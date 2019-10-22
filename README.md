@@ -1,5 +1,4 @@
 # carriage-web
 Frontend code for Carriage
 
-# contributors
-Bryan Graeser
+Contributors: Christopher Hansen, Bryan Graeser
