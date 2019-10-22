@@ -1,5 +1,4 @@
 # carriage-web
 Frontend code for Carriage
 
-## Contributors
-Matthew Guo
+Contributors: Christopher Hansen, Bryan Graeser, Matthew Guo
