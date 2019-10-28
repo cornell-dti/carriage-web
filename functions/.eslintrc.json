@@ -1,0 +1,12 @@
+{
+  "parserOptions": {
+    // Required for certain syntax usages
+    "ecmaVersion": 2017
+  },
+  "env": {
+    "browser": true
+  },
+  "plugins": ["promise"],
+  "extends": ["airbnb-base"],
+  "rules": {}
+}

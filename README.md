@@ -1,5 +1,4 @@
 # carriage-web
 Frontend code for Carriage
 
-Contributors:
-Simran Puri
+Contributors: Christopher Hansen, Bryan Graeser, Matthew Guo, Kinjal Jasani, Simran Puri
