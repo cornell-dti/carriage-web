@@ -1,4 +1,4 @@
 # carriage-web
 Frontend code for Carriage
-Contributors:
-Kinjal Jasani
+
+Contributors: Christopher Hansen, Bryan Graeser, Matthew Guo, Kinjal Jasani
