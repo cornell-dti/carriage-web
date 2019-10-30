@@ -15,10 +15,6 @@ main.use('/api', app);
 
 exports.webAPI = functions.https.onRequest(main);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
 app.post('/addUser', (req, res) => {
   const {
     userEmail, userPhone, userPass, userName,
@@ -32,7 +28,29 @@ app.post('/addUser', (req, res) => {
     disabled: false,
   })
     .then((userRecord) => {
-      res.send({ id: userRecord.uid });
+      res.send({ userID: userRecord.uid });
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.delete('/deleteUserByID', (req, res) => {
+  const { userID } = req.body;
+  admin.auth().deleteUser(userID)
+    .then(() => {
+      res.send({ userID });
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+});
+
+app.post('/createTokenByID', (req, res) => {
+  const { userID } = req.body;
+  admin.auth().createCustomToken(userID)
+    .then((customToken) => {
+      res.send({ token: customToken });
     })
     .catch((error) => {
       res.send(error);
