@@ -11,8 +11,6 @@ jobs:
         with:
           node-version: '10.x'
       - name: NPM Install
-        run: cd functions/ && npm install
-      - name: Add dummy service account key
-        run: echo '{}' > functions/serviceAccountKey.json
+        run: npm install
       - name: Run Linter
-        run: cd functions/ && npm run lint
+        run: npm run lint
