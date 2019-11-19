@@ -89,7 +89,7 @@ var createActiveRides = function() {
   var dynamodb = new AWS.DynamoDB();
 
   var params = {
-    TableName : "Location",
+    TableName : "ActiveRides",
     KeySchema: [       
         { AttributeName: "id", KeyType: "HASH"},  //Partition key
         { AttributeName: "startTime", KeyType: "RANGE"},  //Sort key
@@ -117,7 +117,7 @@ var createPastRides = function() {
   var dynamodb = new AWS.DynamoDB();
 
   var params = {
-    TableName : "Location",
+    TableName : "PastRides",
     KeySchema: [       
         { AttributeName: "id", KeyType: "HASH"},  //Partition key
         { AttributeName: "startTime", KeyType: "RANGE"},  //Sort key
