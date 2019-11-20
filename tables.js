@@ -3,18 +3,18 @@ const config = require('./config');
 
 AWS.config.update(config);
 
-const createLocations = function () {
+function createLocations() {
   const dynamodb = new AWS.DynamoDB();
 
   const params = {
-    TableName: "Location",
+    TableName: 'Location',
     KeySchema: [
-      { AttributeName: "id", KeyType: "HASH" },  //Partition key
-      { AttributeName: "location", KeyType: "RANGE" }  //Sort key
+      { AttributeName: 'id', KeyType: 'HASH' },
+      { AttributeName: 'location', KeyType: 'RANGE' }
     ],
     AttributeDefinitions: [
-      { AttributeName: "id", AttributeType: "N" },
-      { AttributeName: "location", AttributeType: "S" }
+      { AttributeName: 'id', AttributeType: 'N' },
+      { AttributeName: 'location', AttributeType: 'S' }
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
@@ -22,25 +22,25 @@ const createLocations = function () {
     },
   };
 
-  dynamodb.createTable(params, function (err, data) {
+  dynamodb.createTable(params, (err, data) => {
     if (err) {
-      console.error("Unable to create Location table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error('Unable to create Location table. Error JSON:', JSON.stringify(err, null, 2));
     } else {
-      console.log("Created Location table. Table description JSON:", JSON.stringify(data, null, 2));
+      console.log('Created Location table. Table description JSON:', JSON.stringify(data, null, 2));
     }
   });
 }
 
-const createRider = function () {
+function createRider() {
   const dynamodb = new AWS.DynamoDB();
 
   const params = {
-    TableName: "Rider",
+    TableName: 'Rider',
     KeySchema: [
-      { AttributeName: "id", KeyType: "HASH" },  //Partition key
+      { AttributeName: 'id', KeyType: 'HASH' },
     ],
     AttributeDefinitions: [
-      { AttributeName: "id", AttributeType: "N" },
+      { AttributeName: 'id', AttributeType: 'N' },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
@@ -48,25 +48,25 @@ const createRider = function () {
     },
   };
 
-  dynamodb.createTable(params, function (err, data) {
+  dynamodb.createTable(params, (err, data) => {
     if (err) {
-      console.error("Unable to create Rider table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error('Unable to create Rider table. Error JSON:', JSON.stringify(err, null, 2));
     } else {
-      console.log("Created Rider table. Table description JSON:", JSON.stringify(data, null, 2));
+      console.log('Created Rider table. Table description JSON:', JSON.stringify(data, null, 2));
     }
   });
 }
 
-const createDriver = function () {
+function createDriver() {
   const dynamodb = new AWS.DynamoDB();
 
   const params = {
-    TableName: "Driver",
+    TableName: 'Driver',
     KeySchema: [
-      { AttributeName: "id", KeyType: "HASH" },  //Partition key
+      { AttributeName: 'id', KeyType: 'HASH' },
     ],
     AttributeDefinitions: [
-      { AttributeName: "id", AttributeType: "N" },
+      { AttributeName: 'id', AttributeType: 'N' },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
@@ -74,27 +74,27 @@ const createDriver = function () {
     },
   };
 
-  dynamodb.createTable(params, function (err, data) {
+  dynamodb.createTable(params, (err, data) => {
     if (err) {
-      console.error("Unable to create Driver table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error('Unable to create Driver table. Error JSON:', JSON.stringify(err, null, 2));
     } else {
-      console.log("Created Driver table. Table description JSON:", JSON.stringify(data, null, 2));
+      console.log('Created Driver table. Table description JSON:', JSON.stringify(data, null, 2));
     }
   });
 }
 
-const createActiveRides = function () {
+function createActiveRides() {
   const dynamodb = new AWS.DynamoDB();
 
   const params = {
-    TableName: "Location",
+    TableName: 'ActiveRides',
     KeySchema: [
-      { AttributeName: "id", KeyType: "HASH" },  //Partition key
-      { AttributeName: "startTime", KeyType: "RANGE" },  //Sort key
+      { AttributeName: 'id', KeyType: 'HASH' },
+      { AttributeName: 'startTime', KeyType: 'RANGE' },
     ],
     AttributeDefinitions: [
-      { AttributeName: "id", AttributeType: "N" },
-      { AttributeName: "startTime", AttributeType: "S" },
+      { AttributeName: 'id', AttributeType: 'N' },
+      { AttributeName: 'startTime', AttributeType: 'S' },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
@@ -102,27 +102,27 @@ const createActiveRides = function () {
     },
   };
 
-  dynamodb.createTable(params, function (err, data) {
+  dynamodb.createTable(params, (err, data) => {
     if (err) {
-      console.error("Unable to create ActiveRides table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error('Unable to create ActiveRides table. Error JSON:', JSON.stringify(err, null, 2));
     } else {
-      console.log("Created ActiveRides table. Table description JSON:", JSON.stringify(data, null, 2));
+      console.log('Created ActiveRides table. Table description JSON:', JSON.stringify(data, null, 2));
     }
   });
 }
 
-const createPastRides = function () {
+function createPastRides() {
   const dynamodb = new AWS.DynamoDB();
 
   const params = {
-    TableName: "Location",
+    TableName: 'PastRides',
     KeySchema: [
-      { AttributeName: "id", KeyType: "HASH" },  //Partition key
-      { AttributeName: "startTime", KeyType: "RANGE" },  //Sort key
+      { AttributeName: 'id', KeyType: 'HASH' },
+      { AttributeName: 'startTime', KeyType: 'RANGE' },
     ],
     AttributeDefinitions: [
-      { AttributeName: "id", AttributeType: "N" },
-      { AttributeName: "startTime", AttributeType: "S" },
+      { AttributeName: 'id', AttributeType: 'N' },
+      { AttributeName: 'startTime', AttributeType: 'S' },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
@@ -130,11 +130,11 @@ const createPastRides = function () {
     },
   };
 
-  dynamodb.createTable(params, function (err, data) {
+  dynamodb.createTable(params, (err, data) => {
     if (err) {
-      console.error("Unable to create PastRides table. Error JSON:", JSON.stringify(err, null, 2));
+      console.error('Unable to create PastRides table. Error JSON:', JSON.stringify(err, null, 2));
     } else {
-      console.log("Created PastRides table. Table description JSON:", JSON.stringify(data, null, 2));
+      console.log('Created PastRides table. Table description JSON:', JSON.stringify(data, null, 2));
     }
   });
 }
