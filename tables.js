@@ -10,15 +10,15 @@ function createLocations() {
     TableName: 'Location',
     KeySchema: [
       { AttributeName: 'id', KeyType: 'HASH' },
-      { AttributeName: 'location', KeyType: 'RANGE' }
+      { AttributeName: 'location', KeyType: 'RANGE' },
     ],
     AttributeDefinitions: [
       { AttributeName: 'id', AttributeType: 'N' },
-      { AttributeName: 'location', AttributeType: 'S' }
+      { AttributeName: 'location', AttributeType: 'S' },
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
-      WriteCapacityUnits: 10
+      WriteCapacityUnits: 10,
     },
   };
 
@@ -44,7 +44,7 @@ function createRider() {
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
-      WriteCapacityUnits: 10
+      WriteCapacityUnits: 10,
     },
   };
 
@@ -70,7 +70,7 @@ function createDriver() {
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
-      WriteCapacityUnits: 10
+      WriteCapacityUnits: 10,
     },
   };
 
@@ -98,7 +98,7 @@ function createActiveRides() {
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
-      WriteCapacityUnits: 10
+      WriteCapacityUnits: 10,
     },
   };
 
@@ -126,7 +126,7 @@ function createPastRides() {
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 10,
-      WriteCapacityUnits: 10
+      WriteCapacityUnits: 10,
     },
   };
 
@@ -138,3 +138,9 @@ function createPastRides() {
     }
   });
 }
+
+createActiveRides();
+createDriver();
+createLocations();
+createPastRides();
+createRider();

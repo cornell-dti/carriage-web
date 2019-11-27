@@ -137,6 +137,7 @@ app.post('/riders', (req, res) => {
     TableName: 'Riders',
     Item: {
       id: uuid(),
+      fullName: postBody.fullName,
       phoneNumber: postBody.phoneNumber,
       email: postBody.email,
       accessibility: {
@@ -172,4 +173,4 @@ app.post('/verify', (req, res) => {
   }
 });
 
-app.listen(3000);
+app.listen(3000, () => console.log('Listening at port', 3000));
