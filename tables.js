@@ -165,9 +165,9 @@ function createVehicles() {
     }
   });
 }
-// createLocations();
-// createRider();
-// createDriver();
-// createActiveRides();
-// createPastRides();
+createLocations();
+createRider();
+createDriver();
+createActiveRides();
+createPastRides();
 createVehicles();
