@@ -255,13 +255,14 @@ app.post('/locations', (req, res) => {
 
 
 // Verify an authentication token
-app.post('/verify', (req, res) => {
+app.post('/verify', async (req, res) => {
+  const { clientID, token } = req.body;
   try {
-    const { clientID, token } = req.body;
-    res.send({ data: verify(clientID, token) });
+    await verify(clientID, token);
   } catch (err) {
-    res.send(err);
+    res.send({ success: 'false' });
   }
+  res.send({ success: 'true' });
 });
 
 app.listen(3000, () => console.log('Listening at port', 3000));
