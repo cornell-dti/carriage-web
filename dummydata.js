@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const uuidv1 = require('uuid/v1');
+const uuid = require('uuid/v1');
 const config = require('./config');
 
 

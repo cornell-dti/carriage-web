@@ -2,7 +2,7 @@ const { OAuth2Client } = require('google-auth-library');
 const express = require('express');
 const bodyparser = require('body-parser');
 const AWS = require('aws-sdk');
-const uuid = require('uuid/v4');
+const uuid = require('uuid/v1');
 const config = require('./config');
 
 AWS.config.update(config);
