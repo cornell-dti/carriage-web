@@ -5,6 +5,8 @@ const AWS = require('aws-sdk');
 const uuid = require('uuid/v1');
 const config = require('./config');
 
+const port = 3000;
+
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -12,7 +14,12 @@ const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-const clientID = '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com';
+const clientID = ['322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
+  '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com',
+  '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
+  '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
+  '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com'];
+
 
 async function verify(token) {
   const client = new OAuth2Client(clientID);
@@ -268,4 +275,4 @@ app.post('/verify', async (req, res) => {
   console.log('verified');
 });
 
-app.listen(3000, () => console.log('Listening at port', 3000));
+app.listen(port, () => console.log('Listening at port', port));
