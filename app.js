@@ -12,7 +12,9 @@ const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-async function verify(clientID, token) {
+const clientID = '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com';
+
+async function verify(token) {
   const client = new OAuth2Client(clientID);
   const ticket = await client.verifyIdToken({
     idToken: token,
@@ -256,13 +258,14 @@ app.post('/locations', (req, res) => {
 
 // Verify an authentication token
 app.post('/verify', async (req, res) => {
-  const { clientID, token } = req.body;
+  const { token } = req.body;
   try {
-    await verify(clientID, token);
+    await verify(token);
   } catch (err) {
     res.send({ success: 'false' });
   }
   res.send({ success: 'true' });
+  console.log('verified');
 });
 
 app.listen(3000, () => console.log('Listening at port', 3000));
