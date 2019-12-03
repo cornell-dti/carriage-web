@@ -130,14 +130,14 @@ app.get('/vehicle/:vehicleID', (req, res) => {
   });
 });
 
-// Post a rider in Riders table
+// Put a rider in Riders table
 app.post('/riders', (req, res) => {
   const postBody = req.body;
   const params = {
     TableName: 'Riders',
     Item: {
       id: uuid(),
-      fullName: postBody.fullName,
+      name: postBody.name,
       phoneNumber: postBody.phoneNumber,
       email: postBody.email,
       accessibility: {
@@ -162,6 +162,97 @@ app.post('/riders', (req, res) => {
     }
   });
 });
+
+// Put a driver in Drivers table
+app.post('/drivers', (req, res) => {
+  const postBody = req.body;
+  const params = {
+    TableName: 'Drivers',
+    Item: {
+      id: uuid(),
+      startTime: postBody.startTime,
+      endTime: postBody.endTime,
+      breaks: postBody.breaks,
+      vehicle: postBody.vehicle,
+      phoneNumber: postBody.phoneNumber,
+      email: postBody.email,
+      name: postBody.name,
+    },
+  };
+  docClient.put(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(data);
+    }
+  });
+});
+
+// Put an active ride in Active Rides table
+app.post('/activeRides', (req, res) => {
+  // Call to scheduling algorithm here?
+  const postBody = req.body;
+  const params = {
+    TableName: 'Active Rides',
+    Item: {
+      id: uuid(),
+      startLocation: postBody.startLocation,
+      endLocation: postBody.endLocation,
+      startTime: postBody.startTime,
+      endTime: postBody.endTime,
+      isScheduled: postBody.isScheduled,
+      riderID: postBody.riderID,
+      driverID: postBody.driverID,
+      dateRequested: postBody.dateRequested,
+    },
+  };
+  docClient.put(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(data);
+    }
+  });
+});
+
+// Put a vehicle in Vehicles table
+app.post('/vehicles', (req, res) => {
+  const postBody = req.body;
+  const params = {
+    TableName: 'Vehicles',
+    Item: {
+      id: uuid(),
+      wheelchairAccessible: postBody.wheelchairAccessible,
+    },
+  };
+  docClient.put(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(data);
+    }
+  });
+});
+
+// Put a location in Locations table
+app.post('/locations', (req, res) => {
+  const postBody = req.body;
+  const params = {
+    TableName: 'Locations',
+    Item: {
+      id: uuid(),
+      location: postBody.location,
+    },
+  };
+  docClient.put(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(data);
+    }
+  });
+});
+
 
 // Verify an authentication token
 app.post('/verify', (req, res) => {
