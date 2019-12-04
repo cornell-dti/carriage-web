@@ -165,9 +165,78 @@ function createVehicles() {
     }
   });
 }
-createLocations();
-createRider();
-createDriver();
-createActiveRides();
-createPastRides();
-createVehicles();
+
+function addRiderIndex() {
+  const dynamodb = new AWS.DynamoDB();
+
+  const params = {
+    TableName: 'ActiveRides',
+    GlobalSecondaryIndexUpdates: [{
+      Create: {
+        IndexName: 'RiderIndex',
+        KeySchema: [
+          { AttributeName: 'riderID', KeyType: 'HASH' }, // Partition key
+          { AttributeName: 'dateRequested', KeyType: 'RANGE' }, // Sort key
+        ],
+        AttributeDefinitions: [
+          { AttributeName: 'riderID', AttributeType: 'S' },
+          { AttributeName: 'dateRequested', AttributeType: 'N' },
+        ],
+        Projection: {
+          ProjectionType: 'ALL',
+        },
+        ProvisionedThroughput: {
+          ReadCapacityUnits: 10,
+          WriteCapacityUnits: 10,
+        },
+      },
+    }],
+  };
+
+  dynamodb.updateTable(params, (err, data) => {
+    if (err) {
+      console.error('Unable to update ActiveRides table. Error JSON:', JSON.stringify(err, null, 2));
+    } else {
+      console.log('Updates ActiveRides table. Table description JSON:', JSON.stringify(data, null, 2));
+    }
+  });
+}
+
+function addDriverIndex() {
+  const dynamodb = new AWS.DynamoDB();
+
+  const params = {
+    TableName: 'ActiveRides',
+    GlobalSecondaryIndexUpdates: [{
+      Create: {
+        IndexName: 'DriverIndex',
+        KeySchema: [
+          { AttributeName: 'driverID', KeyType: 'HASH' }, // Partition key
+          { AttributeName: 'dateRequested', KeyType: 'RANGE' }, // Sort key
+        ],
+        AttributeDefinitions: [
+          { AttributeName: 'driverID', AttributeType: 'S' },
+          { AttributeName: 'dateRequested', AttributeType: 'N' },
+        ],
+        Projection: {
+          ProjectionType: 'ALL',
+        },
+        ProvisionedThroughput: {
+          ReadCapacityUnits: 10,
+          WriteCapacityUnits: 10,
+        },
+      },
+    }],
+  };
+
+  dynamodb.updateTable(params, (err, data) => {
+    if (err) {
+      console.error('Unable to update ActiveRides table. Error JSON:', JSON.stringify(err, null, 2));
+    } else {
+      console.log('Updates ActiveRides table. Table description JSON:', JSON.stringify(data, null, 2));
+    }
+  });
+}
+
+addRiderIndex();
+addDriverIndex();
