@@ -107,3 +107,9 @@ var vehicles = [
       wheelchairAccessible: false,
   }
 ]
+
+module.exports = { 
+  rideRequests: rideRequests,
+  drivers: drivers,
+  vehicles: vehicles 
+};
