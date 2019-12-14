@@ -1,7 +1,11 @@
 // Incredibly basic test of scheduling
 var sample = require('./sampleInput');
+// Test on possible request set
 schedule = makeSchedule(sample.rideRequests, sample.drivers);
-console.log(schedule);
+console.log(schedule); // Should output valid schedule
+// Test on impossible request set
+schedule = makeSchedule(sample.rideRequestsImpossible, sample.drivers);
+console.log(schedule); // Should output NULL
 
 // Constructs and returns schedule if possible given requests and drivers. Returns NULL if impossible.
 // * NOTE: Currently schedules all drivers to rides with no breaks and work all day, assuming instant transportation to start location, 
@@ -51,12 +55,6 @@ function conflict(request, node, driver) {
         (new Date(request.startTime) < new Date(driver.startTime) || new Date(request.endTime) > new Date(driver.endTime)
         || (new Date(request.startTime) > new Date(ride.startTime) && new Date(request.startTime) < new Date(ride.endTime)) 
         || (new Date(request.endTime) > new Date(ride.startTime) && new Date(request.endTime) < new Date(ride.endTime)))){
-      // if(driver.ID === "0"){
-      //   console.log("CONFLICT 0");
-      //   console.log(ride);
-      //   console.log(request);
-      //   console.log("CONFLICT 0");
-      // }
       return true;
     }
   }

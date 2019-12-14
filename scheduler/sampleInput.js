@@ -29,6 +29,59 @@ var rideRequests = [
       isScheduled: false,
       riderID: "1",
       dateRequested: 34,
+    },
+    {
+      ID: "004",
+      startLocation: 1,
+      endLocation: 2,
+      startTime: "2019-12-13T08:30",
+      endTime: "2019-12-13T08:35",
+      isScheduled: false,
+      riderID: "1",
+      dateRequested: 34,
+    }
+]
+
+var rideRequestsImpossible = [
+  {
+    ID: "001",
+    startLocation: 0,
+    endLocation: 3,
+    startTime: "2019-12-13T07:30",
+    endTime: "2019-12-13T07:50",
+    isScheduled: false,
+    riderID: "0",
+    dateRequested: 34,
+  },
+  {
+    ID: "002",
+    startLocation: 1,
+    endLocation: 2,
+    startTime: "2019-12-13T08:20",
+    endTime: "2019-12-13T08:34",
+    isScheduled: false,
+    riderID: "1",
+    dateRequested: 34,
+  },
+  {
+      ID: "003",
+      startLocation: 1,
+      endLocation: 2,
+      startTime: "2019-12-13T08:10",
+      endTime: "2019-12-13T08:25",
+      isScheduled: false,
+      riderID: "1",
+      dateRequested: 34,
+    },
+    {
+      ID: "004",
+      startLocation: 1,
+      endLocation: 2,
+      startTime: "2019-12-13T08:22",
+      endTime: "2019-12-13T08:35",
+      isScheduled: false,
+      riderID: "1",
+      dateRequested: 34,
     }
 ]
 
@@ -110,6 +163,7 @@ var vehicles = [
 
 module.exports = { 
   rideRequests: rideRequests,
+  rideRequestsImpossible: rideRequestsImpossible,
   drivers: drivers,
   vehicles: vehicles 
 };
