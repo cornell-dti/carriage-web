@@ -4,8 +4,8 @@ var rideRequests = [
     ID: "001",
     startLocation: 0,
     endLocation: 3,
-    startTime: "7:30",
-    endTime: "7:50",
+    startTime: "2019-12-13T07:30",
+    endTime: "2019-12-13T07:50",
     isScheduled: false,
     riderID: "0",
     dateRequested: 34,
@@ -14,20 +14,30 @@ var rideRequests = [
     ID: "002",
     startLocation: 1,
     endLocation: 2,
-    startTime: "8:20",
-    endTime: "8:34",
+    startTime: "2019-12-13T08:20",
+    endTime: "2019-12-13T08:34",
     isScheduled: false,
     riderID: "1",
     dateRequested: 34,
-  }
+  },
+  {
+      ID: "003",
+      startLocation: 1,
+      endLocation: 2,
+      startTime: "2019-12-13T08:10",
+      endTime: "2019-12-13T08:25",
+      isScheduled: false,
+      riderID: "1",
+      dateRequested: 34,
+    }
 ]
 
 var drivers = [
     {
         ID: "0",
         name: "Brandon Brandoni",
-        startTime: "8:00",
-        endTime: "18:00",
+        startTime: "2019-12-13T08:00",
+        endTime: "2019-12-13T18:00",
         breaks: {
             Mon: {
               breakStart: '12:00',
@@ -57,8 +67,8 @@ var drivers = [
     {
         ID: "1",
         name: "Bobby Bobbers",
-        startTime: "7:00",
-        endTime: "17:00",
+        startTime: "2019-12-13T07:00",
+        endTime: "2019-12-13T17:00",
         breaks: {
             Mon: {
               breakStart: '10:00',
