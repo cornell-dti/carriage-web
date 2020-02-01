@@ -15,5 +15,17 @@
         "airbnb-base",
         "plugin:@typescript-eslint/recommended"
     ],
-    "rules": {}
+    "rules": {},
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        }
+    }
 }
