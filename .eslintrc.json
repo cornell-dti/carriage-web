@@ -1,7 +1,9 @@
 {
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         // Required for certain syntax usages
-        "ecmaVersion": 2017
+        "ecmaVersion": 2017,
+        "sourceType": "module"
     },
     "env": {
         "browser": true
@@ -10,7 +12,8 @@
         "promise"
     ],
     "extends": [
-        "airbnb-base"
+        "airbnb-base",
+        "plugin:@typescript-eslint/recommended"
     ],
     "rules": {}
 }
