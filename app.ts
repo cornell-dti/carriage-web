@@ -1,9 +1,9 @@
-const { OAuth2Client } = require('google-auth-library');
-const express = require('express');
-const bodyparser = require('body-parser');
-const AWS = require('aws-sdk');
-const uuid = require('uuid/v1');
-const config = require('./config');
+import { OAuth2Client } from 'google-auth-library';
+import express from 'express';
+import bodyparser from 'body-parser';
+import AWS from 'aws-sdk';
+import uuid from 'uuid/v1';
+import config from './config';
 
 const port = 3000;
 
@@ -14,21 +14,22 @@ const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-const clientID = ['322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
+const validIDs = [
+  '322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
   '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com',
   '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
   '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
-  '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com'];
+  '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
+  '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
+];
 
-
-async function verify(token) {
+async function verify(clientID: string, token: string): Promise<void> {
   const client = new OAuth2Client(clientID);
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: clientID,
+    audience: validIDs,
   });
-  const payload = ticket.getPayload();
-  return payload;
+  ticket.getPayload();
 }
 
 // Get a rider by ID in Riders table
@@ -158,8 +159,8 @@ app.post('/riders', (req, res) => {
       picture: postBody.picture,
       joinDate: postBody.joinDate,
       pronouns: postBody.pronouns,
-      pastRides: [],
-      requestedRides: [],
+      pastRides: [] as string[],
+      requestedRides: [] as string[],
       address: postBody.address,
     },
   };
@@ -265,14 +266,13 @@ app.post('/locations', (req, res) => {
 
 // Verify an authentication token
 app.post('/verify', async (req, res) => {
-  const { token } = req.body;
+  const { token, clientID } = req.body;
   try {
-    await verify(token);
+    await verify(token, clientID);
   } catch (err) {
     res.send({ success: 'false' });
   }
   res.send({ success: 'true' });
-  console.log('verified');
 });
 
 app.listen(port, () => console.log('Listening at port', port));
