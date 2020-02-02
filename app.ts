@@ -20,6 +20,7 @@ const validIDs = [
   '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
   '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
+  '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
 ];
 
 async function verify(clientID: string, token: string): Promise<void> {
