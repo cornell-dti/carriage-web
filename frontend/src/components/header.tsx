@@ -3,10 +3,8 @@ import "../styles/header.css";
 
 const Header = () => (
   <header className="header">
-    <h1>Welcome to Carriage</h1>
-    <h2>
-      Helping People Do Something
-    </h2>
+    <h1 className="title">Welcome to Carriage</h1>
+    <h2 className="subtitle">Helping People Do Something</h2>
   </header>
 );
 
