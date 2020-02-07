@@ -2,15 +2,11 @@ import React from "react";
 import "../styles/header.css";
 
 const Header = () => (
-  <header id="showcase">
+  <header className="header">
     <h1>Welcome to Carriage</h1>
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias minus
-      recusandae enim placeat, maiores atque!
-    </p>
-    <a href="#" className="read-btn">
-      Read More
-    </a>
+    <h2>
+      Helping People Do Something
+    </h2>
   </header>
 );
 
