@@ -10,7 +10,6 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 // Get a rider by ID in Riders table
 router.get('/rider/:riderID', (req, res) => {
-  console.log(config);
   const { riderID } = req.params;
   const params = {
     TableName: 'Riders',
