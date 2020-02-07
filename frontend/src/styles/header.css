@@ -6,7 +6,6 @@
 body {
   margin: 0;
   font-family: Arial, "Helvetica Neue";
-  font-size: 17px;
   color: black;
   line-height: 1.6;
 }
@@ -25,7 +24,7 @@ body {
 }
 
 .read-btn {
-  font-size: 18px;
+  font-size: 1.1em;
   text-decoration: none;
   color: black;
   border: black 1px solid;
