@@ -1,5 +1,5 @@
 import React from "react";
-import "./sectionA.css";
+import "../styles/sectionA.css";
 
 const SectionA = () => (
   <section id="section-a">
