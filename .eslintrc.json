@@ -32,6 +32,7 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "linebreak-style": "off"
     }
 }
