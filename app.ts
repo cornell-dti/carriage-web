@@ -15,12 +15,7 @@ const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-app.use('/', rider);
-app.use('/', driver);
-app.use('/', activeride);
-app.use('/', pastride);
-app.use('/', vehicle);
-app.use('/', location);
+app.use('/', [rider, driver, activeride, pastride, vehicle, location]);
 app.use('/verify', auth);
 
 app.listen(port, () => console.log('Listening at port', port));
