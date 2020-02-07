@@ -8,8 +8,7 @@ const Header = () => (
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias minus
       recusandae enim placeat, maiores atque!
     </p>
-    <a href="#" className="button">
-      {" "}
+    <a href="#" className="read-btn">
       Read More
     </a>
   </header>
