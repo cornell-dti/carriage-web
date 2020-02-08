@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import { TokenPayload, LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
+import { LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
 import AWS from 'aws-sdk';
 import config from '../config';
@@ -50,7 +50,7 @@ router.post('/', async (req, res) => {
         });
       }
     })
-    .catch(() => res.send({ success: false }));
+    .catch((err) => console.log(err));
 });
 
 export default router;
