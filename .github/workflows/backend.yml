@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: "10.x"
       - name: NPM Install
-        run: cd server
+        run: npm install
         working-directory: ./server
       - name: Run Linter
         run: npm run lint
