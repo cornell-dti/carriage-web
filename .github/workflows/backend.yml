@@ -9,8 +9,10 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: '10.x'
+          node-version: "10.x"
       - name: NPM Install
-        run: npm install
+        run: cd server
+        working-directory: ./server
       - name: Run Linter
         run: npm run lint
+        working-directory: ./server
