@@ -45,12 +45,15 @@ router.post('/', async (req, res) => {
           if (err) {
             res.send(err);
           } else {
-            res.send(data);
+            res.send({ success: true });
           }
         });
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      res.send({ success: false });
+    });
 });
 
 export default router;
