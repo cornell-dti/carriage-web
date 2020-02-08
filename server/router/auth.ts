@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import { TokenPayload } from 'google-auth-library/build/src/auth/loginticket';
+import { TokenPayload, LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
 import AWS from 'aws-sdk';
 import config from '../config';
@@ -16,23 +16,40 @@ const validIDs = [
   '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
+  '407408718192.apps.googleusercontent.com',
 ];
 
-async function verify(clientID: string, token: string): Promise<void> {
+async function verify(clientID: string, token: string): Promise<LoginTicket> {
   const client = new OAuth2Client(clientID);
-  client.verifyIdToken({
+  const authRes = await client.verifyIdToken({
     idToken: token,
     audience: validIDs,
-  })
-    .then((ticket) => ticket.getPayload())
-    .catch((err) => { throw err; });
+  });
+  return authRes;
 }
 
 // Verify an authentication token
 router.post('/', async (req, res) => {
-  const { token, clientID } = req.body;
+  const {
+    token, clientID, userType, email,
+  } = req.body;
   verify(token, clientID)
-    .then(() => res.send({ success: true }))
+    .then((authRes) => {
+      if (authRes.getPayload()) {
+        const params = {
+          TableName: userType === 'rider' ? 'Riders' : 'Drivers',
+          ProjectionExpression: 'id, email',
+          FilterExpression: `email = ${email}`,
+        };
+        docClient.scan(params, (err, data) => {
+          if (err) {
+            res.send(err);
+          } else {
+            res.send(data);
+          }
+        });
+      }
+    })
     .catch(() => res.send({ success: false }));
 });
 
