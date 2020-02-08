@@ -10,7 +10,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "10.x"
-      - name: NPM Install
+      - name: Install ESLint
         run: npm install
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./server
       - name: Run Linter
         run: npm run lint
