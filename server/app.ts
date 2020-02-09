@@ -22,6 +22,6 @@ app.use('/', activeride);
 app.use('/', pastride);
 app.use('/', vehicle);
 app.use('/', location);
-app.use('/verify', auth);
+app.use('/auth', auth);
 
 app.listen(port, () => console.log('Listening at port', port));

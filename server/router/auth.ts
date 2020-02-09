@@ -52,12 +52,12 @@ router.post('/', (req, res) => {
             if (typeof userList![0] === 'undefined') {
               res.send({
                 success: true,
-                isNewUser: true,
+                exists: false,
               });
             } else {
               res.send({
                 success: true,
-                isNewUser: false,
+                exists: true,
                 id: userList![0].id,
               });
             }
