@@ -16,7 +16,6 @@ const validIDs = [
   '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
-  '407408718192.apps.googleusercontent.com',
 ];
 
 async function verify(clientID: string, token: string): Promise<LoginTicket> {
@@ -29,29 +28,46 @@ async function verify(clientID: string, token: string): Promise<LoginTicket> {
 }
 
 // Verify an authentication token
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
   const {
     token, clientID, userType, email,
   } = req.body;
-  verify(token, clientID)
+  verify(clientID, token)
     .then((authRes) => {
-      if (authRes.getPayload()) {
+      const payload = authRes.getPayload();
+      if (payload && payload.aud === clientID) {
         const params = {
           TableName: userType === 'rider' ? 'Riders' : 'Drivers',
           ProjectionExpression: 'id, email',
-          FilterExpression: `email = ${email}`,
+          FilterExpression: 'email = :user_email',
+          ExpressionAttributeValues: {
+            ':user_email': email,
+          },
         };
         docClient.scan(params, (err, data) => {
           if (err) {
             res.send(err);
           } else {
-            res.send({ success: true });
+            const userList = data.Items;
+            if (typeof userList![0] === 'undefined') {
+              res.send({
+                success: true,
+                isNewUser: true,
+              });
+            } else {
+              res.send({
+                success: true,
+                isNewUser: false,
+                id: userList![0].id,
+              });
+            }
           }
         });
+      } else {
+        res.send({ success: false });
       }
     })
-    .catch((err) => {
-      console.log(err);
+    .catch(() => {
       res.send({ success: false });
     });
 });

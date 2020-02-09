@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express from 'express';
 import bodyparser from 'body-parser';
 
