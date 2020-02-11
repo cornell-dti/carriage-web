@@ -33,6 +33,7 @@
                 "tsx": "never"
             }
         ],
-        "linebreak-style": "off"
+        "linebreak-style": "off",
+        "object-curly-newline": "off"
     }
 }
