@@ -37,11 +37,10 @@ router.post('/active-rides', (req, res) => {
       startLocation: postBody.startLocation,
       endLocation: postBody.endLocation,
       startTime: postBody.startTime,
-      endTime: postBody.endTime,
-      isScheduled: postBody.isScheduled,
+      endTime: null,
+      isScheduled: false,
       riderID: postBody.riderID,
-      driverID: postBody.driverID,
-      dateRequested: postBody.dateRequested,
+      driverID: null,
     },
   };
   docClient.put(params, (err, data) => {
