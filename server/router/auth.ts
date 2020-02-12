@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import { TokenPayload } from 'google-auth-library/build/src/auth/loginticket';
+import { LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
 import AWS from 'aws-sdk';
 import config from '../config';
@@ -18,22 +18,45 @@ const validIDs = [
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
 ];
 
-async function verify(clientID: string, token: string): Promise<void> {
+async function verify(clientID: string, token: string): Promise<LoginTicket> {
   const client = new OAuth2Client(clientID);
-  client.verifyIdToken({
+  const authRes = await client.verifyIdToken({
     idToken: token,
     audience: validIDs,
-  })
-    .then((ticket) => ticket.getPayload())
-    .catch((err) => { throw err; });
+  });
+  return authRes;
 }
 
 // Verify an authentication token
-router.post('/', async (req, res) => {
-  const { token, clientID } = req.body;
-  verify(token, clientID)
-    .then(() => res.send({ success: true }))
-    .catch(() => res.send({ success: false }));
+router.post('/', (req, res) => {
+  const { token, clientID, userType, email } = req.body;
+  verify(clientID, token)
+    .then((authRes) => {
+      const payload = authRes.getPayload();
+      if (payload && payload.aud === clientID) {
+        const params = {
+          TableName: userType === 'rider' ? 'Riders' : 'Drivers',
+          ProjectionExpression: 'id, email',
+          FilterExpression: 'email = :user_email',
+          ExpressionAttributeValues: {
+            ':user_email': email,
+          },
+        };
+        docClient.scan(params, (err, data) => {
+          if (err) {
+            res.send(err);
+          } else {
+            const userList = data.Items;
+            res.send({ id: userList![0].id ?? null });
+          }
+        });
+      } else {
+        res.send({ success: false });
+      }
+    })
+    .catch(() => {
+      res.send({ success: false });
+    });
 });
 
 export default router;
