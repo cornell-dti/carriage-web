@@ -47,11 +47,7 @@ router.post('/', (req, res) => {
             res.send(err);
           } else {
             const userList = data.Items;
-            if (typeof userList![0] === 'undefined') {
-              res.send({ id: null });
-            } else {
-              res.send({ id: userList![0].id });
-            }
+            res.send({ id: userList![0].id ?? null });
           }
         });
       } else {
