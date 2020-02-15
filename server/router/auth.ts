@@ -29,9 +29,7 @@ async function verify(clientID: string, token: string): Promise<LoginTicket> {
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const {
-    token, clientID, userType, email,
-  } = req.body;
+  const { token, clientID, userType, email } = req.body;
   verify(clientID, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
@@ -49,18 +47,7 @@ router.post('/', (req, res) => {
             res.send(err);
           } else {
             const userList = data.Items;
-            if (typeof userList![0] === 'undefined') {
-              res.send({
-                success: true,
-                exists: false,
-              });
-            } else {
-              res.send({
-                success: true,
-                exists: true,
-                id: userList![0].id,
-              });
-            }
+            res.send({ id: userList![0].id ?? null });
           }
         });
       } else {
