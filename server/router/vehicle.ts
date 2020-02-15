@@ -8,6 +8,11 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+type Vehicle = {
+  id: string,
+  wheelchairAccessible: boolean,
+};
+
 // Get a vehicle by ID in Vehicles table
 router.get('/vehicle/:vehicleID', (req, res) => {
   const { vehicleID } = req.params;
@@ -29,12 +34,13 @@ router.get('/vehicle/:vehicleID', (req, res) => {
 // Put a vehicle in Vehicles table
 router.post('/vehicles', (req, res) => {
   const postBody = req.body;
+  const vehicle: Vehicle = {
+    id: uuid(),
+    wheelchairAccessible: postBody.wheelchairAccessible,
+  };
   const params = {
     TableName: 'Vehicles',
-    Item: {
-      id: uuid(),
-      wheelchairAccessible: postBody.wheelchairAccessible,
-    },
+    Item: vehicle,
   };
   docClient.put(params, (err, data) => {
     if (err) {
