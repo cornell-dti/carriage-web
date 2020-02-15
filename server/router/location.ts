@@ -11,7 +11,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 type Location = {
   id: string,
   location: string,
-}
+};
 
 // Get a location by ID in Locations table
 router.get('/location/:locationID', (req, res) => {
@@ -46,7 +46,7 @@ router.post('/locations', (req, res) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(data);
+      res.send(location);
     }
   });
 });

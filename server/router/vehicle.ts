@@ -46,7 +46,7 @@ router.post('/vehicles', (req, res) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(data);
+      res.send(vehicle);
     }
   });
 });

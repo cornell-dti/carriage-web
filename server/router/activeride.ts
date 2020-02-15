@@ -52,26 +52,13 @@ router.post('/active-rides', (req, res) => {
   };
   const params = {
     TableName: 'Active Rides',
-<<<<<<< Updated upstream
-    Item: {
-      id: uuid(),
-      startLocation: postBody.startLocation,
-      endLocation: postBody.endLocation,
-      startTime: postBody.startTime,
-      endTime: null,
-      isScheduled: false,
-      riderID: postBody.riderID,
-      driverID: null,
-    },
-=======
     Item: ride,
->>>>>>> Stashed changes
   };
   docClient.put(params, (err, data) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(data);
+      res.send(ride);
     }
   });
 });

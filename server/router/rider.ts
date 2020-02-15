@@ -49,14 +49,6 @@ router.get('/rider/:riderID', (req, res) => {
 // Put a rider in Riders table
 router.post('/riders', (req, res) => {
   const postBody = req.body;
-<<<<<<< Updated upstream
-  const newUser = {
-    id: uuid(),
-    name: postBody.name,
-    phoneNumber: postBody.phoneNumber,
-    email: postBody.email,
-    accessibilityNeeds: postBody.accessibilityNeeds,
-=======
   const user: Rider = {
     id: uuid(),
     firstName: postBody.firstName,
@@ -68,33 +60,23 @@ router.post('/riders', (req, res) => {
       hasCrutches: postBody.hasCrutches,
       needsAssistant: postBody.needsAssistant,
     },
->>>>>>> Stashed changes
     description: postBody.description,
     picture: postBody.picture,
     joinDate: postBody.joinDate,
     pronouns: postBody.pronouns,
-<<<<<<< Updated upstream
-    pastRides: [] as string[],
-    requestedRides: [] as string[],
-=======
     pastRides: [],
     requestedRides: [],
->>>>>>> Stashed changes
     address: postBody.address,
   };
   const params = {
     TableName: 'Riders',
-<<<<<<< Updated upstream
-    Item: newUser,
-=======
     Item: user,
->>>>>>> Stashed changes
   };
   docClient.put(params, (err, data) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(newUser);
+      res.send(user);
     }
   });
 });
