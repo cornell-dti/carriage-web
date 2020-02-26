@@ -1,4 +1,4 @@
-name: CI-Backend
+name: CI
 on: push
 
 jobs:
@@ -9,11 +9,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: "10.x"
-      - name: Install ESLint
+          node-version: '10.x'
+      - name: Install Dependencies
         run: npm install
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./server
       - name: Run Linter
         run: npm run lint

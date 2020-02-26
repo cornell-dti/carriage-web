@@ -20,6 +20,7 @@ This pull request is the first step towards implementing feature Foo
 
 ### Breaking Changes  <!-- Optional -->
 
-<!-- Keep items that apply: -->
-- Database schema change (anything that changes Firestore collection structure)
-- Other change that could cause problems (Detailed in notes)
+<!-- Uncomment items that apply: -->
+
+<!-- - Database schema change (anything that changes DynamoDB document structure)
+<!-- - Other change that could cause problems (Detailed in notes)
