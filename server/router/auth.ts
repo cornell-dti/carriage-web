@@ -33,9 +33,18 @@ router.post('/', (req, res) => {
   verify(clientID, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
-      if (payload && payload.aud === clientID) {
+      const validUserTypes = ['rider', 'driver', 'dispatcher'];
+      if (payload && payload.aud === clientID && validUserTypes.includes(userType)) {
+        let table;
+        if (userType === 'rider') {
+          table = 'Riders';
+        } else if (userType === 'driver') {
+          table = 'Drivers';
+        } else {
+          table = 'Dispatchers';
+        }
         const params = {
-          TableName: userType === 'rider' ? 'Riders' : 'Drivers',
+          TableName: table,
           ProjectionExpression: 'id, email',
           FilterExpression: 'email = :user_email',
           ExpressionAttributeValues: {
