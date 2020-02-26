@@ -14,7 +14,7 @@ type Rider = {
   lastName: string,
   phoneNumber: string,
   email: string,
-  accessibility: {
+  accessibilityNeeds: {
     needsWheelchair: boolean,
     hasCrutches: boolean,
     needsAssistant: boolean,
@@ -26,6 +26,7 @@ type Rider = {
   address: string,
   pastRides: string[],
   requestedRides: string[],
+  favoriteLocations: string[],
 };
 
 // Get a rider by ID in Riders table
@@ -47,26 +48,23 @@ router.get('/rider/:riderID', (req, res) => {
 });
 
 // Put a rider in Riders table
-router.post('/riders', (req, res) => {
+router.post('/riders', (req, res, next) => {
   const postBody = req.body;
   const user: Rider = {
     id: uuid(),
     firstName: postBody.firstName,
     lastName: postBody.lastName,
+    pronouns: postBody.pronouns,
     phoneNumber: postBody.phoneNumber,
     email: postBody.email,
-    accessibility: {
-      needsWheelchair: postBody.needsWheelchair,
-      hasCrutches: postBody.hasCrutches,
-      needsAssistant: postBody.needsAssistant,
-    },
+    accessibilityNeeds: postBody.accessibilityNeeds,
     description: postBody.description,
     picture: postBody.picture,
     joinDate: postBody.joinDate,
-    pronouns: postBody.pronouns,
+    address: postBody.address,
     pastRides: [],
     requestedRides: [],
-    address: postBody.address,
+    favoriteLocations: [],
   };
   const params = {
     TableName: 'Riders',
