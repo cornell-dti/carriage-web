@@ -16,7 +16,8 @@ type ActiveRide = {
   endTime: number,
   isScheduled: boolean,
   riderID: string,
-  driverID: string,
+  driverID: string | null,
+  repeatsOn?: string[],
 };
 
 // Get an active/requested ride by ID in Active Rides table
@@ -40,16 +41,20 @@ router.get('/active-ride/:rideID', (req, res) => {
 // Put an active ride in Active Rides table
 router.post('/active-rides', (req, res) => {
   const postBody = req.body;
+  const { repeatsOn } = postBody;
   const ride: ActiveRide = {
     id: uuid(),
     startLocation: postBody.startLocation,
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,
     endTime: postBody.endTime,
-    isScheduled: postBody.isScheduled,
+    isScheduled: false,
     riderID: postBody.riderID,
-    driverID: postBody.driverID,
+    driverID: null,
   };
+  if (repeatsOn) {
+    ride.repeatsOn = repeatsOn;
+  }
   const params = {
     TableName: 'Active Rides',
     Item: ride,
