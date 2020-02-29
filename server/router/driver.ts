@@ -64,14 +64,13 @@ router.get('/driver/:driverID', (req, res) => {
 // Put a driver in Drivers table
 router.post('/drivers', (req, res) => {
   const postBody = req.body;
-  const breaks = postBody.breaks ?? null;
   const user: Driver = {
     id: uuid(),
     firstName: postBody.firstName,
     lastName: postBody.lastName,
     startTime: postBody.startTime,
     endTime: postBody.endTime,
-    breaks,
+    breaks: postBody.breaks ?? null,
     vehicle: postBody.vehicle,
     phoneNumber: postBody.phoneNumber,
     email: postBody.email,
