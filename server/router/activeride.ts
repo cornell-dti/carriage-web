@@ -24,7 +24,7 @@ type ActiveRide = {
 router.get('/active-ride/:rideID', (req, res) => {
   const { rideID } = req.params;
   const params = {
-    TableName: 'Active Rides',
+    TableName: 'ActiveRides',
     Key: {
       id: rideID,
     },

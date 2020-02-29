@@ -48,7 +48,7 @@ router.get('/rider/:riderID', (req, res) => {
 });
 
 // Put a rider in Riders table
-router.post('/riders', (req, res, next) => {
+router.post('/riders', (req, res) => {
   const postBody = req.body;
   const user: Rider = {
     id: uuid(),
