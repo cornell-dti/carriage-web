@@ -12,11 +12,11 @@ type ActiveRide = {
   id: string,
   startLocation: string,
   endLocation: string,
-  startTime: number,
-  endTime: number,
+  startTime: string,
+  endTime: string,
   isScheduled: boolean,
-  riderID: string,
-  driverID: string | null,
+  riderID: string[],
+  driverID: string[] | null,
   repeatsOn: string[] | null,
 };
 
@@ -34,6 +34,33 @@ router.get('/active-ride/:rideID', (req, res) => {
       res.send(err);
     } else {
       res.send(data);
+    }
+  });
+});
+
+// Get all rides in table w/ optional date query
+router.get('/active-rides', (req, res) => {
+  const { date } = req.query;
+  const params: any = {
+    TableName: 'ActiveRides',
+  };
+  if (date) {
+    const rangeStart = new Date(date).toISOString();
+    const rangeEnd = new Date(`${date} 23:59:59`).toISOString();
+    params.FilterExpression = '#time between :start and :end';
+    params.ExpressionAttributeNames = {
+      '#time': 'startTime',
+    };
+    params.ExpressionAttributeValues = {
+      ':start': rangeStart,
+      ':end': rangeEnd,
+    };
+  }
+  docClient.scan(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send({ data: data.Items });
     }
   });
 });

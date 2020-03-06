@@ -21,7 +21,7 @@ type Rider = {
   },
   description: string,
   picture: string,
-  joinDate: number,
+  joinDate: string,
   pronouns: string,
   address: string,
   pastRides: string[],
