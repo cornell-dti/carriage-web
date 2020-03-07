@@ -45,8 +45,9 @@ router.get('/active-rides', (req, res) => {
     TableName: 'ActiveRides',
   };
   if (date) {
-    const rangeStart = new Date(date).toISOString();
-    const rangeEnd = new Date(`${date} 23:59:59`).toISOString();
+    // adding 'EST' to date adds correct offset to UTC when returning toISOString()
+    const rangeStart = new Date(`${date} EST`).toISOString();
+    const rangeEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
     params.FilterExpression = '#time between :start and :end';
     params.ExpressionAttributeNames = {
       '#time': 'startTime',
