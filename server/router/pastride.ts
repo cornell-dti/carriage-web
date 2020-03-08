@@ -11,7 +11,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 router.get('/past-ride/:rideID', (req, res) => {
   const { rideID } = req.params;
   const params = {
-    TableName: 'Past Rides',
+    TableName: 'PastRides',
     Key: {
       id: rideID,
     },
