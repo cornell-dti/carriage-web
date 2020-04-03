@@ -22,8 +22,8 @@
         "eslint-plugin-react-hooks": "^1.7.0"
     },
     "scripts": {
-        "install:frontend": "cd frontend && npm install",
-        "install:server": "cd server && npm install",
+        "install:frontend": "cd frontend && npm install && cd ..",
+        "install:server": "cd server && npm install && cd ..",
         "postinstall": "npm run install:frontend && npm run install:server",
         "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
