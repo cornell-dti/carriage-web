@@ -29,13 +29,14 @@ async function verify(clientID: string, token: string): Promise<LoginTicket> {
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const { token, clientID, userType, email } = req.body;
+  const { token, clientID, table, email } = req.body;
   verify(clientID, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
-      if (payload && payload.aud === clientID) {
+      const validTable = ['Riders', 'Drivers', 'Dispatchers'];
+      if (payload && payload.aud === clientID && validTable.includes(table)) {
         const params = {
-          TableName: userType === 'rider' ? 'Riders' : 'Drivers',
+          TableName: table,
           ProjectionExpression: 'id, email',
           FilterExpression: 'email = :user_email',
           ExpressionAttributeValues: {
@@ -47,7 +48,7 @@ router.post('/', (req, res) => {
             res.send(err);
           } else {
             const userList = data.Items;
-            res.send({ id: userList![0].id ?? null });
+            res.send({ id: data.Count ? userList![0].id : null });
           }
         });
       } else {

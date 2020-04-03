@@ -8,6 +8,11 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+type Location = {
+  id: string,
+  location: string,
+};
+
 // Get a location by ID in Locations table
 router.get('/location/:locationID', (req, res) => {
   const { locationID } = req.params;
@@ -26,22 +31,22 @@ router.get('/location/:locationID', (req, res) => {
   });
 });
 
-
 // Put a location in Locations table
 router.post('/locations', (req, res) => {
   const postBody = req.body;
+  const location: Location = {
+    id: uuid(),
+    location: postBody.location,
+  };
   const params = {
     TableName: 'Locations',
-    Item: {
-      id: uuid(),
-      location: postBody.location,
-    },
+    Item: location,
   };
   docClient.put(params, (err, data) => {
     if (err) {
       res.send(err);
     } else {
-      res.send(data);
+      res.send(location);
     }
   });
 });
