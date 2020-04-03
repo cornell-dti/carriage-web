@@ -22,3 +22,14 @@ th {
 td{
   padding:5px;
 }
+
+form div{
+  display: flex;
+  flex-direction: row;
+}
+
+label{
+  width: 115px;
+  text-align: right;
+  padding-right: 5px;
+}

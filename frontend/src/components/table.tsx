@@ -60,40 +60,34 @@ const Form = (props: FormProps) => {
     <>
       <h2>New Driver</h2>
       <form className="driverForm" onSubmit={e => handleSubmit(e)}>
-        <label>
-          Name:
-       <input type="text"
+        <div>
+          <label htmlFor="name">Name: </label >
+          <input type="text"
             name="name"
             onChange={e => handleInput(e)}
           />
-        </label>
-        <br></br>
-
-        <label>
-          NetID:
-        <input type="text"
+        </div>
+        <div>
+          <label htmlFor="netid">NetID: </label>
+          <input type="text"
             name="netid"
             onChange={e => handleInput(e)}
           />
-        </label>
-        <br></br>
-
-        <label>
-          Email:
-        <input type="text"
+        </div>
+        <div>
+          <label htmlFor="email">Email: </label>
+          <input type="text"
             name="email"
             onChange={e => handleInput(e)}
           />
-        </label>
-        <br></br>
-
-        <label>Phone Number: </label>
-        <input type="text"
-          name="phone"
-          onChange={e => handleInput(e)}
-        />
-        <br></br>
-
+        </div>
+        <div>
+          <label htmlFor="phone">Phone Number: </label>
+          <input type="text"
+            name="phone"
+            onChange={e => handleInput(e)}
+          />
+        </div>
         <input type="submit" value="Submit" />
       </form>
     </>
