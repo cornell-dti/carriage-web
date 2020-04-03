@@ -1,18 +1,16 @@
-import React from "react";
-import LandingPage from "./components/landing";
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import LandingPage from './components/landing';
 // import Table from "./components/table";
 
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "./App.css";
+import './App.css';
 
-const App = () => {
-  return (
+const App = () => (
     <Router>
       <Switch>
         <Route exact path="/" component={LandingPage} />
       </Switch>
     </Router>
-  );
-};
+);
 
 export default App;
