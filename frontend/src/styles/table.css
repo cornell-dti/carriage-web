@@ -2,33 +2,33 @@ body{
   padding-left:25px;
 }
 
-h1{
+.tableHeader{
   margin-bottom: 5px;
 }
 
-h2 {
+.formHeader {
   margin-top: 30px;
   margin-bottom: 5px;
 }
 
-table {
+.driverTable {
   border: 1px solid black;
 }
 
-th {
+.tableHeader {
   border-bottom: 1px solid black;
 }
 
-td{
+.tableCell{
   padding:5px;
 }
 
-form div{
+.formDiv{
   display: flex;
   flex-direction: row;
 }
 
-label{
+.formLabel{
   width: 115px;
   text-align: right;
   padding-right: 5px;

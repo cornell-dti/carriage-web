@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/table.css';
 
-interface driversSettings {
+interface Driver {
   name: string;
   netid: string;
   email: string;
@@ -9,77 +9,73 @@ interface driversSettings {
 }
 
 interface FormProps {
-  onClick: ((newDriver: driversSettings) => void);
+  onClick: ((newDriver: Driver) => void);
 }
 
-function deleteEntry(netid: string, driverList: driversSettings[]) {
-  const newDriverList = [];
-  for (let i = 0; i < driverList.length; i += 1) {
-    if (driverList[i].netid !== netid) {
-      newDriverList.push(driverList[i]);
-    }
-  }
-  return newDriverList;
+function deleteEntry(netid: string, driverList: Driver[]) {
+  return driverList.filter(driver => driver.netid !== netid)
 }
 
 function renderTableHeader() {
   return (
     <tr>
-      <th>Name</th>
-      <th>Netid</th>
-      <th>Email</th>
-      <th>Phone Number</th>
+      <th className="tableHeader">Name</th>
+      <th className="tableHeader">Netid</th>
+      <th className="tableHeader">Email</th>
+      <th className="tableHeader">Phone Number</th>
     </tr>
   );
 }
 
-function addDriver(newDriver: driversSettings, allDrivers: driversSettings[]) {
-  const updatedDrivers = [...allDrivers, newDriver];
-  return updatedDrivers;
+function addDriver(newDriver: Driver, allDrivers: Driver[]) {
+  return [...allDrivers, newDriver];
 }
 
 const Form = (props: FormProps) => {
-  const $newDriver = { name: '', netid: '', email: '', phone: '' };
+  const newDriver = { name: '', netid: '', email: '', phone: '' };
 
   const handleInput = (evt: any) => {
     evt.preventDefault();
-    const $fieldName = evt.target.name;
-    const $fieldValue = evt.target.value;
-    if ($fieldName === 'name') { $newDriver.name = $fieldValue; } else if ($fieldName === 'netid') { $newDriver.netid = $fieldValue; } else if ($fieldName === 'email') { $newDriver.email = $fieldValue; } else { $newDriver.phone = $fieldValue; }
+    const fieldName = evt.target.name;
+    const fieldValue = evt.target.value;
+    if (fieldName === 'name') { newDriver.name = fieldValue; }
+    else if (fieldName === 'netid') { newDriver.netid = fieldValue; }
+    else if (fieldName === 'email') { newDriver.email = fieldValue; }
+    else { newDriver.phone = fieldValue; }
   };
 
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    props.onClick($newDriver);
+    props.onClick(newDriver);
   };
 
   return (
     <>
-      <h2>New Driver</h2>
+      <h2 className="formHeader">New Driver</h2>
       <form className="driverForm" onSubmit={(e) => handleSubmit(e)}>
-        <div>
-          <label htmlFor="name">Name: </label >
+        <div className="formDiv">
+          <label htmlFor="name" className="formLabel">Name: </label >
           <input type="text"
             name="name"
             onChange={(e) => handleInput(e)}
           />
         </div>
-        <div>
-          <label htmlFor="netid">NetID: </label>
+        <div className="formDiv">
+          <label htmlFor="netid" className="formLabel">NetID: </label>
           <input type="text"
             name="netid"
             onChange={(e) => handleInput(e)}
           />
         </div>
-        <div>
-          <label htmlFor="email">Email: </label>
+        <div className="formDiv">
+          <label htmlFor="email" className="formLabel">Email: </label>
           <input type="text"
             name="email"
             onChange={(e) => handleInput(e)}
           />
         </div>
-        <div>
-          <label htmlFor="phone">Phone Number: </label>
+        <div className="formDiv">
+          <label htmlFor="phone" className="formLabel">Phone Number: </label>
           <input type="text"
             name="phone"
             onChange={(e) => handleInput(e)}
@@ -99,18 +95,18 @@ const Table = () => {
     { name: 'Driver4', netid: 'bfd2', email: 'bfd2@cornell.edu', phone: '444-444-4444' },
   ]);
 
-  function renderTableData(drivers: driversSettings[]) {
-    return drivers.map((driver, index) => {
+  function renderTableData(allDrivers: Driver[]) {
+    return allDrivers.map((driver, index) => {
       const { name, netid, email, phone } = driver;
       return (
         <>
           <tr key={netid}>
-            <td>{name}</td>
+            <td className="tableCell">{name}</td>
             <td>{netid}</td>
             <td>{email}</td>
             <td>{phone}</td>
           </tr>
-          <button onClick={() => setDrivers(deleteEntry(netid, drivers))}>Delete</button>
+          <button onClick={() => setDrivers(deleteEntry(netid, allDrivers))}>Delete</button>
         </>
       );
     });
@@ -119,8 +115,8 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1>Driver Table</h1>
-        <table>
+        <h1 className="formHeader">Driver Table</h1>
+        <table className="driverTable">
           <tbody>
             {renderTableHeader()}
             {renderTableData(drivers)}
