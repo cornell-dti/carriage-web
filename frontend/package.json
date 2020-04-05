@@ -22,8 +22,10 @@
     "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@types/react-router-dom": "^5.1.3",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
-    "@typescript-eslint/parser": "^2.18.0"
+    "@typescript-eslint/parser": "^2.18.0",
+    "react-scripts": "^3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,5 +42,16 @@
   "bugs": {
     "url": "https://github.com/cornell-dti/carriage-web/issues"
   },
-  "homepage": "https://github.com/cornell-dti/carriage-web#readme"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }
