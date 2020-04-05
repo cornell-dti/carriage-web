@@ -85,8 +85,8 @@ const Form = (props: FormProps) => {
   };
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    let addDriver = validName && validNetid && validEmail && validPhone;
-    if (addDriver) { props.onClick(newDriver); }
+    let validAddDriver = validName && validNetid && validEmail && validPhone;
+    if (validAddDriver) { props.onClick(newDriver); }
   };
 
   return (
