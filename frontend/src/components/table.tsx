@@ -32,21 +32,61 @@ function addDriver(newDriver: Driver, allDrivers: Driver[]) {
 }
 
 const Form = (props: FormProps) => {
-  const newDriver = { name: '', netid: '', email: '', phone: '' };
+  const [newDriver, setNewDriver] = useState({ name: '', netid: '', email: '', phone: '' });
+  const [validName, setValidName] = useState(false);
+  const [validNetid, setValidNetid] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPhone, setValidPhone] = useState(false);
 
   const handleInput = (evt: any) => {
     evt.preventDefault();
     const fieldName = evt.target.name;
     const fieldValue = evt.target.value;
-    if (fieldName === 'name') { newDriver.name = fieldValue; }
-    else if (fieldName === 'netid') { newDriver.netid = fieldValue; }
-    else if (fieldName === 'email') { newDriver.email = fieldValue; }
-    else { newDriver.phone = fieldValue; }
+    if (fieldName === 'name') {
+      if (fieldValue.length > 0) {
+        newDriver.name = fieldValue;
+        setValidName(true);
+      } else {
+        newDriver.name = "";
+        setValidName(false);
+      }
+    }
+    else if (fieldName === 'netid') {
+      const netIdFormat = /^[a-zA-Z]+[0-9]+$/;
+      if ((fieldValue.length > 0) && fieldValue.match(netIdFormat)) {
+        newDriver.netid = fieldValue;
+        setValidNetid(true);
+      } else {
+        newDriver.netid = "";
+        setValidNetid(false);
+      }
+    }
+    else if (fieldName === 'email') {
+      const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if ((fieldValue.length > 0) && fieldValue.match(emailFormat)) {
+        newDriver.email = fieldValue;
+        setValidEmail(true);
+      } else {
+        newDriver.email = "";
+        setValidEmail(false);
+      }
+    }
+    else {
+      const phoneFormat = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+      if ((fieldValue.length > 0) && fieldValue.match(phoneFormat)) {
+        newDriver.phone = fieldValue;
+        setValidPhone(true);
+      } else {
+        newDriver.phone = "";
+        setValidPhone(false);
+      }
+    }
+    setNewDriver(newDriver);
   };
-
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    props.onClick(newDriver);
+    let addDriver = validName && validNetid && validEmail && validPhone;
+    if (addDriver) { props.onClick(newDriver); }
   };
 
   return (
@@ -58,7 +98,11 @@ const Form = (props: FormProps) => {
           <input type="text"
             name="name"
             onChange={(e) => handleInput(e)}
+            required
           />
+          <p className={`formFeedback ${validName ? "hidden" : ""}`}>
+            Please enter a name
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="netid" className="formLabel">NetID: </label>
@@ -66,6 +110,9 @@ const Form = (props: FormProps) => {
             name="netid"
             onChange={(e) => handleInput(e)}
           />
+          <p className={`formFeedback ${validNetid ? "hidden" : ""}`}>
+            Please enter a valid netid
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="email" className="formLabel">Email: </label>
@@ -73,13 +120,20 @@ const Form = (props: FormProps) => {
             name="email"
             onChange={(e) => handleInput(e)}
           />
+          <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
+            Please enter a valid email address
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="phone" className="formLabel">Phone Number: </label>
           <input type="text"
             name="phone"
+            placeholder="XXX-XXX-XXXX"
             onChange={(e) => handleInput(e)}
           />
+          <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
+            Please enter a phone number in the form xxx-xxx-xxxx
+          </p>
         </div>
         <input type="submit" value="Submit" />
       </form>

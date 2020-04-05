@@ -33,3 +33,16 @@ body{
   text-align: right;
   padding-right: 5px;
 }
+
+.formFeedback{
+  color: red;
+  display: block;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 5px;
+}
+
+.hidden{
+  display:none;
+}
