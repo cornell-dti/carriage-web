@@ -22,5 +22,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-/ <reference types="react-scripts" />
+src/react-app-env.d.ts
 
