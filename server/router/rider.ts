@@ -30,13 +30,11 @@ type Rider = {
 };
 
 // Get a rider by ID in Riders table
-router.get('/rider/:riderID', (req, res) => {
-  const { riderID } = req.params;
+router.get('/rider/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Riders',
-    Key: {
-      id: riderID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -45,6 +43,14 @@ router.get('/rider/:riderID', (req, res) => {
       res.send(data);
     }
   });
+});
+
+// TODO: Get all upcoming rides for a rider
+router.get('/rider/:id/rides', (req, res) => {
+  const { id } = req.params;
+  const params = {
+    TableName: 'ActiveRides',
+  };
 });
 
 // Put a rider in Riders table
@@ -78,5 +84,11 @@ router.post('/riders', (req, res) => {
     }
   });
 });
+
+// TODO: Update an existing rider
+
+
+// TODO: Delete an existing rider
+
 
 export default router;

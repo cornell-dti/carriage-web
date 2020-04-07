@@ -14,13 +14,11 @@ type Location = {
 };
 
 // Get a location by ID in Locations table
-router.get('/location/:locationID', (req, res) => {
-  const { locationID } = req.params;
+router.get('/location/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Locations',
-    Key: {
-      id: locationID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -50,5 +48,9 @@ router.post('/locations', (req, res) => {
     }
   });
 });
+
+// TODO: Update an existing location
+
+// TODO: Delete an existing location
 
 export default router;

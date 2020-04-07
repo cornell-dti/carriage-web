@@ -44,13 +44,11 @@ type Driver = {
 };
 
 // Get a driver by ID in Drivers table
-router.get('/driver/:driverID', (req, res) => {
-  const { driverID } = req.params;
+router.get('/driver/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Drivers',
-    Key: {
-      id: driverID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -87,5 +85,9 @@ router.post('/drivers', (req, res) => {
     }
   });
 });
+
+// TODO: Update an existing driver
+
+// TODO: Delete an existing driver
 
 export default router;

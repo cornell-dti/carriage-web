@@ -21,13 +21,11 @@ type ActiveRide = {
 };
 
 // Get an active/requested ride by ID in Active Rides table
-router.get('/active-ride/:rideID', (req, res) => {
-  const { rideID } = req.params;
+router.get('/active-ride/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'ActiveRides',
-    Key: {
-      id: rideID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -91,6 +89,24 @@ router.post('/active-rides', (req, res) => {
       res.send(ride);
     }
   });
+  // TODO: Finish
+  const riderParams = {
+    TableName: 'Riders',
+    Key: {
+      id: postBody.riderID,
+    },
+    UpdateExpression: '',
+  };
+});
+
+// TODO: Update an existing ride
+router.put('/active-ride/:id', (req, res) => {
+  res.send();
+});
+
+// TODO: Delete an existing ride
+router.delete('/active-ride/:id', (req, res) => {
+  res.send();
 });
 
 export default router;

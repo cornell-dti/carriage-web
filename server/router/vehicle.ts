@@ -14,13 +14,11 @@ type Vehicle = {
 };
 
 // Get a vehicle by ID in Vehicles table
-router.get('/vehicle/:vehicleID', (req, res) => {
-  const { vehicleID } = req.params;
+router.get('/vehicle/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Vehicles',
-    Key: {
-      id: vehicleID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -50,5 +48,9 @@ router.post('/vehicles', (req, res) => {
     }
   });
 });
+
+// TODO: Update an existing vehicle
+
+// TODO: Update an existing vehicle
 
 export default router;
