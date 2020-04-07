@@ -1,8 +1,8 @@
-import React from "react";
-import Header from "./header";
-import Footer from "./footer";
-import ReadMore from "./readmore";
-import "../styles/header.css"
+import React from 'react';
+import Header from './header';
+import Footer from './footer';
+import ReadMore from './readmore';
+import '../styles/header.css';
 
 const LandingPage = () => (
   <div>

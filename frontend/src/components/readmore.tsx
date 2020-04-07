@@ -1,5 +1,5 @@
-import React from "react";
-import "../styles/readmore.css";
+import React from 'react';
+import '../styles/readmore.css';
 
 const ReadMore = () => (
   <a href="https://www.cornelldti.org" className="read-btn">

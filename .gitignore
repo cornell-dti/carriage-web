@@ -67,3 +67,7 @@ node_modules
 .vscode
 
 scripts
+
+.DS_Store
+
+server/.env
