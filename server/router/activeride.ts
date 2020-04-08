@@ -67,8 +67,9 @@ router.get('/active-rides', (req, res) => {
 // Put an active ride in Active Rides table
 router.post('/active-rides', (req, res) => {
   const postBody = req.body;
+  const rideID = uuid();
   const ride: ActiveRide = {
-    id: uuid(),
+    id: rideID,
     startLocation: postBody.startLocation,
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,
@@ -79,7 +80,7 @@ router.post('/active-rides', (req, res) => {
     repeatsOn: postBody.repeatsOn ?? null,
   };
   const params = {
-    TableName: 'Active Rides',
+    TableName: 'ActiveRides',
     Item: ride,
   };
   docClient.put(params, (err, data) => {
@@ -89,14 +90,20 @@ router.post('/active-rides', (req, res) => {
       res.send(ride);
     }
   });
-  // TODO: Finish
   const riderParams = {
     TableName: 'Riders',
     Key: {
       id: postBody.riderID,
     },
-    UpdateExpression: '',
+    UpdateExpression: 'SET #rr = list_append(#rr, :val)',
+    ExpressionAttributeNames: {
+      '#rr': 'requestedRides',
+    },
+    ExpressionAttributeValues: {
+      ':val': [rideID],
+    },
   };
+  docClient.update(riderParams);
 });
 
 // TODO: Update an existing ride

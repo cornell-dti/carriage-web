@@ -45,11 +45,26 @@ router.get('/rider/:id', (req, res) => {
   });
 });
 
+// Get all riders
+router.get('/riders', (req, res) => {
+  const params = {
+    TableName: 'Riders',
+  };
+  docClient.scan(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send({ data: data.Items });
+    }
+  });
+});
+
 // TODO: Get all upcoming rides for a rider
 router.get('/rider/:id/rides', (req, res) => {
   const { id } = req.params;
   const params = {
-    TableName: 'ActiveRides',
+    TableName: 'Riders',
+    Key: { id },
   };
 });
 
