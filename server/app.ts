@@ -10,7 +10,7 @@ import vehicle from './router/vehicle';
 import location from './router/location';
 import auth from './router/auth';
 
-const port = 3000;
+const port = 3001;
 
 const app = express();
 app.use(bodyparser.json());
