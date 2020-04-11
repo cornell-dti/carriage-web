@@ -59,7 +59,7 @@ router.get('/', (req, res) => {
   });
 });
 
-// TODO: Get all upcoming rides for a rider
+// Get all upcoming rides for a rider
 router.get('/:id/rides', (req, res) => {
   const { id } = req.params;
   const params = {

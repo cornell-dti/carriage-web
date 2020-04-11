@@ -8,27 +8,17 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+type BreakTimes = {
+  breakStart: string,
+  breakEnd: string,
+}
+
 type BreakType = {
-  'Mon': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Tue': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Wed': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Thu': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Fri': {
-    breakStart: string,
-    breakEnd: string,
-  },
+  Mon?: BreakTimes,
+  Tue?: BreakTimes,
+  Wed?: BreakTimes,
+  Thu?: BreakTimes,
+  Fri?: BreakTimes,
 }
 
 type Driver = {
