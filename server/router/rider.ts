@@ -1,6 +1,8 @@
 import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
+import * as t from 'io-ts';
+import { isRight } from 'fp-ts/lib/Either';
 import config from '../config';
 
 const router = express.Router();
@@ -8,26 +10,22 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-type Rider = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  phoneNumber: string,
-  email: string,
-  accessibilityNeeds: {
-    needsWheelchair: boolean,
-    hasCrutches: boolean,
-    needsAssistant: boolean,
-  },
-  description: string,
-  picture: string,
-  joinDate: string,
-  pronouns: string,
-  address: string,
-  pastRides: string[],
-  requestedRides: string[],
-  favoriteLocations: string[],
-};
+const Body = t.type({
+  firstName: t.string,
+  lastName: t.string,
+  phoneNumber: t.string,
+  email: t.string,
+  accessibilityNeeds: t.type({
+    needsWheelchair: t.boolean,
+    hasCrutches: t.boolean,
+    needsAssistant: t.boolean,
+  }),
+  description: t.string,
+  picture: t.string,
+  joinDate: t.string,
+  pronouns: t.string,
+  address: t.string,
+});
 
 // Get a rider by ID in Riders table
 router.get('/:id', (req, res) => {
@@ -70,11 +68,7 @@ router.get('/:id/rides', (req, res) => {
     if (err) {
       res.send({ err });
     } else if (!data.Item) {
-      res.send({
-        err: {
-          message: 'id not found',
-        },
-      });
+      res.send({ err: { message: 'id not found' } });
     } else {
       const { requestedRides } = data.Item;
       res.send({ data: requestedRides });
@@ -85,39 +79,49 @@ router.get('/:id/rides', (req, res) => {
 // Put a rider in Riders table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const user: Rider = {
-    id: uuid(),
-    firstName: postBody.firstName,
-    lastName: postBody.lastName,
-    pronouns: postBody.pronouns,
-    phoneNumber: postBody.phoneNumber,
-    email: postBody.email,
-    accessibilityNeeds: postBody.accessibilityNeeds,
-    description: postBody.description,
-    picture: postBody.picture,
-    joinDate: postBody.joinDate,
-    address: postBody.address,
-    pastRides: [],
-    requestedRides: [],
-    favoriteLocations: [],
-  };
+  if (isRight(Body.decode(postBody))) {
+    const user = {
+      id: uuid(),
+      ...postBody,
+      pastRides: [],
+      requestedRides: [],
+      favoriteLocations: [],
+    };
+    const params = {
+      TableName: 'Riders',
+      Item: user,
+    };
+    docClient.put(params, (err, data) => {
+      if (err) {
+        res.send({ err });
+      } else {
+        res.send(user);
+      }
+    });
+  } else {
+    res.send({ err: { message: 'invalid json' } });
+  }
+});
+
+// Update an existing rider
+router.put('/:id', (req, res) => {
+  const postBody = req.body;
+});
+
+// Delete an existing rider
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Riders',
-    Item: user,
+    Key: { id },
   };
-  docClient.put(params, (err, data) => {
+  docClient.delete(params, (err, data) => {
     if (err) {
       res.send({ err });
     } else {
-      res.send(user);
+      res.send(data);
     }
   });
 });
-
-// TODO: Update an existing rider
-
-
-// TODO: Delete an existing rider
-
 
 export default router;
