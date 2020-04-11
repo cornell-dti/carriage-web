@@ -14,7 +14,7 @@ type Location = {
 };
 
 // Get a location by ID in Locations table
-router.get('/location/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'Locations',
@@ -22,7 +22,7 @@ router.get('/location/:id', (req, res) => {
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
@@ -30,7 +30,7 @@ router.get('/location/:id', (req, res) => {
 });
 
 // Put a location in Locations table
-router.post('/locations', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const location: Location = {
     id: uuid(),
@@ -42,7 +42,7 @@ router.post('/locations', (req, res) => {
   };
   docClient.put(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(location);
     }

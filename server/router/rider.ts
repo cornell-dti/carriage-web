@@ -30,7 +30,7 @@ type Rider = {
 };
 
 // Get a rider by ID in Riders table
-router.get('/rider/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'Riders',
@@ -38,7 +38,7 @@ router.get('/rider/:id', (req, res) => {
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
@@ -46,13 +46,13 @@ router.get('/rider/:id', (req, res) => {
 });
 
 // Get all riders
-router.get('/riders', (req, res) => {
+router.get('/', (req, res) => {
   const params = {
     TableName: 'Riders',
   };
   docClient.scan(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send({ data: data.Items });
     }
@@ -60,16 +60,30 @@ router.get('/riders', (req, res) => {
 });
 
 // TODO: Get all upcoming rides for a rider
-router.get('/rider/:id/rides', (req, res) => {
+router.get('/:id/rides', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'Riders',
     Key: { id },
   };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({
+        err: {
+          message: 'id not found',
+        },
+      });
+    } else {
+      const { requestedRides } = data.Item;
+      res.send({ data: requestedRides });
+    }
+  });
 });
 
 // Put a rider in Riders table
-router.post('/riders', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const user: Rider = {
     id: uuid(),
@@ -93,7 +107,7 @@ router.post('/riders', (req, res) => {
   };
   docClient.put(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(user);
     }

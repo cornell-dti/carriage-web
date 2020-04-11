@@ -8,7 +8,7 @@ AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
 // Get a past ride by ID in Past Rides table
-router.get('/past-ride/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'PastRides',
@@ -16,7 +16,7 @@ router.get('/past-ride/:id', (req, res) => {
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
