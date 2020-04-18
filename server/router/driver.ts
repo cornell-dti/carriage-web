@@ -8,27 +8,17 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+type BreakTimes = {
+  breakStart: string,
+  breakEnd: string,
+}
+
 type BreakType = {
-  'Mon': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Tue': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Wed': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Thu': {
-    breakStart: string,
-    breakEnd: string,
-  },
-  'Fri': {
-    breakStart: string,
-    breakEnd: string,
-  },
+  Mon?: BreakTimes,
+  Tue?: BreakTimes,
+  Wed?: BreakTimes,
+  Thu?: BreakTimes,
+  Fri?: BreakTimes,
 }
 
 type Driver = {
@@ -44,13 +34,11 @@ type Driver = {
 };
 
 // Get a driver by ID in Drivers table
-router.get('/driver/:driverID', (req, res) => {
-  const { driverID } = req.params;
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Drivers',
-    Key: {
-      id: driverID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
@@ -62,7 +50,7 @@ router.get('/driver/:driverID', (req, res) => {
 });
 
 // Put a driver in Drivers table
-router.post('/drivers', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const user: Driver = {
     id: uuid(),
@@ -87,5 +75,9 @@ router.post('/drivers', (req, res) => {
     }
   });
 });
+
+// TODO: Update an existing driver
+
+// TODO: Delete an existing driver
 
 export default router;

@@ -21,17 +21,15 @@ type ActiveRide = {
 };
 
 // Get an active/requested ride by ID in Active Rides table
-router.get('/active-ride/:rideID', (req, res) => {
-  const { rideID } = req.params;
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'ActiveRides',
-    Key: {
-      id: rideID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
@@ -39,7 +37,7 @@ router.get('/active-ride/:rideID', (req, res) => {
 });
 
 // Get all rides in table w/ optional date query
-router.get('/active-rides', (req, res) => {
+router.get('/', (req, res) => {
   const { date } = req.query;
   const params: any = {
     TableName: 'ActiveRides',
@@ -59,7 +57,7 @@ router.get('/active-rides', (req, res) => {
   }
   docClient.scan(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send({ data: data.Items });
     }
@@ -67,10 +65,11 @@ router.get('/active-rides', (req, res) => {
 });
 
 // Put an active ride in Active Rides table
-router.post('/active-rides', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
+  const rideID = uuid();
   const ride: ActiveRide = {
-    id: uuid(),
+    id: rideID,
     startLocation: postBody.startLocation,
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,
@@ -81,16 +80,44 @@ router.post('/active-rides', (req, res) => {
     repeatsOn: postBody.repeatsOn ?? null,
   };
   const params = {
-    TableName: 'Active Rides',
+    TableName: 'ActiveRides',
     Item: ride,
   };
   docClient.put(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
+    }
+  });
+  const riderParams = {
+    TableName: 'Riders',
+    Key: {
+      id: postBody.riderID,
+    },
+    UpdateExpression: 'SET #rr = list_append(#rr, :val)',
+    ExpressionAttributeNames: {
+      '#rr': 'requestedRides',
+    },
+    ExpressionAttributeValues: {
+      ':val': [{ id: rideID, startTime: postBody.startTime }],
+    },
+  };
+  docClient.update(riderParams, (err, data) => {
+    if (err) {
+      res.send({ err });
     } else {
       res.send(ride);
     }
   });
+});
+
+// TODO: Update an existing ride
+router.put('/:id', (req, res) => {
+  res.send();
+});
+
+// TODO: Delete an existing ride
+router.delete('/:id', (req, res) => {
+  res.send();
 });
 
 export default router;

@@ -45,7 +45,7 @@ router.post('/', (req, res) => {
         };
         docClient.scan(params, (err, data) => {
           if (err) {
-            res.send(err);
+            res.send({ err });
           } else {
             const userList = data.Items;
             res.send({ id: data.Count ? userList![0].id : null });

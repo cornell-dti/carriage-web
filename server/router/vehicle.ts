@@ -14,17 +14,15 @@ type Vehicle = {
 };
 
 // Get a vehicle by ID in Vehicles table
-router.get('/vehicle/:vehicleID', (req, res) => {
-  const { vehicleID } = req.params;
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Vehicles',
-    Key: {
-      id: vehicleID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
@@ -32,7 +30,7 @@ router.get('/vehicle/:vehicleID', (req, res) => {
 });
 
 // Put a vehicle in Vehicles table
-router.post('/vehicles', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const vehicle: Vehicle = {
     id: uuid(),
@@ -44,11 +42,15 @@ router.post('/vehicles', (req, res) => {
   };
   docClient.put(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(vehicle);
     }
   });
 });
+
+// TODO: Update an existing vehicle
+
+// TODO: Update an existing vehicle
 
 export default router;

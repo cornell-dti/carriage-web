@@ -14,17 +14,15 @@ type Location = {
 };
 
 // Get a location by ID in Locations table
-router.get('/location/:locationID', (req, res) => {
-  const { locationID } = req.params;
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
   const params = {
     TableName: 'Locations',
-    Key: {
-      id: locationID,
-    },
+    Key: { id },
   };
   docClient.get(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(data);
     }
@@ -32,7 +30,7 @@ router.get('/location/:locationID', (req, res) => {
 });
 
 // Put a location in Locations table
-router.post('/locations', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const location: Location = {
     id: uuid(),
@@ -44,11 +42,15 @@ router.post('/locations', (req, res) => {
   };
   docClient.put(params, (err, data) => {
     if (err) {
-      res.send(err);
+      res.send({ err });
     } else {
       res.send(location);
     }
   });
 });
+
+// TODO: Update an existing location
+
+// TODO: Delete an existing location
 
 export default router;
