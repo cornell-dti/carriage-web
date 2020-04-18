@@ -17,7 +17,7 @@ type ActiveRide = {
   isScheduled: boolean,
   riderID: string[],
   driverID: string[] | null,
-  repeatsOn?: string[],
+  repeatsOn: string[] | null,
 };
 
 // Get an active/requested ride by ID in Active Rides table
@@ -77,7 +77,7 @@ router.post('/', (req, res) => {
     isScheduled: false,
     riderID: postBody.riderID,
     driverID: null,
-    ...postBody.repeatsOn && { repeatsOn: postBody.repeatsOn },
+    repeatsOn: postBody.repeatsOn ?? null,
   };
   const params = {
     TableName: 'ActiveRides',
@@ -98,7 +98,7 @@ router.post('/', (req, res) => {
       '#rr': 'requestedRides',
     },
     ExpressionAttributeValues: {
-      ':val': [{ id: rideID, startTime: postBody.startTime }],
+      ':val': [rideID],
     },
   };
   docClient.update(riderParams, (err, data) => {
@@ -117,18 +117,7 @@ router.put('/:id', (req, res) => {
 
 // TODO: Delete an existing ride
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  const params = {
-    TableName: 'ActiveRides',
-    Key: { id },
-  };
-  docClient.delete(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  res.send();
 });
 
 export default router;
