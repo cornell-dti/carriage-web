@@ -98,7 +98,7 @@ router.post('/', (req, res) => {
       '#rr': 'requestedRides',
     },
     ExpressionAttributeValues: {
-      ':val': [rideID],
+      ':val': [{ id: rideID, startTime: postBody.startTime }],
     },
   };
   docClient.update(riderParams, (err, data) => {
