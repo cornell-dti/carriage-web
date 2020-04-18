@@ -108,19 +108,85 @@ router.get('/:id/rides', (req, res) => {
   });
 });
 
-// TODO: Get profile information for a rider
+// Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
-  res.send();
+  const { id } = req.params;
+  const params = {
+    TableName: 'Riders',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const {
+        email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
+      } = data.Item;
+      res.send({
+        email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
+      });
+    }
+  });
 });
 
-// TODO: Get accessibility information for a rider
+// Get accessibility information for a rider
 router.get('/:id/accessibility', (req, res) => {
-  res.send();
+  const { id } = req.params;
+  const params = {
+    TableName: 'Riders',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const { description, accessibilityNeeds } = data.Item;
+      res.send({ id, description, accessibilityNeeds });
+    }
+  });
 });
 
-// TODO: Get all favorite locations for a rider
+// Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
-  res.send();
+  const { id } = req.params;
+  const params = {
+    TableName: 'Locations',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const { favoriteLocations } = data.Item;
+      const keys: Key[] = favoriteLocations.map((locID: string) => ({
+        id: locID,
+      }));
+      if (!keys.length) {
+        res.send({ data: [] });
+      } else {
+        const locParams = {
+          RequestItems: {
+            Location: {
+              Keys: keys,
+            },
+          },
+        };
+        docClient.batchGet(locParams, (locErr, locData) => {
+          if (locErr) {
+            res.send({ err: locErr });
+          } else {
+            res.send({ data: locData.Responses!.Locations });
+          }
+        });
+      }
+    }
+  });
 });
 
 // Put a rider in Riders table
