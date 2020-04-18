@@ -14,11 +14,6 @@ type Key = {
   id: string
 };
 
-type RideKey = {
-  id: string,
-  startTime: string
-};
-
 const Body = t.type({
   firstName: t.string,
   lastName: t.string,
@@ -82,17 +77,13 @@ router.get('/:id/rides', (req, res) => {
       res.send({ err: { message: 'id not found' } });
     } else {
       const { requestedRides } = data.Item;
-      const keys: Object[] = requestedRides.map((ride: RideKey) => ({
-        id: ride.id,
-        startTime: ride.startTime,
-      }));
-      if (!keys.length) {
+      if (!requestedRides.length) {
         res.send({ data: [] });
       } else {
         const rideParams = {
           RequestItems: {
             ActiveRides: {
-              Keys: keys,
+              Keys: requestedRides,
             },
           },
         };

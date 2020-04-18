@@ -34,7 +34,7 @@ type Driver = {
 };
 
 // Get a driver by ID in Drivers table
-router.get('/driver/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'Drivers',
@@ -50,7 +50,7 @@ router.get('/driver/:id', (req, res) => {
 });
 
 // Put a driver in Drivers table
-router.post('/drivers', (req, res) => {
+router.post('/', (req, res) => {
   const postBody = req.body;
   const user: Driver = {
     id: uuid(),
