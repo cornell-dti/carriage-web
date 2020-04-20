@@ -2,56 +2,54 @@ import React, { useState } from 'react';
 import Header from './header';
 import Footer from './footer';
 import ReadMore from './readmore';
-import '../styles/header.css';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { useHistory } from "react-router-dom";
+import '../styles/header.css';
 
 const clientId = "241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com";
+export const SignInButton = () => {
+  const [showSignIn, toggleShow] = useState(true);
+  let history = useHistory();
 
-const error = (response: any) => {
-  console.error(response.error)
-}
+  function logout() {
+    localStorage.clear();
+    toggleShow(true);
+  }
 
-const SignInButton = () => {
-  const [showSignIn, toggleShow] = useState(true)
-
-  function onSignIn(googleUser: any) {
+  async function onSignIn(googleUser: any) {
     var token = googleUser.getAuthResponse().id_token;
-    console.log("ID Token: " + token);
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://localhost:3000/auth');
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onload = function () {
-      console.log(xhr.responseText);
-      console.log('Signed in as: ' + xhr.responseText);
+    toggleShow(false);
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'token=' + token
     };
-    xhr.send('token=' + token);
-    console.log(xhr.responseText);
-
-    // when load then will get json file,
-    //  if success false -> automatically log them out. 
-    //  If true -> go to drivers table
-
-    // toggleShow(false);
+    const response = await fetch('/auth', requestOptions);
+    const authorized = (await response.json()).success;
+    if (authorized) {
+      history.push('/table')
+    } else {
+      logout();
+    }
   }
 
   if (showSignIn) {
     return (
-      <GoogleLogin onSuccess={onSignIn}
-        onFailure={error} clientId={clientId} isSignedIn={true}
+      <GoogleLogin
+        onSuccess={onSignIn}
+        onFailure={() => console.error("failed to sign in")}
+        clientId={clientId} isSignedIn={false}
       />
     )
   }
   return (
-    <GoogleLogout onLogoutSuccess={() => toggleShow(true)} clientId={clientId} />
+    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
   )
 }
 
 const LandingPage = () => (
   <>
-
     <SignInButton />
-
-
     <div>
       <div className="home">
         <Header />

@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
+import { GoogleLogout } from 'react-google-login';
 import '../styles/table.css';
+import { useHistory } from "react-router-dom";
 
+const clientId = "241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com";
+
+const SignOutButton = () => {
+  let history = useHistory();
+  function logout() {
+    localStorage.clear();
+    history.push('/');
+  }
+  return (
+    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
+  )
+}
 interface Driver {
   name: string;
   netid: string;
@@ -184,4 +198,11 @@ const Table = () => {
   );
 };
 
-export default Table;
+const TablePage = () => (
+  <>
+    <SignOutButton />
+    <Table />
+  </>
+);
+
+export default TablePage;
