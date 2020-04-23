@@ -3,8 +3,7 @@ import { GoogleLogout } from 'react-google-login';
 import '../styles/table.css';
 import { useHistory } from "react-router-dom";
 
-const clientId = "241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com";
-
+const clientId: string = process.env.REACT_APP_CLIENT_ID!;
 const SignOutButton = () => {
   let history = useHistory();
   function logout() {

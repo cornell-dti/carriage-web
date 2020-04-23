@@ -6,7 +6,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useHistory } from "react-router-dom";
 import '../styles/header.css';
 
-const clientId = "241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com";
+const clientId: string = process.env.REACT_APP_CLIENT_ID!;
 export const SignInButton = () => {
   const [showSignIn, toggleShow] = useState(true);
   let history = useHistory();
