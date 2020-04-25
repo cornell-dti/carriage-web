@@ -31,7 +31,7 @@ router.get('/:id', (req, res) => {
     if (err) {
       res.send({ err });
     } else {
-      res.send(data);
+      res.send(data.Item);
     }
   });
 });
@@ -86,26 +86,23 @@ router.post('/', (req, res) => {
   docClient.put(params, (err, data) => {
     if (err) {
       res.send({ err });
-    }
-  });
-  const riderParams = {
-    TableName: 'Riders',
-    Key: {
-      id: postBody.riderID,
-    },
-    UpdateExpression: 'SET #rr = list_append(#rr, :val)',
-    ExpressionAttributeNames: {
-      '#rr': 'requestedRides',
-    },
-    ExpressionAttributeValues: {
-      ':val': [{ id: rideID, startTime: postBody.startTime }],
-    },
-  };
-  docClient.update(riderParams, (err, data) => {
-    if (err) {
-      res.send({ err });
     } else {
-      res.send(ride);
+      const riderParams = {
+        TableName: 'Riders',
+        Key: { id: postBody.riderID },
+        UpdateExpression: 'SET #rr = list_append(#rr, :val)',
+        ExpressionAttributeNames: { '#rr': 'requestedRides' },
+        ExpressionAttributeValues: {
+          ':val': [{ id: rideID, startTime: postBody.startTime }],
+        },
+      };
+      docClient.update(riderParams, (riderErr, riderData) => {
+        if (riderErr) {
+          res.send({ err: riderErr });
+        } else {
+          res.send(ride);
+        }
+      });
     }
   });
 });

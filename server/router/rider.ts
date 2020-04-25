@@ -31,8 +31,6 @@ const Body = t.type({
   address: t.string,
 });
 
-type Body = t.TypeOf<typeof Body>;
-
 // Get a rider by ID in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
@@ -44,7 +42,7 @@ router.get('/:id', (req, res) => {
     if (err) {
       res.send({ err });
     } else {
-      res.send(data);
+      res.send(data.Item);
     }
   });
 });
@@ -116,7 +114,7 @@ router.get('/:id/profile', (req, res) => {
         email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
       } = data.Item;
       res.send({
-        email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
+        id, email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
       });
     }
   });
@@ -180,10 +178,10 @@ router.get('/:id/favorites', (req, res) => {
   });
 });
 
-// Put a rider in Riders table
+// Create a rider in Riders table
 router.post('/', (req, res) => {
   if (isRight(Body.decode(req.body))) {
-    const postBody: Body = req.body;
+    const postBody = req.body;
     const user = {
       id: uuid(),
       ...postBody,
@@ -195,7 +193,7 @@ router.post('/', (req, res) => {
       TableName: 'Riders',
       Item: user,
     };
-    docClient.put(params, (err, data) => {
+    docClient.put(params, (err, _) => {
       if (err) {
         res.send({ err });
       } else {
@@ -207,9 +205,71 @@ router.post('/', (req, res) => {
   }
 });
 
-// TODO: Update an existing rider
-router.put('/:id', (req, res) => {
-  res.send();
+// Update a rider in Riders table
+router.post('/:id', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  const params = {
+    TableName: 'Riders',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const rider = data.Item;
+      const updateParams = {
+        TableName: 'Riders',
+        Item: { id } as { [key: string]: any },
+      };
+      Object.keys(rider).forEach((k) => {
+        updateParams.Item[k] = postBody[k] || rider[k];
+      });
+      docClient.put(updateParams, (updateErr, _) => {
+        if (updateErr) {
+          res.send({ err: updateErr });
+        } else {
+          res.send(updateParams.Item);
+        }
+      });
+    }
+  });
+});
+
+// Add a location to favorites
+router.post('/:id/favorites', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  const locID = postBody.id;
+  const locParams = {
+    TableName: 'Locations',
+    Key: { id: locID },
+  };
+  docClient.get(locParams, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'location not found' } });
+    } else {
+      const location = data.Item;
+      const riderParams = {
+        TableName: 'Riders',
+        Key: { id },
+        UpdateExpression: 'SET #fl = list_append(#fl, :val)',
+        ExpressionAttributeNames: { '#fl': 'favoriteLocations' },
+        ExpressionAttributeValues: { ':val': [locID] },
+      };
+      docClient.update(riderParams, (riderErr, _) => {
+        if (riderErr) {
+          res.send({ err: riderErr });
+        } else {
+          res.send(location);
+        }
+      });
+    }
+  });
 });
 
 // Delete an existing rider
@@ -219,7 +279,7 @@ router.delete('/:id', (req, res) => {
     TableName: 'Riders',
     Key: { id },
   };
-  docClient.delete(params, (err, data) => {
+  docClient.delete(params, (err, _) => {
     if (err) {
       res.send({ err });
     } else {
