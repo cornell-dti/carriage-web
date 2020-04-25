@@ -224,8 +224,8 @@ router.post('/:id', (req, res) => {
         TableName: 'Riders',
         Item: { id } as { [key: string]: any },
       };
-      Object.keys(rider).forEach((k) => {
-        updateParams.Item[k] = postBody[k] || rider[k];
+      Object.keys(rider).forEach((key) => {
+        updateParams.Item[key] = postBody[key] || rider[key];
       });
       docClient.put(updateParams, (updateErr, _) => {
         if (updateErr) {
