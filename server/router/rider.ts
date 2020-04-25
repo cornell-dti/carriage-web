@@ -25,7 +25,6 @@ const Body = t.type({
     needsAssistant: t.boolean,
   }),
   description: t.string,
-  picture: t.string,
   joinDate: t.string,
   pronouns: t.string,
   address: t.string,
