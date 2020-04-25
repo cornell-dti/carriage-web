@@ -114,7 +114,7 @@ router.get('/:id/profile', (req, res) => {
         email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
       } = data.Item;
       res.send({
-        id, email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
+        email, firstName, lastName, phoneNumber, pronouns, picture, joinDate,
       });
     }
   });
@@ -134,7 +134,7 @@ router.get('/:id/accessibility', (req, res) => {
       res.send({ err: { message: 'id not found' } });
     } else {
       const { description, accessibilityNeeds } = data.Item;
-      res.send({ id, description, accessibilityNeeds });
+      res.send({ description, accessibilityNeeds });
     }
   });
 });
@@ -143,7 +143,7 @@ router.get('/:id/accessibility', (req, res) => {
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
   const params = {
-    TableName: 'Locations',
+    TableName: 'Riders',
     Key: { id },
   };
   docClient.get(params, (err, data) => {
@@ -161,7 +161,7 @@ router.get('/:id/favorites', (req, res) => {
       } else {
         const locParams = {
           RequestItems: {
-            Location: {
+            Locations: {
               Keys: keys,
             },
           },
