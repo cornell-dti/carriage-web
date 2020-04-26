@@ -17,12 +17,18 @@ export const SignInButton = () => {
   }
 
   async function onSignIn(googleUser: any) {
-    var token = googleUser.getAuthResponse().id_token;
+    let token = googleUser.getAuthResponse().id_token;
+    let email = googleUser.profileObj.email;
     toggleShow(false);
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'token=' + token
+      body: JSON.stringify({
+        "token": token,
+        "email": email,
+        "table": "Dispatchers",
+        "clientID": clientId
+      })
     };
     const response = await fetch('/auth', requestOptions);
     const authorized = (await response.json()).success;
