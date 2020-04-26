@@ -14,6 +14,7 @@ const SignOutButton = () => {
     <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
   )
 }
+
 interface Driver {
   name: string;
   netid: string;
@@ -197,11 +198,11 @@ const Table = () => {
   );
 };
 
-const TablePage = () => (
+const DriverTable = () => (
   <>
     <SignOutButton />
     <Table />
   </>
 );
 
-export default TablePage;
+export default DriverTable;

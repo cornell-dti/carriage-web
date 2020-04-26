@@ -1,0 +1,309 @@
+import React, { useState } from 'react';
+import { GoogleLogout } from 'react-google-login';
+import '../styles/table.css';
+import { useHistory } from "react-router-dom";
+
+const clientId: string = process.env.REACT_APP_CLIENT_ID!;
+const SignOutButton = () => {
+  let history = useHistory();
+  function logout() {
+    localStorage.clear();
+    history.push('/');
+  }
+  return (
+    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
+  )
+}
+
+interface AccessibilityNeeds {
+  needsWheelchair: boolean;
+  hasCrutches: boolean;
+  needsAssistant: boolean;
+}
+
+interface Rider {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessibilityNeeds: AccessibilityNeeds;
+  description: string;
+  joinDate: string;
+  pronouns: string;
+  address: string;
+}
+
+interface FormProps {
+  onClick: ((newRider: Rider) => void);
+}
+
+function deleteEntry(email: string, riderList: Rider[]) {
+  return riderList.filter(rider => rider.email !== email)
+}
+
+function renderTableHeader() {
+  return (
+    <tr>
+      <th className="tableHeader">First Name</th>
+      <th className="tableHeader">Last Name</th>
+      <th className="tableHeader">Phone Number</th>
+      <th className="tableHeader">Email</th>
+      <th className="tableHeader">Accessibility Needs</th>
+      <th className="tableHeader">Description</th>
+      <th className="tableHeader">Join Date</th>
+      <th className="tableHeader">Pronouns</th>
+      <th className="tableHeader">Address</th>
+    </tr>
+  );
+}
+
+function addRider(newRider: Rider, allRiders: Rider[]) {
+  return [...allRiders, newRider];
+}
+
+const Form = (props: FormProps) => {
+  const [newRider, setNewRider] =
+    useState({
+      firstName: '', lastName: '', phoneNumber: '', email: '',
+      accessibilityNeeds:
+        { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
+      description: '', joinDate: '1/2/2020', pronouns: '', address: ''
+    });
+  const [validFirstName, setValidFirstName] = useState(false);
+  const [validLastName, setValidLastName] = useState(false);
+  const [validPhone, setValidPhone] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validDesc, setValidDesc] = useState(false);
+  const [validAddress, setValidAddress] = useState(false);
+
+  const handleInput = (evt: any) => {
+    console.log(evt.target.value);
+    evt.preventDefault();
+    const fieldName = evt.target.name;
+    const fieldValue = evt.target.value;
+    if (fieldName === 'firstName') {
+      if (fieldValue.length > 0) {
+        newRider.firstName = fieldValue;
+        setValidFirstName(true);
+      } else {
+        newRider.firstName = "";
+        setValidFirstName(false);
+      }
+    }
+    else if (fieldName === 'lastName') {
+      if (fieldValue.length > 0) {
+        newRider.lastName = fieldValue;
+        setValidLastName(true);
+      } else {
+        newRider.lastName = "";
+        setValidLastName(false);
+      }
+    }
+    else if (fieldName === 'phone') {
+      const phoneFormat = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+      if ((fieldValue.length > 0) && fieldValue.match(phoneFormat)) {
+        newRider.phoneNumber = fieldValue;
+        setValidPhone(true);
+      } else {
+        newRider.phoneNumber = "";
+        setValidPhone(false);
+      }
+    }
+    else if (fieldName === 'email') {
+      const netIdFormat = /^[a-zA-Z]+[0-9]+$/;
+      if ((fieldValue.length > 0) && fieldValue.match(netIdFormat)) {
+        newRider.email = fieldValue.concat('@cornell.edu');
+        setValidEmail(true);
+      } else {
+        newRider.email = "";
+        setValidEmail(false);
+      }
+    }
+    else if (fieldName === 'description') {
+      if (fieldValue.length > 0) {
+        newRider.description = fieldValue;
+        setValidDesc(true);
+      } else {
+        newRider.description = "";
+        setValidDesc(false);
+      }
+    }
+    else if (fieldName === 'address') {
+      if (fieldValue.length > 0) {
+        newRider.address = fieldValue;
+        setValidAddress(true);
+      } else {
+        newRider.address = "";
+        setValidAddress(false);
+      }
+    }
+    else if (fieldName === 'pronouns') {
+      newRider.pronouns = fieldValue;
+    }
+    else {
+      newRider.accessibilityNeeds =
+        { needsWheelchair: true, hasCrutches: true, needsAssistant: false };
+    }
+    setNewRider(newRider);
+    console.log(newRider);
+  };
+  const handleSubmit = (evt: any) => {
+    evt.preventDefault();
+    let validRider = validFirstName && validLastName && validPhone &&
+      validEmail && validDesc && validAddress;
+    if (validRider) { props.onClick(newRider); }
+  };
+  return (
+    <>
+      <h2 className="formHeader">New Rider</h2>
+      <form className="driverForm" onSubmit={(e) => handleSubmit(e)}>
+        <div className="formDiv">
+          <label htmlFor="firstName" className="formLabel">First Name: </label >
+          <input type="text"
+            name="firstName"
+            onChange={(e) => handleInput(e)}
+          />
+        </div>
+        <div className="formDiv">
+          <label htmlFor="lastName" className="formLabel">Last Name: </label >
+          <input type="text"
+            name="lastName"
+            onChange={(e) => handleInput(e)} />
+        </div>
+        <div className="formDiv">
+          <label htmlFor="phone" className="formLabel">Phone Number: </label>
+          <input type="text"
+            placeholder="XXX-XXX-XXXX"
+            name="phone"
+            onChange={(e) => handleInput(e)} />
+        </div>
+        <div className="formDiv">
+          <label htmlFor="email" className="formLabel">NetID: </label >
+          <input type="text"
+            name="email"
+            onChange={(e) => handleInput(e)} />
+        </div>
+        <div className="formDiv">
+          <label htmlFor="accessibility" className="formLabel">Accessibility Needs: </label >
+          <input type="checkbox" name="accesibility" value="needWheel" />
+          <label htmlFor="accesibility"> Needs Wheelchair</label>
+          <br></br>
+          <input type="checkbox" name="accesibility" value="needCrutches" />
+          <label htmlFor="accesibility"> Has Crutches</label>
+          <br></br>
+          <input type="checkbox" name="accesibility" value="needAssist" />
+          <label htmlFor="accesibility"> Needs Assistant</label>
+          <br></br>
+        </div>
+        <div className="formDiv">
+          <label htmlFor="description" className="formLabel">Description: </label >
+          <input type="text"
+            name="description"
+            onChange={(e) => handleInput(e)} />
+        </div>
+        <div className="formDiv">
+          <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
+          <select id="pronouns">
+            <option value="she">She</option>
+            <option value="he">He</option>
+            <option value="neutral">Neutral</option>
+          </select>
+        </div>
+        <div className="formDiv">
+          <label htmlFor="address" className="formLabel">Address: </label >
+          <input type="text"
+            name="address"
+            onChange={(e) => handleInput(e)} />
+        </div>
+        <input type="submit" value="Submit" />
+      </form>
+    </>
+  );
+};
+
+const Table = () => {
+  const [riders, setRiders] = useState([
+    {
+      firstName: 'first1', lastName: 'last1', phoneNumber: '111-111-1111',
+      email: 'a1@cornell.edu', accessibilityNeeds:
+        { needsWheelchair: true, hasCrutches: true, needsAssistant: false },
+      description: 'descr1', joinDate: 'join1', pronouns: 'pro1', address: 'add1'
+    },
+    {
+      firstName: 'first2', lastName: 'last2', phoneNumber: '222-222-2222',
+      email: 'b2@cornell.edu', accessibilityNeeds:
+        { needsWheelchair: false, hasCrutches: true, needsAssistant: false },
+      description: 'descr2', joinDate: 'join2', pronouns: 'pro2', address: 'add2'
+    }
+  ]);
+
+  function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
+    let allNeeds = '';
+    let arrayNeeds = Object.entries(accessNeeds);
+    arrayNeeds.forEach(element => {
+      if (element[1]) {
+        if (element[0] === 'needsWheelchair') {
+          allNeeds = allNeeds.concat("Needs Wheelchair, ");
+        } else if (element[0] === 'hasCrutches') {
+          allNeeds = allNeeds.concat("Has Crutches, ");
+        } else {
+          allNeeds = allNeeds.concat("Needs Assistant, ");
+        }
+      }
+    });
+    return allNeeds.substr(0, allNeeds.length - 2);
+  }
+
+  function renderTableData(allRiders: Rider[]) {
+    return allRiders.map((rider, index) => {
+      const {
+        firstName, lastName, phoneNumber, email,
+        accessibilityNeeds,
+        description, joinDate, pronouns, address
+      } = rider;
+      return (
+        <>
+          <tr key={email}>
+            <td className="tableCell">{firstName}</td>
+            <td>{lastName}</td>
+            <td>{phoneNumber}</td>
+            <td>{email}</td>
+            <td>{renderAccessNeeds(accessibilityNeeds)}</td>
+            <td>{description}</td>
+            <td>{joinDate}</td>
+            <td>{pronouns}</td>
+            <td>{address}</td>
+          </tr>
+          <button onClick={() => setRiders(deleteEntry(email, allRiders))}>Delete</button>
+        </>
+      );
+    });
+  }
+
+  return (
+    <>
+      <div>
+        <h1 className="formHeader">Rider Table</h1>
+        <table className="driverTable">
+          <tbody>
+            {renderTableHeader()}
+            {renderTableData(riders)}
+          </tbody>
+        </table>
+      </div >
+      <div>
+        {/* {<Form />} */}
+        <Form onClick={(newRider) => setRiders(addRider(newRider, riders))} />
+      </div>
+    </>
+  );
+};
+
+const RiderTable = () => (
+  <>
+    <SignOutButton />
+    <Table />
+  </>
+);
+
+export default RiderTable;
