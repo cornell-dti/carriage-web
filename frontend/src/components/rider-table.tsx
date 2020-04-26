@@ -162,97 +162,99 @@ const Form = (props: FormProps) => {
   return (
     <>
       <h2 className="formHeader">New Rider</h2>
-      <form className="driverForm" onSubmit={(e) => handleSubmit(e)}>
-        <div className="formDiv">
-          <label htmlFor="firstName" className="formLabel">First Name: </label >
-          <input type="text"
-            name="firstName"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validFirstName ? "hidden" : ""}`}>
-            Please enter a first name
+      <div className="addFormDiv">
+        <form className="addForm" onSubmit={(e) => handleSubmit(e)}>
+          <div className="formDiv">
+            <label htmlFor="firstName" className="formLabel">First Name: </label >
+            <input type="text"
+              name="firstName"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validFirstName ? "hidden" : ""}`}>
+              Please enter a first name
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="lastName" className="formLabel">Last Name: </label >
-          <input type="text"
-            name="lastName"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validLastName ? "hidden" : ""}`}>
-            Enter a last name
+          </div>
+          <div className="formDiv">
+            <label htmlFor="lastName" className="formLabel">Last Name: </label >
+            <input type="text"
+              name="lastName"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validLastName ? "hidden" : ""}`}>
+              Enter a last name
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="phone" className="formLabel">Phone Number: </label>
-          <input type="text"
-            placeholder="XXX-XXX-XXXX"
-            name="phone"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
-            Enter a phone number in the form xxx-xxx-xxxx
+          </div>
+          <div className="formDiv">
+            <label htmlFor="phone" className="formLabel">Phone Number: </label>
+            <input type="text"
+              placeholder="XXX-XXX-XXXX"
+              name="phone"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
+              Enter a phone number in the form xxx-xxx-xxxx
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="email" className="formLabel">NetID: </label >
-          <input type="text"
-            name="email"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
-            Enter a valid netid
+          </div>
+          <div className="formDiv">
+            <label htmlFor="email" className="formLabel">NetID: </label >
+            <input type="text"
+              name="email"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
+              Enter a valid netid
           </p>
-        </div>
-        <div className="formDiv">
-          <label className="formLabel">Accessibility Needs: </label >
-          <div>
+          </div>
+          <div className="formDiv">
+            <label className="formLabel">Accessibility Needs: </label >
             <div>
-              <input type="checkbox" id="accesibility" name="needWheel"
-                onChange={(e) => handleInput(e)}
-              />
-              <label htmlFor="accesibility"> Needs Wheelchair</label>
-            </div>
-            <div>
-              <input type="checkbox" id="accesibility" name="needCrutches"
-                onChange={(e) => handleInput(e)}
-              />
-              <label htmlFor="accesibility"> Has Crutches</label>
-            </div>
-            <div>
-              <input type="checkbox" id="accesibility" name="needAssist"
-                onChange={(e) => handleInput(e)}
-              />
-              <label htmlFor="accesibility"> Needs Assistant</label>
+              <div className="checkboxDiv">
+                <input type="checkbox" id="accesibility" name="needWheel"
+                  onChange={(e) => handleInput(e)}
+                />
+                <label htmlFor="accesibility"> Needs Wheelchair</label>
+              </div>
+              <div className="checkboxDiv">
+                <input type="checkbox" id="accesibility" name="needCrutches"
+                  onChange={(e) => handleInput(e)}
+                />
+                <label htmlFor="accesibility"> Has Crutches</label>
+              </div>
+              <div className="checkboxDiv">
+                <input type="checkbox" id="accesibility" name="needAssist"
+                  onChange={(e) => handleInput(e)}
+                />
+                <label htmlFor="accesibility"> Needs Assistant</label>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="description" className="formLabel">
-            Description:
+          <div className="formDiv">
+            <label htmlFor="description" className="formLabel">
+              Description:
           </label >
-          <input type="text"
-            name="description"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validDesc ? "hidden" : ""}`}>
-            Enter a description
+            <input type="text"
+              name="description"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validDesc ? "hidden" : ""}`}>
+              Enter a description
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
-          <select name="pronouns" onChange={(e) => handleInput(e)}>
-            <option value="she">She</option>
-            <option value="he">He</option>
-            <option value="neutral">Neutral</option>
-          </select>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="address" className="formLabel">Address: </label >
-          <input type="text"
-            name="address"
-            onChange={(e) => handleInput(e)} />
-          <p className={`formFeedback ${validAddress ? "hidden" : ""}`}>
-            Enter an address
+          </div>
+          <div className="formDiv">
+            <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
+            <select name="pronouns" onChange={(e) => handleInput(e)}>
+              <option value="she">She</option>
+              <option value="he">He</option>
+              <option value="neutral">Neutral</option>
+            </select>
+          </div>
+          <div className="formDiv">
+            <label htmlFor="address" className="formLabel">Address: </label >
+            <input type="text"
+              name="address"
+              onChange={(e) => handleInput(e)} />
+            <p className={`formFeedback ${validAddress ? "hidden" : ""}`}>
+              Enter an address
           </p>
-        </div>
-        <input type="submit" value="Submit" />
-      </form>
+          </div>
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
     </>
   );
 };
