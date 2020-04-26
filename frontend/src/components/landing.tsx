@@ -22,7 +22,7 @@ export const SignInButton = () => {
     toggleShow(false);
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         "token": token,
         "email": email,
@@ -31,9 +31,9 @@ export const SignInButton = () => {
       })
     };
     const response = await fetch('/auth', requestOptions);
-    const authorized = (await response.json()).success;
+    const authorized = (await response.json())['id'];
     if (authorized) {
-      history.push('/table')
+      history.push('/rider-table')
     } else {
       logout();
     }
