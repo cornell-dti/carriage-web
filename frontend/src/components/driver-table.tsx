@@ -115,7 +115,7 @@ const Form = (props: FormProps) => {
             required
           />
           <p className={`formFeedback ${validName ? "hidden" : ""}`}>
-            Please enter a name
+            Enter a name
           </p>
         </div>
         <div className="formDiv">
@@ -125,7 +125,7 @@ const Form = (props: FormProps) => {
             onChange={(e) => handleInput(e)}
           />
           <p className={`formFeedback ${validNetid ? "hidden" : ""}`}>
-            Please enter a valid netid
+            Enter a valid netid
           </p>
         </div>
         <div className="formDiv">
@@ -135,7 +135,7 @@ const Form = (props: FormProps) => {
             onChange={(e) => handleInput(e)}
           />
           <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
-            Please enter a valid email address
+            Enter a valid email address
           </p>
         </div>
         <div className="formDiv">
@@ -146,7 +146,7 @@ const Form = (props: FormProps) => {
             onChange={(e) => handleInput(e)}
           />
           <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
-            Please enter a phone number in the form xxx-xxx-xxxx
+            Enter a phone number in the form xxx-xxx-xxxx
           </p>
         </div>
         <input type="submit" value="Submit" />
@@ -184,7 +184,7 @@ const Table = () => {
     <>
       <div>
         <h1 className="formHeader">Driver Table</h1>
-        <table className="driverTable">
+        <table className="table">
           <tbody>
             {renderTableHeader()}
             {renderTableData(drivers)}

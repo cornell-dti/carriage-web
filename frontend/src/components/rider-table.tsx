@@ -62,12 +62,15 @@ function addRider(newRider: Rider, allRiders: Rider[]) {
 }
 
 const Form = (props: FormProps) => {
+  let today = new Date();
+  let date = (today.getMonth() + 1) + "/" + today.getDate() + "/" +
+    today.getFullYear();
   const [newRider, setNewRider] =
     useState({
       firstName: '', lastName: '', phoneNumber: '', email: '',
       accessibilityNeeds:
         { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
-      description: '', joinDate: '1/2/2020', pronouns: '', address: ''
+      description: '', joinDate: date, pronouns: 'she', address: ''
     });
   const [validFirstName, setValidFirstName] = useState(false);
   const [validLastName, setValidLastName] = useState(false);
@@ -77,10 +80,9 @@ const Form = (props: FormProps) => {
   const [validAddress, setValidAddress] = useState(false);
 
   const handleInput = (evt: any) => {
-    console.log(evt.target.value);
-    evt.preventDefault();
     const fieldName = evt.target.name;
     const fieldValue = evt.target.value;
+    const fieldId = evt.target.id;
     if (fieldName === 'firstName') {
       if (fieldValue.length > 0) {
         newRider.firstName = fieldValue;
@@ -141,11 +143,15 @@ const Form = (props: FormProps) => {
       newRider.pronouns = fieldValue;
     }
     else {
-      newRider.accessibilityNeeds =
-        { needsWheelchair: true, hasCrutches: true, needsAssistant: false };
+      if (fieldName === "needWheel") {
+        newRider.accessibilityNeeds.needsWheelchair = true
+      } if (fieldName === "needCrutches") {
+        newRider.accessibilityNeeds.hasCrutches = true
+      } else {
+        newRider.accessibilityNeeds.needsAssistant = true
+      }
     }
     setNewRider(newRider);
-    console.log(newRider);
   };
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
@@ -161,14 +167,19 @@ const Form = (props: FormProps) => {
           <label htmlFor="firstName" className="formLabel">First Name: </label >
           <input type="text"
             name="firstName"
-            onChange={(e) => handleInput(e)}
-          />
+            onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validFirstName ? "hidden" : ""}`}>
+            Please enter a first name
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="lastName" className="formLabel">Last Name: </label >
           <input type="text"
             name="lastName"
             onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validLastName ? "hidden" : ""}`}>
+            Enter a last name
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="phone" className="formLabel">Phone Number: </label>
@@ -176,34 +187,56 @@ const Form = (props: FormProps) => {
             placeholder="XXX-XXX-XXXX"
             name="phone"
             onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
+            Enter a phone number in the form xxx-xxx-xxxx
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="email" className="formLabel">NetID: </label >
           <input type="text"
             name="email"
             onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
+            Enter a valid netid
+          </p>
         </div>
         <div className="formDiv">
-          <label htmlFor="accessibility" className="formLabel">Accessibility Needs: </label >
-          <input type="checkbox" name="accesibility" value="needWheel" />
-          <label htmlFor="accesibility"> Needs Wheelchair</label>
-          <br></br>
-          <input type="checkbox" name="accesibility" value="needCrutches" />
-          <label htmlFor="accesibility"> Has Crutches</label>
-          <br></br>
-          <input type="checkbox" name="accesibility" value="needAssist" />
-          <label htmlFor="accesibility"> Needs Assistant</label>
-          <br></br>
+          <label className="formLabel">Accessibility Needs: </label >
+          <div>
+            <div>
+              <input type="checkbox" id="accesibility" name="needWheel"
+                onChange={(e) => handleInput(e)}
+              />
+              <label htmlFor="accesibility"> Needs Wheelchair</label>
+            </div>
+            <div>
+              <input type="checkbox" id="accesibility" name="needCrutches"
+                onChange={(e) => handleInput(e)}
+              />
+              <label htmlFor="accesibility"> Has Crutches</label>
+            </div>
+            <div>
+              <input type="checkbox" id="accesibility" name="needAssist"
+                onChange={(e) => handleInput(e)}
+              />
+              <label htmlFor="accesibility"> Needs Assistant</label>
+            </div>
+          </div>
         </div>
         <div className="formDiv">
-          <label htmlFor="description" className="formLabel">Description: </label >
+          <label htmlFor="description" className="formLabel">
+            Description:
+          </label >
           <input type="text"
             name="description"
             onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validDesc ? "hidden" : ""}`}>
+            Enter a description
+          </p>
         </div>
         <div className="formDiv">
           <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
-          <select id="pronouns">
+          <select name="pronouns" onChange={(e) => handleInput(e)}>
             <option value="she">She</option>
             <option value="he">He</option>
             <option value="neutral">Neutral</option>
@@ -214,6 +247,9 @@ const Form = (props: FormProps) => {
           <input type="text"
             name="address"
             onChange={(e) => handleInput(e)} />
+          <p className={`formFeedback ${validAddress ? "hidden" : ""}`}>
+            Enter an address
+          </p>
         </div>
         <input type="submit" value="Submit" />
       </form>
@@ -274,7 +310,9 @@ const Table = () => {
             <td>{pronouns}</td>
             <td>{address}</td>
           </tr>
-          <button onClick={() => setRiders(deleteEntry(email, allRiders))}>Delete</button>
+          <button onClick={() => setRiders(deleteEntry(email, allRiders))}>
+            Delete
+          </button>
         </>
       );
     });
@@ -284,7 +322,7 @@ const Table = () => {
     <>
       <div>
         <h1 className="formHeader">Rider Table</h1>
-        <table className="driverTable">
+        <table className="table">
           <tbody>
             {renderTableHeader()}
             {renderTableData(riders)}
@@ -292,7 +330,6 @@ const Table = () => {
         </table>
       </div >
       <div>
-        {/* {<Form />} */}
         <Form onClick={(newRider) => setRiders(addRider(newRider, riders))} />
       </div>
     </>

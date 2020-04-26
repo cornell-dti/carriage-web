@@ -7,7 +7,7 @@
   margin-bottom: 5px;
 }
 
-.driverTable {
+.table {
   border: 1px solid black;
 }
 
@@ -22,10 +22,11 @@
 .formDiv{
   display: flex;
   flex-direction: row;
+  padding-bottom: 5px;
 }
 
 .formLabel{
-  width: 115px;
+  width: 180px;
   text-align: right;
   padding-right: 5px;
 }
