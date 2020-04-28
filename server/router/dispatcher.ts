@@ -2,7 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
 import config from '../config';
-import bodyParser from 'body-parser';
+import { deleteFromTableByID } from './common';
 
 const router = express.Router();
 
@@ -44,6 +44,7 @@ router.post('/', (req, res) => {
   });
 });
 
-
+// Remove Dispatcher
+router.delete('/:id', (req, res) => deleteFromTableByID(req, res, docClient, 'Dispatchers'));
 
 export default router;
