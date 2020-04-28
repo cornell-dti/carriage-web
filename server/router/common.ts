@@ -16,3 +16,5 @@ export const deleteFromTableByID =
       }
     });
   }
+
+export default deleteFromTableByID;
