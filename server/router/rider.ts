@@ -4,6 +4,7 @@ import AWS from 'aws-sdk';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import config from '../config';
+import { deleteByID } from './common';
 
 const router = express.Router();
 
@@ -272,19 +273,6 @@ router.post('/:id/favorites', (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  const params = {
-    TableName: 'Riders',
-    Key: { id },
-  };
-  docClient.delete(params, (err, _) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send({ id });
-    }
-  });
-});
+router.delete('/:id', (req, res) => deleteFromTableByID(req, res, docClient, 'Riders'));
 
 export default router;
