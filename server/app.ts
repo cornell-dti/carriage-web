@@ -4,6 +4,7 @@ import bodyparser from 'body-parser';
 
 import rider from './router/rider';
 import driver from './router/driver';
+import dispatcher from './router/dispatcher';
 import activeride from './router/activeride';
 import pastride from './router/pastride';
 import vehicle from './router/vehicle';
@@ -18,6 +19,7 @@ app.use(bodyparser.urlencoded({ extended: false }));
 
 app.use('/riders', rider);
 app.use('/drivers', driver);
+app.use('/dispatchers', dispatcher);
 app.use('/active-rides', activeride);
 app.use('/past-rides', pastride);
 app.use('/vehicles', vehicle);

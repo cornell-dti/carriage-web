@@ -2,6 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
 import config from '../config';
+import bodyParser from 'body-parser';
 
 const router = express.Router();
 
@@ -23,5 +24,26 @@ type Dispatcher = {
   email: string,
   accessLevel: AccessLevel
 };
+
+// Put a driver in Dispatchers table
+router.post('/', (req, res) => {
+  const user: Dispatcher = {
+    id: uuid(),
+    ...JSON.parse(JSON.stringify(req.body))
+  };
+  const params = {
+    TableName: 'Dispatchers',
+    Item: user,
+  };
+  docClient.put(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(user);
+    }
+  });
+});
+
+
 
 export default router;
