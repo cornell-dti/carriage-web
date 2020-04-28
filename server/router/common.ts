@@ -17,4 +17,4 @@ export const deleteByID =
     });
   }
 
-export default deleteFromTableByID;
+export default deleteByID;
