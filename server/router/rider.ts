@@ -4,7 +4,7 @@ import AWS from 'aws-sdk';
 import * as t from 'io-ts';
 import { isRight } from 'fp-ts/lib/Either';
 import config from '../config';
-import { deleteFromTableByID } from './common';
+import { deleteByID } from './common';
 
 const router = express.Router();
 

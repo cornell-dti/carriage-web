@@ -2,7 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
 import config from '../config';
-import { deleteFromTableByID } from './common';
+import { deleteByID } from './common';
 
 const router = express.Router();
 

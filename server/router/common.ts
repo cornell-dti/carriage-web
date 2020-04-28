@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
-export const deleteFromTableByID =
+export const deleteByID =
   (req: Request, res: Response, docClient: DocumentClient, table: string) => {
     const { id } = req.params;
     const params = {
