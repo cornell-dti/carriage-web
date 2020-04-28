@@ -8,5 +8,12 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+type Dispatcher = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  phoneNumber: string,
+  email: string,
+};
 
 export default router;
