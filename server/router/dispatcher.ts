@@ -45,6 +45,6 @@ router.post('/', (req, res) => {
 });
 
 // Remove Dispatcher
-router.delete('/:id', (req, res) => deleteFromTableByID(req, res, docClient, 'Dispatchers'));
+router.delete('/:id', (req, res) => deleteByID(req, res, docClient, 'Dispatchers'));
 
 export default router;

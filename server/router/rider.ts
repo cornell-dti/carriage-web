@@ -273,6 +273,6 @@ router.post('/:id/favorites', (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', (req, res) => deleteFromTableByID(req, res, docClient, 'Riders'));
+router.delete('/:id', (req, res) => deleteByID(req, res, docClient, 'Riders'));
 
 export default router;
