@@ -2,6 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
 import config from '../config';
+import { deleteByID } from './common';
 
 const router = express.Router();
 
@@ -49,6 +50,43 @@ router.get('/:id', (req, res) => {
   });
 });
 
+// Get all drivers
+router.get('/', (req, res) => {
+  const params = {
+    TableName: 'Drivers',
+  };
+  docClient.scan(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else {
+      res.send({ data: data.Items });
+    }
+  });
+});
+
+// Get profile information for a driver
+router.get('/:id/profile', (req, res) => {
+  const { id } = req.params;
+  const params = {
+    TableName: 'Drivers',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send(err);
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const {
+        email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+      } = data.Item;
+      res.send({
+        email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+      });
+    }
+  });
+});
+
 // Put a driver in Drivers table
 router.post('/', (req, res) => {
   const postBody = req.body;
@@ -76,8 +114,40 @@ router.post('/', (req, res) => {
   });
 });
 
-// TODO: Update an existing driver
+// Update an existing driver
+router.post('/:id', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  const params = {
+    TableName: 'Drivers',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const driver = data.Item;
+      const updateParams = {
+        TableName: 'Drivers',
+        Item: { id } as { [key: string]: any },
+      };
+      Object.keys(driver).forEach((key) => {
+        updateParams.Item[key] = postBody[key] || driver[key];
+      });
+      docClient.put(updateParams, (updateErr, _) => {
+        if (updateErr) {
+          res.send({ err: updateErr });
+        } else {
+          res.send(updateParams.Item);
+        }
+      });
+    }
+  });
+});
 
-// TODO: Delete an existing driver
+// Delete an existing driver
+router.delete('/:id', (req, res) => deleteByID(req, res, docClient, 'Drivers'));
 
 export default router;
