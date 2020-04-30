@@ -11,7 +11,7 @@ export const SignInButton = () => {
   const [showSignIn, toggleShow] = useState(true);
   let history = useHistory();
 
-  function logout() {
+  async function logout() {
     localStorage.clear();
     toggleShow(true);
   }
@@ -21,11 +21,16 @@ export const SignInButton = () => {
     toggleShow(false);
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: 'token=' + token
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        "token": token,
+        "clientID": clientId,
+        "email": "cph64@cornell.edu",
+        "table": "Dispatchers"
+      })
     };
     const response = await fetch('/auth', requestOptions);
-    const authorized = (await response.json()).success;
+    const authorized = (await response.json())['id'];
     if (authorized) {
       history.push('/table')
     } else {
