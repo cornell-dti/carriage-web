@@ -8,16 +8,14 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-type ActiveRide = {
+type Ride = {
   id: string,
   startLocation: string,
   endLocation: string,
   startTime: string,
   endTime: string,
-  isScheduled: boolean,
-  riderID: string[],
-  driverID: string[] | null,
-  repeatsOn: string[] | null,
+  riderID: string | null,
+  driverID: string | null,
 };
 
 // Get an active/requested ride by ID in Active Rides table
@@ -68,16 +66,14 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const postBody = req.body;
   const rideID = uuid();
-  const ride: ActiveRide = {
+  const ride: Ride = {
     id: rideID,
     startLocation: postBody.startLocation,
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,
     endTime: postBody.endTime,
-    isScheduled: false,
     riderID: postBody.riderID,
     driverID: null,
-    repeatsOn: postBody.repeatsOn ?? null,
   };
   const params = {
     TableName: 'ActiveRides',
