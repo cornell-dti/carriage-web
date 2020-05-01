@@ -14,7 +14,7 @@ import auth from './router/auth';
 
 const port = 3001;
 
-dynamoose.AWS.config.update(config);
+dynamoose.aws.sdk.config.update(config);
 
 const app = express();
 app.use(bodyparser.json());
