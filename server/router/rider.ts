@@ -45,7 +45,10 @@ const schema = new dynamoose.Schema({
   joinDate: String,
   pronouns: String,
   address: String,
-  favoriteLocations: Array,
+  favoriteLocations: {
+    type: Array,
+    schema: [{ type: String }],
+  },
 });
 
 export const Riders = dynamoose.model('Riders', schema, { create: false });
@@ -189,7 +192,7 @@ router.post('/:id/favorites', (req, res) => {
       res.send({ err: { message: 'location not found' } });
     } else {
       const location = data;
-      Riders.update({ id }, { $ADD: { favoriteLocations: locID } }, (riderErr) => {
+      Riders.update({ id }, { $ADD: { favoriteLocations: [locID] } }, (riderErr) => {
         if (riderErr) {
           res.send({ err: riderErr });
         } else {
