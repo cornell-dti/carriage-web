@@ -51,10 +51,8 @@ router.post('/', (req, res) => {
             res.send({ err });
           } else {
             const userList = data.Items;
-            const tok = jwt.sign({ id: data.Count ? userList![0].id : null }, secret, {
-              expiresIn: '5h'
-            });
-            res.cookie('token', tok, { httpOnly: true }).status(200).send({ id: data.Count ? userList![0].id : null });
+            const tok = jwt.sign({ id: data.Count ? userList![0].id : null }, secret);
+            res.cookie('token', tok, { httpOnly: true, maxAge: 360000 }).send({ id: data.Count ? userList![0].id : null });
             // res.send({ id: data.Count ? userList![0].id : null });
           }
         });
@@ -73,7 +71,7 @@ router.post('/cookie', function (req, res) {
 });
 
 router.get('/delcook', function (req, res) {
-  res.clearCookie('token');
+  res.clearCookie('token', { httpOnly: true, path: '/' });
   res.send('cookie name is cleared');
 });
 

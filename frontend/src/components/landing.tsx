@@ -5,6 +5,7 @@ import ReadMore from './readmore';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useHistory } from "react-router-dom";
 import '../styles/header.css';
+import { response } from 'express';
 
 const clientId: string = process.env.REACT_APP_CLIENT_ID!;
 export const SignInButton = () => {
@@ -13,6 +14,10 @@ export const SignInButton = () => {
 
   async function logout() {
     localStorage.clear();
+    fetch('/auth/delcook').then(
+      res => console.log(res)
+    );
+    history.push('/');
     toggleShow(true);
   }
 
@@ -54,7 +59,6 @@ export const SignInButton = () => {
 
 const LandingPage = () => (
   <>
-    <SignInButton />
     <div>
       <div className="home">
         <Header />

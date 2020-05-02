@@ -4,16 +4,6 @@ import '../styles/table.css';
 import { useHistory } from "react-router-dom";
 
 const clientId: string = process.env.REACT_APP_CLIENT_ID!;
-const SignOutButton = () => {
-  let history = useHistory();
-  function logout() {
-    localStorage.clear();
-    history.push('/');
-  }
-  return (
-    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
-  )
-}
 interface Driver {
   name: string;
   netid: string;
@@ -199,7 +189,6 @@ const Table = () => {
 
 const TablePage = () => (
   <>
-    <SignOutButton />
     <Table />
   </>
 );
