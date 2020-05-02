@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { GoogleLogout } from 'react-google-login';
 import '../styles/table.css';
-import { useHistory } from "react-router-dom";
 
 const clientId: string = process.env.REACT_APP_CLIENT_ID!;
 interface Driver {
