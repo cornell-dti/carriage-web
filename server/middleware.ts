@@ -11,6 +11,7 @@ const withAuth = (req: Request, res: Response, next: any) => {
     jwt.verify(token, secret, (err: any, decoded: any) => {
       if (err) {
         res.status(401).send('Invalid token');
+        console.log(res);
       } else {
         req.body['id'] = decoded['id'];
         next();

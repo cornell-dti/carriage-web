@@ -51,9 +51,9 @@ router.post('/', (req, res) => {
             res.send({ err });
           } else {
             const userList = data.Items;
-            const tok = jwt.sign({ id: data.Count ? userList![0].id : null }, secret);
-            res.cookie('token', tok, { httpOnly: true, maxAge: 360000 }).send({ id: data.Count ? userList![0].id : null });
-            // res.send({ id: data.Count ? userList![0].id : null });
+            const res_bod = { id: data.Count ? userList![0].id : null }
+            const tok = jwt.sign(res_bod, secret);
+            res.cookie('token', tok, { httpOnly: true }).send(res_bod);
           }
         });
       } else {
@@ -65,14 +65,9 @@ router.post('/', (req, res) => {
     });
 });
 
-router.post('/cookie', function (req, res) {
-  const gibberish = jwt.sign('gee wiz', secret);
-  res.cookie('token', gibberish, { maxAge: 360000 }).send('cookie set');
-});
-
-router.get('/delcook', function (req, res) {
+router.get('/logout', function (req, res) {
   res.clearCookie('token', { httpOnly: true, path: '/' });
-  res.send('cookie name is cleared');
+  res.send('cookie cleared');
 });
 
 
