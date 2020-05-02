@@ -157,7 +157,9 @@ const Table = () => {
       })
         .then(res => res.json())
         .then(data => setDrivers(data['data']))
-        .catch(err => console.log('Error while fetching:', err));
+        .catch(err => {
+          console.log('Error while fetching:', err);
+        });
     }
 
     fetchDrivers();
