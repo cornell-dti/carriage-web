@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/table.css';
 
 interface Driver {
@@ -150,6 +150,20 @@ const Table = () => {
     { name: 'Driver3', netid: 'advs12', email: 'advs12@cornell.edu', phone: '333-333-3333' },
     { name: 'Driver4', netid: 'bfd2', email: 'bfd2@cornell.edu', phone: '444-444-4444' },
   ]);
+
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      const data = fetch("/riders", {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then(res => res.json())
+        .then(data => setDrivers(data['data']))
+        .catch(err => console.log('Error while fetching:', err));
+    }
+
+    fetchDrivers();
+  });
 
   function renderTableData(allDrivers: Driver[]) {
     return allDrivers.map((driver, index) => {
