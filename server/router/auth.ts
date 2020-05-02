@@ -7,7 +7,6 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-const secret = "bello";
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -52,7 +51,7 @@ router.post('/', (req, res) => {
           } else {
             const userList = data.Items;
             const res_bod = { id: data.Count ? userList![0].id : null }
-            const tok = jwt.sign(res_bod, secret);
+            const tok = jwt.sign(res_bod, process.env.JWT_SECRET || "");
             res.cookie('token', tok, { httpOnly: true }).send(res_bod);
           }
         });
