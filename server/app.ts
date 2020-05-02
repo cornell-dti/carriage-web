@@ -20,12 +20,12 @@ app.use(cookieParser());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-app.use('/riders', withAuth, rider);
-app.use('/drivers', withAuth, driver);
-app.use('/dispatchers', withAuth, dispatcher);
-app.use('/active-rides', withAuth, activeride);
-app.use('/past-rides', withAuth, pastride);
-app.use('/vehicles', withAuth, vehicle);
+app.use('/riders', rider);
+app.use('/drivers', driver);
+app.use('/dispatchers', dispatcher);
+app.use('/active-rides', activeride);
+app.use('/past-rides', pastride);
+app.use('/vehicles', vehicle);
 app.use('/locations', location);
 app.use('/auth', auth);
 

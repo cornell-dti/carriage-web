@@ -67,6 +67,15 @@ router.post('/', (req, res) => {
     });
 });
 
+router.post('/cookie', function (req, res) {
+  const gibberish = jwt.sign('gee wiz', secret);
+  res.cookie('token', gibberish, { maxAge: 360000 }).send('cookie set');
+});
+
+router.get('/delcook', function (req, res) {
+  res.clearCookie('token');
+  res.send('cookie name is cleared');
+});
 
 
 export default router;
