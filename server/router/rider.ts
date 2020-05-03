@@ -57,11 +57,11 @@ export const Riders = dynamoose.model('Riders', schema, { create: false });
 // Get a rider by ID in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id);
+  db.getByID(res, Riders, id, 'Riders');
 });
 
 // Get all riders
-router.get('/', (req, res) => db.getAll(res, Riders));
+router.get('/', (req, res) => db.getAll(res, Riders, 'Riders'));
 
 // TODO: Get all upcoming rides for a rider
 router.get('/:id/rides', (req, res) => {
@@ -70,33 +70,26 @@ router.get('/:id/rides', (req, res) => {
 
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
-  // const { id } = req.params;
-  // console.log('1');
-  // db.retrieveByID(res, Riders, id).then((data: any) => {
-  //   if (data !== undefined) {
-  //     console.log('1');
-  //     const rider: RiderType = data;
-  //     const {
-  //       email, firstName, lastName, phoneNumber, pronouns, joinDate,
-  //     } = rider;
-  //     res.send({
-  //       email, firstName, lastName, phoneNumber, pronouns, joinDate,
-  //     });
-  //   }
-  // });
+  const { id } = req.params;
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
+    const {
+      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+    } = rider;
+    res.send({
+      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+    });
+  });
 });
 
 // Get accessibility information for a rider
 router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  console.log('hello');
-  const data = db.retrieveByID(res, Riders, id);
-  console.log('hello');
-  if (data) {
-    const rider: RiderType = data as any;
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
     const { description, accessibilityNeeds } = rider;
     res.send({ description, accessibilityNeeds });
-  }
+  });
 });
 
 // Get all favorite locations for a rider

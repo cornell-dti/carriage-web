@@ -6,13 +6,20 @@ import { ObjectType } from 'dynamoose/dist/General';
 type ClientType = Document & Model<Document>;
 
 export const getByID = (
-  (res: Response, client: ClientType, id: string) => {
+  (res: Response,
+    client: ClientType,
+    id: string,
+    table: string,
+    callback?: (value: any) => void) => {
     client.get(id, (err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
-        res.send({ err: { message: `id not found in ${client.name}` } });
+        res.send({ err: { message: `id not found in ${table}` } });
       } else {
+        if (callback) {
+          callback(data);
+        }
         res.send(data);
       }
     });
@@ -20,32 +27,16 @@ export const getByID = (
 );
 
 export const getAll = (
-  (res: Response, client: ClientType) => {
+  (res: Response, client: ClientType, table: string) => {
     client.scan().exec((err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
-        res.send({ err: { message: `items not found in ${client}` } });
+        res.send({ err: { message: `items not found in ${table}` } });
       } else {
         res.send(data);
       }
     });
-  }
-);
-
-export const retrieveByID = (
-  (res: Response, client: ClientType, id: string) => {
-    let doc: Document | undefined;
-    client.get(id, (err, data) => {
-      if (err) {
-        res.send(err);
-      } else if (!data) {
-        res.send({ err: { message: `id not found in ${client}` } });
-      } else {
-        doc = data;
-      }
-    });
-    return doc;
   }
 );
 
@@ -62,12 +53,12 @@ export const create = (
 );
 
 export const update = (
-  (res: Response, client: ClientType, key: ObjectType, updateObj: ObjectType) => {
+  (res: Response, client: ClientType, key: ObjectType, updateObj: ObjectType, table: string) => {
     client.update(key, updateObj, (err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
-        res.send({ err: { message: `id not found in ${client.name}` } });
+        res.send({ err: { message: `id not found in ${table}` } });
       } else {
         res.send(data);
       }
@@ -76,12 +67,12 @@ export const update = (
 );
 
 export const deleteByID = (
-  (res: Response, client: ClientType, id: string) => {
+  (res: Response, client: ClientType, id: string, table: string) => {
     client.get(id, (err, data) => {
       if (err) {
         res.send({ err });
       } else if (!data) {
-        res.send({ err: { message: `id not found in ${client.name}` } });
+        res.send({ err: { message: `id not found in ${table}` } });
       } else {
         data.delete().then(() => res.send({ id }));
       }
