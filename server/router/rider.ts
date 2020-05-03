@@ -2,7 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
 import * as db from './common';
-import { Locations } from './location';
+import { Locations, LocationType } from './location';
 
 const router = express.Router();
 
@@ -95,28 +95,16 @@ router.get('/:id/accessibility', async (req, res) => {
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
+    const { favoriteLocations } = rider;
+    const keys: Key[] = favoriteLocations.map((locID: string) => ({
+      id: locID,
+    }));
+    if (!keys.length) {
+      res.send({ data: [] });
     } else {
-      const rider: RiderType = data;
-      const { favoriteLocations } = rider;
-      const keys: Key[] = favoriteLocations.map((locID: string) => ({
-        id: locID,
-      }));
-      if (!keys.length) {
-        res.send({ data: [] });
-      } else {
-        Locations.batchGet(keys, (locErr, locData) => {
-          if (locErr) {
-            res.send({ err: locErr });
-          } else {
-            res.send({ data: locData });
-          }
-        });
-      }
+      db.batchGet(res, Locations, keys, 'Locations');
     }
   });
 });
@@ -129,26 +117,14 @@ router.post('/', (req, res) => {
     ...postBody,
     favoriteLocations: [],
   });
-  rider.save((err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.create(res, rider);
 });
 
 // Update a rider in Riders table
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  Riders.update({ id }, postBody, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(data);
-    }
-  });
+  db.update(res, Riders, { id }, postBody, 'Riders');
 });
 
 // Add a location to favorites
@@ -156,21 +132,10 @@ router.post('/:id/favorites', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
   const locID = postBody.id;
-  Locations.get(locID, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'location not found' } });
-    } else {
-      const location = data;
-      Riders.update({ id }, { $ADD: { favoriteLocations: [locID] } }, (riderErr) => {
-        if (riderErr) {
-          res.send({ err: riderErr });
-        } else {
-          res.send(location);
-        }
-      });
-    }
+  db.getByID(res, Locations, locID, 'Locations', (data) => {
+    const location: LocationType = data;
+    const updateObj = { $ADD: { favoriteLocations: [locID] } };
+    db.update(res, Riders, { id }, updateObj, 'Riders', () => res.send(location));
   });
 });
 

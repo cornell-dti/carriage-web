@@ -4,7 +4,7 @@ import dynamoose from 'dynamoose';
 
 const router = express.Router();
 
-type LocationType = {
+export type LocationType = {
   id: string,
   name: string,
   address: string,
