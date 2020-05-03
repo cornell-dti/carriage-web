@@ -1,10 +1,15 @@
 import express from 'express';
 import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
+import AWS from 'aws-sdk';
+import config from '../config';
 import * as db from './common';
 import { Locations, LocationType } from './location';
 
 const router = express.Router();
+
+AWS.config.update(config);
+const docClient = new AWS.DynamoDB.DocumentClient();
 
 type Key = {
   id: string
@@ -50,6 +55,13 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [{ type: String }],
   },
+  requestedRides: {
+    type: Array,
+    schema: [{
+      type: Object,
+      schema: Object({ id: String, startTime: String }),
+    }],
+  },
 });
 
 export const Riders = dynamoose.model('Riders', schema, { create: false });
@@ -63,9 +75,40 @@ router.get('/:id', (req, res) => {
 // Get all riders
 router.get('/', (req, res) => db.getAll(res, Riders, 'Riders'));
 
-// TODO: Get all upcoming rides for a rider
+// Get all upcoming rides for a rider
 router.get('/:id/rides', (req, res) => {
-  res.send();
+  const { id } = req.params;
+  const params = {
+    TableName: 'Riders',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data.Item) {
+      res.send({ err: { message: 'id not found' } });
+    } else {
+      const { requestedRides } = data.Item;
+      if (!requestedRides.length) {
+        res.send({ data: [] });
+      } else {
+        const rideParams = {
+          RequestItems: {
+            ActiveRides: {
+              Keys: requestedRides,
+            },
+          },
+        };
+        docClient.batchGet(rideParams, (rideErr, rideData) => {
+          if (rideErr) {
+            res.send({ err: rideErr });
+          } else {
+            res.send({ data: rideData.Responses!.ActiveRides });
+          }
+        });
+      }
+    }
+  });
 });
 
 // Get profile information for a rider
@@ -116,6 +159,7 @@ router.post('/', (req, res) => {
     id: uuid(),
     ...postBody,
     favoriteLocations: [],
+    requestedRides: [],
   });
   db.create(res, rider);
 });
@@ -142,15 +186,7 @@ router.post('/:id/favorites', (req, res) => {
 // Delete an existing rider
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      data.delete().then(() => res.send({ id }));
-    }
-  });
+  db.deleteByID(res, Riders, id, 'Riders');
 });
 
 export default router;
