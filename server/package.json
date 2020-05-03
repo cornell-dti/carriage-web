@@ -7,6 +7,7 @@
         "aws-sdk": "^2.570.0",
         "body-parser": "^1.19.0",
         "dotenv": "^8.2.0",
+        "dynamoose": "^2.1.0",
         "express": "^4.17.1",
         "fp-ts": "^2.5.3",
         "google-auth-library": "^5.5.1",

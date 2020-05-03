@@ -11,9 +11,9 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 
 // Using a String enum allows the enum to be parsed by JSON.parse()
 enum AccessLevel {
-  Admin = "Admin", // only an admin should be able to add another dispatcher
-  SDS = "SDS",
-  Dispatcher = "Dispatcher"
+  Admin = 'Admin', // only an admin should be able to add another dispatcher
+  SDS = 'SDS',
+  Dispatcher = 'Dispatcher'
 }
 
 type Dispatcher = {
@@ -29,7 +29,7 @@ type Dispatcher = {
 router.post('/', (req, res) => {
   const user: Dispatcher = {
     id: uuid(),
-    ...JSON.parse(JSON.stringify(req.body))
+    ...JSON.parse(JSON.stringify(req.body)),
   };
   const params = {
     TableName: 'Dispatchers',
