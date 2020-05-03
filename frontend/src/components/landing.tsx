@@ -35,7 +35,8 @@ export const SignInButton = () => {
       })
     };
     const authorized = await fetch('/auth', requestOptions).then(() =>
-      document.cookie.indexOf('token') === -1);
+      document.cookie.indexOf('token') === -1
+    );
     if (authorized) {
       history.push('/table')
     } else {
