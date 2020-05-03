@@ -54,6 +54,13 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [{ type: String }],
   },
+  requestedRides: {
+    type: Array,
+    schema: [{
+      type: Object,
+      schema: Object({ id: String, startTime: String }),
+    }],
+  },
 });
 
 export const Riders = dynamoose.model('Riders', schema, { create: false });
@@ -193,6 +200,7 @@ router.post('/', (req, res) => {
     id: uuid(),
     ...postBody,
     favoriteLocations: [],
+    requestedRides: [],
   });
   rider.save((err, data) => {
     if (err) {
