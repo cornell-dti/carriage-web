@@ -1,6 +1,7 @@
 import express from 'express';
 import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
+import * as db from './common';
 import { Locations } from './location';
 
 const router = express.Router();
@@ -56,29 +57,11 @@ export const Riders = dynamoose.model('Riders', schema, { create: false });
 // Get a rider by ID in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getByID(res, Riders, id);
 });
 
 // Get all riders
-router.get('/', (req, res) => {
-  Riders.scan().exec((err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'items not found' } });
-    } else {
-      res.send(data);
-    }
-  });
-});
+router.get('/', (req, res) => db.getAll(res, Riders));
 
 // TODO: Get all upcoming rides for a rider
 router.get('/:id/rides', (req, res) => {
@@ -87,38 +70,33 @@ router.get('/:id/rides', (req, res) => {
 
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
-  const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const rider: RiderType = data;
-      const {
-        email, firstName, lastName, phoneNumber, pronouns, joinDate,
-      } = rider;
-      res.send({
-        email, firstName, lastName, phoneNumber, pronouns, joinDate,
-      });
-    }
-  });
+  // const { id } = req.params;
+  // console.log('1');
+  // db.retrieveByID(res, Riders, id).then((data: any) => {
+  //   if (data !== undefined) {
+  //     console.log('1');
+  //     const rider: RiderType = data;
+  //     const {
+  //       email, firstName, lastName, phoneNumber, pronouns, joinDate,
+  //     } = rider;
+  //     res.send({
+  //       email, firstName, lastName, phoneNumber, pronouns, joinDate,
+  //     });
+  //   }
+  // });
 });
 
 // Get accessibility information for a rider
-router.get('/:id/accessibility', (req, res) => {
+router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const rider: RiderType = data;
-      const { description, accessibilityNeeds } = rider;
-      res.send({ description, accessibilityNeeds });
-    }
-  });
+  console.log('hello');
+  const data = db.retrieveByID(res, Riders, id);
+  console.log('hello');
+  if (data) {
+    const rider: RiderType = data as any;
+    const { description, accessibilityNeeds } = rider;
+    res.send({ description, accessibilityNeeds });
+  }
 });
 
 // Get all favorite locations for a rider
