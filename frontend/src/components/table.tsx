@@ -3,7 +3,6 @@ import '../styles/table.css';
 
 interface Driver {
   name: string;
-  netid: string;
   email: string;
   phone: string;
 }
@@ -12,29 +11,28 @@ interface FormProps {
   onClick: ((newDriver: Driver) => void);
 }
 
-function deleteEntry(netid: string, driverList: Driver[]) {
-  return driverList.filter(driver => driver.netid !== netid)
+function deleteEntry(email: string, driverList: any[]) {
+  return driverList.filter(driver => driver.email !== email)
 }
 
 function renderTableHeader() {
   return (
     <tr>
       <th className="tableHeader">Name</th>
-      <th className="tableHeader">Netid</th>
+      {/* <th className="tableHeader">Netid</th> */}
       <th className="tableHeader">Email</th>
       <th className="tableHeader">Phone Number</th>
     </tr>
   );
 }
 
-function addDriver(newDriver: Driver, allDrivers: Driver[]) {
+function addDriver(newDriver: any, allDrivers: any[]) {
   return [...allDrivers, newDriver];
 }
 
 const Form = (props: FormProps) => {
-  const [newDriver, setNewDriver] = useState({ name: '', netid: '', email: '', phone: '' });
+  const [newDriver, setNewDriver] = useState({ name: '', email: '', phone: '' });
   const [validName, setValidName] = useState(false);
-  const [validNetid, setValidNetid] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
   const [validPhone, setValidPhone] = useState(false);
 
@@ -49,16 +47,6 @@ const Form = (props: FormProps) => {
       } else {
         newDriver.name = "";
         setValidName(false);
-      }
-    }
-    else if (fieldName === 'netid') {
-      const netIdFormat = /^[a-zA-Z]+[0-9]+$/;
-      if ((fieldValue.length > 0) && fieldValue.match(netIdFormat)) {
-        newDriver.netid = fieldValue;
-        setValidNetid(true);
-      } else {
-        newDriver.netid = "";
-        setValidNetid(false);
       }
     }
     else if (fieldName === 'email') {
@@ -85,7 +73,7 @@ const Form = (props: FormProps) => {
   };
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    let validAddDriver = validName && validNetid && validEmail && validPhone;
+    let validAddDriver = validName && validEmail && validPhone;
     if (validAddDriver) { props.onClick(newDriver); }
   };
 
@@ -102,16 +90,6 @@ const Form = (props: FormProps) => {
           />
           <p className={`formFeedback ${validName ? "hidden" : ""}`}>
             Please enter a name
-          </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="netid" className="formLabel">NetID: </label>
-          <input type="text"
-            name="netid"
-            onChange={(e) => handleInput(e)}
-          />
-          <p className={`formFeedback ${validNetid ? "hidden" : ""}`}>
-            Please enter a valid netid
           </p>
         </div>
         <div className="formDiv">
@@ -143,10 +121,10 @@ const Form = (props: FormProps) => {
 
 const Table = () => {
   const [drivers, setDrivers] = useState([
-    { name: 'Driver1', netid: 'abc123', email: 'abc123@cornell.edu', phone: '111-111-1111' },
-    { name: 'Driver2', netid: 'asd23', email: 'asd23@cornell.edu', phone: '222-222-2222' },
-    { name: 'Driver3', netid: 'advs12', email: 'advs12@cornell.edu', phone: '333-333-3333' },
-    { name: 'Driver4', netid: 'bfd2', email: 'bfd2@cornell.edu', phone: '444-444-4444' },
+    { name: 'Driver1', email: 'abc123@cornell.edu', phone: '111-111-1111' },
+    { name: 'Driver2', email: 'asd23@cornell.edu', phone: '222-222-2222' },
+    { name: 'Driver3', email: 'advs12@cornell.edu', phone: '333-333-3333' },
+    { name: 'Driver4', email: 'bfd2@cornell.edu', phone: '444-444-4444' },
   ]);
 
   useEffect(() => {
@@ -165,18 +143,18 @@ const Table = () => {
     fetchDrivers();
   });
 
-  function renderTableData(allDrivers: Driver[]) {
+  function renderTableData(allDrivers: any[]) {
     return allDrivers.map((driver, index) => {
-      const { name, netid, email, phone } = driver;
+      const { firstName, lastName, email, phoneNumber } = driver;
       return (
         <>
-          <tr key={netid}>
-            <td className="tableCell">{name}</td>
-            <td>{netid}</td>
+          <tr key={email}>
+            <td className="tableCell">{firstName + ' ' + lastName}</td>
+            {/* <td></td> */}
             <td>{email}</td>
-            <td>{phone}</td>
+            <td>{phoneNumber}</td>
           </tr>
-          <button onClick={() => setDrivers(deleteEntry(netid, allDrivers))}>Delete</button>
+          <button onClick={() => setDrivers(deleteEntry(email, allDrivers))}>Delete</button>
         </>
       );
     });

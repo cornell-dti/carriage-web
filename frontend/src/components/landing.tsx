@@ -34,8 +34,8 @@ export const SignInButton = () => {
         "table": "Dispatchers"
       })
     };
-    const response = await fetch('/auth', requestOptions);
-    const authorized = (await response.json())['id'];
+    const authorized = await fetch('/auth', requestOptions).then(() =>
+      document.cookie.indexOf('token') === -1);
     if (authorized) {
       history.push('/table')
     } else {
