@@ -1,19 +1,6 @@
-import React, { useState } from 'react';
-import { GoogleLogout } from 'react-google-login';
+import React, { useState, useEffect } from 'react';
 import '../styles/table.css';
-import { useHistory } from "react-router-dom";
-
-const clientId: string = process.env.REACT_APP_CLIENT_ID!;
-const SignOutButton = () => {
-  let history = useHistory();
-  function logout() {
-    localStorage.clear();
-    history.push('/');
-  }
-  return (
-    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
-  )
-}
+import SignInButton from './signin'
 
 interface AccessibilityNeeds {
   needsWheelchair: boolean;
@@ -275,6 +262,18 @@ const Table = () => {
     }
   ]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      };
+      const response = await fetch('/rider', requestOptions);
+      const result = (await response.json())["data"];
+      setRiders(result);
+    };
+  });
+
   function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
     let allNeeds = '';
     let arrayNeeds = Object.entries(accessNeeds);
@@ -300,22 +299,22 @@ const Table = () => {
         description, joinDate, pronouns, address
       } = rider;
       return (
-        <>
-          <tr key={email}>
-            <td className="tableCell">{firstName}</td>
-            <td>{lastName}</td>
-            <td>{phoneNumber}</td>
-            <td>{email}</td>
-            <td>{renderAccessNeeds(accessibilityNeeds)}</td>
-            <td>{description}</td>
-            <td>{joinDate}</td>
-            <td>{pronouns}</td>
-            <td>{address}</td>
-          </tr>
-          <button onClick={() => setRiders(deleteEntry(email, allRiders))}>
-            Delete
-          </button>
-        </>
+        <tr key={email}>
+          <td className="tableCell">{firstName}</td>
+          <td>{lastName}</td>
+          <td>{phoneNumber}</td>
+          <td>{email}</td>
+          <td>{renderAccessNeeds(accessibilityNeeds)}</td>
+          <td>{description}</td>
+          <td>{joinDate}</td>
+          <td>{pronouns}</td>
+          <td>{address}</td>
+          <td>
+            <button onClick={() => setRiders(deleteEntry(email, allRiders))}>
+              Delete
+              </button>
+          </td>
+        </tr>
       );
     });
   }
@@ -332,7 +331,29 @@ const Table = () => {
         </table>
       </div >
       <div>
-        <Form onClick={(newRider) => setRiders(addRider(newRider, riders))} />
+        <Form onClick={(newRider) => {
+          const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              "firstName": newRider["firstName"],
+              "lastName": newRider["lastName"],
+              "phoneNumber": newRider["phoneNumber"],
+              "email": newRider["email"],
+              "accessibilityNeeds": {
+                "needsWheelchair": newRider["accessibilityNeeds"]["needsWheelchair"],
+                "hasCrutches": newRider["accessibilityNeeds"]["hasCrutches"],
+                "needsAssistant": newRider["accessibilityNeeds"]["needsAssistant"]
+              },
+              "description:": newRider["description"],
+              "joinDate:": newRider["joinDate"],
+              "pronouns:": newRider["pronouns"],
+              "address:": newRider["address"]
+            })
+          };
+          const response = fetch('/rider', requestOptions);
+          setRiders(addRider(newRider, riders));
+        }} />
       </div>
     </>
   );
@@ -340,7 +361,7 @@ const Table = () => {
 
 const RiderTable = () => (
   <>
-    <SignOutButton />
+    <SignInButton />
     <Table />
   </>
 );

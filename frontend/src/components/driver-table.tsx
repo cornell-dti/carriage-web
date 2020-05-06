@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
-import { GoogleLogout } from 'react-google-login';
 import '../styles/table.css';
-import { useHistory } from "react-router-dom";
-
-const clientId: string = process.env.REACT_APP_CLIENT_ID!;
-const SignOutButton = () => {
-  let history = useHistory();
-  function logout() {
-    localStorage.clear();
-    history.push('/');
-  }
-  return (
-    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
-  )
-}
+import SignInButton from './signin';
 
 interface Driver {
   name: string;
@@ -169,15 +156,18 @@ const Table = () => {
     return allDrivers.map((driver, index) => {
       const { name, netid, email, phone } = driver;
       return (
-        <>
-          <tr key={netid}>
-            <td className="tableCell">{name}</td>
-            <td>{netid}</td>
-            <td>{email}</td>
-            <td>{phone}</td>
-          </tr>
-          <button onClick={() => setDrivers(deleteEntry(netid, allDrivers))}>Delete</button>
-        </>
+        <tr key={netid}>
+          <td className="tableCell">{name}</td>
+          <td>{netid}</td>
+          <td>{email}</td>
+          <td>{phone}</td>
+          <td>
+            <button
+              onClick={() => setDrivers(deleteEntry(netid, allDrivers))}>
+              Delete
+              </button>
+          </td>
+        </tr>
       );
     });
   }
@@ -202,7 +192,7 @@ const Table = () => {
 
 const DriverTable = () => (
   <>
-    <SignOutButton />
+    <SignInButton />
     <Table />
   </>
 );

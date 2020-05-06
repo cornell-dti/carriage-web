@@ -32,13 +32,15 @@ export const SignInButton = () => {
     };
     const response = await fetch('/auth', requestOptions);
     const authorized = (await response.json())['id'];
+    console.log(authorized);
     if (authorized) {
       history.push('/rider-table')
     } else {
+      console.log("not authorized");
+      console.log(authorized);
       logout();
     }
   }
-
   if (showSignIn) {
     return (
       <GoogleLogin
