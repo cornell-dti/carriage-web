@@ -275,7 +275,7 @@ const Table = () => {
     async function getExistingRiders() {
       const response = await fetch('/riders');
       const data = (await response.json())["data"];
-      let all_riders: Rider[] = data.map(function (rider: any) {
+      let allRiders: Rider[] = data.map(function (rider: any) {
         return {
           id: rider["id"],
           firstName: rider["firstName"],
@@ -289,7 +289,7 @@ const Table = () => {
           address: rider["address"]
         }
       });
-      setRiders(all_riders);
+      setRiders(allRiders);
     }
     getExistingRiders();
   }, []);
