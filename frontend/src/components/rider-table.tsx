@@ -35,10 +35,6 @@ function renderTableHeader() {
       <th className="tableHeader">Phone Number</th>
       <th className="tableHeader">Email</th>
       <th className="tableHeader">Accessibility Needs</th>
-      <th className="tableHeader">Description</th>
-      <th className="tableHeader">Join Date</th>
-      <th className="tableHeader">Pronouns</th>
-      <th className="tableHeader">Address</th>
     </tr>
   );
 }
@@ -47,7 +43,6 @@ function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
   let allNeeds = '';
   let arrayNeeds = Object.entries(accessNeeds);
   arrayNeeds.forEach(element => {
-    console.log(element[1]);
     if (element[0] == 'hasCrutches' && element[1]) {
       allNeeds = allNeeds.concat("Has Crutches, ");
     } else if (element[0] == 'needsAssistant' && element[1]) {
@@ -69,7 +64,7 @@ const Form = (props: FormProps) => {
       id: "", firstName: '', lastName: '', phoneNumber: '', email: '',
       accessibilityNeeds:
         { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
-      description: '', joinDate: date, pronouns: 'she', address: ''
+      description: '', joinDate: date, pronouns: 'she/her/hers', address: ''
     });
   const [validFirstName, setValidFirstName] = useState(false);
   const [validLastName, setValidLastName] = useState(false);
@@ -81,7 +76,6 @@ const Form = (props: FormProps) => {
   const handleInput = (evt: any) => {
     const fieldName = evt.target.name;
     const fieldValue = evt.target.value;
-    const fieldId = evt.target.id;
     if (fieldName === 'firstName') {
       if (fieldValue.length > 0) {
         newRider.firstName = fieldValue;
@@ -153,7 +147,6 @@ const Form = (props: FormProps) => {
     setNewRider(newRider);
   };
   const handleSubmit = (evt: any) => {
-    // console.log(newRider)
     evt.preventDefault();
     let validRider = validFirstName && validLastName && validPhone &&
       validEmail && validDesc && validAddress;
@@ -238,8 +231,8 @@ const Form = (props: FormProps) => {
           <div className="formDiv">
             <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
             <select name="pronouns" onChange={(e) => handleInput(e)}>
-              <option value="she">She</option>
-              <option value="he">He</option>
+              <option value="she/her/hers">She/Her/Hers</option>
+              <option value="he/him/his">He/Him/His</option>
               <option value="neutral">Neutral</option>
             </select>
           </div>
@@ -274,7 +267,7 @@ const Table = () => {
   useEffect(() => {
     async function getExistingRiders() {
       const response = await fetch('/riders');
-      const data = (await response.json())["data"];
+      const data = (await response.json());
       let allRiders: Rider[] = data.map(function (rider: any) {
         return {
           id: rider["id"],
@@ -301,7 +294,7 @@ const Table = () => {
         method: 'DELETE',
         headers: { "Content-Type": 'application/json' },
       };
-      const response = await fetch('/riders/' + riderId, requestOptions);
+      let response = await fetch('/riders/' + riderId, requestOptions);
     }
     deleteBackend();
     return riderList.filter(rider => rider.email !== email)
@@ -339,7 +332,6 @@ const Table = () => {
       const {
         id, firstName, lastName, phoneNumber, email,
         accessibilityNeeds,
-        description, joinDate, pronouns, address
       } = rider;
       return (
         <tr key={email}>
@@ -348,10 +340,6 @@ const Table = () => {
           <td>{phoneNumber}</td>
           <td>{email}</td>
           <td>{renderAccessNeeds(accessibilityNeeds)}</td>
-          <td>{description}</td>
-          <td>{joinDate}</td>
-          <td>{pronouns}</td>
-          <td>{address}</td>
           <td>
             <button onClick={() => setRiders(deleteEntry(email, allRiders))
             }>
