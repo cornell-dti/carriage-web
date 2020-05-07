@@ -3,12 +3,13 @@ import '../styles/table.css';
 import SignInButton from './signin'
 
 interface AccessibilityNeeds {
-  needsWheelchair: boolean;
   hasCrutches: boolean;
   needsAssistant: boolean;
+  needsWheelchair: boolean;
 }
 
 interface Rider {
+  id: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
@@ -24,9 +25,7 @@ interface FormProps {
   onClick: ((newRider: Rider) => void);
 }
 
-function deleteEntry(email: string, riderList: Rider[]) {
-  return riderList.filter(rider => rider.email !== email)
-}
+
 
 function renderTableHeader() {
   return (
@@ -44,8 +43,21 @@ function renderTableHeader() {
   );
 }
 
-function addRider(newRider: Rider, allRiders: Rider[]) {
-  return [...allRiders, newRider];
+function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
+  let allNeeds = '';
+  let arrayNeeds = Object.entries(accessNeeds);
+  arrayNeeds.forEach(element => {
+    console.log(element[1]);
+    if (element[0] == 'hasCrutches' && element[1]) {
+      allNeeds = allNeeds.concat("Has Crutches, ");
+    } else if (element[0] == 'needsAssistant' && element[1]) {
+      allNeeds = allNeeds.concat("Needs Assistant, ");
+    }
+    else if (element[0] == 'needsWheelchair' && element[1]) {
+      allNeeds = allNeeds.concat("Needs Wheelchair, ");
+    }
+  });
+  return allNeeds.substr(0, allNeeds.length - 2);
 }
 
 const Form = (props: FormProps) => {
@@ -54,7 +66,7 @@ const Form = (props: FormProps) => {
     today.getFullYear();
   const [newRider, setNewRider] =
     useState({
-      firstName: '', lastName: '', phoneNumber: '', email: '',
+      id: "", firstName: '', lastName: '', phoneNumber: '', email: '',
       accessibilityNeeds:
         { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
       description: '', joinDate: date, pronouns: 'she', address: ''
@@ -89,7 +101,7 @@ const Form = (props: FormProps) => {
       }
     }
     else if (fieldName === 'phone') {
-      const phoneFormat = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+      const phoneFormat = /^[0-9]{10}$/;
       if ((fieldValue.length > 0) && fieldValue.match(phoneFormat)) {
         newRider.phoneNumber = fieldValue;
         setValidPhone(true);
@@ -134,13 +146,14 @@ const Form = (props: FormProps) => {
         newRider.accessibilityNeeds.needsWheelchair = true
       } if (fieldName === "needCrutches") {
         newRider.accessibilityNeeds.hasCrutches = true
-      } else {
+      } else if (fieldName === "needAssist") {
         newRider.accessibilityNeeds.needsAssistant = true
       }
     }
     setNewRider(newRider);
   };
   const handleSubmit = (evt: any) => {
+    // console.log(newRider)
     evt.preventDefault();
     let validRider = validFirstName && validLastName && validPhone &&
       validEmail && validDesc && validAddress;
@@ -172,11 +185,11 @@ const Form = (props: FormProps) => {
           <div className="formDiv">
             <label htmlFor="phone" className="formLabel">Phone Number: </label>
             <input type="text"
-              placeholder="XXX-XXX-XXXX"
+              placeholder="XXXXXXXXXX"
               name="phone"
               onChange={(e) => handleInput(e)} />
             <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
-              Enter a phone number in the form xxx-xxx-xxxx
+              Enter a phone number in the form xxxxxxxxxx
           </p>
           </div>
           <div className="formDiv">
@@ -247,54 +260,84 @@ const Form = (props: FormProps) => {
 };
 
 const Table = () => {
-  const [riders, setRiders] = useState([
-    {
-      firstName: 'first1', lastName: 'last1', phoneNumber: '111-111-1111',
-      email: 'a1@cornell.edu', accessibilityNeeds:
-        { needsWheelchair: true, hasCrutches: true, needsAssistant: false },
-      description: 'descr1', joinDate: 'join1', pronouns: 'pro1', address: 'add1'
-    },
-    {
-      firstName: 'first2', lastName: 'last2', phoneNumber: '222-222-2222',
-      email: 'b2@cornell.edu', accessibilityNeeds:
-        { needsWheelchair: false, hasCrutches: true, needsAssistant: false },
-      description: 'descr2', joinDate: 'join2', pronouns: 'pro2', address: 'add2'
-    }
-  ]);
+  const [riders, setRiders] = useState(
+    [
+      {
+        id: "", firstName: '', lastName: '', phoneNumber: '',
+        email: '', accessibilityNeeds:
+          { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
+        description: '', joinDate: '', pronouns: '', address: ''
+      }
+    ]
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function getExistingRiders() {
+      const response = await fetch('/riders');
+      const data = (await response.json())["data"];
+      let all_riders: Rider[] = data.map(function (rider: any) {
+        return {
+          id: rider["id"],
+          firstName: rider["firstName"],
+          lastName: rider["lastName"],
+          phoneNumber: rider["phoneNumber"],
+          email: rider["email"],
+          accessibilityNeeds: rider["accessibilityNeeds"],
+          description: rider["description"],
+          joinDate: rider["joinDate"],
+          pronouns: rider["pronouns"],
+          address: rider["address"]
+        }
+      });
+      setRiders(all_riders);
+    }
+    getExistingRiders();
+  }, []);
+
+  function deleteEntry(email: string, riderList: Rider[]) {
+    const riderId = (riderList.filter(rider => rider.email === email))[0]["id"]
+    async function deleteBackend() {
+      const requestOptions = {
+        method: 'DELETE',
+        headers: { "Content-Type": 'application/json' },
+      };
+      const response = await fetch('/riders/' + riderId, requestOptions);
+    }
+    deleteBackend();
+    return riderList.filter(rider => rider.email !== email)
+  }
+
+  function addRider(newRider: Rider, allRiders: Rider[]) {
+    async function addBackend() {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          "firstName": newRider["firstName"],
+          "lastName": newRider["lastName"],
+          "phoneNumber": newRider["phoneNumber"],
+          "email": newRider["email"],
+          "accessibilityNeeds": {
+            "needsWheelchair": newRider["accessibilityNeeds"]["needsWheelchair"],
+            "hasCrutches": newRider["accessibilityNeeds"]["hasCrutches"],
+            "needsAssistant": newRider["accessibilityNeeds"]["needsAssistant"]
+          },
+          "description:": newRider["description"],
+          "joinDate:": newRider["joinDate"],
+          "pronouns:": newRider["pronouns"],
+          "address:": newRider["address"]
+        })
       };
-      const response = await fetch('/rider', requestOptions);
-      const result = (await response.json())["data"];
-      setRiders(result);
-    };
-  });
-
-  function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
-    let allNeeds = '';
-    let arrayNeeds = Object.entries(accessNeeds);
-    arrayNeeds.forEach(element => {
-      if (element[1]) {
-        if (element[0] === 'needsWheelchair') {
-          allNeeds = allNeeds.concat("Needs Wheelchair, ");
-        } else if (element[0] === 'hasCrutches') {
-          allNeeds = allNeeds.concat("Has Crutches, ");
-        } else {
-          allNeeds = allNeeds.concat("Needs Assistant, ");
-        }
-      }
-    });
-    return allNeeds.substr(0, allNeeds.length - 2);
+      const response = await fetch('/riders', requestOptions);
+    }
+    addBackend();
+    return [...allRiders, newRider];
   }
 
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
       const {
-        firstName, lastName, phoneNumber, email,
+        id, firstName, lastName, phoneNumber, email,
         accessibilityNeeds,
         description, joinDate, pronouns, address
       } = rider;
@@ -310,7 +353,8 @@ const Table = () => {
           <td>{pronouns}</td>
           <td>{address}</td>
           <td>
-            <button onClick={() => setRiders(deleteEntry(email, allRiders))}>
+            <button onClick={() => setRiders(deleteEntry(email, allRiders))
+            }>
               Delete
               </button>
           </td>
@@ -331,29 +375,7 @@ const Table = () => {
         </table>
       </div >
       <div>
-        <Form onClick={(newRider) => {
-          const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              "firstName": newRider["firstName"],
-              "lastName": newRider["lastName"],
-              "phoneNumber": newRider["phoneNumber"],
-              "email": newRider["email"],
-              "accessibilityNeeds": {
-                "needsWheelchair": newRider["accessibilityNeeds"]["needsWheelchair"],
-                "hasCrutches": newRider["accessibilityNeeds"]["hasCrutches"],
-                "needsAssistant": newRider["accessibilityNeeds"]["needsAssistant"]
-              },
-              "description:": newRider["description"],
-              "joinDate:": newRider["joinDate"],
-              "pronouns:": newRider["pronouns"],
-              "address:": newRider["address"]
-            })
-          };
-          const response = fetch('/rider', requestOptions);
-          setRiders(addRider(newRider, riders));
-        }} />
+        <Form onClick={(newRider) => (setRiders(addRider(newRider, riders)))} />
       </div>
     </>
   );
