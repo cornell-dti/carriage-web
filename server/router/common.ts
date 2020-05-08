@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Model } from 'dynamoose/dist/Model';
 import { Document } from 'dynamoose/dist/Document';
 import { ObjectType } from 'dynamoose/dist/General';
