@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/table.css';
 
 interface Driver {
@@ -80,41 +80,43 @@ const Form = (props: FormProps) => {
   return (
     <>
       <h2 className="formHeader">New Driver</h2>
-      <form className="driverForm" onSubmit={(e) => handleSubmit(e)}>
-        <div className="formDiv">
-          <label htmlFor="name" className="formLabel">Name: </label >
-          <input type="text"
-            name="name"
-            onChange={(e) => handleInput(e)}
-            required
-          />
-          <p className={`formFeedback ${validName ? "hidden" : ""}`}>
-            Please enter a name
+      <div className="addFormDiv">
+        <form className="addForm" onSubmit={(e) => handleSubmit(e)}>
+          <div className="formDiv">
+            <label htmlFor="name" className="formLabel">Name: </label >
+            <input type="text"
+              name="name"
+              onChange={(e) => handleInput(e)}
+              required
+            />
+            <p className={`formFeedback ${validName ? "hidden" : ""}`}>
+              Enter a name
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="email" className="formLabel">Email: </label>
-          <input type="text"
-            name="email"
-            onChange={(e) => handleInput(e)}
-          />
-          <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
-            Please enter a valid email address
+          </div>
+          <div className="formDiv">
+            <label htmlFor="email" className="formLabel">Email: </label>
+            <input type="text"
+              name="email"
+              onChange={(e) => handleInput(e)}
+            />
+            <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
+              Please enter a valid email address
           </p>
-        </div>
-        <div className="formDiv">
-          <label htmlFor="phone" className="formLabel">Phone Number: </label>
-          <input type="text"
-            name="phone"
-            placeholder="XXX-XXX-XXXX"
-            onChange={(e) => handleInput(e)}
-          />
-          <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
-            Please enter a phone number in the form xxx-xxx-xxxx
+          </div>
+          <div className="formDiv">
+            <label htmlFor="phone" className="formLabel">Phone Number: </label>
+            <input type="text"
+              name="phone"
+              placeholder="XXX-XXX-XXXX"
+              onChange={(e) => handleInput(e)}
+            />
+            <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
+              Enter a phone number in the form xxx-xxx-xxxx
           </p>
-        </div>
-        <input type="submit" value="Submit" />
-      </form>
+          </div>
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
     </>
   );
 };
@@ -164,7 +166,7 @@ const Table = () => {
     <>
       <div>
         <h1 className="formHeader">Driver Table</h1>
-        <table className="driverTable">
+        <table className="table">
           <tbody>
             {renderTableHeader()}
             {renderTableData(drivers)}
@@ -178,10 +180,8 @@ const Table = () => {
   );
 };
 
-const TablePage = () => (
-  <>
-    <Table />
-  </>
+const DriverTable = () => (
+  <Table />
 );
 
-export default TablePage;
+export default DriverTable;

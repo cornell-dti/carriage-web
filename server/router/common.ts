@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
-export const deleteByID =
+export const deleteByID = (
   (req: Request, res: Response, client: DocumentClient, table: string) => {
     const { id } = req.params;
     const params = {
@@ -15,6 +15,6 @@ export const deleteByID =
         res.send({ id });
       }
     });
-  }
+  });
 
 export default deleteByID;

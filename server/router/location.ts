@@ -1,5 +1,6 @@
 import express from 'express';
 import uuid from 'uuid/v1';
+import dynamoose from 'dynamoose';
 import AWS from 'aws-sdk';
 import config from '../config';
 
@@ -8,10 +9,19 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-type Location = {
+type LocationType = {
   id: string,
-  location: string,
+  name: string,
+  address: string,
 };
+
+const schema = new dynamoose.Schema({
+  id: String,
+  name: String,
+  address: String,
+});
+
+export const Locations = dynamoose.model('Locations', schema, { create: false });
 
 // Get a location by ID in Locations table
 router.get('/:id', (req, res) => {
@@ -32,9 +42,10 @@ router.get('/:id', (req, res) => {
 // Put a location in Locations table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const location: Location = {
+  const location: LocationType = {
     id: uuid(),
-    location: postBody.location,
+    name: postBody.name,
+    address: postBody.address,
   };
   const params = {
     TableName: 'Locations',
