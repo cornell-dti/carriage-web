@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Model } from 'dynamoose/dist/Model';
 import { Document } from 'dynamoose/dist/Document';
 import { ObjectType } from 'dynamoose/dist/General';
@@ -114,6 +115,21 @@ export const deleteByID = (
         callback(data);
       } else {
         data.delete().then(() => res.send({ id }));
+      }
+    });
+  });
+
+export const deleteByIDOld = (
+  (res: Response, client: DocumentClient, id: string, table: string) => {
+    const params = {
+      TableName: table,
+      Key: { id },
+    };
+    client.delete(params, (err, _) => {
+      if (err) {
+        res.send({ err });
+      } else {
+        res.send({ id });
       }
     });
   });

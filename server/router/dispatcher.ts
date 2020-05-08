@@ -2,7 +2,7 @@ import express from 'express';
 import uuid from 'uuid/v1';
 import AWS from 'aws-sdk';
 import config from '../config';
-import { deleteByID } from './common';
+import { deleteByIDOld } from './common';
 
 const router = express.Router();
 
@@ -45,6 +45,9 @@ router.post('/', (req, res) => {
 });
 
 // Remove Dispatcher
-router.delete('/:id', (req, res) => res.send());
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  deleteByIDOld(res, docClient, id, 'Dispatchers');
+});
 
 export default router;

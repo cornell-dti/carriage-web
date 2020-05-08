@@ -121,6 +121,17 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete an existing driver
-router.delete('/:id', (req, res) => res.send());
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  Drivers.get(id, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data) {
+      res.send({ err: { message: 'id not found in Drivers' } });
+    } else {
+      data.delete().then(() => res.send({ id }));
+    }
+  });
+});
 
 export default router;
