@@ -50,9 +50,9 @@ router.post('/', (req, res) => {
             res.send({ err });
           } else {
             const userList = data.Items;
-            const res_bod = { id: data.Count ? userList![0].id : null }
-            const tok = jwt.sign(res_bod, process.env.JWT_SECRET || "");
-            res.cookie('token', tok, { httpOnly: true }).send(res_bod);
+            const resBod = { id: data.Count ? userList![0].id : null }
+            const tok = jwt.sign(resBod, process.env.JWT_SECRET || "");
+            res.cookie('token', tok, { httpOnly: true }).send(resBod);
           }
         });
       } else {

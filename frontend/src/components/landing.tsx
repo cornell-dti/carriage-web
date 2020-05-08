@@ -3,7 +3,6 @@ import Header from './header';
 import Footer from './footer';
 import ReadMore from './readmore';
 import '../styles/header.css';
-import { response } from 'express';
 
 const LandingPage = () => (
   <>
