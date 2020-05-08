@@ -14,7 +14,7 @@ export const getByID = (
     callback?: (value: any) => void) => {
     model.get(id, (err, data) => {
       if (err) {
-        res.send(err);
+        res.send({ err });
       } else if (!data) {
         res.send({ err: { message: `id not found in ${table}` } });
       } else if (callback) {
@@ -53,7 +53,7 @@ export const getAll = (
     callback?: (value: any) => void) => {
     model.scan().exec((err, data) => {
       if (err) {
-        res.send(err);
+        res.send({ err });
       } else if (!data) {
         res.send({ err: { message: `items not found in ${table}` } });
       } else if (callback) {
@@ -88,7 +88,7 @@ export const update = (
     callback?: (value: any) => void) => {
     model.update(key, updateObj, (err, data) => {
       if (err) {
-        res.send(err);
+        res.send({ err });
       } else if (!data) {
         res.send({ err: { message: `id not found in ${table}` } });
       } else if (callback) {

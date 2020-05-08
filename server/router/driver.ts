@@ -24,7 +24,7 @@ type DriverType = {
   lastName: string,
   startTime: string,
   endTime: string,
-  breaks: BreakType | null,
+  breaks: BreakType,
   vehicle: string,
   phoneNumber: string,
   email: string,

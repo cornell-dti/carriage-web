@@ -1,13 +1,9 @@
 import express from 'express';
 import uuid from 'uuid/v1';
-import AWS from 'aws-sdk';
-import config from '../config';
-import { deleteByIDOld } from './common';
+import dynamoose from 'dynamoose';
+import * as db from './common';
 
 const router = express.Router();
-
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
 
 // Using a String enum allows the enum to be parsed by JSON.parse()
 enum AccessLevel {
@@ -16,7 +12,7 @@ enum AccessLevel {
   Dispatcher = 'Dispatcher'
 }
 
-type Dispatcher = {
+type DispatcherType = {
   id: string,
   firstName: string,
   lastName: string,
@@ -25,29 +21,33 @@ type Dispatcher = {
   accessLevel: AccessLevel
 };
 
+const schema = new dynamoose.Schema({
+  id: String,
+  firstName: String,
+  lastName: String,
+  phoneNumber: String,
+  email: String,
+  accessLevel: {
+    type: String,
+    enum: ['Admin', 'SDS', 'Dispatcher'],
+  },
+});
+
+const Dispatchers = dynamoose.model('Dispatchers', schema, { create: false });
+
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
-  const user: Dispatcher = {
+  const dispatcher = new Dispatchers({
     id: uuid(),
     ...JSON.parse(JSON.stringify(req.body)),
-  };
-  const params = {
-    TableName: 'Dispatchers',
-    Item: user,
-  };
-  docClient.put(params, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(user);
-    }
   });
+  db.create(res, dispatcher);
 });
 
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  deleteByIDOld(res, docClient, id, 'Dispatchers');
+  db.deleteByID(res, Dispatchers, id, 'Dispatchers');
 });
 
 export default router;
