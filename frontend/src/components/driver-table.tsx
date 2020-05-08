@@ -153,7 +153,7 @@ const Table = () => {
 
   useEffect(() => {
     const fetchDrivers = async () => {
-      const data = fetch("/riders", {
+      fetch("/riders", {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       })
