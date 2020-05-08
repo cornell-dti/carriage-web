@@ -9,6 +9,9 @@ export const SignInButton = () => {
 
   function logout() {
     localStorage.clear();
+    fetch('/auth/delcook').then(
+      res => console.log(res)
+    );
     toggleShow(true);
     history.push('/');
   }
@@ -28,8 +31,9 @@ export const SignInButton = () => {
           "clientID": clientId
         })
     };
-    const response = await fetch('/auth', requestOptions);
-    const authorized = (await response.json())['id'];
+    const authorized = await fetch('/auth', requestOptions).then(() =>
+      document.cookie.indexOf('token') === -1
+    );
     if (authorized) {
       history.push('/rider-table')
     } else {
