@@ -118,18 +118,3 @@ export const deleteByID = (
       }
     });
   });
-
-export const deleteByIDOld = (
-  (res: Response, client: DocumentClient, id: string, table: string) => {
-    const params = {
-      TableName: table,
-      Key: { id },
-    };
-    client.delete(params, (err, _) => {
-      if (err) {
-        res.send({ err });
-      } else {
-        res.send({ id });
-      }
-    });
-  });
