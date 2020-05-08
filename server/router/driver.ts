@@ -47,47 +47,23 @@ export const Drivers = dynamoose.model('Drivers', schema, { create: false });
 // Get a driver by ID in Drivers table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  Drivers.get(id, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getByID(res, Drivers, id, 'Drivers');
 });
 
 // Get all drivers
-router.get('/', (req, res) => {
-  Drivers.scan().exec((err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'items not found' } });
-    } else {
-      res.send(data);
-    }
-  });
-});
+router.get('/', (req, res) => db.getAll(res, Drivers, 'Drivers'));
 
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  Drivers.get(id, (err, data: any) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const driver: DriverType = data;
-      const {
-        email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
-      } = driver;
-      res.send({
-        email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
-      });
-    }
+  db.getByID(res, Drivers, id, 'Drivers', (data) => {
+    const driver: DriverType = data;
+    const {
+      email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+    } = driver;
+    res.send({
+      email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+    });
   });
 });
 
@@ -98,40 +74,20 @@ router.post('/', (req, res) => {
     id: uuid(),
     ...postBody,
   });
-  driver.save((err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.create(res, driver);
 });
 
 // Update an existing driver
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  Drivers.update({ id }, postBody, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(data);
-    }
-  });
+  db.update(res, Drivers, { id }, postBody, 'Drivers');
 });
 
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  Drivers.get(id, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found in Drivers' } });
-    } else {
-      data.delete().then(() => res.send({ id }));
-    }
-  });
+  db.deleteByID(res, Drivers, id, 'Drivers');
 });
 
 export default router;
