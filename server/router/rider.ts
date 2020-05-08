@@ -15,22 +15,28 @@ type Key = {
   id: string
 };
 
+type RideKeyType = {
+  id: string
+  startTime: string
+};
+
 type RiderType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  phoneNumber: string,
-  email: string,
+  id: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
   accessibilityNeeds: {
-    needsWheelchair: boolean,
-    hasCrutches: boolean,
-    needsAssistant: boolean,
-  },
-  description: string,
-  joinDate: string,
-  pronouns: string,
-  address: string,
+    needsWheelchair: boolean
+    hasCrutches: boolean
+    needsAssistant: boolean
+  }
+  description: string
+  joinDate: string
+  pronouns: string
+  address: string
   favoriteLocations: string[]
+  requestedRides: RideKeyType[]
 };
 
 const schema = new dynamoose.Schema({

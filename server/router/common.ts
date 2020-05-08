@@ -3,15 +3,15 @@ import { Model } from 'dynamoose/dist/Model';
 import { Document } from 'dynamoose/dist/Document';
 import { ObjectType } from 'dynamoose/dist/General';
 
-type ClientType = Document & Model<Document>;
+type ModelType = Document & Model<Document>;
 
 export const getByID = (
   (res: Response,
-    client: ClientType,
+    model: ModelType,
     id: string,
     table: string,
     callback?: (value: any) => void) => {
-    client.get(id, (err, data) => {
+    model.get(id, (err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
@@ -27,11 +27,11 @@ export const getByID = (
 
 export const batchGet = (
   (res: Response,
-    client: ClientType,
+    model: ModelType,
     keys: ObjectType[],
     table: string,
     callback?: (value: any) => void) => {
-    client.batchGet(keys, (err, data) => {
+    model.batchGet(keys, (err, data) => {
       if (err) {
         res.send({ err });
       } else if (!data) {
@@ -47,10 +47,10 @@ export const batchGet = (
 
 export const getAll = (
   (res: Response,
-    client: ClientType,
+    model: ModelType,
     table: string,
     callback?: (value: any) => void) => {
-    client.scan().exec((err, data) => {
+    model.scan().exec((err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
@@ -80,12 +80,12 @@ export const create = (
 
 export const update = (
   (res: Response,
-    client: ClientType,
+    model: ModelType,
     key: ObjectType,
     updateObj: ObjectType,
     table: string,
     callback?: (value: any) => void) => {
-    client.update(key, updateObj, (err, data) => {
+    model.update(key, updateObj, (err, data) => {
       if (err) {
         res.send(err);
       } else if (!data) {
@@ -101,11 +101,11 @@ export const update = (
 
 export const deleteByID = (
   (res: Response,
-    client: ClientType,
+    model: ModelType,
     id: string,
     table: string,
     callback?: (value: any) => void) => {
-    client.get(id, (err, data) => {
+    model.get(id, (err, data) => {
       if (err) {
         res.send({ err });
       } else if (!data) {
