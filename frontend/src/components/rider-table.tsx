@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/table.css';
-import SignInButton from './signin'
 
 interface AccessibilityNeeds {
   hasCrutches: boolean;
@@ -370,10 +369,7 @@ const Table = () => {
 };
 
 const RiderTable = () => (
-  <>
-    <SignInButton />
-    <Table />
-  </>
+  <Table />
 );
 
 export default RiderTable;

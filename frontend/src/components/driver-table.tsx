@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import '../styles/table.css';
-import SignInButton from './signin';
 
 interface Driver {
   name: string;
@@ -191,10 +190,7 @@ const Table = () => {
 };
 
 const DriverTable = () => (
-  <>
-    <SignInButton />
-    <Table />
-  </>
+  <Table />
 );
 
 export default DriverTable;
