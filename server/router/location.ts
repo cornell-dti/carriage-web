@@ -9,7 +9,7 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-type LocationType = {
+export type LocationType = {
   id: string,
   name: string,
   address: string,

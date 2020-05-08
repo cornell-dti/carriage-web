@@ -3,7 +3,8 @@ import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
 import AWS from 'aws-sdk';
 import config from '../config';
-import { Locations } from './location';
+import * as db from './common';
+import { Locations, LocationType } from './location';
 
 const router = express.Router();
 
@@ -14,22 +15,28 @@ type Key = {
   id: string
 };
 
+type RideKeyType = {
+  id: string
+  startTime: string
+};
+
 type RiderType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  phoneNumber: string,
-  email: string,
+  id: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
   accessibilityNeeds: {
-    needsWheelchair: boolean,
-    hasCrutches: boolean,
-    needsAssistant: boolean,
-  },
-  description: string,
-  joinDate: string,
-  pronouns: string,
-  address: string,
+    needsWheelchair: boolean
+    hasCrutches: boolean
+    needsAssistant: boolean
+  }
+  description: string
+  joinDate: string
+  pronouns: string
+  address: string
   favoriteLocations: string[]
+  requestedRides: RideKeyType[]
 };
 
 const schema = new dynamoose.Schema({
@@ -68,29 +75,11 @@ export const Riders = dynamoose.model('Riders', schema, { create: false });
 // Get a rider by ID in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getByID(res, Riders, id, 'Riders');
 });
 
 // Get all riders
-router.get('/', (req, res) => {
-  Riders.scan().exec((err, data) => {
-    if (err) {
-      res.send(err);
-    } else if (!data) {
-      res.send({ err: { message: 'items not found' } });
-    } else {
-      res.send(data);
-    }
-  });
-});
+router.get('/', (req, res) => db.getAll(res, Riders, 'Riders'));
 
 // Get all upcoming rides for a rider
 router.get('/:id/rides', (req, res) => {
@@ -131,64 +120,40 @@ router.get('/:id/rides', (req, res) => {
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const rider: RiderType = data;
-      const {
-        email, firstName, lastName, phoneNumber, pronouns, joinDate,
-      } = rider;
-      res.send({
-        email, firstName, lastName, phoneNumber, pronouns, joinDate,
-      });
-    }
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
+    const {
+      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+    } = rider;
+    res.send({
+      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+    });
   });
 });
 
 // Get accessibility information for a rider
-router.get('/:id/accessibility', (req, res) => {
+router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const rider: RiderType = data;
-      const { description, accessibilityNeeds } = rider;
-      res.send({ description, accessibilityNeeds });
-    }
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
+    const { description, accessibilityNeeds } = rider;
+    res.send({ description, accessibilityNeeds });
   });
 });
 
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
+  db.getByID(res, Riders, id, 'Riders', (data) => {
+    const rider: RiderType = data;
+    const { favoriteLocations } = rider;
+    const keys: Key[] = favoriteLocations.map((locID: string) => ({
+      id: locID,
+    }));
+    if (!keys.length) {
+      res.send({ data: [] });
     } else {
-      const rider: RiderType = data;
-      const { favoriteLocations } = rider;
-      const keys: Key[] = favoriteLocations.map((locID: string) => ({
-        id: locID,
-      }));
-      if (!keys.length) {
-        res.send({ data: [] });
-      } else {
-        Locations.batchGet(keys, (locErr, locData) => {
-          if (locErr) {
-            res.send({ err: locErr });
-          } else {
-            res.send({ data: locData });
-          }
-        });
-      }
+      db.batchGet(res, Locations, keys, 'Locations');
     }
   });
 });
@@ -202,26 +167,14 @@ router.post('/', (req, res) => {
     favoriteLocations: [],
     requestedRides: [],
   });
-  rider.save((err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.create(res, rider);
 });
 
 // Update a rider in Riders table
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  Riders.update({ id }, postBody, (err, data) => {
-    if (err) {
-      res.send(err);
-    } else {
-      res.send(data);
-    }
-  });
+  db.update(res, Riders, { id }, postBody, 'Riders');
 });
 
 // Add a location to favorites
@@ -229,36 +182,17 @@ router.post('/:id/favorites', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
   const locID = postBody.id;
-  Locations.get(locID, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'location not found' } });
-    } else {
-      const location = data;
-      Riders.update({ id }, { $ADD: { favoriteLocations: [locID] } }, (riderErr) => {
-        if (riderErr) {
-          res.send({ err: riderErr });
-        } else {
-          res.send(location);
-        }
-      });
-    }
+  db.getByID(res, Locations, locID, 'Locations', (data) => {
+    const location: LocationType = data;
+    const updateObj = { $ADD: { favoriteLocations: [locID] } };
+    db.update(res, Riders, { id }, updateObj, 'Riders', () => res.send(location));
   });
 });
 
 // Delete an existing rider
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  Riders.get(id, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      data.delete().then(() => res.send({ id }));
-    }
-  });
+  db.deleteByID(res, Riders, id, 'Riders');
 });
 
 export default router;
