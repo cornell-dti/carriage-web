@@ -30,13 +30,28 @@ type DriverType = {
   email: string,
 };
 
+const breakDayValue = Object({
+  type: Object,
+  schema: Object({
+    breakStart: String,
+    breakEnd: String,
+  }),
+});
+
+const breakSchema = Object.fromEntries(
+  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) => [d, breakDayValue]),
+);
+
 const schema = new dynamoose.Schema({
   id: String,
   firstName: String,
   lastName: String,
   startTime: String,
   endTime: String,
-  breaks: Object,
+  breaks: {
+    type: Object,
+    schema: breakSchema,
+  },
   vehicle: String,
   phoneNumber: String,
   email: String,
