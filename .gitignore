@@ -71,3 +71,6 @@ scripts
 .DS_Store
 
 server/.env
+
+# build
+build/
