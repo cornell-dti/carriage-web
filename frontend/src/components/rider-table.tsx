@@ -328,8 +328,7 @@ const Table = () => {
 
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
-      const {
-        id, firstName, lastName, phoneNumber, email,
+      const { firstName, lastName, phoneNumber, email,
         accessibilityNeeds,
       } = rider;
       return (

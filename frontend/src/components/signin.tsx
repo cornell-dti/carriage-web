@@ -9,7 +9,7 @@ export const SignInButton = () => {
 
   function logout() {
     localStorage.clear();
-    fetch('/auth/delcook').then(
+    fetch('/auth/logout').then(
       res => console.log(res)
     );
     toggleShow(true);
@@ -20,6 +20,7 @@ export const SignInButton = () => {
     let token = googleUser.getAuthResponse().id_token;
     let email = googleUser.profileObj.email;
     toggleShow(false);
+    console.log('will run again')
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -31,9 +32,9 @@ export const SignInButton = () => {
           "clientID": clientId
         })
     };
-    const authorized = await fetch('/auth', requestOptions).then(() =>
-      document.cookie.indexOf('token') === -1
-    );
+    const authorized = await fetch('/auth', requestOptions).then((res) =>
+      res.json()
+    ).then((data) => data['id']);
     if (authorized) {
       history.push('/rider-table')
     } else {
@@ -45,7 +46,7 @@ export const SignInButton = () => {
       <GoogleLogin
         onSuccess={onSignIn}
         onFailure={() => console.error("failed to sign in")}
-        clientId={clientId} isSignedIn={false}
+        clientId={clientId} isSignedIn={true}
       />
     )
   }
