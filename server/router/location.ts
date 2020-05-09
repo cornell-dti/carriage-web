@@ -1,14 +1,9 @@
 import express from 'express';
 import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
-import AWS from 'aws-sdk';
-import config from '../config';
 import * as db from './common';
 
 const router = express.Router();
-
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
 
 export type LocationType = {
   id: string,
