@@ -40,7 +40,7 @@ const schema = new dynamoose.Schema({
   vehicle: String,
   phoneNumber: String,
   email: String,
-});
+}, { saveUnknown: true });
 
 export const Drivers = dynamoose.model('Drivers', schema, { create: false });
 
