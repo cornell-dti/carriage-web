@@ -5,15 +5,13 @@ import ReadMore from './readmore';
 import '../styles/header.css';
 
 const LandingPage = () => (
-  <>
-    <div>
-      <div className="home">
-        <Header />
-        <ReadMore />
-      </div>
-      <Footer />
+  <div>
+    <div className="home">
+      <Header />
+      <ReadMore />
     </div>
-  </>
+    <Footer />
+  </div>
 );
 
 export default LandingPage;
