@@ -11,6 +11,8 @@ const withAuth = (req: Request, res: Response, next: any) => {
         res.status(401).send('Invalid token');
         console.log(res);
       } else {
+        // this middleware does not do all that is desired yet
+        // maybe split it into multiple middlewares, each one handling a particular type of request
         req.body['id'] = decoded['id'];
         next();
       }
