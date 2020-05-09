@@ -8,7 +8,7 @@ type ModelType = Document & Model<Document>;
 export function getByID(
   res: Response,
   model: ModelType,
-  id: string,
+  id: string | ObjectType,
   table: string,
   callback?: (value: any) => void,
 ) {
@@ -104,7 +104,7 @@ export function update(
 export function deleteByID(
   res: Response,
   model: ModelType,
-  id: string,
+  id: string | ObjectType,
   table: string,
   callback?: (value: any) => void,
 ) {
