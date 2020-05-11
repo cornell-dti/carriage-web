@@ -13,7 +13,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 **Current Contributors**
 * Bryan Graeser - Product Manager
 * Nina Xie - Product Manager
-* Christopher Hansen - Technical Project Manager
+* Christopher Hansen - Technical Product Manager
 * Lucy Wang - Software Developer
 * Matthew Guo - Software Developer
 * Chelsea Wang - Designer
