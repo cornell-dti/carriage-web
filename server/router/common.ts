@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { Model } from 'dynamoose/dist/Model';
 import { Document } from 'dynamoose/dist/Document';
 import { ObjectType } from 'dynamoose/dist/General';
+import { Condition } from 'dynamoose/dist/Condition';
 
 type ModelType = Document & Model<Document>;
 
@@ -117,6 +118,28 @@ export function deleteByID(
       callback(data);
     } else {
       data.delete().then(() => res.send({ id }));
+    }
+  });
+}
+
+export function query(
+  res: Response,
+  model: ModelType,
+  condition: Condition,
+  index?: string,
+  callback?: (value: any) => void,
+) {
+  let queryCall = model.query(condition);
+  if (index) {
+    queryCall = queryCall.using(index);
+  }
+  queryCall.exec((err: any, data: any) => {
+    if (err) {
+      res.send({ err });
+    } else if (callback) {
+      callback(data);
+    } else {
+      res.send({ data });
     }
   });
 }
