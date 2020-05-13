@@ -84,26 +84,22 @@ router.get('/:type', (req, res) => {
   let condition = new Condition('type').eq(type);
   let index;
   if (riderID) {
-    // if querying rider, must change hash key to riderID and index to riderIndex
-    condition = new Condition('riderID').eq(riderID).where('type').eq(type);
+    condition = condition.where('riderID').eq(riderID);
+    // change index to riderIndex to use riderID as hash key
     index = Index.rider;
   }
   if (driverID) {
-    if (index) {
-      // if index already set to riderIndex, use filter operation on driverID
-      condition = condition.where('driverID').eq(driverID);
-    } else {
-      // otherwise change hash key to driverID and index to driverIndex
-      condition = new Condition('driverID').eq(driverID).where('type').eq(type);
-      index = Index.driver;
-    }
+    condition = condition.where('driverID').eq(driverID);
+    // change index to driverIndex (if not previously set) to use driverID as
+    // hash key, otherwise use as filter expression
+    index = index || Index.driver;
   }
   if (date) {
     const dateStart = new Date(`${date} EST`).toISOString();
     const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
-    // startTime used as range key or filter operation depending on index
     condition = condition.where('startTime').between(dateStart, dateEnd);
-    // if no index set, use timeIndex to set startTime as range key
+    // change index to timeIndex (if not previously set) to use startTime as
+    // range key, otherwise use as filter expression
     index = index || Index.time;
   }
   db.query(res, Rides, condition, index);
