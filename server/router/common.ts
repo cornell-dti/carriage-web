@@ -59,7 +59,7 @@ export function getAll(
     } else if (callback) {
       callback(data);
     } else {
-      res.send(data);
+      res.send({ data });
     }
   });
 }
