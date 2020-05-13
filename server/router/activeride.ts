@@ -1,9 +1,7 @@
 import express from 'express';
 import uuid from 'uuid/v1';
-import dynamoose from 'dynamoose';
 import AWS from 'aws-sdk';
 import config from '../config';
-import * as db from './common';
 
 const router = express.Router();
 
@@ -16,56 +14,52 @@ type Ride = {
   endLocation: string,
   startTime: string,
   endTime: string,
-  riderID: string,
-  driverID?: string,
+  riderID: string | null,
+  driverID: string | null,
 };
-
-const schema = new dynamoose.Schema({
-  id: String,
-  startLocation: String,
-  endLocation: String,
-  startTime: String,
-  endTime: String,
-  riderID: String,
-  driverID: String,
-}, { saveUnknown: true });
-
-export const Rides = dynamoose.model('ActiveRides', schema, { create: false });
 
 // Get an active/requested ride by ID in Active Rides table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Rides, id, 'Active Rides');
+  const params = {
+    TableName: 'ActiveRides',
+    Key: { id },
+  };
+  docClient.get(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else {
+      res.send(data.Item);
+    }
+  });
 });
 
 // Get all rides in table w/ optional date query
 router.get('/', (req, res) => {
   const { date } = req.query;
+  const params: any = {
+    TableName: 'ActiveRides',
+  };
   if (date) {
     // adding 'EST' to date adds correct offset to UTC when returning toISOString()
     const rangeStart = new Date(`${date} EST`).toISOString();
     const rangeEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
-    const condition = new dynamoose.Condition({
-      FilterExpression: '#time between :start and :end',
-      ExpressionAttributeNames: {
-        '#time': 'startTime',
-      },
-      ExpressionAttributeValues: {
-        ':start': rangeStart,
-        ':end': rangeEnd,
-      },
-    });
-    Rides.query(condition).exec((err, data) => {
-      if (err) {
-        res.send({ err });
-      } else if (!data) {
-        res.send({ data: [] });
-      } else {
-        res.send({ data });
-      }
-    });
+    params.FilterExpression = '#time between :start and :end';
+    params.ExpressionAttributeNames = {
+      '#time': 'startTime',
+    };
+    params.ExpressionAttributeValues = {
+      ':start': rangeStart,
+      ':end': rangeEnd,
+    };
   }
-  db.getAll(res, Rides, 'Active Rides');
+  docClient.scan(params, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else {
+      res.send({ data: data.Items });
+    }
+  });
 });
 
 // Put an active ride in Active Rides table
@@ -79,6 +73,7 @@ router.post('/', (req, res) => {
     startTime: postBody.startTime,
     endTime: postBody.endTime,
     riderID: postBody.riderID,
+    driverID: null,
   };
   const params = {
     TableName: 'ActiveRides',
