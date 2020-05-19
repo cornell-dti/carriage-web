@@ -1,13 +1,9 @@
 import express from 'express';
 import uuid from 'uuid/v1';
 import dynamoose from 'dynamoose';
-import AWS from 'aws-sdk';
-import config from '../config';
+import * as db from './common';
 
 const router = express.Router();
-
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
 
 export type LocationType = {
   id: string,
@@ -26,42 +22,34 @@ export const Locations = dynamoose.model('Locations', schema, { create: false })
 // Get a location by ID in Locations table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  const params = {
-    TableName: 'Locations',
-    Key: { id },
-  };
-  docClient.get(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getByID(res, Locations, id, 'Locations');
 });
+
+// Get all locations
+router.get('/', (req, res) => db.getAll(res, Locations, 'Locations'));
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const location: LocationType = {
+  const location = new Locations({
     id: uuid(),
     name: postBody.name,
     address: postBody.address,
-  };
-  const params = {
-    TableName: 'Locations',
-    Item: location,
-  };
-  docClient.put(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(location);
-    }
   });
+  db.create(res, location);
 });
 
-// TODO: Update an existing location
+// Update an existing location
+router.post('/', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  db.update(res, Locations, { id }, postBody, 'Locations');
+});
 
-// TODO: Delete an existing location
+// Delete an existing location
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  db.deleteByID(res, Locations, id, 'Locations');
+});
 
 export default router;
