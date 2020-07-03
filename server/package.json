@@ -27,6 +27,7 @@
     },
     "scripts": {
         "start": "nodemon --exec \"ts-node\" --watch router app.ts",
+        "tsc": "tsc --noEmit false",
         "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

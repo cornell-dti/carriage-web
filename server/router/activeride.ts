@@ -23,13 +23,17 @@ router.get('/:id', (req, res) => {
   const { id } = req.params;
   const params = {
     TableName: 'ActiveRides',
-    Key: { id },
+    KeyConditionExpression: '#id = :rideID',
+    ExpressionAttributeNames: { '#id': 'id' },
+    ExpressionAttributeValues: { ':rideID': id },
   };
-  docClient.get(params, (err, data) => {
+  docClient.query(params, (err, data) => {
     if (err) {
       res.send({ err });
+    } else if (!data.Items) {
+      res.send({ err: { message: 'id not found in Active Rides' } });
     } else {
-      res.send(data.Item);
+      res.send(data.Items[0]);
     }
   });
 });

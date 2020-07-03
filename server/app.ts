@@ -8,13 +8,14 @@ import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
 import dispatcher from './router/dispatcher';
+import ride from './router/ride';
 import activeride from './router/activeride';
 import pastride from './router/pastride';
 import vehicle from './router/vehicle';
 import location from './router/location';
 import auth from './router/auth';
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 dynamoose.aws.sdk.config.update(config);
 
@@ -31,5 +32,6 @@ app.use('/past-rides', withAuth, pastride);
 app.use('/vehicles', withAuth, vehicle);
 app.use('/locations', location);
 app.use('/auth', auth);
+app.get('/health-check', (_, response) => response.status(200).send('OK'));
 
 app.listen(port, () => console.log('Listening at port', port));
