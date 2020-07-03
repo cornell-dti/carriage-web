@@ -20,7 +20,6 @@ export const SignInButton = () => {
     let token = googleUser.getAuthResponse().id_token;
     let email = googleUser.profileObj.email;
     toggleShow(false);
-    console.log('will run again')
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
