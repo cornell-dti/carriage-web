@@ -265,10 +265,9 @@ const Table = () => {
 
   useEffect(() => {
     async function getExistingRiders() {
-      const response = await fetch('/riders');
-      const data = (await response.json());
-      let allRiders: Rider[] = data.map(function (rider: any) {
-        return {
+      const allRiders = await fetch('/riders')
+        .then((res) => res.json())
+        .then((data) => data['data'].map((rider: Rider) => ({
           id: rider["id"],
           firstName: rider["firstName"],
           lastName: rider["lastName"],
@@ -279,8 +278,7 @@ const Table = () => {
           joinDate: rider["joinDate"],
           pronouns: rider["pronouns"],
           address: rider["address"]
-        }
-      });
+        })))
       setRiders(allRiders);
     }
     getExistingRiders();
