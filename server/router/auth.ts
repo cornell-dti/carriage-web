@@ -3,6 +3,7 @@ import { LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
 import AWS from 'aws-sdk';
 import config from '../config';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -49,16 +50,24 @@ router.post('/', (req, res) => {
             res.send({ err });
           } else {
             const userList = data.Items;
-            res.send({ id: data.Count ? userList![0].id : null });
+            const resBod = { id: data.Count ? userList![0].id : null }
+            const tok = jwt.sign(resBod, process.env.JWT_SECRET || "");
+            res.cookie('token', tok, { httpOnly: true }).send(resBod);
           }
         });
       } else {
         res.send({ success: false });
       }
     })
-    .catch(() => {
-      res.send({ success: false });
+    .catch((e) => {
+      res.send(e.toString());
     });
 });
+
+router.get('/logout', function (req, res) {
+  res.clearCookie('token', { httpOnly: true, path: '/' });
+  res.send('cookie cleared');
+});
+
 
 export default router;
