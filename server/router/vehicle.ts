@@ -33,8 +33,17 @@ router.post('/', (req, res) => {
   db.create(res, vehicle);
 });
 
-// TODO: Update an existing vehicle
+// Update an existing vehicle
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  db.update(res, Vehicle, { id }, postBody, 'Vehicles');
+});
 
-// TODO: Update an existing vehicle
+// Delete an existing vehicle
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  db.deleteById(res, Vehicle, id, 'Vehicles');
+});
 
 export default router;
