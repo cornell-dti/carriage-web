@@ -108,10 +108,9 @@ router.get('/:type', (req, res) => {
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const rideID = uuid();
   const ride = new Rides({
     type: RideType.unscheduled,
-    id: rideID,
+    id: uuid(),
     startLocation: postBody.startLocation,
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,

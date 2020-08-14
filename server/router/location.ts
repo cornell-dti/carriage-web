@@ -33,8 +33,7 @@ router.post('/', (req, res) => {
   const postBody = req.body;
   const location = new Locations({
     id: uuid(),
-    name: postBody.name,
-    address: postBody.address,
+    ...postBody,
   });
   db.create(res, location);
 });

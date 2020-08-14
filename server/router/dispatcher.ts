@@ -5,12 +5,8 @@ import * as db from './common';
 
 const router = express.Router();
 
-// Using a String enum allows the enum to be parsed by JSON.parse()
-enum AccessLevel {
-  Admin = 'Admin', // only an admin should be able to add another dispatcher
-  SDS = 'SDS',
-  Dispatcher = 'Dispatcher'
-}
+// only an admin should be able to add another dispatcher
+type AccessLevel = 'Admin' | 'SDS' | 'Dispatcher'
 
 type DispatcherType = {
   id: string,
@@ -37,9 +33,10 @@ const Dispatchers = dynamoose.model('Dispatchers', schema, { create: false });
 
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
+  const postBody = req.body;
   const dispatcher = new Dispatchers({
     id: uuid(),
-    ...JSON.parse(JSON.stringify(req.body)),
+    ...postBody,
   });
   db.create(res, dispatcher);
 });

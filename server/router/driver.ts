@@ -71,8 +71,7 @@ router.get('/', (req, res) => db.getAll(res, Drivers, 'Drivers'));
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Drivers, id, 'Drivers', (data) => {
-    const driver: DriverType = data;
+  db.getByID(res, Drivers, id, 'Drivers', (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
     } = driver;

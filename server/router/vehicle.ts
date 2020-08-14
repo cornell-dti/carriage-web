@@ -1,52 +1,36 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import AWS from 'aws-sdk';
-import config from '../config';
+import dynamoose from 'dynamoose';
+import * as db from './common';
 
 const router = express.Router();
 
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
-
-type Vehicle = {
+export type VehicleType = {
   id: string,
   wheelchairAccessible: boolean,
 };
 
+const schema = new dynamoose.Schema({
+  id: String,
+  wheelchairAccessible: Boolean,
+});
+
+export const Vehicles = dynamoose.model('Vehicles', schema, { create: false });
+
 // Get a vehicle by ID in Vehicles table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  const params = {
-    TableName: 'Vehicles',
-    Key: { id },
-  };
-  docClient.get(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getByID(res, Vehicles, id, 'Vehicles');
 });
 
 // Put a vehicle in Vehicles table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const vehicle: Vehicle = {
+  const vehicle = new Vehicles({
     id: uuid(),
-    wheelchairAccessible: postBody.wheelchairAccessible,
-  };
-  const params = {
-    TableName: 'Vehicles',
-    Item: vehicle,
-  };
-  docClient.put(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(vehicle);
-    }
+    ...postBody,
   });
+  db.create(res, vehicle);
 });
 
 // TODO: Update an existing vehicle
