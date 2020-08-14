@@ -1,5 +1,5 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import AWS from 'aws-sdk';
 import config from '../config';
 

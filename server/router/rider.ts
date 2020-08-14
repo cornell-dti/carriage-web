@@ -1,5 +1,5 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import dynamoose from 'dynamoose';
 import AWS from 'aws-sdk';
 import config from '../config';
@@ -144,7 +144,7 @@ router.get('/:id/accessibility', async (req, res) => {
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id, 'Riders', (data) => {
+  db.getByID(res, Riders, id, 'Riders', (data: RiderType) => {
     const rider: RiderType = data;
     const { favoriteLocations } = rider;
     const keys: Key[] = favoriteLocations.map((locID: string) => ({

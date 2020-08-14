@@ -1,5 +1,5 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import dynamoose from 'dynamoose';
 import * as db from './common';
 
