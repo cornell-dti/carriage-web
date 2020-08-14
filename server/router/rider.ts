@@ -67,10 +67,10 @@ const schema = new dynamoose.Schema({
 
 export const Rider = dynamoose.model('Riders', schema, { create: false });
 
-// Get a rider by ID in Riders table
+// Get a rider by Id in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Rider, id, 'Riders');
+  db.getById(res, Rider, id, 'Riders');
 });
 
 // Get all riders
@@ -79,7 +79,7 @@ router.get('/', (req, res) => db.getAll(res, Rider, 'Riders'));
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Rider, id, 'Riders', (rider: RiderType) => {
+  db.getById(res, Rider, id, 'Riders', (rider: RiderType) => {
     const {
       email, firstName, lastName, phoneNumber, pronouns, joinDate,
     } = rider;
@@ -92,7 +92,7 @@ router.get('/:id/profile', (req, res) => {
 // Get accessibility information for a rider
 router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Rider, id, 'Riders', (rider: RiderType) => {
+  db.getById(res, Rider, id, 'Riders', (rider: RiderType) => {
     const { description, accessibilityNeeds } = rider;
     res.send({ description, accessibilityNeeds });
   });
@@ -101,9 +101,9 @@ router.get('/:id/accessibility', async (req, res) => {
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Rider, id, 'Riders', ({ favoriteLocations }: RiderType) => {
-    const keys: Key[] = favoriteLocations.map((locID: string) => ({
-      id: locID,
+  db.getById(res, Rider, id, 'Riders', ({ favoriteLocations }: RiderType) => {
+    const keys: Key[] = favoriteLocations.map((locId: string) => ({
+      id: locId,
     }));
     if (!keys.length) {
       res.send({ data: [] });
@@ -135,10 +135,9 @@ router.put('/:id', (req, res) => {
 // Add a location to favorites
 router.post('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  const locID = postBody.id;
-  db.getByID(res, Location, locID, 'Locations', (location: LocationType) => {
-    const updateObj = { $ADD: { favoriteLocations: [locID] } };
+  const { id: locId } = req.body;
+  db.getById(res, Location, locId, 'Locations', (location: LocationType) => {
+    const updateObj = { $ADD: { favoriteLocations: [locId] } };
     db.update(res, Rider, { id }, updateObj, 'Riders', () => res.send(location));
   });
 });
@@ -146,7 +145,7 @@ router.post('/:id/favorites', (req, res) => {
 // Delete an existing rider
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Rider, id, 'Riders');
+  db.deleteById(res, Rider, id, 'Riders');
 });
 
 export default router;

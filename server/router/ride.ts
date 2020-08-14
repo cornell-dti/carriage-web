@@ -25,8 +25,8 @@ type Ride = {
   endLocation: string,
   startTime: string,
   endTime: string,
-  riderID: string,
-  driverID?: string,
+  riderId: string,
+  driverId?: string,
 };
 
 const schema = new dynamoose.Schema({
@@ -47,7 +47,7 @@ const schema = new dynamoose.Schema({
   endLocation: String,
   startTime: String,
   endTime: String,
-  riderID: {
+  riderId: {
     type: String,
     index: {
       name: Index.rider,
@@ -55,7 +55,7 @@ const schema = new dynamoose.Schema({
       global: true,
     } as any,
   },
-  driverID: {
+  driverId: {
     type: String,
     index: {
       name: Index.driver,
@@ -67,10 +67,10 @@ const schema = new dynamoose.Schema({
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });
 
-// Get a ride by ID in Rides table
+// Get a ride by id in Rides table
 router.get('/:type/:id', (req, res) => {
   const { type, id } = req.params;
-  db.getByID(res, Ride, { type, id }, 'Rides');
+  db.getById(res, Ride, { type, id }, 'Rides');
 });
 
 // Get all rides in Rides table
@@ -79,18 +79,18 @@ router.get('/', (req, res) => db.getAll(res, Ride, 'Rides'));
 // Query all rides in table
 router.get('/:type', (req, res) => {
   const { type } = req.params;
-  const { riderID, driverID, date } = req.query;
+  const { riderId, driverId, date } = req.query;
   // default hash key is type, default index is none
   let condition = new Condition('type').eq(type);
   let index;
-  if (riderID) {
-    condition = condition.where('riderID').eq(riderID);
-    // change index to riderIndex to use riderID as hash key
+  if (riderId) {
+    condition = condition.where('riderId').eq(riderId);
+    // change index to riderIndex to use riderId as hash key
     index = Index.rider;
   }
-  if (driverID) {
-    condition = condition.where('driverID').eq(driverID);
-    // change index to driverIndex (if not previously set) to use driverID as
+  if (driverId) {
+    condition = condition.where('driverId').eq(driverId);
+    // change index to driverIndex (if not previously set) to use driverId as
     // hash key, otherwise use as filter expression
     index = index || Index.driver;
   }
@@ -115,7 +115,7 @@ router.post('/', (req, res) => {
     endLocation: postBody.endLocation,
     startTime: postBody.startTime,
     endTime: postBody.endTime,
-    riderID: postBody.riderID,
+    riderId: postBody.riderId,
   });
   db.create(res, ride);
 });
@@ -130,7 +130,7 @@ router.put('/:type/:id', (req, res) => {
 // Delete an existing ride
 router.delete('/:type/:id', (req, res) => {
   const { type, id } = req.params;
-  db.deleteByID(res, Ride, { type, id }, 'Rides');
+  db.deleteById(res, Ride, { type, id }, 'Rides');
 });
 
 export default router;

@@ -9,7 +9,7 @@ const router = express.Router();
 AWS.config.update(config);
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-const validIDs = [
+const validIds = [
   '322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
   '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com',
   '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
@@ -19,23 +19,23 @@ const validIDs = [
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
 ];
 
-async function verify(clientID: string, token: string): Promise<LoginTicket> {
-  const client = new OAuth2Client(clientID);
+async function verify(clientId: string, token: string): Promise<LoginTicket> {
+  const client = new OAuth2Client(clientId);
   const authRes = await client.verifyIdToken({
     idToken: token,
-    audience: validIDs,
+    audience: validIds,
   });
   return authRes;
 }
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const { token, clientID, table, email } = req.body;
-  verify(clientID, token)
+  const { token, clientId, table, email } = req.body;
+  verify(clientId, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
       const validTable = ['Riders', 'Drivers', 'Dispatchers'];
-      if (payload && payload.aud === clientID && validTable.includes(table)) {
+      if (payload && payload.aud === clientId && validTable.includes(table)) {
         const params = {
           TableName: table,
           ProjectionExpression: 'id, email',

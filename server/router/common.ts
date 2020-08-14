@@ -6,7 +6,7 @@ import { Condition } from 'dynamoose/dist/Condition';
 
 type ModelType = Document & Model<Document>;
 
-export function getByID(
+export function getById(
   res: Response,
   model: ModelType,
   id: string | ObjectType,
@@ -102,7 +102,7 @@ export function update(
   });
 }
 
-export function deleteByID(
+export function deleteById(
   res: Response,
   model: ModelType,
   id: string | ObjectType,

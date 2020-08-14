@@ -59,10 +59,10 @@ const schema = new dynamoose.Schema({
 
 export const Driver = dynamoose.model('Drivers', schema, { create: false });
 
-// Get a driver by ID in Drivers table
+// Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Driver, id, 'Drivers');
+  db.getById(res, Driver, id, 'Drivers');
 });
 
 // Get all drivers
@@ -71,7 +71,7 @@ router.get('/', (req, res) => db.getAll(res, Driver, 'Drivers'));
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Driver, id, 'Drivers', (driver: DriverType) => {
+  db.getById(res, Driver, id, 'Drivers', (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
     } = driver;
@@ -101,7 +101,7 @@ router.put('/:id', (req, res) => {
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Driver, id, 'Drivers');
+  db.deleteById(res, Driver, id, 'Drivers');
 });
 
 export default router;

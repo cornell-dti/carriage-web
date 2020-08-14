@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Dispatcher, id, 'Dispatchers');
+  db.deleteById(res, Dispatcher, id, 'Dispatchers');
 });
 
 export default router;

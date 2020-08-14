@@ -17,10 +17,10 @@ const schema = new dynamoose.Schema({
 
 export const Vehicle = dynamoose.model('Vehicles', schema, { create: false });
 
-// Get a vehicle by ID in Vehicles table
+// Get a vehicle by Id in Vehicles table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Vehicle, id, 'Vehicles');
+  db.getById(res, Vehicle, id, 'Vehicles');
 });
 
 // Put a vehicle in Vehicles table
