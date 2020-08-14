@@ -29,12 +29,12 @@ const schema = new dynamoose.Schema({
   },
 });
 
-const Dispatchers = dynamoose.model('Dispatchers', schema, { create: false });
+const Dispatcher = dynamoose.model('Dispatchers', schema, { create: false });
 
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const dispatcher = new Dispatchers({
+  const dispatcher = new Dispatcher({
     id: uuid(),
     ...postBody,
   });
@@ -44,7 +44,7 @@ router.post('/', (req, res) => {
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Dispatchers, id, 'Dispatchers');
+  db.deleteByID(res, Dispatcher, id, 'Dispatchers');
 });
 
 export default router;

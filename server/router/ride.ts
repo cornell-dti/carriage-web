@@ -65,16 +65,16 @@ const schema = new dynamoose.Schema({
   },
 }, { saveUnknown: true });
 
-export const Rides = dynamoose.model('Rides', schema, { create: false });
+export const Ride = dynamoose.model('Rides', schema, { create: false });
 
 // Get a ride by ID in Rides table
 router.get('/:type/:id', (req, res) => {
   const { type, id } = req.params;
-  db.getByID(res, Rides, { type, id }, 'Rides');
+  db.getByID(res, Ride, { type, id }, 'Rides');
 });
 
 // Get all rides in Rides table
-router.get('/', (req, res) => db.getAll(res, Rides, 'Rides'));
+router.get('/', (req, res) => db.getAll(res, Ride, 'Rides'));
 
 // Query all rides in table
 router.get('/:type', (req, res) => {
@@ -102,13 +102,13 @@ router.get('/:type', (req, res) => {
     // range key, otherwise use as filter expression
     index = index || Index.time;
   }
-  db.query(res, Rides, condition, index);
+  db.query(res, Ride, condition, index);
 });
 
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const ride = new Rides({
+  const ride = new Ride({
     type: RideType.unscheduled,
     id: uuid(),
     startLocation: postBody.startLocation,
@@ -124,13 +124,13 @@ router.post('/', (req, res) => {
 router.put('/:type/:id', (req, res) => {
   const { type, id } = req.params;
   const postBody = req.body;
-  db.update(res, Rides, { type, id }, postBody, 'Rides');
+  db.update(res, Ride, { type, id }, postBody, 'Rides');
 });
 
 // Delete an existing ride
 router.delete('/:type/:id', (req, res) => {
   const { type, id } = req.params;
-  db.deleteByID(res, Rides, { type, id }, 'Rides');
+  db.deleteByID(res, Ride, { type, id }, 'Rides');
 });
 
 export default router;

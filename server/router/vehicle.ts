@@ -15,18 +15,18 @@ const schema = new dynamoose.Schema({
   wheelchairAccessible: Boolean,
 });
 
-export const Vehicles = dynamoose.model('Vehicles', schema, { create: false });
+export const Vehicle = dynamoose.model('Vehicles', schema, { create: false });
 
 // Get a vehicle by ID in Vehicles table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Vehicles, id, 'Vehicles');
+  db.getByID(res, Vehicle, id, 'Vehicles');
 });
 
 // Put a vehicle in Vehicles table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const vehicle = new Vehicles({
+  const vehicle = new Vehicle({
     id: uuid(),
     ...postBody,
   });
