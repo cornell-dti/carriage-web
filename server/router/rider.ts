@@ -10,11 +10,6 @@ type Key = {
   id: string
 };
 
-type RideKeyType = {
-  id: string
-  startTime: string
-};
-
 type RiderType = {
   id: string
   firstName: string
@@ -31,7 +26,6 @@ type RiderType = {
   pronouns: string
   address: string
   favoriteLocations: string[]
-  requestedRides: RideKeyType[]
 };
 
 const schema = new dynamoose.Schema({
@@ -56,18 +50,11 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [{ type: String }],
   },
-  requestedRides: {
-    type: Array,
-    schema: [{
-      type: Object,
-      schema: Object({ id: String, startTime: String }),
-    }],
-  },
 });
 
 export const Rider = dynamoose.model('Riders', schema, { create: false });
 
-// Get a rider by Id in Riders table
+// Get a rider by id in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   db.getById(res, Rider, id, 'Riders');
@@ -120,7 +107,6 @@ router.post('/', (req, res) => {
     id: uuid(),
     ...postBody,
     favoriteLocations: [],
-    requestedRides: [],
   });
   db.create(res, rider);
 });

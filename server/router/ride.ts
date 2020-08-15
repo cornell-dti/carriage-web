@@ -6,20 +6,20 @@ import * as db from './common';
 
 const router = express.Router();
 
-const enum RideType {
-  active = 'active',
-  past = 'past',
-  unscheduled = 'unscheduled',
+enum Type {
+  ACTIVE = 'active',
+  PAST = 'past',
+  UNSCHEDULED = 'unscheduled',
 }
 
-const enum Index {
-  rider = 'riderIndex',
-  driver = 'driverIndex',
-  time = 'timeIndex',
+enum Index {
+  RIDER = 'riderIndex',
+  DRIVER = 'driverIndex',
+  TIME = 'timeIndex',
 }
 
-type Ride = {
-  type: RideType,
+type RideType = {
+  type: Type,
   id: string,
   startLocation: string,
   endLocation: string,
@@ -35,7 +35,7 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: ['active', 'past', 'unscheduled'],
     index: {
-      name: Index.time,
+      name: Index.TIME,
       rangeKey: 'startTime',
     } as any,
   },
@@ -50,7 +50,7 @@ const schema = new dynamoose.Schema({
   riderId: {
     type: String,
     index: {
-      name: Index.rider,
+      name: Index.RIDER,
       rangeKey: 'type',
       global: true,
     } as any,
@@ -58,7 +58,7 @@ const schema = new dynamoose.Schema({
   driverId: {
     type: String,
     index: {
-      name: Index.driver,
+      name: Index.DRIVER,
       rangeKey: 'type',
       global: true,
     } as any,
@@ -67,8 +67,10 @@ const schema = new dynamoose.Schema({
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });
 
+const typeParam = ':type(active|past|unscheduled)';
+
 // Get a ride by id in Rides table
-router.get('/:type/:id', (req, res) => {
+router.get(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
   db.getById(res, Ride, { type, id }, 'Rides');
 });
@@ -77,7 +79,7 @@ router.get('/:type/:id', (req, res) => {
 router.get('/', (req, res) => db.getAll(res, Ride, 'Rides'));
 
 // Query all rides in table
-router.get('/:type', (req, res) => {
+router.get(`/${typeParam}`, (req, res) => {
   const { type } = req.params;
   const { riderId, driverId, date } = req.query;
   // default hash key is type, default index is none
@@ -86,13 +88,13 @@ router.get('/:type', (req, res) => {
   if (riderId) {
     condition = condition.where('riderId').eq(riderId);
     // change index to riderIndex to use riderId as hash key
-    index = Index.rider;
+    index = Index.RIDER;
   }
   if (driverId) {
     condition = condition.where('driverId').eq(driverId);
     // change index to driverIndex (if not previously set) to use driverId as
     // hash key, otherwise use as filter expression
-    index = index || Index.driver;
+    index = index || Index.DRIVER;
   }
   if (date) {
     const dateStart = new Date(`${date} EST`).toISOString();
@@ -100,7 +102,7 @@ router.get('/:type', (req, res) => {
     condition = condition.where('startTime').between(dateStart, dateEnd);
     // change index to timeIndex (if not previously set) to use startTime as
     // range key, otherwise use as filter expression
-    index = index || Index.time;
+    index = index || Index.TIME;
   }
   db.query(res, Ride, condition, index);
 });
@@ -108,27 +110,28 @@ router.get('/:type', (req, res) => {
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
   const postBody = req.body;
+  const { startLocation, endLocation, startTime, endTime, riderId } = postBody;
   const ride = new Ride({
-    type: RideType.unscheduled,
+    type: Type.UNSCHEDULED,
     id: uuid(),
-    startLocation: postBody.startLocation,
-    endLocation: postBody.endLocation,
-    startTime: postBody.startTime,
-    endTime: postBody.endTime,
-    riderId: postBody.riderId,
+    startLocation,
+    endLocation,
+    startTime,
+    endTime,
+    riderId,
   });
   db.create(res, ride);
 });
 
 // Update an existing ride
-router.put('/:type/:id', (req, res) => {
+router.put(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
   const postBody = req.body;
   db.update(res, Ride, { type, id }, postBody, 'Rides');
 });
 
 // Delete an existing ride
-router.delete('/:type/:id', (req, res) => {
+router.delete(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
   db.deleteById(res, Ride, { type, id }, 'Rides');
 });

@@ -56,9 +56,7 @@ router.post('/', (req, res) => {
         res.send({ success: false });
       }
     })
-    .catch(() => {
-      res.send({ success: false });
-    });
+    .catch(() => res.send({ success: false }));
 });
 
 export default router;
