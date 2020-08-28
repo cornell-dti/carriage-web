@@ -15,18 +15,18 @@ const schema = new dynamoose.Schema({
   wheelchairAccessible: Boolean,
 });
 
-const table = 'Vehicles';
+const tableName = 'Vehicles';
 
-export const Vehicle = dynamoose.model(table, schema, { create: false });
+export const Vehicle = dynamoose.model(tableName, schema, { create: false });
 
 // Get a vehicle by id
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Vehicle, id, table);
+  db.getById(res, Vehicle, id, tableName);
 });
 
 // Get all vehicles
-router.get('/', (req, res) => db.getAll(res, Vehicle, table));
+router.get('/', (req, res) => db.getAll(res, Vehicle, tableName));
 
 // Create a new vehicle
 router.post('/', (req, res) => {
@@ -42,13 +42,13 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Vehicle, { id }, postBody, table);
+  db.update(res, Vehicle, { id }, postBody, tableName);
 });
 
 // Delete an existing vehicle
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteById(res, Vehicle, id, table);
+  db.deleteById(res, Vehicle, id, tableName);
 });
 
 export default router;

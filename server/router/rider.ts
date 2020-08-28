@@ -52,21 +52,23 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Rider = dynamoose.model('Riders', schema, { create: false });
+const tableName = 'Riders';
+
+export const Rider = dynamoose.model(tableName, schema, { create: false });
 
 // Get a rider by id in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Rider, id, 'Riders');
+  db.getById(res, Rider, id, tableName);
 });
 
 // Get all riders
-router.get('/', (req, res) => db.getAll(res, Rider, 'Riders'));
+router.get('/', (req, res) => db.getAll(res, Rider, tableName));
 
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Rider, id, 'Riders', (rider: RiderType) => {
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
       email, firstName, lastName, phoneNumber, pronouns, joinDate,
     } = rider;
@@ -79,7 +81,7 @@ router.get('/:id/profile', (req, res) => {
 // Get accessibility information for a rider
 router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  db.getById(res, Rider, id, 'Riders', (rider: RiderType) => {
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, accessibilityNeeds } = rider;
     res.send({ description, accessibilityNeeds });
   });
@@ -88,7 +90,7 @@ router.get('/:id/accessibility', async (req, res) => {
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Rider, id, 'Riders', ({ favoriteLocations }: RiderType) => {
+  db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
     const keys: Key[] = favoriteLocations.map((locId: string) => ({
       id: locId,
     }));
@@ -115,7 +117,7 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Rider, { id }, postBody, 'Riders');
+  db.update(res, Rider, { id }, postBody, tableName);
 });
 
 // Add a location to favorites
@@ -124,14 +126,14 @@ router.post('/:id/favorites', (req, res) => {
   const { id: locId } = req.body;
   db.getById(res, Location, locId, 'Locations', (location: LocationType) => {
     const updateObj = { $ADD: { favoriteLocations: [locId] } };
-    db.update(res, Rider, { id }, updateObj, 'Riders', () => res.send(location));
+    db.update(res, Rider, { id }, updateObj, tableName, () => res.send(location));
   });
 });
 
 // Delete an existing rider
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteById(res, Rider, id, 'Riders');
+  db.deleteById(res, Rider, id, tableName);
 });
 
 export default router;

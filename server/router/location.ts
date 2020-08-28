@@ -17,16 +17,18 @@ const schema = new dynamoose.Schema({
   address: String,
 });
 
-export const Location = dynamoose.model('Locations', schema, { create: false });
+const table = 'Locations';
+
+export const Location = dynamoose.model(table, schema, { create: false });
 
 // Get a location by id in Locations table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Location, id, 'Locations');
+  db.getById(res, Location, id, table);
 });
 
 // Get all locations
-router.get('/', (req, res) => db.getAll(res, Location, 'Locations'));
+router.get('/', (req, res) => db.getAll(res, Location, table));
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
@@ -42,13 +44,13 @@ router.post('/', (req, res) => {
 router.post('/', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Location, { id }, postBody, 'Locations');
+  db.update(res, Location, { id }, postBody, table);
 });
 
 // Delete an existing location
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteById(res, Location, id, 'Locations');
+  db.deleteById(res, Location, id, table);
 });
 
 export default router;

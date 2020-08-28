@@ -40,26 +40,32 @@ const schema = new dynamoose.Schema({
   driverId: String,
 });
 
-export const Ride = dynamoose.model('Rides', schema);
+const tableName = 'Rides';
+
+export const Ride = dynamoose.model(tableName, schema, { create: false });
 
 const typeParam = ':type(active|past|unscheduled)';
 
 // Get a ride by id in Rides table
 router.get(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
-  db.getById(res, Ride, { type, id }, 'Rides');
+  db.getById(res, Ride, { type, id }, tableName);
 });
 
 // Get all rides in Rides table
-router.get('/', (req, res) => db.getAll(res, Ride, 'Rides'));
+router.get('/', (req, res) => db.getAll(res, Ride, tableName));
 
 // Query all rides in table
 router.get(`/${typeParam}`, (req, res) => {
   const { type } = req.params;
   const { riderId, driverId, date } = req.query;
   let condition = new Condition('type').eq(type);
-  if (riderId) condition = condition.where('riderId').eq(riderId);
-  if (driverId) condition = condition.where('driverId').eq(driverId);
+  if (riderId) {
+    condition = condition.where('riderId').eq(riderId);
+  }
+  if (driverId) {
+    condition = condition.where('driverId').eq(driverId);
+  }
   if (date) {
     const dateStart = new Date(`${date} EST`).toISOString();
     const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
@@ -88,13 +94,13 @@ router.post('/', (req, res) => {
 router.put(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
   const postBody = req.body;
-  db.update(res, Ride, { type, id }, postBody, 'Rides');
+  db.update(res, Ride, { type, id }, postBody, tableName);
 });
 
 // Delete an existing ride
 router.delete(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
-  db.deleteById(res, Ride, { type, id }, 'Rides');
+  db.deleteById(res, Ride, { type, id }, tableName);
 });
 
 export default router;

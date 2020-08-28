@@ -57,21 +57,23 @@ const schema = new dynamoose.Schema({
   email: String,
 }, { saveUnknown: true });
 
-export const Driver = dynamoose.model('Drivers', schema, { create: false });
+const table = 'Drivers';
+
+export const Driver = dynamoose.model(table, schema, { create: false });
 
 // Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Driver, id, 'Drivers');
+  db.getById(res, Driver, id, table);
 });
 
 // Get all drivers
-router.get('/', (req, res) => db.getAll(res, Driver, 'Drivers'));
+router.get('/', (req, res) => db.getAll(res, Driver, table));
 
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Driver, id, 'Drivers', (driver: DriverType) => {
+  db.getById(res, Driver, id, table, (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
     } = driver;
@@ -95,13 +97,13 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Driver, { id }, postBody, 'Drivers');
+  db.update(res, Driver, { id }, postBody, table);
 });
 
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteById(res, Driver, id, 'Drivers');
+  db.deleteById(res, Driver, id, table);
 });
 
 export default router;
