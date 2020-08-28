@@ -129,10 +129,9 @@ export function query(
   index?: string,
   callback?: (value: any) => void,
 ) {
-  let queryCall = model.query(condition);
-  if (index) {
-    queryCall = queryCall.using(index);
-  }
+  const queryCall = index
+    ? model.query(condition).using(index)
+    : model.query(condition);
   queryCall.exec((err: any, data: any) => {
     if (err) {
       res.send({ err });

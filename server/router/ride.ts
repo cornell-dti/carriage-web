@@ -1,7 +1,6 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose from 'dynamoose';
-import { Condition } from 'dynamoose/dist/Condition';
+import dynamoose, { Condition } from 'dynamoose';
 import * as db from './common';
 
 const router = express.Router();
@@ -10,12 +9,6 @@ enum Type {
   ACTIVE = 'active',
   PAST = 'past',
   UNSCHEDULED = 'unscheduled',
-}
-
-enum Index {
-  RIDER = 'riderIndex',
-  DRIVER = 'driverIndex',
-  TIME = 'timeIndex',
 }
 
 type RideType = {
@@ -33,11 +26,7 @@ const schema = new dynamoose.Schema({
   type: {
     hashKey: true,
     type: String,
-    enum: ['active', 'past', 'unscheduled'],
-    index: {
-      name: Index.TIME,
-      rangeKey: 'startTime',
-    } as any,
+    enum: Object.values(Type),
   },
   id: {
     rangeKey: true,
@@ -47,25 +36,11 @@ const schema = new dynamoose.Schema({
   endLocation: String,
   startTime: String,
   endTime: String,
-  riderId: {
-    type: String,
-    index: {
-      name: Index.RIDER,
-      rangeKey: 'type',
-      global: true,
-    } as any,
-  },
-  driverId: {
-    type: String,
-    index: {
-      name: Index.DRIVER,
-      rangeKey: 'type',
-      global: true,
-    } as any,
-  },
-}, { saveUnknown: true });
+  riderId: String,
+  driverId: String,
+});
 
-export const Ride = dynamoose.model('Rides', schema, { create: false });
+export const Ride = dynamoose.model('Rides', schema);
 
 const typeParam = ':type(active|past|unscheduled)';
 
@@ -82,29 +57,15 @@ router.get('/', (req, res) => db.getAll(res, Ride, 'Rides'));
 router.get(`/${typeParam}`, (req, res) => {
   const { type } = req.params;
   const { riderId, driverId, date } = req.query;
-  // default hash key is type, default index is none
   let condition = new Condition('type').eq(type);
-  let index;
-  if (riderId) {
-    condition = condition.where('riderId').eq(riderId);
-    // change index to riderIndex to use riderId as hash key
-    index = Index.RIDER;
-  }
-  if (driverId) {
-    condition = condition.where('driverId').eq(driverId);
-    // change index to driverIndex (if not previously set) to use driverId as
-    // hash key, otherwise use as filter expression
-    index = index || Index.DRIVER;
-  }
+  if (riderId) condition = condition.where('riderId').eq(riderId);
+  if (driverId) condition = condition.where('driverId').eq(driverId);
   if (date) {
     const dateStart = new Date(`${date} EST`).toISOString();
     const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
-    // change index to timeIndex (if not previously set) to use startTime as
-    // range key, otherwise use as filter expression
-    index = index || Index.TIME;
   }
-  db.query(res, Ride, condition, index);
+  db.query(res, Ride, condition);
 });
 
 // Put an active ride in Active Rides table
