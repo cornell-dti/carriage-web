@@ -30,13 +30,13 @@ type DriverType = {
   email: string,
 };
 
-const breakDayValue = Object({
+const breakDayValue = {
   type: Object,
-  schema: Object({
+  schema: {
     breakStart: String,
     breakEnd: String,
-  }),
-});
+  },
+};
 
 const breakSchema = Object.fromEntries(
   ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) => [d, breakDayValue]),
@@ -57,23 +57,23 @@ const schema = new dynamoose.Schema({
   email: String,
 }, { saveUnknown: true });
 
-const table = 'Drivers';
+const tableName = 'Drivers';
 
-export const Driver = dynamoose.model(table, schema, { create: false });
+export const Driver = dynamoose.model(tableName, schema, { create: false });
 
 // Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Driver, id, table);
+  db.getById(res, Driver, id, tableName);
 });
 
 // Get all drivers
-router.get('/', (req, res) => db.getAll(res, Driver, table));
+router.get('/', (req, res) => db.getAll(res, Driver, tableName));
 
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getById(res, Driver, id, table, (driver: DriverType) => {
+  db.getById(res, Driver, id, tableName, (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
     } = driver;
@@ -97,13 +97,13 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Driver, { id }, postBody, table);
+  db.update(res, Driver, { id }, postBody, tableName);
 });
 
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteById(res, Driver, id, table);
+  db.deleteById(res, Driver, id, tableName);
 });
 
 export default router;

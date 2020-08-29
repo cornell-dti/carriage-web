@@ -85,11 +85,33 @@ export function update(
   res: Response,
   model: ModelType,
   key: ObjectType,
-  updateObj: ObjectType,
+  operation: Object,
   table: string,
   callback?: (value: any) => void,
 ) {
-  model.update(key, updateObj, (err, data) => {
+  model.update(key, operation, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data) {
+      res.send({ err: { message: `id not found in ${table}` } });
+    } else if (callback) {
+      callback(data);
+    } else {
+      res.send(data);
+    }
+  });
+}
+
+export function conditionalUpdate(
+  res: Response,
+  model: ModelType,
+  key: ObjectType,
+  operation: Object,
+  condition: Condition,
+  table: string,
+  callback?: (value: any) => void,
+) {
+  model.update(key, operation, { condition, return: 'document' }, (err, data) => {
     if (err) {
       res.send({ err });
     } else if (!data) {

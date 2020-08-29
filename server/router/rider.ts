@@ -1,8 +1,8 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose from 'dynamoose';
+import dynamoose, { Condition } from 'dynamoose';
 import * as db from './common';
-import { Location, LocationType } from './location';
+import { Location } from './location';
 
 const router = express.Router();
 
@@ -48,7 +48,7 @@ const schema = new dynamoose.Schema({
   address: String,
   favoriteLocations: {
     type: Array,
-    schema: [{ type: String }],
+    schema: [String],
   },
 });
 
@@ -124,9 +124,15 @@ router.put('/:id', (req, res) => {
 router.post('/:id/favorites', (req, res) => {
   const { id } = req.params;
   const { id: locId } = req.body;
-  db.getById(res, Location, locId, 'Locations', (location: LocationType) => {
-    const updateObj = { $ADD: { favoriteLocations: [locId] } };
-    db.update(res, Rider, { id }, updateObj, tableName, () => res.send(location));
+  // check if location exists in table
+  db.getById(res, Location, locId, 'Locations', () => {
+    const operation = { $ADD: { favoriteLocations: [locId] } };
+    const condition = new Condition('favoriteLocations').not().contains(locId);
+    db.conditionalUpdate(
+      res, Rider, { id }, operation, condition, tableName, ({ favoriteLocations }: RiderType) => {
+        res.send({ favoriteLocations });
+      },
+    );
   });
 });
 
