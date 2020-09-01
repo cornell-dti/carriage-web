@@ -26,6 +26,10 @@ export function getById(
   });
 }
 
+export function createKeys(property: string, values: string[]) {
+  return values.map((v) => ({ [property]: v }));
+}
+
 export function batchGet(
   res: Response,
   model: ModelType,
@@ -33,6 +37,9 @@ export function batchGet(
   table: string,
   callback?: (value: any) => void,
 ) {
+  if (!keys.length) {
+    res.send({ data: [] });
+  }
   model.batchGet(keys, (err, data) => {
     if (err) {
       res.send({ err });
@@ -85,7 +92,7 @@ export function update(
   res: Response,
   model: ModelType,
   key: ObjectType,
-  operation: Object,
+  operation: ObjectType,
   table: string,
   callback?: (value: any) => void,
 ) {
@@ -106,7 +113,7 @@ export function conditionalUpdate(
   res: Response,
   model: ModelType,
   key: ObjectType,
-  operation: Object,
+  operation: ObjectType,
   condition: Condition,
   table: string,
   callback?: (value: any) => void,

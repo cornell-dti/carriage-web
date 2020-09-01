@@ -91,14 +91,8 @@ router.get('/:id/accessibility', async (req, res) => {
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
   db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
-    const keys: Key[] = favoriteLocations.map((locId: string) => ({
-      id: locId,
-    }));
-    if (!keys.length) {
-      res.send({ data: [] });
-    } else {
-      db.batchGet(res, Location, keys, 'Locations');
-    }
+    const keys = db.createKeys('id', favoriteLocations);
+    db.batchGet(res, Location, keys, 'Locations');
   });
 });
 
@@ -130,7 +124,8 @@ router.post('/:id/favorites', (req, res) => {
     const condition = new Condition('favoriteLocations').not().contains(locId);
     db.conditionalUpdate(
       res, Rider, { id }, operation, condition, tableName, ({ favoriteLocations }: RiderType) => {
-        res.send({ favoriteLocations });
+        const keys = db.createKeys('id', favoriteLocations);
+        db.batchGet(res, Location, keys, 'Locations');
       },
     );
   });
