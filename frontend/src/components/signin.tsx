@@ -31,7 +31,7 @@ export const SignInButton = () => {
     const response = await fetch('/auth', requestOptions);
     const authorized = (await response.json())['id'];
     if (authorized) {
-      history.push('/rider-table')
+      history.push('/dashboard')
     } else {
       logout();
     }
