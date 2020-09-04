@@ -6,7 +6,7 @@ import { Condition } from 'dynamoose/dist/Condition';
 
 type ModelType = Document & Model<Document>;
 
-export function getByID(
+export function getById(
   res: Response,
   model: ModelType,
   id: string | ObjectType,
@@ -26,6 +26,10 @@ export function getByID(
   });
 }
 
+export function createKeys(property: string, values: string[]) {
+  return values.map((v) => ({ [property]: v }));
+}
+
 export function batchGet(
   res: Response,
   model: ModelType,
@@ -33,6 +37,9 @@ export function batchGet(
   table: string,
   callback?: (value: any) => void,
 ) {
+  if (!keys.length) {
+    res.send({ data: [] });
+  }
   model.batchGet(keys, (err, data) => {
     if (err) {
       res.send({ err });
@@ -85,11 +92,11 @@ export function update(
   res: Response,
   model: ModelType,
   key: ObjectType,
-  updateObj: ObjectType,
+  operation: ObjectType,
   table: string,
   callback?: (value: any) => void,
 ) {
-  model.update(key, updateObj, (err, data) => {
+  model.update(key, operation, (err, data) => {
     if (err) {
       res.send({ err });
     } else if (!data) {
@@ -102,7 +109,29 @@ export function update(
   });
 }
 
-export function deleteByID(
+export function conditionalUpdate(
+  res: Response,
+  model: ModelType,
+  key: ObjectType,
+  operation: ObjectType,
+  condition: Condition,
+  table: string,
+  callback?: (value: any) => void,
+) {
+  model.update(key, operation, { condition, return: 'document' }, (err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (!data) {
+      res.send({ err: { message: `id not found in ${table}` } });
+    } else if (callback) {
+      callback(data);
+    } else {
+      res.send(data);
+    }
+  });
+}
+
+export function deleteById(
   res: Response,
   model: ModelType,
   id: string | ObjectType,
@@ -129,10 +158,9 @@ export function query(
   index?: string,
   callback?: (value: any) => void,
 ) {
-  let queryCall = model.query(condition);
-  if (index) {
-    queryCall = queryCall.using(index);
-  }
+  const queryCall = index
+    ? model.query(condition).using(index)
+    : model.query(condition);
   queryCall.exec((err: any, data: any) => {
     if (err) {
       res.send({ err });

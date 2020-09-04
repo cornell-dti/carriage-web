@@ -1,16 +1,12 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import dynamoose from 'dynamoose';
 import * as db from './common';
 
 const router = express.Router();
 
-// Using a String enum allows the enum to be parsed by JSON.parse()
-enum AccessLevel {
-  Admin = 'Admin', // only an admin should be able to add another dispatcher
-  SDS = 'SDS',
-  Dispatcher = 'Dispatcher'
-}
+// only an admin should be able to add another dispatcher
+type AccessLevel = 'Admin' | 'SDS' | 'Dispatcher'
 
 type DispatcherType = {
   id: string,
@@ -33,13 +29,16 @@ const schema = new dynamoose.Schema({
   },
 });
 
-const Dispatchers = dynamoose.model('Dispatchers', schema, { create: false });
+const tableName = 'Dispatchers';
+
+const Dispatcher = dynamoose.model(tableName, schema, { create: false });
 
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
-  const dispatcher = new Dispatchers({
+  const postBody = req.body;
+  const dispatcher = new Dispatcher({
     id: uuid(),
-    ...JSON.parse(JSON.stringify(req.body)),
+    ...postBody,
   });
   db.create(res, dispatcher);
 });
@@ -47,7 +46,7 @@ router.post('/', (req, res) => {
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Dispatchers, id, 'Dispatchers');
+  db.deleteById(res, Dispatcher, id, tableName);
 });
 
 export default router;

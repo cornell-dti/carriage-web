@@ -1,5 +1,5 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import dynamoose from 'dynamoose';
 import * as db from './common';
 
@@ -17,24 +17,25 @@ const schema = new dynamoose.Schema({
   address: String,
 });
 
-export const Locations = dynamoose.model('Locations', schema, { create: false });
+const tableName = 'Locations';
 
-// Get a location by ID in Locations table
+export const Location = dynamoose.model(tableName, schema, { create: false });
+
+// Get a location by id in Locations table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Locations, id, 'Locations');
+  db.getById(res, Location, id, tableName);
 });
 
 // Get all locations
-router.get('/', (req, res) => db.getAll(res, Locations, 'Locations'));
+router.get('/', (req, res) => db.getAll(res, Location, tableName));
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const location = new Locations({
+  const location = new Location({
     id: uuid(),
-    name: postBody.name,
-    address: postBody.address,
+    ...postBody,
   });
   db.create(res, location);
 });
@@ -43,13 +44,13 @@ router.post('/', (req, res) => {
 router.post('/', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Locations, { id }, postBody, 'Locations');
+  db.update(res, Location, { id }, postBody, tableName);
 });
 
 // Delete an existing location
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Locations, id, 'Locations');
+  db.deleteById(res, Location, id, tableName);
 });
 
 export default router;

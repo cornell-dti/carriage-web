@@ -1,5 +1,5 @@
 import express from 'express';
-import uuid from 'uuid/v1';
+import { v4 as uuid } from 'uuid';
 import dynamoose from 'dynamoose';
 import * as db from './common';
 
@@ -30,13 +30,13 @@ type DriverType = {
   email: string,
 };
 
-const breakDayValue = Object({
+const breakDayValue = {
   type: Object,
-  schema: Object({
+  schema: {
     breakStart: String,
     breakEnd: String,
-  }),
-});
+  },
+};
 
 const breakSchema = Object.fromEntries(
   ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) => [d, breakDayValue]),
@@ -57,22 +57,23 @@ const schema = new dynamoose.Schema({
   email: String,
 }, { saveUnknown: true });
 
-export const Drivers = dynamoose.model('Drivers', schema, { create: false });
+const tableName = 'Drivers';
 
-// Get a driver by ID in Drivers table
+export const Driver = dynamoose.model(tableName, schema, { create: false });
+
+// Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Drivers, id, 'Drivers');
+  db.getById(res, Driver, id, tableName);
 });
 
 // Get all drivers
-router.get('/', (req, res) => db.getAll(res, Drivers, 'Drivers'));
+router.get('/', (req, res) => db.getAll(res, Driver, tableName));
 
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Drivers, id, 'Drivers', (data) => {
-    const driver: DriverType = data;
+  db.getById(res, Driver, id, tableName, (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
     } = driver;
@@ -85,7 +86,7 @@ router.get('/:id/profile', (req, res) => {
 // Put a driver in Drivers table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const driver = new Drivers({
+  const driver = new Driver({
     id: uuid(),
     ...postBody,
   });
@@ -96,13 +97,13 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Drivers, { id }, postBody, 'Drivers');
+  db.update(res, Driver, { id }, postBody, tableName);
 });
 
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Drivers, id, 'Drivers');
+  db.deleteById(res, Driver, id, tableName);
 });
 
 export default router;

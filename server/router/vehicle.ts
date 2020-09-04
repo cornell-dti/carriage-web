@@ -1,56 +1,54 @@
 import express from 'express';
-import uuid from 'uuid/v1';
-import AWS from 'aws-sdk';
-import config from '../config';
+import { v4 as uuid } from 'uuid';
+import dynamoose from 'dynamoose';
+import * as db from './common';
 
 const router = express.Router();
 
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
-
-type Vehicle = {
+export type VehicleType = {
   id: string,
   wheelchairAccessible: boolean,
 };
 
-// Get a vehicle by ID in Vehicles table
+const schema = new dynamoose.Schema({
+  id: String,
+  wheelchairAccessible: Boolean,
+});
+
+const tableName = 'Vehicles';
+
+export const Vehicle = dynamoose.model(tableName, schema, { create: false });
+
+// Get a vehicle by id
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  const params = {
-    TableName: 'Vehicles',
-    Key: { id },
-  };
-  docClient.get(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(data);
-    }
-  });
+  db.getById(res, Vehicle, id, tableName);
 });
 
-// Put a vehicle in Vehicles table
+// Get all vehicles
+router.get('/', (req, res) => db.getAll(res, Vehicle, tableName));
+
+// Create a new vehicle
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const vehicle: Vehicle = {
+  const vehicle = new Vehicle({
     id: uuid(),
-    wheelchairAccessible: postBody.wheelchairAccessible,
-  };
-  const params = {
-    TableName: 'Vehicles',
-    Item: vehicle,
-  };
-  docClient.put(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else {
-      res.send(vehicle);
-    }
+    ...postBody,
   });
+  db.create(res, vehicle);
 });
 
-// TODO: Update an existing vehicle
+// Update an existing vehicle
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const postBody = req.body;
+  db.update(res, Vehicle, { id }, postBody, tableName);
+});
 
-// TODO: Update an existing vehicle
+// Delete an existing vehicle
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  db.deleteById(res, Vehicle, id, tableName);
+});
 
 export default router;

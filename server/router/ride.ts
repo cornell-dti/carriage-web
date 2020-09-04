@@ -1,43 +1,32 @@
 import express from 'express';
-import uuid from 'uuid/v1';
-import dynamoose from 'dynamoose';
-import { Condition } from 'dynamoose/dist/Condition';
+import { v4 as uuid } from 'uuid';
+import dynamoose, { Condition } from 'dynamoose';
 import * as db from './common';
 
 const router = express.Router();
 
-const enum RideType {
-  active = 'active',
-  past = 'past',
-  unscheduled = 'unscheduled',
+enum Type {
+  ACTIVE = 'active',
+  PAST = 'past',
+  UNSCHEDULED = 'unscheduled',
 }
 
-const enum Index {
-  rider = 'riderIndex',
-  driver = 'driverIndex',
-  time = 'timeIndex',
-}
-
-type Ride = {
-  type: RideType,
+type RideType = {
+  type: Type,
   id: string,
   startLocation: string,
   endLocation: string,
   startTime: string,
   endTime: string,
-  riderID: string,
-  driverID?: string,
+  riderId: string,
+  driverId?: string,
 };
 
 const schema = new dynamoose.Schema({
   type: {
     hashKey: true,
     type: String,
-    enum: ['active', 'past', 'unscheduled'],
-    index: {
-      name: Index.time,
-      rangeKey: 'startTime',
-    } as any,
+    enum: Object.values(Type),
   },
   id: {
     rangeKey: true,
@@ -47,91 +36,71 @@ const schema = new dynamoose.Schema({
   endLocation: String,
   startTime: String,
   endTime: String,
-  riderID: {
-    type: String,
-    index: {
-      name: Index.rider,
-      rangeKey: 'type',
-      global: true,
-    } as any,
-  },
-  driverID: {
-    type: String,
-    index: {
-      name: Index.driver,
-      rangeKey: 'type',
-      global: true,
-    } as any,
-  },
-}, { saveUnknown: true });
+  riderId: String,
+  driverId: String,
+});
 
-export const Rides = dynamoose.model('Rides', schema, { create: false });
+const tableName = 'Rides';
 
-// Get a ride by ID in Rides table
-router.get('/:type/:id', (req, res) => {
+export const Ride = dynamoose.model(tableName, schema, { create: false });
+
+const typeParam = ':type(active|past|unscheduled)';
+
+// Get a ride by id in Rides table
+router.get(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
-  db.getByID(res, Rides, { type, id }, 'Rides');
+  db.getById(res, Ride, { type, id }, tableName);
 });
 
 // Get all rides in Rides table
-router.get('/', (req, res) => db.getAll(res, Rides, 'Rides'));
+router.get('/', (req, res) => db.getAll(res, Ride, tableName));
 
 // Query all rides in table
-router.get('/:type', (req, res) => {
+router.get(`/${typeParam}`, (req, res) => {
   const { type } = req.params;
-  const { riderID, driverID, date } = req.query;
-  // default hash key is type, default index is none
+  const { riderId, driverId, date } = req.query;
   let condition = new Condition('type').eq(type);
-  let index;
-  if (riderID) {
-    condition = condition.where('riderID').eq(riderID);
-    // change index to riderIndex to use riderID as hash key
-    index = Index.rider;
+  if (riderId) {
+    condition = condition.where('riderId').eq(riderId);
   }
-  if (driverID) {
-    condition = condition.where('driverID').eq(driverID);
-    // change index to driverIndex (if not previously set) to use driverID as
-    // hash key, otherwise use as filter expression
-    index = index || Index.driver;
+  if (driverId) {
+    condition = condition.where('driverId').eq(driverId);
   }
   if (date) {
     const dateStart = new Date(`${date} EST`).toISOString();
     const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
-    // change index to timeIndex (if not previously set) to use startTime as
-    // range key, otherwise use as filter expression
-    index = index || Index.time;
   }
-  db.query(res, Rides, condition, index);
+  db.query(res, Ride, condition);
 });
 
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const rideID = uuid();
-  const ride = new Rides({
-    type: RideType.unscheduled,
-    id: rideID,
-    startLocation: postBody.startLocation,
-    endLocation: postBody.endLocation,
-    startTime: postBody.startTime,
-    endTime: postBody.endTime,
-    riderID: postBody.riderID,
+  const { startLocation, endLocation, startTime, endTime, riderId } = postBody;
+  const ride = new Ride({
+    type: Type.UNSCHEDULED,
+    id: uuid(),
+    startLocation,
+    endLocation,
+    startTime,
+    endTime,
+    riderId,
   });
   db.create(res, ride);
 });
 
 // Update an existing ride
-router.put('/:type/:id', (req, res) => {
+router.put(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
   const postBody = req.body;
-  db.update(res, Rides, { type, id }, postBody, 'Rides');
+  db.update(res, Ride, { type, id }, postBody, tableName);
 });
 
 // Delete an existing ride
-router.delete('/:type/:id', (req, res) => {
+router.delete(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
-  db.deleteByID(res, Rides, { type, id }, 'Rides');
+  db.deleteById(res, Ride, { type, id }, tableName);
 });
 
 export default router;

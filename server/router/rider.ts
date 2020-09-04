@@ -1,23 +1,13 @@
 import express from 'express';
-import uuid from 'uuid/v1';
-import dynamoose from 'dynamoose';
-import AWS from 'aws-sdk';
-import config from '../config';
+import { v4 as uuid } from 'uuid';
+import dynamoose, { Condition } from 'dynamoose';
 import * as db from './common';
-import { Locations, LocationType } from './location';
+import { Location } from './location';
 
 const router = express.Router();
 
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
-
 type Key = {
   id: string
-};
-
-type RideKeyType = {
-  id: string
-  startTime: string
 };
 
 type RiderType = {
@@ -36,7 +26,6 @@ type RiderType = {
   pronouns: string
   address: string
   favoriteLocations: string[]
-  requestedRides: RideKeyType[]
 };
 
 const schema = new dynamoose.Schema({
@@ -59,69 +48,27 @@ const schema = new dynamoose.Schema({
   address: String,
   favoriteLocations: {
     type: Array,
-    schema: [{ type: String }],
-  },
-  requestedRides: {
-    type: Array,
-    schema: [{
-      type: Object,
-      schema: Object({ id: String, startTime: String }),
-    }],
+    schema: [String],
   },
 });
 
-export const Riders = dynamoose.model('Riders', schema, { create: false });
+const tableName = 'Riders';
 
-// Get a rider by ID in Riders table
+export const Rider = dynamoose.model(tableName, schema, { create: false });
+
+// Get a rider by id in Riders table
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id, 'Riders');
+  db.getById(res, Rider, id, tableName);
 });
 
 // Get all riders
-router.get('/', (req, res) => db.getAll(res, Riders, 'Riders'));
-
-// Get all upcoming rides for a rider
-router.get('/:id/rides', (req, res) => {
-  const { id } = req.params;
-  const params = {
-    TableName: 'Riders',
-    Key: { id },
-  };
-  docClient.get(params, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data.Item) {
-      res.send({ err: { message: 'id not found' } });
-    } else {
-      const { requestedRides } = data.Item;
-      if (!requestedRides.length) {
-        res.send({ data: [] });
-      } else {
-        const rideParams = {
-          RequestItems: {
-            ActiveRides: {
-              Keys: requestedRides,
-            },
-          },
-        };
-        docClient.batchGet(rideParams, (rideErr, rideData) => {
-          if (rideErr) {
-            res.send({ err: rideErr });
-          } else {
-            res.send({ data: rideData.Responses!.ActiveRides });
-          }
-        });
-      }
-    }
-  });
-});
+router.get('/', (req, res) => db.getAll(res, Rider, tableName));
 
 // Get profile information for a rider
 router.get('/:id/profile', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id, 'Riders', (data) => {
-    const rider: RiderType = data;
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
       email, firstName, lastName, phoneNumber, pronouns, joinDate,
     } = rider;
@@ -134,8 +81,7 @@ router.get('/:id/profile', (req, res) => {
 // Get accessibility information for a rider
 router.get('/:id/accessibility', async (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id, 'Riders', (data) => {
-    const rider: RiderType = data;
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, accessibilityNeeds } = rider;
     res.send({ description, accessibilityNeeds });
   });
@@ -144,28 +90,19 @@ router.get('/:id/accessibility', async (req, res) => {
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  db.getByID(res, Riders, id, 'Riders', (data) => {
-    const rider: RiderType = data;
-    const { favoriteLocations } = rider;
-    const keys: Key[] = favoriteLocations.map((locID: string) => ({
-      id: locID,
-    }));
-    if (!keys.length) {
-      res.send({ data: [] });
-    } else {
-      db.batchGet(res, Locations, keys, 'Locations');
-    }
+  db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
+    const keys = db.createKeys('id', favoriteLocations);
+    db.batchGet(res, Location, keys, 'Locations');
   });
 });
 
 // Create a rider in Riders table
 router.post('/', (req, res) => {
   const postBody = req.body;
-  const rider = new Riders({
+  const rider = new Rider({
     id: uuid(),
     ...postBody,
     favoriteLocations: [],
-    requestedRides: [],
   });
   db.create(res, rider);
 });
@@ -174,25 +111,30 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const postBody = req.body;
-  db.update(res, Riders, { id }, postBody, 'Riders');
+  db.update(res, Rider, { id }, postBody, tableName);
 });
 
 // Add a location to favorites
 router.post('/:id/favorites', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  const locID = postBody.id;
-  db.getByID(res, Locations, locID, 'Locations', (data) => {
-    const location: LocationType = data;
-    const updateObj = { $ADD: { favoriteLocations: [locID] } };
-    db.update(res, Riders, { id }, updateObj, 'Riders', () => res.send(location));
+  const { id: locId } = req.body;
+  // check if location exists in table
+  db.getById(res, Location, locId, 'Locations', () => {
+    const operation = { $ADD: { favoriteLocations: [locId] } };
+    const condition = new Condition('favoriteLocations').not().contains(locId);
+    db.conditionalUpdate(
+      res, Rider, { id }, operation, condition, tableName, ({ favoriteLocations }: RiderType) => {
+        const keys = db.createKeys('id', favoriteLocations);
+        db.batchGet(res, Location, keys, 'Locations');
+      },
+    );
   });
 });
 
 // Delete an existing rider
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  db.deleteByID(res, Riders, id, 'Riders');
+  db.deleteById(res, Rider, id, tableName);
 });
 
 export default router;

@@ -4,20 +4,20 @@
     "description": "Frontend code for Carriage",
     "main": "app.js",
     "dependencies": {
-        "aws-sdk": "^2.671.0",
+        "aws-sdk": "^2.733.0",
         "body-parser": "^1.19.0",
         "dotenv": "^8.2.0",
-        "dynamoose": "^2.1.0",
+        "dynamoose": "^2.3.0",
         "express": "^4.17.1",
-        "fp-ts": "^2.5.4",
         "google-auth-library": "^5.10.1",
-        "io-ts": "^2.2.2",
         "uuid": "^3.4.0"
     },
     "devDependencies": {
-        "nodemon": "^2.0.3",
-        "ts-node": "^8.10.1",
-        "typescript": "^3.8.3"
+        "@types/express": "^4.17.7",
+        "@types/uuid": "^8.3.0",
+        "nodemon": "^2.0.4",
+        "ts-node": "^8.10.2",
+        "typescript": "^3.9.7"
     },
     "scripts": {
         "start": "nodemon --exec \"ts-node\" --watch router app.ts",
