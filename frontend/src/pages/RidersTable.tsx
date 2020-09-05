@@ -265,8 +265,11 @@ const Table = () => {
 
   useEffect(() => {
     async function getExistingRiders() {
-      const response = await fetch('/riders');
-      const data = (await response.json());
+      const data = await fetch('/riders').then(res => {
+        return res.json();
+      }).then(data => {
+        return data["data"];
+      });
       let allRiders: Rider[] = data.map(function (rider: any) {
         return {
           id: rider["id"],
