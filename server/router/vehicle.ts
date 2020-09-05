@@ -1,23 +1,11 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose from 'dynamoose';
 import * as db from './common';
+import { Vehicle } from '../models/vehicle';
 
 const router = express.Router();
 
-export type VehicleType = {
-  id: string,
-  wheelchairAccessible: boolean,
-};
-
-const schema = new dynamoose.Schema({
-  id: String,
-  wheelchairAccessible: Boolean,
-});
-
 const tableName = 'Vehicles';
-
-export const Vehicle = dynamoose.model(tableName, schema, { create: false });
 
 // Get a vehicle by id
 router.get('/:id', (req, res) => {

@@ -1,60 +1,13 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose, { Condition } from 'dynamoose';
+import { Condition } from 'dynamoose';
 import * as db from './common';
-import { Location } from './location';
+import { Rider, RiderType } from '../models/rider';
+import { Location } from '../models/location';
 
 const router = express.Router();
 
-type Key = {
-  id: string
-};
-
-type RiderType = {
-  id: string
-  firstName: string
-  lastName: string
-  phoneNumber: string
-  email: string
-  accessibilityNeeds: {
-    needsWheelchair: boolean
-    hasCrutches: boolean
-    needsAssistant: boolean
-  }
-  description: string
-  joinDate: string
-  pronouns: string
-  address: string
-  favoriteLocations: string[]
-};
-
-const schema = new dynamoose.Schema({
-  id: String,
-  firstName: String,
-  lastName: String,
-  phoneNumber: String,
-  email: String,
-  accessibilityNeeds: {
-    type: Object,
-    schema: {
-      needsWheelchair: Boolean,
-      hasCrutches: Boolean,
-      needsAssistant: Boolean,
-    },
-  },
-  description: String,
-  joinDate: String,
-  pronouns: String,
-  address: String,
-  favoriteLocations: {
-    type: Array,
-    schema: [{ type: String }],
-  },
-});
-
 const tableName = 'Riders';
-
-export const Rider = dynamoose.model(tableName, schema, { create: false });
 
 // Get a rider by id in Riders table
 router.get('/:id', (req, res) => {

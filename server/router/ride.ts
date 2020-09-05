@@ -1,48 +1,12 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose, { Condition } from 'dynamoose';
+import { Condition } from 'dynamoose';
 import * as db from './common';
+import { Ride, Type } from '../models/ride';
 
 const router = express.Router();
 
-enum Type {
-  ACTIVE = 'active',
-  PAST = 'past',
-  UNSCHEDULED = 'unscheduled',
-}
-
-type RideType = {
-  type: Type,
-  id: string,
-  startLocation: string,
-  endLocation: string,
-  startTime: string,
-  endTime: string,
-  riderId: string,
-  driverId?: string,
-};
-
-const schema = new dynamoose.Schema({
-  type: {
-    hashKey: true,
-    type: String,
-    enum: Object.values(Type),
-  },
-  id: {
-    rangeKey: true,
-    type: String,
-  },
-  startLocation: String,
-  endLocation: String,
-  startTime: String,
-  endTime: String,
-  riderId: String,
-  driverId: String,
-});
-
 const tableName = 'Rides';
-
-export const Ride = dynamoose.model(tableName, schema, { create: false });
 
 const typeParam = ':type(active|past|unscheduled)';
 

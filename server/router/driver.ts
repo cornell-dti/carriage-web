@@ -1,65 +1,11 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import dynamoose from 'dynamoose';
 import * as db from './common';
+import { Driver, DriverType } from '../models/driver';
 
 const router = express.Router();
 
-type BreakTimes = {
-  breakStart: string,
-  breakEnd: string,
-}
-
-type BreakType = {
-  Mon?: BreakTimes,
-  Tue?: BreakTimes,
-  Wed?: BreakTimes,
-  Thu?: BreakTimes,
-  Fri?: BreakTimes,
-}
-
-type DriverType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  startTime: string,
-  endTime: string,
-  breaks: BreakType,
-  vehicle: string,
-  phoneNumber: string,
-  email: string,
-};
-
-const breakDayValue = {
-  type: Object,
-  schema: {
-    breakStart: String,
-    breakEnd: String,
-  },
-};
-
-const breakSchema = Object.fromEntries(
-  ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((d) => [d, breakDayValue]),
-);
-
-const schema = new dynamoose.Schema({
-  id: String,
-  firstName: String,
-  lastName: String,
-  startTime: String,
-  endTime: String,
-  breaks: {
-    type: Object,
-    schema: breakSchema,
-  },
-  vehicle: String,
-  phoneNumber: String,
-  email: String,
-}, { saveUnknown: true });
-
 const tableName = 'Drivers';
-
-export const Driver = dynamoose.model(tableName, schema, { create: false });
 
 // Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
