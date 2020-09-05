@@ -2,16 +2,18 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import LandingPage from './components/landing';
 import Dashboard from './pages/Dashboard';
-import { SignInButton } from './components/signin';
+import { AuthManager } from './components/AuthManager';
 
 import './App.css';
 
 const App = () => (
   <Router>
-    <Switch>
-      <Route exact path="/" component={() => <><SignInButton /><LandingPage /></>} />
-      <Route path="/dashboard" component={Dashboard} />
-    </Switch>
+    <AuthManager>
+      <Switch>
+        <Route exact path="/" component={LandingPage} />
+        <Route path="/dashboard" component={Dashboard} />
+      </Switch>
+    </AuthManager>
   </Router>
 );
 
