@@ -3,7 +3,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useHistory } from "react-router-dom";
 import { useClientId } from '../hooks';
 import AuthContext from '../context/auth';
-import LandingPage from './landing';
+import LandingPage from './LandingPage';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);

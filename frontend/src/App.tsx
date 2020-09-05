@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import LandingPage from './components/landing';
+import LandingPage from './components/LandingPage';
 import Dashboard from './pages/Dashboard';
 import { AuthManager } from './components/AuthManager';
 
