@@ -1,5 +1,5 @@
-import React, { useState, FunctionComponent, createContext } from 'react';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import React, { useState, FunctionComponent } from 'react';
+import { GoogleLogin } from 'react-google-login';
 import { useHistory } from "react-router-dom";
 import { useClientId } from '../hooks';
 import AuthContext from '../context/auth';

@@ -31,7 +31,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
             <Link key={item.path} className="sidebar-links" to={item.path}>
               <div onClick={() => setSelected(index)} className="icon">
                 <div className={index === selected ? "selected circle" : "circle"}>
-                  <img src={item.icon} />
+                  <img alt={item.caption} src={item.icon} />
                 </div>
                 <div className="caption">{item.caption}</div>
               </div>
