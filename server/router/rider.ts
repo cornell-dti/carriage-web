@@ -6,7 +6,6 @@ import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 
 const router = express.Router();
-
 const tableName = 'Riders';
 
 // Get a rider by id in Riders table
