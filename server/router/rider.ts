@@ -50,10 +50,10 @@ router.get('/:id/favorites', (req, res) => {
 
 // Create a rider in Riders table
 router.post('/', (req, res) => {
-  const postBody = req.body;
+  const { body } = req;
   const rider = new Rider({
     id: uuid(),
-    ...postBody,
+    ...body,
     favoriteLocations: [],
   });
   db.create(res, rider);
@@ -62,8 +62,8 @@ router.post('/', (req, res) => {
 // Update a rider in Riders table
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  db.update(res, Rider, { id }, postBody, tableName);
+  const { body } = req;
+  db.update(res, Rider, { id }, body, tableName);
 });
 
 // Add a location to favorites

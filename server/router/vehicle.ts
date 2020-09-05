@@ -17,10 +17,10 @@ router.get('/', (req, res) => db.getAll(res, Vehicle, tableName));
 
 // Create a new vehicle
 router.post('/', (req, res) => {
-  const postBody = req.body;
+  const { body } = req;
   const vehicle = new Vehicle({
     id: uuid(),
-    ...postBody,
+    ...body,
   });
   db.create(res, vehicle);
 });
@@ -28,8 +28,8 @@ router.post('/', (req, res) => {
 // Update an existing vehicle
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  db.update(res, Vehicle, { id }, postBody, tableName);
+  const { body } = req;
+  db.update(res, Vehicle, { id }, body, tableName);
 });
 
 // Delete an existing vehicle

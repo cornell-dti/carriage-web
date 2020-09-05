@@ -30,10 +30,10 @@ router.get('/:id/profile', (req, res) => {
 
 // Put a driver in Drivers table
 router.post('/', (req, res) => {
-  const postBody = req.body;
+  const { body } = req;
   const driver = new Driver({
     id: uuid(),
-    ...postBody,
+    ...body,
   });
   db.create(res, driver);
 });
@@ -41,8 +41,8 @@ router.post('/', (req, res) => {
 // Update an existing driver
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  db.update(res, Driver, { id }, postBody, tableName);
+  const { body } = req;
+  db.update(res, Driver, { id }, body, tableName);
 });
 
 // Delete an existing driver

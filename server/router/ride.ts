@@ -38,8 +38,7 @@ router.get(`/${typeParam}`, (req, res) => {
 
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
-  const postBody = req.body;
-  const { startLocation, endLocation, startTime, endTime, riderId } = postBody;
+  const { startLocation, endLocation, startTime, endTime, riderId } = req.body;
   const ride = new Ride({
     type: Type.UNSCHEDULED,
     id: uuid(),
@@ -55,8 +54,8 @@ router.post('/', (req, res) => {
 // Update an existing ride
 router.put(`/${typeParam}/:id`, (req, res) => {
   const { type, id } = req.params;
-  const postBody = req.body;
-  db.update(res, Ride, { type, id }, postBody, tableName);
+  const { body } = req;
+  db.update(res, Ride, { type, id }, body, tableName);
 });
 
 // Delete an existing ride

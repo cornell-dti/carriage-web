@@ -8,10 +8,10 @@ const tableName = 'Dispatchers';
 
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
-  const postBody = req.body;
+  const { body } = req;
   const dispatcher = new Dispatcher({
     id: uuid(),
-    ...postBody,
+    ...body,
   });
   db.create(res, dispatcher);
 });

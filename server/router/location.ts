@@ -17,10 +17,10 @@ router.get('/', (req, res) => db.getAll(res, Location, tableName));
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
-  const postBody = req.body;
+  const { body } = req;
   const location = new Location({
     id: uuid(),
-    ...postBody,
+    ...body,
   });
   db.create(res, location);
 });
@@ -28,8 +28,8 @@ router.post('/', (req, res) => {
 // Update an existing location
 router.post('/', (req, res) => {
   const { id } = req.params;
-  const postBody = req.body;
-  db.update(res, Location, { id }, postBody, tableName);
+  const { body } = req;
+  db.update(res, Location, { id }, body, tableName);
 });
 
 // Delete an existing location
