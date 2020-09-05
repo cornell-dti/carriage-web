@@ -48,7 +48,7 @@ const schema = new dynamoose.Schema({
   address: String,
   favoriteLocations: {
     type: Array,
-    schema: [String],
+    schema: [{ type: String }],
   },
 });
 
