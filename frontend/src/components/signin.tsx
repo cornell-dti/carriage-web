@@ -25,7 +25,7 @@ export const SignInButton = () => {
           "token": token,
           "email": email,
           "table": "Dispatchers",
-          "clientID": clientId
+          "clientId": clientId
         })
     };
     const response = await fetch('/auth', requestOptions);
