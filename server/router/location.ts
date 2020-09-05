@@ -4,7 +4,6 @@ import * as db from './common';
 import { Location } from '../models/location';
 
 const router = express.Router();
-
 const tableName = 'Locations';
 
 // Get a location by id in Locations table

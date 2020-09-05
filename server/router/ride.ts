@@ -5,9 +5,7 @@ import * as db from './common';
 import { Ride, Type } from '../models/ride';
 
 const router = express.Router();
-
 const tableName = 'Rides';
-
 const typeParam = ':type(active|past|unscheduled)';
 
 // Get a ride by id in Rides table

@@ -4,7 +4,6 @@ import * as db from './common';
 import { Vehicle } from '../models/vehicle';
 
 const router = express.Router();
-
 const tableName = 'Vehicles';
 
 // Get a vehicle by id

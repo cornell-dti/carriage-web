@@ -4,7 +4,6 @@ import * as db from './common';
 import { Dispatcher } from '../models/dispatcher';
 
 const router = express.Router();
-
 const tableName = 'Dispatchers';
 
 // Put a driver in Dispatchers table

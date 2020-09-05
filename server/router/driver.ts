@@ -4,7 +4,6 @@ import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 
 const router = express.Router();
-
 const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
