@@ -1,6 +1,6 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useClientId } from '../hooks';
 import AuthContext from '../context/auth';
 import LandingPage from './LandingPage';
@@ -9,6 +9,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
   const clientId = useClientId();
   let history = useHistory();
+  const { pathname } = useLocation();
 
   function logout() {
     localStorage.clear();
@@ -32,13 +33,15 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         })
     };
 
-    const authorized = await fetch('/auth', requestOptions).then(res => {
-      return res.json();
-    }).then(data => data['id']);
+    const authorized = await fetch('/auth', requestOptions)
+      .then(res => res.json())
+      .then(data => data['id']);
 
     if (authorized) {
       setSignedIn(true);
-      history.push('/dashboard/home');
+      if (pathname === '/') {
+        history.push('/dashboard/home');
+      }
     } else {
       logout();
     }
