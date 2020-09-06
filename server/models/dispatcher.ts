@@ -1,7 +1,11 @@
 import dynamoose from 'dynamoose';
 
 // only an admin should be able to add another dispatcher
-type AccessLevel = 'Admin' | 'SDS' | 'Dispatcher'
+export enum AccessLevel {
+  ADMIN = 'Admin',
+  SDS = 'SDS',
+  DISPATCHER = 'Dispatcher',
+}
 
 export type DispatcherType = {
   id: string,
@@ -20,7 +24,7 @@ const schema = new dynamoose.Schema({
   email: String,
   accessLevel: {
     type: String,
-    enum: ['Admin', 'SDS', 'Dispatcher'],
+    enum: Object.values(AccessLevel),
   },
 });
 
