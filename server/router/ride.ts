@@ -10,7 +10,7 @@ const typeParam = ':type(active|past|unscheduled)';
 
 // Get a ride by id in Rides table
 router.get(`/${typeParam}/:id`, (req, res) => {
-  const { type, id } = req.params;
+  const { params: { type, id } } = req;
   db.getById(res, Ride, { type, id }, tableName);
 });
 
@@ -19,8 +19,7 @@ router.get('/', (req, res) => db.getAll(res, Ride, tableName));
 
 // Query all rides in table
 router.get(`/${typeParam}`, (req, res) => {
-  const { type } = req.params;
-  const { riderId, driverId, date } = req.query;
+  const { params: { type }, query: { riderId, driverId, date } } = req;
   let condition = new Condition('type').eq(type);
   if (riderId) {
     condition = condition.where('riderId').eq(riderId);
@@ -38,29 +37,24 @@ router.get(`/${typeParam}`, (req, res) => {
 
 // Put an active ride in Active Rides table
 router.post('/', (req, res) => {
-  const { startLocation, endLocation, startTime, endTime, riderId } = req.body;
+  const { body } = req;
   const ride = new Ride({
     type: Type.UNSCHEDULED,
     id: uuid(),
-    startLocation,
-    endLocation,
-    startTime,
-    endTime,
-    riderId,
+    ...body,
   });
   db.create(res, ride);
 });
 
 // Update an existing ride
 router.put(`/${typeParam}/:id`, (req, res) => {
-  const { type, id } = req.params;
-  const { body } = req;
+  const { params: { type, id }, body } = req;
   db.update(res, Ride, { type, id }, body, tableName);
 });
 
 // Delete an existing ride
 router.delete(`/${typeParam}/:id`, (req, res) => {
-  const { type, id } = req.params;
+  const { params: { type, id } } = req;
   db.deleteById(res, Ride, { type, id }, tableName);
 });
 

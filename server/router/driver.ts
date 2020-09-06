@@ -8,7 +8,7 @@ const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
 router.get('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.getById(res, Driver, id, tableName);
 });
 
@@ -17,7 +17,7 @@ router.get('/', (req, res) => db.getAll(res, Driver, tableName));
 
 // Get profile information for a driver
 router.get('/:id/profile', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.getById(res, Driver, id, tableName, (driver: DriverType) => {
     const {
       email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
@@ -40,14 +40,13 @@ router.post('/', (req, res) => {
 
 // Update an existing driver
 router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { body } = req;
+  const { params: { id }, body } = req;
   db.update(res, Driver, { id }, body, tableName);
 });
 
 // Delete an existing driver
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });
 

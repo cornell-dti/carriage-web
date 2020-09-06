@@ -8,7 +8,7 @@ const tableName = 'Vehicles';
 
 // Get a vehicle by id
 router.get('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.getById(res, Vehicle, id, tableName);
 });
 
@@ -27,14 +27,13 @@ router.post('/', (req, res) => {
 
 // Update an existing vehicle
 router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { body } = req;
+  const { params: { id }, body } = req;
   db.update(res, Vehicle, { id }, body, tableName);
 });
 
 // Delete an existing vehicle
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.deleteById(res, Vehicle, id, tableName);
 });
 

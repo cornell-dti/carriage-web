@@ -18,7 +18,7 @@ router.post('/', (req, res) => {
 
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.deleteById(res, Dispatcher, id, tableName);
 });
 

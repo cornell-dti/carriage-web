@@ -8,7 +8,7 @@ const tableName = 'Locations';
 
 // Get a location by id in Locations table
 router.get('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.getById(res, Location, id, tableName);
 });
 
@@ -27,14 +27,13 @@ router.post('/', (req, res) => {
 
 // Update an existing location
 router.post('/', (req, res) => {
-  const { id } = req.params;
-  const { body } = req;
+  const { params: { id }, body } = req;
   db.update(res, Location, { id }, body, tableName);
 });
 
 // Delete an existing location
 router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+  const { params: { id } } = req;
   db.deleteById(res, Location, id, tableName);
 });
 
