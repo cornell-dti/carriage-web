@@ -24,19 +24,17 @@ const Sidebar: FunctionComponent = ({ children }) => {
 
   return (
     <div className="container">
-      <div>
-        <div className="sidebar">
-          {menuItems.map(item => (
-            <Link key={item.path} className="sidebar-links" to={item.path}>
-              <div onClick={() => setSelected(item.path)} className="icon">
-                <div className={item.path === selected ? "selected circle" : "circle"}>
-                  <img alt={item.caption} src={item.icon} />
-                </div>
-                <div className="caption">{item.caption}</div>
+      <div className="sidebar">
+        {menuItems.map(item => (
+          <Link key={item.path} className="sidebar-links" to={item.path}>
+            <div onClick={() => setSelected(item.path)} className="icon">
+              <div className={item.path === selected ? "selected circle" : "circle"}>
+                <img alt={item.caption} src={item.icon} />
               </div>
-            </Link>
-          ))}
-        </div>
+              <div className="caption">{item.caption}</div>
+            </div>
+          </Link>
+        ))}
       </div>
 
       <div className="content">
