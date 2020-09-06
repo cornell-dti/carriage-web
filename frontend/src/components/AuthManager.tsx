@@ -1,7 +1,7 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from "react-router-dom";
-import { useClientId } from '../hooks';
+import useClientId from '../hooks/useClientId';
 import AuthContext from '../context/auth';
 import LandingPage from './LandingPage';
 
