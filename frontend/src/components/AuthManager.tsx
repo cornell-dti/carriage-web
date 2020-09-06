@@ -8,7 +8,7 @@ import LandingPage from './LandingPage';
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
   const clientId = useClientId();
-  let history = useHistory();
+  const history = useHistory();
   const { pathname } = useLocation();
 
   function logout() {
@@ -18,8 +18,8 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   }
 
   async function onSignIn(googleUser: any) {
-    let token = googleUser.getAuthResponse().id_token;
-    let email = googleUser.profileObj.email;
+    const { id_token: token } = googleUser.getAuthResponse();
+    const { email } = googleUser.profileObj;
 
     const requestOptions = {
       method: 'POST',
@@ -47,26 +47,26 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     }
   }
 
-  return (
-    signedIn ?
-      (
-        <AuthContext.Provider value={{ logout }}>
-          {children}
-        </AuthContext.Provider>
-      )
-      : (
-        <>
-          <GoogleLogin
-            onSuccess={onSignIn}
-            onFailure={() => console.error("failed to sign in")}
-            clientId={clientId}
-            cookiePolicy={'single_host_origin'}
-            isSignedIn
-          />
-          <LandingPage />
-        </>
-      )
+  const SiteContent = () => (
+    <AuthContext.Provider value={{ logout }}>
+      {children}
+    </AuthContext.Provider>
   )
+
+  const AuthBarrier = () => (
+    <>
+      <GoogleLogin
+        onSuccess={onSignIn}
+        onFailure={() => console.error("failed to sign in")}
+        clientId={clientId}
+        cookiePolicy='single_host_origin'
+        isSignedIn
+      />
+      <LandingPage />
+    </>
+  )
+
+  return signedIn ? <SiteContent /> : <AuthBarrier />
 
 }
 
