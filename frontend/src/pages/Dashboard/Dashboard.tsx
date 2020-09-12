@@ -5,7 +5,6 @@ import Drivers from './Drivers';
 import Riders from './Riders';
 import Home from './Home';
 import Settings from './Settings';
-import './dashboard.css';
 
 const Dashboard = () => (
   <Router basename="/dashboard">
