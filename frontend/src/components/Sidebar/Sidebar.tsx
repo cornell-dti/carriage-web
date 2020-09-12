@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { home, drivers, riders, settings } from './icons';
 import styles from './sidebar.module.css';
 
-interface MenuItem {
+type MenuItem = {
   icon: string,
   caption: string,
   path: string
