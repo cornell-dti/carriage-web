@@ -1,11 +1,11 @@
 import React from 'react';
-import '../styles/dashboard.css';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import DriverTable from './DriversTable';
 import RiderTable from './RidersTable';
 import Home from './Home';
 import Settings from './Settings';
+import './dashboard.css';
 
 const Dashboard = () => (
   <Router basename="/dashboard">
