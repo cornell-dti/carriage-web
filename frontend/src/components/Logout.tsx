@@ -9,7 +9,7 @@ const Logout: FunctionComponent = () => {
 
   return (
     <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
-  )
-}
+  );
+};
 
 export default Logout;

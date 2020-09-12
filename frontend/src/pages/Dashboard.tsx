@@ -7,22 +7,20 @@ import RiderTable from './RidersTable';
 import Home from './Home';
 import Settings from './Settings';
 
-const Dashboard = () => {
-  return (
-    <Router basename="/dashboard">
-      <Sidebar>
-        <Switch>
-          <Route path="/home" component={Home} />
-          <Route path="/drivers" component={DriverTable} />
-          <Route path="/riders" component={RiderTable} />
-          <Route path="/settings" component={Settings} />
-          <Route path="*">
-            <Redirect to="/home" />
-          </Route>
-        </Switch>
-      </Sidebar>
-    </Router>
-  );
-}
+const Dashboard = () => (
+  <Router basename="/dashboard">
+    <Sidebar>
+      <Switch>
+        <Route path="/home" component={Home} />
+        <Route path="/drivers" component={DriverTable} />
+        <Route path="/riders" component={RiderTable} />
+        <Route path="/settings" component={Settings} />
+        <Route path="*">
+          <Redirect to="/home" />
+        </Route>
+      </Switch>
+    </Sidebar>
+  </Router>
+);
 
-export default Dashboard
+export default Dashboard;
