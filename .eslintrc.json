@@ -20,7 +20,8 @@
     },
     "plugins": [
         "promise",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "react-hooks"
     ],
     "rules": {
         "import/extensions": [
@@ -34,6 +35,8 @@
             }
         ],
         "linebreak-style": "off",
-        "object-curly-newline": "off"
+        "object-curly-newline": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 }
