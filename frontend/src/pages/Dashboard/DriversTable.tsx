@@ -60,7 +60,7 @@ const Form = (props: FormProps) => {
         setValidNetid(false);
       }
     } else if (fieldName === 'email') {
-      const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      const emailFormat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
       if ((fieldValue.length > 0) && fieldValue.match(emailFormat)) {
         newDriver.email = fieldValue;
         setValidEmail(true);

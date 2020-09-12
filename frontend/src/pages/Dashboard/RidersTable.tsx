@@ -41,11 +41,11 @@ function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
   let allNeeds = '';
   const arrayNeeds = Object.entries(accessNeeds);
   arrayNeeds.forEach((element) => {
-    if (element[0] == 'hasCrutches' && element[1]) {
+    if (element[0] === 'hasCrutches' && element[1]) {
       allNeeds = allNeeds.concat('Has Crutches, ');
-    } else if (element[0] == 'needsAssistant' && element[1]) {
+    } else if (element[0] === 'needsAssistant' && element[1]) {
       allNeeds = allNeeds.concat('Needs Assistant, ');
-    } else if (element[0] == 'needsWheelchair' && element[1]) {
+    } else if (element[0] === 'needsWheelchair' && element[1]) {
       allNeeds = allNeeds.concat('Needs Wheelchair, ');
     }
   });
@@ -297,7 +297,7 @@ const Table = () => {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       };
-      const response = await fetch(`/riders/${riderId}`, requestOptions);
+      await fetch(`/riders/${riderId}`, requestOptions);
     }
     deleteBackend();
     return riderList.filter((rider) => rider.email !== email);
@@ -324,7 +324,7 @@ const Table = () => {
           'address:': newRider.address,
         }),
       };
-      const response = await fetch('/riders', requestOptions);
+      await fetch('/riders', requestOptions);
     }
     addBackend();
     return [...allRiders, newRider];
@@ -333,8 +333,7 @@ const Table = () => {
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
       const {
-        id, firstName, lastName, phoneNumber, email,
-        accessibilityNeeds,
+        firstName, lastName, phoneNumber, email, accessibilityNeeds,
       } = rider;
       return (
         <tr key={email}>
