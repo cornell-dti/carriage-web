@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/table.css';
+import './table.css';
 
 interface Driver {
   name: string;

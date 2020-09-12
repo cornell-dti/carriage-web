@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/table.css';
+import './table.css';
 
 interface AccessibilityNeeds {
   hasCrutches: boolean;

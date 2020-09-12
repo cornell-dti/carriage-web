@@ -1,11 +1,8 @@
 import React, { useState, FunctionComponent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import '../styles/sidebar.css';
-
-import home from '../menu/home.png';
-import drivers from '../menu/drivers.png';
-import riders from '../menu/riders.png';
-import settings from '../menu/settings.png';
+import cn from 'classnames';
+import { home, drivers, riders, settings } from './icons';
+import styles from './sidebar.module.css';
 
 interface MenuItem {
   icon: string,
@@ -25,24 +22,28 @@ const Sidebar: FunctionComponent = ({ children }) => {
   ];
 
   return (
-    <div className="container">
-      <div className="sidebar">
-        {menuItems.map((item) => (
-          <Link key={item.path} className="sidebar-links" to={item.path}>
-            <div onClick={() => setSelected(item.path)} className="icon">
-              <div className={item.path === selected ? 'selected circle' : 'circle'}>
-                <img alt={item.caption} src={item.icon} />
+    <div className={styles.container}>
+      <div className={styles.sidebar}>
+        {menuItems.map(({ path, icon, caption }) => (
+          <Link key={path} className={styles.sidebarLinks} to={path}>
+            <div onClick={() => setSelected(path)} className={styles.icon}>
+              <div className={
+                path === selected
+                  ? cn(styles.selected, styles.circle)
+                  : styles.circle
+              }>
+                <img alt={caption} src={icon} />
               </div>
-              <div className="caption">{item.caption}</div>
+              <div className={styles.caption}>{caption}</div>
             </div>
           </Link>
         ))}
       </div>
 
-      <div className="content">
+      <div className={styles.content}>
         {children}
       </div>
-    </div>
+    </div >
   );
 };
 

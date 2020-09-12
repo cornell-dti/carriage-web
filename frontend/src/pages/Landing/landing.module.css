@@ -1,5 +1,5 @@
 .home {
-  background-image: url("../img/showcase.jpg");
+  background-image: url("./showcase.jpg");
   background-size: cover;
   background-size: center;
   height: 100vh;
