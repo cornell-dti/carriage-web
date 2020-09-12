@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import LandingPage from './components/LandingPage';
-import Dashboard from './pages/Dashboard';
-import { AuthManager } from './components/AuthManager';
+import LandingPage from './pages/Landing/Landing';
+import Dashboard from './pages/Dashboard/Dashboard';
+import { AuthManager } from './components/AuthManager/AuthManager';
 
-import './App.css';
+import './styles/App.css';
 
 const App = () => (
   <Router>

@@ -1,34 +1,8 @@
 import React, { useState } from 'react';
-import '../styles/table.css';
+import { Driver } from '../../types/index';
 
-interface Driver {
-  name: string;
-  netid: string;
-  email: string;
-  phone: string;
-}
-
-interface FormProps {
+type FormProps = {
   onClick: ((newDriver: Driver) => void);
-}
-
-function deleteEntry(netid: string, driverList: Driver[]) {
-  return driverList.filter(driver => driver.netid !== netid)
-}
-
-function renderTableHeader() {
-  return (
-    <tr>
-      <th className="tableHeader">Name</th>
-      <th className="tableHeader">Netid</th>
-      <th className="tableHeader">Email</th>
-      <th className="tableHeader">Phone Number</th>
-    </tr>
-  );
-}
-
-function addDriver(newDriver: Driver, allDrivers: Driver[]) {
-  return [...allDrivers, newDriver];
 }
 
 const Form = (props: FormProps) => {
@@ -47,37 +21,34 @@ const Form = (props: FormProps) => {
         newDriver.name = fieldValue;
         setValidName(true);
       } else {
-        newDriver.name = "";
+        newDriver.name = '';
         setValidName(false);
       }
-    }
-    else if (fieldName === 'netid') {
+    } else if (fieldName === 'netid') {
       const netIdFormat = /^[a-zA-Z]+[0-9]+$/;
       if ((fieldValue.length > 0) && fieldValue.match(netIdFormat)) {
         newDriver.netid = fieldValue;
         setValidNetid(true);
       } else {
-        newDriver.netid = "";
+        newDriver.netid = '';
         setValidNetid(false);
       }
-    }
-    else if (fieldName === 'email') {
-      const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    } else if (fieldName === 'email') {
+      const emailFormat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
       if ((fieldValue.length > 0) && fieldValue.match(emailFormat)) {
         newDriver.email = fieldValue;
         setValidEmail(true);
       } else {
-        newDriver.email = "";
+        newDriver.email = '';
         setValidEmail(false);
       }
-    }
-    else {
+    } else {
       const phoneFormat = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
       if ((fieldValue.length > 0) && fieldValue.match(phoneFormat)) {
         newDriver.phone = fieldValue;
         setValidPhone(true);
       } else {
-        newDriver.phone = "";
+        newDriver.phone = '';
         setValidPhone(false);
       }
     }
@@ -85,7 +56,7 @@ const Form = (props: FormProps) => {
   };
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
-    let validAddDriver = validName && validNetid && validEmail && validPhone;
+    const validAddDriver = validName && validNetid && validEmail && validPhone;
     if (validAddDriver) { props.onClick(newDriver); }
   };
 
@@ -101,7 +72,7 @@ const Form = (props: FormProps) => {
               onChange={(e) => handleInput(e)}
               required
             />
-            <p className={`formFeedback ${validName ? "hidden" : ""}`}>
+            <p className={`formFeedback ${validName ? 'hidden' : ''}`}>
               Enter a name
           </p>
           </div>
@@ -111,7 +82,7 @@ const Form = (props: FormProps) => {
               name="netid"
               onChange={(e) => handleInput(e)}
             />
-            <p className={`formFeedback ${validNetid ? "hidden" : ""}`}>
+            <p className={`formFeedback ${validNetid ? 'hidden' : ''}`}>
               Enter a valid netid
           </p>
           </div>
@@ -121,7 +92,7 @@ const Form = (props: FormProps) => {
               name="email"
               onChange={(e) => handleInput(e)}
             />
-            <p className={`formFeedback ${validEmail ? "hidden" : ""}`}>
+            <p className={`formFeedback ${validEmail ? 'hidden' : ''}`}>
               Enter a valid email address
           </p>
           </div>
@@ -132,7 +103,7 @@ const Form = (props: FormProps) => {
               placeholder="XXX-XXX-XXXX"
               onChange={(e) => handleInput(e)}
             />
-            <p className={`formFeedback ${validPhone ? "hidden" : ""}`}>
+            <p className={`formFeedback ${validPhone ? 'hidden' : ''}`}>
               Enter a phone number in the form xxx-xxx-xxxx
           </p>
           </div>
@@ -143,54 +114,4 @@ const Form = (props: FormProps) => {
   );
 };
 
-const Table = () => {
-  const [drivers, setDrivers] = useState([
-    { name: 'Driver1', netid: 'abc123', email: 'abc123@cornell.edu', phone: '111-111-1111' },
-    { name: 'Driver2', netid: 'asd23', email: 'asd23@cornell.edu', phone: '222-222-2222' },
-    { name: 'Driver3', netid: 'advs12', email: 'advs12@cornell.edu', phone: '333-333-3333' },
-    { name: 'Driver4', netid: 'bfd2', email: 'bfd2@cornell.edu', phone: '444-444-4444' },
-  ]);
-
-  function renderTableData(allDrivers: Driver[]) {
-    return allDrivers.map((driver, index) => {
-      const { name, netid, email, phone } = driver;
-      return (
-        <tr key={netid}>
-          <td className="tableCell">{name}</td>
-          <td>{netid}</td>
-          <td>{email}</td>
-          <td>{phone}</td>
-          <td>
-            <button
-              onClick={() => setDrivers(deleteEntry(netid, allDrivers))}>
-              Delete
-              </button>
-          </td>
-        </tr>
-      );
-    });
-  }
-
-  return (
-    <>
-      <div>
-        <h1 className="formHeader">Driver Table</h1>
-        <table className="table">
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData(drivers)}
-          </tbody>
-        </table>
-      </div >
-      <div>
-        <Form onClick={(newDriver) => setDrivers(addDriver(newDriver, drivers))} />
-      </div>
-    </>
-  );
-};
-
-const DriverTable = () => (
-  <Table />
-);
-
-export default DriverTable;
+export default Form;
