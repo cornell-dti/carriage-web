@@ -17,12 +17,12 @@
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@types/react-router-dom": "^5.1.3",
-    "dotenv": "^8.2.0",
     "react-scripts": "^3.4.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "tsc": "tsc --noEmit false",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,3 +1,3 @@
-const useClientId = () => process.env.REACT_APP_CLIENT_ID!;
+const useClientId = () => process.env.REACT_APP_CLIENT_ID || '';
 
 export default useClientId;

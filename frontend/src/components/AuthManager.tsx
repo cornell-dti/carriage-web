@@ -57,7 +57,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     <>
       <GoogleLogin
         onSuccess={onSignIn}
-        onFailure={() => console.error('failed to sign in')}
+        onFailure={(err) => console.error(err)}
         clientId={clientId}
         cookiePolicy='single_host_origin'
         isSignedIn
