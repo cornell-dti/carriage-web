@@ -1,5 +1,5 @@
 import React from 'react';
-import { Driver, BreakType } from '../../types/index';
+import { Driver, BreakType } from '../../types';
 
 const parseAvailability = (
   startTime: string,
