@@ -17,9 +17,27 @@ export type Rider = {
   address: string;
 }
 
-export type Driver = {
-  name: string;
-  netid: string;
-  email: string;
-  phone: string;
+type BreakTimes = {
+  breakStart: string,
+  breakEnd: string,
 }
+
+type BreakType = {
+  Mon?: BreakTimes,
+  Tue?: BreakTimes,
+  Wed?: BreakTimes,
+  Thu?: BreakTimes,
+  Fri?: BreakTimes,
+}
+
+export type Driver = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  startTime: string,
+  endTime: string,
+  breaks: BreakType,
+  vehicle: string,
+  phoneNumber: string,
+  email: string,
+};
