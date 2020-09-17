@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { Driver } from '../../types/index';
+
+type Driver = {
+  name: string,
+  netid: string,
+  email: string,
+  phone: string,
+}
 
 type FormProps = {
   onClick: ((newDriver: Driver) => void);
