@@ -17,12 +17,12 @@ export type Rider = {
   address: string;
 }
 
-type BreakTimes = {
+export type BreakTimes = {
   breakStart: string,
   breakEnd: string,
 }
 
-type BreakType = {
+export type BreakType = {
   Mon?: BreakTimes,
   Tue?: BreakTimes,
   Wed?: BreakTimes,
