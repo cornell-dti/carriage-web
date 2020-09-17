@@ -1,6 +1,13 @@
 import React from 'react';
 import { Driver, BreakType } from '../../types';
 
+const formatTime = (time: string) => {
+  const hours = Number(time.substring(0, 2));
+  // set fmtHours to 12 if hours is multiple of 12
+  const fmtHours = hours % 12 || 12;
+  return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
+};
+
 const parseAvailability = (
   startTime: string,
   endTime: string,
@@ -10,11 +17,15 @@ const parseAvailability = (
   const availability = days.map((day) => {
     let timeRange = '';
     const breakTimes = breaks[day];
+    const fmtStart = formatTime(startTime);
+    const fmtEnd = formatTime(endTime);
     if (!breakTimes) {
-      timeRange = `${startTime} - ${endTime}`;
+      timeRange = `${fmtStart}-${fmtEnd}`;
     } else {
       const { breakStart, breakEnd } = breakTimes;
-      timeRange = `${startTime} - ${breakStart}, ${breakEnd} - ${endTime}`;
+      const fmtBreakStart = formatTime(breakStart);
+      const fmtBreakEnd = formatTime(breakEnd);
+      timeRange = `${fmtStart}-${fmtBreakStart}, ${fmtBreakEnd}-${fmtEnd}`;
     }
     return [day, timeRange];
   });
