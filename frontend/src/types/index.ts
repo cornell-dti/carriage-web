@@ -18,26 +18,22 @@ export type Rider = {
 }
 
 export type BreakTimes = {
-  breakStart: string,
-  breakEnd: string,
+  breakStart: string;
+  breakEnd: string;
 }
 
 export type BreakType = {
-  Mon?: BreakTimes,
-  Tue?: BreakTimes,
-  Wed?: BreakTimes,
-  Thu?: BreakTimes,
-  Fri?: BreakTimes,
+  [day: string]: BreakTimes;
 }
 
 export type Driver = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  startTime: string,
-  endTime: string,
-  breaks: BreakType,
-  vehicle: string,
-  phoneNumber: string,
-  email: string,
+  id: string;
+  firstName: string;
+  lastName: string;
+  startTime: string;
+  endTime: string;
+  breaks: BreakType;
+  vehicle: string;
+  phoneNumber: string;
+  email: string;
 };
