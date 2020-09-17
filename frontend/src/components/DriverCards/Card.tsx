@@ -6,8 +6,10 @@ const parseAvailability = (
   endTime: string,
   breaks: BreakType,
 ) => {
-  const availability = Object.entries(breaks).map(([day, breakTimes]) => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const availability = days.map((day) => {
     let timeRange = '';
+    const breakTimes = breaks[day];
     if (!breakTimes) {
       timeRange = `${startTime} - ${endTime}`;
     } else {
@@ -19,16 +21,22 @@ const parseAvailability = (
   return availability;
 };
 
+type CardProps = {
+  driver: Driver;
+}
+
 const Card = ({
-  firstName,
-  lastName,
-  email,
-  phoneNumber,
-  startTime,
-  endTime,
-  breaks,
-  vehicle,
-}: Driver) => {
+  driver: {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    startTime,
+    endTime,
+    breaks,
+    vehicle,
+  },
+}: CardProps) => {
   const fullName = `${firstName} ${lastName}`;
   const netId = email.split('@')[0];
   const availability = parseAvailability(startTime, endTime, breaks);
@@ -40,7 +48,7 @@ const Card = ({
       <p>{netId}</p>
       <p>{phoneNumber}</p>
       {availability.map(([day, timeRange]) => (
-        <p><b>{day}:</b> {timeRange}</p>
+        <p key={day}><b>{day}:</b> {timeRange}</p>
       ))}
       <p>{vehicle}</p>
     </div>
