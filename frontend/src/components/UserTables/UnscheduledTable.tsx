@@ -1,4 +1,6 @@
 import React from 'react';
+import { Passenger } from '../../types/index';
+import './unscheduledTable.css';
 
 
 function renderTableHeader() {
@@ -14,18 +16,6 @@ function renderTableHeader() {
   );
 }
 
-type passenger = {
-  startTime: string;
-  endTime: string;
-  name: string;
-  pickupLocation: string;
-  pickupTag: string;
-  dropoffLocation: string;
-  dropoffTag: string;
-  needs: string;
-
-}
-
 const Table = () => {
   const passengers = [
     { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
@@ -36,7 +26,7 @@ const Table = () => {
 
   ];
 
-  function renderTableData(allPassengers: passenger[]) {
+  function renderTableData(allPassengers: Passenger[]) {
     let currentTime = '';
     return allPassengers.map((rider, index) => {
       const { startTime, endTime, name, pickupLocation, pickupTag,
@@ -53,13 +43,13 @@ const Table = () => {
       const timeframe = currentTime;
       return (
         <tr key={index}>
-          <td>{timeframe}</td>
-          <td><span>{startTime}</span> <br></br> <span>-- {endTime}</span></td>
-          <td className="tableCell">{name}</td>
-          <td><span>{pickupLocation}</span> <span style={{ background: '#D5F2EA' }}>{pickupTag}</span></td>
-          <td><span>{dropoffLocation}</span> <span style={{ background: '#FFD8DE' }}>{dropoffTag}</span></td>
-          <td>{needs}</td>
-        </tr>
+          <td className="cell">{timeframe}</td>
+          <td className="cell"><span style={{ fontWeight: 'bold' }}>{startTime}</span> <br></br> <span style={{ color: '#707070' }}>-- {endTime}</span></td>
+          <td className="passInfo cell firstCell">{name}</td>
+          <td className="passInfo cell"><span>{pickupLocation}</span> <span style={{ background: '#D5F2EA', borderRadius: '10px', padding: '5px' }}>{pickupTag}</span></td>
+          <td className="passInfo cell"><span>{dropoffLocation}</span> <span style={{ background: '#FFD8DE', borderRadius: '10px', padding: '5px' }}>{dropoffTag}</span></td>
+          <td className="passInfo cell lastCell">{needs}</td>
+        </tr >
       );
     });
   }
@@ -68,7 +58,7 @@ const Table = () => {
     <>
       <div>
         <h1 className="formHeader">Unscheduled Rides</h1>
-        <table className="table">
+        <table cellSpacing='0' className="table" >
           <tbody>
             {renderTableHeader()}
             {renderTableData(passengers)}

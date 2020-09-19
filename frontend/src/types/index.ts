@@ -23,3 +23,15 @@ export type Driver = {
   email: string;
   phone: string;
 }
+
+export type Passenger = {
+  startTime: string;
+  endTime: string;
+  name: string;
+  pickupLocation: string;
+  pickupTag: string;
+  dropoffLocation: string;
+  dropoffTag: string;
+  needs: string;
+
+}
