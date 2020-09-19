@@ -15,8 +15,8 @@ function renderTableHeader() {
 }
 
 type passenger = {
-  timeFrame: string;
-  time: string;
+  startTime: string;
+  endTime: string;
   name: string;
   pickupLocation: string;
   pickupTag: string;
@@ -27,22 +27,24 @@ type passenger = {
 }
 
 const Table = () => {
-  const [passenger] = useState([
-    { timeFrame: '8AM', time: '8:20am - 8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { timeFrame: '8AM', time: '8:20am - 8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { timeFrame: '8AM', time: '8:20am - 8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { timeFrame: '8AM', time: '8:20am - 8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { timeFrame: '8AM', time: '8:20am - 8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
+  const passengers = [
+    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
+    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
+    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
+    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
+    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
 
-  ]);
+  ];
 
-  function renderTableData(passengers: passenger[]) {
-    return passengers.map((rider, index) => {
-      const { timeFrame, time, name, pickupLocation, pickupTag, dropoffLocation, dropoffTag, needs } = rider;
+  function renderTableData(allPassengers: passenger[]) {
+    return allPassengers.map((rider, index) => {
+      const { startTime, endTime, name, pickupLocation, pickupTag,
+        dropoffLocation, dropoffTag, needs } = rider;
+      const timeframe = startTime[0] + startTime.substring(startTime.indexOf('m') - 1).toUpperCase();
       return (
         <tr key={index}>
-          <td>{timeFrame}</td>
-          <td>{time}</td>
+          <td>{timeframe}</td>
+          <td><span>{startTime}</span> <br></br> <span>-- {endTime}</span></td>
           <td className="tableCell">{name}</td>
           <td><span>{pickupLocation}</span> <span style={{ background: '#D5F2EA' }}>{pickupTag}</span></td>
           <td><span>{dropoffLocation}</span> <span style={{ background: '#FFD8DE' }}>{dropoffTag}</span></td>
@@ -59,7 +61,7 @@ const Table = () => {
         <table className="table">
           <tbody>
             {renderTableHeader()}
-            {renderTableData(passenger)}
+            {renderTableData(passengers)}
           </tbody>
         </table>
       </div >
