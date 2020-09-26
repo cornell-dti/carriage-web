@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './card.module.css';
 import { Driver, BreakType } from '../../types';
-import { clock, phone, wheel } from './icons';
+import { capacity, clock, phone, wheel } from './icons';
 
 const formatTime = (time: string) => {
   const hours = Number(time.substring(0, 2));
@@ -44,14 +44,13 @@ const formatPhone = (phoneNumber: string) => {
 type CardInfoProps = {
   icon: string;
   alt: string;
-  info?: string;
-  children?: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 };
 
-const CardInfo = ({ icon, alt, info, children }: CardInfoProps) => (
+const CardInfo = ({ icon, alt, children }: CardInfoProps) => (
   <div className={styles.infoContainer}>
     <img className={styles.icon} src={icon} alt={alt} />
-    {info ? <p className={styles.info}>{info}</p> : children}
+    {children}
   </div>
 );
 
@@ -75,6 +74,13 @@ const Card = ({
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const availability = parseAvailability(startTime, endTime, breaks);
+  const [vehicleInfo, setVehicleInfo] = useState({ name: '', capacity: '' });
+
+  useEffect(() => {
+    fetch(`/vehicles/${vehicle}`)
+      .then((res) => res.json())
+      .then((data) => setVehicleInfo(data));
+  }, [vehicle]);
 
   return (
     <div className={styles.card}>
@@ -84,7 +90,9 @@ const Card = ({
           <p className={styles.name}>{fullName}</p>
           <p className={styles.netId}>{netId}</p>
         </div>
-        <CardInfo icon={phone} alt="phone icon" info={fmtPhone} />
+        <CardInfo icon={phone} alt="phone icon">
+          <p className={styles.info}>{fmtPhone}</p>
+        </CardInfo>
         <CardInfo icon={clock} alt="clock icon">
           <div className={styles.availabilityContainer}>
             {availability.map(([day, timeRange]) => (
@@ -94,7 +102,12 @@ const Card = ({
             ))}
           </div>
         </CardInfo>
-        <CardInfo icon={wheel} alt="wheel icon" info={vehicle} />
+        <CardInfo icon={wheel} alt="wheel icon">
+          <p className={styles.info}>
+            {`${vehicleInfo.name} | ${vehicleInfo.capacity}`}
+          </p>
+          <img src={capacity} />
+        </CardInfo>
       </div>
     </div>
   );
