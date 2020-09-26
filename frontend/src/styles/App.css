@@ -3,7 +3,10 @@ body {
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: black;
   line-height: 1.6;
-  background-color: #e5e5e5;
+}
+
+p {
+  margin: 0;
 }
 
 * {

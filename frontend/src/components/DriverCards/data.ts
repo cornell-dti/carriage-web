@@ -41,6 +41,46 @@ const data: Driver[] = [
     },
     vehicle: '1',
   },
+  {
+    id: '4',
+    firstName: 'Second',
+    lastName: 'Driver',
+    email: 'sd123@cornell.edu',
+    phoneNumber: '1234567890',
+    startTime: '10:00',
+    endTime: '17:00',
+    breaks: {
+      Tue: {
+        breakStart: '11:00',
+        breakEnd: '12:00',
+      },
+      Thu: {
+        breakStart: '13:00',
+        breakEnd: '15:00',
+      },
+    },
+    vehicle: '1',
+  },
+  {
+    id: '3',
+    firstName: 'Second',
+    lastName: 'Driver',
+    email: 'sd123@cornell.edu',
+    phoneNumber: '1234567890',
+    startTime: '10:00',
+    endTime: '17:00',
+    breaks: {
+      Tue: {
+        breakStart: '11:00',
+        breakEnd: '12:00',
+      },
+      Thu: {
+        breakStart: '13:00',
+        breakEnd: '15:00',
+      },
+    },
+    vehicle: '1',
+  },
 ];
 
 export default data;
