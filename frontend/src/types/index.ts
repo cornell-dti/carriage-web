@@ -37,3 +37,10 @@ export type Driver = {
   phoneNumber: string;
   email: string;
 };
+
+export type Vehicle = {
+  id: string;
+  name: string;
+  capacity: string;
+  wheelchairAccessible: boolean;
+}

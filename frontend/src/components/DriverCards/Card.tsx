@@ -4,7 +4,7 @@ import { Driver, BreakType } from '../../types';
 import { capacity, clock, phone, wheel } from './icons';
 
 const formatTime = (time: string) => {
-  const hours = Number(time.substring(0, 2));
+  const hours = Number(time.split(':')[0]);
   // set fmtHours to 12 if hours is multiple of 12
   const fmtHours = hours % 12 || 12;
   return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
@@ -70,7 +70,9 @@ const Card = ({
     vehicle,
   },
 }: CardProps) => {
-  const fullName = `${firstName} ${lastName}`;
+  const fullName = firstName.length + lastName.length > 16
+    ? `${firstName} ${lastName[0]}.`
+    : `${firstName} ${lastName}`;
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const availability = parseAvailability(startTime, endTime, breaks);
@@ -84,7 +86,7 @@ const Card = ({
 
   return (
     <div className={styles.card}>
-      <div className={styles.image}>image</div>
+      <div className={styles.image}></div>
       <div className={styles.contentContainer}>
         <div className={styles.titleContainer}>
           <p className={styles.name}>{fullName}</p>
@@ -94,7 +96,7 @@ const Card = ({
           <p className={styles.info}>{fmtPhone}</p>
         </CardInfo>
         <CardInfo icon={clock} alt="clock icon">
-          <div className={styles.availabilityContainer}>
+          <div>
             {availability.map(([day, timeRange]) => (
               <p key={day} className={styles.info}>
                 <b>{day}:</b> {timeRange}
@@ -106,7 +108,7 @@ const Card = ({
           <p className={styles.info}>
             {`${vehicleInfo.name} | ${vehicleInfo.capacity}`}
           </p>
-          <img src={capacity} />
+          <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
         </CardInfo>
       </div>
     </div>
