@@ -1,8 +1,11 @@
 import React from 'react';
-import Table from '../../components/UserTables/DriversTable';
+import DriverCards from '../../components/DriverCards/DriverCards';
 
 const Drivers = () => (
-  <Table />
+  <>
+    <h1>Drivers</h1>
+    <DriverCards />
+  </>
 );
 
 export default Drivers;

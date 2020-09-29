@@ -17,9 +17,30 @@ export type Rider = {
   address: string;
 }
 
+export type BreakTimes = {
+  breakStart: string;
+  breakEnd: string;
+}
+
+export type BreakType = {
+  [day: string]: BreakTimes;
+}
+
 export type Driver = {
-  name: string;
-  netid: string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  startTime: string;
+  endTime: string;
+  breaks: BreakType;
+  vehicle: string;
+  phoneNumber: string;
   email: string;
-  phone: string;
+};
+
+export type Vehicle = {
+  id: string;
+  name: string;
+  capacity: string;
+  wheelchairAccessible: boolean;
 }
