@@ -1,6 +1,7 @@
 import React from 'react';
 import { Passenger } from '../../types/index';
 import './unscheduledTable.css';
+import RiderCard from '../RiderCard/RiderCard';
 
 
 function renderTableHeader() {
@@ -41,14 +42,16 @@ const Table = () => {
       }
 
       const timeframe = currentTime;
+      const comma = ',';
+      const pickup = pickupLocation + comma + pickupTag;
+      const dropoff = dropoffLocation + comma + dropoffTag;
+      const inputValues = [name, pickup, dropoff, needs];
+      const tags = [1, 2];
       return (
         <tr key={index}>
           <td className="cell">{timeframe}</td>
           <td className="cell"><span style={{ fontWeight: 'bold' }}>{startTime}</span> <br></br> <span style={{ color: '#707070' }}>-- {endTime}</span></td>
-          <td className="passInfo cell firstCell">{name}</td>
-          <td className="passInfo cell"><span>{pickupLocation}</span> <span style={{ background: '#D5F2EA', borderRadius: '10px', padding: '5px' }}>{pickupTag}</span></td>
-          <td className="passInfo cell"><span>{dropoffLocation}</span> <span style={{ background: '#FFD8DE', borderRadius: '10px', padding: '5px' }}>{dropoffTag}</span></td>
-          <td className="passInfo cell lastCell">{needs}</td>
+          <RiderCard values={inputValues} tags={tags} />
         </tr >
       );
     });
