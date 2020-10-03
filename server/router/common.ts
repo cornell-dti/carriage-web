@@ -155,19 +155,38 @@ export function query(
   res: Response,
   model: ModelType,
   condition: Condition,
-  index?: string,
+  index: string,
   callback?: (value: any) => void,
 ) {
-  const queryCall = index
-    ? model.query(condition).using(index)
-    : model.query(condition);
-  queryCall.exec((err: any, data: any) => {
-    if (err) {
-      res.send({ err });
-    } else if (callback) {
-      callback(data);
-    } else {
-      res.send({ data });
-    }
-  });
+  model
+    .query(condition)
+    .using(index)
+    .exec((err: any, data: any) => {
+      if (err) {
+        res.send({ err });
+      } else if (callback) {
+        callback(data);
+      } else {
+        res.send({ data });
+      }
+    });
+}
+
+export function scan(
+  res: Response,
+  model: ModelType,
+  condition: Condition,
+  callback?: (value: any) => void,
+) {
+  model
+    .scan(condition)
+    .exec((err, data) => {
+      if (err) {
+        res.send({ err });
+      } else if (callback) {
+        callback(data);
+      } else {
+        res.send({ data });
+      }
+    });
 }
