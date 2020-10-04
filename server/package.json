@@ -12,13 +12,12 @@
         "dynamoose": "^2.3.0",
         "express": "^4.17.1",
         "google-auth-library": "^5.10.1",
-        "uuid": "^3.4.0"
-    },
-    "devDependencies": {
+        "uuid": "^3.4.0",
         "nodemon": "^2.0.4",
         "ts-node": "^8.10.2",
         "typescript": "^3.9.7"
     },
+    "devDependencies": {},
     "scripts": {
         "start": "nodemon --exec \"ts-node\" --watch router --watch models app.ts",
         "tsc": "tsc",
