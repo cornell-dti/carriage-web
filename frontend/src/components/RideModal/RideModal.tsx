@@ -4,9 +4,10 @@ import Modal from '../Modal/Modal';
 const RideModal = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const onClose = () => setIsOpen(false);
-  const onAccept = () => onClose();
   const openModal = () => setIsOpen(true);
+  const onNext = (page: number) => true;
+  const onAccept = () => setIsOpen(false);
+  const onCancel = () => setIsOpen(false);
 
   return (
     <>
@@ -15,8 +16,9 @@ const RideModal = () => {
         paginate
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
         isOpen={isOpen}
+        onNext={onNext}
         onAccept={onAccept}
-        onClose={onClose}
+        onCancel={onCancel}
       >
         <h2>page 1</h2>
         <h2>page 2</h2>
