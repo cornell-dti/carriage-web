@@ -24,6 +24,22 @@ export type Driver = {
   phone: string;
 }
 
+export type Ride = {
+  type: string;
+  id: string;
+  startLocation: string;
+  endLocation: string;
+  startTime: string;
+  endTime: string;
+  riderId: string;
+}
+
+export type Location = {
+  id: string;
+  name: string;
+  address: string;
+}
+
 export type Passenger = {
   startTime: string;
   endTime: string;
@@ -33,5 +49,4 @@ export type Passenger = {
   dropoffLocation: string;
   dropoffTag: string;
   needs: string;
-
 }
