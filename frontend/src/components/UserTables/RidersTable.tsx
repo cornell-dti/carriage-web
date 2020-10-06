@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import RiderCard from '../RiderCard/RiderCard';
 import Form from '../UserForms/RidersForm';
 import { AccessibilityNeeds, Rider } from '../../types';
 import './table.css';
+
 
 function renderTableHeader() {
   return (
@@ -117,19 +119,12 @@ const Table = () => {
       const {
         firstName, lastName, phoneNumber, email, accessibilityNeeds,
       } = rider;
+      const buttonText = 'Delete';
+      const inputValues = [firstName, lastName, phoneNumber, email,
+        renderAccessNeeds(accessibilityNeeds), buttonText];
       return (
-        <tr key={email}>
-          <td className="tableCell">{firstName}</td>
-          <td>{lastName}</td>
-          <td>{phoneNumber}</td>
-          <td>{email}</td>
-          <td>{renderAccessNeeds(accessibilityNeeds)}</td>
-          <td>
-            <button onClick={() => setRiders(deleteEntry(email, allRiders))
-            }>
-              Delete
-              </button>
-          </td>
+        <tr key={index}>
+          <RiderCard values={inputValues} buttonHandler={() => setRiders(deleteEntry(email, allRiders))} />
         </tr>
       );
     });
@@ -139,7 +134,7 @@ const Table = () => {
     <>
       <div>
         <h1 className="formHeader">Rider Table</h1>
-        <table className="table">
+        <table cellSpacing='0' className="table" >
           <tbody>
             {renderTableHeader()}
             {renderTableData(riders)}
