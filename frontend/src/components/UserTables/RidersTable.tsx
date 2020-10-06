@@ -124,7 +124,8 @@ const Table = () => {
         renderAccessNeeds(accessibilityNeeds), buttonText];
       return (
         <tr key={index}>
-          <RiderCard values={inputValues} buttonHandler={() => setRiders(deleteEntry(email, allRiders))} />
+          <RiderCard values={inputValues}
+            buttonHandler={() => setRiders(deleteEntry(email, allRiders))} />
         </tr>
       );
     });
