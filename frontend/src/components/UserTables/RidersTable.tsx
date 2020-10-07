@@ -120,12 +120,20 @@ const Table = () => {
         firstName, lastName, phoneNumber, email, accessibilityNeeds,
       } = rider;
       const buttonText = 'Delete';
-      const inputValues = [firstName, lastName, phoneNumber, email,
-        renderAccessNeeds(accessibilityNeeds), buttonText];
+      const valueFName = { data: firstName };
+      const valueLName = { data: lastName };
+      const valuePhone = { data: phoneNumber };
+      const valueEmail = { data: email };
+      const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
+      const valueDelete = {
+        data: buttonText,
+        buttonHandler: setRiders(deleteEntry(email, allRiders)),
+      };
+      const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
+        valueAccessbility, valueDelete];
       return (
         <tr key={index}>
-          <RiderCard values={inputValues}
-            buttonHandler={() => setRiders(deleteEntry(email, allRiders))} />
+          <RiderCard values={inputValues} />
         </tr>
       );
     });

@@ -50,3 +50,9 @@ export type Passenger = {
   dropoffTag: string;
   needs: string;
 }
+
+export type RiderTableValue = {
+  data: string;
+  tag?: string;
+  buttonHandler?: () => void;
+}

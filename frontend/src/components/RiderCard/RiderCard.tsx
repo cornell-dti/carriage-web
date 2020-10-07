@@ -1,32 +1,35 @@
-import './card.css';
 import React from 'react';
+import { RiderTableValue } from '../../types/index';
+import styles from './card.module.css';
+
 
 type RiderCardProps = {
-  values: Array<string>;
-  tags?: Array<number>;
-  buttonHandler?: () => void
+  values: Array<RiderTableValue>;
 };
 
 const RiderCard = (props: RiderCardProps) => {
-  const vals = props.values;
+  const { values } = props;
 
-  const resultList = vals.map((val, index) => {
+  const resultList = values.map((val, index) => {
+    const { data, tag, buttonHandler } = val;
     if (index === 0) {
-      return (<td key={index} className='passInfo cell firstCell'>{val}</td>);
-    } if (index === vals.length - 1) {
-      if (props.buttonHandler) {
-        return (<td key={index} className='passInfo cell lastCell'><button onClick={props.buttonHandler}>{val}</button></td>);
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.firstCell}`}>{data}</td>);
+    } if (index === values.length - 1) {
+      if (buttonHandler) {
+        return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+        ${styles.lastCell}`}>
+          <button onClick={buttonHandler}>{data}</button></td>);
       }
-      return (<td key={index} className='passInfo cell lastCell'>{val}</td>);
-    } if (props.tags && props.tags.includes(index)) {
-      const valList = val.split(',');
-      const tag = valList[1];
-      const newVal = valList[0];
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}>{data}</td>);
+    } if (tag) {
       const tagString = 'tag ';
       const tagStyle = tagString + tag.toLowerCase();
-      return (<td key={index} className='passInfo cell'>{newVal} <span className={tagStyle}>{tag}</span></td>);
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>{data}
+        <span className={tagStyle}>{tag}</span></td>);
     }
-    return (<td key={index} className='passInfo cell'>{val}</td>);
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>{data}</td>);
   });
   return (<>{resultList}</>);
 };

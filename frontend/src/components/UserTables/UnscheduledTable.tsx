@@ -42,16 +42,16 @@ const Table = () => {
       }
 
       const timeframe = currentTime;
-      const comma = ',';
-      const pickup = pickupLocation + comma + pickupTag;
-      const dropoff = dropoffLocation + comma + dropoffTag;
-      const inputValues = [name, pickup, dropoff, needs];
-      const tags = [1, 2];
+      const valueName = { data: name };
+      const valuePickup = { data: pickupLocation, tag: pickupTag };
+      const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+      const valueNeeds = { data: needs };
+      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds];
       return (
         <tr key={index}>
           <td className="cell">{timeframe}</td>
           <td className="cell"><span style={{ fontWeight: 'bold' }}>{startTime}</span> <br></br> <span style={{ color: '#707070' }}>-- {endTime}</span></td>
-          <RiderCard values={inputValues} tags={tags} />
+          <RiderCard values={inputValues} />
         </tr >
       );
     });
