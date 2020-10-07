@@ -24,12 +24,15 @@ const RiderCard = (props: RiderCardProps) => {
       return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
     } if (tag) {
-      const tagString = 'tag ';
-      const tagStyle = tagString + tag.toLowerCase();
-      return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>{data}
-        <span className={tagStyle}>{tag}</span></td>);
+      const tagStyle = tag.toLowerCase();
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
+        {data}{' '}
+        <span className={`${styles.tag} 
+        ${tagStyle === 'ctown' ? styles.ctown : styles.west}`}>
+          {tag}</span></td>);
     }
-    return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>{data}</td>);
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
+      {data}</td>);
   });
   return (<>{resultList}</>);
 };
