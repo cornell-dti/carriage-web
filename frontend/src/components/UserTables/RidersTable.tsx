@@ -100,10 +100,10 @@ const Table = () => {
             hasCrutches: newRider.accessibilityNeeds.hasCrutches,
             needsAssistant: newRider.accessibilityNeeds.needsAssistant,
           },
-          'description:': newRider.description,
-          'joinDate:': newRider.joinDate,
-          'pronouns:': newRider.pronouns,
-          'address:': newRider.address,
+          description: newRider.description,
+          joinDate: newRider.joinDate,
+          pronouns: newRider.pronouns,
+          address: newRider.address,
         }),
       };
       await fetch('/riders', requestOptions);
