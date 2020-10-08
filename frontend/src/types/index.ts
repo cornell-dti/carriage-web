@@ -2,7 +2,7 @@ export type AccessibilityNeeds = {
   hasCrutches: boolean;
   needsAssistant: boolean;
   needsWheelchair: boolean;
-}
+};
 
 export type Rider = {
   id: string;
@@ -15,16 +15,16 @@ export type Rider = {
   joinDate: string;
   pronouns: string;
   address: string;
-}
+};
 
 export type BreakTimes = {
   breakStart: string;
   breakEnd: string;
-}
+};
 
 export type BreakType = {
   [day: string]: BreakTimes;
-}
+};
 
 export type Driver = {
   id: string;
@@ -43,4 +43,10 @@ export type Vehicle = {
   name: string;
   capacity: string;
   wheelchairAccessible: boolean;
-}
+};
+
+export type Location = {
+  id: string;
+  name: string;
+  address: string;
+};

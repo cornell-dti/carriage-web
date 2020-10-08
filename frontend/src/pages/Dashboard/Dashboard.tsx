@@ -4,6 +4,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Drivers from './Drivers';
 import Riders from './Riders';
 import Home from './Home';
+import Locations from './Locations';
 import Settings from './Settings';
 
 const Dashboard = () => (
@@ -13,6 +14,7 @@ const Dashboard = () => (
         <Route path="/home" component={Home} />
         <Route path="/drivers" component={Drivers} />
         <Route path="/riders" component={Riders} />
+        <Route path="/locations" component={Locations} />
         <Route path="/settings" component={Settings} />
         <Route path="*">
           <Redirect to="/home" />
