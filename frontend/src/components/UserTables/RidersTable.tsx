@@ -130,7 +130,7 @@ const Table = () => {
       const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
       const valueDelete = {
         data: buttonText,
-        buttonHandler: setRiders(deleteEntry(email, allRiders)),
+        buttonHandler: () => setRiders(deleteEntry(email, allRiders)),
       };
       const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
         valueAccessbility, valueDelete];
