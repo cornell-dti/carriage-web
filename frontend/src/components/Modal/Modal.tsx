@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { createPortal } from 'react-dom';
-import { Button } from '../FormElements/FormElements';
 import styles from './modal.module.css';
 
 type PageIndicatorsProps = {
@@ -13,7 +12,7 @@ const PageIndicators = ({ pages, current }: PageIndicatorsProps) => {
   // use spread operator to actually get empty array w/ length pages
   const indicators = [...new Array(pages)];
   return (
-    <div>
+    <div className={styles.pageIndicators}>
       {indicators.map((_, i) => (
         <span
           key={String(i)}
@@ -29,80 +28,44 @@ type ModalProps = {
   title: string | string[];
   isOpen: boolean;
   paginate?: boolean;
-  form?: boolean;
+  currentPage?: number;
   children: React.ReactNode;
-  onNext?: (page: number) => boolean | Promise<boolean>;
-  onAccept?: (e: React.FormEvent) => void;
-  onCancel?: () => void;
+  onClose?: () => void;
 };
 
 const Modal = ({
   title,
   isOpen,
   paginate = false,
-  form = false,
+  currentPage = 0,
   children,
-  onNext = () => true,
-  onAccept = () => {},
-  onCancel = () => {},
+  onClose = () => { },
 }: ModalProps) => {
-  const [currentPage, setCurrentPage] = useState(0);
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
   const numPages = pages.length;
-  const hasPagesLeft = paginate && currentPage < numPages - 1;
+  const currentTitle = title === 'string' ? title : title[currentPage];
 
-  const goNextPage = () => {
-    // Only move onto next page after validation in onNext occurs (if any)
-    if (onNext(currentPage)) {
-      setCurrentPage((p) => (p + 1 < numPages ? p + 1 : p));
-    }
-  };
-
-  // Reset the modal to the first page everytime it's opened
-  useEffect(() => {
-    if (isOpen) {
-      setCurrentPage(0);
-    }
-  }, [isOpen]);
-
-  const ModalInner = () => (
+  return (
     <>
-      <div className={styles.topContainer}>
-        <h1 className={styles.title}>
-          {typeof title === 'string' ? title : title[currentPage]}
-        </h1>
-        <button onClick={onCancel}>Cancel</button>
-      </div>
-      {pages[currentPage]}
-      <div className={styles.bottomContainer}>
-        {hasPagesLeft ? (
-          <Button type="button" onClick={goNextPage}>
-            Next
-          </Button>
-        ) : (
-          <Button type="submit">Accept</Button>
+      {isOpen
+        && createPortal(
+          <div className={styles.background}>
+            <div className={styles.modal}>
+              <div className={styles.topContainer}>
+                <h1 className={styles.title}>{currentTitle}</h1>
+                <button onClick={onClose}>Close</button>
+              </div>
+              {pages[currentPage]}
+              {paginate && (
+                <PageIndicators pages={numPages} current={currentPage} />
+              )}
+            </div>
+          </div>,
+          document.body,
         )}
-        {paginate && <PageIndicators pages={numPages} current={currentPage} />}
-      </div>
     </>
   );
-
-  const ModalPortal = () => (
-    <div className={styles.background}>
-      <div className={styles.modal}>
-        {form ? (
-          <form onSubmit={onAccept}>
-            <ModalInner />
-          </form>
-        ) : (
-          <ModalInner />
-        )}
-      </div>
-    </div>
-  );
-
-  return isOpen ? createPortal(<ModalPortal />, document.body) : null;
 };
 
 export default Modal;

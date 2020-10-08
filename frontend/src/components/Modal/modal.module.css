@@ -30,15 +30,14 @@
   align-items: center;
 }
 
-.bottomContainer {
+.pageIndicators {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
 .indicator {
-  height: 6px;
-  width: 6px;
+  height: 8px;
+  width: 8px;
   margin: 0 4px;
   border-radius: 50%;
   display: inline-block;
