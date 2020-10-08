@@ -19,23 +19,18 @@ type InputProps = {
   type: string;
   name: string;
   placeholder?: string;
-  ref?: () => void;
 };
 
-export const Input = ({
-  className,
-  type,
-  name,
-  placeholder,
-  ref,
-}: InputProps) => (
-  <input
-    type={type}
-    className={cn(styles[`${type}Input`], className)}
-    name={name}
-    placeholder={placeholder}
-    ref={ref}
-  />
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, name, placeholder }, ref) => (
+    <input
+      type={type}
+      className={cn(styles[`${type}Input`], className)}
+      name={name}
+      placeholder={placeholder}
+      ref={ref}
+    />
+  ),
 );
 
 type ButtonProps = {
@@ -44,32 +39,33 @@ type ButtonProps = {
   name?: string;
   small?: boolean;
   outline?: boolean;
-  ref?: () => void;
-  onClick?: () => void;
-  children: string;
+  onClick?: (e: React.BaseSyntheticEvent) => void;
+  children: React.ReactNode;
 };
 
-export const Button = ({
-  className,
-  type,
-  name,
-  small = false,
-  outline = false,
-  ref,
-  onClick,
-  children,
-}: ButtonProps) => {
-  const btnClass = !outline ? styles.primaryBtn : styles.secondaryBtn;
-  const sizeClass = !small ? styles.lgBtn : styles.smBtn;
-  return (
-    <button
-      type={type}
-      className={cn(btnClass, sizeClass, className)}
-      name={name}
-      ref={ref}
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, ref) => {
+    const {
+      className,
+      type,
+      name,
+      small = false,
+      outline = false,
+      onClick,
+      children,
+    } = props;
+    const btnClass = !outline ? styles.primaryBtn : styles.secondaryBtn;
+    const sizeClass = !small ? styles.lgBtn : styles.smBtn;
+    return (
+      <button
+        type={type}
+        className={cn(btnClass, sizeClass, className)}
+        name={name}
+        ref={ref}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    );
+  },
+);
