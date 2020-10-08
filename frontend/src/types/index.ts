@@ -52,7 +52,7 @@ export type Passenger = {
 }
 
 export type RiderTableValue = {
-  data: string;
+  data: string | null;
   tag?: string;
   buttonHandler?: () => void;
 }

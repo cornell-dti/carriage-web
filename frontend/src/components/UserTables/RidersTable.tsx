@@ -19,17 +19,20 @@ function renderTableHeader() {
 
 function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
   let allNeeds = '';
-  const arrayNeeds = Object.entries(accessNeeds);
-  arrayNeeds.forEach((element) => {
-    if (element[0] === 'hasCrutches' && element[1]) {
-      allNeeds = allNeeds.concat('Has Crutches, ');
-    } else if (element[0] === 'needsAssistant' && element[1]) {
-      allNeeds = allNeeds.concat('Needs Assistant, ');
-    } else if (element[0] === 'needsWheelchair' && element[1]) {
-      allNeeds = allNeeds.concat('Needs Wheelchair, ');
-    }
-  });
-  return allNeeds.substr(0, allNeeds.length - 2);
+  if (accessNeeds != null) {
+    const arrayNeeds = Object.entries(accessNeeds);
+    arrayNeeds.forEach((element) => {
+      if (element[0] === 'hasCrutches' && element[1]) {
+        allNeeds = allNeeds.concat('Has Crutches, ');
+      } else if (element[0] === 'needsAssistant' && element[1]) {
+        allNeeds = allNeeds.concat('Needs Assistant, ');
+      } else if (element[0] === 'needsWheelchair' && element[1]) {
+        allNeeds = allNeeds.concat('Needs Wheelchair, ');
+      }
+    });
+    return allNeeds.substr(0, allNeeds.length - 2);
+  }
+  return null;
 }
 
 const Table = () => {
