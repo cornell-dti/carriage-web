@@ -12,18 +12,18 @@ const RiderCard = (props: RiderCardProps) => {
 
   const resultList = values.map((val, index) => {
     const { data, tag, buttonHandler } = val;
-    if (index === 0) {
+    if (index === 0) { /* first cell */
       return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.firstCell}`}>{data}</td>);
-    } if (index === values.length - 1) {
-      if (buttonHandler) {
+    } if (index === values.length - 1) { /* last cell */
+      if (buttonHandler) { /* if there is a button in the last cell */
         return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
           <button onClick={buttonHandler}>{data}</button></td>);
       }
       return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
-    } if (tag) {
+    } if (tag) { /* if there is a tag involved */
       const tagStyle = tag.toLowerCase();
       return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
         {data}{' '}
