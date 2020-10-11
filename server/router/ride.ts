@@ -6,56 +6,72 @@ import { Ride, Type } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Rides';
-const typeParam = ':type(active|past|unscheduled)';
 
 // Get a ride by id in Rides table
-router.get(`/${typeParam}/:id`, (req, res) => {
-  const { params: { type, id } } = req;
-  db.getById(res, Ride, { type, id }, tableName);
+router.get('/:id', (req, res) => {
+  const { params: { id } } = req;
+  db.getById(res, Ride, id, tableName);
 });
 
-// Get all rides in Rides table
-router.get('/', (req, res) => db.getAll(res, Ride, tableName));
-
-// Query all rides in table
-router.get(`/${typeParam}`, (req, res) => {
-  const { params: { type }, query: { riderId, driverId, date } } = req;
-  let condition = new Condition('type').eq(type);
-  if (riderId) {
-    condition = condition.where('riderId').eq(riderId);
+// Get and query all rides in table
+router.get('/', (req, res) => {
+  const { query } = req;
+  if (query === {}) {
+    db.getAll(res, Ride, tableName);
+  } else {
+    const { type, rider, driver, date } = query;
+    let condition = new Condition();
+    if (type) {
+      condition = condition.where('type').eq(type);
+    }
+    if (rider) {
+      condition = condition.where('rider').eq(rider);
+    }
+    if (driver) {
+      condition = condition.where('driver').eq(driver);
+    }
+    if (date) {
+      const dateStart = new Date(`${date} EST`).toISOString();
+      const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
+      condition = condition.where('startTime').between(dateStart, dateEnd);
+    }
+    db.scan(res, Ride, condition);
   }
-  if (driverId) {
-    condition = condition.where('driverId').eq(driverId);
-  }
-  if (date) {
-    const dateStart = new Date(`${date} EST`).toISOString();
-    const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
-    condition = condition.where('startTime').between(dateStart, dateEnd);
-  }
-  db.query(res, Ride, condition);
 });
 
-// Put an active ride in Active Rides table
+// Put a ride in Rides table
 router.post('/', (req, res) => {
-  const { body } = req;
+  const {
+    body: {
+      rider,
+      startLocation,
+      endLocation,
+      startTime,
+      endTime,
+    },
+  } = req;
   const ride = new Ride({
-    type: Type.UNSCHEDULED,
     id: uuid(),
-    ...body,
+    type: Type.UNSCHEDULED,
+    rider,
+    startLocation,
+    endLocation,
+    startTime,
+    endTime,
   });
   db.create(res, ride);
 });
 
 // Update an existing ride
-router.put(`/${typeParam}/:id`, (req, res) => {
-  const { params: { type, id }, body } = req;
-  db.update(res, Ride, { type, id }, body, tableName);
+router.put('/:id', (req, res) => {
+  const { params: { id }, body } = req;
+  db.update(res, Ride, { id }, body, tableName);
 });
 
 // Delete an existing ride
-router.delete(`/${typeParam}/:id`, (req, res) => {
-  const { params: { type, id } } = req;
-  db.deleteById(res, Ride, { type, id }, tableName);
+router.delete('/:id', (req, res) => {
+  const { params: { id } } = req;
+  db.deleteById(res, Ride, id, tableName);
 });
 
 export default router;
