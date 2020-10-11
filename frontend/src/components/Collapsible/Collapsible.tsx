@@ -11,13 +11,9 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
   const [expanded, setExpanded] = useState(false);
   const icon = expanded ? down : up;
 
-  const changeExpanded = () => {
-    setExpanded(!expanded);
-  }
-
   return (
     <div className={styles.collapsible}>
-      <div className={styles.banner} onClick={changeExpanded}>
+      <div className={styles.banner} onClick={() => setExpanded(!expanded)} >
         <p className={styles.title}>{title}</p>
         <img className={styles.icon} src={icon} />
       </div>
