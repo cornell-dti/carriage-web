@@ -6,7 +6,7 @@ type FormProps = {
 }
 
 const Form = ({ onClick }: FormProps) => {
-  const [newLocation, setnewLocation] = useState<Location>({
+  const [newLocation, setNewLocation] = useState<Location>({
     id: '',
     name: '',
     address: '',
@@ -17,14 +17,15 @@ const Form = ({ onClick }: FormProps) => {
   const handleInput = (evt: any) => {
     const fieldName = evt.target.name;
     const fieldValue = evt.target.value;
+    const updatedLocation = { ...newLocation };
     if (fieldName === 'name') {
-      newLocation.name = fieldValue;
+      updatedLocation.name = fieldValue;
       setValidName(fieldValue.length > 0);
     } else if (fieldName === 'address') {
-      newLocation.address = fieldValue;
+      updatedLocation.address = fieldValue;
       setValidAddress(fieldValue.length > 0);
     }
-    setnewLocation(newLocation);
+    setNewLocation(updatedLocation);
   };
 
   const handleSubmit = (evt: any) => {

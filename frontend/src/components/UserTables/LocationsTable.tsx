@@ -31,12 +31,18 @@ const Table = () => {
       }),
     };
     fetch('/locations', requestOptions).then((res) => {
-      if (res.status === 200) {
-        setLocations([...locations, newLocation]);
-      } else {
-        // TODO: alert
+      if (res.status !== 200) {
+        throw new Error('adding location failed');
       }
-    });
+      return res.json();
+    }).then((data) => {
+      const validLocation = {
+        id: data.id,
+        name: newLocation.name,
+        address: newLocation.address,
+      };
+      setLocations([...locations, validLocation]);
+    }).catch((e) => console.error(e.message));
   };
 
   const deleteLocation = (locationId: string) => {
@@ -48,9 +54,9 @@ const Table = () => {
       if (res.status === 200) {
         setLocations(locations.filter((l) => l.id !== locationId));
       } else {
-        // TODO: alert
+        throw new Error('adding location failed');
       }
-    });
+    }).catch((e) => console.error('removing location failed'));
   };
 
   return (
