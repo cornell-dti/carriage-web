@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
   }
 });
 
-// Put an active ride in Active Rides table
+// Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
     body: {
