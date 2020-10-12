@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import cn from 'classnames';
 import { Location } from '../../types/index';
 
 type FormProps = {
@@ -45,7 +46,7 @@ const Form = ({ onClick }: FormProps) => {
               name="name"
               onChange={handleInput}
             />
-            <p className={`formFeedback ${validName && 'hidden2'}`}>
+            <p className={cn('formFeedback', { hidden2: validName })}>
               Enter a name
             </p>
           </div>
@@ -56,7 +57,7 @@ const Form = ({ onClick }: FormProps) => {
               name="address"
               onChange={handleInput}
             />
-            <p className={`formFeedback ${validAddress && 'hidden2'}`}>
+            <p className={cn('formFeedback', { hidden2: validAddress })}>
               Enter an address
             </p>
           </div>
