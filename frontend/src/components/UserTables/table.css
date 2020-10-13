@@ -1,4 +1,4 @@
-.tableHeader{
+.tableHeader {
   margin-bottom: 5px;
   border-bottom: 1px solid black;
   text-align: left;
@@ -12,28 +12,28 @@
 
 .table {
   border: 1px solid black;
-  margin-left:auto; 
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
   width: 90%;
 }
 
-.tableCell{
-  padding:5px;
+.tableCell {
+  padding: 5px;
 }
 
-.formDiv{
+.formDiv {
   display: flex;
   flex-direction: row;
   padding-bottom: 5px;
 }
 
-.formLabel{
+.formLabel {
   width: 125px;
   text-align: right;
   padding-right: 5px;
 }
 
-.formFeedback{
+.formFeedback {
   color: red;
   display: block;
   margin-right: 0;
@@ -42,14 +42,18 @@
   margin-left: 5px;
 }
 
-.hidden{
-  display:none;
+.hidden {
+  display: none;
+}
+
+.hidden2 {
+  visibility: hidden;
 }
 
 .addForm {
   display: inline-block;
-  margin-left:auto; 
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .addFormDiv {
