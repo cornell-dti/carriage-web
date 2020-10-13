@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RiderCard from '../RiderCard/RiderCard';
+import RiderCard from '../TableRow/TableRow';
 import Form from '../UserForms/RidersForm';
 import { AccessibilityNeeds, Rider } from '../../types';
 import './table.css';

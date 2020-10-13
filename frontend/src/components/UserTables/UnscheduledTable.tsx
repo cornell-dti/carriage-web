@@ -1,7 +1,7 @@
 import React from 'react';
 import { Passenger } from '../../types/index';
-import './unscheduledTable.css';
-import RiderCard from '../RiderCard/RiderCard';
+import styles from './unscheduledTable.module.css';
+import RiderCard from '../TableRow/TableRow';
 
 
 function renderTableHeader() {
@@ -49,8 +49,10 @@ const Table = () => {
       const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds];
       return (
         <tr key={index}>
-          <td className="cell">{timeframe}</td>
-          <td className="cell"><span style={{ fontWeight: 'bold' }}>{startTime}</span> <br></br> <span style={{ color: '#707070' }}>-- {endTime}</span></td>
+          <td className={styles.cell}>{timeframe}</td>
+          <td className={styles.cell}>
+            <span className={styles.bold}>{startTime}</span> <br></br>
+            <span className={styles.gray}>-- {endTime}</span></td>
           <RiderCard values={inputValues} />
         </tr >
       );
@@ -60,8 +62,8 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1 className="formHeader">Unscheduled Rides</h1>
-        <table cellSpacing='0' className="table" >
+        <h1 className={styles.formHeader}>Unscheduled Rides</h1>
+        <table cellSpacing='0' className={styles.table} >
           <tbody>
             {renderTableHeader()}
             {renderTableData(passengers)}

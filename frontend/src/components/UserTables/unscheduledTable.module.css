@@ -29,3 +29,11 @@
 .lastCell{
   border-radius: 0 15px 15px 0;
 }
+
+.bold {
+  font-weight: 'bold';
+}
+
+.gray {
+  color: #707070;
+}

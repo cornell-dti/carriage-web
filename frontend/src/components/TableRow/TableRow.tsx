@@ -1,6 +1,6 @@
 import React from 'react';
 import { RiderTableValue } from '../../types/index';
-import styles from './card.module.css';
+import styles from './row.module.css';
 
 
 type RiderCardProps = {
