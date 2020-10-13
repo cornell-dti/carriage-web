@@ -1,18 +1,18 @@
 import React from 'react';
 import { Passenger } from '../../types/index';
-import styles from './unscheduledTable.module.css';
-import RiderCard from '../TableRow/TableRow';
+import styles from './table.module.css';
+import TableRow from '../TableComponents/TableRow';
 
 
 function renderTableHeader() {
   return (
     <tr>
       <th></th>
-      <th className="tableHeader">Time</th>
-      <th className="tableHeader">Passenger</th>
-      <th className="tableHeader">Pickup Location</th>
-      <th className="tableHeader">Dropoff Location</th>
-      <th className="tableHeader">Needs</th>
+      <th className={styles.tableHeader}>Time</th>
+      <th className={styles.tableHeader}>Passenger</th>
+      <th className={styles.tableHeader}>Pickup Location</th>
+      <th className={styles.tableHeader}>Dropoff Location</th>
+      <th className={styles.tableHeader}>Needs</th>
     </tr>
   );
 }
@@ -53,7 +53,7 @@ const Table = () => {
           <td className={styles.cell}>
             <span className={styles.bold}>{startTime}</span> <br></br>
             <span className={styles.gray}>-- {endTime}</span></td>
-          <RiderCard values={inputValues} />
+          <TableRow values={inputValues} />
         </tr >
       );
     });

@@ -51,7 +51,7 @@ export type Passenger = {
   needs: string;
 }
 
-export type RiderTableValue = {
+export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;

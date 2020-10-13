@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import RiderCard from '../TableRow/TableRow';
+import TableRow from '../TableComponents/TableRow';
 import Form from '../UserForms/RidersForm';
 import { AccessibilityNeeds, Rider } from '../../types';
-import './table.css';
+import styles from './table.module.css';
 
 
 function renderTableHeader() {
   return (
     <tr>
-      <th className="tableHeader">First Name</th>
-      <th className="tableHeader">Last Name</th>
-      <th className="tableHeader">Phone Number</th>
-      <th className="tableHeader">Email</th>
-      <th className="tableHeader">Accessibility Needs</th>
+      <th className={styles.tableHeader}>First Name</th>
+      <th className={styles.tableHeader}>Last Name</th>
+      <th className={styles.tableHeader}>Phone Number</th>
+      <th className={styles.tableHeader}>Email</th>
+      <th className={styles.tableHeader}>Accessibility Needs</th>
     </tr>
   );
 }
@@ -136,7 +136,7 @@ const Table = () => {
         valueAccessbility, valueDelete];
       return (
         <tr key={index}>
-          <RiderCard values={inputValues} />
+          <TableRow values={inputValues} />
         </tr>
       );
     });
@@ -145,8 +145,8 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1 className="formHeader">Rider Table</h1>
-        <table cellSpacing='0' className="table" >
+        <h1 className={styles.formHeader}>Rider Table</h1>
+        <table cellSpacing='0' className={styles.table}>
           <tbody>
             {renderTableHeader()}
             {renderTableData(riders)}
