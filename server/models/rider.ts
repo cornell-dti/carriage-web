@@ -1,16 +1,18 @@
 import dynamoose from 'dynamoose';
 
+export enum Accessibility {
+  ASSISTANT = 'Assistant',
+  CRUTCHES = 'Crutches',
+  WHEELCHAIR = 'Wheelchair',
+}
+
 export type RiderType = {
   id: string
   firstName: string
   lastName: string
   phoneNumber: string
   email: string
-  accessibilityNeeds: {
-    needsWheelchair: boolean
-    hasCrutches: boolean
-    needsAssistant: boolean
-  }
+  accessibility: Accessibility[]
   description: string
   joinDate: string
   pronouns: string
@@ -24,13 +26,9 @@ const schema = new dynamoose.Schema({
   lastName: String,
   phoneNumber: String,
   email: String,
-  accessibilityNeeds: {
-    type: Object,
-    schema: {
-      needsWheelchair: Boolean,
-      hasCrutches: Boolean,
-      needsAssistant: Boolean,
-    },
+  accessibility: {
+    type: Array,
+    schema: [String],
   },
   description: String,
   joinDate: String,
@@ -38,7 +36,7 @@ const schema = new dynamoose.Schema({
   address: String,
   favoriteLocations: {
     type: Array,
-    schema: [{ type: String }],
+    schema: [String],
   },
 });
 

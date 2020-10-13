@@ -1,4 +1,5 @@
 import dynamoose from 'dynamoose';
+import { Vehicle, VehicleType } from './vehicle';
 
 type BreakTimes = {
   breakStart: string,
@@ -20,7 +21,7 @@ export type DriverType = {
   startTime: string,
   endTime: string,
   breaks: BreakType,
-  vehicle: string,
+  vehicle: VehicleType,
   phoneNumber: string,
   email: string,
 };
@@ -51,7 +52,7 @@ const schema = new dynamoose.Schema({
     type: Object,
     schema: breakSchema,
   },
-  vehicle: String,
+  vehicle: Vehicle as any,
   phoneNumber: String,
   email: String,
 });
