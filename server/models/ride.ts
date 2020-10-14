@@ -12,6 +12,7 @@ export enum Type {
 export enum Status {
   NOT_STARTED = 'not_started',
   ON_THE_WAY = 'on_the_way',
+  ARRIVED = 'arrived',
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
 }
