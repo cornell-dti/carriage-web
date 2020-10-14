@@ -9,9 +9,17 @@ export enum Type {
   UNSCHEDULED = 'unscheduled',
 }
 
+export enum Status {
+  NOT_STARTED = 'not_started',
+  ON_THE_WAY = 'on_the_way',
+  PICKED_UP = 'picked_up',
+  COMPLETED = 'completed',
+}
+
 export type RideType = {
   id: string,
   type: Type,
+  status: Status
   startLocation: LocationType,
   endLocation: LocationType,
   startTime: string,
@@ -28,6 +36,10 @@ const schema = new dynamoose.Schema({
   type: {
     type: String,
     enum: Object.values(Type),
+  },
+  status: {
+    type: String,
+    enum: Object.values(Status),
   },
   startLocation: Location as any,
   endLocation: Location as any,
