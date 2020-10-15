@@ -2,7 +2,7 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as db from './common';
-import { Ride, Type } from '../models/ride';
+import { Ride, Status, Type } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -19,10 +19,13 @@ router.get('/', (req, res) => {
   if (query === {}) {
     db.getAll(res, Ride, tableName);
   } else {
-    const { type, rider, driver, date } = query;
+    const { type, status, rider, driver, date } = query;
     let condition = new Condition();
     if (type) {
       condition = condition.where('type').eq(type);
+    }
+    if(status) {
+      condition = condition.where('status').eq(status);
     }
     if (rider) {
       condition = condition.where('rider').eq(rider);
@@ -53,6 +56,7 @@ router.post('/', (req, res) => {
   const ride = new Ride({
     id: uuid(),
     type: Type.UNSCHEDULED,
+    status: Status.NOT_STARTED,
     rider,
     startLocation,
     endLocation,
