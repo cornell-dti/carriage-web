@@ -1,24 +1,27 @@
-.tableHeader{
-  margin-bottom: 5px;
-  border-bottom: 1px solid black;
-  text-align: left;
+.table{
+  background-color: #F6F6F6;
+  padding: 3rem;
+  border: none;
+  width: 100%;
+  border-spacing: 0 15px;
 }
+
+.tableHeader{
+  border-bottom: none;
+  padding-right: 3rem;
+  padding-bottom: 1.5rem;
+}
+
+.cell{
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 
 .formHeader {
   margin-top: 30px;
   margin-bottom: 5px;
   text-align: center;
-}
-
-.table {
-  border: 1px solid black;
-  margin-left:auto; 
-  margin-right:auto;
-  width: 90%;
-}
-
-.tableCell{
-  padding:5px;
 }
 
 .formDiv{
@@ -58,4 +61,12 @@
 
 .checkboxDiv {
   text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.gray {
+  color: #707070;
 }
