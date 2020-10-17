@@ -1,7 +1,9 @@
 import React from 'react';
+import Table from '../../components/UserTables/UnscheduledTable';
 
 const Home = () => (
-  <h1>Homepage</h1>
+
+  <Table />
 );
 
 export default Home;

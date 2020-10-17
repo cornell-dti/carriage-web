@@ -1,33 +1,38 @@
 import React, { useState, useEffect } from 'react';
+import TableRow from '../TableComponents/TableRow';
 import Form from '../UserForms/RidersForm';
 import { AccessibilityNeeds, Rider } from '../../types';
-import './table.css';
+import styles from './table.module.css';
+
 
 function renderTableHeader() {
   return (
     <tr>
-      <th className="tableHeader">First Name</th>
-      <th className="tableHeader">Last Name</th>
-      <th className="tableHeader">Phone Number</th>
-      <th className="tableHeader">Email</th>
-      <th className="tableHeader">Accessibility Needs</th>
+      <th className={styles.tableHeader}>First Name</th>
+      <th className={styles.tableHeader}>Last Name</th>
+      <th className={styles.tableHeader}>Phone Number</th>
+      <th className={styles.tableHeader}>Email</th>
+      <th className={styles.tableHeader}>Accessibility Needs</th>
     </tr>
   );
 }
 
 function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
   let allNeeds = '';
-  const arrayNeeds = Object.entries(accessNeeds);
-  arrayNeeds.forEach((element) => {
-    if (element[0] === 'hasCrutches' && element[1]) {
-      allNeeds = allNeeds.concat('Has Crutches, ');
-    } else if (element[0] === 'needsAssistant' && element[1]) {
-      allNeeds = allNeeds.concat('Needs Assistant, ');
-    } else if (element[0] === 'needsWheelchair' && element[1]) {
-      allNeeds = allNeeds.concat('Needs Wheelchair, ');
-    }
-  });
-  return allNeeds.substr(0, allNeeds.length - 2);
+  if (accessNeeds != null) {
+    const arrayNeeds = Object.entries(accessNeeds);
+    arrayNeeds.forEach((element) => {
+      if (element[0] === 'hasCrutches' && element[1]) {
+        allNeeds = allNeeds.concat('Has Crutches, ');
+      } else if (element[0] === 'needsAssistant' && element[1]) {
+        allNeeds = allNeeds.concat('Needs Assistant, ');
+      } else if (element[0] === 'needsWheelchair' && element[1]) {
+        allNeeds = allNeeds.concat('Needs Wheelchair, ');
+      }
+    });
+    return allNeeds.substr(0, allNeeds.length - 2);
+  }
+  return null;
 }
 
 const Table = () => {
@@ -117,19 +122,21 @@ const Table = () => {
       const {
         firstName, lastName, phoneNumber, email, accessibilityNeeds,
       } = rider;
+      const buttonText = 'Delete';
+      const valueFName = { data: firstName };
+      const valueLName = { data: lastName };
+      const valuePhone = { data: phoneNumber };
+      const valueEmail = { data: email };
+      const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
+      const valueDelete = {
+        data: buttonText,
+        buttonHandler: () => setRiders(deleteEntry(email, allRiders)),
+      };
+      const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
+        valueAccessbility, valueDelete];
       return (
-        <tr key={email}>
-          <td className="tableCell">{firstName}</td>
-          <td>{lastName}</td>
-          <td>{phoneNumber}</td>
-          <td>{email}</td>
-          <td>{renderAccessNeeds(accessibilityNeeds)}</td>
-          <td>
-            <button onClick={() => setRiders(deleteEntry(email, allRiders))
-            }>
-              Delete
-              </button>
-          </td>
+        <tr key={index}>
+          <TableRow values={inputValues} />
         </tr>
       );
     });
@@ -138,8 +145,8 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1 className="formHeader">Rider Table</h1>
-        <table className="table">
+        <h1 className={styles.formHeader}>Rider Table</h1>
+        <table cellSpacing='0' className={styles.table}>
           <tbody>
             {renderTableHeader()}
             {renderTableData(riders)}
