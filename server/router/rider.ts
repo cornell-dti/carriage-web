@@ -34,8 +34,8 @@ router.get('/:id/profile', (req, res) => {
 router.get('/:id/accessibility', async (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
-    const { description, accessibilityNeeds } = rider;
-    res.send({ description, accessibilityNeeds });
+    const { description, accessibility } = rider;
+    res.send({ description, accessibility });
   });
 });
 

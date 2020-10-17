@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import Form from '../UserForms/DriversForm';
-import { Driver } from '../../types/index';
+
+type Driver = {
+  name: string,
+  netid: string,
+  email: string,
+  phone: string,
+}
 
 function deleteEntry(netid: string, driverList: Driver[]) {
   return driverList.filter((driver) => driver.netid !== netid);

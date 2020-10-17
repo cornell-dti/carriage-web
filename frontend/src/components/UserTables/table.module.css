@@ -30,13 +30,13 @@
   padding-bottom: 5px;
 }
 
-.formLabel{
+.formLabel {
   width: 125px;
   text-align: right;
   padding-right: 5px;
 }
 
-.formFeedback{
+.formFeedback {
   color: red;
   display: block;
   margin-right: 0;
@@ -45,14 +45,18 @@
   margin-left: 5px;
 }
 
-.hidden{
-  display:none;
+.hidden {
+  display: none;
+}
+
+.hidden2 {
+  visibility: hidden;
 }
 
 .addForm {
   display: inline-block;
-  margin-left:auto; 
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .addFormDiv {
