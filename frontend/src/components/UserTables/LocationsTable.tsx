@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Form from '../UserForms/LocationsForm';
 import { Location } from '../../types';
-import './table.css';
+import styles from './table.module.css';
 
 const Table = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -62,16 +62,16 @@ const Table = () => {
   return (
     <div>
       <div>
-        <h1 className="formHeader">Location Table</h1>
-        <table className="table">
+        <h1 className={styles.formHeader}>Location Table</h1>
+        <table className={styles.table}>
           <tbody>
             <tr>
-              <th className="tableHeader">Name</th>
-              <th className="tableHeader">Address</th>
+              <th className={styles.tableHeader}>Name</th>
+              <th className={styles.tableHeader}>Address</th>
             </tr>
             {locations.map(({ id, name, address }, index) => (
               <tr key={index}>
-                <td className="tableCell">{name}</td>
+                <td className={styles.tableHeader}>{name}</td>
                 <td>{address}</td>
                 <td>
                   <button onClick={() => deleteLocation(id)}>
