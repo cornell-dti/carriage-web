@@ -1,0 +1,60 @@
+.userDetail {
+  width: 90%;
+  display: inline-block;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0px 4px 35px rgba(0, 0, 0, 0.1);
+  margin-left: 5%;
+}
+
+.imgContainer {
+  margin: 30px 0px 0px 20px;
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+}
+
+.profilePic {
+  background-color: #dddddd;
+  width: 120px;
+  height: 120px;
+  display: inline-block;
+}
+
+.basicInfoContainer {
+  position: relative;
+  width: 1000px;
+  display: inline-block;
+  margin-left: 10px;
+  padding-bottom: 20px;
+}
+
+.name {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.netId {
+  display: inline-block;
+  font-size: 15px;
+  opacity: 0.5;
+  margin-left: 20px;
+}
+
+.edit {
+  position: absolute;
+  display: inline-block;
+  top: -5px;
+  right: 0px;
+  width: 60px;
+}
+
+.otherInfoContainer {
+  display: inline-block;
+  width: 100%;
+  background: rgba(226, 240, 251, 0.2);
+  border-top: ridge;
+  padding-top: 30px;
+}
