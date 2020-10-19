@@ -38,6 +38,16 @@ export type Driver = {
   email: string;
 };
 
+export type Location = {
+  id: string;
+  name: string;
+  address: string;
+};
+
+export type ObjectType = {
+  [x: string]: any;
+}
+
 export type Vehicle = {
   id: string;
   name: string;
