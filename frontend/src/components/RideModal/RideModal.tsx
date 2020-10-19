@@ -1,28 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
+import { Button } from '../FormElements/FormElements';
+import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
+import { ObjectType } from '../../types/index';
 
 const RideModal = () => {
+  const [formData, setFormData] = useState({});
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const openModal = () => setIsOpen(true);
-  const onNext = (page: number) => true;
-  const onAccept = () => setIsOpen(false);
-  const onCancel = () => setIsOpen(false);
+  const openModal = () => {
+    setCurrentPage(0);
+    setIsOpen(true);
+  };
+
+  const goNextPage = () => setCurrentPage((p) => p + 1);
+
+  const closeModal = () => setIsOpen(false);
+
+  const saveDataThen = (next: () => void) => (data: ObjectType) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+    next();
+  };
+
+  const submitData = () => {
+    setIsSubmitted(true);
+    closeModal();
+  };
+
+  useEffect(() => {
+    if (isSubmitted) {
+      setIsSubmitted(false);
+      console.log(formData);
+    }
+  }, [formData, isSubmitted]);
 
   return (
     <>
-      <button onClick={openModal}>open modal</button>
+      <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
         isOpen={isOpen}
-        onNext={onNext}
-        onAccept={onAccept}
-        onCancel={onCancel}
+        currentPage={currentPage}
+        onClose={closeModal}
       >
-        <h2>page 1</h2>
-        <h2>page 2</h2>
-        <h2>page 3</h2>
+        <RideTimesPage onSubmit={saveDataThen(goNextPage)} />
+        <DriverPage onSubmit={saveDataThen(goNextPage)} />
+        <RiderInfoPage onSubmit={saveDataThen(submitData)} />
       </Modal>
     </>
   );

@@ -1,0 +1,52 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputContainer {
+  margin-bottom: 24px;
+}
+
+.rideTime {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 16px;
+  row-gap: 16px;
+}
+
+.date {
+  grid-column: 1/3;
+  grid-row: 1;
+  text-align: center;
+}
+
+.pickupTime {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.dropoffTime {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.drivers {
+  display: flex;
+}
+
+.driver {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.driverLabel {
+  margin: 0;
+}
+
+.driverRadio {
+  margin: 0;
+}
