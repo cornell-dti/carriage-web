@@ -1,3 +1,33 @@
+.label {
+  margin-right: 8px;
+}
+
+.input {
+  border: none;
+  outline: none;
+}
+
+.textInput {
+  font-size: 17px;
+  padding: 4px;
+}
+
+.timeInput, .dateInput {
+  font-size: 20px;
+  padding: 4px;
+}
+
+.timeInput::-webkit-calendar-picker-indicator, 
+.dateInput::-webkit-calendar-picker-indicator {
+  height: 18px;
+  width: 18px;
+}
+
+.input:focus {
+  background-color: #eee;
+}
+
+
 .lgBtn {
   border-radius: 8px;
   min-width: 120px;

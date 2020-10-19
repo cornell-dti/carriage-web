@@ -19,15 +19,19 @@ type InputProps = {
   type: string;
   name: string;
   placeholder?: string;
+  value?: string;
+  list?: string;
 };
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, name, placeholder }, ref) => (
+  ({ className, type, name, placeholder, value, list }, ref) => (
     <input
       type={type}
-      className={cn(styles[`${type}Input`], className)}
+      className={cn(styles.input, styles[`${type}Input`], className)}
       name={name}
       placeholder={placeholder}
+      value={value}
+      list={list}
       ref={ref}
     />
   ),
