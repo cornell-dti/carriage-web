@@ -49,12 +49,6 @@ export type Ride = {
   riderId: string;
 };
 
-export type Location = {
-  id: string;
-  name: string;
-  address: string;
-};
-
 export type ObjectType = {
   [x: string]: any;
 }
