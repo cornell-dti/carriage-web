@@ -1,4 +1,7 @@
 import dynamoose from 'dynamoose';
+import { Location, LocationType } from './location';
+import { Rider, RiderType } from './rider';
+import { Driver, DriverType } from './driver';
 
 export enum Type {
   ACTIVE = 'active',
@@ -6,33 +9,45 @@ export enum Type {
   UNSCHEDULED = 'unscheduled',
 }
 
+export enum Status {
+  NOT_STARTED = 'not_started',
+  ON_THE_WAY = 'on_the_way',
+  ARRIVED = 'arrived',
+  PICKED_UP = 'picked_up',
+  COMPLETED = 'completed',
+}
+
 export type RideType = {
-  type: Type,
   id: string,
-  startLocation: string,
-  endLocation: string,
+  type: Type,
+  status: Status
+  startLocation: LocationType,
+  endLocation: LocationType,
   startTime: string,
   endTime: string,
-  riderId: string,
-  driverId?: string,
+  rider: RiderType,
+  driver?: DriverType,
 };
 
 const schema = new dynamoose.Schema({
-  type: {
+  id: {
     hashKey: true,
+    type: String,
+  },
+  type: {
     type: String,
     enum: Object.values(Type),
   },
-  id: {
-    rangeKey: true,
+  status: {
     type: String,
+    enum: Object.values(Status),
   },
-  startLocation: String,
-  endLocation: String,
+  startLocation: Location as any,
+  endLocation: Location as any,
   startTime: String,
   endTime: String,
-  riderId: String,
-  driverId: String,
+  rider: Rider as any,
+  driver: Driver as any,
 });
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });

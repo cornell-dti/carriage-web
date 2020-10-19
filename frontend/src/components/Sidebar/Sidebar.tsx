@@ -1,7 +1,7 @@
 import React, { useState, FunctionComponent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { home, drivers, riders, settings } from './icons';
+import { home, drivers, riders, settings, locations } from './icons';
 import styles from './sidebar.module.css';
 
 type MenuItem = {
@@ -18,6 +18,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
     { icon: home, caption: 'Home', path: '/home' },
     { icon: drivers, caption: 'Drivers', path: '/drivers' },
     { icon: riders, caption: 'Riders', path: '/riders' },
+    { icon: locations, caption: 'Locations', path: '/locations' },
     { icon: settings, caption: 'Settings', path: '/settings' },
   ];
 

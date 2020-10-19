@@ -1,0 +1,30 @@
+.collapsible {
+  display: inline-block;
+  width: 100%;
+  background-color: #F3F3F3;;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.banner {
+  width: 100%;
+  padding: 6px 0px 6px 50px;
+}
+
+.title {
+  display: inline-block;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.icon {
+  margin-left: 2%;
+  transform: translate(0, 15%);
+}
+
+.contentContainer {
+  display: inline-block;
+  width: 100%;
+  background-color: #FFFFFF;
+  padding: 10px 0px 10px 80px;
+}
