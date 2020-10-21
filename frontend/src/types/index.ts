@@ -78,3 +78,7 @@ export type TableValue = {
   tag?: string;
   buttonHandler?: () => void;
 };
+
+export type ObjectType = {
+  [x: string]: any;
+};
