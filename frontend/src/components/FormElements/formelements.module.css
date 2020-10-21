@@ -1,0 +1,61 @@
+.label {
+  margin-right: 8px;
+}
+
+.input {
+  border: none;
+  outline: none;
+}
+
+.textInput {
+  font-size: 17px;
+  padding: 4px;
+}
+
+.timeInput, .dateInput {
+  font-size: 20px;
+  padding: 4px;
+}
+
+.timeInput::-webkit-calendar-picker-indicator, 
+.dateInput::-webkit-calendar-picker-indicator {
+  height: 18px;
+  width: 18px;
+}
+
+.input:focus {
+  background-color: #eee;
+}
+
+
+.lgBtn {
+  border-radius: 8px;
+  min-width: 120px;
+  padding: 10px 18px;
+  text-align: center;
+  font-size: 17px;
+  outline: none;
+  cursor: pointer;
+}
+
+.smBtn {
+  border-radius: 10px;
+  min-width: 105px;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+}
+
+.primaryBtn {
+  background-color: black;
+  color: white;
+  border: none;
+}
+
+.secondaryBtn {
+  background-color: white;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+}
