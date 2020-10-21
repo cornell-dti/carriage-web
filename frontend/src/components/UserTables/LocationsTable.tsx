@@ -71,7 +71,7 @@ const Table = () => {
             </tr>
             {locations.map(({ id, name, address }, index) => (
               <tr key={index}>
-                <td className={styles.tableCell}>{name}</td>
+                <td className={styles.tableHeader}>{name}</td>
                 <td>{address}</td>
                 <td>
                   <button onClick={() => deleteLocation(id)}>
