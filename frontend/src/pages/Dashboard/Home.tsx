@@ -1,9 +1,12 @@
 import React from 'react';
 import Table from '../../components/UserTables/UnscheduledTable';
+import Schedule from '../../components/Schedule/Schedule';
 
 const Home = () => (
-
-  <Table />
+  <>
+    <Schedule />
+    <Table />
+  </>
 );
 
 export default Home;
