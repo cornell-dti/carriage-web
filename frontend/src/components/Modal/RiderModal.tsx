@@ -37,9 +37,9 @@ const RiderModal = () => {
     <>
       <Button onClick={openModal}>+ Add ride</Button>
       <Modal
-        paginate
         title={['Add a Student']}
         isOpen={isOpen}
+        currentPage={0}
         onClose={closeModal}
       >
         <RiderModalInfo onSubmit={saveDataThen(submitData)} />

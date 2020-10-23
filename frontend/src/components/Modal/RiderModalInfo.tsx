@@ -20,16 +20,64 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={styles.date}>
-          <Label htmlFor="start">Date:</Label>
+        <div className={cn(styles.gridR1, styles.gridC1)}>
+          <Input
+            name="name"
+            type="text"
+            placeholder="Name"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR1, styles.gridC2)}>
+          <Input
+            name="netid"
+            type="text"
+            placeholder="NetID"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR2, styles.gridC1)}>
+          <Input
+            name="email"
+            type="text"
+            placeholder="Email"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR2, styles.gridC2)}>
+          <Input
+            name="phone"
+            type="text"
+            placeholder="Phone Number"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR3, styles.gridC1)}>
+          <Input
+            name="needs"
+            type="text"
+            placeholder="Needs"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR3, styles.gridC2)}>
+          <Input
+            name="address"
+            type="text"
+            placeholder="Address"
+            ref={register({ required: true })}
+          />
+        </div>
+        <div className={cn(styles.gridR4, styles.gridC1)}>
+          <Label htmlFor="start">Start Date:</Label>
           <Input
             type="date"
             name="start"
             ref={register({ required: true })}
           />
         </div>
-        <div className={styles.date}>
-          <Label htmlFor="end">Date:</Label>
+        <div className={cn(styles.gridR4, styles.gridC2)}>
+          <Label htmlFor="end">End Date:</Label>
           <Input
             type="date"
             name="end"
@@ -37,6 +85,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           />
         </div>
       </div>
+      <Button type="submit">Add a Student</Button>
     </form>
   );
 };

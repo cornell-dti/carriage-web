@@ -153,9 +153,6 @@ const Table = () => {
           </tbody>
         </table>
       </div >
-      <div>
-        <Form onClick={(newRider) => (setRiders(addRider(newRider, riders)))} />
-      </div>
     </>
   );
 };
