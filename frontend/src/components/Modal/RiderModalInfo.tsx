@@ -12,10 +12,10 @@ type ModalFormProps = {
 
 const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
   const { register, handleSubmit, getValues } = useForm();
-  const beforeSubmit = ({ start, end }: ObjectType) => {
+  const beforeSubmit = ({ name, netid, email, phone, needs, address, start, end }: ObjectType) => {
     const startDate = new Date(`${start}`).toISOString();
     const endDate = new Date(`${end}`).toISOString();
-    onSubmit({ startDate, endDate });
+    onSubmit({ name, netid, email, phone, needs, address, startDate, endDate });
   };
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
