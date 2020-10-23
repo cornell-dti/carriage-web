@@ -1,0 +1,23 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputContainer {
+  margin-bottom: 24px;
+}
+
+.rideTime {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 16px;
+  row-gap: 16px;
+}
+
+.date {
+  grid-column: 1/3;
+  grid-row: 1;
+  text-align: center;
+}

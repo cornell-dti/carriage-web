@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
+import RiderModalInfo from './RiderModalInfo';
 
 const RiderModal = () => {
   const [formData, setFormData] = useState({});
@@ -41,7 +42,7 @@ const RiderModal = () => {
         isOpen={isOpen}
         onClose={closeModal}
       >
-        <RiderInfoPage onSubmit={saveDataThen(submitData)} />
+        <RiderModalInfo onSubmit={saveDataThen(submitData)} />
       </Modal>
     </>
   );
