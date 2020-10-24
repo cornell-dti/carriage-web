@@ -10,7 +10,7 @@ export type Rider = {
   lastName: string;
   phoneNumber: string;
   email: string;
-  accessibilityNeeds: AccessibilityNeeds;
+  accessibilityNeeds: Array<string>;
   description: string;
   joinDate: string;
   pronouns: string;

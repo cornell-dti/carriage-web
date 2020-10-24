@@ -1,11 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 
-const RiderModal = () => {
-  const [formData, setFormData] = useState({});
+
+type RiderModalProps = {
+  riders: Array<Rider>;
+  setRiders: Dispatch<SetStateAction<Rider[]>>;
+}
+
+function addRider(newRider: Rider, allRiders: Rider[]) {
+  async function addBackend() {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName: newRider.firstName,
+        lastName: newRider.lastName,
+        phoneNumber: newRider.phoneNumber,
+        email: newRider.email,
+        accessibilityNeeds: newRider.accessibilityNeeds,
+        description: newRider.description,
+        joinDate: newRider.joinDate,
+        pronouns: newRider.pronouns,
+        address: newRider.address,
+      }),
+    };
+    await fetch('/riders', requestOptions);
+  }
+  addBackend();
+  return [...allRiders, newRider];
+}
+
+const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
+  const [formData, setFormData] = useState({
+    id: '',
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    accessibilityNeeds: [],
+    description: '',
+    joinDate: '',
+    pronouns: '',
+    address: '',
+  });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -30,8 +70,21 @@ const RiderModal = () => {
     if (isSubmitted) {
       setIsSubmitted(false);
       console.log(formData);
+      const newRider = {
+        id: formData.id,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+        accessibilityNeeds: formData.accessibilityNeeds,
+        description: '',
+        joinDate: '',
+        pronouns: '',
+        address: formData.address,
+      };
+      setRiders(addRider(newRider, riders));
     }
-  }, [formData, isSubmitted]);
+  }, [formData, isSubmitted, riders, setRiders]);
 
   return (
     <>

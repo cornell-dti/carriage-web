@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
-import { ObjectType, Driver, Rider, Location } from '../../types/index';
+import { ObjectType } from '../../types/index';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -12,10 +12,25 @@ type ModalFormProps = {
 
 const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
   const { register, handleSubmit, getValues } = useForm();
-  const beforeSubmit = ({ name, netid, email, phone, needs, address, start, end }: ObjectType) => {
+  const beforeSubmit = ({ name, netid, email, phoneNumber, needs,
+    address, start, end }: ObjectType) => {
     const startDate = new Date(`${start}`).toISOString();
     const endDate = new Date(`${end}`).toISOString();
-    onSubmit({ name, netid, email, phone, needs, address, startDate, endDate });
+    const splitName = name.split(' ');
+    const firstName = splitName[0];
+    const lastName = splitName[1];
+    const accessibilityNeeds = needs.split(' ');
+    onSubmit({
+      id: netid,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      accessibilityNeeds,
+      address,
+      startDate,
+      endDate,
+    });
   };
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
@@ -46,7 +61,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
         </div>
         <div className={cn(styles.gridR2, styles.gridC2)}>
           <Input
-            name="phone"
+            name="phoneNumber"
             type="text"
             placeholder="Phone Number"
             ref={register({ required: true })}
