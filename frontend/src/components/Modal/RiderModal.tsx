@@ -88,9 +88,9 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
 
   return (
     <>
-      <Button onClick={openModal}>+ Add ride</Button>
+      <Button onClick={openModal}>+ Add a Rider</Button>
       <Modal
-        title={['Add a Student']}
+        title={['Add a Rider']}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}
