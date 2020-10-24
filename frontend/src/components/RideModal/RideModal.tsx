@@ -31,8 +31,14 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
+      fetch('/rides', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
       setIsSubmitted(false);
-      console.log(formData);
     }
   }, [formData, isSubmitted]);
 

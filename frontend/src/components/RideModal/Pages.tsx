@@ -95,7 +95,7 @@ export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
   const { register, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>([]);
-  const locations = Object.keys(locationToId);
+  const locations = Object.keys(locationToId).sort();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
     const rider = nameToId[name.toLowerCase()];
@@ -135,6 +135,7 @@ export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
             name="name"
             type="text"
             placeholder="Name"
+            className={styles.nameInput}
             ref={register({
               required: true,
               validate: (name: string) => (
@@ -152,7 +153,9 @@ export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => <option key={l}>{l}</option>)}
+            {locations.map((l) => (
+              l === 'custom' ? null : <option key={l}>{l}</option>
+            ))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -164,7 +167,9 @@ export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => <option key={l}>{l}</option>)}
+            {locations.map((l) => (
+              l === 'custom' ? null : <option key={l}>{l}</option>
+            ))}
           </datalist>
         </div>
       </div>
