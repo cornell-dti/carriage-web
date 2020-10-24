@@ -3,6 +3,7 @@ import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
+import styles from './ridermodal.module.css';
 
 
 type RiderModalProps = {
@@ -88,7 +89,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
 
   return (
     <>
-      <Button onClick={openModal}>+ Add a Rider</Button>
+      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Rider</Button>
       <Modal
         title={['Add a Rider']}
         isOpen={isOpen}

@@ -42,3 +42,8 @@
   grid-row: 5;
 }
 
+.addRiderButton {
+  float: right;
+  margin-top: 2rem;
+}
+

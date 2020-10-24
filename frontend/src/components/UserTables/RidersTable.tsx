@@ -96,7 +96,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   return (
     <>
       <div>
-        <h1 className={styles.formHeader}>Rider Table</h1>
+        <h1 className={styles.formHeader}>Riders</h1>
         <table cellSpacing='0' className={styles.table}>
           <tbody>
             {renderTableHeader()}
