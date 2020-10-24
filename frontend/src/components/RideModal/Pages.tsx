@@ -94,7 +94,7 @@ export const DriverPage = ({ onSubmit }: ModalFormProps) => {
 export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
   const { register, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
-  const [locationToId, setLocationToId] = useState<ObjectType>([]);
+  const [locationToId, setLocationToId] = useState<ObjectType>({});
   const locations = Object.keys(locationToId).sort();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
