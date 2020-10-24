@@ -16,16 +16,43 @@ const TableRow = (props: TableRowProps) => {
 
   const resultList = values.map((val, index) => {
     const { data, tag, buttonHandler } = val;
-    if (index === 0) { /* first cell */
-      return (<TableCell data={data} index={index} first={true} last={false} />);
-    } if (index === values.length - 1) { /* last cell */
-      return (<TableCell data={data} index={index} first={false} last={true}
-        buttonHandler={buttonHandler} />);
+    if (index === 0) {
+      /* first cell */
+      return (
+        <TableCell
+          key={index}
+          data={data}
+          index={index}
+          first={true}
+          last={false}
+        />
+      );
     }
-    return (<TableCell data={data} index={index} first={false} last={false}
-      tag={tag} />);
+    if (index === values.length - 1) {
+      /* last cell */
+      return (
+        <TableCell
+          key={index}
+          data={data}
+          index={index}
+          first={false}
+          last={true}
+          buttonHandler={buttonHandler}
+        />
+      );
+    }
+    return (
+      <TableCell
+        key={index}
+        data={data}
+        index={index}
+        first={false}
+        last={false}
+        tag={tag}
+      />
+    );
   });
-  return (<>{resultList}</>);
+  return <>{resultList}</>;
 };
 
 export default TableRow;
