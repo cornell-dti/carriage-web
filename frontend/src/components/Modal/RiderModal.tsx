@@ -70,7 +70,6 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
   useEffect(() => {
     if (isSubmitted) {
       setIsSubmitted(false);
-      console.log(formData);
       const newRider = {
         id: formData.id,
         firstName: formData.firstName,

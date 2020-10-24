@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
@@ -11,7 +11,7 @@ type ModalFormProps = {
 }
 
 const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
-  const { register, handleSubmit, getValues } = useForm();
+  const { register, handleSubmit } = useForm();
   const beforeSubmit = ({ name, netid, email, phoneNumber, needs,
     address, start, end }: ObjectType) => {
     const startDate = new Date(`${start}`).toISOString();
@@ -19,7 +19,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
     const splitName = name.split(' ');
     const firstName = splitName[0];
     const lastName = splitName[1];
-    const accessibilityNeeds = needs.split(' ');
+    const accessibilityNeeds = needs.split(',');
     onSubmit({
       id: netid,
       firstName,

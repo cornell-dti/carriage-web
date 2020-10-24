@@ -1,6 +1,6 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import TableRow from '../TableComponents/TableRow';
-import { AccessibilityNeeds, Rider } from '../../types';
+import { Rider } from '../../types';
 import styles from './table.module.css';
 
 type RidersTableProps = {
@@ -22,9 +22,14 @@ function renderTableHeader() {
 
 function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
+  const comma = ', ';
   if (accessNeeds != null) {
     for (let i = 0; i < accessNeeds.length; i += 1) {
-      allNeeds += accessNeeds[i];
+      if (i !== accessNeeds.length - 1) {
+        allNeeds = allNeeds + accessNeeds[i] + comma;
+      } else {
+        allNeeds += accessNeeds[i];
+      }
     }
     return allNeeds;
   }
