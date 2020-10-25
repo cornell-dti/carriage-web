@@ -1,8 +1,10 @@
 import express from 'express';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as db from './common';
-import { Ride, Status, Type } from '../models/ride';
+import { Ride, RideType, Status, Type } from '../models/ride';
+import { Location } from '../models/location';
+import { formatAddress } from '../util';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -24,7 +26,7 @@ router.get('/', (req, res) => {
     if (type) {
       condition = condition.where('type').eq(type);
     }
-    if(status) {
+    if (status) {
       condition = condition.where('status').eq(status);
     }
     if (rider) {
@@ -45,23 +47,41 @@ router.get('/', (req, res) => {
 // Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
-    body: {
-      rider,
-      startLocation,
-      endLocation,
-      startTime,
-      endTime,
-    },
+    body: { rider, startTime, endTime, driver, startLocation, endLocation },
   } = req;
+  let startLocationId;
+  let endLocationId;
+
+  if (!validate(startLocation)) {
+    startLocationId = uuid();
+    const location = new Location({
+      id: startLocationId,
+      name: 'Custom',
+      address: formatAddress(startLocation),
+    });
+    location.save();
+  }
+
+  if (!validate(endLocation)) {
+    endLocationId = uuid();
+    const location = new Location({
+      id: endLocationId,
+      name: 'Custom',
+      address: formatAddress(endLocation),
+    });
+    location.save();
+  }
+
   const ride = new Ride({
     id: uuid(),
     type: Type.UNSCHEDULED,
     status: Status.NOT_STARTED,
     rider,
-    startLocation,
-    endLocation,
+    startLocation: startLocationId ?? startLocation,
+    endLocation: endLocationId ?? endLocation,
     startTime,
     endTime,
+    driver,
   });
   db.create(res, ride);
 });
@@ -69,7 +89,25 @@ router.post('/', (req, res) => {
 // Update an existing ride
 router.put('/:id', (req, res) => {
   const { params: { id }, body } = req;
-  db.update(res, Ride, { id }, body, tableName);
+  if (body.type === Type.PAST) {
+    Ride.get(id, (_, ride: any) => {
+      const {
+        startLocation: { id: startId, name: startName },
+        endLocation: { id: endId, name: endName },
+      } = ride as RideType;
+      if (startName === 'Custom') {
+        body.startLocation = 'Custom';
+        Location.delete(startId);
+      }
+      if (endName === 'Custom') {
+        body.endLocation = 'Custom';
+        Location.delete(endId);
+      }
+      db.update(res, Ride, { id }, body, tableName);
+    });
+  } else {
+    db.update(res, Ride, { id }, body, tableName);
+  }
 });
 
 // Delete an existing ride
