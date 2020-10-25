@@ -1,11 +1,5 @@
 import dynamoose from 'dynamoose';
 
-export type LocationType = {
-  id: string;
-  name: string;
-  address: string;
-};
-
 export enum Tag {
   WEST = 'west',
   CENTRAL = 'central',
@@ -13,6 +7,13 @@ export enum Tag {
   CTOWN = 'ctown', // college town
   DTOWN = 'dtown', // downtown
 }
+
+export type LocationType = {
+  id: string;
+  name: string;
+  address: string;
+  tag: Tag;
+};
 
 const schema = new dynamoose.Schema({
   id: String,
