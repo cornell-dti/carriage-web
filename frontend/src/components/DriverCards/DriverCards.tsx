@@ -3,7 +3,7 @@ import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from './icons';
 import { Driver, BreakType, Vehicle } from '../../types';
-
+import { Link } from 'react-router-dom';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -63,6 +63,11 @@ const DriverCard = ({
   const fmtPhone = formatPhone(phoneNumber);
   const availability = parseAvailability(startTime, endTime, breaks);
   const [vehicleInfo, setVehicleInfo] = useState<Vehicle>();
+  const fullName = firstName + "_" + lastName;
+  const data = {
+    firstName: firstName, lastName: lastName, netId: netId, phone: fmtPhone,
+    availability: availability, vehicle: vehicleInfo
+  }
 
   useEffect(() => {
     fetch(`/vehicles/${vehicle}`)
@@ -71,22 +76,28 @@ const DriverCard = ({
   }, [vehicle]);
 
   return (
-    <Card firstName={firstName} lastName={lastName} netId={netId}>
-      <CardInfo icon={phone} alt="phone icon">
-        <p>{fmtPhone}</p>
-      </CardInfo>
-      <CardInfo icon={clock} alt="clock icon">
-        <div>
-          {availability.map(([day, timeRange]) => (
-            <p key={day}><b>{day}:</b> {timeRange}</p>
-          ))}
-        </div>
-      </CardInfo>
-      <CardInfo icon={wheel} alt="wheel icon">
-        <p>{vehicleInfo && `${vehicleInfo.name} | ${vehicleInfo.capacity}`}</p>
-        <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
-      </CardInfo>
-    </Card>
+    <>
+      {/* <Link to={{ pathname: `/drivers/driver?name=${fullName}`, state: data }} */}
+      <Link to={{ pathname: "/drivers/driver", state: data, search: `?name=${fullName}` }}
+        style={{ textDecoration: 'none', color: "inherit" }}>
+        <Card firstName={firstName} lastName={lastName} netId={netId} >
+          <CardInfo icon={phone} alt="phone icon">
+            <p>{fmtPhone}</p>
+          </CardInfo>
+          <CardInfo icon={clock} alt="clock icon">
+            <div>
+              {availability.map(([day, timeRange]) => (
+                <p key={day}><b>{day}:</b> {timeRange}</p>
+              ))}
+            </div>
+          </CardInfo>
+          <CardInfo icon={wheel} alt="wheel icon">
+            <p>{vehicleInfo && `${vehicleInfo.name} | ${vehicleInfo.capacity}`}</p>
+            <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
+          </CardInfo>
+        </Card>
+      </Link>
+    </>
   );
 };
 
