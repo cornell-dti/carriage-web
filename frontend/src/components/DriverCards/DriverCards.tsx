@@ -64,7 +64,7 @@ const DriverCard = ({
   const availability = parseAvailability(startTime, endTime, breaks);
   const [vehicleInfo, setVehicleInfo] = useState<Vehicle>();
   const fullName = firstName + "_" + lastName;
-  const data = {
+  const userInfo = {
     firstName: firstName, lastName: lastName, netId: netId, phone: fmtPhone,
     availability: availability, vehicle: vehicleInfo
   }
@@ -77,8 +77,7 @@ const DriverCard = ({
 
   return (
     <>
-      {/* <Link to={{ pathname: `/drivers/driver?name=${fullName}`, state: data }} */}
-      <Link to={{ pathname: "/drivers/driver", state: data, search: `?name=${fullName}` }}
+      <Link to={{ pathname: "/drivers/driver", state: userInfo, search: `?name=${fullName}` }}
         style={{ textDecoration: 'none', color: "inherit" }}>
         <Card firstName={firstName} lastName={lastName} netId={netId} >
           <CardInfo icon={phone} alt="phone icon">
