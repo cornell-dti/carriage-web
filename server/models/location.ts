@@ -12,7 +12,7 @@ export type LocationType = {
   id: string;
   name: string;
   address: string;
-  tag: Tag;
+  tag?: Tag;
 };
 
 const schema = new dynamoose.Schema({

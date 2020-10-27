@@ -56,10 +56,19 @@ export type Vehicle = {
   wheelchairAccessible: boolean;
 };
 
+export enum Tag {
+  WEST = 'west',
+  CENTRAL = 'central',
+  NORTH = 'north',
+  CTOWN = 'ctown', // college town
+  DTOWN = 'dtown', // downtown
+}
+
 export type Location = {
   id: string;
   name: string;
   address: string;
+  tag?: Tag;
 };
 
 export type Passenger = {
