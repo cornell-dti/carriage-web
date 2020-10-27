@@ -7,16 +7,14 @@ type FormProps = {
 
 const Form = (props: FormProps) => {
   const today = new Date();
-  const date = `${today.getMonth() + 1}/${today.getDate()}/${
-    today.getFullYear()}`;
+  const date = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
   const [newRider, setNewRider] = useState({
     id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
-    accessibilityNeeds:
-      { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
+    accessibilityNeeds: new Array<string>(),
     description: '',
     joinDate: date,
     pronouns: 'she/her/hers',
@@ -86,11 +84,11 @@ const Form = (props: FormProps) => {
       newRider.pronouns = fieldValue;
     } else {
       if (fieldName === 'needWheel') {
-        newRider.accessibilityNeeds.needsWheelchair = true;
+        newRider.accessibilityNeeds.push('Wheelchair');
       } if (fieldName === 'needCrutches') {
-        newRider.accessibilityNeeds.hasCrutches = true;
+        newRider.accessibilityNeeds.push('Crutches');
       } else if (fieldName === 'needAssist') {
-        newRider.accessibilityNeeds.needsAssistant = true;
+        newRider.accessibilityNeeds.push('Assistant');
       }
     }
     setNewRider(newRider);

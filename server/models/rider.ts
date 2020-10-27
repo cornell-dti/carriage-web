@@ -6,6 +6,11 @@ export enum Accessibility {
   WHEELCHAIR = 'Wheelchair',
 }
 
+export enum Organization {
+  REDRUNNER = 'RedRunner',
+  CULIFT = 'CULift'
+}
+
 export type RiderType = {
   id: string
   firstName: string
@@ -13,6 +18,7 @@ export type RiderType = {
   phoneNumber: string
   email: string
   accessibility: Accessibility[]
+  organization: Organization
   description: string
   joinDate: string
   pronouns: string
@@ -29,6 +35,10 @@ const schema = new dynamoose.Schema({
   accessibility: {
     type: Array,
     schema: [String],
+  },
+  organization: {
+    type: String,
+    enum: Object.values(Organization),
   },
   description: String,
   joinDate: String,
