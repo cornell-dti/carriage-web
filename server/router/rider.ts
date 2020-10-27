@@ -39,6 +39,15 @@ router.get('/:id/accessibility', async (req, res) => {
   });
 });
 
+// Get organization information for a rider
+router.get('/:id/organization', async (req, res) => {
+  const { params: { id } } = req;
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
+    const { description, organization } = rider;
+    res.send({ description, organization });
+  });
+});
+
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { params: { id } } = req;
