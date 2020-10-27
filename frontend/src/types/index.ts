@@ -10,7 +10,7 @@ export type Rider = {
   lastName: string;
   phoneNumber: string;
   email: string;
-  accessibilityNeeds: AccessibilityNeeds;
+  accessibilityNeeds: Array<string>;
   description: string;
   joinDate: string;
   pronouns: string;
@@ -77,4 +77,8 @@ export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;
+};
+
+export type ObjectType = {
+  [x: string]: any;
 };
