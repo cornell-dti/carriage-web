@@ -90,7 +90,7 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { params: { id }, body } = req;
   if (body.type === Type.PAST) {
-    Ride.get(id, (_, ride: any) => {
+    db.getById(res, Ride, id, tableName, (ride) => {
       const {
         startLocation: { id: startId, name: startName },
         endLocation: { id: endId, name: endName },
