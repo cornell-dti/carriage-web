@@ -100,7 +100,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           />
         </div>
       </div>
-      <Button type="submit">Add a Student</Button>
+      <Button type="submit">Add a Rider</Button>
     </form>
   );
 };
