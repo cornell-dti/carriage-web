@@ -13,8 +13,15 @@ const Dashboard = () => (
     <Sidebar>
       <Switch>
         <Route path="/home" component={Home} />
-        <Route exact path="/drivers/driver" component={DriverDetail} />
-        <Route exact path="/drivers" component={Drivers} />
+        <Route
+          path="/drivers"
+          render={({ match: { url } }) => (
+            <>
+              <Route path={`${url}/`} component={Drivers} exact />
+              <Route path={`${url}/driver`} component={DriverDetail} />
+            </>
+          )}
+        />
         <Route path="/riders" component={Riders} />
         <Route path="/locations" component={Locations} />
         <Route path="/settings" component={Settings} />

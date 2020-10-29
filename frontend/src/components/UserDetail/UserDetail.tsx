@@ -40,7 +40,6 @@ const UserDetail = ({
   children
 }: UserDetailProps) => {
   const fullName = firstName + " " + lastName;
-  console.log(netId);
   return (
     <div className={styles.userDetail}>
       <div className={styles.imgContainer}>

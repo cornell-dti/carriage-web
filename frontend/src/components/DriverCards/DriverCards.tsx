@@ -76,27 +76,25 @@ const DriverCard = ({
   }, [vehicle]);
 
   return (
-    <>
-      <Link to={{ pathname: "/drivers/driver", state: userInfo, search: `?name=${fullName}` }}
-        style={{ textDecoration: 'none', color: "inherit" }}>
-        <Card firstName={firstName} lastName={lastName} netId={netId} >
-          <CardInfo icon={phone} alt="phone icon">
-            <p>{fmtPhone}</p>
-          </CardInfo>
-          <CardInfo icon={clock} alt="clock icon">
-            <div>
-              {availability.map(([day, timeRange]) => (
-                <p key={day}><b>{day}:</b> {timeRange}</p>
-              ))}
-            </div>
-          </CardInfo>
-          <CardInfo icon={wheel} alt="wheel icon">
-            <p>{vehicleInfo && `${vehicleInfo.name} | ${vehicleInfo.capacity}`}</p>
-            <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
-          </CardInfo>
-        </Card>
-      </Link>
-    </>
+    <Link to={{ pathname: "/drivers/driver", state: userInfo, search: `?name=${fullName}` }}
+      style={{ textDecoration: 'none', color: "inherit" }}>
+      <Card firstName={firstName} lastName={lastName} netId={netId} >
+        <CardInfo icon={phone} alt="phone icon">
+          <p>{fmtPhone}</p>
+        </CardInfo>
+        <CardInfo icon={clock} alt="clock icon">
+          <div>
+            {availability.map(([day, timeRange]) => (
+              <p key={day}><b>{day}:</b> {timeRange}</p>
+            ))}
+          </div>
+        </CardInfo>
+        <CardInfo icon={wheel} alt="wheel icon">
+          <p>{vehicleInfo && `${vehicleInfo.name} | ${vehicleInfo.capacity}`}</p>
+          <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
+        </CardInfo>
+      </Card>
+    </Link>
   );
 };
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Vehicle } from '../../types';
-import styles from './driverDetail.module.css';
 import UserDetail, { UserContactInfo, OtherInfo } from '../UserDetail/UserDetail';
 import { phone, clock, wheel } from "./icons";
+import { useLocation } from 'react-router-dom';
 
 type DriverDetailProps = {
   // profilePic: string;
@@ -14,12 +14,11 @@ type DriverDetailProps = {
   vehicle: Vehicle
 }
 
-const DriverDetail = (props: any) => {
-  console.log("driver detail running");
-  const driver: DriverDetailProps = props.location.state;
-  console.log("driver", driver);
-  const reducer = (acc: string, [day, timeRange]: string[]) => acc + day + ": " + timeRange + " • ";
-  const parsedAvail = driver.availability.reduce(reducer, "");
+const DriverDetail = () => {
+  const location = useLocation<DriverDetailProps>();
+  const driver: DriverDetailProps = location.state;
+  const availToString = (acc: string, [day, timeRange]: string[]) => acc + day + ": " + timeRange + " • ";
+  const parsedAvail = driver.availability.reduce(availToString, "");
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
   const vehicle = driver.vehicle ? (driver.vehicle.name + " (" + driver.vehicle.capacity + " people)") : ""
   return (
