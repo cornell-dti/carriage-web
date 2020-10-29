@@ -10,13 +10,14 @@ const Table = () => {
     const locationsData = await fetch('/locations')
       .then((res) => res.json())
       .then((data) => data.data);
-    const locs = locationsData.map((location: any) => ({
-      id: location.id,
-      name: location.name,
-      address: location.address,
-      ...(location.tag && { tag: location.tag }),
-    }));
-    setLocations(locs);
+    setLocations(
+      locationsData.map((location: any) => ({
+        id: location.id,
+        name: location.name,
+        address: location.address,
+        ...(location.tag && { tag: location.tag }),
+      })),
+    );
   };
 
   useEffect(() => {
@@ -24,8 +25,7 @@ const Table = () => {
   }, []);
 
   const addLocation = (newLocation: Location) => {
-    const body = { ...newLocation };
-    delete body.id;
+    const { id, ...body } = { ...newLocation };
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
