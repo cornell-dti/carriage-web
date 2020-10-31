@@ -5,10 +5,12 @@ export function createKeys(property: string, values: string[]) {
 }
 
 export function formatAddress(address: string): string {
-  let addressString = address;
-  if (!address.includes(',')) {
-    addressString += ', Ithaca, NY 14850';
+  let addressString;
+  try {
+    // type declaration in addresser is incorrect
+    addressString = parseAddress(address) as any;
+  } catch {
+    addressString = parseAddress(`${address}, Ithaca, NY 14850`) as any;
   }
-  // type declaration in addresser is incorrect
-  return (parseAddress(addressString) as any).formattedAddress;
+  return addressString.formattedAddress;
 }
