@@ -2,6 +2,7 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import * as db from './common';
 import { Location } from '../models/location';
+import { formatAddress } from '../util';
 
 const router = express.Router();
 const tableName = 'Locations';
@@ -17,17 +18,22 @@ router.get('/', (req, res) => db.getAll(res, Location, tableName));
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
-  const { body } = req;
+  const { body: { name, address } } = req;
   const location = new Location({
     id: uuid(),
-    ...body,
+    name,
+    address: formatAddress(address),
   });
   db.create(res, location);
 });
 
 // Update an existing location
-router.post('/', (req, res) => {
+router.put('/:id', (req, res) => {
   const { params: { id }, body } = req;
+  const { address } = body;
+  if (address) {
+    body.address = formatAddress(address);
+  }
   db.update(res, Location, { id }, body, tableName);
 });
 
