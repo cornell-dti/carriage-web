@@ -1,97 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label } from '../FormElements/FormElements';
-import styles from './ridemodal.module.css';
-import { ObjectType, Driver, Rider, Location } from '../../types/index';
+import { ObjectType, Rider, Location } from '../../../types';
+import { ModalPageProps } from '../../Modal/types';
+import { Button, Input } from '../../FormElements/FormElements';
+import styles from '../ridemodal.module.css';
 
-type ModalFormProps = {
-  onSubmit: (data: ObjectType) => void;
-  formData?: ObjectType;
-}
-
-export const RideTimesPage = ({ onSubmit }: ModalFormProps) => {
-  const { register, handleSubmit, getValues } = useForm();
-
-  const beforeSubmit = ({ date, pickupTime, dropoffTime }: ObjectType) => {
-    const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
-    const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    onSubmit({ startTime, endTime });
-  };
-
-  return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={styles.date}>
-          <Label htmlFor="date">Date:</Label>
-          <Input
-            type="date"
-            name="date"
-            ref={register({ required: true })}
-          />
-        </div>
-        <div className={styles.pickupTime}>
-          <Label htmlFor="pickupTime">Pickup time:</Label>
-          <Input
-            type="time"
-            name="pickupTime"
-            ref={register({ required: true })}
-          />
-        </div>
-        <div className={styles.dropoffTime}>
-          <Label htmlFor="dropoffTime">Dropoff time:</Label>
-          <Input
-            type="time"
-            name="dropoffTime"
-            ref={register({
-              required: true,
-              validate: (dropoffTime) => {
-                const pickupTime = getValues('pickupTime');
-                return pickupTime < dropoffTime;
-              },
-            })}
-          />
-        </div>
-      </div>
-      <Button type="submit">Next</Button>
-    </form >
-  );
-};
-
-export const DriverPage = ({ onSubmit }: ModalFormProps) => {
-  const { register, handleSubmit } = useForm();
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-
-  useEffect(() => {
-    fetch('/drivers')
-      .then((res) => res.json())
-      .then(({ data }) => setDrivers(data));
-  }, []);
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.drivers)}>
-        {drivers.map((d) => (
-          <div className={styles.driver} key={d.id}>
-            <Label htmlFor="driver" className={styles.driverLabel}>
-              {d.firstName}
-            </Label>
-            <Input
-              className={styles.driverRadio}
-              name="driver"
-              type="radio"
-              value={d.id}
-              ref={register({ required: true })}
-            />
-          </div>
-        ))}
-      </div>
-      <Button type="submit">Next</Button>
-    </form>
-  );
-};
-
-export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
+const RiderInfoPage = ({ onSubmit }: ModalPageProps) => {
   const { register, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
@@ -177,3 +92,5 @@ export const RiderInfoPage = ({ onSubmit }: ModalFormProps) => {
     </form>
   );
 };
+
+export default RiderInfoPage;
