@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import styles from './cell.module.css';
-
+import { Button } from '../FormElements/FormElements';
 
 type TableCellProps = {
   data: string | null;
@@ -24,7 +24,7 @@ const TableCell = (props: TableCellProps) => {
     if (buttonHandler) {
       return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>
-        <button onClick={buttonHandler}>{data}</button></td></>);
+        <Button onClick={buttonHandler}>{data}</Button></td></>);
     }
     return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
     ${styles.lastCell}`}>{data}</td></>);

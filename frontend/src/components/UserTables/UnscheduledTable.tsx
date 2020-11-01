@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Passenger } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
-
+import AssignDriverModal from '../Modal/AssignDriverModal';
 
 function renderTableHeader() {
   return (
@@ -18,6 +18,8 @@ function renderTableHeader() {
 }
 
 const Table = () => {
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+
   const passengers = [
     { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '8:30am', endTime: '8:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
@@ -26,6 +28,8 @@ const Table = () => {
     { startTime: '10:10am', endTime: '10:30am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
 
   ];
+
+  const openAssignModal = () => setAssignModalOpen(true);
 
   function renderTableData(allPassengers: Passenger[]) {
     let currentTime = '';
@@ -46,7 +50,11 @@ const Table = () => {
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds];
+      const assignButton = {
+        data: 'Assign',
+        buttonHandler: openAssignModal,
+      };
+      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds, assignButton];
       return (
         <tr key={index}>
           <td className={styles.cell}>{timeframe}</td>
@@ -69,6 +77,7 @@ const Table = () => {
             {renderTableData(passengers)}
           </tbody>
         </table>
+        <AssignDriverModal isOpen={assignModalOpen} ride={passengers[0]}></AssignDriverModal>
       </div >
     </>
   );
