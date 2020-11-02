@@ -6,13 +6,22 @@ import Riders from './Riders';
 import Home from './Home';
 import Locations from './Locations';
 import Settings from './Settings';
+import DriverDetail from '../../components/DriverDetail/DriverDetail';
 
 const Dashboard = () => (
   <Router basename="/dashboard">
     <Sidebar>
       <Switch>
         <Route path="/home" component={Home} />
-        <Route path="/drivers" component={Drivers} />
+        <Route
+          path="/drivers"
+          render={({ match: { url } }) => (
+            <>
+              <Route path={`${url}/`} component={Drivers} exact />
+              <Route path={`${url}/driver`} component={DriverDetail} />
+            </>
+          )}
+        />
         <Route path="/riders" component={Riders} />
         <Route path="/locations" component={Locations} />
         <Route path="/settings" component={Settings} />
