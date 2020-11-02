@@ -1,6 +1,7 @@
 import React from 'react';
 import UserDetail, { UserContactInfo, OtherInfo } from '../UserDetail/UserDetail';
 import { phone, clock } from "./icons";
+import { useLocation } from 'react-router-dom';
 
 type RiderDetailProps = {
   // profilePic: string;
@@ -12,8 +13,9 @@ type RiderDetailProps = {
   accessibility: string
 }
 
-const RiderDetail = (props: any) => {
-  const rider: RiderDetailProps = props.location.state;
+const RiderDetail = () => {
+  const location = useLocation<RiderDetailProps>();
+  const rider: RiderDetailProps = location.state;
   return (
     <UserDetail
       firstName={rider.firstName}
