@@ -107,7 +107,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         history.push(location)
       }
       return (
-        <tr key={index} onClick={goToDetail}>
+        <tr key={index} onClick={goToDetail} className={styles.tableRow}>
           <TableRow values={inputValues} />
         </tr>
       );
