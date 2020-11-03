@@ -77,7 +77,9 @@ const Table = () => {
             {renderTableData(passengers)}
           </tbody>
         </table>
-        <AssignDriverModal isOpen={assignModalOpen} ride={passengers[0]}></AssignDriverModal>
+        <AssignDriverModal isOpen={assignModalOpen}
+          setOpen={setAssignModalOpen}
+          ride={passengers[0]}></AssignDriverModal>
       </div >
     </>
   );
