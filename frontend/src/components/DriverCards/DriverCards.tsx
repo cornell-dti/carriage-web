@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from './icons';
 import { Driver, BreakType, Vehicle } from '../../types';
-import { Link } from 'react-router-dom';
+
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
