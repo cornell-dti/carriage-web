@@ -1,83 +1,24 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
+import styles from './schedule.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
-import styles from './schedule.module.css';
+
+import { CalEvent, tempEvents, resourceMap1, colorMap } from './temp_data';
 
 const localizer = momentLocalizer(moment);
 
-type CalEvent = {
-  id: number;
-  title: string;
-  start: Date;
-  end: Date;
-  resourceId: number;
-};
+const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
-// events on temp date
-const events: CalEvent[] = [
-  {
-    id: 0,
-    title: 'Baker Flagpole to Warren Hall',
-    start: new Date(2018, 0, 29, 9, 0, 0),
-    end: new Date(2018, 0, 29, 9, 30, 0),
-    resourceId: 1,
-  },
-  {
-    id: 1,
-    title: 'Eddygate to Hollister Hall',
-    start: new Date(2018, 0, 29, 8, 50, 0),
-    end: new Date(2018, 0, 29, 9, 50, 0),
-    resourceId: 1,
-  },
-  {
-    id: 2,
-    title: 'RPCC to Gates Hall',
-    start: new Date(2018, 0, 29, 9, 30, 0),
-    end: new Date(2018, 0, 29, 12, 30, 0),
-    resourceId: 3,
-  },
-  {
-    id: 3,
-    title: 'Becker to Mallot',
-    start: new Date(2018, 0, 29, 12, 0, 0),
-    end: new Date(2018, 0, 29, 12, 30, 0),
-    resourceId: 4,
-  },
-  {
-    id: 11,
-    title: 'Uris Hall to Uris Library',
-    start: new Date(2018, 0, 29, 7, 0, 0),
-    end: new Date(2018, 0, 29, 10, 30, 0),
-    resourceId: 4,
-  },
-];
 
-const resourceMap1 = [
-  { resourceId: 1, resourceTitle: "DRIVER'S NAME" },
-  { resourceId: 2, resourceTitle: 'MARTHA STUART' },
-  { resourceId: 3, resourceTitle: 'FOO BAR' },
-  { resourceId: 4, resourceTitle: 'JOHN SMITH' },
-  { resourceId: 5, resourceTitle: 'SAM PIKE' },
-  { resourceId: 6, resourceTitle: 'MYLES HALLS' },
-  { resourceId: 7, resourceTitle: 'BENSON HOLMES' },
-];
-
-const colorMap = {
-  red: ['FFA26B', 'FFC7A6'],
-  blue: ['0084F4', '66B5F8'],
-  yellow: ['FFCF5C', 'FFE29D'],
-  green: ['00C48C', '7DDFC3'],
-  black: ['1A051D', 'FBE4E8'],
-};
-
-const Schedule: FunctionComponent = () => {
+const Schedule = () => {
   const defaultStart = new Date();
   defaultStart.setHours(8, 0, 0, 0);
   const [curStart, setCurStart] = useState(defaultStart);
-
-  // TODO: change button colors when you can no longer go up or down
+  const [events, setEvents] = useState(tempEvents);
+  const [tempId, setTempId] = useState(100);
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -117,6 +58,12 @@ const Schedule: FunctionComponent = () => {
     };
   };
 
+  const slotStyle = (d: Date) => ({
+    style: {
+      borderTop: d.getMinutes() !== 0 ? 'none' : '1px solid rgba(0, 0, 0, 15%)',
+    },
+  });
+
   const filterEvents = (allEvents: CalEvent[]) => {
     const c = curStart.getHours();
     return allEvents.filter(({ start, end }) => {
@@ -127,38 +74,69 @@ const Schedule: FunctionComponent = () => {
     });
   };
 
+  const onEventDrop = ({ start, end, event, resourceId }: any) => {
+    const nextEvents = events.map((old) => (old.id === event.id
+      ? { ...old, start: new Date(start), end: new Date(end), resourceId }
+      : old));
+    setEvents(nextEvents);
+  };
+
+  // eslint-disable-next-line no-alert
+  const onSelectEvent = (event: any) => alert(event.title);
+
+  const onSelectSlot = ({ start, end, resourceId }: any) => {
+    // eslint-disable-next-line no-alert
+    const title = window.prompt('New Ride name');
+    if (title) {
+      const newEvent: CalEvent = {
+        start: new Date(start),
+        end: new Date(end),
+        title,
+        id: tempId,
+        resourceId,
+      };
+      setTempId(tempId + 1);
+      setEvents([...events, newEvent]);
+    }
+  };
+
+  const okHr = (hr: number) => hr === curStart.getHours();
+
   return (
     <>
       <h1 className={styles.heading}>Home</h1>
       <div className={styles.calendar_container}>
         <div className={styles.left}>
-          <Calendar
-            formats={{
-              timeGutterFormat: 'h A',
-            }}
+          <DnDCalendar
+            formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             events={filterEvents(events)}
             toolbar={false}
-            step={60}
-            timeslots={1}
+            step={5}
+            timeslots={12}
             showMultiDayTimes={true}
             defaultView="day"
+            onEventDrop={onEventDrop}
+            selectable
+            onSelectEvent={onSelectEvent}
+            onSelectSlot={onSelectSlot}
             min={curStart}
             max={new Date(curStart.getTime() + 7199999)} // 2 hrs
-            defaultDate={new Date(2018, 0, 29)}
+            defaultDate={new Date(2018, 0, 29)} // temp date
             resources={resourceMap1}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
             eventPropGetter={eventStyle}
+            slotPropGetter={slotStyle}
           />
         </div>
         <div className={styles.right}>
           <div>
-            <button className={styles.btn} onClick={goUp}>
+            <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
               <i className={styles.uparrow}></i>
             </button>
             <span className={styles.pad}></span>
-            <button className={styles.btn} onClick={goDown}>
+            <button className={styles.btn} onClick={goDown} disabled={okHr(22)}>
               <i className={styles.downarrow}></i>
             </button>
           </div>

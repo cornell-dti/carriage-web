@@ -65,3 +65,7 @@
   border-radius: 50%;
   background-color: lightgray;
 }
+
+.btn:disabled {
+  visibility: hidden;
+}
