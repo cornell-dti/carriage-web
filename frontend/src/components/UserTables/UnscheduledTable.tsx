@@ -18,21 +18,18 @@ function renderTableHeader() {
 }
 
 const Table = () => {
-  const [assignModalOpen, setAssignModalOpen] = useState(false);
-
+  const [openModal, setOpenModal] = useState(-1);
   const passengers = [
     { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '8:30am', endTime: '8:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '9:10am', endTime: '9:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '9:30am', endTime: '9:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '10:10am', endTime: '10:30am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-
   ];
-
-  const openAssignModal = () => setAssignModalOpen(true);
 
   function renderTableData(allPassengers: Passenger[]) {
     let currentTime = '';
+
     return allPassengers.map((rider, index) => {
       const { startTime, endTime, name, pickupLocation, pickupTag,
         dropoffLocation, dropoffTag, needs } = rider;
@@ -50,9 +47,15 @@ const Table = () => {
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
+      const assignModal = () => <AssignDriverModal
+        index={index}
+        isOpen={openModal === index}
+        close={() => setOpenModal(-1)}
+        ride={passengers[0]}></AssignDriverModal>;
       const assignButton = {
         data: 'Assign',
-        buttonHandler: openAssignModal,
+        buttonHandler: () => setOpenModal(index),
+        ButtonModal: assignModal,
       };
       const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds, assignButton];
       return (
@@ -77,10 +80,7 @@ const Table = () => {
             {renderTableData(passengers)}
           </tbody>
         </table>
-        <AssignDriverModal isOpen={assignModalOpen}
-          setOpen={setAssignModalOpen}
-          ride={passengers[0]}></AssignDriverModal>
-      </div >
+      </div>
     </>
   );
 };

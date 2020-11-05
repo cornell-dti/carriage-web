@@ -10,10 +10,11 @@ type TableCellProps = {
   last: boolean;
   tag?: string;
   buttonHandler?: () => void;
+  ButtonModal?: () => JSX.Element;
 }
 
 const TableCell = (props: TableCellProps) => {
-  const { data, index, first, last, tag, buttonHandler } = props;
+  const { data, index, first, last, tag, buttonHandler, ButtonModal } = props;
   if (first) {
     return (<><td
       key={index}
@@ -21,6 +22,11 @@ const TableCell = (props: TableCellProps) => {
       {data}
     </td></>);
   } if (last) {
+    if (buttonHandler && ButtonModal) {
+      return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}>
+        <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td></>);
+    }
     if (buttonHandler) {
       return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>

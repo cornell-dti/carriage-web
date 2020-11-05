@@ -77,6 +77,7 @@ export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;
+  ButtonModal?: () => JSX.Element;
 };
 
 export type ObjectType = {

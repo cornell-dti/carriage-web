@@ -3,10 +3,13 @@
   font-size: 12px;
   font-weight: bold;
   text-align: center;
+  color: black;
 }
 
 .driverRow {
   height: 49px;
+  display: flex;
+  align-items: center;
 }
 
 .driverRow:hover{
@@ -14,14 +17,12 @@
 }
 
 .driverName {
-  padding-top: 10px;
   font-size: 17px;
   color: #817E7E;
   font-weight: bold;
 }
 
 .driverImage {
-  float: left;
   margin: 7px 14px 6px 27px;
   border-radius: 50%;
   width: 36px;
@@ -30,6 +31,7 @@
 
 .modal {
   position: absolute;
+  margin-top: 20px;
   right: 18px;
   width: 254px;
   background-color: white;
