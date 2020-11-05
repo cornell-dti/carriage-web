@@ -14,6 +14,7 @@
 
 .driverRow:hover{
   background: rgba(240, 240, 240, 1);
+  cursor: pointer;
 }
 
 .driverName {
@@ -32,9 +33,11 @@
 .modal {
   position: absolute;
   margin-top: 20px;
+  padding-bottom: 30px;
   right: 18px;
   width: 254px;
   background-color: white;
   z-index: 1010;
   box-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.1);
+  cursor: default;
 }

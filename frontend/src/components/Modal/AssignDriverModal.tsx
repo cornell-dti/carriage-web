@@ -47,6 +47,9 @@ const AssignDriverModal = ({ index, isOpen, close, ride }: AssignModalProps) => 
           <h1 className={styles.titleText}>Suggested Drivers</h1>
           <DriverRow firstName='Terry' imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />
           <h1 className={styles.titleText}>Available Drivers</h1>
+          <DriverRow firstName='Terry' imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />
+          <DriverRow firstName='Terry' imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />
+
         </div>
       }
     </>
