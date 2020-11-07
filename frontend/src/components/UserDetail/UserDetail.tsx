@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './userDetail.module.css';
-import { edit, phone } from "./icons";
+import { edit } from "../../icons/other/index";
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];

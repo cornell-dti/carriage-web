@@ -6,8 +6,8 @@ import Riders from './Riders';
 import Home from './Home';
 import Locations from './Locations';
 import Settings from './Settings';
-import DriverDetail from '../../components/DriverDetail/DriverDetail';
-import RiderDetail from '../../components/RiderDetail/RiderDetail';
+import DriverDetail from '../../components/UserDetail/DriverDetail';
+import RiderDetail from '../../components/UserDetail/RiderDetail';
 
 const Dashboard = () => (
   <Router basename="/dashboard">

@@ -1,6 +1,6 @@
 import React from 'react';
-import UserDetail, { UserContactInfo, OtherInfo } from '../UserDetail/UserDetail';
-import { phone, clock } from "./icons";
+import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import { phone } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
 
 type RiderDetailProps = {
