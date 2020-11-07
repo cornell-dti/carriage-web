@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './collapsible.module.css';
-import { up, down } from "./icons";
+import { up, down } from "../../icons/other/index";
 
 type CollapsibleSection = {
   title: string;

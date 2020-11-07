@@ -1,7 +1,7 @@
 import React from 'react';
 import { Vehicle } from '../../types';
-import UserDetail, { UserContactInfo, OtherInfo } from '../UserDetail/UserDetail';
-import { phone, clock, wheel } from "./icons";
+import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import { phone, clock, wheel } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
 
 type DriverDetailProps = {
