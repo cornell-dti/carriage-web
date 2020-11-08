@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import TableRow from '../TableComponents/TableRow';
-import Form from '../UserForms/RidersForm';
-import { AccessibilityNeeds, Rider } from '../../types';
+import { Rider } from '../../types';
 import styles from './table.module.css';
+import { useHistory } from 'react-router-dom';
 
+type RidersTableProps = {
+  riders: Array<Rider>;
+  setRiders: Dispatch<SetStateAction<Rider[]>>;
+}
 
 function renderTableHeader() {
   return (
@@ -17,42 +21,24 @@ function renderTableHeader() {
   );
 }
 
-function renderAccessNeeds(accessNeeds: AccessibilityNeeds) {
+function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
+  const comma = ', ';
   if (accessNeeds != null) {
-    const arrayNeeds = Object.entries(accessNeeds);
-    arrayNeeds.forEach((element) => {
-      if (element[0] === 'hasCrutches' && element[1]) {
-        allNeeds = allNeeds.concat('Has Crutches, ');
-      } else if (element[0] === 'needsAssistant' && element[1]) {
-        allNeeds = allNeeds.concat('Needs Assistant, ');
-      } else if (element[0] === 'needsWheelchair' && element[1]) {
-        allNeeds = allNeeds.concat('Needs Wheelchair, ');
+    for (let i = 0; i < accessNeeds.length; i += 1) {
+      if (i !== accessNeeds.length - 1) {
+        allNeeds = allNeeds + accessNeeds[i] + comma;
+      } else {
+        allNeeds += accessNeeds[i];
       }
-    });
-    return allNeeds.substr(0, allNeeds.length - 2);
+    }
+    return allNeeds;
   }
   return null;
 }
 
-const Table = () => {
-  const [riders, setRiders] = useState(
-    [
-      {
-        id: '',
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        email: '',
-        accessibilityNeeds:
-          { needsWheelchair: false, hasCrutches: false, needsAssistant: false },
-        description: '',
-        joinDate: '',
-        pronouns: '',
-        address: '',
-      },
-    ],
-  );
+const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
+  const history = useHistory();
 
   useEffect(() => {
     async function getExistingRiders() {
@@ -75,7 +61,7 @@ const Table = () => {
       setRiders(allRiders);
     }
     getExistingRiders();
-  }, []);
+  }, [setRiders]);
 
   function deleteEntry(email: string, riderList: Rider[]) {
     const riderId = (riderList.filter((rider) => rider.email === email))[0].id;
@@ -88,33 +74,6 @@ const Table = () => {
     }
     deleteBackend();
     return riderList.filter((rider) => rider.email !== email);
-  }
-
-  function addRider(newRider: Rider, allRiders: Rider[]) {
-    async function addBackend() {
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: newRider.firstName,
-          lastName: newRider.lastName,
-          phoneNumber: newRider.phoneNumber,
-          email: newRider.email,
-          accessibilityNeeds: {
-            needsWheelchair: newRider.accessibilityNeeds.needsWheelchair,
-            hasCrutches: newRider.accessibilityNeeds.hasCrutches,
-            needsAssistant: newRider.accessibilityNeeds.needsAssistant,
-          },
-          description: newRider.description,
-          joinDate: newRider.joinDate,
-          pronouns: newRider.pronouns,
-          address: newRider.address,
-        }),
-      };
-      await fetch('/riders', requestOptions);
-    }
-    addBackend();
-    return [...allRiders, newRider];
   }
 
   function renderTableData(allRiders: Rider[]) {
@@ -134,8 +93,21 @@ const Table = () => {
       };
       const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
         valueAccessbility, valueDelete];
+      const netId = email.split('@')[0];
+      const riderData = {
+        firstName: firstName, lastName: lastName, netID: netId,
+        phone: phoneNumber, accessibility: renderAccessNeeds(accessibilityNeeds)
+      }
+      const location = {
+        pathname: "/riders/rider",
+        state: riderData,
+        search: `?name=${firstName + "_" + lastName}`
+      }
+      const goToDetail = () => {
+        history.push(location)
+      }
       return (
-        <tr key={index}>
+        <tr key={index} onClick={goToDetail} className={styles.tableRow}>
           <TableRow values={inputValues} />
         </tr>
       );
@@ -145,7 +117,7 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1 className={styles.formHeader}>Rider Table</h1>
+        <h1 className={styles.formHeader}>Riders</h1>
         <table cellSpacing='0' className={styles.table}>
           <tbody>
             {renderTableHeader()}
@@ -153,11 +125,8 @@ const Table = () => {
           </tbody>
         </table>
       </div >
-      <div>
-        <Form onClick={(newRider) => (setRiders(addRider(newRider, riders)))} />
-      </div>
     </>
   );
 };
 
-export default Table;
+export default RidersTable;

@@ -1,0 +1,52 @@
+/* line below driver's name */
+.rbc-time-content {
+  border-top: none;
+}
+
+/* columns seperating drivers */
+.rbc-time-content > * + * > * {
+  border-left: 1px solid rgba(0, 0, 0, 15%);
+}
+
+/* rows seperating timeslots */
+.rbc-timeslot-group {
+  border-bottom: none;
+}
+
+/* other seperating timeslots */
+.rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid rgba(0, 0, 0, 15%);
+}
+
+/* line below drivers */
+.rbc-time-header-content > .rbc-row.rbc-row-resource {
+  border-bottom: 1px solid rgba(0, 0, 0, 15%);
+}
+
+/* vertical line by time slot */
+.rbc-time-view-resources .rbc-time-gutter,
+.rbc-time-view-resources .rbc-time-header-gutter {
+  background-color: #fdfdfd;
+  border: none;
+}
+
+.rbc-time-view {
+  border: none;
+  background-color: #fdfdfd;
+}
+
+.rbc-time-view .rbc-allday-cell {
+  display: none;
+}
+
+/* driver names */
+.rbc-time-view .rbc-row div:nth-child(1) {
+  border-bottom: none;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+/* line between driver names */
+.rbc-time-view-resources .rbc-time-header-content {
+  border: none;
+}

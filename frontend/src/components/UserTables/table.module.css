@@ -1,30 +1,34 @@
-.table{
-  background-color: #F6F6F6;
+.table {
+  background-color: #f6f6f6;
   padding: 3rem;
   border: none;
   width: 100%;
   border-spacing: 0 15px;
 }
 
-.tableHeader{
+.tableHeader {
   border-bottom: none;
   padding-right: 3rem;
   padding-bottom: 1.5rem;
 }
 
-.cell{
+.tableRow {
+  cursor: pointer;
+}
+
+.cell {
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-
 .formHeader {
   margin-top: 30px;
   margin-bottom: 5px;
-  text-align: center;
+  margin-left: 32px;
+  text-align: left;
 }
 
-.formDiv{
+.formDiv {
   display: flex;
   flex-direction: row;
   padding-bottom: 5px;

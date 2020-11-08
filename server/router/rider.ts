@@ -4,6 +4,7 @@ import { Condition } from 'dynamoose';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
+import { createKeys } from '../util';
 
 const router = express.Router();
 const tableName = 'Riders';
@@ -39,11 +40,20 @@ router.get('/:id/accessibility', async (req, res) => {
   });
 });
 
+// Get organization information for a rider
+router.get('/:id/organization', async (req, res) => {
+  const { params: { id } } = req;
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
+    const { description, organization } = rider;
+    res.send({ description, organization });
+  });
+});
+
 // Get all favorite locations for a rider
 router.get('/:id/favorites', (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
-    const keys = db.createKeys('id', favoriteLocations);
+    const keys = createKeys('id', favoriteLocations);
     db.batchGet(res, Location, keys, 'Locations');
   });
 });
@@ -74,7 +84,7 @@ router.post('/:id/favorites', (req, res) => {
     const condition = new Condition('favoriteLocations').not().contains(locId);
     db.conditionalUpdate(
       res, Rider, { id }, operation, condition, tableName, ({ favoriteLocations }: RiderType) => {
-        const keys = db.createKeys('id', favoriteLocations);
+        const keys = createKeys('id', favoriteLocations);
         db.batchGet(res, Location, keys, 'Locations');
       },
     );
