@@ -2,28 +2,21 @@ import React from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
 
-type LabelProps = {
-  className?: string;
-  htmlFor: string;
-  children: string;
-};
+type LabelType = (
+  React.DetailedHTMLProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>
+);
 
-export const Label = ({ className, htmlFor, children }: LabelProps) => (
+export const Label = ({ className, htmlFor, children }: LabelType) => (
   <label className={cn(styles.label, className)} htmlFor={htmlFor}>
     {children}
   </label>
 );
 
-type InputProps = {
-  className?: string;
-  type: string;
-  name: string;
-  placeholder?: string;
-  value?: string;
-  list?: string;
-};
+type InputType = (
+  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+);
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<HTMLInputElement, InputType>(
   ({ className, type, name, placeholder, value, list }, ref) => (
     <input
       type={type}

@@ -49,6 +49,10 @@ export type Ride = {
   riderId: string;
 };
 
+export type ObjectType = {
+  [x: string]: any;
+}
+
 export type Vehicle = {
   id: string;
   name: string;
@@ -86,8 +90,4 @@ export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;
-};
-
-export type ObjectType = {
-  [x: string]: any;
 };
