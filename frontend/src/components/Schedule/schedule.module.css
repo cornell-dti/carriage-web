@@ -28,6 +28,10 @@
   align-items: center;
 }
 
+.long {
+  height: 800px;
+}
+
 .pad {
   padding: 40px;
 }
@@ -68,4 +72,16 @@
 
 .btn:disabled {
   visibility: hidden;
+}
+
+.more {
+  padding: 5px;
+  margin-right: 50px;
+  border: none;
+  background-color: white;
+  float: right;
+}
+
+.more:hover {
+  text-decoration: underline;
 }

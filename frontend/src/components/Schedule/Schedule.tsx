@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import cn from 'classnames';
 import moment from 'moment';
 import styles from './schedule.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
+import './dnd.scss';
 
-import { CalEvent, tempEvents, resourceMap1, colorMap } from './temp_data';
+import { CalEvent, tempEvents, resourceMap1, colorMap } from './viewData';
 
 const localizer = momentLocalizer(moment);
 
@@ -16,9 +18,11 @@ const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 const Schedule = () => {
   const defaultStart = new Date();
   defaultStart.setHours(8, 0, 0, 0);
+  const defaultEnd = new Date(defaultStart.getTime() + 28699999);
+
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState(tempEvents);
-  const [tempId, setTempId] = useState(100);
+  const [viewMore, setViewMore] = useState(false);
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -75,8 +79,14 @@ const Schedule = () => {
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
+    // eslint-disable-next-line no-console
+    console.log('dragged event:', event.title);
+    // eslint-disable-next-line no-console
+    console.log('old resourceId:', event.resourceId);
+    // eslint-disable-next-line no-console
+    console.log('new resourceId:', resourceId);
     const nextEvents = events.map((old) => (old.id === event.id
-      ? { ...old, start: new Date(start), end: new Date(end), resourceId }
+      ? { ...old, resourceId }
       : old));
     setEvents(nextEvents);
   };
@@ -84,30 +94,15 @@ const Schedule = () => {
   // eslint-disable-next-line no-alert
   const onSelectEvent = (event: any) => alert(event.title);
 
-  const onSelectSlot = ({ start, end, resourceId }: any) => {
-    // eslint-disable-next-line no-alert
-    const title = window.prompt('New Ride name');
-    if (title) {
-      const newEvent: CalEvent = {
-        start: new Date(start),
-        end: new Date(end),
-        title,
-        id: tempId,
-        resourceId,
-      };
-      setTempId(tempId + 1);
-      setEvents([...events, newEvent]);
-    }
-  };
-
-  const okHr = (hr: number) => hr === curStart.getHours();
+  const okHr = (hr: number) => viewMore || hr === curStart.getHours();
 
   return (
     <>
       <h1 className={styles.heading}>Home</h1>
-      <div className={styles.calendar_container}>
-        <div className={styles.left}>
+      <div className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
+        <div className={cn(styles.left, { [styles.long]: viewMore })}>
           <DnDCalendar
+            resizable={false}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             events={filterEvents(events)}
@@ -119,9 +114,8 @@ const Schedule = () => {
             onEventDrop={onEventDrop}
             selectable
             onSelectEvent={onSelectEvent}
-            onSelectSlot={onSelectSlot}
-            min={curStart}
-            max={new Date(curStart.getTime() + 7199999)} // 2 hrs
+            min={viewMore ? defaultStart : curStart}
+            max={viewMore ? defaultEnd : new Date(curStart.getTime() + 7199999)}
             defaultDate={new Date(2018, 0, 29)} // temp date
             resources={resourceMap1}
             resourceIdAccessor="resourceId"
@@ -130,7 +124,7 @@ const Schedule = () => {
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={styles.right}>
+        <div className={cn(styles.right, { [styles.long]: viewMore })}>
           <div>
             <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
               <i className={styles.uparrow}></i>
@@ -142,6 +136,7 @@ const Schedule = () => {
           </div>
         </div>
       </div>
+      <button className={styles.more} onClick={() => setViewMore(!viewMore)}>view more</button>
     </>
   );
 };
