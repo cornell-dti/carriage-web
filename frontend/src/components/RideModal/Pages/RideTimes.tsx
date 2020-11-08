@@ -41,7 +41,8 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
             ref={register({
               required: true,
               validate: (dropoffTime) => {
-                const pickupTime = getValues('pickupTime');
+                // getValues is returning unknown as a type, causing an error
+                const pickupTime: any = getValues('pickupTime');
                 return pickupTime < dropoffTime;
               },
             })}
