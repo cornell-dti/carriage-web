@@ -5,7 +5,7 @@ import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
 
 const RideModal = () => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -17,7 +17,12 @@ const RideModal = () => {
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
-  const closeModal = () => setIsOpen(false);
+  const goPrevPage = () => setCurrentPage((p) => p - 1);
+
+  const closeModal = () => {
+    setFormData({});
+    setIsOpen(false);
+  };
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -25,8 +30,13 @@ const RideModal = () => {
   };
 
   const submitData = () => {
+    const {
+      date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
+    } = formData;
+    const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
+    const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
+    setFormData({ startTime, endTime, driver, rider, startLocation, endLocation });
     setIsSubmitted(true);
-    closeModal();
   };
 
   useEffect(() => {
@@ -39,6 +49,7 @@ const RideModal = () => {
         body: JSON.stringify(formData),
       });
       setIsSubmitted(false);
+      closeModal();
     }
   }, [formData, isSubmitted]);
 
@@ -52,9 +63,18 @@ const RideModal = () => {
         currentPage={currentPage}
         onClose={closeModal}
       >
-        <RideTimesPage onSubmit={saveDataThen(goNextPage)} />
-        <DriverPage onSubmit={saveDataThen(goNextPage)} />
-        <RiderInfoPage onSubmit={saveDataThen(submitData)} />
+        <RideTimesPage
+          formData={formData}
+          onSubmit={saveDataThen(goNextPage)}
+        />
+        <DriverPage
+          formData={formData}
+          onBack={goPrevPage}
+          onSubmit={saveDataThen(goNextPage)} />
+        <RiderInfoPage
+          onBack={goPrevPage}
+          onSubmit={saveDataThen(submitData)}
+        />
       </Modal>
     </>
   );

@@ -6,7 +6,7 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 
-const RiderInfoPage = ({ onSubmit }: ModalPageProps) => {
+const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   const { register, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
@@ -69,7 +69,7 @@ const RiderInfoPage = ({ onSubmit }: ModalPageProps) => {
           />
           <datalist id="locations">
             {locations.map((l) => (
-              l === 'custom' ? null : <option key={l}>{l}</option>
+              l === 'Custom' ? null : <option key={l}>{l}</option>
             ))}
           </datalist>
         </div>
@@ -83,12 +83,15 @@ const RiderInfoPage = ({ onSubmit }: ModalPageProps) => {
           />
           <datalist id="locations">
             {locations.map((l) => (
-              l === 'custom' ? null : <option key={l}>{l}</option>
+              l === 'Custom' ? null : <option key={l}>{l}</option>
             ))}
           </datalist>
         </div>
       </div>
-      <Button type="submit">Add a Ride</Button>
+      <div className={styles.btnContainer}>
+        <Button outline type="button" onClick={onBack}>Back</Button>
+        <Button type="submit">Add a Ride</Button>
+      </div>
     </form>
   );
 };

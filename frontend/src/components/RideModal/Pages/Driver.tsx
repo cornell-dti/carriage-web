@@ -6,8 +6,12 @@ import styles from '../ridemodal.module.css';
 import { Driver } from '../../../types/index';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 
-const DriverPage = ({ onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit } = useForm();
+const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      driver: formData?.driver ?? '',
+    },
+  });
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   useEffect(() => {
@@ -34,7 +38,10 @@ const DriverPage = ({ onSubmit }: ModalPageProps) => {
           </div>
         ))}
       </div>
-      <Button type="submit">Next</Button>
+      <div className={styles.btnContainer}>
+        <Button outline type="button" onClick={onBack}>Back</Button>
+        <Button type="submit">Next</Button>
+      </div>
     </form>
   );
 };

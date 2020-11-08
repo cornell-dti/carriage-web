@@ -2,21 +2,20 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ModalPageProps } from '../../Modal/types';
-import { ObjectType } from '../../../types/index';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 
-const RideTimesPage = ({ onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit, getValues } = useForm();
-
-  const beforeSubmit = ({ date, pickupTime, dropoffTime }: ObjectType) => {
-    const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
-    const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    onSubmit({ startTime, endTime });
-  };
+const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
+  const { register, handleSubmit, getValues } = useForm({
+    defaultValues: {
+      date: formData?.date ?? '',
+      pickupTime: formData?.pickupTime ?? '',
+      dropoffTime: formData?.dropoffTime ?? '',
+    },
+  });
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
+    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={styles.date}>
           <Label htmlFor="date">Date:</Label>

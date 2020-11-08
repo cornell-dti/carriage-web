@@ -8,6 +8,14 @@
   margin-bottom: 24px;
 }
 
+.btnContainer {
+  display: flex;
+}
+
+.btnContainer > button {
+  margin: 0 12px;
+}
+
 .rideTime {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
