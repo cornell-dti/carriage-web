@@ -26,10 +26,6 @@ export function getById(
   });
 }
 
-export function createKeys(property: string, values: string[]) {
-  return values.map((v) => ({ [property]: v }));
-}
-
 export function batchGet(
   res: Response,
   model: ModelType,

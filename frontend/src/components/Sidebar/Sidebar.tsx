@@ -1,7 +1,7 @@
 import React, { useState, FunctionComponent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { home, drivers, riders, settings, locations } from './icons';
+import { home, drivers, riders, settings, locations } from '../../icons/sidebar/index';
 import styles from './sidebar.module.css';
 
 type MenuItem = {

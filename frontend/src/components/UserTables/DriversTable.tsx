@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Form from '../UserForms/DriversForm';
+import styles from './table.module.css';
 
 type Driver = {
   name: string,
@@ -15,10 +16,10 @@ function deleteEntry(netid: string, driverList: Driver[]) {
 function renderTableHeader() {
   return (
     <tr>
-      <th className="tableHeader">Name</th>
-      <th className="tableHeader">Netid</th>
-      <th className="tableHeader">Email</th>
-      <th className="tableHeader">Phone Number</th>
+      <th className={styles.tableHeader}>Name</th>
+      <th className={styles.tableHeader}>Netid</th>
+      <th className={styles.tableHeader}>Email</th>
+      <th className={styles.tableHeader}>Phone Number</th>
     </tr>
   );
 }
@@ -40,7 +41,7 @@ const Table = () => {
       const { name, netid, email, phone } = driver;
       return (
         <tr key={netid}>
-          <td className="tableCell">{name}</td>
+          <td className={styles.tableCell}>{name}</td>
           <td>{netid}</td>
           <td>{email}</td>
           <td>{phone}</td>
@@ -58,8 +59,8 @@ const Table = () => {
   return (
     <>
       <div>
-        <h1 className="formHeader">Driver Table</h1>
-        <table className="table">
+        <h1 className={styles.formHeader}>Driver Table</h1>
+        <table className={styles.table}>
           <tbody>
             {renderTableHeader()}
             {renderTableData(drivers)}

@@ -49,6 +49,10 @@ export type Ride = {
   riderId: string;
 };
 
+export type ObjectType = {
+  [x: string]: any;
+}
+
 export type Vehicle = {
   id: string;
   name: string;
@@ -56,10 +60,19 @@ export type Vehicle = {
   wheelchairAccessible: boolean;
 };
 
+export enum Tag {
+  WEST = 'west',
+  CENTRAL = 'central',
+  NORTH = 'north',
+  CTOWN = 'ctown', // college town
+  DTOWN = 'dtown', // downtown
+}
+
 export type Location = {
   id: string;
   name: string;
   address: string;
+  tag?: Tag;
 };
 
 export type Passenger = {
@@ -78,8 +91,4 @@ export type TableValue = {
   tag?: string;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
-};
-
-export type ObjectType = {
-  [x: string]: any;
 };
