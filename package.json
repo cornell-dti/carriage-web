@@ -6,7 +6,7 @@
     "dependencies": {
         "@types/jquery": "^3.3.33",
         "babel-eslint": "^10.1.0",
-        "eslint": "^6.8.0",
+        "eslint": "^7.13.0",
         "eslint-config-airbnb-base": "^14.0.0",
         "eslint-config-react-app": "^5.2.0",
         "eslint-plugin-flowtype": "^3.13.0",

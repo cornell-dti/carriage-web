@@ -5,7 +5,6 @@ import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, BreakType, Vehicle } from '../../types';
 
-
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
   // set fmtHours to 12 if hours is multiple of 12
@@ -64,11 +63,15 @@ const DriverCard = ({
   const fmtPhone = formatPhone(phoneNumber);
   const availability = parseAvailability(startTime, endTime, breaks);
   const [vehicleInfo, setVehicleInfo] = useState<Vehicle>();
-  const fullName = firstName + "_" + lastName;
+  const fullName = `${firstName}_${lastName}`;
   const userInfo = {
-    firstName: firstName, lastName: lastName, netId: netId, phone: fmtPhone,
-    availability: availability, vehicle: vehicleInfo
-  }
+    firstName,
+    lastName,
+    netId,
+    phone: fmtPhone,
+    availability,
+    vehicle: vehicleInfo,
+  };
 
   useEffect(() => {
     fetch(`/vehicles/${vehicle}`)
@@ -77,8 +80,8 @@ const DriverCard = ({
   }, [vehicle]);
 
   return (
-    <Link to={{ pathname: "/drivers/driver", state: userInfo, search: `?name=${fullName}` }}
-      style={{ textDecoration: 'none', color: "inherit" }}>
+    <Link to={{ pathname: '/drivers/driver', state: userInfo, search: `?name=${fullName}` }}
+      style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card firstName={firstName} lastName={lastName} netId={netId} >
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
