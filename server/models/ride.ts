@@ -15,6 +15,8 @@ export enum Status {
   ARRIVED = 'arrived',
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
+  NO_SHOW = 'no_show',
+  LATE = 'late',
 }
 
 export type RideType = {
