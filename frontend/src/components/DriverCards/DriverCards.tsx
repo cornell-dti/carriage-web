@@ -63,7 +63,7 @@ const DriverCard = ({
   const fmtPhone = formatPhone(phoneNumber);
   const availability = parseAvailability(startTime, endTime, breaks);
   const [vehicleInfo, setVehicleInfo] = useState<Vehicle>();
-  const fullName = `${firstName} '_' + ${lastName}`;
+  const fullName = `${firstName}_${lastName}`;
   const userInfo = {
     firstName,
     lastName,
