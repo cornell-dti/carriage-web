@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Passenger } from '../../types/index';
+import { Passenger, Driver } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
 import AssignDriverModal from '../Modal/AssignDriverModal';
@@ -17,7 +17,10 @@ function renderTableHeader() {
   );
 }
 
-const Table = () => {
+type TableProps = {
+  drivers: Driver[]
+}
+const Table = ({ drivers }: TableProps) => {
   const [openModal, setOpenModal] = useState(-1);
   const passengers = [
     { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
@@ -48,10 +51,12 @@ const Table = () => {
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
       const assignModal = () => <AssignDriverModal
-        index={index}
         isOpen={openModal === index}
         close={() => setOpenModal(-1)}
-        ride={passengers[0]}></AssignDriverModal>;
+        ride={passengers[0]}
+        allDrivers={drivers} />;
+
+
       const assignButton = {
         data: 'Assign',
         buttonHandler: () => setOpenModal(index),
