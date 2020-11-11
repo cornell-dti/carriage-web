@@ -16,13 +16,13 @@ export enum Status {
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
   NO_SHOW = 'no_show',
-  LATE = 'late',
 }
 
 export type RideType = {
   id: string,
   type: Type,
-  status: Status
+  status: Status,
+  late?: boolean,
   startLocation: LocationType,
   endLocation: LocationType,
   startTime: string,
@@ -44,6 +44,7 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: Object.values(Status),
   },
+  late: Boolean,
   startLocation: Location as any,
   endLocation: Location as any,
   startTime: String,
