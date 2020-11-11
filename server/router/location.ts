@@ -20,16 +20,22 @@ router.get('/', (req, res) => {
   if (query === {}) {
     db.getAll(res, Location, tableName);
   } else {
-    const { preset } = query;
+    const { active } = query;
     let condition = new Condition();
-    if (preset && preset === 'true') {
-      condition = condition
-        .where('tag')
-        .not()
-        .eq(Tag.INACTIVE)
-        .where('tag')
-        .not()
-        .eq(Tag.CUSTOM);
+    if (active) {
+      if (active === 'true') {
+        condition = condition
+          .where('tag')
+          .not()
+          .eq(Tag.INACTIVE)
+          .where('tag')
+          .not()
+          .eq(Tag.CUSTOM);
+      } else {
+        condition = condition
+          .where('tag')
+          .eq(Tag.INACTIVE);
+      }
     }
     db.scan(res, Location, condition);
   }
