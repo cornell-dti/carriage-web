@@ -6,6 +6,14 @@
   border-spacing: 0 15px;
 }
 
+.tableContainer {
+  padding-left: 32px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
+
 .tableHeader {
   border-bottom: none;
   padding-right: 3rem;

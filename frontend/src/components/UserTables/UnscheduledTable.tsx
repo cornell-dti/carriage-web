@@ -63,12 +63,14 @@ const Table = () => {
     <>
       <div>
         <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-        <table cellSpacing='0' className={styles.table} >
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData(passengers)}
-          </tbody>
-        </table>
+        <div className={styles.tableContainer}>
+          <table cellSpacing='0' className={styles.table} >
+            <tbody>
+              {renderTableHeader()}
+              {renderTableData(passengers)}
+            </tbody>
+          </table>
+        </div>
       </div >
     </>
   );
