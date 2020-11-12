@@ -27,6 +27,11 @@ export type RideType = {
   endTime: string,
   rider: RiderType,
   driver?: DriverType,
+  recurring?: boolean,
+  recurringDays?: number[],
+  endDate?: string
+  deleted?: boolean,
+  edits?: string[],
 };
 
 const schema = new dynamoose.Schema({
@@ -48,6 +53,17 @@ const schema = new dynamoose.Schema({
   endTime: String,
   rider: Rider as any,
   driver: Driver as any,
+  recurring: Boolean,
+  recurringDays: {
+    type: Array,
+    schema: [Number],
+  },
+  deleted: Boolean,
+  edits: {
+    type: Array,
+    schema: [String],
+  },
+  endDate: String,
 });
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });
