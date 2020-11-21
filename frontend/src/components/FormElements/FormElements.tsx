@@ -6,8 +6,8 @@ type LabelType = (
   React.DetailedHTMLProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>
 );
 
-export const Label = ({ className, htmlFor, children }: LabelType) => (
-  <label className={cn(styles.label, className)} htmlFor={htmlFor}>
+export const Label = ({ className, children, ...props }: LabelType) => (
+  <label {...props} className={cn(styles.label, className)}>
     {children}
   </label>
 );
@@ -17,14 +17,11 @@ type InputType = (
 );
 
 export const Input = React.forwardRef<HTMLInputElement, InputType>(
-  ({ className, type, name, placeholder, value, list }, ref) => (
+  ({ type, className, ...props }, ref) => (
     <input
-      type={type}
+      {...props}
       className={cn(styles.input, styles[`${type}Input`], className)}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      list={list}
+      type={type}
       ref={ref}
     />
   ),
