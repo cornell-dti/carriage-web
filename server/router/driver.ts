@@ -32,8 +32,8 @@ router.get('/:id/profile', (req, res) => {
 router.post('/', (req, res) => {
   const { body } = req;
   const driver = new Driver({
-    id: uuid(),
     ...body,
+    id: uuid(),
   });
   db.create(res, driver);
 });
