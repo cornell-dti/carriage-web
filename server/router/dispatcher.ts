@@ -11,7 +11,7 @@ router.post('/', (req, res) => {
   const { body } = req;
   const dispatcher = new Dispatcher({
     ...body,
-    id: uuid(),
+    id: uuid()
   });
   db.create(res, dispatcher);
 });

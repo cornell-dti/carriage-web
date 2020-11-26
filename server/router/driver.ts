@@ -33,7 +33,7 @@ router.post('/', (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
-    id: uuid(),
+    id: uuid()
   });
   db.create(res, driver);
 });

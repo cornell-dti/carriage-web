@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
   const { body } = req;
   const vehicle = new Vehicle({
     ...body,
-    id: uuid(),
+    id: uuid()
   });
   db.create(res, vehicle);
 });
