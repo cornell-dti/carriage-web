@@ -20,10 +20,10 @@ router.get('/:id/profile', (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Driver, id, tableName, (driver: DriverType) => {
     const {
-      email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+      email, firstName, lastName, phoneNumber, availability, vehicle,
     } = driver;
     res.send({
-      email, firstName, lastName, phoneNumber, startTime, endTime, breaks, vehicle,
+      email, firstName, lastName, phoneNumber, availability, vehicle,
     });
   });
 });
