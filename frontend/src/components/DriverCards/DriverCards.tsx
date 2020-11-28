@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
-import { Driver, BreakType, Vehicle } from '../../types';
+import { Driver, AvailabilityType } from '../../types';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -12,28 +12,19 @@ const formatTime = (time: string) => {
   return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
 };
 
-const parseAvailability = (
-  startTime: string,
-  endTime: string,
-  breaks: BreakType,
-) => {
+const formatAvailability = (availability: AvailabilityType) => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const availability = days.map((day) => {
-    let timeRange = '';
-    const breakTimes = breaks[day];
-    const fmtStart = formatTime(startTime);
-    const fmtEnd = formatTime(endTime);
-    if (!breakTimes) {
-      timeRange = `${fmtStart}-${fmtEnd}`;
-    } else {
-      const { breakStart, breakEnd } = breakTimes;
-      const fmtBreakStart = formatTime(breakStart);
-      const fmtBreakEnd = formatTime(breakEnd);
-      timeRange = `${fmtStart}-${fmtBreakStart}, ${fmtBreakEnd}-${fmtEnd}`;
+  const availabilityList = days.reduce((acc, day) => {
+    const availabilityTimes = availability[day];
+    if (availabilityTimes) {
+      const { startTime, endTime } = availabilityTimes;
+      const fmtStart = formatTime(startTime);
+      const fmtEnd = formatTime(endTime);
+      acc.push([day, `${fmtStart}-${fmtEnd}`]);
     }
-    return [day, timeRange];
-  });
-  return availability;
+    return acc;
+  }, [] as string[][]);
+  return availabilityList;
 };
 
 const formatPhone = (phoneNumber: string) => {
@@ -53,31 +44,22 @@ const DriverCard = ({
     lastName,
     email,
     phoneNumber,
-    startTime,
-    endTime,
-    breaks,
+    availability,
     vehicle,
   },
 }: DriverCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-  const availability = parseAvailability(startTime, endTime, breaks);
-  const [vehicleInfo, setVehicleInfo] = useState<Vehicle>();
+  const fmtAvailability = formatAvailability(availability);
   const fullName = `${firstName}_${lastName}`;
   const userInfo = {
     firstName,
     lastName,
     netId,
     phone: fmtPhone,
-    availability,
-    vehicle: vehicleInfo,
+    availability: fmtAvailability,
+    vehicle,
   };
-
-  useEffect(() => {
-    fetch(`/vehicles/${vehicle}`)
-      .then((res) => res.json())
-      .then((data) => setVehicleInfo(data));
-  }, [vehicle]);
 
   return (
     <Link to={{ pathname: '/drivers/driver', state: userInfo, search: `?name=${fullName}` }}
@@ -88,13 +70,13 @@ const DriverCard = ({
         </CardInfo>
         <CardInfo icon={clock} alt="clock icon">
           <div>
-            {availability.map(([day, timeRange]) => (
+            {fmtAvailability.map(([day, timeRange]) => (
               <p key={day}><b>{day}:</b> {timeRange}</p>
             ))}
           </div>
         </CardInfo>
         <CardInfo icon={wheel} alt="wheel icon">
-          <p>{vehicleInfo && `${vehicleInfo.name} | ${vehicleInfo.capacity}`}</p>
+          <p>{`${vehicle.name} | ${vehicle.capacity}`}</p>
           <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
         </CardInfo>
       </Card>
