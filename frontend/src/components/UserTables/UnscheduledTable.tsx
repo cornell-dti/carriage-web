@@ -18,8 +18,8 @@ function renderTableHeader() {
 }
 
 type TableProps = {
-  drivers: Driver[]
-}
+  drivers: Driver[];
+};
 const Table = ({ drivers }: TableProps) => {
   const [openModal, setOpenModal] = useState(-1);
   const [rides, setRides] = useState<RealRide[]>([]);
@@ -33,51 +33,69 @@ const Table = ({ drivers }: TableProps) => {
   };
 
   const getUnscheduledRides = () => {
-    fetch('/rides?type=unscheduled').then((res) => res.json()).then(({ data }) => setRides(data.sort(compRides)));
+    fetch('/rides?type=unscheduled')
+      .then((res) => res.json())
+      .then(({ data }) => setRides(data.sort(compRides)));
   };
 
   useEffect(getUnscheduledRides, []);
 
   function renderTableData(allRides: RealRide[]) {
     return allRides.map((ride, index) => {
-      const startTime = (new Date(ride.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const endTime = (new Date(ride.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const startTime = new Date(ride.startTime).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const endTime = new Date(ride.endTime).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
       const { rider } = ride;
-      const name = (rider) ? `${rider.firstName} ${rider.lastName}` : '';
-      const needs = (rider) ? (rider.accessibilityNeeds || []).join(', ') : '';
+      const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
+      const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
       const pickupLocation = ride.startLocation.name;
       const pickupTag = ride.startLocation.tag;
-      console.log(pickupTag);
       const dropoffLocation = ride.endLocation.name;
       const dropoffTag = ride.endLocation.tag;
 
-
-      const timeframe = (new Date(ride.startTime)).toLocaleString('en-US', { hour: 'numeric', hour12: true });
+      const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
+        hour: 'numeric',
+        hour12: true,
+      });
       const valueName = { data: name };
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-      const assignModal = () => <AssignDriverModal
-        isOpen={openModal === index}
-        close={() => setOpenModal(-1)}
-        ride={rides[0]}
-        allDrivers={drivers} />;
-
+      const assignModal = () => (
+        <AssignDriverModal
+          isOpen={openModal === index}
+          close={() => setOpenModal(-1)}
+          ride={rides[0]}
+          allDrivers={drivers}
+        />
+      );
 
       const assignButton = {
         data: 'Assign',
         buttonHandler: () => setOpenModal(index),
         ButtonModal: assignModal,
       };
-      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds, assignButton];
+      const inputValues = [
+        valueName,
+        valuePickup,
+        valueDropoff,
+        valueNeeds,
+        assignButton,
+      ];
       return (
         <tr key={index}>
           <td className={styles.cell}>{timeframe}</td>
           <td className={styles.cell}>
             <span className={styles.bold}>{startTime}</span> <br></br>
-            <span className={styles.gray}>-- {endTime}</span></td>
+            <span className={styles.gray}>-- {endTime}</span>
+          </td>
           <TableRow values={inputValues} />
-        </tr >
+        </tr>
       );
     });
   }
@@ -86,7 +104,7 @@ const Table = ({ drivers }: TableProps) => {
     <>
       <div>
         <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-        <table cellSpacing='0' className={styles.table} >
+        <table cellSpacing="0" className={styles.table}>
           <tbody>
             {renderTableHeader()}
             {renderTableData(rides)}
