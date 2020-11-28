@@ -14,7 +14,6 @@ const localizer = momentLocalizer(moment);
 
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
-
 const Schedule = () => {
   const defaultStart = new Date();
   defaultStart.setHours(8, 0, 0, 0);
@@ -22,7 +21,7 @@ const Schedule = () => {
 
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState(tempEvents);
-  const [viewMore, setViewMore] = useState(false);
+  const [viewState, setviewState] = useState(false);
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -79,28 +78,26 @@ const Schedule = () => {
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    // eslint-disable-next-line no-console
-    console.log('dragged event:', event.title);
-    // eslint-disable-next-line no-console
-    console.log('old resourceId:', event.resourceId);
-    // eslint-disable-next-line no-console
-    console.log('new resourceId:', resourceId);
-    const nextEvents = events.map((old) => (old.id === event.id
-      ? { ...old, resourceId }
-      : old));
+    // uncomment to view event change details
+    // console.log('dragged event:', event.title);
+    // console.log('old resourceId:', event.resourceId);
+    // console.log('new resourceId:', resourceId);
+    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
     setEvents(nextEvents);
   };
 
   // eslint-disable-next-line no-alert
   const onSelectEvent = (event: any) => alert(event.title);
 
-  const okHr = (hr: number) => viewMore || hr === curStart.getHours();
+  const okHr = (hr: number) => viewState || hr === curStart.getHours();
 
   return (
     <>
       <h1 className={styles.heading}>Home</h1>
-      <div className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
-        <div className={cn(styles.left, { [styles.long]: viewMore })}>
+      <div
+        className={cn(styles.calendar_container, { [styles.long]: viewState })}
+      >
+        <div className={cn(styles.left, { [styles.long]: viewState })}>
           <DnDCalendar
             resizable={false}
             formats={{ timeGutterFormat: 'h A' }}
@@ -114,8 +111,10 @@ const Schedule = () => {
             onEventDrop={onEventDrop}
             selectable
             onSelectEvent={onSelectEvent}
-            min={viewMore ? defaultStart : curStart}
-            max={viewMore ? defaultEnd : new Date(curStart.getTime() + 7199999)}
+            min={viewState ? defaultStart : curStart}
+            max={
+              viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
+            }
             defaultDate={new Date(2018, 0, 29)} // temp date
             resources={resourceMap1}
             resourceIdAccessor="resourceId"
@@ -124,7 +123,7 @@ const Schedule = () => {
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={cn(styles.right, { [styles.long]: viewMore })}>
+        <div className={cn(styles.right, { [styles.long]: viewState })}>
           <div>
             <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
               <i className={styles.uparrow}></i>
@@ -136,7 +135,9 @@ const Schedule = () => {
           </div>
         </div>
       </div>
-      <button className={styles.more} onClick={() => setViewMore(!viewMore)}>view more</button>
+      <button className={styles.view_state} onClick={() => setviewState(!viewState)}>
+        view {viewState ? 'less' : 'more'}
+      </button>
     </>
   );
 };

@@ -74,7 +74,7 @@
   visibility: hidden;
 }
 
-.more {
+.view_state {
   padding: 5px;
   margin-right: 50px;
   border: none;
@@ -82,6 +82,6 @@
   float: right;
 }
 
-.more:hover {
+.view_state:hover {
   text-decoration: underline;
 }
