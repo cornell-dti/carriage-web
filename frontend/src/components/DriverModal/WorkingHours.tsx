@@ -52,7 +52,7 @@ const HourInput = () => {
         <button
           key={day}
           type="button"
-          className={cn(styles.day, { [styles.daySelected]: days.has(day) })}
+          className={cn(styles.day, { [styles.daySelected]: days[day] })}
           onClick={() => handleClick(day)}
         >
           {label}
