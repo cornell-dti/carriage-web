@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Passenger, Driver } from '../../types/index';
+import React, { useState, useEffect } from 'react';
+import { Driver, RealRide } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
 import AssignDriverModal from '../Modal/AssignDriverModal';
@@ -22,30 +22,37 @@ type TableProps = {
 }
 const Table = ({ drivers }: TableProps) => {
   const [openModal, setOpenModal] = useState(-1);
-  const passengers = [
-    { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { startTime: '8:30am', endTime: '8:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { startTime: '9:10am', endTime: '9:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { startTime: '9:30am', endTime: '9:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-    { startTime: '10:10am', endTime: '10:30am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-  ];
+  const [rides, setRides] = useState<RealRide[]>([]);
 
-  function renderTableData(allPassengers: Passenger[]) {
-    let currentTime = '';
+  const compRides = (a: RealRide, b: RealRide) => {
+    const x = new Date(a.startTime);
+    const y = new Date(b.startTime);
+    if (x < y) return -1;
+    if (x > y) return 1;
+    return 0;
+  };
 
-    return allPassengers.map((rider, index) => {
-      const { startTime, endTime, name, pickupLocation, pickupTag,
-        dropoffLocation, dropoffTag, needs } = rider;
-      const colon = startTime.indexOf(':');
-      const timeOfDay = startTime.substring(startTime.indexOf('m') - 1).toUpperCase();
-      const startHour = startTime.substring(0, colon) + timeOfDay;
-      if (startHour !== currentTime) {
-        currentTime = startHour;
-      } else {
-        currentTime = '';
-      }
+  const getUnscheduledRides = () => {
+    fetch('/rides?type=unscheduled').then((res) => res.json()).then(({ data }) => setRides(data.sort(compRides)));
+  };
 
-      const timeframe = currentTime;
+  useEffect(getUnscheduledRides, []);
+
+  function renderTableData(allRides: RealRide[]) {
+    return allRides.map((ride, index) => {
+      const startTime = (new Date(ride.startTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const endTime = (new Date(ride.endTime)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const { rider } = ride;
+      const name = (rider) ? `${rider.firstName} ${rider.lastName}` : '';
+      const needs = (rider) ? (rider.accessibilityNeeds || []).join(', ') : '';
+      const pickupLocation = ride.startLocation.name;
+      const pickupTag = ride.startLocation.tag;
+      console.log(pickupTag);
+      const dropoffLocation = ride.endLocation.name;
+      const dropoffTag = ride.endLocation.tag;
+
+
+      const timeframe = (new Date(ride.startTime)).toLocaleString('en-US', { hour: 'numeric', hour12: true });
       const valueName = { data: name };
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
@@ -53,7 +60,7 @@ const Table = ({ drivers }: TableProps) => {
       const assignModal = () => <AssignDriverModal
         isOpen={openModal === index}
         close={() => setOpenModal(-1)}
-        ride={passengers[0]}
+        ride={rides[0]}
         allDrivers={drivers} />;
 
 
@@ -82,7 +89,7 @@ const Table = ({ drivers }: TableProps) => {
         <table cellSpacing='0' className={styles.table} >
           <tbody>
             {renderTableHeader()}
-            {renderTableData(passengers)}
+            {renderTableData(rides)}
           </tbody>
         </table>
       </div>

@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { Passenger, Driver } from '../../types/index';
+import { RealRide, Driver } from '../../types/index';
 import styles from './assigndrivermodal.module.css';
 
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Passenger;
+  ride: RealRide;
   allDrivers: Driver[];
 }
 
@@ -47,7 +47,7 @@ const AssignDriverModal = ({ isOpen, close, ride, allDrivers }: AssignModalProps
       {isOpen
         && <div className={styles.modal} ref={wrapperRef}>
           <h1 className={styles.titleText}>Available Drivers</h1>
-          {allDrivers.map((driver) => <DriverRow firstName={driver.firstName} imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />)}
+        {allDrivers.map((driver, id) => <DriverRow key={id} firstName={driver.firstName} imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />)}
         </div>
       }
     </>

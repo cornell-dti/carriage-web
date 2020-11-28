@@ -75,20 +75,22 @@ export type Location = {
   tag?: Tag;
 };
 
-export type Passenger = {
-  startTime: string;
-  endTime: string;
-  name: string;
-  pickupLocation: string;
-  pickupTag: string;
-  dropoffLocation: string;
-  dropoffTag: string;
-  needs: string;
-};
-
 export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
+};
+
+export type RealRide = {
+  id: string;
+  type: string;
+  status: string;
+  late?: boolean;
+  startLocation: Location;
+  endLocation: Location;
+  startTime: string;
+  endTime: string;
+  rider: Rider;
+  driver?: Driver;
 };
