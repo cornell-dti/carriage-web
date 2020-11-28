@@ -8,7 +8,7 @@ import { ObjectType } from '../../types/index';
 const HourInput = () => {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [days, setDays] = useState(new Set<string>());
+  const [days, setDays] = useState<ObjectType>({});
   const { clearDay, updateDays, isDaySelected } = useWorkingHours();
   const dayLabels = {
     Sun: 'S',
@@ -21,19 +21,17 @@ const HourInput = () => {
   };
 
   const handleClick = (day: string) => {
-    if (!isDaySelected(day) && !days.has(day)) {
-      setDays((prev) => new Set(prev.add(day)));
-    } else if (isDaySelected(day) && days.has(day)) {
-      setDays((prev) => {
-        prev.delete(day);
-        return new Set(prev);
-      });
+    if (!isDaySelected(day) && !days[day]) {
+      setDays((prev) => ({ ...prev, [day]: 1 }));
+    } else if (isDaySelected(day) && days[day]) {
+      setDays((prev) => ({ ...prev, [day]: 0 }));
       clearDay(day);
     }
   };
 
   useEffect(() => {
-    updateDays(Array.from(days), startTime, endTime);
+    const dayList = Object.keys(days).filter((day) => days[day]);
+    updateDays(dayList, startTime, endTime);
   }, [days, endTime, startTime, updateDays]);
 
   return (
