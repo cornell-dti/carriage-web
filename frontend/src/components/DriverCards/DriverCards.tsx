@@ -13,7 +13,7 @@ const formatTime = (time: string) => {
 };
 
 const formatAvailability = (availability: AvailabilityType) => {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const availabilityList = days.reduce((acc, day) => {
     const availabilityTimes = availability[day];
     if (availabilityTimes) {
