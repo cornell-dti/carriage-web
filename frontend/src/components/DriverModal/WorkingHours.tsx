@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import styles from './drivermodal.module.css';
 import { Input } from '../FormElements/FormElements';
-import { AvailabilityProvider, useAvailability } from './AvailabilityContext';
+import { WeekProvider, useWeek } from './WeekContext';
 
 type HourInputProps = {
   index: number;
@@ -16,7 +16,7 @@ const HourInput = ({ index }: HourInputProps) => {
     isDayOpen,
     isDaySelectedByInstance,
     getSelectedDays,
-  } = useAvailability();
+  } = useWeek();
   const { register, setValue, getValues } = useFormContext();
   const dayLabels = {
     Sun: 'S',
@@ -97,11 +97,11 @@ const WorkingHours = () => {
   return (
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
-      <AvailabilityProvider>
+      <WeekProvider>
         {[...new Array(numHourInputs)].map((_, index) => (
           <HourInput key={index} index={index} />
         ))}
-      </AvailabilityProvider>
+      </WeekProvider>
       <p className={styles.addHourInput} onClick={addHourInput}>+ Add more</p>
     </div>
   );

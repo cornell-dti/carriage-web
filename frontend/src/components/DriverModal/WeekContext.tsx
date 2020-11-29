@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-type AvailabilityState = {
+type WeekState = {
   selectDay: (day: string, index: number) => void;
   deselectDay: (day: string) => void;
   isDayOpen: (day: string) => boolean;
@@ -8,7 +8,7 @@ type AvailabilityState = {
   getSelectedDays: (index: number) => string[];
 };
 
-const initialState: AvailabilityState = {
+const initialState: WeekState = {
   selectDay: () => { },
   deselectDay: () => { },
   isDayOpen: () => false,
@@ -16,23 +16,23 @@ const initialState: AvailabilityState = {
   getSelectedDays: () => [],
 };
 
-const AvailabilityContext = React.createContext(initialState);
+const WeekContext = React.createContext(initialState);
 
-export const useAvailability = () => React.useContext(AvailabilityContext);
+export const useWeek = () => React.useContext(WeekContext);
 
-type AvailabilityProviderProps = {
+type WeekProviderProps = {
   children: React.ReactNode;
 }
 
-type AvailabilityType = {
+type WeekType = {
   [day: string]: number;
 };
 
-export const AvailabilityProvider = ({ children }: AvailabilityProviderProps) => {
-  // availability keeps track of which HourInput has what days selected, based
+export const WeekProvider = ({ children }: WeekProviderProps) => {
+  // week keeps track of which HourInput has what days selected, based
   // on its index number. if a day is not selected in any HourInput instance,
   // the value is -1.
-  const [availability, setAvailability] = useState<AvailabilityType>({
+  const [week, setWeek] = useState<WeekType>({
     Sun: -1,
     Mon: -1,
     Tue: -1,
@@ -43,25 +43,25 @@ export const AvailabilityProvider = ({ children }: AvailabilityProviderProps) =>
   });
 
   const setDay = (day: string, value: number) => {
-    setAvailability((prev) => ({ ...prev, [day]: value }));
+    setWeek((prev) => ({ ...prev, [day]: value }));
   };
 
   const selectDay = (day: string, index: number) => setDay(day, index);
 
   const deselectDay = (day: string) => setDay(day, -1);
 
-  const isDayOpen = (day: string) => availability[day] === -1;
+  const isDayOpen = (day: string) => week[day] === -1;
 
   const isDaySelectedByInstance = (day: string, index: number) => (
-    availability[day] === index
+    week[day] === index
   );
 
   const getSelectedDays = (index: number) => (
-    Object.keys(availability).filter((day) => availability[day] === index)
+    Object.keys(week).filter((day) => week[day] === index)
   );
 
   return (
-    <AvailabilityContext.Provider
+    <WeekContext.Provider
       value={{
         selectDay,
         deselectDay,
@@ -71,6 +71,6 @@ export const AvailabilityProvider = ({ children }: AvailabilityProviderProps) =>
       }}
     >
       {children}
-    </AvailabilityContext.Provider>
+    </WeekContext.Provider>
   );
 };
