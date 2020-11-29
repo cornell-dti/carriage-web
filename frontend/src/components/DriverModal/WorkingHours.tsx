@@ -43,7 +43,7 @@ const HourInput = ({ index }: HourInputProps) => {
   useEffect(() => {
     // Register day selector as custom form input
     register(`${instance}.days`, { required: true });
-  });
+  }, [instance, register]);
 
   useEffect(() => {
     // When selected days changes, update days value
