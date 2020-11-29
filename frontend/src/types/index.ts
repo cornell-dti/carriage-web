@@ -92,3 +92,12 @@ export type TableValue = {
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
 };
+
+export type Dispatcher = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessLevel: string;
+}

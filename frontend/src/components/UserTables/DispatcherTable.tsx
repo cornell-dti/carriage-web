@@ -89,18 +89,19 @@ const DispatcherManager = () => {
         <table className={styles.table}>
           <tbody>
             {renderTableHeader()}
-            {dispatchers.map(({ id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
-              <tr key={index}>
-                <td>{firstName}</td>
-                <td>{lastName}</td>
-                <td>{phoneNumber}</td>
-                <td>{email}</td>
-                <td> {accessLevel}</td>
-                <td>
-                  <button onClick={() => deleteDispatcher(id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+            {dispatchers.map((
+              { id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
+                <tr key={index}>
+                  <td>{firstName}</td>
+                  <td>{lastName}</td>
+                  <td>{phoneNumber}</td>
+                  <td>{email}</td>
+                  <td> {accessLevel}</td>
+                  <td>
+                    <button onClick={() => deleteDispatcher(id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

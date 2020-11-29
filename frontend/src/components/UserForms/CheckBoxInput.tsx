@@ -25,21 +25,22 @@ const renderCheckbox = ({ checkboxId, checkboxName, checkboxLabel, handleInput }
   </div>
 )
 
-const CheckBoxInput = ({ labelText, checkboxId, options, optionLabels, handleInput }: InputProp) => {
-  return (
-    <div className={styles.formDiv}>
-      <label className={styles.formLabel}> {labelText} </label >
-      <div>
-        {options.map((opt: string, i) => {
-          renderCheckbox(
-            {
-              checkboxId: opt, checkboxName: checkboxId,
-              checkboxLabel: optionLabels[i], handleInput: handleInput
-            })
-        })}
+const CheckBoxInput =
+  ({ labelText, checkboxId, options, optionLabels, handleInput }: InputProp) => {
+    return (
+      <div className={styles.formDiv}>
+        <label className={styles.formLabel}> {labelText} </label >
+        <div>
+          {options.map((opt: string, i) => {
+            renderCheckbox(
+              {
+                checkboxId: opt, checkboxName: checkboxId,
+                checkboxLabel: optionLabels[i], handleInput: handleInput
+              })
+          })}
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
 export default CheckBoxInput
