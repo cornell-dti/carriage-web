@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import TextInput from './TextInput';
 
 type Driver = {
   name: string,
@@ -71,48 +72,30 @@ const Form = (props: FormProps) => {
       <h2 className="formHeader">New Driver</h2>
       <div className="addFormDiv">
         <form className="addForm" onSubmit={(e) => handleSubmit(e)}>
-          <div className="formDiv">
-            <label htmlFor="name" className="formLabel">Name: </label >
-            <input type="text"
-              name="name"
-              onChange={(e) => handleInput(e)}
-              required
-            />
-            <p className={`formFeedback ${validName ? 'hidden' : ''}`}>
-              Enter a name
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="netid" className="formLabel">NetID: </label>
-            <input type="text"
-              name="netid"
-              onChange={(e) => handleInput(e)}
-            />
-            <p className={`formFeedback ${validNetid ? 'hidden' : ''}`}>
-              Enter a valid netid
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="email" className="formLabel">Email: </label>
-            <input type="text"
-              name="email"
-              onChange={(e) => handleInput(e)}
-            />
-            <p className={`formFeedback ${validEmail ? 'hidden' : ''}`}>
-              Enter a valid email address
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="phone" className="formLabel">Phone Number: </label>
-            <input type="text"
-              name="phone"
-              placeholder="XXX-XXX-XXXX"
-              onChange={(e) => handleInput(e)}
-            />
-            <p className={`formFeedback ${validPhone ? 'hidden' : ''}`}>
-              Enter a phone number in the form xxx-xxx-xxxx
-          </p>
-          </div>
+          <TextInput
+            labelName="name"
+            labelText="Name: "
+            feedback="Please enter a name"
+            showFormFeedback={`formFeedback ${validName ? 'hidden' : ''}`}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="netid"
+            labelText="NetID: "
+            feedback="Enter a valid netid"
+            showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="email"
+            labelText="Email: "
+            feedback="Enter a valid email address"
+            showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="phone"
+            labelText="Phone Number: "
+            feedback="Enter a phone number in the form xxx-xxx-xxxx"
+            showFormFeedback={`formFeedback ${validPhone ? 'hidden' : ''}`}
+            handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>
       </div>

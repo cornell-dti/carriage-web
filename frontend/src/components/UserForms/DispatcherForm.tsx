@@ -1,110 +1,80 @@
 import React, { useState } from 'react';
-import { Rider } from '../../types/index';
+import { Dispatcher } from '../../types/index';
 import TextInput from './TextInput';
 import DropDownInput from './DropDownInput';
-import CheckBoxInput from './CheckBoxInput';
 
 type FormProps = {
-  onClick: ((newRider: Rider) => void);
+  onClick: ((newDispatcher: Dispatcher) => void);
 }
 
 const Form = (props: FormProps) => {
-  const today = new Date();
-  const date = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`;
-  const [newRider, setNewRider] = useState({
+  const [newDispatcher, setNewDispatcher] = useState({
     id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
-    accessibilityNeeds: new Array<string>(),
-    description: '',
-    joinDate: date,
-    pronouns: 'she/her/hers',
-    address: '',
+    accessLevel: '',
   });
   const [validFirstName, setValidFirstName] = useState(false);
   const [validLastName, setValidLastName] = useState(false);
   const [validPhone, setValidPhone] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
-  const [validDesc, setValidDesc] = useState(false);
-  const [validAddress, setValidAddress] = useState(false);
+  const [validAccessLvl, setValidAccessLvl] = useState(true);
 
   const handleInput = (evt: any) => {
     const fieldName = evt.target.name;
     const fieldValue = evt.target.value;
     if (fieldName === 'firstName') {
       if (fieldValue.length > 0) {
-        newRider.firstName = fieldValue;
+        newDispatcher.firstName = fieldValue;
         setValidFirstName(true);
       } else {
-        newRider.firstName = '';
+        newDispatcher.firstName = '';
         setValidFirstName(false);
       }
     } else if (fieldName === 'lastName') {
       if (fieldValue.length > 0) {
-        newRider.lastName = fieldValue;
+        newDispatcher.lastName = fieldValue;
         setValidLastName(true);
       } else {
-        newRider.lastName = '';
+        newDispatcher.lastName = '';
         setValidLastName(false);
       }
     } else if (fieldName === 'phone') {
       const phoneFormat = /^[0-9]{10}$/;
       if ((fieldValue.length > 0) && fieldValue.match(phoneFormat)) {
-        newRider.phoneNumber = fieldValue;
+        newDispatcher.phoneNumber = fieldValue;
         setValidPhone(true);
       } else {
-        newRider.phoneNumber = '';
+        newDispatcher.phoneNumber = '';
         setValidPhone(false);
       }
     } else if (fieldName === 'email') {
       const netIdFormat = /^[a-zA-Z]+[0-9]+$/;
       if ((fieldValue.length > 0) && fieldValue.match(netIdFormat)) {
-        newRider.email = fieldValue.concat('@cornell.edu');
+        newDispatcher.email = fieldValue.concat('@cornell.edu');
         setValidEmail(true);
       } else {
-        newRider.email = '';
+        newDispatcher.email = '';
         setValidEmail(false);
       }
-    } else if (fieldName === 'description') {
-      if (fieldValue.length > 0) {
-        newRider.description = fieldValue;
-        setValidDesc(true);
-      } else {
-        newRider.description = '';
-        setValidDesc(false);
-      }
-    } else if (fieldName === 'address') {
-      if (fieldValue.length > 0) {
-        newRider.address = fieldValue;
-        setValidAddress(true);
-      } else {
-        newRider.address = '';
-        setValidAddress(false);
-      }
-    } else if (fieldName === 'pronouns') {
-      newRider.pronouns = fieldValue;
     } else {
-      if (fieldName === 'needWheel') {
-        newRider.accessibilityNeeds.push('Wheelchair');
-      } if (fieldName === 'needCrutches') {
-        newRider.accessibilityNeeds.push('Crutches');
-      } else if (fieldName === 'needAssist') {
-        newRider.accessibilityNeeds.push('Assistant');
-      }
+      newDispatcher.accessLevel = fieldValue;
     }
-    setNewRider(newRider);
+    setNewDispatcher(newDispatcher);
   };
+
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
     const validRider = validFirstName && validLastName && validPhone
-      && validEmail && validDesc && validAddress;
-    if (validRider) { props.onClick(newRider); }
+      && validEmail && validAccessLvl;
+    if (validRider) { props.onClick(newDispatcher); }
   };
+
   return (
     <>
-      <h2 className="formHeader">New Rider</h2>
+      <h2 className="formHeader">New Dispatcher</h2>
       <div className="addFormDiv">
         <form className="addForm" onSubmit={(e) => handleSubmit(e)}>
           <TextInput
@@ -131,35 +101,17 @@ const Form = (props: FormProps) => {
             feedback="Enter a valid netid"
             showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
             handleInput={(e) => handleInput(e)} />
-          <CheckBoxInput
-            labelText="Accessibility Needs: "
-            checkboxId="accessibility"
-            options={["needWheel", "needCrutches", "needAssist"]}
-            optionLabels={["Needs Wheelchair", "Has Crutches", "Needs Assistant"]}
-            handleInput={handleInput}
-          />
-          <TextInput
-            labelName="description"
-            labelText="Description: "
-            feedback="Enter a description"
-            showFormFeedback={`formFeedback ${validDesc ? 'hidden' : ''}`}
-            handleInput={(e) => handleInput(e)} />
           <DropDownInput
-            labelName="pronouns"
-            labelText="Pronouns: "
-            options={["she/her/hers", "he/him/his", "neutral"]}
-            handleInput={(e) => handleInput(e)} />
-          <TextInput
-            labelName="address"
-            labelText="Address: "
-            feedback="Enter an address"
-            showFormFeedback={`formFeedback ${validAddress ? 'hidden' : ''}`}
+            labelName="accessLevel"
+            labelText="Access Level: "
+            options={["Admin", "SDS", "Dispatcher"]}
             handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>
       </div>
     </>
-  );
-};
+  )
 
-export default Form;
+}
+
+export default Form

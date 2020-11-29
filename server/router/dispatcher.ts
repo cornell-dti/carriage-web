@@ -6,12 +6,15 @@ import { Dispatcher } from '../models/dispatcher';
 const router = express.Router();
 const tableName = 'Dispatchers';
 
+// Get all dispatchers
+router.get('/', (req, res) => db.getAll(res, Dispatcher, tableName));
+
 // Put a driver in Dispatchers table
 router.post('/', (req, res) => {
   const { body } = req;
   const dispatcher = new Dispatcher({
+    id: uuid(),
     ...body,
-    id: uuid()
   });
   db.create(res, dispatcher);
 });
