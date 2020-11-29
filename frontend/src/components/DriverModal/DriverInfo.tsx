@@ -26,15 +26,18 @@ const DriverInfo = ({ register }: DriverInfoProps) => (
     />
     <Input
       name='email'
-      type='text'
+      type='email'
       placeholder='Email'
       className={cn(styles.input, styles.col1)}
       ref={register({ required: true })}
     />
     <Input
       name='phone'
-      type='text'
+      type='tel'
+      pattern="[0-9]{10}"
       placeholder='Phone Number'
+      min={10}
+      max={10}
       className={cn(styles.input, styles.col2)}
       ref={register({ required: true })}
     />
@@ -49,8 +52,9 @@ const DriverInfo = ({ register }: DriverInfoProps) => (
       name='capacity'
       type='number'
       placeholder='Capacity'
+      min={0}
       className={cn(styles.input, styles.col2)}
-      ref={register({ required: true })}
+      ref={register({ required: true, min: 0 })}
     />
   </div>
 );

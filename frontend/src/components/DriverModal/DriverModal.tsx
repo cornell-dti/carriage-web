@@ -6,22 +6,18 @@ import { ObjectType } from '../../types/index';
 import DriverInfo from './DriverInfo';
 import WorkingHours from './WorkingHours';
 import { WorkingHoursProvider } from './WorkingHoursContext';
+import styles from './drivermodal.module.css';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [availability, setAvailability] = useState<ObjectType>({});
-  const { register, handleSubmit } = useForm();
+  const { register, setValue, handleSubmit } = useForm();
 
   const openModal = () => setIsOpen(true);
 
   const closeModal = () => setIsOpen(false);
 
-  const handleWorkingHoursChange = (data: ObjectType) => {
-    setAvailability(data);
-  };
-
   const onSubmit = (data: ObjectType) => {
-    console.log(data, availability);
+    console.log(data);
   };
 
   return (
@@ -35,8 +31,9 @@ const DriverModal = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DriverInfo register={register} />
           <WorkingHoursProvider>
-            <WorkingHours onChange={handleWorkingHoursChange} />
+            <WorkingHours register={register} setValue={setValue} />
           </WorkingHoursProvider>
+          <Button className={styles.submit} type='submit'>Add a Driver</Button>
         </form>
       </Modal>
     </>

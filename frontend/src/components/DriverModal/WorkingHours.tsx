@@ -5,11 +5,15 @@ import { Input } from '../FormElements/FormElements';
 import { useWorkingHours } from './WorkingHoursContext';
 import { ObjectType } from '../../types/index';
 
-const HourInput = () => {
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+type HourInputProps = {
+  index: number;
+  register: any;
+  setValue: any;
+}
+
+const HourInput = ({ index, register, setValue }: HourInputProps) => {
   const [days, setDays] = useState<ObjectType>({});
-  const { clearDay, updateDays, isDaySelected } = useWorkingHours();
+  const { toggleDay, isDaySelected } = useWorkingHours();
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -19,33 +23,43 @@ const HourInput = () => {
     Fri: 'F',
     Sat: 'S',
   };
+  const availabilityItem = `availability[${index}]`;
 
   const handleClick = (day: string) => {
     if (!isDaySelected(day) && !days[day]) {
       setDays((prev) => ({ ...prev, [day]: 1 }));
+      toggleDay(day);
     } else if (isDaySelected(day) && days[day]) {
       setDays((prev) => ({ ...prev, [day]: 0 }));
-      clearDay(day);
+      toggleDay(day);
     }
   };
 
   useEffect(() => {
+    // Register day selector as form input
+    register(`${availabilityItem}.days`, { required: true });
+  });
+
+  useEffect(() => {
+    // Update days value with all days that have value 1
     const dayList = Object.keys(days).filter((day) => days[day]);
-    updateDays(dayList, startTime, endTime);
-  }, [days, endTime, startTime, updateDays]);
+    setValue(`${availabilityItem}.days`, dayList);
+  }, [availabilityItem, days, setValue]);
 
   return (
     <div className={styles.hourInput}>
       <Input
+        name={`${availabilityItem}.startTime`}
         type='time'
         style={{ fontSize: 'initial' }}
-        onChange={(e) => setStartTime(e.target.value)}
+        ref={register({ required: true })}
       />
       <p className={styles.toText}>to</p>
       <Input
+        name={`${availabilityItem}.endTime`}
         type='time'
         style={{ fontSize: 'initial' }}
-        onChange={(e) => setEndTime(e.target.value)}
+        ref={register({ required: true })}
       />
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
@@ -63,24 +77,25 @@ const HourInput = () => {
 };
 
 type WorkingHoursProps = {
-  onChange: (data: ObjectType) => void;
+  register: any;
+  setValue: any;
 }
 
-const WorkingHours = ({ onChange }: WorkingHoursProps) => {
+const WorkingHours = ({ register, setValue }: WorkingHoursProps) => {
   const [numHourInputs, setNumHourInputs] = useState(1);
-  const { availability } = useWorkingHours();
 
   const addHourInput = () => setNumHourInputs((p) => p + 1);
-
-  useEffect(() => {
-    onChange(availability);
-  }, [availability, onChange]);
 
   return (
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       {[...new Array(numHourInputs)].map((_, index) => (
-        <HourInput key={index} />
+        <HourInput
+          key={index}
+          index={index}
+          register={register}
+          setValue={setValue}
+        />
       ))}
       <p className={styles.addHourInput} onClick={addHourInput}>+ Add more</p>
     </div>

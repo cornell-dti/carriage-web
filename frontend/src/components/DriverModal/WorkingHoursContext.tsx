@@ -2,28 +2,23 @@ import React, { useCallback, useState } from 'react';
 
 type WorkingHoursState = {
   availability: {
-    [day: string]: {
-      startTime?: string;
-      endTime?: string;
-    };
+    [day: string]: boolean;
   };
-  clearDay: (day: string) => void;
-  updateDays: (days: string[], startTime: string, endTime: string) => void;
+  toggleDay: (day: string) => void;
   isDaySelected: (day: string) => boolean;
 };
 
 const initialState: WorkingHoursState = {
   availability: {
-    Sun: {},
-    Mon: {},
-    Tue: {},
-    Wed: {},
-    Thu: {},
-    Fri: {},
-    Sat: {},
+    Sun: false,
+    Mon: false,
+    Tue: false,
+    Wed: false,
+    Thu: false,
+    Fri: false,
+    Sat: false,
   },
-  clearDay: () => { },
-  updateDays: () => { },
+  toggleDay: () => { },
   isDaySelected: () => false,
 };
 
@@ -38,29 +33,17 @@ type WorkingHoursProviderProps = {
 export const WorkingHoursProvider = ({ children }: WorkingHoursProviderProps) => {
   const [availability, setAvailability] = useState(initialState.availability);
 
-  const clearDay = (day: string) => {
-    setAvailability((prev) => ({ ...prev, [day]: {} }));
-  };
-
-  // Not sure why useCallback is needed but without it an infinite loop happens
-  const updateDays = useCallback((days: string[], startTime: string, endTime: string) => {
-    setAvailability((prev) => {
-      const newState = prev;
-      days.forEach((day) => {
-        newState[day] = { startTime, endTime };
-      });
-      return { ...newState };
-    });
+  const toggleDay = useCallback((day: string) => {
+    setAvailability((prev) => ({ ...prev, [day]: !prev[day] }));
   }, []);
 
-  const isDaySelected = (day: string) => Object.keys(availability[day]).length !== 0;
+  const isDaySelected = (day: string) => availability[day];
 
   return (
     <WorkingHoursContext.Provider
       value={{
         availability,
-        clearDay,
-        updateDays,
+        toggleDay,
         isDaySelected,
       }}
     >
