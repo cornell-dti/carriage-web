@@ -9,10 +9,14 @@ type InputProp = {
   handleInput: ((e: any) => void)
 }
 
-const TextInput = ({ labelName, labelText, feedback, showFormFeedback, handleInput }: InputProp) => {
+const TextInput = (
+  { labelName, labelText, feedback, showFormFeedback, handleInput }: InputProp
+) => {
   return (
     <div className={styles.formDiv}>
-      <label htmlFor={labelName} className={styles.formLabel}> {labelText} </label >
+      <label htmlFor={labelName} className={styles.formLabel}>
+        {labelText}
+      </label >
       <input type="text"
         name={labelName}
         onChange={(e) => handleInput(e)} />
