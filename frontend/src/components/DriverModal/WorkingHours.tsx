@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
+import { useFormContext } from 'react-hook-form';
 import styles from './drivermodal.module.css';
 import { Input } from '../FormElements/FormElements';
 import { useWorkingHours } from './WorkingHoursContext';
@@ -7,13 +8,12 @@ import { ObjectType } from '../../types/index';
 
 type HourInputProps = {
   index: number;
-  register: any;
-  setValue: any;
 }
 
-const HourInput = ({ index, register, setValue }: HourInputProps) => {
+const HourInput = ({ index }: HourInputProps) => {
   const [days, setDays] = useState<ObjectType>({});
   const { toggleDay, isDaySelected } = useWorkingHours();
+  const { register, setValue, getValues } = useFormContext();
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -59,7 +59,13 @@ const HourInput = ({ index, register, setValue }: HourInputProps) => {
         name={`${availabilityItem}.endTime`}
         type='time'
         style={{ fontSize: 'initial' }}
-        ref={register({ required: true })}
+        ref={register({
+          required: true,
+          validate: (endTime) => {
+            const startTime = getValues(`${availabilityItem}.startTime`);
+            return startTime < endTime;
+          },
+        })}
       />
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
@@ -76,12 +82,7 @@ const HourInput = ({ index, register, setValue }: HourInputProps) => {
   );
 };
 
-type WorkingHoursProps = {
-  register: any;
-  setValue: any;
-}
-
-const WorkingHours = ({ register, setValue }: WorkingHoursProps) => {
+const WorkingHours = () => {
   const [numHourInputs, setNumHourInputs] = useState(1);
 
   const addHourInput = () => setNumHourInputs((p) => p + 1);
@@ -90,12 +91,7 @@ const WorkingHours = ({ register, setValue }: WorkingHoursProps) => {
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       {[...new Array(numHourInputs)].map((_, index) => (
-        <HourInput
-          key={index}
-          index={index}
-          register={register}
-          setValue={setValue}
-        />
+        <HourInput key={index} index={index} />
       ))}
       <p className={styles.addHourInput} onClick={addHourInput}>+ Add more</p>
     </div>

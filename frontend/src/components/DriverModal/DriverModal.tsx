@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
@@ -10,7 +10,7 @@ import styles from './drivermodal.module.css';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { register, setValue, handleSubmit } = useForm();
+  const methods = useForm();
 
   const openModal = () => setIsOpen(true);
 
@@ -28,13 +28,15 @@ const DriverModal = () => {
         isOpen={isOpen}
         onClose={closeModal}
       >
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <DriverInfo register={register} />
-          <WorkingHoursProvider>
-            <WorkingHours register={register} setValue={setValue} />
-          </WorkingHoursProvider>
-          <Button className={styles.submit} type='submit'>Add a Driver</Button>
-        </form>
+        <FormProvider {...methods} >
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <DriverInfo />
+            <WorkingHoursProvider>
+              <WorkingHours />
+            </WorkingHoursProvider>
+            <Button className={styles.submit} type='submit'>Add a Driver</Button>
+          </form>
+        </FormProvider>
       </Modal>
     </>
   );
