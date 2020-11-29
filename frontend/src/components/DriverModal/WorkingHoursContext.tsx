@@ -33,9 +33,9 @@ type WorkingHoursProviderProps = {
 export const WorkingHoursProvider = ({ children }: WorkingHoursProviderProps) => {
   const [availability, setAvailability] = useState(initialState.availability);
 
-  const toggleDay = useCallback((day: string) => {
+  const toggleDay = (day: string) => {
     setAvailability((prev) => ({ ...prev, [day]: !prev[day] }));
-  }, []);
+  };
 
   const isDaySelected = (day: string) => availability[day];
 
