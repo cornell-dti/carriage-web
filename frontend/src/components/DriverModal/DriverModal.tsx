@@ -5,7 +5,6 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import DriverInfo from './DriverInfo';
 import WorkingHours from './WorkingHours';
-import { WorkingHoursProvider } from './WorkingHoursContext';
 import styles from './drivermodal.module.css';
 
 const DriverModal = () => {
@@ -31,9 +30,7 @@ const DriverModal = () => {
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <DriverInfo />
-            <WorkingHoursProvider>
-              <WorkingHours />
-            </WorkingHoursProvider>
+            <WorkingHours />
             <Button className={styles.submit} type='submit'>Add a Driver</Button>
           </form>
         </FormProvider>

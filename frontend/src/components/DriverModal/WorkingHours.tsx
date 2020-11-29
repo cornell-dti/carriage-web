@@ -3,16 +3,20 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import styles from './drivermodal.module.css';
 import { Input } from '../FormElements/FormElements';
-import { useWorkingHours } from './WorkingHoursContext';
-import { ObjectType } from '../../types/index';
+import { AvailabilityProvider, useAvailability } from './AvailabilityContext';
 
 type HourInputProps = {
   index: number;
 }
 
 const HourInput = ({ index }: HourInputProps) => {
-  const [days, setDays] = useState<ObjectType>({});
-  const { toggleDay, isDaySelected } = useWorkingHours();
+  const {
+    selectDay,
+    deselectDay,
+    isDayOpen,
+    isDaySelectedByInstance,
+    getSelectedDays,
+  } = useAvailability();
   const { register, setValue, getValues } = useFormContext();
   const dayLabels = {
     Sun: 'S',
@@ -23,46 +27,46 @@ const HourInput = ({ index }: HourInputProps) => {
     Fri: 'F',
     Sat: 'S',
   };
-  const availabilityItem = `availability[${index}]`;
+  // All data for this HourInput instance will be saved in the form's data in
+  // an array 'availability' at index 'index'
+  const instance = `availability[${index}]`;
+  const days = getSelectedDays(index);
 
   const handleClick = (day: string) => {
-    if (!isDaySelected(day) && !days[day]) {
-      setDays((prev) => ({ ...prev, [day]: 1 }));
-      toggleDay(day);
-    } else if (isDaySelected(day) && days[day]) {
-      setDays((prev) => ({ ...prev, [day]: 0 }));
-      toggleDay(day);
+    if (isDaySelectedByInstance(day, index)) {
+      deselectDay(day);
+    } else if (isDayOpen(day)) {
+      selectDay(day, index);
     }
   };
 
   useEffect(() => {
-    // Register day selector as form input
-    register(`${availabilityItem}.days`, { required: true });
+    // Register day selector as custom form input
+    register(`${instance}.days`, { required: true });
   });
 
   useEffect(() => {
-    // Update days value with all days that have value 1
-    const dayList = Object.keys(days).filter((day) => days[day]);
-    setValue(`${availabilityItem}.days`, dayList);
-  }, [availabilityItem, days, setValue]);
+    // When selected days changes, update days value
+    setValue(`${instance}.days`, days);
+  }, [instance, days, setValue]);
 
   return (
     <div className={styles.hourInput}>
       <Input
-        name={`${availabilityItem}.startTime`}
+        name={`${instance}.startTime`}
         type='time'
         style={{ fontSize: 'initial' }}
         ref={register({ required: true })}
       />
       <p className={styles.toText}>to</p>
       <Input
-        name={`${availabilityItem}.endTime`}
+        name={`${instance}.endTime`}
         type='time'
         style={{ fontSize: 'initial' }}
         ref={register({
           required: true,
           validate: (endTime) => {
-            const startTime = getValues(`${availabilityItem}.startTime`);
+            const startTime = getValues(`${instance}.startTime`);
             return startTime < endTime;
           },
         })}
@@ -72,7 +76,10 @@ const HourInput = ({ index }: HourInputProps) => {
         <button
           key={day}
           type="button"
-          className={cn(styles.day, { [styles.daySelected]: days[day] })}
+          className={cn(
+            styles.day,
+            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+          )}
           onClick={() => handleClick(day)}
         >
           {label}
@@ -90,9 +97,11 @@ const WorkingHours = () => {
   return (
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
-      {[...new Array(numHourInputs)].map((_, index) => (
-        <HourInput key={index} index={index} />
-      ))}
+      <AvailabilityProvider>
+        {[...new Array(numHourInputs)].map((_, index) => (
+          <HourInput key={index} index={index} />
+        ))}
+      </AvailabilityProvider>
       <p className={styles.addHourInput} onClick={addHourInput}>+ Add more</p>
     </div>
   );
