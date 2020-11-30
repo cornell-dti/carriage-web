@@ -5,6 +5,7 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import DriverInfo from './DriverInfo';
 import WorkingHours from './WorkingHours';
+import Upload from './Upload';
 import styles from './drivermodal.module.css';
 
 const DriverModal = () => {
@@ -15,8 +16,21 @@ const DriverModal = () => {
 
   const closeModal = () => setIsOpen(false);
 
+  const parseAvailability = (availability: ObjectType[]) => {
+    const result: ObjectType = {};
+    availability.forEach(({ startTime, endTime, days }) => {
+      days.forEach((day: string) => {
+        result[day] = { startTime, endTime };
+      });
+    });
+    return result;
+  };
+
   const onSubmit = (data: ObjectType) => {
-    console.log(data);
+    const { availability, capacity, carType, email, name, netid, phone } = data;
+    const parsedAvail = parseAvailability(availability);
+    const vehicle = { name: carType, capacity: Number(capacity) };
+    console.log({ email, name, netid, phone, availability: parsedAvail, vehicle });
   };
 
   return (
@@ -27,6 +41,7 @@ const DriverModal = () => {
         isOpen={isOpen}
         onClose={closeModal}
       >
+        <Upload />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <DriverInfo />
