@@ -14,18 +14,20 @@
 }
 
 /* other seperating timeslots */
-.rbc-day-slot .rbc-time-slot {
-  border-top: 1px solid rgba(0, 0, 0, 15%);
-}
+/* .rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid rgba(0, 0, 0, 15%); 
+} */
 
 /* line below drivers */
 .rbc-time-header-content > .rbc-row.rbc-row-resource {
-  border-bottom: 1px solid rgba(0, 0, 0, 15%);
+  /* border-bottom: 1px solid rgba(0, 0, 0, 15%); */
+  border: none;
 }
 
 /* vertical line by time slot */
 .rbc-time-view-resources .rbc-time-gutter,
 .rbc-time-view-resources .rbc-time-header-gutter {
+  width: 60px;
   background-color: #fdfdfd;
   border: none;
 }

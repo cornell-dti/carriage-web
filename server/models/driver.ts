@@ -1,56 +1,52 @@
 import dynamoose from 'dynamoose';
 import { Vehicle, VehicleType } from './vehicle';
 
-type BreakTimes = {
-  breakStart: string,
-  breakEnd: string,
+type Availability = {
+  startTime: string,
+  endTime: string,
 }
 
-type BreakType = {
-  Mon?: BreakTimes,
-  Tue?: BreakTimes,
-  Wed?: BreakTimes,
-  Thu?: BreakTimes,
-  Fri?: BreakTimes,
+type AvailabilityType = {
+  Mon?: Availability,
+  Tue?: Availability,
+  Wed?: Availability,
+  Thu?: Availability,
+  Fri?: Availability,
 }
 
 export type DriverType = {
   id: string,
   firstName: string,
   lastName: string,
-  startTime: string,
-  endTime: string,
-  breaks: BreakType,
+  availability: AvailabilityType,
   vehicle: VehicleType,
   phoneNumber: string,
   email: string,
 };
 
-const breakDayValue = {
+const availability = {
   type: Object,
   schema: {
-    breakStart: String,
-    breakEnd: String,
+    startTime: String,
+    endTime: String,
   },
 };
 
-const breakSchema = {
-  Mon: breakDayValue,
-  Tue: breakDayValue,
-  Wed: breakDayValue,
-  Thu: breakDayValue,
-  Fri: breakDayValue,
+const availabilitySchema = {
+  Mon: availability,
+  Tue: availability,
+  Wed: availability,
+  Thu: availability,
+  Fri: availability,
 };
 
 const schema = new dynamoose.Schema({
   id: String,
   firstName: String,
   lastName: String,
-  startTime: String,
-  endTime: String,
-  breaks: {
+  availability: {
     type: Object,
-    schema: breakSchema,
+    schema: availabilitySchema,
   },
   vehicle: Vehicle as any,
   phoneNumber: String,

@@ -15,18 +15,25 @@ export enum Status {
   ARRIVED = 'arrived',
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
+  NO_SHOW = 'no_show',
 }
 
 export type RideType = {
   id: string,
   type: Type,
-  status: Status
+  status: Status,
+  late: boolean,
   startLocation: LocationType,
   endLocation: LocationType,
   startTime: string,
   endTime: string,
   rider: RiderType,
   driver?: DriverType,
+  recurring?: boolean,
+  recurringDays?: number[],
+  endDate?: string
+  deleted?: boolean,
+  edits?: string[],
 };
 
 const schema = new dynamoose.Schema({
@@ -42,12 +49,27 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: Object.values(Status),
   },
+  late: {
+    type: Boolean,
+    default: false,
+  },
   startLocation: Location as any,
   endLocation: Location as any,
   startTime: String,
   endTime: String,
   rider: Rider as any,
   driver: Driver as any,
+  recurring: Boolean,
+  recurringDays: {
+    type: Array,
+    schema: [Number],
+  },
+  deleted: Boolean,
+  edits: {
+    type: Array,
+    schema: [String],
+  },
+  endDate: String,
 });
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });
