@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
 // Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
-    body: { rider, startTime, requestedEndTime, endTime, driver, startLocation, endLocation },
+    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
 
   let startLocationId;
