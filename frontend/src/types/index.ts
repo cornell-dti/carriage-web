@@ -39,16 +39,6 @@ export type Driver = {
   phone: string;
 };
 
-export type Ride = {
-  type: string;
-  id: string;
-  startLocation: string;
-  endLocation: string;
-  startTime: string;
-  endTime: string;
-  riderId: string;
-};
-
 export type ObjectType = {
   [x: string]: any;
 }
@@ -82,7 +72,7 @@ export type TableValue = {
   ButtonModal?: () => JSX.Element;
 };
 
-export type RealRide = {
+export type Ride = {
   id: string;
   type: string;
   status: string;

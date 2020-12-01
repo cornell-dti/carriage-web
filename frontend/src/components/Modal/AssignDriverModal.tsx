@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { RealRide, Driver } from '../../types/index';
+import { Ride, Driver } from '../../types/index';
 import styles from './assigndrivermodal.module.css';
 
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: RealRide;
+  ride: Ride;
   allDrivers: Driver[];
 };
 

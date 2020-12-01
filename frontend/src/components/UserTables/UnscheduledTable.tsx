@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Driver, RealRide } from '../../types/index';
+import moment from 'moment';
+import { Driver, Ride } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
 import AssignDriverModal from '../Modal/AssignDriverModal';
@@ -22,9 +23,9 @@ type TableProps = {
 };
 const Table = ({ drivers }: TableProps) => {
   const [openModal, setOpenModal] = useState(-1);
-  const [rides, setRides] = useState<RealRide[]>([]);
+  const [rides, setRides] = useState<Ride[]>([]);
 
-  const compRides = (a: RealRide, b: RealRide) => {
+  const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;
@@ -33,14 +34,15 @@ const Table = ({ drivers }: TableProps) => {
   };
 
   const getUnscheduledRides = () => {
-    fetch('/rides?type=unscheduled')
+    const today = moment(new Date()).format('YYYY-MM-DD');
+    fetch(`/rides?type=unscheduled&date=${today}`)
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };
 
   useEffect(getUnscheduledRides, []);
 
-  function renderTableData(allRides: RealRide[]) {
+  function renderTableData(allRides: Ride[]) {
     return allRides.map((ride, index) => {
       const startTime = new Date(ride.startTime).toLocaleTimeString([], {
         hour: '2-digit',
