@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
@@ -10,6 +10,11 @@ import './dnd.scss';
 
 import { CalEvent, tempEvents, resourceMap1, colorMap } from './viewData';
 
+type Driver = {
+  resourceId: string,
+  resourceTitle: string
+}
+
 const localizer = momentLocalizer(moment);
 
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
@@ -20,8 +25,43 @@ const Schedule = () => {
   const defaultEnd = new Date(defaultStart.getTime() + 28699999);
 
   const [curStart, setCurStart] = useState(defaultStart);
-  const [events, setEvents] = useState(tempEvents);
+  // const [events, setEvents] = useState<CalEvent[]>([]);
+  const [events, setEvents] = useState(tempEvents)
+  const [drivers, setDrivers] = useState<Driver[]>([])
   const [viewState, setviewState] = useState(false);
+
+  // useEffect(() => {
+  //   fetch('/rides')
+  //     .then((res) => res.json())
+  //     .then(({ data }) => {
+  //       console.log(data.filter((ride: any) => ride.type !== "unscheduled"))
+  //       setEvents(data
+  //         .filter((ride: any) => ride.type !== "unscheduled")
+  //         .map((ride: any) => ({
+  //           id: ride.id,
+  //           title:
+  //             "" + ride.startLocation.name + " to " + ride.endLocation.name + "/n" +
+  //             "Rider: " + ride.rider.firstName + " " + ride.rider.lastName + "/n" +
+  //             "Driver: " + ride.driver.firstName + " " + ride.rider.lastName,
+  //           start: ride.startTime,
+  //           end: ride.endTime,
+  //           resourceId: ride.driver.id
+  //         })),
+  //       )
+  //     }
+  //     );
+  // });
+
+  useEffect(() => {
+    fetch('/drivers')
+      .then((res) => res.json())
+      .then(({ data }) => setDrivers(
+        data.map((driver: any) => ({
+          resourceId: driver.id,
+          resourceTitle: driver.firstName + " " + driver.lastName
+        }))
+      ));
+  }, []);
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -116,7 +156,8 @@ const Schedule = () => {
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
             defaultDate={new Date(2018, 0, 29)} // temp date
-            resources={resourceMap1}
+            // resources={resourceMap1}
+            resources={drivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
             eventPropGetter={eventStyle}
