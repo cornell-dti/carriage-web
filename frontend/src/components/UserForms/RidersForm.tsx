@@ -111,25 +111,25 @@ const Form = (props: FormProps) => {
             labelName="firstName"
             labelText="First Name: "
             feedback="Please enter a first name"
-            showFormFeedback={`formFeedback ${validFirstName ? 'hidden' : ''}`}
+            showFormFeedback={validFirstName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="lastName"
             labelText="Last Name: "
             feedback="Please enter a last name"
-            showFormFeedback={`formFeedback ${validLastName ? 'hidden' : ''}`}
+            showFormFeedback={validLastName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="phone"
             labelText="Phone Number: "
             feedback="Enter a phone number in the form xxx-xxx-xxxx"
-            showFormFeedback={`formFeedback ${validPhone ? 'hidden' : ''}`}
+            showFormFeedback={validPhone}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="email"
             labelText="NetId: "
             feedback="Enter a valid netid"
-            showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
+            showFormFeedback={validEmail}
             handleInput={(e) => handleInput(e)} />
           <CheckBoxInput
             labelText="Accessibility Needs: "
@@ -142,7 +142,7 @@ const Form = (props: FormProps) => {
             labelName="description"
             labelText="Description: "
             feedback="Enter a description"
-            showFormFeedback={`formFeedback ${validDesc ? 'hidden' : ''}`}
+            showFormFeedback={validDesc}
             handleInput={(e) => handleInput(e)} />
           <DropDownInput
             labelName="pronouns"
@@ -153,7 +153,7 @@ const Form = (props: FormProps) => {
             labelName="address"
             labelText="Address: "
             feedback="Enter an address"
-            showFormFeedback={`formFeedback ${validAddress ? 'hidden' : ''}`}
+            showFormFeedback={validAddress}
             handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>

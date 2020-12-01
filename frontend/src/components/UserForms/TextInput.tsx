@@ -5,7 +5,7 @@ type InputProp = {
   labelName: string,
   labelText: string,
   feedback: string,
-  showFormFeedback: string,
+  showFormFeedback: boolean,
   handleInput: ((e: any) => void)
 }
 
@@ -20,9 +20,9 @@ const TextInput = (
       <input type="text"
         name={labelName}
         onChange={(e) => handleInput(e)} />
-      <p className={showFormFeedback}>
-        {feedback}
-      </p>
+      {showFormFeedback &&
+        <p>{feedback}</p>
+      }
     </div>
   )
 }

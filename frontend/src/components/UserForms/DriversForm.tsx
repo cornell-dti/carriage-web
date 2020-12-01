@@ -76,25 +76,25 @@ const Form = (props: FormProps) => {
             labelName="name"
             labelText="Name: "
             feedback="Please enter a name"
-            showFormFeedback={`formFeedback ${validName ? 'hidden' : ''}`}
+            showFormFeedback={validName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="netid"
             labelText="NetID: "
             feedback="Enter a valid netid"
-            showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
+            showFormFeedback={validEmail}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="email"
             labelText="Email: "
             feedback="Enter a valid email address"
-            showFormFeedback={`formFeedback ${validEmail ? 'hidden' : ''}`}
+            showFormFeedback={validEmail}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="phone"
             labelText="Phone Number: "
             feedback="Enter a phone number in the form xxx-xxx-xxxx"
-            showFormFeedback={`formFeedback ${validPhone ? 'hidden' : ''}`}
+            showFormFeedback={validPhone}
             handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>

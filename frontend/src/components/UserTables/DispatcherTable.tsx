@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect } from 'react';
 import DispatcherForm from '../UserForms/DispatcherForm';
 import { Dispatcher } from '../../types/index';
 import styles from './table.module.css';
@@ -12,13 +12,7 @@ const DispatcherManager = () => {
       .then((res) => res.json())
       .then((data) => data.data);
     setDispatchers(
-      dispatchersData.map((dispatcher: Dispatcher) => ({
-        id: dispatcher.id,
-        firstName: dispatcher.firstName,
-        phoneNumber: dispatcher.phoneNumber,
-        email: dispatcher.email,
-        accessLevel: dispatcher.accessLevel
-      })),
+      dispatchersData
     );
   };
 

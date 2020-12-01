@@ -54,17 +54,13 @@ const Form = ({ onClick }: FormProps) => {
             labelName="name"
             labelText="Name: "
             feedback="Please enter a name"
-            showFormFeedback={cn(styles.formFeedback, {
-              [styles.hidden2]: validName,
-            })}
+            showFormFeedback={validName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="address"
             labelText="Address: "
             feedback="Please enter an address"
-            showFormFeedback={cn(styles.formFeedback, {
-              [styles.hidden2]: validAddress,
-            })}
+            showFormFeedback={validAddress}
             handleInput={(e) => handleInput(e)} />
           <DropDownInput
             labelName="tag"
