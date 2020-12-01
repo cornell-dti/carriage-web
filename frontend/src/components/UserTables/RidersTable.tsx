@@ -2,6 +2,7 @@ import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import TableRow from '../TableComponents/TableRow';
 import { Rider } from '../../types';
 import styles from './table.module.css';
+import { useHistory } from 'react-router-dom';
 
 type RidersTableProps = {
   riders: Array<Rider>;
@@ -37,6 +38,8 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
 }
 
 const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
+  const history = useHistory();
+
   useEffect(() => {
     async function getExistingRiders() {
       const ridersData = await fetch('/riders')
@@ -90,8 +93,21 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       };
       const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
         valueAccessbility, valueDelete];
+      const netId = email.split('@')[0];
+      const riderData = {
+        firstName: firstName, lastName: lastName, netID: netId,
+        phone: phoneNumber, accessibility: renderAccessNeeds(accessibilityNeeds)
+      }
+      const location = {
+        pathname: "/riders/rider",
+        state: riderData,
+        search: `?name=${firstName + "_" + lastName}`
+      }
+      const goToDetail = () => {
+        history.push(location)
+      }
       return (
-        <tr key={index}>
+        <tr key={index} onClick={goToDetail} className={styles.tableRow}>
           <TableRow values={inputValues} />
         </tr>
       );

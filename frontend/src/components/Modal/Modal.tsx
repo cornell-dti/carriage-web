@@ -1,7 +1,7 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import styles from './modal.module.css';
-import closeIcon from './close.svg';
+import { close } from '../../icons/other/index';
 
 type PageIndicatorsProps = {
   pages: number;
@@ -56,7 +56,7 @@ const Modal = ({
               <div className={styles.topContainer}>
                 <h1 className={styles.title}>{currentTitle}</h1>
                 <button className={styles.closeBtn} onClick={onClose}>
-                  <img alt="close" src={closeIcon} />
+                  <img alt="close" src={close} />
                 </button>
               </div>
               <div className={styles.page}>

@@ -29,3 +29,7 @@
 .west{
   background-color: #FFD8DE;
 }
+
+Button {
+  position: relative;
+}

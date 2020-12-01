@@ -17,23 +17,21 @@ export type Rider = {
   address: string;
 };
 
-export type BreakTimes = {
-  breakStart: string;
-  breakEnd: string;
+export type Availability = {
+  startTime: string;
+  endTime: string;
 };
 
-export type BreakType = {
-  [day: string]: BreakTimes;
+export type AvailabilityType = {
+  [day: string]: Availability;
 };
 
 export type Driver = {
   id: string;
   firstName: string;
   lastName: string;
-  startTime: string;
-  endTime: string;
-  breaks: BreakType;
-  vehicle: string;
+  availability: AvailabilityType;
+  vehicle: Vehicle;
   phoneNumber: string;
   email: string;
   phone: string;
@@ -48,6 +46,10 @@ export type Ride = {
   endTime: string;
   riderId: string;
 };
+
+export type ObjectType = {
+  [x: string]: any;
+}
 
 export type Vehicle = {
   id: string;
@@ -86,8 +88,5 @@ export type TableValue = {
   data: string | null;
   tag?: string;
   buttonHandler?: () => void;
-};
-
-export type ObjectType = {
-  [x: string]: any;
+  ButtonModal?: () => JSX.Element;
 };

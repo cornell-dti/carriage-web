@@ -1,8 +1,8 @@
-import React from 'react';
-import { Passenger } from '../../types/index';
+import React, { useState } from 'react';
+import { Passenger, Driver } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
-
+import AssignDriverModal from '../Modal/AssignDriverModal';
 
 function renderTableHeader() {
   return (
@@ -17,18 +17,22 @@ function renderTableHeader() {
   );
 }
 
-const Table = () => {
+type TableProps = {
+  drivers: Driver[]
+}
+const Table = ({ drivers }: TableProps) => {
+  const [openModal, setOpenModal] = useState(-1);
   const passengers = [
     { startTime: '8:20am', endTime: '8:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '8:30am', endTime: '8:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '9:10am', endTime: '9:40am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '9:30am', endTime: '9:50am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
     { startTime: '10:10am', endTime: '10:30am', name: 'Rose Lisborn', pickupLocation: 'Eddygate', pickupTag: 'Ctown', dropoffLocation: 'Hollister Hall', dropoffTag: 'West', needs: 'Crutches' },
-
   ];
 
   function renderTableData(allPassengers: Passenger[]) {
     let currentTime = '';
+
     return allPassengers.map((rider, index) => {
       const { startTime, endTime, name, pickupLocation, pickupTag,
         dropoffLocation, dropoffTag, needs } = rider;
@@ -46,7 +50,19 @@ const Table = () => {
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds];
+      const assignModal = () => <AssignDriverModal
+        isOpen={openModal === index}
+        close={() => setOpenModal(-1)}
+        ride={passengers[0]}
+        allDrivers={drivers} />;
+
+
+      const assignButton = {
+        data: 'Assign',
+        buttonHandler: () => setOpenModal(index),
+        ButtonModal: assignModal,
+      };
+      const inputValues = [valueName, valuePickup, valueDropoff, valueNeeds, assignButton];
       return (
         <tr key={index}>
           <td className={styles.cell}>{timeframe}</td>
@@ -69,7 +85,7 @@ const Table = () => {
             {renderTableData(passengers)}
           </tbody>
         </table>
-      </div >
+      </div>
     </>
   );
 };

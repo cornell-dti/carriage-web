@@ -62,8 +62,8 @@ router.get('/:id/favorites', (req, res) => {
 router.post('/', (req, res) => {
   const { body } = req;
   const rider = new Rider({
-    id: uuid(),
     ...body,
+    id: uuid(),
     favoriteLocations: [],
   });
   db.create(res, rider);

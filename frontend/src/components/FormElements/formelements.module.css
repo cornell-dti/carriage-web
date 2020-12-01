@@ -5,6 +5,7 @@
 .input {
   border: none;
   outline: none;
+  border-radius: 4px;
 }
 
 .textInput {
