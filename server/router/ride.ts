@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
 // Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
-    body: { rider, startTime, endTime, driver, startLocation, endLocation },
+    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
 
   let startLocationId;
@@ -83,7 +83,8 @@ router.post('/', (req, res) => {
     startLocation: startLocationId ?? startLocation,
     endLocation: endLocationId ?? endLocation,
     startTime,
-    endTime,
+    requestedEndTime,
+    endTime: requestedEndTime,
     driver,
   });
   db.create(res, ride);

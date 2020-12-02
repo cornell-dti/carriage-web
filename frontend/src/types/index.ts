@@ -17,36 +17,24 @@ export type Rider = {
   address: string;
 };
 
-export type BreakTimes = {
-  breakStart: string;
-  breakEnd: string;
+export type Availability = {
+  startTime: string;
+  endTime: string;
 };
 
-export type BreakType = {
-  [day: string]: BreakTimes;
+export type AvailabilityType = {
+  [day: string]: Availability;
 };
 
 export type Driver = {
   id: string;
   firstName: string;
   lastName: string;
-  startTime: string;
-  endTime: string;
-  breaks: BreakType;
-  vehicle: string;
+  availability: AvailabilityType;
+  vehicle: Vehicle;
   phoneNumber: string;
   email: string;
   phone: string;
-};
-
-export type Ride = {
-  type: string;
-  id: string;
-  startLocation: string;
-  endLocation: string;
-  startTime: string;
-  endTime: string;
-  riderId: string;
 };
 
 export type ObjectType = {
@@ -75,17 +63,6 @@ export type Location = {
   tag?: Tag;
 };
 
-export type Passenger = {
-  startTime: string;
-  endTime: string;
-  name: string;
-  pickupLocation: string;
-  pickupTag: string;
-  dropoffLocation: string;
-  dropoffTag: string;
-  needs: string;
-};
-
 export type TableValue = {
   data: string | null;
   tag?: string;
@@ -93,6 +70,7 @@ export type TableValue = {
   ButtonModal?: () => JSX.Element;
 };
 
+<<<<<<< HEAD
 export type Dispatcher = {
   id: string;
   firstName: string;
@@ -101,3 +79,17 @@ export type Dispatcher = {
   email: string;
   accessLevel: string;
 }
+=======
+export type Ride = {
+  id: string;
+  type: string;
+  status: string;
+  late?: boolean;
+  startLocation: Location;
+  endLocation: Location;
+  startTime: string;
+  endTime: string;
+  rider: Rider;
+  driver?: Driver;
+};
+>>>>>>> 17795a20eb77fe76ddf8d3f137c6163c75d2951b
