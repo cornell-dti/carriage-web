@@ -8,7 +8,21 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
 import './dnd.scss';
 
-import { CalEvent, tempEvents, resourceMap1, colorMap } from './viewData';
+const colorMap = {
+  red: ['FFA26B', 'FFC7A6'],
+  blue: ['0084F4', '66B5F8'],
+  yellow: ['FFCF5C', 'FFE29D'],
+  green: ['00C48C', '7DDFC3'],
+  black: ['1A051D', 'FBE4E8'],
+};
+
+type CalEvent = {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  resourceId: number;
+};
 
 type Driver = {
   resourceId: string,
@@ -25,32 +39,31 @@ const Schedule = () => {
   const defaultEnd = new Date(defaultStart.getTime() + 28699999);
 
   const [curStart, setCurStart] = useState(defaultStart);
-  // const [events, setEvents] = useState<CalEvent[]>([]);
-  const [events, setEvents] = useState(tempEvents)
-  const [drivers, setDrivers] = useState<Driver[]>([])
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
 
-  // useEffect(() => {
-  //   fetch('/rides')
-  //     .then((res) => res.json())
-  //     .then(({ data }) => {
-  //       console.log(data.filter((ride: any) => ride.type !== "unscheduled"))
-  //       setEvents(data
-  //         .filter((ride: any) => ride.type !== "unscheduled")
-  //         .map((ride: any) => ({
-  //           id: ride.id,
-  //           title:
-  //             "" + ride.startLocation.name + " to " + ride.endLocation.name + "/n" +
-  //             "Rider: " + ride.rider.firstName + " " + ride.rider.lastName + "/n" +
-  //             "Driver: " + ride.driver.firstName + " " + ride.rider.lastName,
-  //           start: ride.startTime,
-  //           end: ride.endTime,
-  //           resourceId: ride.driver.id
-  //         })),
-  //       )
-  //     }
-  //     );
-  // });
+  useEffect(() => {
+    fetch('/rides')
+      .then((res) => res.json())
+      .then(({ data }) => {
+        console.log(data)
+        setEvents(data
+          .filter((ride: any) => ride.type !== "unscheduled" && ride.driver !== undefined)
+          .map((ride: any) => ({
+            id: ride.id,
+            title:
+              "" + ride.startLocation.name + " to " + ride.endLocation.name + "\n" +
+              "Rider: " + ride.rider.firstName + " " + ride.rider.lastName + "\n" +
+              "Driver: " + ride.driver.firstName + " " + ride.driver.lastName,
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver.id
+          })),
+        )
+      }
+      );
+  }, []);
 
   useEffect(() => {
     fetch('/drivers')
@@ -155,8 +168,7 @@ const Schedule = () => {
             max={
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
-            defaultDate={new Date(2018, 0, 29)} // temp date
-            // resources={resourceMap1}
+            defaultDate={new Date(2020, 10, 29)} // temp date
             resources={drivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
