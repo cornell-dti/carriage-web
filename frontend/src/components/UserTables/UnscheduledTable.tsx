@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Driver, Ride } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
-
+import AssignDriverModal from '../Modal/AssignDriverModal';
 
 function renderTableHeader() {
   return (
