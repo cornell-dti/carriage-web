@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import styles from './cell.module.css';
-
+import { Button } from '../FormElements/FormElements';
 
 type TableCellProps = {
   data: string | null;
@@ -10,34 +10,40 @@ type TableCellProps = {
   last: boolean;
   tag?: string;
   buttonHandler?: () => void;
+  ButtonModal?: () => JSX.Element;
 }
 
 const TableCell = (props: TableCellProps) => {
-  const { data, index, first, last, tag, buttonHandler } = props;
+  const { data, index, first, last, tag, buttonHandler, ButtonModal } = props;
   if (first) {
-    return (<><td
+    return (<td
       key={index}
       className={cn(styles.passInfo, styles.cell, styles.firstCell)}>
       {data}
-    </td></>);
+    </td>);
   } if (last) {
+    if (buttonHandler && ButtonModal) {
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}>
+        <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td>);
+    }
     if (buttonHandler) {
       return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>
-        <button onClick={buttonHandler}>{data}</button></td></>);
+        <Button onClick={buttonHandler}>{data}</Button></td></>);
     }
-    return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
-    ${styles.lastCell}`}>{data}</td></>);
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+    ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
     const tagStyle = tag.toLowerCase();
-    return (<><td key={index} className={`${styles.passInfo} ${styles.cell}`}>
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
       {data}{' '}
       <span className={`${styles.tag} 
         ${tagStyle === 'ctown' ? styles.ctown : styles.west}`}>
-        {tag}</span></td></>);
+        {tag}</span></td>);
   }
-  return (<><td key={index} className={`${styles.passInfo} ${styles.cell}`}>
-    {data}</td></>);
+  return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
+    {data}</td>);
 };
 
 export default TableCell;

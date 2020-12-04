@@ -3,7 +3,7 @@ import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as db from './common';
 import { Ride, RideType, Status, Type } from '../models/ride';
-import { Location } from '../models/location';
+import { Location, Tag } from '../models/location';
 import { formatAddress } from '../util';
 
 const router = express.Router();
@@ -47,8 +47,9 @@ router.get('/', (req, res) => {
 // Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
-    body: { rider, startTime, endTime, driver, startLocation, endLocation },
+    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
+
   let startLocationId;
   let endLocationId;
 
@@ -58,6 +59,7 @@ router.post('/', (req, res) => {
       id: startLocationId,
       name: 'Custom',
       address: formatAddress(startLocation),
+      tag: Tag.CUSTOM,
     });
     location.save();
   }
@@ -68,6 +70,7 @@ router.post('/', (req, res) => {
       id: endLocationId,
       name: 'Custom',
       address: formatAddress(endLocation),
+      tag: Tag.CUSTOM,
     });
     location.save();
   }
@@ -80,7 +83,8 @@ router.post('/', (req, res) => {
     startLocation: startLocationId ?? startLocation,
     endLocation: endLocationId ?? endLocation,
     startTime,
-    endTime,
+    requestedEndTime,
+    endTime: requestedEndTime,
     driver,
   });
   db.create(res, ride);
@@ -92,14 +96,14 @@ router.put('/:id', (req, res) => {
   if (body.type === Type.PAST) {
     db.getById(res, Ride, id, tableName, (ride) => {
       const {
-        startLocation: { id: startId, name: startName },
-        endLocation: { id: endId, name: endName },
+        startLocation: { id: startId, tag: startTag },
+        endLocation: { id: endId, tag: endTag },
       } = ride as RideType;
-      if (startName === 'Custom') {
+      if (startTag === Tag.CUSTOM) {
         body.startLocation = 'Custom';
         Location.delete(startId);
       }
-      if (endName === 'Custom') {
+      if (endTag === Tag.CUSTOM) {
         body.endLocation = 'Custom';
         Location.delete(endId);
       }
