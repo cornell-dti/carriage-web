@@ -26,11 +26,33 @@ const DriverModal = () => {
     return result;
   };
 
-  const onSubmit = (data: ObjectType) => {
-    const { availability, capacity, carType, email, name, netid, phone } = data;
-    const parsedAvail = parseAvailability(availability);
+  const onSubmit = async (data: ObjectType) => {
+    const { name, email, phoneNumber, carType, capacity, availability } = data;
     const vehicle = { name: carType, capacity: Number(capacity) };
-    console.log({ email, name, netid, phone, availability: parsedAvail, vehicle });
+    const vehicleJson = await fetch('/vehicles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(vehicle),
+    }).then((res) => res.json());
+    const [firstName, lastName] = name.split(' ');
+    const driver = {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      availability: parseAvailability(availability),
+      vehicle: vehicleJson.id,
+    };
+    fetch('/drivers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(driver),
+    });
+    closeModal();
   };
 
   return (

@@ -31,7 +31,7 @@ const DriverInfo = () => {
         ref={register({ required: true })}
       />
       <Input
-        name='phone'
+        name='phoneNumber'
         type='tel'
         pattern="[0-9]{10}"
         placeholder='Phone Number'
@@ -51,9 +51,9 @@ const DriverInfo = () => {
         name='capacity'
         type='number'
         placeholder='Capacity'
-        min={0}
+        min={1}
         className={cn(styles.input, styles.col2)}
-        ref={register({ required: true, min: 0 })}
+        ref={register({ required: true, min: 1 })}
       />
     </div>
   );
