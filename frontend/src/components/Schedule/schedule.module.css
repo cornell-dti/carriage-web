@@ -28,6 +28,10 @@
   align-items: center;
 }
 
+.long {
+  height: 800px;
+}
+
 .pad {
   padding: 40px;
 }
@@ -64,4 +68,20 @@
 .btn:hover {
   border-radius: 50%;
   background-color: lightgray;
+}
+
+.btn:disabled {
+  visibility: hidden;
+}
+
+.view_state {
+  padding: 5px;
+  margin-right: 50px;
+  border: none;
+  background-color: white;
+  float: right;
+}
+
+.view_state:hover {
+  text-decoration: underline;
 }

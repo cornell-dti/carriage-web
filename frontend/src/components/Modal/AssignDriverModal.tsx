@@ -1,18 +1,18 @@
 import React, { useRef, useEffect } from 'react';
-import { Passenger, Driver } from '../../types/index';
+import { Ride, Driver } from '../../types/index';
 import styles from './assigndrivermodal.module.css';
 
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Passenger;
+  ride: Ride;
   allDrivers: Driver[];
-}
+};
 
 type DriverRowProps = {
   firstName: string;
   imageURL: string;
-}
+};
 
 const DriverRow = ({ firstName, imageURL }: DriverRowProps) => (
   <div className={styles.driverRow}>
@@ -21,7 +21,12 @@ const DriverRow = ({ firstName, imageURL }: DriverRowProps) => (
   </div>
 );
 
-const AssignDriverModal = ({ isOpen, close, ride, allDrivers }: AssignModalProps) => {
+const AssignDriverModal = ({
+  isOpen,
+  close,
+  ride,
+  allDrivers,
+}: AssignModalProps) => {
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
@@ -38,18 +43,23 @@ const AssignDriverModal = ({ isOpen, close, ride, allDrivers }: AssignModalProps
     }, [ref]);
   }
 
-
   const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef);
 
   return (
     <>
-      {isOpen
-        && <div className={styles.modal} ref={wrapperRef}>
+      {isOpen && (
+        <div className={styles.modal} ref={wrapperRef}>
           <h1 className={styles.titleText}>Available Drivers</h1>
-          {allDrivers.map((driver) => <DriverRow firstName={driver.firstName} imageURL='https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg' />)}
+          {allDrivers.map((driver, id) => (
+            <DriverRow
+              key={id}
+              firstName={driver.firstName}
+              imageURL="https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg"
+            />
+          ))}
         </div>
-      }
+      )}
     </>
   );
 };

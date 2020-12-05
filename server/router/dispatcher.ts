@@ -10,8 +10,8 @@ const tableName = 'Dispatchers';
 router.post('/', (req, res) => {
   const { body } = req;
   const dispatcher = new Dispatcher({
-    id: uuid(),
     ...body,
+    id: uuid()
   });
   db.create(res, dispatcher);
 });
