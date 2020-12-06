@@ -29,9 +29,9 @@ type WeekType = {
 };
 
 export const WeekProvider = ({ children }: WeekProviderProps) => {
-  // week keeps track of which HourInput has what days selected, based
-  // on its index number. if a day is not selected in any HourInput instance,
-  // the value is -1.
+  // week keeps track of which AvailabilityInput has what days selected, based
+  // on its index number. if a day is not selected in any AvailabilityInput
+  // instance, the value is -1.
   const [week, setWeek] = useState<WeekType>({
     Sun: -1,
     Mon: -1,

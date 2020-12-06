@@ -31,10 +31,6 @@
   width: 94px;
 }
 
-#driverPhotoInput {
-  display: none;
-}
-
 .uploadText {
   margin: 0;
   font-size: 12px;
@@ -54,21 +50,27 @@
   margin-bottom: 14px;
 }
 
-.addHourInput {
+.addAvailabilityInput {
   display: inline-block;
   color: #0084F4;
   font-size: 12px;
   cursor: pointer;
 }
 
-.addHourInput:hover {
+.addAvailabilityInput:hover {
   text-decoration: underline;
 }
 
-.hourInput { 
+.availabilityInput { 
   display: flex; 
   align-items: center; 
   margin: 8px 0;
+}
+
+.timeInput {
+  font-size: initial;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 6px 10px;
 }
 
 .toText {

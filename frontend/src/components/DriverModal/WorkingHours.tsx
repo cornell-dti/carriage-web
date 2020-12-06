@@ -5,11 +5,11 @@ import styles from './drivermodal.module.css';
 import { Input } from '../FormElements/FormElements';
 import { WeekProvider, useWeek } from './WeekContext';
 
-type HourInputProps = {
+type AvailabilityInputProps = {
   index: number;
 }
 
-const HourInput = ({ index }: HourInputProps) => {
+const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
   const {
     selectDay,
     deselectDay,
@@ -27,8 +27,8 @@ const HourInput = ({ index }: HourInputProps) => {
     Fri: 'F',
     Sat: 'S',
   };
-  // All data for this HourInput instance will be saved in the form's data in
-  // an array 'availability' at index 'index'
+  // All data for this AvailabilityInput instance will be saved in the form's
+  // data in an array 'availability' at index 'index'
   const instance = `availability[${index}]`;
   const days = getSelectedDays(index);
 
@@ -51,18 +51,18 @@ const HourInput = ({ index }: HourInputProps) => {
   }, [instance, days, setValue]);
 
   return (
-    <div className={styles.hourInput}>
+    <div className={styles.availabilityInput}>
       <Input
         name={`${instance}.startTime`}
         type='time'
-        style={{ fontSize: 'initial' }}
+        className={styles.timeInput}
         ref={register({ required: true })}
       />
       <p className={styles.toText}>to</p>
       <Input
         name={`${instance}.endTime`}
         type='time'
-        style={{ fontSize: 'initial' }}
+        className={styles.timeInput}
         ref={register({
           required: true,
           validate: (endTime) => {
@@ -90,19 +90,21 @@ const HourInput = ({ index }: HourInputProps) => {
 };
 
 const WorkingHours = () => {
-  const [numHourInputs, setNumHourInputs] = useState(1);
+  const [numAvailability, setNumAvailability] = useState(1);
 
-  const addHourInput = () => setNumHourInputs((p) => p + 1);
+  const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
 
   return (
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       <WeekProvider>
-        {[...new Array(numHourInputs)].map((_, index) => (
-          <HourInput key={index} index={index} />
+        {[...new Array(numAvailability)].map((_, index) => (
+          <AvailabilityInput key={index} index={index} />
         ))}
       </WeekProvider>
-      <p className={styles.addHourInput} onClick={addHourInput}>+ Add more</p>
+      <p className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
+        + Add more
+        </p>
     </div>
   );
 };
