@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Ride } from '../../types/index';
 import moment from 'moment';
-import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 
-type TableProps = {
-  drivers: Driver[];
-};
-const Table = ({ drivers }: TableProps) => {
+type ScheduledTableProp = {
+  driverId: string;
+  driverName: string;
+}
+
+const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
   const [rides, setRides] = useState<Ride[]>([]);
 
   const compRides = (a: Ride, b: Ride) => {
@@ -17,21 +19,21 @@ const Table = ({ drivers }: TableProps) => {
     return 0;
   };
 
-  const getUnscheduledRides = () => {
+  const getScheduledRides = () => {
     // uncomment to get the rides for only today
     // const today = moment(new Date()).format('YYYY-MM-DD');
-    // fetch(`/rides?type=unscheduled&date=${today}`)
-    fetch(`/rides?type=unscheduled`)
+    // fetch(`/rides?driver=${driverId}date=${today}`)
+    fetch(`/rides?driver=${driverId}`)
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };
 
-  useEffect(getUnscheduledRides, []);
+  useEffect(getScheduledRides, []);
 
   return (
-    <RidesTable title="Unscheduled Rides" rides={rides} drivers={drivers}
-      hasAssignButton={true} />
-  );
-};
+    <RidesTable title={driverName} rides={rides} drivers={[]}
+      hasAssignButton={false} />
+  )
+}
 
-export default Table;
+export default ScheduledTable

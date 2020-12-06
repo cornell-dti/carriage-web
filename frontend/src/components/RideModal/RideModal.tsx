@@ -3,12 +3,15 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
+import { useHistory } from 'react-router-dom';
 
 const RideModal = () => {
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const history = useHistory();
 
   const openModal = () => {
     setCurrentPage(0);
@@ -39,6 +42,13 @@ const RideModal = () => {
     setIsSubmitted(true);
   };
 
+  const exportPreview = () => {
+    const location = {
+      pathname: "/home/export",
+    }
+    history.push(location)
+  }
+
   useEffect(() => {
     if (isSubmitted) {
       fetch('/rides', {
@@ -55,6 +65,7 @@ const RideModal = () => {
 
   return (
     <>
+      <Button onClick={exportPreview}>export</Button>
       <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate
