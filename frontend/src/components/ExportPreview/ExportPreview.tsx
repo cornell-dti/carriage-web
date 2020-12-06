@@ -14,9 +14,10 @@ const ExportPreview = () => {
   return (
     <>
       <div id="exportTable">
-        {drivers.map((driver: Driver, index: number) =>
-          <ScheduledTable key={index} driverId={driver.id}
-            driverName={driver.firstName + " " + driver.lastName} />
+        {drivers.map(
+          (driver: Driver, index: number) =>
+            <ScheduledTable key={index} driverId={driver.id}
+              driverName={driver.firstName + " " + driver.lastName} />
         )}
       </div>
     </>
