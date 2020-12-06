@@ -10,7 +10,6 @@ import styles from '../UserTables/table.module.css';
 function renderTableHeader() {
   return (
     <tr>
-      <th></th>
       <th className={styles.tableHeader}>Name</th>
       <th className={styles.tableHeader}>Date</th>
       <th className={styles.tableHeader}>Pickup Location</th>
@@ -31,7 +30,7 @@ type DriverDetailProps = {
   vehicle: Vehicle
 }
 
-const DriverDetail = (props: DriverDetailProps) => {
+const DriverDetail = () => {
   const location = useLocation<DriverDetailProps>();
   const driver: DriverDetailProps = location.state;
   const availToString = (acc: string, [day, timeRange]: string[]) => acc + day + ": " + timeRange + " • ";
@@ -49,7 +48,8 @@ const DriverDetail = (props: DriverDetailProps) => {
   };
 
   const getPastRides = () => {
-    fetch(`/rides?type=past&driver=${props.id}`)
+    console.log(driver.firstName);
+    fetch(`/rides?type=past&driver=${driver.id}`)
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };
@@ -57,15 +57,16 @@ const DriverDetail = (props: DriverDetailProps) => {
   useEffect(getPastRides, []);
 
   function renderTableData(allRides: Ride[]) {
+    console.log(allRides);
     return allRides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
       const { rider } = ride;
       const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
       const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
+      const pickupLocation = ride.startLocation ? ride.startLocation.name : '';
+      const pickupTag = ride.startLocation ? ride.startLocation.tag : '';
+      const dropoffLocation = ride.endLocation ? ride.endLocation.name : '';
+      const dropoffTag = ride.endLocation ? ride.endLocation.tag : '';
 
       const valueName = { data: name };
       const valueDate = { data: date };
