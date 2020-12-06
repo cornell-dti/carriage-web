@@ -9,7 +9,7 @@ const Drivers = () => (
       <h1 className={styles.header}>Drivers</h1>
       <DriverModal />
     </div>
-    {/* <DriverCards /> */}
+    <DriverCards />
   </>
 );
 
