@@ -24,7 +24,8 @@ function renderTableHeader() {
   );
 }
 
-const RidesTable = ({ title, rides, drivers, hasAssignButton }: RidesTableProps) => {
+const RidesTable = (
+  { title, rides, drivers, hasAssignButton }: RidesTableProps) => {
   const [openModal, setOpenModal] = useState(-1);
 
   function renderTableData(allRides: Ride[]) {
