@@ -48,7 +48,6 @@ const DriverDetail = () => {
   };
 
   const getPastRides = () => {
-    console.log(driver.firstName);
     fetch(`/rides?type=past&driver=${driver.id}`)
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
@@ -57,7 +56,6 @@ const DriverDetail = () => {
   useEffect(getPastRides, []);
 
   function renderTableData(allRides: Ride[]) {
-    console.log(allRides);
     return allRides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
       const { rider } = ride;

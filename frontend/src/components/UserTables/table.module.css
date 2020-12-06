@@ -7,7 +7,8 @@
 }
 
 .tableContainer {
-  padding-left: 32px;
+  padding-left: 2%;
+  padding-right: 2%;
   display: flex;
   width: 100%;
   flex-direction: row;
@@ -16,8 +17,9 @@
 
 .tableHeader {
   border-bottom: none;
-  padding-right: 3rem;
+  padding-left: 2rem;
   padding-bottom: 1.5rem;
+  text-align: left;
 }
 
 .tableRow {
