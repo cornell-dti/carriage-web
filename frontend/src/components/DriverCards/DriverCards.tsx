@@ -35,10 +35,12 @@ const formatPhone = (phoneNumber: string) => {
 };
 
 type DriverCardProps = {
+  id: string,
   driver: Driver;
 }
 
 const DriverCard = ({
+  id,
   driver: {
     firstName,
     lastName,
@@ -53,6 +55,7 @@ const DriverCard = ({
   const fmtAvailability = formatAvailability(availability);
   const fullName = `${firstName}_${lastName}`;
   const userInfo = {
+    id,
     firstName,
     lastName,
     netId,
@@ -98,6 +101,7 @@ const DriverCards = () => {
       {drivers && drivers.map((driver) => (
         <DriverCard
           key={driver.id}
+          id={driver.id}
           driver={driver}
         />
       ))}
