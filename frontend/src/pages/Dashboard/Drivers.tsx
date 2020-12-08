@@ -7,7 +7,9 @@ const Drivers = () => (
   <>
     <div className={styles.pageTitle}>
       <h1 className={styles.header}>Drivers</h1>
-      <DriverModal />
+      <div className={styles.margin3}>
+        <DriverModal />
+      </div>
     </div>
     <DriverCards />
   </>
