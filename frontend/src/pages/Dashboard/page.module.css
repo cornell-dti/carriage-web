@@ -9,3 +9,13 @@
   margin-top: 1rem;
   margin-left: 32px;
 }
+
+.pageTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.margin3{
+  margin: 3rem;
+}

@@ -41,6 +41,7 @@
 
 .page {
   margin: 12px 0;
+  position: relative;
 }
 
 .pageIndicators {

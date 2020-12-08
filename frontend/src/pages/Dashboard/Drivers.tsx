@@ -1,10 +1,16 @@
 import React from 'react';
+import DriverModal from '../../components/DriverModal/DriverModal';
 import DriverCards from '../../components/DriverCards/DriverCards';
 import styles from './page.module.css';
 
 const Drivers = () => (
   <>
-    <h1 className={styles.header}>Drivers</h1>
+    <div className={styles.pageTitle}>
+      <h1 className={styles.header}>Drivers</h1>
+      <div className={styles.margin3}>
+        <DriverModal />
+      </div>
+    </div>
     <DriverCards />
   </>
 );
