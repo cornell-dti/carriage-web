@@ -106,12 +106,14 @@ const Table = ({ drivers }: TableProps) => {
     <>
       <div>
         <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-        <table cellSpacing="0" className={styles.table}>
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData(rides)}
-          </tbody>
-        </table>
+        <div className={styles.tableContainer}>
+          <table cellSpacing='0' className={styles.table} >
+            <tbody>
+              {renderTableHeader()}
+              {renderTableData(rides)}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );
