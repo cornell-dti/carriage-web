@@ -45,7 +45,7 @@ const Modal = ({
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
   const numPages = pages.length;
-  const currentTitle = title === 'string' ? title : title[currentPage];
+  const currentTitle = paginate ? title[currentPage] : title;
 
   return (
     <>
