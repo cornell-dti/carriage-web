@@ -4,6 +4,7 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
 import moment from 'moment';
 import styles from './schedule.module.css';
+import { Ride, Driver } from '../../types';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
 import './dnd.scss';
@@ -24,7 +25,7 @@ type CalEvent = {
   resourceId: number;
 };
 
-type Driver = {
+type CalendarDriver = {
   resourceId: string,
   resourceTitle: string
 }
@@ -40,6 +41,7 @@ const Schedule = () => {
 
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
+  const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
 
@@ -47,34 +49,42 @@ const Schedule = () => {
     fetch('/rides')
       .then((res) => res.json())
       .then(({ data }) => {
-        console.log(data)
         setEvents(data
-          .filter((ride: any) => ride.type !== "unscheduled" && ride.driver !== undefined)
-          .map((ride: any) => ({
+          .filter((ride: Ride) => ride.type !== "unscheduled" && ride.driver !== undefined && ride.startLocation !== undefined)
+          .map((ride: Ride) => ({
             id: ride.id,
             title:
-              "" + ride.startLocation.name + " to " + ride.endLocation.name + "\n" +
-              "Rider: " + ride.rider.firstName + " " + ride.rider.lastName + "\n" +
-              "Driver: " + ride.driver.firstName + " " + ride.driver.lastName,
+              `${ride.startLocation.name} to ${ride.endLocation.name}
+Rider: ${ride.rider.firstName} ${ride.rider.lastName}
+Driver: ${ride.driver!.firstName} ${ride.driver!.lastName}`,
             start: new Date(ride.startTime.toString()),
             end: new Date(ride.endTime.toString()),
-            resourceId: ride.driver.id
-          })),
-        )
-      }
-      );
+            resourceId: ride.driver!.id
+          })))
+      });
   }, []);
 
   useEffect(() => {
     fetch('/drivers')
       .then((res) => res.json())
-      .then(({ data }) => setDrivers(
-        data.map((driver: any) => ({
-          resourceId: driver.id,
-          resourceTitle: driver.firstName + " " + driver.lastName
-        }))
-      ));
+      .then(({ data }) => {
+        setDrivers(data);
+        setCalDrivers(
+          data.map((driver: any) => ({
+            resourceId: driver.id,
+            resourceTitle: driver.firstName + " " + driver.lastName
+          }))
+        )
+      });
   }, []);
+
+  const updateRides = (rideId: string, updatedDriver: Driver) => {
+    fetch(`/rides/${rideId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ driver: updatedDriver }),
+    });
+  }
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -135,7 +145,18 @@ const Schedule = () => {
     // console.log('dragged event:', event.title);
     // console.log('old resourceId:', event.resourceId);
     // console.log('new resourceId:', resourceId);
-    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
+    const updatedCalDriver = calDrivers.find(d => d.resourceId === resourceId);
+    const oldTitle = events.find(e => (e.id === event.id))?.title;
+    const unchanged = oldTitle?.substr(0, oldTitle?.indexOf("Driver"));
+    const title = `${unchanged}Driver: ${updatedCalDriver?.resourceTitle}`;
+
+    const nextEvents = events.map(
+      (old) => (old.id === event.id ? { ...old, resourceId, title } : old));
+
+    const updatedDriver = drivers.find(d => d.id === resourceId);
+    if (updatedDriver !== undefined) {
+      updateRides(event.id, updatedDriver)
+    }
     setEvents(nextEvents);
   };
 
@@ -168,8 +189,8 @@ const Schedule = () => {
             max={
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
-            defaultDate={new Date(2020, 10, 29)} // temp date
-            resources={drivers}
+            defaultDate={new Date()}
+            resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
             eventPropGetter={eventStyle}
