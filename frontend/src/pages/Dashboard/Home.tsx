@@ -19,15 +19,16 @@ const Home = () => {
     fetchDrivers();
   }, []);
 
-  return (
-    <>
-      <div className={styles.pageTitle}>
-        <h1>Homepage</h1>
+  return (<>
+    <div className={styles.pageTitle}>
+      <h1 className={styles.header}>Homepage</h1>
+      <div className={styles.margin3}>
         <RideModal />
       </div>
-      <Schedule />
-      <Table drivers={drivers} />
-    </>
+    </div>
+    <Schedule />
+    <Table drivers={drivers} />
+  </>
   );
 };
 
