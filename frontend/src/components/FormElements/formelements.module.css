@@ -8,7 +8,7 @@
   border-radius: 4px;
 }
 
-.textInput {
+.textInput, .numberInput {
   font-size: 17px;
   padding: 4px;
 }
@@ -25,9 +25,8 @@
 }
 
 .input:focus {
-  background-color: #eee;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-
 
 .lgBtn {
   border-radius: 8px;
