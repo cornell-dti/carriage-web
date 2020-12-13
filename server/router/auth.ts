@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ModelType } from 'dynamoose/dist/General';
 import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
-import { Dispatcher, DispatcherType } from '../models/dispatcher';
+import { Dispatcher } from '../models/dispatcher';
 import { Driver } from '../models/driver';
 
 const router = express.Router();

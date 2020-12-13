@@ -18,7 +18,7 @@ export function formatAddress(address: string): string {
   return addressString.formattedAddress;
 }
 
-function validate(
+function validateToken(
   req: Request,
   res: Response,
   callback: (payload?: JWTPayload) => void,
@@ -52,7 +52,7 @@ function isUserValid(userType: UserType, authLevel: UserType) {
 
 export function validateUser(authLevel: UserType) {
   return (req: Request, res: Response, next: NextFunction) => {
-    validate(req, res, (payload) => {
+    validateToken(req, res, (payload) => {
       if (payload) {
         const { userType } = payload;
         if (isUserValid(userType, authLevel)) {
