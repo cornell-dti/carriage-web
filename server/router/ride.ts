@@ -11,7 +11,9 @@ const tableName = 'Rides';
 
 // Get a ride by id in Rides table
 router.get('/:id', (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Ride, id, tableName);
 });
 
@@ -47,7 +49,14 @@ router.get('/', (req, res) => {
 // Put a ride in Rides table
 router.post('/', (req, res) => {
   const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
+    body: {
+      rider,
+      startTime,
+      requestedEndTime,
+      driver,
+      startLocation,
+      endLocation,
+    },
   } = req;
 
   let startLocationId;
@@ -92,7 +101,10 @@ router.post('/', (req, res) => {
 
 // Update an existing ride
 router.put('/:id', (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   if (body.type === Type.PAST) {
     db.getById(res, Ride, id, tableName, (ride) => {
       const {
@@ -116,7 +128,9 @@ router.put('/:id', (req, res) => {
 
 // Delete an existing ride
 router.delete('/:id', (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Ride, id, tableName);
 });
 

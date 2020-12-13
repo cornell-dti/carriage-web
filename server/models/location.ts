@@ -7,7 +7,7 @@ export enum Tag {
   CTOWN = 'ctown', // college town
   DTOWN = 'dtown', // downtown
   INACTIVE = 'inactive',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export type LocationType = {

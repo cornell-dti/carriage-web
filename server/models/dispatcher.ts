@@ -8,12 +8,12 @@ export enum AccessLevel {
 }
 
 export type DispatcherType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  phoneNumber: string,
-  email: string,
-  accessLevel: AccessLevel
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessLevel: AccessLevel;
 };
 
 const schema = new dynamoose.Schema({
@@ -28,4 +28,6 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Dispatcher = dynamoose.model('Dispatchers', schema, { create: false });
+export const Dispatcher = dynamoose.model('Dispatchers', schema, {
+  create: false,
+});

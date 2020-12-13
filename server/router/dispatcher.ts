@@ -11,14 +11,16 @@ router.post('/', (req, res) => {
   const { body } = req;
   const dispatcher = new Dispatcher({
     ...body,
-    id: uuid()
+    id: uuid(),
   });
   db.create(res, dispatcher);
 });
 
 // Remove Dispatcher
 router.delete('/:id', (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Dispatcher, id, tableName);
 });
 

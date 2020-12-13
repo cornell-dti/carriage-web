@@ -10,7 +10,9 @@ const tableName = 'Locations';
 
 // Get a location by id in Locations table
 router.get('/:id', (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Location, id, tableName);
 });
 
@@ -32,9 +34,7 @@ router.get('/', (req, res) => {
           .not()
           .eq(Tag.CUSTOM);
       } else {
-        condition = condition
-          .where('tag')
-          .eq(Tag.INACTIVE);
+        condition = condition.where('tag').eq(Tag.INACTIVE);
       }
     }
     db.scan(res, Location, condition);
@@ -43,7 +43,9 @@ router.get('/', (req, res) => {
 
 // Put a location in Locations table
 router.post('/', (req, res) => {
-  const { body: { name, address } } = req;
+  const {
+    body: { name, address },
+  } = req;
   const location = new Location({
     id: uuid(),
     name,
@@ -54,7 +56,10 @@ router.post('/', (req, res) => {
 
 // Update an existing location
 router.put('/:id', (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   const { address } = body;
   if (address) {
     body.address = formatAddress(address);
@@ -64,7 +69,9 @@ router.put('/:id', (req, res) => {
 
 // Delete an existing location
 router.delete('/:id', (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Location, id, tableName);
 });
 

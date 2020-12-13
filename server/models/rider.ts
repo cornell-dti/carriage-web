@@ -8,22 +8,22 @@ export enum Accessibility {
 
 export enum Organization {
   REDRUNNER = 'RedRunner',
-  CULIFT = 'CULift'
+  CULIFT = 'CULift',
 }
 
 export type RiderType = {
-  id: string
-  firstName: string
-  lastName: string
-  phoneNumber: string
-  email: string
-  accessibility: Accessibility[]
-  organization: Organization
-  description: string
-  joinDate: string
-  pronouns: string
-  address: string
-  favoriteLocations: string[]
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessibility: Accessibility[];
+  organization: Organization;
+  description: string;
+  joinDate: string;
+  pronouns: string;
+  address: string;
+  favoriteLocations: string[];
 };
 
 const schema = new dynamoose.Schema({

@@ -11,7 +11,7 @@ export function getById(
   model: ModelType,
   id: string | ObjectType,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.get(id, (err, data) => {
     if (err) {
@@ -31,7 +31,7 @@ export function batchGet(
   model: ModelType,
   keys: ObjectType[],
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   if (!keys.length) {
     res.send({ data: [] });
@@ -53,7 +53,7 @@ export function getAll(
   res: Response,
   model: ModelType,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.scan().exec((err, data) => {
     if (err) {
@@ -71,7 +71,7 @@ export function getAll(
 export function create(
   res: Response,
   doc: Document,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   doc.save((err, data) => {
     if (err) {
@@ -90,7 +90,7 @@ export function update(
   key: ObjectType,
   operation: ObjectType,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.update(key, operation, (err, data) => {
     if (err) {
@@ -112,19 +112,24 @@ export function conditionalUpdate(
   operation: ObjectType,
   condition: Condition,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
-  model.update(key, operation, { condition, return: 'document' }, (err, data) => {
-    if (err) {
-      res.send({ err });
-    } else if (!data) {
-      res.send({ err: { message: `id not found in ${table}` } });
-    } else if (callback) {
-      callback(data);
-    } else {
-      res.send(data);
+  model.update(
+    key,
+    operation,
+    { condition, return: 'document' },
+    (err, data) => {
+      if (err) {
+        res.send({ err });
+      } else if (!data) {
+        res.send({ err: { message: `id not found in ${table}` } });
+      } else if (callback) {
+        callback(data);
+      } else {
+        res.send(data);
+      }
     }
-  });
+  );
 }
 
 export function deleteById(
@@ -132,7 +137,7 @@ export function deleteById(
   model: ModelType,
   id: string | ObjectType,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.get(id, (err, data) => {
     if (err) {
@@ -152,7 +157,7 @@ export function query(
   model: ModelType,
   condition: Condition,
   index: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model
     .query(condition)
@@ -172,17 +177,15 @@ export function scan(
   res: Response,
   model: ModelType,
   condition: Condition,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
-  model
-    .scan(condition)
-    .exec((err, data) => {
-      if (err) {
-        res.send({ err });
-      } else if (callback) {
-        callback(data);
-      } else {
-        res.send({ data });
-      }
-    });
+  model.scan(condition).exec((err, data) => {
+    if (err) {
+      res.send({ err });
+    } else if (callback) {
+      callback(data);
+    } else {
+      res.send({ data });
+    }
+  });
 }
