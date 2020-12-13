@@ -39,7 +39,7 @@ function getModel(table: string) {
   return tableToModel[table];
 }
 
-function getRole(table: string, user: any) {
+function getUserType(table: string, user: any) {
   if (table === 'Dispatchers') {
     return (user as DispatcherType).accessLevel;
   }
@@ -62,7 +62,7 @@ router.post('/', (req, res) => {
             const user: any = data[0];
             const userPayload = {
               id: user ? user.id : null,
-              userType: getRole(table, user),
+              userType: getUserType(table, user),
             };
             res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
