@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Ride } from '../../types/index';
 import moment from 'moment';
 import RidesTable from './RidesTable';
+import styles from './table.module.css';
 
 type ScheduledTableProp = {
   driverId: string;
@@ -31,8 +32,11 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
   useEffect(getScheduledRides, []);
 
   return (
-    <RidesTable title={driverName} rides={rides} drivers={[]}
-      hasAssignButton={false} />
+    <>
+      <h1 className={styles.formHeader}>{driverName}</h1>
+      <RidesTable rides={rides} drivers={[]}
+        hasAssignButton={false} />
+    </>
   )
 }
 

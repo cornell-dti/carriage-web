@@ -45,6 +45,7 @@
   margin-top: 30px;
   margin-bottom: 5px;
   margin-left: 32px;
+  font-size: 18px;
   text-align: left;
 }
 
@@ -97,4 +98,8 @@
 
 .gray {
   color: #707070;
+}
+
+.proflePic {
+  border-radius: 50%;
 }

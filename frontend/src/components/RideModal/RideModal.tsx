@@ -5,6 +5,7 @@ import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 import { download } from '../../icons/other';
+import styles from './ridemodal.module.css';
 
 const RideModal = () => {
   const [formData, setFormData] = useState<ObjectType>({});
@@ -66,10 +67,10 @@ const RideModal = () => {
 
   return (
     <>
-      <Button onClick={exportPreview}>
-        export <img src={download} alt="capacity icon" />
+      <Button onClick={exportPreview} outline={true} className={styles.exportButton}>
+        <img src={download} alt="capacity icon" /> Export
       </Button>
-      <Button onClick={openModal}>Add ride +</Button>
+      <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}

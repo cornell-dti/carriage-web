@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
 import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
+import styles from './table.module.css';
 
 type TableProps = {
   drivers: Driver[];
@@ -29,24 +29,13 @@ const Table = ({ drivers }: TableProps) => {
   useEffect(getUnscheduledRides, []);
 
   return (
-<<<<<<< HEAD
-    <RidesTable title="Unscheduled Rides" rides={rides} drivers={drivers}
-      hasAssignButton={true} />
-=======
     <>
-      <div>
-        <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-        <div className={styles.tableContainer}>
-          <table cellSpacing='0' className={styles.table} >
-            <tbody>
-              {renderTableHeader()}
-              {renderTableData(rides)}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* put profile picture here */}
+      <img className={styles.profilePic} src="" alt="profile pic" />
+      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
+      <RidesTable rides={rides} drivers={drivers}
+        hasAssignButton={true} />
     </>
->>>>>>> e1dd8bd20211ec44e111271621572edf1434201a
   );
 };
 
