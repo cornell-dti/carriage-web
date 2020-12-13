@@ -33,10 +33,12 @@ type DriverDetailProps = {
 const DriverDetail = () => {
   const location = useLocation<DriverDetailProps>();
   const driver: DriverDetailProps = location.state;
-  const availToString = (acc: string, [day, timeRange]: string[]) => acc + day + ': ' + timeRange + ' • ';
+  const availToString = (acc: string, [day, timeRange]: string[]) => `${acc
+    + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
-  const vehicle = driver.vehicle ? (driver.vehicle.name + ' (' + driver.vehicle.capacity + ' people)') : '';
+  const vehicle = driver.vehicle
+    ? (`${driver.vehicle.name} (${driver.vehicle.capacity} people)`) : '';
   const [rides, setRides] = useState<Ride[]>([]);
 
   const compRides = (a: Ride, b: Ride) => {
