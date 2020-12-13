@@ -61,6 +61,8 @@ export function validateUser(authLevel: UserType) {
         } else {
           res.send({ err: 'User does not have sufficient permissions' });
         }
+      } else {
+        res.send({ err: 'Invalid token' });
       }
     });
   };
