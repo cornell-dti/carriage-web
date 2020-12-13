@@ -1,6 +1,7 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
+import jwt from 'jsonwebtoken';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
@@ -68,7 +69,17 @@ router.post('/', validateUser('Rider'), (req, res) => {
     id: uuid(),
     favoriteLocations: [],
   });
-  db.create(res, rider);
+  db.create(res, rider, (data: RiderType) => {
+    const { locals: { user: { id } } } = res;
+    if (id) {
+      res.send(data);
+    } else {
+      res.send({
+        ...data,
+        jwt: jwt.sign({ id: data.id, userType: 'Rider' }, process.env.JWT_SECRET!),
+      });
+    }
+  });
 });
 
 // Update a rider in Riders table

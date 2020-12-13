@@ -1,5 +1,6 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
+import jwt from 'jsonwebtoken';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
@@ -38,7 +39,17 @@ router.post('/', validateUser('Driver'), (req, res) => {
     ...body,
     id: uuid(),
   });
-  db.create(res, driver);
+  db.create(res, driver, (data: DriverType) => {
+    const { locals: { user: { id } } } = res;
+    if (id) {
+      res.send(data);
+    } else {
+      res.send({
+        ...data,
+        jwt: jwt.sign({ id: data.id, userType: 'Driver' }, process.env.JWT_SECRET!),
+      });
+    }
+  });
 });
 
 // Update an existing driver
