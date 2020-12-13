@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import TableRow from 'components/TableComponents/TableRow';
+import TableRow from '../TableComponents/TableRow';
 import Form from '../UserForms/LocationsForm';
 import { Location } from '../../types';
 import styles from './table.module.css';
