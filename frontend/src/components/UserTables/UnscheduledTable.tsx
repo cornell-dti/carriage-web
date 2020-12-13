@@ -29,8 +29,24 @@ const Table = ({ drivers }: TableProps) => {
   useEffect(getUnscheduledRides, []);
 
   return (
+<<<<<<< HEAD
     <RidesTable title="Unscheduled Rides" rides={rides} drivers={drivers}
       hasAssignButton={true} />
+=======
+    <>
+      <div>
+        <h1 className={styles.formHeader}>Unscheduled Rides</h1>
+        <div className={styles.tableContainer}>
+          <table cellSpacing='0' className={styles.table} >
+            <tbody>
+              {renderTableHeader()}
+              {renderTableData(rides)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
+>>>>>>> e1dd8bd20211ec44e111271621572edf1434201a
   );
 };
 

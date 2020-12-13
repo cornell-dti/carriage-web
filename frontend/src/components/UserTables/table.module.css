@@ -1,3 +1,4 @@
+@media screen and (min-device-width: 801px){
 .table {
   background-color: #f6f6f6;
   padding: 3rem;
@@ -5,6 +6,25 @@
   width: 100%;
   border-spacing: 0 15px;
 }
+}
+
+@media screen and (max-device-width: 800px){
+  .table {
+    background-color: #f6f6f6;
+    padding: 1%;
+    border: none;
+    width: 50%;
+    border-spacing: 0 15px;
+  }
+  }
+
+.tableContainer {
+  padding-left: 32px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
 
 .tableHeader {
   border-bottom: none;
