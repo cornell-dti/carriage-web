@@ -7,18 +7,14 @@ const DispatcherManager = () => {
 
   const [dispatchers, setDispatchers] = useState<Dispatcher[]>([]);
 
-  const getCurrentDispatchers = async () => {
-    const dispatchersData = await fetch('/dispatchers')
-      .then((res) => res.json())
-      .then((data) => data.data);
-    setDispatchers(
-      dispatchersData
-    );
-  };
-
   useEffect(() => {
-    getCurrentDispatchers();
+    fetch('/dispatchers')
+      .then((res) => res.json())
+      .then(({ data }) => {
+        setDispatchers(data)
+      });
   }, []);
+
 
   const addDispatcher = (newDispatcher: Dispatcher) => {
     const { id, ...body } = { ...newDispatcher };
@@ -85,17 +81,17 @@ const DispatcherManager = () => {
             {renderTableHeader()}
             {dispatchers.map((
               { id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
-                <tr key={index}>
-                  <td>{firstName}</td>
-                  <td>{lastName}</td>
-                  <td>{phoneNumber}</td>
-                  <td>{email}</td>
-                  <td> {accessLevel}</td>
-                  <td>
-                    <button onClick={() => deleteDispatcher(id)}>Delete</button>
-                  </td>
-                </tr>
-              ))}
+              <tr key={index}>
+                <td>{firstName}</td>
+                <td>{lastName}</td>
+                <td>{phoneNumber}</td>
+                <td>{email}</td>
+                <td> {accessLevel}</td>
+                <td>
+                  <button onClick={() => deleteDispatcher(id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
