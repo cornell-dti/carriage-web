@@ -61,12 +61,12 @@ const DriverDetail = () => {
     return allRides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
       const { rider } = ride;
-      const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
-      const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
-      const pickupLocation = ride.startLocation ? ride.startLocation.name : '';
-      const pickupTag = ride.startLocation ? ride.startLocation.tag : '';
-      const dropoffLocation = ride.endLocation ? ride.endLocation.name : '';
-      const dropoffTag = ride.endLocation ? ride.endLocation.tag : '';
+      const name = `${rider.firstName} ${rider.lastName}`;
+      const needs = (rider.accessibilityNeeds || []).join(', ');
+      const pickupLocation = ride.startLocation.name;
+      const pickupTag = ride.startLocation.tag;
+      const dropoffLocation = ride.endLocation.name;
+      const dropoffTag = ride.endLocation.tag;
 
       const valueName = { data: name };
       const valueDate = { data: date };
