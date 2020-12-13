@@ -82,7 +82,9 @@ const Schedule = () => {
     // console.log('dragged event:', event.title);
     // console.log('old resourceId:', event.resourceId);
     // console.log('new resourceId:', resourceId);
-    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
+    const nextEvents = events.map((old) =>
+      old.id === event.id ? { ...old, resourceId } : old
+    );
     setEvents(nextEvents);
   };
 
@@ -135,7 +137,10 @@ const Schedule = () => {
           </div>
         </div>
       </div>
-      <button className={styles.view_state} onClick={() => setviewState(!viewState)}>
+      <button
+        className={styles.view_state}
+        onClick={() => setviewState(!viewState)}
+      >
         view {viewState ? 'less' : 'more'}
       </button>
     </>

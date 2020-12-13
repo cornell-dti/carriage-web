@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import TableRow from 'components/TableComponents/TableRow';
 import Form from '../UserForms/LocationsForm';
 import { Location } from '../../types';
 import styles from './table.module.css';
@@ -16,7 +17,7 @@ const Table = () => {
         name: location.name,
         address: location.address,
         ...(location.tag && { tag: location.tag }),
-      })),
+      }))
     );
   };
 
@@ -78,21 +79,29 @@ const Table = () => {
     <div>
       <div>
         <h1 className={styles.formHeader}>Location Table</h1>
-        <table className={styles.table}>
-          <tbody>
-            {renderTableHeader()}
-            {locations.map(({ id, name, address, tag }, index) => (
-              <tr key={index}>
-                <td className={styles.tableHeader}>{name}</td>
-                <td>{address}</td>
-                <td> {tag}</td>
-                <td>
-                  <button onClick={() => deleteLocation(id)}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <tbody>
+              {renderTableHeader()}
+              {locations.map(({ id, name, address, tag }, index) => (
+                <tr key={index}>
+                  <TableRow
+                    values={[
+                      { data: name },
+                      { data: address },
+                      { data: '', tag },
+                      {
+                        data: 'Delete',
+                        buttonHandler: () => deleteLocation(id),
+                      },
+                    ]}
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       <Form onClick={addLocation} />
     </div>
