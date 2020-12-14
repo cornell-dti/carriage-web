@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DispatcherForm from '../UserForms/DispatcherForm';
 import { Dispatcher } from '../../types/index';
 import styles from './table.module.css';
+import TableRow from '../TableComponents/TableRow';
 
 const DispatcherManager = () => {
 
@@ -27,8 +28,6 @@ const DispatcherManager = () => {
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding dispatcher failed');
-        } else {
-          console.log("get error")
         }
         return res.json();
       })
@@ -81,16 +80,17 @@ const DispatcherManager = () => {
             {renderTableHeader()}
             {dispatchers.map((
               { id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
-              <tr key={index}>
-                <td>{firstName}</td>
-                <td>{lastName}</td>
-                <td>{phoneNumber}</td>
-                <td>{email}</td>
-                <td> {accessLevel}</td>
-                <td>
-                  <button onClick={() => deleteDispatcher(id)}>Delete</button>
-                </td>
-              </tr>
+              <TableRow values={[
+                { data: firstName },
+                { data: lastName },
+                { data: phoneNumber },
+                { data: email },
+                { data: accessLevel },
+                {
+                  data: "Delete",
+                  buttonHandler: () => deleteDispatcher(id)
+                }
+              ]} />
             ))}
           </tbody>
         </table>

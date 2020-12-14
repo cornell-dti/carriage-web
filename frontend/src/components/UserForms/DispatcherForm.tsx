@@ -20,7 +20,6 @@ const Form = (props: FormProps) => {
   const [validLastName, setValidLastName] = useState(false);
   const [validPhone, setValidPhone] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
-  const [validAccessLvl, setValidAccessLvl] = useState(true);
 
   const handleInput = (evt: any) => {
     const fieldName = evt.target.name;
@@ -68,7 +67,7 @@ const Form = (props: FormProps) => {
   const handleSubmit = (evt: any) => {
     evt.preventDefault();
     const validRider = validFirstName && validLastName && validPhone
-      && validEmail && validAccessLvl;
+      && validEmail;
     if (validRider) { props.onClick(newDispatcher); }
   };
 
@@ -81,25 +80,25 @@ const Form = (props: FormProps) => {
             labelName="firstName"
             labelText="First Name: "
             feedback="Please enter a first name"
-            showFormFeedback={validFirstName}
+            showFormFeedback={!validFirstName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="lastName"
             labelText="Last Name: "
             feedback="Please enter a last name"
-            showFormFeedback={validLastName}
+            showFormFeedback={!validLastName}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="phone"
             labelText="Phone Number: "
             feedback="Enter a phone number in the form xxx-xxx-xxxx"
-            showFormFeedback={validPhone}
+            showFormFeedback={!validPhone}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="email"
             labelText="NetId: "
             feedback="Enter a valid netid"
-            showFormFeedback={validEmail}
+            showFormFeedback={!validEmail}
             handleInput={(e) => handleInput(e)} />
           <DropDownInput
             labelName="accessLevel"
