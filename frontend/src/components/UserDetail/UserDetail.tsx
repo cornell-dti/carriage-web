@@ -1,16 +1,14 @@
 import React from 'react';
 import styles from './userDetail.module.css';
-import { edit } from "../../icons/other/index";
+import { edit } from '../../icons/other/index';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
-}
+};
 
 export const OtherInfo = ({ children }: otherInfo) => (
-  <div className={styles.otherInfoContainer}>
-    {children}
-  </div>
-)
+  <div className={styles.otherInfoContainer}>{children}</div>
+);
 
 type UserContactInfo = {
   icon: string;
@@ -31,15 +29,15 @@ type UserDetailProps = {
   lastName: string;
   netId: string;
   children: JSX.Element | JSX.Element[];
-}
+};
 
 const UserDetail = ({
   firstName,
   lastName,
   netId,
-  children
+  children,
 }: UserDetailProps) => {
-  const fullName = firstName + " " + lastName;
+  const fullName = `${firstName} ${lastName}`;
   return (
     <div className={styles.userDetail}>
       <div className={styles.imgContainer}>
@@ -48,13 +46,11 @@ const UserDetail = ({
       <div className={styles.basicInfoContainer}>
         <p className={styles.name}>{fullName}</p>
         <p className={styles.netId}>{netId}</p>
-        <img className={styles.edit} src={edit} />
-        <div className={styles.contactInfoContainer}>
-          {children}
-        </div>
+        <img className={styles.edit} alt="edit" src={edit} />
+        <div className={styles.contactInfoContainer}>{children}</div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default UserDetail;
