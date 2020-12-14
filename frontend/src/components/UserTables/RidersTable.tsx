@@ -46,19 +46,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         .then((res) => res.json())
         .then((data) => data.data);
 
-      const allRiders: Rider[] = ridersData.map((rider: any) => ({
-        id: rider.id,
-        firstName: rider.firstName,
-        lastName: rider.lastName,
-        phoneNumber: rider.phoneNumber,
-        email: rider.email,
-        accessibilityNeeds: rider.accessibilityNeeds,
-        description: rider.description,
-        joinDate: rider.joinDate,
-        pronouns: rider.pronouns,
-        address: rider.address,
-      }));
-      setRiders(allRiders);
+      setRiders(ridersData);
     }
     getExistingRiders();
   }, [setRiders]);
