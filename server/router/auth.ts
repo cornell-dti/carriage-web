@@ -10,7 +10,7 @@ import { Driver } from '../models/driver';
 
 const router = express.Router();
 
-const validIds = [
+const audience = [
   '322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
   '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com',
   '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
@@ -22,10 +22,7 @@ const validIds = [
 
 async function verify(clientId: string, token: string): Promise<LoginTicket> {
   const client = new OAuth2Client(clientId);
-  const authRes = await client.verifyIdToken({
-    idToken: token,
-    audience: validIds,
-  });
+  const authRes = await client.verifyIdToken({ idToken: token, audience });
   return authRes;
 }
 
@@ -52,7 +49,7 @@ router.post('/', (req, res) => {
       if (payload && payload.aud === clientId && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
-            res.send({ err: err.message });
+            res.send({ success: false, err: err.message });
           } else if (data) {
             // Dynamoose type is incorrect
             const user: any = data[0];
@@ -62,15 +59,15 @@ router.post('/', (req, res) => {
             };
             res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
-            res.send({ success: false });
+            res.send({ success: false, err: 'Scan data not found' });
           }
         });
       } else {
-        res.send({ success: false });
+        res.send({ success: false, err: 'Payload not found' });
       }
     })
-    .catch(() => {
-      res.send({ success: false });
+    .catch((err) => {
+      res.send({ success: false, err: err.message });
     });
 });
 
