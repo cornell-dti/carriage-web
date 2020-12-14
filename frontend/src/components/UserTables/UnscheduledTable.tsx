@@ -55,10 +55,12 @@ const Table = ({ drivers }: TableProps) => {
       const { rider } = ride;
       const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
       const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
+      const start = ride.startLocation || { name: '', tag: '' };
+      const end = ride.endLocation || { name: '', tag: '' };
+      const pickupLocation = start.name || '';
+      const pickupTag = start.tag || '';
+      const dropoffLocation = end.name || '';
+      const dropoffTag = end.tag || '';
 
       const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
         hour: 'numeric',
@@ -103,19 +105,17 @@ const Table = ({ drivers }: TableProps) => {
   }
 
   return (
-    <>
-      <div>
-        <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-        <div className={styles.tableContainer}>
-          <table cellSpacing='0' className={styles.table} >
-            <tbody>
-              {renderTableHeader()}
-              {renderTableData(rides)}
-            </tbody>
-          </table>
-        </div>
+    <div>
+      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
+      <div className={styles.tableContainer}>
+        <table cellSpacing="0" className={styles.table}>
+          <tbody>
+            {renderTableHeader()}
+            {renderTableData(rides)}
+          </tbody>
+        </table>
       </div>
-    </>
+    </div>
   );
 };
 

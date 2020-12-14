@@ -140,6 +140,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
+<<<<<<< HEAD
     const nextEvents = events.map(
       (old) => (old.id === event.id ? { ...old, resourceId } : old));
 
@@ -147,6 +148,15 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     if (updatedDriver !== undefined) {
       updateRides(event.id, updatedDriver)
     }
+=======
+    // uncomment to view event change details
+    // console.log('dragged event:', event.title);
+    // console.log('old resourceId:', event.resourceId);
+    // console.log('new resourceId:', resourceId);
+    const nextEvents = events.map((old) =>
+      old.id === event.id ? { ...old, resourceId } : old
+    );
+>>>>>>> e4ab1370cd404103671c07e47931f396ca18eaef
     setEvents(nextEvents);
   };
 
@@ -199,7 +209,10 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           </div>
         </div>
       </div>
-      <button className={styles.view_state} onClick={() => setviewState(!viewState)}>
+      <button
+        className={styles.view_state}
+        onClick={() => setviewState(!viewState)}
+      >
         view {viewState ? 'less' : 'more'}
       </button>
     </>
