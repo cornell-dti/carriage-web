@@ -50,13 +50,12 @@ const Schedule = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(data
-          .filter((ride: Ride) => ride.type !== "unscheduled" && ride.driver !== undefined && ride.startLocation !== undefined)
+          .filter((ride: Ride) => ride.type !== "unscheduled")
           .map((ride: Ride) => ({
             id: ride.id,
             title:
               `${ride.startLocation.name} to ${ride.endLocation.name}
-Rider: ${ride.rider.firstName} ${ride.rider.lastName}
-Driver: ${ride.driver!.firstName} ${ride.driver!.lastName}`,
+Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             start: new Date(ride.startTime.toString()),
             end: new Date(ride.endTime.toString()),
             resourceId: ride.driver!.id
@@ -72,7 +71,7 @@ Driver: ${ride.driver!.firstName} ${ride.driver!.lastName}`,
         setCalDrivers(
           data.map((driver: any) => ({
             resourceId: driver.id,
-            resourceTitle: driver.firstName + " " + driver.lastName
+            resourceTitle: `${driver.firstName} ${driver.lastName}`
           }))
         )
       });
@@ -141,17 +140,8 @@ Driver: ${ride.driver!.firstName} ${ride.driver!.lastName}`,
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    // uncomment to view event change details
-    // console.log('dragged event:', event.title);
-    // console.log('old resourceId:', event.resourceId);
-    // console.log('new resourceId:', resourceId);
-    const updatedCalDriver = calDrivers.find(d => d.resourceId === resourceId);
-    const oldTitle = events.find(e => (e.id === event.id))?.title;
-    const unchanged = oldTitle?.substr(0, oldTitle?.indexOf("Driver"));
-    const title = `${unchanged}Driver: ${updatedCalDriver?.resourceTitle}`;
-
     const nextEvents = events.map(
-      (old) => (old.id === event.id ? { ...old, resourceId, title } : old));
+      (old) => (old.id === event.id ? { ...old, resourceId } : old));
 
     const updatedDriver = drivers.find(d => d.id === resourceId);
     if (updatedDriver !== undefined) {
