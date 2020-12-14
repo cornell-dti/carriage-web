@@ -1,35 +1,21 @@
-@media screen and (min-device-width: 801px){
 .table {
   background-color: #f6f6f6;
-  padding: 3rem;
+  padding: 2rem;
   border: none;
   width: 100%;
   border-spacing: 0 15px;
 }
-}
-
-@media screen and (max-device-width: 800px){
-  .table {
-    background-color: #f6f6f6;
-    padding: 1%;
-    border: none;
-    width: 50%;
-    border-spacing: 0 15px;
-  }
-  }
 
 .tableContainer {
-  padding-left: 32px;
-  display: flex;
-  width: 100%;
-  flex-direction: row;
+  display:block;
+  overflow-x: auto; 
 }
 
 
 .tableHeader {
   border-bottom: none;
-  padding-right: 3rem;
-  padding-bottom: 1.5rem;
+  padding-right: 2rem;
+  padding-bottom: 1rem;
 }
 
 .tableRow {

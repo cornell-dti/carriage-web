@@ -21,10 +21,8 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
   };
 
   const getScheduledRides = () => {
-    // uncomment to get the rides for only today
-    // const today = moment(new Date()).format('YYYY-MM-DD');
-    // fetch(`/rides?driver=${driverId}date=${today}`)
-    fetch(`/rides?driver=${driverId}`)
+    const today = moment(new Date()).format('YYYY-MM-DD');
+    fetch(`/rides?driver=${driverId}date=${today}`)
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };
