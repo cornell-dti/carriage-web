@@ -80,17 +80,19 @@ const DispatcherManager = () => {
             {renderTableHeader()}
             {dispatchers.map((
               { id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
-              <TableRow values={[
-                { data: firstName },
-                { data: lastName },
-                { data: phoneNumber },
-                { data: email },
-                { data: accessLevel },
-                {
-                  data: "Delete",
-                  buttonHandler: () => deleteDispatcher(id)
-                }
-              ]} />
+              <tr key={index}>
+                <TableRow values={[
+                  { data: firstName },
+                  { data: lastName },
+                  { data: phoneNumber },
+                  { data: email },
+                  { data: accessLevel },
+                  {
+                    data: "Delete",
+                    buttonHandler: () => deleteDispatcher(id)
+                  }
+                ]} />
+              </tr>
             ))}
           </tbody>
         </table>
