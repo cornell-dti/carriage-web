@@ -11,22 +11,8 @@ const router = express.Router();
 const BUCKET_NAME = 'dti-carriage-staging-public';
 const s3bucket = new AWS.S3();
 
-// Sets the user's standard photoLink, if it is not already set
-function addPhotoLink(
-  res: Response,
-  model: db.ModelType,
-  tableName: string,
-  userId: string,
-  objectKey: string,
-) {
-  db.getById(res, model, userId, tableName, () => {
-    const operation = { $ADD: { photoLink: [objectKey] } };
-    const condition = new Condition().not().exists('photoLink');
-    db.conditionalUpdate(res, model, { userId }, operation, condition, tableName);
-  });
-}
-
-// Uploads base64-encoded fileBuffer to S3, with an object key {tableName}/{userId}
+// Uploads base64-encoded fileBuffer to S3 in the folder {tableName}
+// Sets the user's DB photoLink field to the url of the uploaded image, if not set
 router.post('/', (req, res) => {
   const { body: { userId, tableName, fileBuffer } } = req;
   const objectKey = `${tableName}/${userId}`;
@@ -46,14 +32,16 @@ router.post('/', (req, res) => {
     }
   });
 
+  const objectLink = `${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
+  const operation = { $ADD: { photoLink: [objectLink] } };
+  const condition = new Condition().not().exists('photoLink');
+
   if (tableName === 'Drivers') {
-    addPhotoLink(res, Driver, tableName, userId, objectKey);
-  }
-  if (tableName === 'Riders') {
-    addPhotoLink(res, Rider, tableName, userId, objectKey);
-  }
-  if (tableName === 'Dispatchers') {
-    addPhotoLink(res, Dispatcher, tableName, userId, objectKey);
+    db.conditionalUpdate(res, Driver, { userId }, operation, condition, tableName);
+  } else if (tableName === 'Riders') {
+    db.conditionalUpdate(res, Rider, { userId }, operation, condition, tableName);
+  } else if (tableName === 'Dispatchers') {
+    db.conditionalUpdate(res, Dispatcher, { userId }, operation, condition, tableName);
   }
 });
 
