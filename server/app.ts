@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import express from 'express';
 import dynamoose from 'dynamoose';
+import * as AWS from 'aws-sdk';
 import bodyparser from 'body-parser';
 import config from './config';
 import rider from './router/rider';
@@ -15,6 +16,7 @@ import upload from './router/upload';
 const port = process.env.PORT || 3001;
 
 dynamoose.aws.sdk.config.update(config);
+AWS.config.update(config);
 
 const app = express();
 app.use(bodyparser.json());
