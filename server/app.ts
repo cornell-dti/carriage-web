@@ -10,6 +10,7 @@ import ride from './router/ride';
 import vehicle from './router/vehicle';
 import location from './router/location';
 import auth from './router/auth';
+import upload from './router/fileUpload'
 
 const port = process.env.PORT || 3001;
 
@@ -26,6 +27,7 @@ app.use('/rides', ride);
 app.use('/vehicles', vehicle);
 app.use('/locations', location);
 app.use('/auth', auth);
+app.use('/upload', upload);
 app.get('/health-check', (_, response) => response.status(200).send('OK'));
 
 app.listen(port, () => console.log('Listening at port', port));
