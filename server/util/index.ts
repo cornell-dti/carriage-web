@@ -34,6 +34,8 @@ function validateToken(
           callback(payload as JWTPayload);
         }
       });
+    } else {
+      res.send({ err: 'Invalid token format' });
     }
   } else {
     res.send({ err: 'No token provided' });
