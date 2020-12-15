@@ -46,22 +46,27 @@ router.post('/', (req, res) => {
     .then((authRes) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
-      if (payload && payload.aud === clientId && model) {
+      if (payload?.aud === clientId && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
             res.send({ success: false, err: err.message });
-          } else if (data) {
-            // Dynamoose type is incorrect
-            const user: any = data[0];
+          } else if (data?.length) {
+            // Dynamoose incorrectly types data[0] as Document[]
+            type User = { id: string };
+            const { id }: User = data[0] as any;
             const userPayload = {
-              id: user ? user.id : null,
+              id,
               userType: getUserType(table),
             };
             res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
-            res.send({ success: false, err: 'Scan data not found' });
+            res.send({ success: false, err: 'User not found' });
           }
         });
+      } else if (payload?.aud !== clientId) {
+        res.send({ success: false, err: 'Invalid client id' });
+      } else if (!model) {
+        res.send({ success: false, err: 'Table not found' });
       } else {
         res.send({ success: false, err: 'Payload not found' });
       }
