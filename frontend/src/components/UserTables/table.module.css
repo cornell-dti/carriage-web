@@ -1,6 +1,6 @@
 .table {
   background-color: #f6f6f6;
-  padding: 3rem;
+  padding: 2rem;
   border: none;
   width: 100%;
   border-spacing: 0 15px;
@@ -9,17 +9,18 @@
 .tableContainer {
   padding-left: 2%;
   padding-right: 2%;
-  display: flex;
   width: 100%;
   flex-direction: row;
+  display:block;
+  overflow-x: auto; 
 }
 
 
 .tableHeader {
   border-bottom: none;
-  padding-left: 2rem;
-  padding-bottom: 1.5rem;
   text-align: left;
+  padding-left: 2rem;
+  padding-bottom: 1rem;
 }
 
 .tableRow {
