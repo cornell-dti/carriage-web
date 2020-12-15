@@ -1,5 +1,4 @@
-import express from 'express';
-import { Response } from 'express';
+import express, { Response } from 'express';
 import * as AWS from 'aws-sdk';
 import { Condition } from 'dynamoose';
 import * as db from './common';
@@ -12,8 +11,8 @@ const router = express.Router();
 const BUCKET_NAME = 'dti-carriage-staging-public';
 const s3bucket = new AWS.S3();
 
-// Sets the user's standard photoLink if it is not already set.
-export function addPhotoLink(
+// Sets the user's standard photoLink, if it is not already set
+function addPhotoLink(
   res: Response,
   model: db.ModelType,
   tableName: string,
@@ -57,6 +56,5 @@ router.post('/', (req, res) => {
     addPhotoLink(res, Dispatcher, tableName, userId, objectKey);
   }
 });
-
 
 export default router;
