@@ -1,7 +1,6 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
-import jwt from 'jsonwebtoken';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
@@ -17,7 +16,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all riders
-router.get('/', validateUser('User'), (req, res) => {
+router.get('/', validateUser('Dispatcher'), (req, res) => {
   db.getAll(res, Rider, tableName);
 });
 
@@ -62,24 +61,14 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
 });
 
 // Create a rider in Riders table
-router.post('/', validateUser('Rider'), (req, res) => {
+router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;
   const rider = new Rider({
     ...body,
     id: uuid(),
     favoriteLocations: [],
   });
-  db.create(res, rider, (data: RiderType) => {
-    const { locals: { user: { id } } } = res;
-    if (id) {
-      res.send(data);
-    } else {
-      res.send({
-        ...data,
-        jwt: jwt.sign({ id: data.id, userType: 'Rider' }, process.env.JWT_SECRET!),
-      });
-    }
-  });
+  db.create(res, rider);
 });
 
 // Update a rider in Riders table
@@ -105,7 +94,7 @@ router.post('/:id/favorites', validateUser('Rider'), (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', validateUser('Rider'), (req, res) => {
+router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Rider, id, tableName);
 });

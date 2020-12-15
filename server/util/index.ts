@@ -40,13 +40,14 @@ function validateToken(
   }
 }
 
+const priority: { [type in UserType]: number } = {
+  User: 0,
+  Rider: 1,
+  Driver: 1,
+  Dispatcher: 2,
+};
+
 function isUserValid(userType: UserType, authLevel: UserType) {
-  const priority: { [type in UserType]: number } = {
-    User: 0,
-    Rider: 1,
-    Driver: 1,
-    Dispatcher: 2,
-  };
   return userType === authLevel || priority[authLevel] < priority[userType];
 }
 

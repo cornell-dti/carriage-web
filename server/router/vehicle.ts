@@ -14,7 +14,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all vehicles
-router.get('/', validateUser('User'), (req, res) => {
+router.get('/', validateUser('Dispatcher'), (req, res) => {
   db.getAll(res, Vehicle, tableName);
 });
 

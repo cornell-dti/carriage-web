@@ -1,6 +1,5 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import jwt from 'jsonwebtoken';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
@@ -15,7 +14,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all drivers
-router.get('/', validateUser('User'), (req, res) => {
+router.get('/', validateUser('Dispatcher'), (req, res) => {
   db.getAll(res, Driver, tableName);
 });
 
@@ -33,23 +32,13 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 });
 
 // Put a driver in Drivers table
-router.post('/', validateUser('Driver'), (req, res) => {
+router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
     id: uuid(),
   });
-  db.create(res, driver, (data: DriverType) => {
-    const { locals: { user: { id } } } = res;
-    if (id) {
-      res.send(data);
-    } else {
-      res.send({
-        ...data,
-        jwt: jwt.sign({ id: data.id, userType: 'Driver' }, process.env.JWT_SECRET!),
-      });
-    }
-  });
+  db.create(res, driver);
 });
 
 // Update an existing driver
@@ -59,7 +48,7 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
 });
 
 // Delete an existing driver
-router.delete('/:id', validateUser('Driver'), (req, res) => {
+router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });
