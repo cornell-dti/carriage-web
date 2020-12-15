@@ -4,7 +4,7 @@ import { Document } from 'dynamoose/dist/Document';
 import { ObjectType } from 'dynamoose/dist/General';
 import { Condition } from 'dynamoose/dist/Condition';
 
-type ModelType = Document & Model<Document>;
+export type ModelType = Document & Model<Document>;
 
 export function getById(
   res: Response,
