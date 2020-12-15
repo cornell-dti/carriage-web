@@ -13,7 +13,8 @@ export type DispatcherType = {
   lastName: string,
   phoneNumber: string,
   email: string,
-  accessLevel: AccessLevel
+  accessLevel: AccessLevel,
+  photoLink: string,
 };
 
 const schema = new dynamoose.Schema({
@@ -26,6 +27,7 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: Object.values(AccessLevel),
   },
+  photoLink: String,
 });
 
 export const Dispatcher = dynamoose.model('Dispatchers', schema, { create: false });
