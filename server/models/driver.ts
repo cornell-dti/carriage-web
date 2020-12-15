@@ -22,6 +22,7 @@ export type DriverType = {
   vehicle: VehicleType,
   phoneNumber: string,
   email: string,
+  photoLink?: string,
 };
 
 const availability = {
@@ -51,6 +52,7 @@ const schema = new dynamoose.Schema({
   vehicle: Vehicle as any,
   phoneNumber: String,
   email: String,
+  photoLink: String,
 });
 
 export const Driver = dynamoose.model('Drivers', schema, { create: false });
