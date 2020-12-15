@@ -70,6 +70,14 @@ export type TableValue = {
   ButtonModal?: () => JSX.Element;
 };
 
+export type Dispatcher = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessLevel: string;
+}
 export type Ride = {
   id: string;
   type: string;

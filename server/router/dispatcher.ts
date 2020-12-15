@@ -7,6 +7,9 @@ import { validateUser } from '../util';
 const router = express.Router();
 const tableName = 'Dispatchers';
 
+// Get all dispatchers
+router.get('/', (req, res) => db.getAll(res, Dispatcher, tableName));
+
 // Put a driver in Dispatchers table
 router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;

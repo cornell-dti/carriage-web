@@ -1,13 +1,13 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { Rider } from '../../types';
 import styles from './table.module.css';
-import { useHistory } from 'react-router-dom';
 
 type RidersTableProps = {
   riders: Array<Rider>;
   setRiders: Dispatch<SetStateAction<Rider[]>>;
-}
+};
 
 function renderTableHeader() {
   return (
@@ -46,25 +46,13 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         .then((res) => res.json())
         .then((data) => data.data);
 
-      const allRiders: Rider[] = ridersData.map((rider: any) => ({
-        id: rider.id,
-        firstName: rider.firstName,
-        lastName: rider.lastName,
-        phoneNumber: rider.phoneNumber,
-        email: rider.email,
-        accessibilityNeeds: rider.accessibilityNeeds,
-        description: rider.description,
-        joinDate: rider.joinDate,
-        pronouns: rider.pronouns,
-        address: rider.address,
-      }));
-      setRiders(allRiders);
+      setRiders(ridersData);
     }
     getExistingRiders();
   }, [setRiders]);
 
   function deleteEntry(email: string, riderList: Rider[]) {
-    const riderId = (riderList.filter((rider) => rider.email === email))[0].id;
+    const riderId = riderList.filter((rider) => rider.email === email)[0].id;
     async function deleteBackend() {
       const requestOptions = {
         method: 'DELETE',
@@ -79,7 +67,11 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
       const {
-        firstName, lastName, phoneNumber, email, accessibilityNeeds,
+        firstName,
+        lastName,
+        phoneNumber,
+        email,
+        accessibilityNeeds,
       } = rider;
       const buttonText = 'Delete';
       const valueFName = { data: firstName };
@@ -91,21 +83,30 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         data: buttonText,
         buttonHandler: () => setRiders(deleteEntry(email, allRiders)),
       };
-      const inputValues = [valueFName, valueLName, valuePhone, valueEmail,
-        valueAccessbility, valueDelete];
+      const inputValues = [
+        valueFName,
+        valueLName,
+        valuePhone,
+        valueEmail,
+        valueAccessbility,
+        valueDelete,
+      ];
       const netId = email.split('@')[0];
       const riderData = {
-        firstName: firstName, lastName: lastName, netID: netId,
-        phone: phoneNumber, accessibility: renderAccessNeeds(accessibilityNeeds)
-      }
+        firstName,
+        lastName,
+        netID: netId,
+        phone: phoneNumber,
+        accessibility: renderAccessNeeds(accessibilityNeeds),
+      };
       const location = {
-        pathname: "/riders/rider",
+        pathname: '/riders/rider',
         state: riderData,
-        search: `?name=${firstName + "_" + lastName}`
-      }
+        search: `?name=${`${firstName}_${lastName}`}`,
+      };
       const goToDetail = () => {
-        history.push(location)
-      }
+        history.push(location);
+      };
       return (
         <tr key={index} onClick={goToDetail} className={styles.tableRow}>
           <TableRow values={inputValues} />
@@ -118,13 +119,15 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     <>
       <div>
         <h1 className={styles.formHeader}>Riders</h1>
-        <table cellSpacing='0' className={styles.table}>
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData(riders)}
-          </tbody>
-        </table>
-      </div >
+        <div className={styles.tableContainer}>
+          <table cellSpacing="0" className={styles.table}>
+            <tbody>
+              {renderTableHeader()}
+              {renderTableData(riders)}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </>
   );
 };
