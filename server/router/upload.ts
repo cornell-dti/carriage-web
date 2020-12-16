@@ -29,26 +29,21 @@ router.post('/', (req, res) => {
     ContentType: `image/${type}`,
   };
 
-  try {
-    s3bucket.putObject(params, (s3Err, s3data) => {
-      if (s3Err) {
-        res.send(s3Err);
-      }
-    });
-
-    const objectLink = `${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
-    const operation = { photoLink: objectLink };
-    const condition = new Condition().not().exists('photoLink');
-
-    if (tableName === 'Drivers') {
-      db.conditionalUpdate(res, Driver, { id: userId }, operation, condition, tableName);
-    } else if (tableName === 'Riders') {
-      db.conditionalUpdate(res, Rider, { id: userId }, operation, condition, tableName);
-    } else if (tableName === 'Dispatchers') {
-      db.conditionalUpdate(res, Dispatcher, { id: userId }, operation, condition, tableName);
+  s3bucket.putObject(params, (s3Err, s3data) => {
+    if (s3Err) {
+      res.send(s3Err);
     }
-  } catch (err) {
-    res.send(err);
+  });
+
+  const objectLink = `${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
+  const operation = { photoLink: objectLink };
+
+  if (tableName === 'Drivers') {
+    db.update(res, Driver, { id: userId }, operation, tableName);
+  } else if (tableName === 'Riders') {
+    db.update(res, Driver, { id: userId }, operation, tableName);
+  } else if (tableName === 'Dispatchers') {
+    db.update(res, Driver, { id: userId }, operation, tableName);
   }
 });
 
