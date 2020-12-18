@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express from 'express';
 import * as AWS from 'aws-sdk';
 import { Condition } from 'dynamoose';
 import * as db from './common';
