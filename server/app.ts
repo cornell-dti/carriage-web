@@ -10,7 +10,7 @@ import ride from './router/ride';
 import vehicle from './router/vehicle';
 import location from './router/location';
 import auth from './router/auth';
-import upload from './router/fileUpload'
+import upload from './router/upload';
 
 const port = process.env.PORT || 3001;
 
