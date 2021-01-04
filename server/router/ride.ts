@@ -4,19 +4,19 @@ import { Condition } from 'dynamoose';
 import * as db from './common';
 import { Ride, RideType, Status, Type } from '../models/ride';
 import { Location, Tag } from '../models/location';
-import { formatAddress } from '../util';
+import { formatAddress, validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Rides';
 
 // Get a ride by id in Rides table
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Ride, id, tableName);
 });
 
 // Get and query all rides in table
-router.get('/', (req, res) => {
+router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
   if (query === {}) {
     db.getAll(res, Ride, tableName);
@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
 });
 
 // Put a ride in Rides table
-router.post('/', (req, res) => {
+router.post('/', validateUser('User'), (req, res) => {
   const {
     body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
@@ -91,7 +91,7 @@ router.post('/', (req, res) => {
 });
 
 // Update an existing ride
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
   if (body.type === Type.PAST) {
     db.getById(res, Ride, id, tableName, (ride) => {
@@ -115,7 +115,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete an existing ride
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Ride, id, tableName);
 });

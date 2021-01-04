@@ -3,21 +3,24 @@ import { v4 as uuid } from 'uuid';
 import moment from 'moment';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
+import { validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Driver, id, tableName);
 });
 
 // Get all drivers
-router.get('/', (req, res) => db.getAll(res, Driver, tableName));
+router.get('/', validateUser('Dispatcher'), (req, res) => {
+  db.getAll(res, Driver, tableName);
+});
 
 // Get profile information for a driver
-router.get('/:id/profile', (req, res) => {
+router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Driver, id, tableName, (driver: DriverType) => {
     const {
@@ -84,7 +87,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
 
 
 // Put a driver in Drivers table
-router.post('/', (req, res) => {
+router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
@@ -94,13 +97,13 @@ router.post('/', (req, res) => {
 });
 
 // Update an existing driver
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUser('Driver'), (req, res) => {
   const { params: { id }, body } = req;
   db.update(res, Driver, { id }, body, tableName);
 });
 
 // Delete an existing driver
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });

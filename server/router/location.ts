@@ -3,19 +3,19 @@ import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose/dist/Condition';
 import * as db from './common';
 import { Location, Tag } from '../models/location';
-import { formatAddress } from '../util';
+import { formatAddress, validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Locations';
 
 // Get a location by id in Locations table
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Location, id, tableName);
 });
 
 // Get and query all locations
-router.get('/', (req, res) => {
+router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
   if (query === {}) {
     db.getAll(res, Location, tableName);
@@ -42,7 +42,7 @@ router.get('/', (req, res) => {
 });
 
 // Put a location in Locations table
-router.post('/', (req, res) => {
+router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body: { name, address } } = req;
   const location = new Location({
     id: uuid(),
@@ -53,7 +53,7 @@ router.post('/', (req, res) => {
 });
 
 // Update an existing location
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id }, body } = req;
   const { address } = body;
   if (address) {
@@ -63,7 +63,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Delete an existing location
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Location, id, tableName);
 });

@@ -4,22 +4,24 @@ import { Condition } from 'dynamoose';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
-import { createKeys } from '../util';
+import { createKeys, validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Riders';
 
 // Get a rider by id in Riders table
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName);
 });
 
 // Get all riders
-router.get('/', (req, res) => db.getAll(res, Rider, tableName));
+router.get('/', validateUser('Dispatcher'), (req, res) => {
+  db.getAll(res, Rider, tableName);
+});
 
 // Get profile information for a rider
-router.get('/:id/profile', (req, res) => {
+router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
@@ -32,7 +34,7 @@ router.get('/:id/profile', (req, res) => {
 });
 
 // Get accessibility information for a rider
-router.get('/:id/accessibility', async (req, res) => {
+router.get('/:id/accessibility', validateUser('User'), async (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, accessibility } = rider;
@@ -41,7 +43,7 @@ router.get('/:id/accessibility', async (req, res) => {
 });
 
 // Get organization information for a rider
-router.get('/:id/organization', async (req, res) => {
+router.get('/:id/organization', validateUser('User'), async (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, organization } = rider;
@@ -50,7 +52,7 @@ router.get('/:id/organization', async (req, res) => {
 });
 
 // Get all favorite locations for a rider
-router.get('/:id/favorites', (req, res) => {
+router.get('/:id/favorites', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
     const keys = createKeys('id', favoriteLocations);
@@ -59,7 +61,7 @@ router.get('/:id/favorites', (req, res) => {
 });
 
 // Create a rider in Riders table
-router.post('/', (req, res) => {
+router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;
   const rider = new Rider({
     ...body,
@@ -70,13 +72,13 @@ router.post('/', (req, res) => {
 });
 
 // Update a rider in Riders table
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUser('Rider'), (req, res) => {
   const { params: { id }, body } = req;
   db.update(res, Rider, { id }, body, tableName);
 });
 
 // Add a location to favorites
-router.post('/:id/favorites', (req, res) => {
+router.post('/:id/favorites', validateUser('Rider'), (req, res) => {
   const { params: { id }, body: { id: locId } } = req;
   // check if location exists in table
   db.getById(res, Location, locId, 'Locations', () => {
@@ -92,7 +94,7 @@ router.post('/:id/favorites', (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Rider, id, tableName);
 });
