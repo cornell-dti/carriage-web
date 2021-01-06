@@ -19,13 +19,13 @@ const app = express();
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 
-app.use('/riders', rider);
-app.use('/drivers', driver);
-app.use('/dispatchers', dispatcher);
-app.use('/rides', ride);
-app.use('/vehicles', vehicle);
-app.use('/locations', location);
-app.use('/auth', auth);
-app.get('/health-check', (_, response) => response.status(200).send('OK'));
+app.use('/api/riders', rider);
+app.use('/api/drivers', driver);
+app.use('/api/dispatchers', dispatcher);
+app.use('/api/rides', ride);
+app.use('/api/vehicles', vehicle);
+app.use('/api/locations', location);
+app.use('/api/auth', auth);
+app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
 
 app.listen(port, () => console.log('Listening at port', port));
