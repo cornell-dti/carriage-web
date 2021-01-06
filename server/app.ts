@@ -30,7 +30,8 @@ app.use('/api/auth', auth);
 app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
 
 // Serve static files from frontend
-const frontendBuild = '../frontend/build';
+const isDev = path.dirname(__dirname) === 'server';
+const frontendBuild = `${isDev ? '' : '../'}../frontend/build`;
 app.use(express.static(path.join(__dirname, frontendBuild)));
 
 // Catch all handler
