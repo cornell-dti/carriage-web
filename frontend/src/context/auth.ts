@@ -1,5 +1,7 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
-const AuthContext = createContext({ logout: () => { } });
+const AuthContext = createContext({ jwt: '', logout: () => { } });
+
+export const useAuth = () => useContext(AuthContext);
 
 export default AuthContext;
