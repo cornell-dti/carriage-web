@@ -7,6 +7,7 @@ import LandingPage from '../../pages/Landing/Landing';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
+  const [jwt, setJWT] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -14,7 +15,10 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   function logout() {
     localStorage.clear();
     setSignedIn(false);
-    history.push('/');
+    setJWT('');
+    if (pathname !== '/') {
+      history.push('/');
+    }
   }
 
   async function onSignIn(googleUser: any) {
@@ -33,11 +37,12 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         }),
     };
 
-    const authorized = await fetch('/auth', requestOptions)
+    const userJWT = await fetch('/api/auth', requestOptions)
       .then((res) => res.json())
-      .then((data) => data.id);
+      .then((data) => data.jwt);
 
-    if (authorized) {
+    if (userJWT) {
+      setJWT(userJWT);
       setSignedIn(true);
       if (pathname === '/') {
         history.push('/dashboard/home');
@@ -48,7 +53,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   }
 
   const SiteContent = () => (
-    <AuthContext.Provider value={{ logout }}>
+    <AuthContext.Provider value={{ jwt, logout }}>
       {children}
     </AuthContext.Provider>
   );
