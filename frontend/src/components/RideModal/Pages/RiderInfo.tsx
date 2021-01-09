@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
+import axios from 'axios';
 import { ObjectType, Rider, Location } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
@@ -20,9 +21,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    fetch('/riders')
-      .then((res) => res.json())
-      .then(({ data }: { data: Rider[] }) => {
+    axios.get('/api/riders')
+      .then((res) => {
+        const { data }: { data: Rider[] } = res.data;
         const nameToIdObj = data.reduce((acc: ObjectType, r) => {
           const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
           acc[fullName] = r.id;
@@ -31,9 +32,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
         setNameToId(nameToIdObj);
       });
 
-    fetch('/locations')
-      .then((res) => res.json())
-      .then(({ data }: { data: Location[] }) => {
+    axios.get('/api/locations')
+      .then((res) => {
+        const { data }: { data: Location[] } = res.data;
         const locationToIdObj = data.reduce((acc: ObjectType, l) => {
           acc[l.name] = l.id;
           return acc;

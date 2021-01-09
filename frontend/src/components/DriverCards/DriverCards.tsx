@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
+import { useAuth } from '../../context/auth';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -91,9 +93,8 @@ const DriverCards = () => {
   const [drivers, setDrivers] = useState<Driver[]>();
 
   useEffect(() => {
-    fetch('/drivers')
-      .then((res) => res.json())
-      .then(({ data }) => setDrivers(data));
+    axios.get('/api/drivers')
+      .then(({ data }) => setDrivers(data.data));
   }, []);
 
   return (

@@ -1,21 +1,35 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 
+function configureAxios(jwt: string) {
+  return axios.interceptors.request.use((req) => {
+    req.headers.authorization = `Bearer ${jwt}`;
+    return req;
+  });
+}
+
+function ejectAxios(id: number) {
+  axios.interceptors.request.eject(id);
+}
+
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
-  const [jwt, setJWT] = useState('');
+  const [interceptor, setInterceptor] = useState<number>();
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
 
   function logout() {
     localStorage.clear();
+    if (interceptor) {
+      ejectAxios(interceptor);
+    }
     setSignedIn(false);
-    setJWT('');
     if (pathname !== '/') {
       history.push('/');
     }
@@ -25,24 +39,16 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     const { id_token: token } = googleUser.getAuthResponse();
     const { email } = googleUser.profileObj;
 
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:
-        JSON.stringify({
-          token,
-          email,
-          table: 'Dispatchers',
-          clientId,
-        }),
-    };
+    const jwt = await axios.post('/api/auth', {
+      token,
+      email,
+      table: 'Dispatchers',
+      clientId,
+    })
+      .then((res) => res.data.jwt);
 
-    const userJWT = await fetch('/api/auth', requestOptions)
-      .then((res) => res.json())
-      .then((data) => data.jwt);
-
-    if (userJWT) {
-      setJWT(userJWT);
+    if (jwt) {
+      setInterceptor(configureAxios(jwt));
       setSignedIn(true);
       if (pathname === '/') {
         history.push('/dashboard/home');
@@ -53,7 +59,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   }
 
   const SiteContent = () => (
-    <AuthContext.Provider value={{ jwt, logout }}>
+    <AuthContext.Provider value={{ logout }}>
       {children}
     </AuthContext.Provider>
   );

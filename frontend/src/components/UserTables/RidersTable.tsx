@@ -1,5 +1,6 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import { Rider } from '../../types';
 import styles from './table.module.css';
@@ -42,9 +43,8 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
 
   useEffect(() => {
     async function getExistingRiders() {
-      const ridersData = await fetch('/riders')
-        .then((res) => res.json())
-        .then((data) => data.data);
+      const ridersData = await axios.get('/api/riders')
+        .then(({ data }) => data.data);
 
       setRiders(ridersData);
     }
@@ -54,11 +54,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   function deleteEntry(email: string, riderList: Rider[]) {
     const riderId = riderList.filter((rider) => rider.email === email)[0].id;
     async function deleteBackend() {
-      const requestOptions = {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      };
-      await fetch(`/riders/${riderId}`, requestOptions);
+      await axios.delete(`/api/riders/${riderId}`);
     }
     deleteBackend();
     return riderList.filter((rider) => rider.email !== email);

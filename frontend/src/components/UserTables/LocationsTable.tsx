@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import Form from '../UserForms/LocationsForm';
 import { Location } from '../../types';
@@ -8,16 +9,15 @@ const Table = () => {
   const [locations, setLocations] = useState<Location[]>([]);
 
   const getExistingLocations = async () => {
-    const locationsData = await fetch('/locations')
-      .then((res) => res.json())
-      .then((data) => data.data);
+    const locationsData = await axios.get('/api/locations')
+      .then(({ data }) => data.data);
     setLocations(
       locationsData.map((location: any) => ({
         id: location.id,
         name: location.name,
         address: location.address,
         ...(location.tag && { tag: location.tag }),
-      }))
+      })),
     );
   };
 
@@ -27,19 +27,12 @@ const Table = () => {
 
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    };
-    fetch('/locations', requestOptions)
+    axios.post('/api/locations', body)
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding location failed');
         }
-        return res.json();
-      })
-      .then((data) => {
+        const { data } = res;
         const validLocation = {
           id: data.id,
           name: data.name,
@@ -52,11 +45,7 @@ const Table = () => {
   };
 
   const deleteLocation = (locationId: string) => {
-    const requestOptions = {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    };
-    fetch(`/locations/${locationId}`, requestOptions)
+    axios.delete(`/api/locations/${locationId}`)
       .then((res) => {
         if (res.status === 200) {
           setLocations(locations.filter((l) => l.id !== locationId));

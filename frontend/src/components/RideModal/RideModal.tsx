@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
@@ -41,13 +42,7 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch('/rides', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      axios.post('/api/rides', formData);
       setIsSubmitted(false);
       closeModal();
     }

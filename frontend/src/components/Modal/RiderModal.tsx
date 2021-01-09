@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import axios from 'axios';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
@@ -13,22 +14,17 @@ type RiderModalProps = {
 
 function addRider(newRider: Rider, allRiders: Rider[]) {
   async function addBackend() {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        firstName: newRider.firstName,
-        lastName: newRider.lastName,
-        phoneNumber: newRider.phoneNumber,
-        email: newRider.email,
-        accessibilityNeeds: newRider.accessibilityNeeds,
-        description: newRider.description,
-        joinDate: newRider.joinDate,
-        pronouns: newRider.pronouns,
-        address: newRider.address,
-      }),
-    };
-    await fetch('/riders', requestOptions);
+    await axios.post('/api/riders', {
+      firstName: newRider.firstName,
+      lastName: newRider.lastName,
+      phoneNumber: newRider.phoneNumber,
+      email: newRider.email,
+      accessibilityNeeds: newRider.accessibilityNeeds,
+      description: newRider.description,
+      joinDate: newRider.joinDate,
+      pronouns: newRider.pronouns,
+      address: newRider.address,
+    });
   }
   addBackend();
   return [...allRiders, newRider];

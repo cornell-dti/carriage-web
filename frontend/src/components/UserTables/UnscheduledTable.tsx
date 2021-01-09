@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import axios from 'axios';
 import { Driver, Ride } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
@@ -35,9 +36,8 @@ const Table = ({ drivers }: TableProps) => {
 
   const getUnscheduledRides = () => {
     const today = moment(new Date()).format('YYYY-MM-DD');
-    fetch(`/rides?type=unscheduled&date=${today}`)
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
+    axios.get(`/api/rides?type=unscheduled&date=${today}`)
+      .then(({ data }) => setRides(data.data.sort(compRides)));
   };
 
   useEffect(getUnscheduledRides, []);

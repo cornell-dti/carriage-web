@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
+import axios from 'axios';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Driver } from '../../../types/index';
@@ -15,9 +16,8 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   useEffect(() => {
-    fetch('/drivers')
-      .then((res) => res.json())
-      .then(({ data }) => setDrivers(data));
+    axios.get('/api/drivers')
+      .then(({ data }) => setDrivers(data.data));
   }, []);
 
   return (

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import { Ride, Vehicle } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
@@ -50,9 +51,8 @@ const DriverDetail = () => {
   };
 
   const getPastRides = () => {
-    fetch(`/rides?type=past&driver=${driver.id}`)
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
+    axios.get(`/api/rides?type=past&driver=${driver.id}`)
+      .then(({ data }) => setRides(data.data.sort(compRides)));
   };
 
   useEffect(getPastRides, []);

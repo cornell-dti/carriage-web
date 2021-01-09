@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import RideModal from '../../components/RideModal/RideModal';
 import Table from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
@@ -9,8 +10,7 @@ const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
 
   const fetchDrivers = async () => {
-    const driverData = await fetch('/drivers')
-      .then((res) => res.json())
+    const driverData = await axios.get('/api/drivers')
       .then((data) => data.data);
     setDrivers(driverData);
   };
