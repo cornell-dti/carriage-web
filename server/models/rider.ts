@@ -1,4 +1,7 @@
 import dynamoose from 'dynamoose';
+import isEmail from 'validator/lib/isEmail';
+import { formatAddress, isAddress } from '../util';
+
 
 export enum Accessibility {
   ASSISTANT = 'Assistant',
@@ -27,26 +30,64 @@ export type RiderType = {
 };
 
 const schema = new dynamoose.Schema({
-  id: String,
-  firstName: String,
-  lastName: String,
-  phoneNumber: String,
-  email: String,
+  id: {
+    type: String,
+    required: true,
+    hashKey: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    validate: /[0-9]{10}/,
+  },
+  email: {
+    type: String,
+    required: true,
+    validate: (email) => isEmail(email as string),
+  },
   accessibility: {
     type: Array,
     schema: [String],
+    required: true,
   },
   organization: {
     type: String,
     enum: Object.values(Organization),
+    required: true,
   },
-  description: String,
-  joinDate: String,
-  pronouns: String,
-  address: String,
+  description: {
+    type: String,
+    required: true,
+  },
+  joinDate: {
+    type: String,
+    required: true,
+    validate: /(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}/,
+  },
+  pronouns: {
+    type: String,
+    required: true,
+    validate: /\w*\/\w*\/\w*/,
+  },
+  address: {
+    type: String,
+    required: true,
+    set: (address) => formatAddress(address as string),
+    validate: (address) => isAddress(address as string),
+  },
   favoriteLocations: {
     type: Array,
+    required: true,
     schema: [String],
+    default: [],
   },
 });
 
