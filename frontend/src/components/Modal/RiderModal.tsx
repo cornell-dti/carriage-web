@@ -61,7 +61,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         address: formData.address,
       };
       const addRider = async () => {
-        await fetch('/riders', withDefaults({
+        await fetch('/api/riders', withDefaults({
           method: 'POST',
           body: JSON.stringify(newRider),
         }));

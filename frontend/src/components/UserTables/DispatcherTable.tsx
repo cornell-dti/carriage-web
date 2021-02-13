@@ -10,7 +10,7 @@ const DispatcherManager = () => {
   const { withDefaults } = useReq();
 
   useEffect(() => {
-    fetch('/dispatchers', withDefaults())
+    fetch('/api/dispatchers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setDispatchers(data);
@@ -20,7 +20,7 @@ const DispatcherManager = () => {
 
   const addDispatcher = (newDispatcher: Dispatcher) => {
     const { id, ...body } = { ...newDispatcher };
-    fetch('/dispatchers', withDefaults({
+    fetch('/api/dispatchers', withDefaults({
       method: 'POST',
       body: JSON.stringify(body),
     }))

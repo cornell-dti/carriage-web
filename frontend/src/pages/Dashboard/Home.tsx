@@ -12,7 +12,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchDrivers = async () => {
-      const driverData = await fetch('/drivers', withDefaults())
+      const driverData = await fetch('/api/drivers', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
       setDrivers(driverData);

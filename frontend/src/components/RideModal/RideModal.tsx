@@ -43,7 +43,7 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch('/rides', withDefaults({
+      fetch('/api/rides', withDefaults({
         method: 'POST',
         body: JSON.stringify(formData),
       }));

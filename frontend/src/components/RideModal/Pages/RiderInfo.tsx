@@ -22,7 +22,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    fetch('/riders', withDefaults())
+    fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Rider[] }) => {
         const nameToIdObj = data.reduce((acc: ObjectType, r) => {
@@ -33,7 +33,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
         setNameToId(nameToIdObj);
       });
 
-    fetch('/locations', withDefaults())
+    fetch('/api/locations', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Location[] }) => {
         const locationToIdObj = data.reduce((acc: ObjectType, l) => {

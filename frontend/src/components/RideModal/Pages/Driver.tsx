@@ -17,7 +17,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const { withDefaults } = useReq();
 
   useEffect(() => {
-    fetch('/drivers', withDefaults())
+    fetch('/api/drivers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setDrivers(data));
   }, [withDefaults]);

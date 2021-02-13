@@ -31,7 +31,7 @@ const DriverModal = () => {
   const onSubmit = async (data: ObjectType) => {
     const { name, email, phoneNumber, carType, capacity, availability } = data;
     const vehicle = { name: carType, capacity: Number(capacity) };
-    const vehicleJson = await fetch('/vehicles', withDefaults({
+    const vehicleJson = await fetch('/api/vehicles', withDefaults({
       method: 'POST',
       body: JSON.stringify(vehicle),
     }))
@@ -45,7 +45,7 @@ const DriverModal = () => {
       availability: parseAvailability(availability),
       vehicle: vehicleJson.id,
     };
-    fetch('/drivers', withDefaults({
+    fetch('/api/drivers', withDefaults({
       method: 'POST',
       body: JSON.stringify(driver),
     }));

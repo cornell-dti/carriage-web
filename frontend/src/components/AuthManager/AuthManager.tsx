@@ -39,7 +39,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     const { id_token: token } = googleUser.getAuthResponse();
     const { email } = googleUser.profileObj;
 
-    const serverJWT = await fetch('/auth', withDefaults({
+    const serverJWT = await fetch('/api/auth', withDefaults({
       method: 'POST',
       body:
         JSON.stringify({

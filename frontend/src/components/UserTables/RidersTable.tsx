@@ -44,7 +44,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
 
   useEffect(() => {
     async function getExistingRiders() {
-      const ridersData = await fetch('/riders', withDefaults())
+      const ridersData = await fetch('/api/riders', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
 

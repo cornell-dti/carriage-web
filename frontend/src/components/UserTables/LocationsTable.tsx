@@ -11,7 +11,7 @@ const Table = () => {
 
   useEffect(() => {
     const getExistingLocations = async () => {
-      const locationsData = await fetch('/locations', withDefaults())
+      const locationsData = await fetch('/api/locations', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
       setLocations(
@@ -28,7 +28,7 @@ const Table = () => {
 
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
-    fetch('/locations', withDefaults({
+    fetch('/api/locations', withDefaults({
       method: 'POST',
       body: JSON.stringify(body),
     }))
