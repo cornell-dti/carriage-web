@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import axios from 'axios';
 import { Driver, Ride } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
 import AssignDriverModal from '../Modal/AssignDriverModal';
+import { useReq } from '../../context/req';
 
 function renderTableHeader() {
   return (
@@ -25,6 +25,7 @@ type TableProps = {
 const Table = ({ drivers }: TableProps) => {
   const [openModal, setOpenModal] = useState(-1);
   const [rides, setRides] = useState<Ride[]>([]);
+  const { withDefaults } = useReq();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -36,8 +37,9 @@ const Table = ({ drivers }: TableProps) => {
 
   const getUnscheduledRides = () => {
     const today = moment(new Date()).format('YYYY-MM-DD');
-    axios.get(`/api/rides?type=unscheduled&date=${today}`)
-      .then(({ data }) => setRides(data.data.sort(compRides)));
+    fetch(`/rides?type=unscheduled&date=${today}`, withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => setRides(data.sort(compRides)));
   };
 
   useEffect(getUnscheduledRides, []);

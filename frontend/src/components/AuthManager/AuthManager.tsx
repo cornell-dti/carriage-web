@@ -1,33 +1,23 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 
-function configureAxios(jwt: string) {
-  return axios.interceptors.request.use((req) => {
-    req.headers.authorization = `Bearer ${jwt}`;
-    return req;
-  });
-}
-
-function ejectAxios(id: number) {
-  axios.interceptors.request.eject(id);
-}
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
-  const [interceptor, setInterceptor] = useState<number>();
+  const [jwt, setJWT] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
 
   function logout() {
     localStorage.clear();
-    if (interceptor) {
-      ejectAxios(interceptor);
+    if (jwt) {
+      setJWT('');
     }
     setSignedIn(false);
     if (pathname !== '/') {
@@ -35,20 +25,35 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     }
   }
 
+  function withDefaults(options?: RequestInit) {
+    return {
+      ...options,
+      headers: {
+        authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+    } as RequestInit;
+  }
+
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
     const { email } = googleUser.profileObj;
 
-    const jwt = await axios.post('/api/auth', {
-      token,
-      email,
-      table: 'Dispatchers',
-      clientId,
-    })
-      .then((res) => res.data.jwt);
+    const serverJWT = await fetch('/auth', withDefaults({
+      method: 'POST',
+      body:
+        JSON.stringify({
+          token,
+          email,
+          table: 'Dispatchers',
+          clientId,
+        }),
+    }))
+      .then((res) => res.json())
+      .then((json) => json.jwt);
 
-    if (jwt) {
-      setInterceptor(configureAxios(jwt));
+    if (serverJWT) {
+      setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
         history.push('/dashboard/home');
@@ -60,7 +65,9 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   const SiteContent = () => (
     <AuthContext.Provider value={{ logout }}>
-      {children}
+      <ReqContext.Provider value={{ withDefaults }}>
+        {children}
+      </ReqContext.Provider>
     </AuthContext.Provider>
   );
 

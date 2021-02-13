@@ -1,29 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import DispatcherForm from '../UserForms/DispatcherForm';
 import { Dispatcher } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
+import { useReq } from '../../context/req';
 
 const DispatcherManager = () => {
   const [dispatchers, setDispatchers] = useState<Dispatcher[]>([]);
+  const { withDefaults } = useReq();
 
   useEffect(() => {
-    axios.get('/api/dispatchers')
+    fetch('/dispatchers', withDefaults())
+      .then((res) => res.json())
       .then(({ data }) => {
-        setDispatchers(data.data);
+        setDispatchers(data);
       });
-  }, []);
+  }, [withDefaults]);
 
 
   const addDispatcher = (newDispatcher: Dispatcher) => {
     const { id, ...body } = { ...newDispatcher };
-    axios.post('/api/dispatchers', body)
+    fetch('/dispatchers', withDefaults({
+      method: 'POST',
+      body: JSON.stringify(body),
+    }))
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding dispatcher failed');
         }
-        const { data: dispatcher } = res;
+        return res.json();
+      })
+      .then((dispatcher) => {
         const validDispatcher = {
           id: dispatcher.id,
           firstName: dispatcher.firstName,
@@ -38,7 +45,7 @@ const DispatcherManager = () => {
   };
 
   const deleteDispatcher = (dispatcherId: string) => {
-    axios.delete(`/api/dispatchers/${dispatcherId}`)
+    fetch(`/dispatchers/${dispatcherId}`, withDefaults({ method: 'DELETE' }))
       .then((res) => {
         if (res.status === 200) {
           setDispatchers(dispatchers.filter((d) => d.id !== dispatcherId));

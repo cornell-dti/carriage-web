@@ -11,7 +11,6 @@
     "@types/react-big-calendar": "^0.24.7",
     "@types/react-dom": "^16.9.9",
     "@types/react-router-dom": "^5.1.7",
-    "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
     "classnames": "^2.2.6",
     "moment": "^2.29.1",
@@ -55,5 +54,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://carriage-web.herokuapp.com"
+  "proxy": "https://carriage-web.herokuapp.com/api"
 }

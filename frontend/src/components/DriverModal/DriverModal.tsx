@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import axios from 'axios';
+import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
@@ -11,6 +11,7 @@ import styles from './drivermodal.module.css';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { withDefaults } = useReq();
   const methods = useForm();
 
   const openModal = () => setIsOpen(true);
@@ -30,7 +31,11 @@ const DriverModal = () => {
   const onSubmit = async (data: ObjectType) => {
     const { name, email, phoneNumber, carType, capacity, availability } = data;
     const vehicle = { name: carType, capacity: Number(capacity) };
-    const vehicleJson = await axios.post('/api/vehicles', vehicle).then((res) => res.data);
+    const vehicleJson = await fetch('/vehicles', withDefaults({
+      method: 'POST',
+      body: JSON.stringify(vehicle),
+    }))
+      .then((res) => res.json());
     const [firstName, lastName] = name.split(' ');
     const driver = {
       firstName,
@@ -40,7 +45,10 @@ const DriverModal = () => {
       availability: parseAvailability(availability),
       vehicle: vehicleJson.id,
     };
-    axios.post('/api/drivers', driver);
+    fetch('/drivers', withDefaults({
+      method: 'POST',
+      body: JSON.stringify(driver),
+    }));
     closeModal();
   };
 

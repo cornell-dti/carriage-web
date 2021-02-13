@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
+import { useReq } from '../../context/req';
 
 const RideModal = () => {
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const { withDefaults } = useReq();
 
   const openModal = () => {
     setCurrentPage(0);
@@ -42,11 +43,14 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      axios.post('/api/rides', formData);
+      fetch('/rides', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(formData),
+      }));
       setIsSubmitted(false);
       closeModal();
     }
-  }, [formData, isSubmitted]);
+  }, [formData, isSubmitted, withDefaults]);
 
   return (
     <>

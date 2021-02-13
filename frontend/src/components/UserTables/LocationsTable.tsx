@@ -1,38 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import Form from '../UserForms/LocationsForm';
 import { Location } from '../../types';
 import styles from './table.module.css';
+import { useReq } from '../../context/req';
 
 const Table = () => {
   const [locations, setLocations] = useState<Location[]>([]);
-
-  const getExistingLocations = async () => {
-    const locationsData = await axios.get('/api/locations')
-      .then(({ data }) => data.data);
-    setLocations(
-      locationsData.map((location: any) => ({
-        id: location.id,
-        name: location.name,
-        address: location.address,
-        ...(location.tag && { tag: location.tag }),
-      })),
-    );
-  };
+  const { withDefaults } = useReq();
 
   useEffect(() => {
+    const getExistingLocations = async () => {
+      const locationsData = await fetch('/locations', withDefaults())
+        .then((res) => res.json())
+        .then((data) => data.data);
+      setLocations(
+        locationsData.map((location: any) => ({
+          id: location.id,
+          name: location.name,
+          address: location.address,
+          ...(location.tag && { tag: location.tag }),
+        })),
+      );
+    };
     getExistingLocations();
-  }, []);
+  }, [withDefaults]);
 
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
-    axios.post('/api/locations', body)
+    fetch('/locations', withDefaults({
+      method: 'POST',
+      body: JSON.stringify(body),
+    }))
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding location failed');
         }
-        const { data } = res;
+        return res.json();
+      })
+      .then((data) => {
         const validLocation = {
           id: data.id,
           name: data.name,
@@ -45,7 +51,7 @@ const Table = () => {
   };
 
   const deleteLocation = (locationId: string) => {
-    axios.delete(`/api/locations/${locationId}`)
+    fetch(`/locations/${locationId}`, withDefaults({ method: 'DELETE' }))
       .then((res) => {
         if (res.status === 200) {
           setLocations(locations.filter((l) => l.id !== locationId));

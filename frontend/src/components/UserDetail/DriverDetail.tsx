@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import { Ride, Vehicle } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel } from '../../icons/userInfo/index';
 import styles from '../UserTables/table.module.css';
+import { useReq } from '../../context/req';
 
 
 function renderTableHeader() {
@@ -41,6 +41,7 @@ const DriverDetail = () => {
   const vehicle = driver.vehicle
     ? (`${driver.vehicle.name} (${driver.vehicle.capacity} people)`) : '';
   const [rides, setRides] = useState<Ride[]>([]);
+  const { withDefaults } = useReq();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -51,8 +52,9 @@ const DriverDetail = () => {
   };
 
   const getPastRides = () => {
-    axios.get(`/api/rides?type=past&driver=${driver.id}`)
-      .then(({ data }) => setRides(data.data.sort(compRides)));
+    fetch(`/rides?type=past&driver=${driver.id}`, withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => setRides(data.sort(compRides)));
   };
 
   useEffect(getPastRides, []);

@@ -1,9 +1,9 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { useHistory } from 'react-router-dom';
-import axios from 'axios';
 import TableRow from '../TableComponents/TableRow';
 import { Rider } from '../../types';
 import styles from './table.module.css';
+import { useReq } from '../../context/req';
 
 type RidersTableProps = {
   riders: Array<Rider>;
@@ -40,26 +40,27 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
 
 const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   const history = useHistory();
+  const { withDefaults } = useReq();
 
   useEffect(() => {
     async function getExistingRiders() {
-      const ridersData = await axios.get('/api/riders')
-        .then(({ data }) => data.data);
+      const ridersData = await fetch('/riders', withDefaults())
+        .then((res) => res.json())
+        .then((data) => data.data);
 
       setRiders(ridersData);
     }
     getExistingRiders();
-  }, [setRiders]);
+  }, [setRiders, withDefaults]);
 
   function deleteEntry(email: string, riderList: Rider[]) {
     const riderId = riderList.filter((rider) => rider.email === email)[0].id;
     async function deleteBackend() {
-      await axios.delete(`/api/riders/${riderId}`);
+      await fetch(`/riders/${riderId}`, withDefaults({ method: 'DELETE' }));
     }
     deleteBackend();
     return riderList.filter((rider) => rider.email !== email);
   }
-
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
       const {

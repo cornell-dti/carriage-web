@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import RideModal from '../../components/RideModal/RideModal';
 import Table from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
+import { useReq } from '../../context/req';
 
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
-
-  const fetchDrivers = async () => {
-    const driverData = await axios.get('/api/drivers')
-      .then((data) => data.data);
-    setDrivers(driverData);
-  };
+  const { withDefaults } = useReq();
 
   useEffect(() => {
+    const fetchDrivers = async () => {
+      const driverData = await fetch('/drivers', withDefaults())
+        .then((res) => res.json())
+        .then((data) => data.data);
+      setDrivers(driverData);
+    };
+
     fetchDrivers();
-  }, []);
+  }, [withDefaults]);
 
   return (
     <div>
