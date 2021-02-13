@@ -3,28 +3,27 @@ import DispatcherForm from '../UserForms/DispatcherForm';
 import { Dispatcher } from '../../types/index';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
+import { useReq } from '../../context/req';
 
 const DispatcherManager = () => {
-
   const [dispatchers, setDispatchers] = useState<Dispatcher[]>([]);
+  const { withDefaults } = useReq();
 
   useEffect(() => {
-    fetch('/dispatchers')
+    fetch('/api/dispatchers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        setDispatchers(data)
+        setDispatchers(data);
       });
-  }, []);
+  }, [withDefaults]);
 
 
   const addDispatcher = (newDispatcher: Dispatcher) => {
     const { id, ...body } = { ...newDispatcher };
-    const requestOptions = {
+    fetch('/api/dispatchers', withDefaults({
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-    };
-    fetch('/dispatchers', requestOptions)
+    }))
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding dispatcher failed');
@@ -38,7 +37,7 @@ const DispatcherManager = () => {
           lastName: dispatcher.lastName,
           phoneNumber: dispatcher.phoneNumber,
           email: dispatcher.email,
-          accessLevel: dispatcher.accessLevel
+          accessLevel: dispatcher.accessLevel,
         };
         setDispatchers([...dispatchers, validDispatcher]);
       })
@@ -46,11 +45,7 @@ const DispatcherManager = () => {
   };
 
   const deleteDispatcher = (dispatcherId: string) => {
-    const requestOptions = {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    };
-    fetch(`/dispatchers/${dispatcherId}`, requestOptions)
+    fetch(`/dispatchers/${dispatcherId}`, withDefaults({ method: 'DELETE' }))
       .then((res) => {
         if (res.status === 200) {
           setDispatchers(dispatchers.filter((d) => d.id !== dispatcherId));
@@ -79,7 +74,8 @@ const DispatcherManager = () => {
           <tbody>
             {renderTableHeader()}
             {dispatchers.map((
-              { id, firstName, lastName, phoneNumber, email, accessLevel }, index) => (
+              { id, firstName, lastName, phoneNumber, email, accessLevel }, index,
+            ) => (
               <tr key={index}>
                 <TableRow values={[
                   { data: firstName },
@@ -88,9 +84,9 @@ const DispatcherManager = () => {
                   { data: email },
                   { data: accessLevel },
                   {
-                    data: "Delete",
-                    buttonHandler: () => deleteDispatcher(id)
-                  }
+                    data: 'Delete',
+                    buttonHandler: () => deleteDispatcher(id),
+                  },
                 ]} />
               </tr>
             ))}
@@ -99,7 +95,7 @@ const DispatcherManager = () => {
       </div>
       <DispatcherForm onClick={addDispatcher} />
     </>
-  )
-}
+  );
+};
 
-export default DispatcherManager
+export default DispatcherManager;

@@ -4,20 +4,22 @@ import Table from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
+import { useReq } from '../../context/req';
 
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
-
-  const fetchDrivers = async () => {
-    const driverData = await fetch('/drivers')
-      .then((res) => res.json())
-      .then((data) => data.data);
-    setDrivers(driverData);
-  };
+  const { withDefaults } = useReq();
 
   useEffect(() => {
+    const fetchDrivers = async () => {
+      const driverData = await fetch('/api/drivers', withDefaults())
+        .then((res) => res.json())
+        .then((data) => data.data);
+      setDrivers(driverData);
+    };
+
     fetchDrivers();
-  }, []);
+  }, [withDefaults]);
 
   return (
     <div>
