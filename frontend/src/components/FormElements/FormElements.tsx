@@ -16,7 +16,9 @@ type InputType = (
   React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 );
 
+// eslint-disable-next-line react/display-name
 export const Input = React.forwardRef<HTMLInputElement, InputType>(
+  // eslint-disable-next-line react/prop-types
   ({ type, className, ...props }, ref) => (
     <input
       {...props}
@@ -37,16 +39,12 @@ type ButtonProps = {
   children: React.ReactNode;
 };
 
+// eslint-disable-next-line react/display-name
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
-      className,
-      type,
-      name,
-      small = false,
-      outline = false,
-      onClick,
-      children,
+      // eslint-disable-next-line react/prop-types
+      className, type, name, small = false, outline = false, onClick, children,
     } = props;
     const btnClass = !outline ? styles.primaryBtn : styles.secondaryBtn;
     const sizeClass = !small ? styles.lgBtn : styles.smBtn;

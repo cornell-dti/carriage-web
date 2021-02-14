@@ -22,6 +22,10 @@ function renderTableHeader() {
   );
 }
 
+const failed = {
+  id: '-1FAILED',
+};
+
 function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
   const comma = ', ';
@@ -54,7 +58,12 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   }, [setRiders, withDefaults]);
 
   function deleteEntry(email: string, riderList: Rider[]) {
-    const riderId = riderList.filter((rider) => rider.email === email)[0].id;
+    const riderId = (
+      riderList.filter((rider) => rider.email === email)[0] || failed
+    ).id;
+    if (riderId === failed.id) {
+      return riderList;
+    }
     async function deleteBackend() {
       await fetch(`/riders/${riderId}`, withDefaults({ method: 'DELETE' }));
     }

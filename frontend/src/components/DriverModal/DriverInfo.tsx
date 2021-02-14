@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form';
 import styles from './drivermodal.module.css';
 import { Input } from '../FormElements/FormElements';
 
-
 const DriverInfo = () => {
   const { register } = useFormContext();
   return (

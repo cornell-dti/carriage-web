@@ -78,7 +78,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           type="button"
           className={cn(
             styles.day,
-            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+            { [styles.daySelected || '']: isDaySelectedByInstance(day, index) },
           )}
           onClick={() => handleClick(day)}
         >

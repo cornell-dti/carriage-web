@@ -5,7 +5,7 @@ import styles from './assigndrivermodal.module.css';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Ride;
+  ride: Ride | undefined;
   allDrivers: Driver[];
 };
 
@@ -24,6 +24,7 @@ const DriverRow = ({ firstName, imageURL }: DriverRowProps) => (
 const AssignDriverModal = ({
   isOpen,
   close,
+  // eslint-disable-next-line no-unused-vars
   ride,
   allDrivers,
 }: AssignModalProps) => {

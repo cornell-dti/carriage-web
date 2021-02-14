@@ -1,16 +1,26 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { home, drivers, riders, settings, locations } from '../../icons/sidebar/index';
+import {
+  home,
+  drivers,
+  riders,
+  settings,
+  locations,
+} from '../../icons/sidebar/index';
 import styles from './sidebar.module.css';
 
 type MenuItem = {
-  icon: string,
-  caption: string,
-  path: string
-}
+  icon: string;
+  caption: string;
+  path: string;
+};
 
-const Sidebar: FunctionComponent = ({ children }) => {
+type SidebarProps = {
+  children: ReactNode;
+};
+
+const Sidebar = ({ children }: SidebarProps) => {
   const { pathname } = useLocation();
   const [selected, setSelected] = useState(pathname);
 
@@ -28,11 +38,13 @@ const Sidebar: FunctionComponent = ({ children }) => {
         {menuItems.map(({ path, icon, caption }) => (
           <Link key={path} className={styles.sidebarLinks} to={path}>
             <div onClick={() => setSelected(path)} className={styles.icon}>
-              <div className={
-                path === selected
-                  ? cn(styles.selected, styles.circle)
-                  : styles.circle
-              }>
+              <div
+                className={
+                  path === selected
+                    ? cn(styles.selected, styles.circle)
+                    : styles.circle
+                }
+              >
                 <img alt={caption} src={icon} />
               </div>
               <div className={styles.caption}>{caption}</div>
@@ -41,10 +53,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
         ))}
       </div>
 
-      <div className={styles.content}>
-        {children}
-      </div>
-    </div >
+      <div className={styles.content}>{children}</div>
+    </div>
   );
 };
 

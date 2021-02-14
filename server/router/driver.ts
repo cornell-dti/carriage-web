@@ -85,7 +85,6 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
   });
 });
 
-
 // Put a driver in Drivers table
 router.post('/', validateUser('Dispatcher'), (req, res) => {
   const { body } = req;

@@ -1,11 +1,60 @@
 // Incredibly basic test of scheduling
-const sample = require('./sampleInput');
+import {
+  rideRequests as _rideRequests,
+  drivers as _drivers,
+  rideRequestsImpossible,
+} from './sampleInput';
 // Test on possible request set
-let schedule = makeSchedule(sample.rideRequests, sample.drivers);
-console.log(schedule); // Should output valid schedule
-// Test on impossible request set
-schedule = makeSchedule(sample.rideRequestsImpossible, sample.drivers);
-console.log(schedule); // Should output NULL
+
+/**
+ * TODO: currently checks for conflicts with every ride, much more efficient models possible
+ * (track most recent ride for each driver)
+ * NOTE: assumes implicit guarantee that for all JSONs: startTime > endTime
+ *
+ * @param {{ startTime: string, endTime: string }} request
+ * @param {*} node a list of JSON ride objects,
+ * where each ride has startTime and endTime valid string date fields and a driverID field
+ * @param {{ startTime: string, endTime: string; ID: string }} driver a valid driver JSON object.
+ * @returns {boolean} if there exists a conflict when assigning request (ride) to driver
+ * given the schedule in node (list of scheduled ride JSONs)
+ */
+function conflict(request, node, driver) {
+  return Object.keys(node).some((key) => {
+    const ride = node[key];
+    return (
+      ride.driverID === driver.ID
+      && (new Date(request.startTime) < new Date(driver.startTime)
+      || new Date(request.endTime) > new Date(driver.endTime)
+      || (new Date(request.startTime) > new Date(ride.startTime)
+      && new Date(request.startTime) < new Date(ride.endTime))
+      || (new Date(request.endTime) > new Date(ride.startTime)
+      && new Date(request.endTime) < new Date(ride.endTime)))
+    );
+  });
+}
+
+/**
+ * Creates copy of request JSON object with driverID field set as input driver
+ *
+ * @param {*} request a JSON object
+ * @param {*} driverID
+ */
+function assignRide(request, driverID) {
+  const scheduled = JSON.parse(JSON.stringify(request));
+  scheduled.driverID = driverID;
+  return scheduled;
+}
+
+/**
+ * TODO: Inefficient, over-copying --> improve
+ *
+ * @template {T}
+ * @param {T[]} node an array list of JSON objects that all must be deep-copied.
+ * @returns {T[]} a deep copy of the input node.
+ */
+function copyNode(node) {
+  return Object.keys(node).map((key) => JSON.parse(JSON.stringify(node[key])));
+}
 
 /**
  * NOTE:
@@ -49,50 +98,8 @@ function makeSchedule(rideRequests, drivers) {
   return null;
 }
 
-/**
- * TODO: currently checks for conflicts with every ride, much more efficient models possible
- * (track most recent ride for each driver)
- * NOTE: assumes implicit guarantee that for all JSONs: startTime > endTime
- *
- * @param {{ startTime: string, endTime: string }} request
- * @param {*} node a list of JSON ride objects,
- * where each ride has startTime and endTime valid string date fields and a driverID field
- * @param {{ startTime: string, endTime: string; ID: string }} driver a valid driver JSON object.
- * @returns {boolean} if there exists a conflict when assigning request (ride) to driver
- * given the schedule in node (list of scheduled ride JSONs)
- */
-function conflict(request, node, driver) {
-  return Object.keys(node).some((key) => {
-    const ride = node[key];
-    return ride.driverID === driver.ID
-      && (new Date(request.startTime) < new Date(driver.startTime)
-        || new Date(request.endTime) > new Date(driver.endTime)
-      || (new Date(request.startTime) > new Date(ride.startTime)
-        && new Date(request.startTime) < new Date(ride.endTime))
-        || (new Date(request.endTime) > new Date(ride.startTime)
-          && new Date(request.endTime) < new Date(ride.endTime)));
-  });
-}
-
-/**
- * Creates copy of request JSON object with driverID field set as input driver
- *
- * @param {*} request a JSON object
- * @param {*} driverID
- */
-function assignRide(request, driverID) {
-  const scheduled = JSON.parse(JSON.stringify(request));
-  scheduled.driverID = driverID;
-  return scheduled;
-}
-
-/**
- * TODO: Inefficient, over-copying --> improve
- *
- * @template {T}
- * @param {T[]} node an array list of JSON objects that all must be deep-copied.
- * @returns {T[]} a deep copy of the input node.
- */
-function copyNode(node) {
-  return Object.keys(node).map((key) => JSON.parse(JSON.stringify(node[key])));
-}
+let schedule = makeSchedule(_rideRequests, _drivers);
+console.log(schedule); // Should output valid schedule
+// Test on impossible request set
+schedule = makeSchedule(rideRequestsImpossible, _drivers);
+console.log(schedule); // Should output NULL

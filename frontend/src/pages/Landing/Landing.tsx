@@ -14,7 +14,6 @@ const ReadMore = () => (
   </a>
 );
 
-
 const Footer = () => (
   <footer className={styles.footer}>
     Some information about copyright can go here

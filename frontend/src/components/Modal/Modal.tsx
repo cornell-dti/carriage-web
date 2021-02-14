@@ -40,7 +40,9 @@ const Modal = ({
   paginate = false,
   currentPage = 0,
   children,
-  onClose = () => { },
+  onClose = () => {
+    // do nothing
+  },
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];

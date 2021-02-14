@@ -36,20 +36,13 @@ const formatPhone = (phoneNumber: string) => {
 };
 
 type DriverCardProps = {
-  id: string,
+  id: string;
   driver: Driver;
-}
+};
 
 const DriverCard = ({
   id,
-  driver: {
-    firstName,
-    lastName,
-    email,
-    phoneNumber,
-    availability,
-    vehicle,
-  },
+  driver: { firstName, lastName, email, phoneNumber, availability, vehicle },
 }: DriverCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
@@ -66,22 +59,34 @@ const DriverCard = ({
   };
 
   return (
-    <Link to={{ pathname: '/drivers/driver', state: userInfo, search: `?name=${fullName}` }}
-      style={{ textDecoration: 'none', color: 'inherit' }}>
-      <Card firstName={firstName} lastName={lastName} netId={netId} >
+    <Link
+      to={{
+        pathname: '/drivers/driver',
+        state: userInfo,
+        search: `?name=${fullName}`,
+      }}
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    >
+      <Card firstName={firstName} lastName={lastName} netId={netId || ''}>
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
         </CardInfo>
         <CardInfo icon={clock} alt="clock icon">
           <div>
             {fmtAvailability.map(([day, timeRange]) => (
-              <p key={day}><b>{day}:</b> {timeRange}</p>
+              <p key={day}>
+                <b>{day}:</b> {timeRange}
+              </p>
             ))}
           </div>
         </CardInfo>
         <CardInfo icon={wheel} alt="wheel icon">
           <p>{`${vehicle.name} | ${vehicle.capacity}`}</p>
-          <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
+          <img
+            src={capacity}
+            alt="capacity icon"
+            style={{ marginLeft: '2px' }}
+          />
         </CardInfo>
       </Card>
     </Link>
@@ -100,13 +105,10 @@ const DriverCards = () => {
 
   return (
     <div className={styles.cardsContainer}>
-      {drivers && drivers.map((driver) => (
-        <DriverCard
-          key={driver.id}
-          id={driver.id}
-          driver={driver}
-        />
-      ))}
+      {drivers
+        && drivers.map((driver) => (
+          <DriverCard key={driver.id} id={driver.id} driver={driver} />
+        ))}
     </div>
   );
 };
