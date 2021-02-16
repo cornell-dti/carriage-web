@@ -6,11 +6,11 @@ import { Condition } from 'dynamoose/dist/Condition';
 export function getById(
   res: Response,
   model: ModelType<Document>,
-  id: string | ObjectType,
+  id: string | ObjectType | undefined,
   table: string,
   callback?: (value: any) => void,
 ) {
-  model.get(id, (err, data) => {
+  model.get(id || '', (err, data) => {
     if (err) {
       res.send({ err });
     } else if (!data) {
@@ -127,11 +127,11 @@ export function conditionalUpdate(
 export function deleteById(
   res: Response,
   model: ModelType<Document>,
-  id: string | ObjectType,
+  id: string | ObjectType | undefined,
   table: string,
   callback?: (value: any) => void,
 ) {
-  model.get(id, (err, data) => {
+  model.get(id || '', (err, data) => {
     if (err) {
       res.send({ err });
     } else if (!data) {
