@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import TextInput from './TextInput';
 
 type Driver = {
-  name: string,
-  netid: string,
-  email: string,
-  phone: string,
+  name: string;
+  netid: string;
+  email: string;
+  phone: string;
 }
 
 type FormProps = {

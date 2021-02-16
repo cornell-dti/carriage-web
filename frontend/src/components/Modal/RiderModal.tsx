@@ -6,7 +6,6 @@ import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 
-
 type RiderModalProps = {
   riders: Array<Rider>;
   setRiders: Dispatch<SetStateAction<Rider[]>>;

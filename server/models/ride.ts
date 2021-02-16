@@ -19,22 +19,22 @@ export enum Status {
 }
 
 export type RideType = {
-  id: string,
-  type: Type,
-  status: Status,
-  late: boolean,
-  startLocation: LocationType,
-  endLocation: LocationType,
-  startTime: string,
-  requestedEndTime: string,
-  endTime: string,
-  rider: RiderType,
-  driver?: DriverType,
-  recurring?: boolean,
-  recurringDays?: number[],
-  endDate?: string
-  deleted?: boolean,
-  edits?: string[],
+  id: string;
+  type: Type;
+  status: Status;
+  late: boolean;
+  startLocation: LocationType;
+  endLocation: LocationType;
+  startTime: string;
+  requestedEndTime: string;
+  endTime: string;
+  rider: RiderType;
+  driver?: DriverType;
+  recurring?: boolean;
+  recurringDays?: number[];
+  endDate?: string;
+  deleted?: boolean;
+  edits?: string[];
 };
 
 const schema = new dynamoose.Schema({

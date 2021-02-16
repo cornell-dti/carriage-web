@@ -28,10 +28,13 @@ const Table = () => {
 
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
-    fetch('/api/locations', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(body),
-    }))
+    fetch(
+      '/api/locations',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    )
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding location failed');
@@ -59,7 +62,7 @@ const Table = () => {
           throw new Error('adding location failed');
         }
       })
-      .catch((e) => console.error('removing location failed'));
+      .catch(() => console.error('removing location failed'));
   };
 
   const renderTableHeader = () => (

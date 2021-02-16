@@ -27,7 +27,7 @@ function validateToken(
   if (authorization) {
     const [bearer, token] = authorization.split(' ');
     if (bearer === 'Bearer') {
-      jwt.verify(token, process.env.JWT_SECRET!, (err, payload) => {
+      jwt.verify(token || '', process.env.JWT_SECRET!, (err, payload) => {
         if (err) {
           res.send({ err });
         } else {

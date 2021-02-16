@@ -17,13 +17,15 @@ const DispatcherManager = () => {
       });
   }, [withDefaults]);
 
-
   const addDispatcher = (newDispatcher: Dispatcher) => {
     const { id, ...body } = { ...newDispatcher };
-    fetch('/api/dispatchers', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(body),
-    }))
+    fetch(
+      '/api/dispatchers',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    )
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding dispatcher failed');
@@ -53,7 +55,7 @@ const DispatcherManager = () => {
           throw new Error('deleting failed');
         }
       })
-      .catch((e) => console.error('removing dispatcher failed'));
+      .catch(() => console.error('removing dispatcher failed'));
   };
 
   const renderTableHeader = () => (
@@ -73,23 +75,28 @@ const DispatcherManager = () => {
         <table className={styles.table}>
           <tbody>
             {renderTableHeader()}
-            {dispatchers.map((
-              { id, firstName, lastName, phoneNumber, email, accessLevel }, index,
-            ) => (
-              <tr key={index}>
-                <TableRow values={[
-                  { data: firstName },
-                  { data: lastName },
-                  { data: phoneNumber },
-                  { data: email },
-                  { data: accessLevel },
-                  {
-                    data: 'Delete',
-                    buttonHandler: () => deleteDispatcher(id),
-                  },
-                ]} />
-              </tr>
-            ))}
+            {dispatchers.map(
+              (
+                { id, firstName, lastName, phoneNumber, email, accessLevel },
+                index,
+              ) => (
+                <tr key={index}>
+                  <TableRow
+                    values={[
+                      { data: firstName },
+                      { data: lastName },
+                      { data: phoneNumber },
+                      { data: email },
+                      { data: accessLevel },
+                      {
+                        data: 'Delete',
+                        buttonHandler: () => deleteDispatcher(id),
+                      },
+                    ]}
+                  />
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './collapsible.module.css';
-import { up, down } from "../../icons/other/index";
+import { up, down } from '../../icons/other/index';
 
 type CollapsibleSection = {
   title: string;
@@ -19,7 +19,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
       </div>
       {expanded && <div className={styles.contentContainer}>{children}</div>}
     </div>
-  )
-}
+  );
+};
 
 export default Collapsible;

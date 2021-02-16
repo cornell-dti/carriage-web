@@ -77,14 +77,12 @@ const Schedule = () => {
     });
   };
 
-  const onEventDrop = ({ start, end, event, resourceId }: any) => {
+  const onEventDrop = ({ event, resourceId }: any) => {
     // uncomment to view event change details
     // console.log('dragged event:', event.title);
     // console.log('old resourceId:', event.resourceId);
     // console.log('new resourceId:', resourceId);
-    const nextEvents = events.map((old) =>
-      old.id === event.id ? { ...old, resourceId } : old
-    );
+    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
     setEvents(nextEvents);
   };
 
@@ -97,9 +95,11 @@ const Schedule = () => {
     <>
       <h1 className={styles.heading}>Home</h1>
       <div
-        className={cn(styles.calendar_container, { [styles.long]: viewState })}
+        className={cn(styles.calendar_container, {
+          [styles.long || '']: viewState,
+        })}
       >
-        <div className={cn(styles.left, { [styles.long]: viewState })}>
+        <div className={cn(styles.left, { [styles.long || '']: viewState })}>
           <DnDCalendar
             resizable={false}
             formats={{ timeGutterFormat: 'h A' }}
@@ -125,7 +125,7 @@ const Schedule = () => {
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={cn(styles.right, { [styles.long]: viewState })}>
+        <div className={cn(styles.right, { [styles.long || '']: viewState })}>
           <div>
             <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
               <i className={styles.uparrow}></i>

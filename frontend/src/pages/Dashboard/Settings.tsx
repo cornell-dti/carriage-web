@@ -1,7 +1,7 @@
 import React from 'react';
 import Logout from '../../components/Logout/Logout';
 import styles from './page.module.css';
-import DispatcherTable from '../../components/UserTables/DispatcherTable'
+import DispatcherTable from '../../components/UserTables/DispatcherTable';
 
 const Settings = () => (
   <>

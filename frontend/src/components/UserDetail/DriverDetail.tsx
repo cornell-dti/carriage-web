@@ -7,7 +7,6 @@ import { phone, clock, wheel } from '../../icons/userInfo/index';
 import styles from '../UserTables/table.module.css';
 import { useReq } from '../../context/req';
 
-
 function renderTableHeader() {
   return (
     <tr>
@@ -27,8 +26,8 @@ type DriverDetailProps = {
   lastName: string;
   netId: string;
   phone: string;
-  availability: string[][]
-  vehicle: Vehicle
+  availability: string[][];
+  vehicle: Vehicle;
 }
 
 const DriverDetail = () => {
