@@ -5,6 +5,7 @@ import cn from 'classnames';
 import moment from 'moment';
 import styles from './schedule.module.css';
 import { Ride, Driver } from '../../types';
+import { useReq } from '../../context/req';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
 import './dnd.scss';
@@ -45,8 +46,10 @@ const Schedule = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
 
+  const {withDefaults} = useReq();
+
   useEffect(() => {
-    fetch('/rides')
+    fetch('/api/rides', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(data
@@ -61,10 +64,10 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             resourceId: ride.driver!.id
           })))
       });
-  }, []);
+  }, [withDefaults]);
 
   useEffect(() => {
-    fetch('/drivers')
+    fetch('/api/drivers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setDrivers(data);
@@ -75,14 +78,14 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           }))
         )
       });
-  }, []);
+  }, [withDefaults]);
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(`/rides/${rideId}`, {
+    fetch(`/api/rides/${rideId}`, withDefaults({
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ driver: updatedDriver }),
-    });
+    }));
   }
 
   const goUp = () => {
