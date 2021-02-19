@@ -1,27 +1,29 @@
 .label {
-  margin-right: 8px;
+  margin-right: 0.4rem;
 }
 
 .input {
   border: none;
   outline: none;
-  border-radius: 4px;
+  border-radius: 0.2rem;
 }
 
-.textInput, .numberInput {
-  font-size: 17px;
-  padding: 4px;
+.textInput,
+.numberInput {
+  font-size: 0.85rem;
+  padding: 0.2rem;
 }
 
-.timeInput, .dateInput {
-  font-size: 20px;
-  padding: 4px;
+.timeInput,
+.dateInput {
+  font-size: 1rem;
+  padding: 0.2rem;
 }
 
-.timeInput::-webkit-calendar-picker-indicator, 
+.timeInput::-webkit-calendar-picker-indicator,
 .dateInput::-webkit-calendar-picker-indicator {
-  height: 18px;
-  width: 18px;
+  height: 0.9rem;
+  width: 0.9rem;
 }
 
 .input:focus {
@@ -29,21 +31,21 @@
 }
 
 .lgBtn {
-  border-radius: 8px;
-  min-width: 120px;
-  padding: 10px 18px;
+  border-radius: 0.4rem;
+  min-width: 6rem;
+  padding: 0.5rem 0.9rem;
   text-align: center;
-  font-size: 17px;
+  font-size: 0.85rem;
   outline: none;
   cursor: pointer;
 }
 
 .smBtn {
-  border-radius: 10px;
-  min-width: 105px;
-  padding: 8px 16px;
+  border-radius: 0.5rem;
+  min-width: 5.25rem;
+  padding: 0.4rem 0.8rem;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.7rem;
   outline: none;
   cursor: pointer;
 }
@@ -56,6 +58,6 @@
 
 .secondaryBtn {
   background-color: white;
-  border: 1px solid #000000;
+  border: 0.05rem solid #000000;
   box-sizing: border-box;
 }

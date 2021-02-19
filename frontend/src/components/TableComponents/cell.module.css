@@ -1,33 +1,32 @@
-.cell{
+.cell {
   padding-left: 2rem;
   padding-right: 2rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
 
-.passInfo{
+.passInfo {
   background-color: #fff;
 }
 
-.firstCell{
-  border-radius: 15px 0 0 15px;
+.firstCell {
+  border-radius: 0.75rem 0 0 0.75rem;
 }
 
-.lastCell{
-  border-radius: 0 15px 15px 0;
+.lastCell {
+  border-radius: 0 0.75rem 0.75rem 0;
 }
 
-.tag{
-  border-radius: 10px;
-  padding: 5px;
+.tag {
+  border-radius: 0.5rem;
+  padding: 0.25rem;
 }
-.ctown{
-  background-color: #D5F2EA;
-  
+.ctown {
+  background-color: #d5f2ea;
 }
 
-.west{
-  background-color: #FFD8DE;
+.west {
+  background-color: #ffd8de;
 }
 
 Button {

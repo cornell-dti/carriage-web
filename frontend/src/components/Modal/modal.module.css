@@ -14,13 +14,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
-  padding: 32px 36px;
-  border-radius: 16px;
+  padding: 1.6rem 1.8rem;
+  border-radius: 0.8rem;
   z-index: 1010;
 }
 
 .title {
-  font-size: 28px;
+  font-size: 1.4rem;
   margin: 0;
 }
 
@@ -30,7 +30,7 @@
   cursor: pointer;
   background: none;
   padding: 0;
-  margin-left: 12px;
+  margin-left: 0.6rem;
 }
 
 .topContainer {
@@ -40,7 +40,7 @@
 }
 
 .page {
-  margin: 12px 0;
+  margin: 0.6rem 0;
   position: relative;
 }
 
@@ -50,9 +50,9 @@
 }
 
 .indicator {
-  height: 6px;
-  width: 6px;
-  margin: 0 4px;
+  height: 0.3rem;
+  width: 0.3rem;
+  margin: 0 0.2rem;
   border-radius: 50%;
   display: inline-block;
 }

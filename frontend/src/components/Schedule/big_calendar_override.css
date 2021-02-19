@@ -5,7 +5,7 @@
 
 /* columns seperating drivers */
 .rbc-time-content > * + * > * {
-  border-left: 1px solid rgba(0, 0, 0, 15%);
+  border-left: 0.05rem solid rgba(0, 0, 0, 15%);
 }
 
 /* rows seperating timeslots */
@@ -27,7 +27,7 @@
 /* vertical line by time slot */
 .rbc-time-view-resources .rbc-time-gutter,
 .rbc-time-view-resources .rbc-time-header-gutter {
-  width: 60px;
+  width: 3rem;
   background-color: #fdfdfd;
   border: none;
 }
@@ -44,8 +44,8 @@
 /* driver names */
 .rbc-time-view .rbc-row div:nth-child(1) {
   border-bottom: none;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
 }
 
 /* line between driver names */

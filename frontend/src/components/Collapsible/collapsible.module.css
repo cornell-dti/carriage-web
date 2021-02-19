@@ -1,19 +1,19 @@
 .collapsible {
   display: inline-block;
   width: 100%;
-  background-color: #F3F3F3;;
-  border-radius: 8px;
-  margin-bottom: 25px;
+  background-color: #f3f3f3;
+  border-radius: 0.4rem;
+  margin-bottom: 1.25rem;
 }
 
 .banner {
   width: 100%;
-  padding: 6px 0px 6px 50px;
+  padding: 0.3rem 0 0.3rem 2.5rem;
 }
 
 .title {
   display: inline-block;
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: bold;
 }
 
@@ -25,6 +25,6 @@
 .contentContainer {
   display: inline-block;
   width: 100%;
-  background-color: #FFFFFF;
-  padding: 10px 0px 10px 80px;
+  background-color: #ffffff;
+  padding: 0.5rem 0 0.5rem 4rem;
 }

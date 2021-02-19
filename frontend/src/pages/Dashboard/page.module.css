@@ -1,13 +1,13 @@
-.header{
-  margin-top: 30px;
-  margin-bottom: 5px;
-  margin-left: 32px;
+.header {
+  margin-top: 1.5rem;
+  margin-bottom: 0.25rem;
+  margin-left: 1.6rem;
   text-align: left;
 }
 
-.pageContainer{
+.pageContainer {
   margin-top: 1rem;
-  margin-left: 32px;
+  margin-left: 1.6rem;
 }
 
 .pageTitle {
@@ -16,6 +16,6 @@
   align-items: center;
 }
 
-.margin3{
+.margin3 {
   margin: 3rem;
 }
