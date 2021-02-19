@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Rider } from '../../types/index';
+import TextInput from './TextInput';
+import DropDownInput from './DropDownInput';
+import CheckBoxInput from './CheckBoxInput';
 
 type FormProps = {
   onClick: ((newRider: Rider) => void);
@@ -104,94 +107,54 @@ const Form = (props: FormProps) => {
       <h2 className="formHeader">New Rider</h2>
       <div className="addFormDiv">
         <form className="addForm" onSubmit={(e) => handleSubmit(e)}>
-          <div className="formDiv">
-            <label htmlFor="firstName" className="formLabel">First Name: </label >
-            <input type="text"
-              name="firstName"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validFirstName ? 'hidden' : ''}`}>
-              Please enter a first name
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="lastName" className="formLabel">Last Name: </label >
-            <input type="text"
-              name="lastName"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validLastName ? 'hidden' : ''}`}>
-              Enter a last name
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="phone" className="formLabel">Phone Number: </label>
-            <input type="text"
-              placeholder="XXXXXXXXXX"
-              name="phone"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validPhone ? 'hidden' : ''}`}>
-              Enter a phone number in the form xxxxxxxxxx
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="email" className="formLabel">NetID: </label >
-            <input type="text"
-              name="email"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validEmail ? 'hidden' : ''}`}>
-              Enter a valid netid
-          </p>
-          </div>
-          <div className="formDiv">
-            <label className="formLabel">Accessibility Needs: </label >
-            <div>
-              <div className="checkboxDiv">
-                <input type="checkbox" id="accesibility" name="needWheel"
-                  onChange={(e) => handleInput(e)}
-                />
-                <label htmlFor="accesibility"> Needs Wheelchair</label>
-              </div>
-              <div className="checkboxDiv">
-                <input type="checkbox" id="accesibility" name="needCrutches"
-                  onChange={(e) => handleInput(e)}
-                />
-                <label htmlFor="accesibility"> Has Crutches</label>
-              </div>
-              <div className="checkboxDiv">
-                <input type="checkbox" id="accesibility" name="needAssist"
-                  onChange={(e) => handleInput(e)}
-                />
-                <label htmlFor="accesibility"> Needs Assistant</label>
-              </div>
-            </div>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="description" className="formLabel">
-              Description:
-          </label >
-            <input type="text"
-              name="description"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validDesc ? 'hidden' : ''}`}>
-              Enter a description
-          </p>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="pronouns" className="formLabel">Pronouns: </label >
-            <select name="pronouns" onChange={(e) => handleInput(e)}>
-              <option value="she/her/hers">She/Her/Hers</option>
-              <option value="he/him/his">He/Him/His</option>
-              <option value="neutral">Neutral</option>
-            </select>
-          </div>
-          <div className="formDiv">
-            <label htmlFor="address" className="formLabel">Address: </label >
-            <input type="text"
-              name="address"
-              onChange={(e) => handleInput(e)} />
-            <p className={`formFeedback ${validAddress ? 'hidden' : ''}`}>
-              Enter an address
-          </p>
-          </div>
+          <TextInput
+            labelName="firstName"
+            labelText="First Name: "
+            feedback="Please enter a first name"
+            showFormFeedback={validFirstName}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="lastName"
+            labelText="Last Name: "
+            feedback="Please enter a last name"
+            showFormFeedback={validLastName}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="phone"
+            labelText="Phone Number: "
+            feedback="Enter a phone number in the form xxx-xxx-xxxx"
+            showFormFeedback={validPhone}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="email"
+            labelText="NetId: "
+            feedback="Enter a valid netid"
+            showFormFeedback={validEmail}
+            handleInput={(e) => handleInput(e)} />
+          <CheckBoxInput
+            labelText="Accessibility Needs: "
+            checkboxId="accessibility"
+            options={["needWheel", "needCrutches", "needAssist"]}
+            optionLabels={["Needs Wheelchair", "Has Crutches", "Needs Assistant"]}
+            handleInput={handleInput}
+          />
+          <TextInput
+            labelName="description"
+            labelText="Description: "
+            feedback="Enter a description"
+            showFormFeedback={validDesc}
+            handleInput={(e) => handleInput(e)} />
+          <DropDownInput
+            labelName="pronouns"
+            labelText="Pronouns: "
+            options={["she/her/hers", "he/him/his", "neutral"]}
+            handleInput={(e) => handleInput(e)} />
+          <TextInput
+            labelName="address"
+            labelText="Address: "
+            feedback="Enter an address"
+            showFormFeedback={validAddress}
+            handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>
       </div>

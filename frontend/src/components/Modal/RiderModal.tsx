@@ -4,34 +4,12 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
+import { useReq } from '../../context/req';
 
 
 type RiderModalProps = {
   riders: Array<Rider>;
   setRiders: Dispatch<SetStateAction<Rider[]>>;
-}
-
-function addRider(newRider: Rider, allRiders: Rider[]) {
-  async function addBackend() {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        firstName: newRider.firstName,
-        lastName: newRider.lastName,
-        phoneNumber: newRider.phoneNumber,
-        email: newRider.email,
-        accessibilityNeeds: newRider.accessibilityNeeds,
-        description: newRider.description,
-        joinDate: newRider.joinDate,
-        pronouns: newRider.pronouns,
-        address: newRider.address,
-      }),
-    };
-    await fetch('/riders', requestOptions);
-  }
-  addBackend();
-  return [...allRiders, newRider];
 }
 
 const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
@@ -49,11 +27,11 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { withDefaults } = useReq();
 
   const openModal = () => {
     setIsOpen(true);
   };
-
 
   const closeModal = () => setIsOpen(false);
 
@@ -82,9 +60,16 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         pronouns: '',
         address: formData.address,
       };
-      setRiders(addRider(newRider, riders));
+      const addRider = async () => {
+        await fetch('/api/riders', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(newRider),
+        }));
+      };
+      addRider();
+      setRiders([...riders, newRider]);
     }
-  }, [formData, isSubmitted, riders, setRiders]);
+  }, [formData, isSubmitted, riders, setRiders, withDefaults]);
 
   return (
     <>
