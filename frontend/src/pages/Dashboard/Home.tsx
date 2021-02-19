@@ -5,7 +5,7 @@ import Schedule from '../../components/Schedule/Schedule';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
 import { useReq } from '../../context/req';
-import ExportButton from 'components/ExportButton/ExportButton';
+import ExportButton from '../../components/ExportButton/ExportButton';
 
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
