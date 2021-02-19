@@ -11,7 +11,7 @@ type ModalFormProps = {
 }
 
 const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
-  const { register, handleSubmit } = useForm();
+  const { register, errors, handleSubmit } = useForm();
   const beforeSubmit = ({ name, netid, email, phoneNumber, needs,
     address, start, end }: ObjectType) => {
     const startDate = new Date(`${start}`).toISOString();
@@ -40,32 +40,36 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
             name="name"
             type="text"
             placeholder="Name"
-            ref={register({ required: true })}
+            ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
           />
+          {errors.email && "enter a valid name"}
         </div>
         <div className={cn(styles.gridR1, styles.gridC2)}>
           <Input
             name="netid"
             type="text"
             placeholder="NetID"
-            ref={register({ required: true })}
+            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
           />
+          {errors.email && "enter a valid netid"}
         </div>
         <div className={cn(styles.gridR2, styles.gridC1)}>
           <Input
             name="email"
             type="text"
             placeholder="Email"
-            ref={register({ required: true })}
+            ref={register({ required: true, pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ })}
           />
+          {errors.email && "enter a valid email"}
         </div>
         <div className={cn(styles.gridR2, styles.gridC2)}>
           <Input
             name="phoneNumber"
             type="text"
             placeholder="Phone Number"
-            ref={register({ required: true })}
+            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
           />
+          {errors.phoneNumber && "enter a valid phone number"}
         </div>
         <div className={cn(styles.gridR3, styles.gridC1)}>
           <Input
@@ -74,6 +78,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
             placeholder="Needs"
             ref={register({ required: true })}
           />
+          {errors.email && "enter some needs"}
         </div>
         <div className={cn(styles.gridR3, styles.gridC2)}>
           <Input
@@ -82,6 +87,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
             placeholder="Address"
             ref={register({ required: true })}
           />
+          {errors.email && "enter an address"}
         </div>
         <div className={cn(styles.gridR4, styles.gridC1)}>
           <Label htmlFor="start">Start Date:</Label>

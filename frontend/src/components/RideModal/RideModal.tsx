@@ -6,12 +6,14 @@ import { ObjectType } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 import { download } from '../../icons/other';
 import styles from './ridemodal.module.css';
+import { useReq } from '../../context/req';
 
 const RideModal = () => {
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const { withDefaults } = useReq();
 
   const history = useHistory();
 
@@ -53,17 +55,14 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch('/rides', {
+      fetch('/api/rides', withDefaults({
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(formData),
-      });
+      }));
       setIsSubmitted(false);
       closeModal();
     }
-  }, [formData, isSubmitted]);
+  }, [formData, isSubmitted, withDefaults]);
 
   return (
     <>

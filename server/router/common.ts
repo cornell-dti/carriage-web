@@ -1,14 +1,11 @@
 import { Response } from 'express';
-import { Model } from 'dynamoose/dist/Model';
 import { Document } from 'dynamoose/dist/Document';
-import { ObjectType } from 'dynamoose/dist/General';
+import { ModelType, ObjectType } from 'dynamoose/dist/General';
 import { Condition } from 'dynamoose/dist/Condition';
-
-type ModelType = Document & Model<Document>;
 
 export function getById(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   id: string | ObjectType,
   table: string,
   callback?: (value: any) => void,
@@ -28,7 +25,7 @@ export function getById(
 
 export function batchGet(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   keys: ObjectType[],
   table: string,
   callback?: (value: any) => void,
@@ -51,7 +48,7 @@ export function batchGet(
 
 export function getAll(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   table: string,
   callback?: (value: any) => void,
 ) {
@@ -86,7 +83,7 @@ export function create(
 
 export function update(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   key: ObjectType,
   operation: ObjectType,
   table: string,
@@ -107,7 +104,7 @@ export function update(
 
 export function conditionalUpdate(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   key: ObjectType,
   operation: ObjectType,
   condition: Condition,
@@ -129,7 +126,7 @@ export function conditionalUpdate(
 
 export function deleteById(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   id: string | ObjectType,
   table: string,
   callback?: (value: any) => void,
@@ -149,7 +146,7 @@ export function deleteById(
 
 export function query(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   condition: Condition,
   index: string,
   callback?: (value: any) => void,
@@ -170,7 +167,7 @@ export function query(
 
 export function scan(
   res: Response,
-  model: ModelType,
+  model: ModelType<Document>,
   condition: Condition,
   callback?: (value: any) => void,
 ) {

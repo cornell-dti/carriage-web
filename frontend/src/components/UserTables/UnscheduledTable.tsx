@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
+import moment from 'moment';
 import styles from './table.module.css';
+import { useReq } from '../../context/req';
 
 type TableProps = {
   drivers: Driver[];
 };
 const Table = ({ drivers }: TableProps) => {
   const [rides, setRides] = useState<Ride[]>([]);
+  const { withDefaults } = useReq();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -18,10 +21,8 @@ const Table = ({ drivers }: TableProps) => {
   };
 
   const getUnscheduledRides = () => {
-    // uncomment to get the rides for only today
-    // const today = moment(new Date()).format('YYYY-MM-DD');
-    // fetch(`/rides?type=unscheduled&date=${today}`)
-    fetch(`/rides?type=unscheduled`)
+    const today = moment(new Date()).format('YYYY-MM-DD');
+    fetch(`/rides?type=unscheduled&date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };

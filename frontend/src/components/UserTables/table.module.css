@@ -7,6 +7,10 @@
 }
 
 .tableContainer {
+  padding-left: 2%;
+  padding-right: 2%;
+  width: 100%;
+  flex-direction: row;
   display:block;
   overflow-x: auto; 
 }
@@ -14,7 +18,8 @@
 
 .tableHeader {
   border-bottom: none;
-  padding-right: 2rem;
+  text-align: left;
+  padding-left: 2rem;
   padding-bottom: 1rem;
 }
 
