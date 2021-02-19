@@ -24,7 +24,7 @@ const Table = ({ drivers }: TableProps) => {
     const today = new Date();
     const tmr = today.setDate(today.getDate() + 1);
     const tmrFormatted = moment(tmr).format('YYYY-MM-DD');
-    fetch(`/rides?type=unscheduled&date=${tmrFormatted}`, withDefaults())
+    fetch(`/api/rides?type=unscheduled&date=${tmrFormatted}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   };
