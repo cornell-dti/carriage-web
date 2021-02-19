@@ -3,9 +3,6 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
-import { useHistory } from 'react-router-dom';
-import { download } from '../../icons/other';
-import styles from './ridemodal.module.css';
 import { useReq } from '../../context/req';
 
 const RideModal = () => {
@@ -14,8 +11,6 @@ const RideModal = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const { withDefaults } = useReq();
-
-  const history = useHistory();
 
   const openModal = () => {
     setCurrentPage(0);
@@ -46,13 +41,6 @@ const RideModal = () => {
     setIsSubmitted(true);
   };
 
-  const exportPreview = () => {
-    const location = {
-      pathname: "/home/export",
-    }
-    history.push(location)
-  }
-
   useEffect(() => {
     if (isSubmitted) {
       fetch('/api/rides', withDefaults({
@@ -66,9 +54,6 @@ const RideModal = () => {
 
   return (
     <>
-      <Button onClick={exportPreview} outline={true} className={styles.exportButton}>
-        <img src={download} alt="capacity icon" /> Export
-      </Button>
       <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate
