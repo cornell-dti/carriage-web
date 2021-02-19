@@ -49,7 +49,8 @@ const Schedule = () => {
   const {withDefaults} = useReq();
 
   useEffect(() => {
-    fetch('/api/rides', withDefaults())
+    const today = moment(new Date()).format('YYYY-MM-DD');
+    fetch(`/api/rides?date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(data
