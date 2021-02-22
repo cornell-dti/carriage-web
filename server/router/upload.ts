@@ -5,6 +5,7 @@ import * as db from './common';
 import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
 import { Dispatcher } from '../models/dispatcher';
+import { validateUser } from '../util';
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ const s3bucket = new AWS.S3();
 
 // Uploads base64-encoded fileBuffer to S3 in the folder {tableName}
 // Sets the user's DB photoLink field to the url of the uploaded image, if not set
-router.post('/', (req, res) => {
+router.post('/', validateUser('User'), (req, res) => {
   const { body: { userId, tableName, fileBuffer } } = req;
   const objectKey = `${tableName}/${userId}`;
 
