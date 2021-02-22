@@ -1,29 +1,46 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
+import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 
+
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
+  const [jwt, setJWT] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
 
   function logout() {
     localStorage.clear();
+    if (jwt) {
+      setJWT('');
+    }
     setSignedIn(false);
-    history.push('/');
+    if (pathname !== '/') {
+      history.push('/');
+    }
+  }
+
+  function withDefaults(options?: RequestInit) {
+    return {
+      ...options,
+      headers: {
+        authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+    } as RequestInit;
   }
 
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
     const { email } = googleUser.profileObj;
 
-    const requestOptions = {
+    const serverJWT = await fetch('/api/auth', withDefaults({
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body:
         JSON.stringify({
           token,
@@ -31,13 +48,12 @@ export const AuthManager: FunctionComponent = ({ children }) => {
           table: 'Dispatchers',
           clientId,
         }),
-    };
-
-    const authorized = await fetch('/auth', requestOptions)
+    }))
       .then((res) => res.json())
-      .then((data) => data.id);
+      .then((json) => json.jwt);
 
-    if (authorized) {
+    if (serverJWT) {
+      setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
         history.push('/dashboard/home');
@@ -49,7 +65,9 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   const SiteContent = () => (
     <AuthContext.Provider value={{ logout }}>
-      {children}
+      <ReqContext.Provider value={{ withDefaults }}>
+        {children}
+      </ReqContext.Provider>
     </AuthContext.Provider>
   );
 

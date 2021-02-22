@@ -1,15 +1,16 @@
 import { OAuth2Client } from 'google-auth-library';
 import { LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
-import AWS from 'aws-sdk';
-import config from '../config';
+import jwt from 'jsonwebtoken';
+import { ModelType } from 'dynamoose/dist/General';
+import { Document } from 'dynamoose/dist/Document';
+import { Rider } from '../models/rider';
+import { Dispatcher } from '../models/dispatcher';
+import { Driver } from '../models/driver';
 
 const router = express.Router();
 
-AWS.config.update(config);
-const docClient = new AWS.DynamoDB.DocumentClient();
-
-const validIds = [
+const audience = [
   '322014396101-q7vtrj4rg7h8tlknl1gati2lkbdbu3sp.apps.googleusercontent.com',
   '241748771473-o2cbaufs2p6qu6bvhfurdkki78fvn6hs.apps.googleusercontent.com',
   '3763570966-h9kjq9q71fpb0pl0k8vhl3ogsbqcld96.apps.googleusercontent.com',
@@ -21,11 +22,21 @@ const validIds = [
 
 async function verify(clientId: string, token: string): Promise<LoginTicket> {
   const client = new OAuth2Client(clientId);
-  const authRes = await client.verifyIdToken({
-    idToken: token,
-    audience: validIds,
-  });
+  const authRes = await client.verifyIdToken({ idToken: token, audience });
   return authRes;
+}
+
+function getModel(table: string) {
+  const tableToModel: { [table: string]: ModelType<Document> } = {
+    Riders: Rider,
+    Drivers: Driver,
+    Dispatchers: Dispatcher,
+  };
+  return tableToModel[table];
+}
+
+function getUserType(table: string) {
+  return table.slice(0, table.length - 1);
 }
 
 // Verify an authentication token
@@ -34,29 +45,35 @@ router.post('/', (req, res) => {
   verify(clientId, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
-      const validTable = ['Riders', 'Drivers', 'Dispatchers'];
-      if (payload && payload.aud === clientId && validTable.includes(table)) {
-        const params = {
-          TableName: table,
-          ProjectionExpression: 'id, email',
-          FilterExpression: 'email = :user_email',
-          ExpressionAttributeValues: {
-            ':user_email': email,
-          },
-        };
-        docClient.scan(params, (err, data) => {
+      const model = getModel(table);
+      if (payload?.aud === clientId && model) {
+        model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
-            res.send({ err });
+            res.send({ success: false, err: err.message });
+          } else if (data?.length) {
+            // Dynamoose incorrectly types data[0] as Document[]
+            type User = { id: string };
+            const { id }: User = data[0] as any;
+            const userPayload = {
+              id,
+              userType: getUserType(table),
+            };
+            res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
-            const userList = data.Items;
-            res.send({ id: data.Count ? userList![0].id : null });
+            res.send({ success: false, err: 'User not found' });
           }
         });
+      } else if (payload?.aud !== clientId) {
+        res.send({ success: false, err: 'Invalid client id' });
+      } else if (!model) {
+        res.send({ success: false, err: 'Table not found' });
       } else {
-        res.send({ success: false });
+        res.send({ success: false, err: 'Payload not found' });
       }
     })
-    .catch(() => res.send({ success: false }));
+    .catch((err) => {
+      res.send({ success: false, err: err.message });
+    });
 });
 
 export default router;

@@ -5,11 +5,13 @@ import { ObjectType, Rider, Location } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
+import { useReq } from '../../../context/req';
 
 const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   const { register, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
+  const { withDefaults } = useReq();
   const locations = Object.keys(locationToId).sort();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
@@ -20,7 +22,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    fetch('/riders')
+    fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Rider[] }) => {
         const nameToIdObj = data.reduce((acc: ObjectType, r) => {
@@ -31,7 +33,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
         setNameToId(nameToIdObj);
       });
 
-    fetch('/locations')
+    fetch('/api/locations', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Location[] }) => {
         const locationToIdObj = data.reduce((acc: ObjectType, l) => {
@@ -40,7 +42,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
         }, {});
         setLocationToId(locationToIdObj);
       });
-  }, []);
+  }, [withDefaults]);
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
