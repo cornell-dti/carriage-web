@@ -4,6 +4,11 @@
   align-items: center;
 }
 
+.error {
+  color: red;
+  font-size: 0.8rem;
+}
+
 .inputContainer {
   margin-bottom: 24px;
 }

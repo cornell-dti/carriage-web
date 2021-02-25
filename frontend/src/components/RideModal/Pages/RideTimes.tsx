@@ -6,18 +6,20 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 
 const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit, getValues } = useForm({
+  const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
       date: formData?.date ?? '',
       pickupTime: formData?.pickupTime ?? '',
       dropoffTime: formData?.dropoffTime ?? '',
     },
   });
+  const { errors } = formState;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={styles.date}>
+          {errors.date && <p className={styles.error}>Please enter a date</p>}
           <Label htmlFor="date">Date:</Label>
           <Input
             type="date"
@@ -26,6 +28,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
           />
         </div>
         <div className={styles.pickupTime}>
+          {errors.pickupTime && <p className={styles.error}>Please enter a time</p>}
           <Label htmlFor="pickupTime">Pickup time:</Label>
           <Input
             type="time"
@@ -34,6 +37,12 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
           />
         </div>
         <div className={styles.dropoffTime}>
+          {errors.dropoffTime?.type === 'required' && (
+            <p className={styles.error}>Please enter a time</p>
+          )}
+          {errors.dropoffTime?.type === 'validate' && (
+            <p className={styles.error}>Invalid time</p>
+          )}
           <Label htmlFor="dropoffTime">Dropoff time:</Label>
           <Input
             type="time"

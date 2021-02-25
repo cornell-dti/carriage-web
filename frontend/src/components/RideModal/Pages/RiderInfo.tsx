@@ -8,7 +8,7 @@ import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 
 const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit } = useForm();
+  const { register, errors, handleSubmit } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { withDefaults } = useReq();
@@ -48,6 +48,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
+          {errors.name && <p className={styles.error}>Rider not found.</p>}
           <Input
             name="name"
             type="text"
@@ -62,6 +63,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           />
         </div>
         <div className={styles.pickupLocation}>
+          {errors.pickupLoc && <p className={styles.error}>Please enter a location.</p>}
           <Input
             name="pickupLoc"
             type="text"
@@ -76,6 +78,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
+          {errors.dropoffLoc && <p className={styles.error}>Please enter a location.</p>}
           <Input
             name="dropoffLoc"
             type="text"

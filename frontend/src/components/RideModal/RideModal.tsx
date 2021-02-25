@@ -31,21 +31,27 @@ const RideModal = () => {
     next();
   };
 
-  const submitData = () => {
-    const {
-      date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
-    } = formData;
-    const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
-    const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    setFormData({ startTime, endTime, driver, rider, startLocation, endLocation });
-    setIsSubmitted(true);
-  };
+  const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
-    if (isSubmitted) {
+    // all fields are required so just checking length should be suitable
+    const isFormComplete = Object.keys(formData).length === 7;
+    if (isSubmitted && isFormComplete) {
+      const {
+        date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
+      } = formData;
+      const ride = {
+        type: 'active',
+        startLocation,
+        endLocation,
+        driver,
+        rider,
+        startTime: new Date(`${date} ${pickupTime} EST`).toISOString(),
+        endTime: new Date(`${date} ${dropoffTime} EST`).toISOString(),
+      };
       fetch('/api/rides', withDefaults({
         method: 'POST',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(ride),
       }));
       setIsSubmitted(false);
       closeModal();
