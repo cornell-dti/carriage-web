@@ -47,7 +47,16 @@ router.get('/', validateUser('User'), (req, res) => {
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
   const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
+    body: {
+      type,
+      rider,
+      startTime,
+      endTime,
+      requestedEndTime,
+      driver,
+      startLocation,
+      endLocation,
+    },
   } = req;
 
   let startLocationId;
@@ -77,14 +86,14 @@ router.post('/', validateUser('User'), (req, res) => {
 
   const ride = new Ride({
     id: uuid(),
-    type: Type.UNSCHEDULED,
+    type: type ?? Type.UNSCHEDULED,
     status: Status.NOT_STARTED,
     rider,
     startLocation: startLocationId ?? startLocation,
     endLocation: endLocationId ?? endLocation,
     startTime,
     requestedEndTime,
-    endTime: requestedEndTime,
+    endTime: endTime ?? requestedEndTime,
     driver,
   });
   db.create(res, ride);
