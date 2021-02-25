@@ -24,6 +24,7 @@ export type RiderType = {
   pronouns: string
   address: string
   favoriteLocations: string[]
+  photoLink?: string
 };
 
 const schema = new dynamoose.Schema({
@@ -48,6 +49,7 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [String],
   },
+  photoLink: String,
 });
 
 export const Rider = dynamoose.model('Riders', schema, { create: false });
