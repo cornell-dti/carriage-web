@@ -29,11 +29,11 @@ const Home = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.margin3}>
-          <ExportButton/>
+          <ExportButton />
           <RideModal />
         </div>
       </div>
-      <MiniCal date={date} cb={setDate} />
+      <MiniCal cur_date={date} callback={setDate} />
       <Schedule />
       <Table drivers={drivers} />
     </div>

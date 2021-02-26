@@ -1,6 +1,7 @@
 .root {
   margin-left: 32px;
 }
+
 .customInput {
   width: 200px;
   background-color: black;
@@ -9,11 +10,7 @@
   border-radius: 5px;
 }
 
-.today {
-  color: aquamarine;
-}
-
-.just {
+.justify {
   display: flex;
   justify-content: space-between;
 }
@@ -26,8 +23,7 @@
   margin: 0px 15px;
 }
 
-.b,
-.b:disabled {
+.btn2 {
   background-color: white;
   color: black;
   margin: 10px 15px;
@@ -40,7 +36,7 @@
   font-size: 20px;
 }
 
-.act {
+.active {
   background-color: #00c48c;
   color: white;
 }

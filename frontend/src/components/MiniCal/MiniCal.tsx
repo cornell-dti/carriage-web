@@ -6,23 +6,31 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker.css';
 import styles from './minical.module.css';
 
-type MiniCalProps = {
-  date: Date;
-  cb: (cur: Date) => void;
+const isToday = (date: Date) => {
+  return date.getDate() === new Date().getDate();
 };
 
-const MiniCal = ({ date, cb }: MiniCalProps) => {
+const isTomorrow = (date: Date) => {
+  return date.getDate() === new Date().getDate() + 1;
+};
+
+const isWeekday = (date: Date) => {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+};
+
+type MiniCalProps = {
+  cur_date: Date;
+  callback: (cur: Date) => void;
+};
+
+const MiniCal = ({ cur_date, callback }: MiniCalProps) => {
   const CustomInput = ({ value, onClick }: any) => (
     <button className={styles.customInput} onClick={onClick}>
-      {date.getDate() == new Date().getDate() ? 'Today' : ''}
-      {date.getDate() == new Date().getDate() + 1 ? 'Tomorrow' : ''} 📅 {value}
+      {isToday(cur_date) ? 'Today' : ''}
+      {isTomorrow(cur_date) ? 'Tomorrow' : ''} 📅 {value}
     </button>
   );
-
-  const isWeekday = (date: Date) => {
-    const day = date.getDay();
-    return day !== 0 && day !== 6;
-  };
 
   const pseudoScroll = () => {
     const x = window.scrollX;
@@ -36,8 +44,8 @@ const MiniCal = ({ date, cb }: MiniCalProps) => {
       USERPROFILE{'   '}
       <DatePicker
         adjustDateOnChange
-        selected={date}
-        onChange={cb}
+        selected={cur_date}
+        onChange={callback}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
@@ -58,33 +66,33 @@ const MiniCal = ({ date, cb }: MiniCalProps) => {
           nextMonthButtonDisabled,
         }) => (
           <div>
-            <div className={styles.just}>
+            <div className={styles.justify}>
               <button
-                className={cn(styles.b, {
-                  [styles.act]: date.getDate() == new Date().getDate(),
+                className={cn(styles.btn2, {
+                  [styles.active]: isToday(date),
                 })}
                 onClick={() => {
-                  cb(new Date());
+                  callback(new Date());
                   pseudoScroll();
                 }}
               >
                 TODAY
               </button>
               <button
-                className={cn(styles.b, {
-                  [styles.act]: date.getDate() == new Date().getDate() + 1,
+                className={cn(styles.btn2, {
+                  [styles.active]: isTomorrow(date),
                 })}
                 onClick={() => {
                   const tomorrow = new Date();
                   tomorrow.setDate(new Date().getDate() + 1);
-                  cb(tomorrow);
+                  callback(tomorrow);
                   pseudoScroll();
                 }}
               >
                 TOMORROW
               </button>
             </div>
-            <div className={styles.just}>
+            <div className={styles.justify}>
               <button
                 className={styles.btn}
                 onClick={decreaseMonth}
