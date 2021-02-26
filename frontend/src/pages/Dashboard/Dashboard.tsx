@@ -8,12 +8,21 @@ import Locations from './Locations';
 import Settings from './Settings';
 import DriverDetail from '../../components/UserDetail/DriverDetail';
 import RiderDetail from '../../components/UserDetail/RiderDetail';
+import ExportPreview from '../../components/ExportPreview/ExportPreview';
 
 const Dashboard = () => (
   <Router basename="/dashboard">
     <Sidebar>
       <Switch>
-        <Route path="/home" component={Home} />
+        <Route
+          path="/home"
+          render={({ match: { url } }) => (
+            <>
+              <Route path={`${url}/`} component={Home} exact />
+              <Route path={`${url}/export`} component={ExportPreview} />
+            </>
+          )}
+        />
         <Route
           path="/drivers"
           render={({ match: { url } }) => (
