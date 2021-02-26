@@ -33,7 +33,7 @@ const Home = () => {
           <RideModal />
         </div>
       </div>
-      <MiniCal cur_date={date} callback={setDate} />
+      <MiniCal curDate={date} callback={setDate} />
       <Schedule />
       <Table drivers={drivers} />
     </div>

@@ -20,15 +20,15 @@ const isWeekday = (date: Date) => {
 };
 
 type MiniCalProps = {
-  cur_date: Date;
+  curDate: Date;
   callback: (cur: Date) => void;
 };
 
-const MiniCal = ({ cur_date, callback }: MiniCalProps) => {
+const MiniCal = ({ curDate, callback }: MiniCalProps) => {
   const CustomInput = ({ value, onClick }: any) => (
     <button className={styles.customInput} onClick={onClick}>
-      {isToday(cur_date) ? 'Today' : ''}
-      {isTomorrow(cur_date) ? 'Tomorrow' : ''} 📅 {value}
+      {isToday(curDate) ? 'Today' : ''}
+      {isTomorrow(curDate) ? 'Tomorrow' : ''} 📅 {value}
     </button>
   );
 
@@ -44,7 +44,7 @@ const MiniCal = ({ cur_date, callback }: MiniCalProps) => {
       USERPROFILE{'   '}
       <DatePicker
         adjustDateOnChange
-        selected={cur_date}
+        selected={curDate}
         onChange={callback}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
