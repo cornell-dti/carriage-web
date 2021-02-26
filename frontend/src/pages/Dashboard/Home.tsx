@@ -5,6 +5,7 @@ import Schedule from '../../components/Schedule/Schedule';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
 import { useReq } from '../../context/req';
+import ExportButton from '../../components/ExportButton/ExportButton';
 
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -26,6 +27,7 @@ const Home = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.margin3}>
+          <ExportButton/>
           <RideModal />
         </div>
       </div>
