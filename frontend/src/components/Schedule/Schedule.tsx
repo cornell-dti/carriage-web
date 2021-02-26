@@ -27,9 +27,9 @@ type CalEvent = {
 };
 
 type CalendarDriver = {
-  resourceId: string,
-  resourceTitle: string
-}
+  resourceId: string;
+  resourceTitle: string;
+};
 
 const localizer = momentLocalizer(moment);
 
@@ -46,24 +46,25 @@ const Schedule = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
 
-  const {withDefaults} = useReq();
+  const { withDefaults } = useReq();
 
   useEffect(() => {
     const today = moment(new Date()).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        setEvents(data
-          .filter((ride: Ride) => ride.type !== "unscheduled")
-          .map((ride: Ride) => ({
-            id: ride.id,
-            title:
-              `${ride.startLocation.name} to ${ride.endLocation.name}
+        setEvents(
+          data
+            .filter((ride: Ride) => ride.type !== 'unscheduled')
+            .map((ride: Ride) => ({
+              id: ride.id,
+              title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-            start: new Date(ride.startTime.toString()),
-            end: new Date(ride.endTime.toString()),
-            resourceId: ride.driver!.id
-          })))
+              start: new Date(ride.startTime.toString()),
+              end: new Date(ride.endTime.toString()),
+              resourceId: ride.driver!.id,
+            }))
+        );
       });
   }, [withDefaults]);
 
@@ -75,19 +76,22 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         setCalDrivers(
           data.map((driver: any) => ({
             resourceId: driver.id,
-            resourceTitle: `${driver.firstName} ${driver.lastName}`
+            resourceTitle: `${driver.firstName} ${driver.lastName}`,
           }))
-        )
+        );
       });
   }, [withDefaults]);
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(`/api/rides/${rideId}`, withDefaults({
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ driver: updatedDriver }),
-    }));
-  }
+    fetch(
+      `/api/rides/${rideId}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driver: updatedDriver }),
+      })
+    );
+  };
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -144,12 +148,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    const nextEvents = events.map(
-      (old) => (old.id === event.id ? { ...old, resourceId } : old));
+    const nextEvents = events.map((old) =>
+      old.id === event.id ? { ...old, resourceId } : old
+    );
 
-    const updatedDriver = drivers.find(d => d.id === resourceId);
+    const updatedDriver = drivers.find((d) => d.id === resourceId);
     if (updatedDriver !== undefined) {
-      updateRides(event.id, updatedDriver)
+      updateRides(event.id, updatedDriver);
     }
     setEvents(nextEvents);
   };

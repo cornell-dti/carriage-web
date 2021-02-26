@@ -1,0 +1,46 @@
+.root {
+  margin-left: 32px;
+}
+.customInput {
+  width: 200px;
+  background-color: black;
+  color: white;
+  padding: 5px 0px;
+  border-radius: 5px;
+}
+
+.today {
+  color: aquamarine;
+}
+
+.just {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  margin: 0px 15px;
+}
+
+.b,
+.b:disabled {
+  background-color: white;
+  color: black;
+  margin: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  width: 95px;
+}
+
+.month {
+  font-size: 20px;
+}
+
+.act {
+  background-color: #00c48c;
+  color: white;
+}

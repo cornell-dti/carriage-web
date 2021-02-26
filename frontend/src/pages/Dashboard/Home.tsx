@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RideModal from '../../components/RideModal/RideModal';
 import Table from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
+import MiniCal from '../../components/MiniCal/MiniCal';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
 import { useReq } from '../../context/req';
@@ -9,6 +10,7 @@ import { useReq } from '../../context/req';
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const { withDefaults } = useReq();
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
     const fetchDrivers = async () => {
@@ -29,6 +31,7 @@ const Home = () => {
           <RideModal />
         </div>
       </div>
+      <MiniCal date={date} cb={setDate} />
       <Schedule />
       <Table drivers={drivers} />
     </div>
