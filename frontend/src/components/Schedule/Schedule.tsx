@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
 import moment from 'moment';
 import styles from './schedule.module.css';
+import { Ride, Driver } from '../../types';
+import { useReq } from '../../context/req';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
 import './dnd.scss';
 
-import { CalEvent, tempEvents, resourceMap1, colorMap } from './viewData';
+const colorMap = {
+  red: ['FFA26B', 'FFC7A6'],
+  blue: ['0084F4', '66B5F8'],
+  yellow: ['FFCF5C', 'FFE29D'],
+  green: ['00C48C', '7DDFC3'],
+  black: ['1A051D', 'FBE4E8'],
+};
+
+type CalEvent = {
+  id: number;
+  title: string;
+  start: Date;
+  end: Date;
+  resourceId: number;
+};
+
+type CalendarDriver = {
+  resourceId: string,
+  resourceTitle: string
+}
 
 const localizer = momentLocalizer(moment);
 
@@ -20,8 +41,53 @@ const Schedule = () => {
   const defaultEnd = new Date(defaultStart.getTime() + 28699999);
 
   const [curStart, setCurStart] = useState(defaultStart);
-  const [events, setEvents] = useState(tempEvents);
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
+
+  const {withDefaults} = useReq();
+
+  useEffect(() => {
+    const today = moment(new Date()).format('YYYY-MM-DD');
+    fetch(`/api/rides?date=${today}`, withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => {
+        setEvents(data
+          .filter((ride: Ride) => ride.type !== "unscheduled")
+          .map((ride: Ride) => ({
+            id: ride.id,
+            title:
+              `${ride.startLocation.name} to ${ride.endLocation.name}
+Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver!.id
+          })))
+      });
+  }, [withDefaults]);
+
+  useEffect(() => {
+    fetch('/api/drivers', withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => {
+        setDrivers(data);
+        setCalDrivers(
+          data.map((driver: any) => ({
+            resourceId: driver.id,
+            resourceTitle: `${driver.firstName} ${driver.lastName}`
+          }))
+        )
+      });
+  }, [withDefaults]);
+
+  const updateRides = (rideId: string, updatedDriver: Driver) => {
+    fetch(`/api/rides/${rideId}`, withDefaults({
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ driver: updatedDriver }),
+    }));
+  }
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -78,13 +144,13 @@ const Schedule = () => {
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    // uncomment to view event change details
-    // console.log('dragged event:', event.title);
-    // console.log('old resourceId:', event.resourceId);
-    // console.log('new resourceId:', resourceId);
-    const nextEvents = events.map((old) =>
-      old.id === event.id ? { ...old, resourceId } : old
-    );
+    const nextEvents = events.map(
+      (old) => (old.id === event.id ? { ...old, resourceId } : old));
+
+    const updatedDriver = drivers.find(d => d.id === resourceId);
+    if (updatedDriver !== undefined) {
+      updateRides(event.id, updatedDriver)
+    }
     setEvents(nextEvents);
   };
 
@@ -117,8 +183,8 @@ const Schedule = () => {
             max={
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
-            defaultDate={new Date(2018, 0, 29)} // temp date
-            resources={resourceMap1}
+            defaultDate={new Date()}
+            resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
             eventPropGetter={eventStyle}
