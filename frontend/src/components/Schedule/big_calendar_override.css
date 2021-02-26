@@ -27,7 +27,7 @@
 /* vertical line by time slot */
 .rbc-time-view-resources .rbc-time-gutter,
 .rbc-time-view-resources .rbc-time-header-gutter {
-  width: 38.75rem;
+  width: 3.75rem;
   background-color: #fdfdfd;
   border: none;
 }
