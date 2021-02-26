@@ -1,13 +1,13 @@
 .titleText {
-  margin: 0.8rem 0;
-  font-size: 0.6rem;
+  margin: 1rem 0;
+  font-size: 0.75rem;
   font-weight: bold;
   text-align: center;
   color: black;
 }
 
 .driverRow {
-  height: 2.45rem;
+  height: 3.063rem;
   display: flex;
   align-items: center;
 }
@@ -18,26 +18,26 @@
 }
 
 .driverName {
-  font-size: 0.85rem;
+  font-size: 1.063rem;
   color: #817e7e;
   font-weight: bold;
 }
 
 .driverImage {
-  margin: 0.35rem 0.7rem 0.3rem 1.35rem;
+  margin: 0.438rem 0.875rem 0.375rem 1.688rem;
   border-radius: 50%;
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .modal {
   position: absolute;
-  margin-top: 1rem;
-  left: -1rem;
-  padding-bottom: 1.5rem;
-  width: 12.7rem;
+  margin-top: 1.25rem;
+  left: -1.25rem;
+  padding-bottom: 1.875rem;
+  width: 15.875rem;
   background-color: white;
   z-index: 1010;
-  box-shadow: 0 0.2rem 0.75rem 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.938rem 0 rgba(0, 0, 0, 0.1);
   cursor: default;
 }

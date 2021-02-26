@@ -1,9 +1,9 @@
 .userDetail {
   width: 96%;
   display: inline-block;
-  border-radius: 0.4rem;
+  border-radius: 0.5rem;
   background-color: white;
-  box-shadow: 0 0.2rem 1.75rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
   margin-left: 2%;
   margin-top: 8%;
 }
@@ -33,14 +33,14 @@
 
 .name {
   display: inline-block;
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: bold;
   margin-bottom: 2%;
 }
 
 .netId {
   display: inline-block;
-  font-size: 0.74rem;
+  font-size: 0.938rem;
   opacity: 0.5;
   margin-left: 3%;
 }
@@ -50,7 +50,7 @@
   display: inline-block;
   top: 2%;
   right: 0;
-  width: 3rem;
+  width: 38.75rem;
 }
 
 .contactInfoContainaer {
@@ -66,12 +66,12 @@
 }
 
 .contactIcon {
-  width: 0.8rem;
-  margin-right: 0.8rem;
+  width: 1rem;
+  margin-right: 1rem;
 }
 
 .contactText {
-  font-size: 0.8rem;
+  font-size: 1rem;
   display: inline-block;
 }
 
