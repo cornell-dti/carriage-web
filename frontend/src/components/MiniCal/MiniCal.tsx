@@ -1,10 +1,10 @@
 import React from 'react';
-import DatePicker, { CalendarContainer } from 'react-datepicker';
-
+import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
-import './datepicker.css';
+import './datepicker_override.css';
 import styles from './minical.module.css';
+import { useDate } from '../../context/date';
 
 const isToday = (date: Date) => {
   return date.getDate() === new Date().getDate();
@@ -14,23 +14,22 @@ const isTomorrow = (date: Date) => {
   return date.getDate() === new Date().getDate() + 1;
 };
 
-const isWeekday = (date: Date) => {
-  const day = date.getDay();
-  return day !== 0 && day !== 6;
-};
+const MiniCal = () => {
+  const { curDate, setCurDate } = useDate();
 
-type MiniCalProps = {
-  curDate: Date;
-  callback: (cur: Date) => void;
-};
-
-const MiniCal = ({ curDate, callback }: MiniCalProps) => {
-  const CustomInput = ({ value, onClick }: any) => (
-    <button className={styles.customInput} onClick={onClick}>
-      {isToday(curDate) ? 'Today' : ''}
-      {isTomorrow(curDate) ? 'Tomorrow' : ''} 📅 {value}
-    </button>
-  );
+  const updateDate = (d: Date) => {
+    setCurDate(d);
+  };
+  class CustomInput extends React.Component<any> {
+    render() {
+      return (
+        <button className={styles.customInput} onClick={this.props.onClick}>
+          {isToday(curDate) ? 'Today' : ''}
+          {isTomorrow(curDate) ? 'Tomorrow' : ''} 📅 {this.props.value}
+        </button>
+      );
+    }
+  }
 
   const pseudoScroll = () => {
     const x = window.scrollX;
@@ -45,12 +44,11 @@ const MiniCal = ({ curDate, callback }: MiniCalProps) => {
       <DatePicker
         adjustDateOnChange
         selected={curDate}
-        onChange={callback}
+        onChange={updateDate}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
         customInput={<CustomInput />}
-        filterDate={isWeekday}
         highlightDates={[
           {
             'custom--today': [new Date()],
@@ -72,7 +70,7 @@ const MiniCal = ({ curDate, callback }: MiniCalProps) => {
                   [styles.active]: isToday(date),
                 })}
                 onClick={() => {
-                  callback(new Date());
+                  updateDate(new Date());
                   pseudoScroll();
                 }}
               >
@@ -85,7 +83,7 @@ const MiniCal = ({ curDate, callback }: MiniCalProps) => {
                 onClick={() => {
                   const tomorrow = new Date();
                   tomorrow.setDate(new Date().getDate() + 1);
-                  callback(tomorrow);
+                  updateDate(tomorrow);
                   pseudoScroll();
                 }}
               >

@@ -3,12 +3,13 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
 import moment from 'moment';
-import styles from './schedule.module.css';
 import { Ride, Driver } from '../../types';
 import { useReq } from '../../context/req';
+import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './big_calendar_override.css';
 import './dnd.scss';
+import './big_calendar_override.css';
+import styles from './schedule.module.css';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -36,9 +37,10 @@ const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
 const Schedule = () => {
-  const defaultStart = new Date();
+  const { curDate } = useDate();
+  const defaultStart = curDate;
   defaultStart.setHours(8, 0, 0, 0);
-  const defaultEnd = new Date(defaultStart.getTime() + 28699999);
+  const defaultEnd = new Date(curDate.getTime() + 28699999);
 
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
@@ -49,7 +51,7 @@ const Schedule = () => {
   const { withDefaults } = useReq();
 
   useEffect(() => {
-    const today = moment(new Date()).format('YYYY-MM-DD');
+    const today = moment(curDate).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
@@ -66,7 +68,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             }))
         );
       });
-  }, [withDefaults]);
+  }, [withDefaults, curDate]);
 
   useEffect(() => {
     fetch('/api/drivers', withDefaults())
@@ -175,7 +177,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             resizable={false}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
-            events={filterEvents(events)}
+            events={viewState ? events : filterEvents(events)}
             toolbar={false}
             step={5}
             timeslots={12}
@@ -188,7 +190,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             max={
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
-            defaultDate={new Date()}
+            defaultDate={curDate}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"

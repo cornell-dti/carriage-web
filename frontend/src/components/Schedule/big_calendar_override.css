@@ -52,3 +52,7 @@
 .rbc-time-view-resources .rbc-time-header-content {
   border: none;
 }
+
+.rbc-today {
+  background-color: #fdfdfd;
+}
