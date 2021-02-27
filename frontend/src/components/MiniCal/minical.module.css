@@ -1,7 +1,6 @@
 .root {
   display: flex;
   align-items: center;
-  border: 1px solid pink;
   margin-left: 32px;
 }
 
