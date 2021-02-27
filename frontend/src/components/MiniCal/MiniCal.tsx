@@ -6,13 +6,9 @@ import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 
-const isToday = (date: Date) => {
-  return date.getDate() === new Date().getDate();
-};
+const isToday = (date: Date) => date.getDate() === new Date().getDate();
 
-const isTomorrow = (date: Date) => {
-  return date.getDate() === new Date().getDate() + 1;
-};
+const isTomorrow = (date: Date) => date.getDate() === new Date().getDate() + 1;
 
 const Icon = () => (
   <svg
@@ -48,6 +44,16 @@ const MiniCal = () => {
       );
     }
   }
+
+  const Indicators = ({ date }: { date: Date }) => (
+    <div>
+      <svg width="60" height="14" viewBox="0 0 60 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="7" cy="7" r="7" fill={isToday(date) ? '#00C48C' : 'white'} />
+        <circle cx="53" cy="7" r="7" fill={isTomorrow(date) ? '#00C48C' : 'white'} />
+        <line x1="14" y1="7" x2="46" y2="7" stroke="white" />
+      </svg>
+    </div>
+  );
 
   const pseudoScroll = () => {
     const x = window.scrollX;
@@ -94,6 +100,7 @@ const MiniCal = () => {
               >
                 TODAY
               </button>
+              <Indicators date={date} />
               <button
                 className={cn(styles.btn2, {
                   [styles.active]: isTomorrow(date),
