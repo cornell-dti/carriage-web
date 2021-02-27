@@ -1,4 +1,7 @@
 .root {
+  display: flex;
+  align-items: center;
+  border: 1px solid pink;
   margin-left: 32px;
 }
 
@@ -6,13 +9,23 @@
   width: 200px;
   background-color: black;
   color: white;
-  padding: 5px 0px;
+  margin-top: 0px;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 33px;
+}
+
+.svg {
+  height: 12px;
 }
 
 .justify {
+  margin-bottom: 5px;
+  height: 45px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .btn {
@@ -20,23 +33,36 @@
   color: white;
   border-radius: 50%;
   border: none;
-  margin: 0px 15px;
+  margin: 0px 12px;
 }
 
 .btn2 {
   background-color: white;
   color: black;
   margin: 10px 15px;
-  border-radius: 5px;
+  border-radius: 12px;
   border: none;
   width: 95px;
+  height: 31px;
+  font-size: 14;
 }
 
 .month {
+  width: 160px;
+  line-height: 45px;
   font-size: 20px;
 }
 
 .active {
   background-color: #00c48c;
   color: white;
+}
+
+.primary {
+  height: 1em;
+  color: #00c48c;
+}
+
+.space {
+  width: 0.5em;
 }
