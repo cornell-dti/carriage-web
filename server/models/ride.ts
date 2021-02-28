@@ -104,7 +104,11 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [String],
   },
-  endDate: String,
+  endDate: {
+    type: String,
+    required: false,
+    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+  },
 });
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });

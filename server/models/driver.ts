@@ -66,7 +66,7 @@ const schema = new dynamoose.Schema({
   phoneNumber: {
     type: String,
     required: true,
-    validate: /[0-9]{10}/,
+    validate: /^[0-9]{10}$/,
   },
   email: {
     type: String,

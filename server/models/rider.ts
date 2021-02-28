@@ -46,7 +46,7 @@ const schema = new dynamoose.Schema({
   phoneNumber: {
     type: String,
     required: true,
-    validate: /[0-9]{10}/,
+    validate: /^[0-9]{10}$/,
   },
   email: {
     type: String,
@@ -70,12 +70,12 @@ const schema = new dynamoose.Schema({
   joinDate: {
     type: String,
     required: true,
-    validate: /(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}/,
+    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
   },
   pronouns: {
     type: String,
     required: true,
-    validate: /\w*\/\w*\/\w*/,
+    validate: /^\w*\/\w*\/\w*$/,
   },
   address: {
     type: String,
