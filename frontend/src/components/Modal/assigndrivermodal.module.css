@@ -1,43 +1,43 @@
 .titleText {
-  margin: 16px 0px;
-  font-size: 12px;
+  margin: 1rem 0;
+  font-size: 0.75rem;
   font-weight: bold;
   text-align: center;
   color: black;
 }
 
 .driverRow {
-  height: 49px;
+  height: 3.063rem;
   display: flex;
   align-items: center;
 }
 
-.driverRow:hover{
+.driverRow:hover {
   background: rgba(240, 240, 240, 1);
   cursor: pointer;
 }
 
 .driverName {
-  font-size: 17px;
-  color: #817E7E;
+  font-size: 1.063rem;
+  color: #817e7e;
   font-weight: bold;
 }
 
 .driverImage {
-  margin: 7px 14px 6px 27px;
+  margin: 0.438rem 0.875rem 0.375rem 1.688rem;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .modal {
   position: absolute;
-  margin-top: 20px;
-  left: -20px;
-  padding-bottom: 30px;
-  width: 254px;
+  margin-top: 1.25rem;
+  left: -1.25rem;
+  padding-bottom: 1.875rem;
+  width: 15.875rem;
   background-color: white;
   z-index: 1010;
-  box-shadow: 0px 4px 15px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.938rem 0 rgba(0, 0, 0, 0.1);
   cursor: default;
 }

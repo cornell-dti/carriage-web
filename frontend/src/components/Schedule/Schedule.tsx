@@ -125,7 +125,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     const color = colorMap[getColor(event.id)];
     return {
       style: {
-        borderLeft: `4px solid #${color[0]}`,
+        borderLeft: `0.2rem solid #${color[0]}`,
         backgroundColor: `#${color[1]}`,
         borderRadius: 0,
         color: 'black',
@@ -135,7 +135,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const slotStyle = (d: Date) => ({
     style: {
-      borderTop: d.getMinutes() !== 0 ? 'none' : '1px solid rgba(0, 0, 0, 15%)',
+      borderTop: d.getMinutes() !== 0 ? 'none' : '0.05rem solid rgba(0, 0, 0, 15%)',
     },
   });
 
