@@ -3,13 +3,13 @@ import { Rider } from '../../types';
 import { useReq } from '../../context/req';
 
 type ridersState = {
-    getExistingRiders: () => Array<Rider>, 
-    refreshRiders: () => Promise<Array<Rider>> 
+    getExistingRiders:Array<Rider>, 
+    refreshRiders: () => Promise<void> 
 };
 
 const initialState: ridersState = {
-   getExistingRiders: () => [],
-   refreshRiders: async () =>  []
+   getExistingRiders: [],
+   refreshRiders: async () =>  undefined
   };
 const RidersContext = React.createContext(initialState);
 
@@ -23,20 +23,19 @@ type RidersType = Array<Rider>;
 
 export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [riders, setRiders] = useState<RidersType>([])
-  const getExistingRiders = () => {return riders};
+  const getExistingRiders = riders;
   const { withDefaults } = useReq();
   const refreshRiders = async () => {
     const ridersData:RidersType = await fetch('/api/riders', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
         
-      setRiders((prev) => ({ ...prev, ridersData})); 
-      return riders;
+      setRiders([ ...ridersData]); 
     };
     //Initialize the data
     React.useEffect(()=> {
       refreshRiders();
-    }, [setRiders, withDefaults]);
+    }, [setRiders]);
   
     return (
       <RidersContext.Provider
