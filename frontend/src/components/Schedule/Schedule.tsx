@@ -3,12 +3,13 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
 import moment from 'moment';
-import styles from './schedule.module.css';
 import { Ride, Driver } from '../../types';
 import { useReq } from '../../context/req';
+import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './big_calendar_override.css';
 import './dnd.scss';
+import './big_calendar_override.css';
+import styles from './schedule.module.css';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -27,18 +28,19 @@ type CalEvent = {
 };
 
 type CalendarDriver = {
-  resourceId: string,
-  resourceTitle: string
-}
+  resourceId: string;
+  resourceTitle: string;
+};
 
 const localizer = momentLocalizer(moment);
 
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
 const Schedule = () => {
-  const defaultStart = new Date();
+  const { curDate } = useDate();
+  const defaultStart = curDate;
   defaultStart.setHours(8, 0, 0, 0);
-  const defaultEnd = new Date(defaultStart.getTime() + 28699999);
+  const defaultEnd = new Date(curDate.getTime() + 28699999);
 
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
@@ -46,26 +48,27 @@ const Schedule = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [viewState, setviewState] = useState(false);
 
-  const {withDefaults} = useReq();
+  const { withDefaults } = useReq();
 
   useEffect(() => {
-    const today = moment(new Date()).format('YYYY-MM-DD');
+    const today = moment(curDate).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        setEvents(data
-          .filter((ride: Ride) => ride.type !== "unscheduled")
-          .map((ride: Ride) => ({
-            id: ride.id,
-            title:
-              `${ride.startLocation.name} to ${ride.endLocation.name}
+        setEvents(
+          data
+            .filter((ride: Ride) => ride.type !== 'unscheduled')
+            .map((ride: Ride) => ({
+              id: ride.id,
+              title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-            start: new Date(ride.startTime.toString()),
-            end: new Date(ride.endTime.toString()),
-            resourceId: ride.driver!.id
-          })))
+              start: new Date(ride.startTime.toString()),
+              end: new Date(ride.endTime.toString()),
+              resourceId: ride.driver!.id,
+            }))
+        );
       });
-  }, [withDefaults]);
+  }, [withDefaults, curDate]);
 
   useEffect(() => {
     fetch('/api/drivers', withDefaults())
@@ -75,19 +78,22 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         setCalDrivers(
           data.map((driver: any) => ({
             resourceId: driver.id,
-            resourceTitle: `${driver.firstName} ${driver.lastName}`
+            resourceTitle: `${driver.firstName} ${driver.lastName}`,
           }))
-        )
+        );
       });
   }, [withDefaults]);
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(`/api/rides/${rideId}`, withDefaults({
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ driver: updatedDriver }),
-    }));
-  }
+    fetch(
+      `/api/rides/${rideId}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driver: updatedDriver }),
+      })
+    );
+  };
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -144,12 +150,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    const nextEvents = events.map(
-      (old) => (old.id === event.id ? { ...old, resourceId } : old));
+    const nextEvents = events.map((old) =>
+      old.id === event.id ? { ...old, resourceId } : old
+    );
 
-    const updatedDriver = drivers.find(d => d.id === resourceId);
+    const updatedDriver = drivers.find((d) => d.id === resourceId);
     if (updatedDriver !== undefined) {
-      updateRides(event.id, updatedDriver)
+      updateRides(event.id, updatedDriver);
     }
     setEvents(nextEvents);
   };
@@ -170,7 +177,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             resizable={false}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
-            events={filterEvents(events)}
+            events={viewState ? events : filterEvents(events)}
             toolbar={false}
             step={5}
             timeslots={12}
@@ -183,7 +190,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             max={
               viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
             }
-            defaultDate={new Date()}
+            defaultDate={curDate}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"

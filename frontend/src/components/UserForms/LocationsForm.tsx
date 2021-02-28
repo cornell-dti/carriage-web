@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import cn from 'classnames';
 import styles from '../UserTables/table.module.css';
 import { Location } from '../../types/index';
 import TextInput from './TextInput';
@@ -55,18 +54,21 @@ const Form = ({ onClick }: FormProps) => {
             labelText="Name: "
             feedback="Please enter a name"
             showFormFeedback={validName}
-            handleInput={(e) => handleInput(e)} />
+            handleInput={(e) => handleInput(e)}
+          />
           <TextInput
             labelName="address"
             labelText="Address: "
             feedback="Please enter an address"
             showFormFeedback={validAddress}
-            handleInput={(e) => handleInput(e)} />
+            handleInput={(e) => handleInput(e)}
+          />
           <DropDownInput
             labelName="tag"
             labelText="Tag: "
-            options={["none", "west", "central", "north", "ctown", "dtown"]}
-            handleInput={(e) => handleInput(e)} />
+            options={['none', 'west', 'central', 'north', 'ctown', 'dtown']}
+            handleInput={(e) => handleInput(e)}
+          />
           <input type="submit" value="Submit" />
         </form>
       </div>
