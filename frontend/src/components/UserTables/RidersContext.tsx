@@ -32,7 +32,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     //Initialize the data
     React.useEffect(()=> {
       refreshRiders();
-    });
+    }, []);
   
     return (
       <RidersContext.Provider
