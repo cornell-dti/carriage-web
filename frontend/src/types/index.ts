@@ -37,6 +37,15 @@ export type Driver = {
   phone: string;
 };
 
+export type Admin = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessLevel: string;
+};
+
 export type ObjectType = {
   [x: string]: any;
 }
