@@ -1,35 +1,43 @@
-.cell{
+.cell {
   padding-left: 2rem;
   padding-right: 2rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
 
-.passInfo{
+.passInfo {
   background-color: #fff;
 }
 
-.firstCell{
+.firstCell {
   border-radius: 15px 0 0 15px;
 }
 
-.lastCell{
+.lastCell {
   border-radius: 0 15px 15px 0;
 }
 
-.tag{
+.tag {
   border-radius: 10px;
   padding: 5px;
 }
-.ctown{
-  background-color: #D5F2EA;
-  
+.ctown {
+  background-color: #d5f2ea;
 }
 
-.west{
-  background-color: #FFD8DE;
+.west {
+  background-color: #ffd8de;
+}
+
+.editButton {
+  color: black;
+  background: none;
 }
 
 Button {
   position: relative;
+}
+
+Button:hover {
+  text-decoration: underline;
 }

@@ -13,11 +13,11 @@ type RidersTableProps = {
 function renderTableHeader() {
   return (
     <tr>
-      <th className={styles.tableHeader}>First Name</th>
-      <th className={styles.tableHeader}>Last Name</th>
-      <th className={styles.tableHeader}>Phone Number</th>
-      <th className={styles.tableHeader}>Email</th>
-      <th className={styles.tableHeader}>Accessibility Needs</th>
+      <th className={styles.tableHeader}>Name / Netid</th>
+      <th className={styles.tableHeader}>Number</th>
+      <th className={styles.tableHeader}>Address</th>
+      <th className={styles.tableHeader}>Duration</th>
+      <th className={styles.tableHeader}>Disability</th>
     </tr>
   );
 }
@@ -67,28 +67,37 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         firstName,
         lastName,
         phoneNumber,
+        address,
+        joinDate,
         email,
         accessibilityNeeds,
       } = rider;
-      const buttonText = 'Delete';
       const valueFName = { data: firstName };
       const valueLName = { data: lastName };
       const valuePhone = { data: phoneNumber };
-      const valueEmail = { data: email };
+      const valueAddress = { data: address };
+      const valueJoinDate = { data: joinDate };
       const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
-      const valueDelete = {
-        data: buttonText,
-        buttonHandler: () => setRiders(deleteEntry(email, allRiders)),
+      const editRider = () => {
+        console.log('Edit rider pressed!')
       };
-      const inputValues = [
-        valueFName,
-        valueLName,
-        valuePhone,
-        valueEmail,
-        valueAccessbility,
-        valueDelete,
-      ];
+      const valueEdit = {
+        data: 'Edit',
+        buttonHandler: () => editRider(), //placeholder function
+      };
       const netId = email.split('@')[0];
+      const valueNameNetid = { 
+        data: valueFName.data + ' ' + valueLName.data + ' ' + netId
+      };
+      console.log(valueAccessbility);
+      const inputValues = [
+        valueNameNetid,
+        valuePhone,
+        valueAddress,
+        valueJoinDate,
+        valueAccessbility,
+        valueEdit,
+      ];
       const riderData = {
         firstName,
         lastName,
