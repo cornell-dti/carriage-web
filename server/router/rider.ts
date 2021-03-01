@@ -66,7 +66,6 @@ router.post('/', validateUser('Dispatcher'), (req, res) => {
   const rider = new Rider({
     ...body,
     id: uuid(),
-    favoriteLocations: [],
   });
   db.create(res, rider);
 });

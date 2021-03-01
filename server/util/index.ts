@@ -7,15 +7,28 @@ export function createKeys(property: string, values: string[]) {
   return values.map((v) => ({ [property]: v }));
 }
 
+export function isAddress(address: string) {
+  let parsedAddr;
+  try {
+    parsedAddr = parseAddress(address);
+  } catch {
+    return false;
+  }
+  const {
+    streetNumber, streetName, streetSuffix, placeName, stateName, zipCode,
+  } = parsedAddr;
+  return Boolean(streetNumber && streetName && streetSuffix && placeName && stateName && zipCode);
+}
+
 export function formatAddress(address: string): string {
-  let addressString;
+  let parsedAddr;
   try {
     // type declaration in addresser is incorrect
-    addressString = parseAddress(address) as any;
+    parsedAddr = parseAddress(address) as any;
   } catch {
-    addressString = parseAddress(`${address}, Ithaca, NY 14850`) as any;
+    parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`) as any;
   }
-  return addressString.formattedAddress;
+  return parsedAddr.formattedAddress;
 }
 
 function validateToken(

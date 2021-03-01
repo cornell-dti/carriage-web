@@ -1,4 +1,5 @@
 import dynamoose from 'dynamoose';
+import isISO8601 from 'validator/lib/isISO8601';
 import { Location, LocationType } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
@@ -27,10 +28,10 @@ export type RideType = {
   endLocation: LocationType,
   startTime: string,
   requestedEndTime: string,
-  endTime: string,
+  endTime?: string,
   rider: RiderType,
   driver?: DriverType,
-  recurring?: boolean,
+  recurring: boolean,
   recurringDays?: number[],
   endDate?: string
   deleted?: boolean,
@@ -39,29 +40,61 @@ export type RideType = {
 
 const schema = new dynamoose.Schema({
   id: {
-    hashKey: true,
     type: String,
+    required: true,
+    hashKey: true,
   },
   type: {
     type: String,
     enum: Object.values(Type),
+    required: true,
+    default: Type.UNSCHEDULED,
   },
   status: {
     type: String,
     enum: Object.values(Status),
+    required: true,
+    default: Status.NOT_STARTED,
   },
   late: {
     type: Boolean,
     default: false,
+    required: true,
   },
-  startLocation: Location as any,
-  endLocation: Location as any,
-  startTime: String,
-  requestedEndTime: String,
-  endTime: String,
-  rider: Rider as any,
-  driver: Driver as any,
-  recurring: Boolean,
+  startLocation: {
+    type: Location as any,
+    required: true,
+  },
+  endLocation: {
+    type: Location as any,
+    required: true,
+  },
+  startTime: {
+    type: String,
+    required: true,
+    validate: (time) => isISO8601(time as string),
+  },
+  requestedEndTime: {
+    type: String,
+    required: true,
+    validate: (time) => isISO8601(time as string),
+  },
+  endTime: {
+    type: String,
+    validate: (time) => isISO8601(time as string),
+  },
+  rider: {
+    type: Rider as any,
+    required: true,
+  },
+  driver: {
+    type: Driver as any,
+  },
+  recurring: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   recurringDays: {
     type: Array,
     schema: [Number],
@@ -71,7 +104,11 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [String],
   },
-  endDate: String,
+  endDate: {
+    type: String,
+    required: false,
+    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+  },
 });
 
 export const Ride = dynamoose.model('Rides', schema, { create: false });
