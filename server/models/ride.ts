@@ -61,14 +61,8 @@ const schema = new dynamoose.Schema({
     default: false,
     required: true,
   },
-  startLocation: {
-    type: Location as any,
-    required: true,
-  },
-  endLocation: {
-    type: Location as any,
-    required: true,
-  },
+  startLocation: Location as any,
+  endLocation: Location as any,
   startTime: {
     type: String,
     required: true,
@@ -83,13 +77,8 @@ const schema = new dynamoose.Schema({
     type: String,
     validate: (time) => isISO8601(time as string),
   },
-  rider: {
-    type: Rider as any,
-    required: true,
-  },
-  driver: {
-    type: Driver as any,
-  },
+  rider: Rider as any,
+  driver: Driver as any,
   recurring: {
     type: Boolean,
     required: true,
