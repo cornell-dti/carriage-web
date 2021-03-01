@@ -24,6 +24,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 **Past Contributors**
 * Sam Steinberg - Product Manager
 * Laura Sizemore - Technical Product Manager
+* Jessica Chen - Software Developer
 * Bryan Graeser - Software Developer
 * Christopher Hansen - Software Developer
 * Ishika Jain - Software Developer

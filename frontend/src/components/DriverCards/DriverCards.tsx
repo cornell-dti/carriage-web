@@ -4,6 +4,7 @@ import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
+import { useReq } from '../../context/req';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -80,7 +81,7 @@ const DriverCard = ({
         </CardInfo>
         <CardInfo icon={wheel} alt="wheel icon">
           <p>{`${vehicle.name} | ${vehicle.capacity}`}</p>
-          <img src={capacity} alt="capacity icon" style={{ marginLeft: '2px' }} />
+          <img src={capacity} alt="capacity icon" style={{ marginLeft: '0.1rem' }} />
         </CardInfo>
       </Card>
     </Link>
@@ -89,12 +90,13 @@ const DriverCard = ({
 
 const DriverCards = () => {
   const [drivers, setDrivers] = useState<Driver[]>();
+  const { withDefaults } = useReq();
 
   useEffect(() => {
-    fetch('/drivers')
+    fetch('/api/drivers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setDrivers(data));
-  }, []);
+  }, [withDefaults]);
 
   return (
     <div className={styles.cardsContainer}>

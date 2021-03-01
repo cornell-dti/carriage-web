@@ -23,6 +23,7 @@ export type DriverType = {
   vehicle: VehicleType,
   phoneNumber: string,
   email: string,
+  photoLink?: string,
 };
 
 const availability = {

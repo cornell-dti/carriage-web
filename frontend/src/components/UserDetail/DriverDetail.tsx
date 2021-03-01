@@ -5,7 +5,7 @@ import { Ride, Vehicle } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel } from '../../icons/userInfo/index';
 import styles from '../UserTables/table.module.css';
-
+import { useReq } from '../../context/req';
 
 function renderTableHeader() {
   return (
@@ -26,20 +26,22 @@ type DriverDetailProps = {
   lastName: string;
   netId: string;
   phone: string;
-  availability: string[][]
-  vehicle: Vehicle
-}
+  availability: string[][];
+  vehicle: Vehicle;
+};
 
 const DriverDetail = () => {
   const location = useLocation<DriverDetailProps>();
   const driver: DriverDetailProps = location.state;
-  const availToString = (acc: string, [day, timeRange]: string[]) => `${acc
-    + day}: ${timeRange} • `;
+  const availToString = (acc: string, [day, timeRange]: string[]) =>
+    `${acc + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
   const vehicle = driver.vehicle
-    ? (`${driver.vehicle.name} (${driver.vehicle.capacity} people)`) : '';
+    ? `${driver.vehicle.name} (${driver.vehicle.capacity} people)`
+    : '';
   const [rides, setRides] = useState<Ride[]>([]);
+  const { withDefaults } = useReq();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -49,13 +51,11 @@ const DriverDetail = () => {
     return 0;
   };
 
-  const getPastRides = () => {
-    fetch(`/rides?type=past&driver=${driver.id}`)
+  useEffect(() => {
+    fetch(`/rides?type=past&driver=${driver.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
-  };
-
-  useEffect(getPastRides, []);
+  }, [withDefaults, driver.id]);
 
   function renderTableData(allRides: Ride[]) {
     return allRides.map((ride, index) => {
@@ -95,7 +95,8 @@ const DriverDetail = () => {
       <UserDetail
         firstName={driver.firstName}
         lastName={driver.lastName}
-        netId={driver.netId}>
+        netId={driver.netId}
+      >
         <UserContactInfo icon={phone} alt="" text={driver.phone} />
         <UserContactInfo icon={wheel} alt="" text={vehicle} />
         <UserContactInfo icon={clock} alt="" text={avail} />
@@ -107,7 +108,7 @@ const DriverDetail = () => {
       <div>
         <h1 className={styles.formHeader}>Past Rides</h1>
         <div className={styles.tableContainer}>
-          <table cellSpacing='0' className={styles.table} >
+          <table cellSpacing="0" className={styles.table}>
             <tbody>
               {renderTableHeader()}
               {renderTableData(rides)}
@@ -116,7 +117,6 @@ const DriverDetail = () => {
         </div>
       </div>
     </>
-
   );
 };
 

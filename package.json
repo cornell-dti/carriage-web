@@ -25,7 +25,9 @@
         "eslint-plugin-react-hooks": "^1.7.0"
     },
     "scripts": {
-        "heroku-postbuild": "cd server && npm run tsc",
+        "heroku-postbuild": "npm run build:frontend && npm run build:server",
+        "build:frontend": "cd frontend && npm run build && cd ..",
+        "build:server": "cd server && npm run tsc && cd ..",
         "install:frontend": "cd frontend && npm install && cd ..",
         "install:server": "cd server && npm install && cd ..",
         "postinstall": "npm run install:frontend && npm run install:server",

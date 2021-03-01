@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
+import { useReq } from '../../../context/req';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Driver } from '../../../types/index';
@@ -13,12 +14,13 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
     },
   });
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const { withDefaults } = useReq();
 
   useEffect(() => {
-    fetch('/drivers')
+    fetch('/api/drivers', withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setDrivers(data));
-  }, []);
+  }, [withDefaults]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
