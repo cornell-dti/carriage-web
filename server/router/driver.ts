@@ -41,11 +41,15 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
   const reqEnd = moment(endTime);
 
   if (reqStart.date() !== reqEnd.date()) {
-    res.send({ err: { message: 'startTime and endTime dates must be equal' } });
+    res.status(400).send({ err: 'startTime and endTime dates must be equal' });
   }
 
   const reqStartTime = reqStart.format('HH:mm');
   const reqEndTime = reqEnd.format('HH:mm');
+
+  if (reqStartTime > reqEndTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
 
   const reqStartDay = moment(startTime).day();
   const reqEndDay = moment(endTime).day();
@@ -81,7 +85,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         available = true;
       }
     }
-    res.send(available);
+    res.status(200).send(available);
   });
 });
 
