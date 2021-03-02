@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose/dist/Condition';
 import * as db from './common';
 import { Location, Tag } from '../models/location';
-import { formatAddress, validateUser } from '../util';
+import { validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Locations';
@@ -47,7 +47,7 @@ router.post('/', validateUser('Dispatcher'), (req, res) => {
   const location = new Location({
     id: uuid(),
     name,
-    address: formatAddress(address),
+    address,
   });
   db.create(res, location);
 });
@@ -55,10 +55,6 @@ router.post('/', validateUser('Dispatcher'), (req, res) => {
 // Update an existing location
 router.put('/:id', validateUser('Dispatcher'), (req, res) => {
   const { params: { id }, body } = req;
-  const { address } = body;
-  if (address) {
-    body.address = formatAddress(address);
-  }
   db.update(res, Location, { id }, body, tableName);
 });
 

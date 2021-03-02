@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {useHistory} from 'react-router-dom';
 import RideModal from '../../components/RideModal/RideModal';
-import Table from '../../components/UserTables/UnscheduledTable';
+import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
+import MiniCal from '../../components/MiniCal/MiniCal';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
 import { useReq } from '../../context/req';
@@ -38,8 +39,9 @@ const Home = () => {
           <RideModal />
         </div>
       </div>
+      <MiniCal />
       <Schedule />
-      <Table drivers={drivers} />
+      <UnscheduledTable drivers={drivers} />
     </div>
   );
 };

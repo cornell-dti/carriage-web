@@ -3,7 +3,7 @@
   padding: 2rem;
   border: none;
   width: 100%;
-  border-spacing: 0 15px;
+  border-spacing: 0 0.938rem;
 }
 
 .tableContainer {
@@ -32,23 +32,23 @@
 }
 
 .formHeader {
-  margin-top: 30px;
-  margin-bottom: 5px;
-  margin-left: 32px;
-  font-size: 18px;
+  margin-top: 1.875rem;
+  margin-bottom: 0.313rem;
+  margin-left: 2rem;
+  font-size: 1.125rem;
   text-align: left;
 }
 
 .formDiv {
   display: flex;
   flex-direction: row;
-  padding-bottom: 5px;
+  padding-bottom: 0.313rem;
 }
 
 .formLabel {
-  width: 125px;
+  width: 7.813rem;
   text-align: right;
-  padding-right: 5px;
+  padding-right: 0.313rem;
 }
 
 .formFeedback {
@@ -57,7 +57,7 @@
   margin-right: 0;
   margin-top: 0;
   margin-bottom: 0;
-  margin-left: 5px;
+  margin-left: 0.313rem;
 }
 
 .hidden {
