@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Driver } from '../../types/index';
 import styles from './exportPreview.module.css';
 import { useReq } from '../../context/req';
+import ExportButton from '../ExportButton/ExportButton';
 
 const ExportPreview = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -15,6 +16,10 @@ const ExportPreview = () => {
       .then(({ data }) => setDrivers(data));
   }, []);
 
+  const downloadCSV = () => {
+
+  }
+
   return (
     <>
       <p className={styles.date}>{moment(new Date()).format('YYYY-MM-DD')}</p>
@@ -25,6 +30,9 @@ const ExportPreview = () => {
             <ScheduledTable key={index} driverId={driver.id}
               driverName={driver.firstName + " " + driver.lastName} />
         )}
+      </div>
+      <div className={styles.exportButtonContainer}>
+        <ExportButton onClick={downloadCSV}/>
       </div>
     </>
   )

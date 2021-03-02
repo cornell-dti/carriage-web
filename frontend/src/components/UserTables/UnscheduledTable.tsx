@@ -33,7 +33,6 @@ const Table = ({ drivers }: TableProps) => {
 
   return (
     <>
-      <img className={styles.profilePic} src="" alt="profile pic" />
       <h1 className={styles.formHeader}>Unscheduled Rides</h1>
       <RidesTable rides={rides} drivers={drivers}
         hasAssignButton={true} />

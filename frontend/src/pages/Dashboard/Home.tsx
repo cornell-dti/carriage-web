@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {useHistory} from 'react-router-dom';
 import RideModal from '../../components/RideModal/RideModal';
 import Table from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
@@ -22,12 +23,18 @@ const Home = () => {
     fetchDrivers();
   }, [withDefaults]);
 
+  const history = useHistory();
+
+  const exportPreview = () => {
+    history.push('/home/export');
+  }
+
   return (
     <div>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.margin3}>
-          <ExportButton/>
+          <ExportButton onClick={exportPreview} />
           <RideModal />
         </div>
       </div>
