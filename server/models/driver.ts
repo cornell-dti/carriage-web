@@ -71,6 +71,7 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (email) => isEmail(email as string),
   },
+  photoLink: String,
 });
 
 export const Driver = dynamoose.model('Drivers', schema, { create: false });
