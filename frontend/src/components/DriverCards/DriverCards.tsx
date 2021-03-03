@@ -4,7 +4,7 @@ import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
-import {useDrivers, DriversProvider} from './DriversContext';
+import {useDrivers, DriversProvider} from '../../context/DriversContext';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);

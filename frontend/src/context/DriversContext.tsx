@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Driver } from '../../types';
-import { useReq } from '../../context/req';
+import { Driver } from '../types';
+import { useReq } from './req';
 
 
 type driversState = {
