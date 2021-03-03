@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
-import { useReq } from '../../context/req';
+import {useDrivers, DriversProvider} from './DriversContext';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -87,16 +87,10 @@ const DriverCard = ({
     </Link>
   );
 };
-
-const DriverCards = () => {
-  const [drivers, setDrivers] = useState<Driver[]>();
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    fetch('/api/drivers', withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setDrivers(data));
-  }, [withDefaults]);
+const Drivers = () => { 
+  const {
+    drivers,
+  } = useDrivers();
 
   return (
     <div className={styles.cardsContainer}>
@@ -109,6 +103,11 @@ const DriverCards = () => {
       ))}
     </div>
   );
-};
+  };
+const DriverCards = () => (
+  <DriversProvider>
+    <Drivers/>
+  </DriversProvider>
+);
 
 export default DriverCards;

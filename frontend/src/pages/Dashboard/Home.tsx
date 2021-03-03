@@ -4,25 +4,19 @@ import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
 import styles from './page.module.css';
-import { Driver } from '../../types/index';
-import { useReq } from '../../context/req';
+import {useDrivers, DriversProvider} from '../../components/DriverCards/DriversContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
 
+const Drivers = () => { 
+  const {
+    drivers,
+  } = useDrivers();
+
+  return (
+    <UnscheduledTable drivers={drivers} />
+  );
+  };
 const Home = () => {
-  const [drivers, setDrivers] = useState<Driver[]>([]);
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      const driverData = await fetch('/api/drivers', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-      setDrivers(driverData);
-    };
-
-    fetchDrivers();
-  }, [withDefaults]);
-
   return (
     <div>
       <div className={styles.pageTitle}>
@@ -34,7 +28,9 @@ const Home = () => {
       </div>
       <MiniCal />
       <Schedule />
-      <UnscheduledTable drivers={drivers} />
+      <DriversProvider>
+        <Drivers/>
+      </DriversProvider>
     </div>
   );
 };
