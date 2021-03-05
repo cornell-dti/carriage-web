@@ -10,6 +10,7 @@ import dispatcher from './router/dispatcher';
 import ride from './router/ride';
 import vehicle from './router/vehicle';
 import location from './router/location';
+import upload from './router/upload';
 import auth from './router/auth';
 
 const port = process.env.PORT || 3001;
@@ -27,6 +28,7 @@ app.use('/api/rides', ride);
 app.use('/api/vehicles', vehicle);
 app.use('/api/locations', location);
 app.use('/api/auth', auth);
+app.use('/api/upload', upload);
 app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
 
 // Serve static files from frontend

@@ -1,4 +1,5 @@
 import dynamoose from 'dynamoose';
+import isEmail from 'validator/lib/isEmail';
 
 // only an admin should be able to add another dispatcher
 export enum AccessLevel {
@@ -13,19 +14,40 @@ export type DispatcherType = {
   lastName: string,
   phoneNumber: string,
   email: string,
-  accessLevel: AccessLevel
+  accessLevel: AccessLevel,
+  photoLink?: string,
 };
 
 const schema = new dynamoose.Schema({
-  id: String,
-  firstName: String,
-  lastName: String,
-  phoneNumber: String,
-  email: String,
+  id: {
+    type: String,
+    required: true,
+    hashKey: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    validate: /^[0-9]{10}$/,
+  },
+  email: {
+    type: String,
+    required: true,
+    validate: (email) => isEmail(email as string),
+  },
   accessLevel: {
     type: String,
+    required: true,
     enum: Object.values(AccessLevel),
   },
+  photoLink: String,
 });
 
 export const Dispatcher = dynamoose.model('Dispatchers', schema, { create: false });

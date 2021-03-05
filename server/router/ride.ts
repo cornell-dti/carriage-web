@@ -2,9 +2,9 @@ import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as db from './common';
-import { Ride, RideType, Status, Type } from '../models/ride';
+import { Ride, RideType, Type } from '../models/ride';
 import { Location, Tag } from '../models/location';
-import { formatAddress, validateUser } from '../util';
+import { validateUser } from '../util';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -58,7 +58,7 @@ router.post('/', validateUser('User'), (req, res) => {
     const location = new Location({
       id: startLocationId,
       name: 'Custom',
-      address: formatAddress(startLocation),
+      address: startLocation,
       tag: Tag.CUSTOM,
     });
     location.save();
@@ -69,7 +69,7 @@ router.post('/', validateUser('User'), (req, res) => {
     const location = new Location({
       id: endLocationId,
       name: 'Custom',
-      address: formatAddress(endLocation),
+      address: endLocation,
       tag: Tag.CUSTOM,
     });
     location.save();
@@ -77,8 +77,6 @@ router.post('/', validateUser('User'), (req, res) => {
 
   const ride = new Ride({
     id: uuid(),
-    type: Type.UNSCHEDULED,
-    status: Status.NOT_STARTED,
     rider,
     startLocation: startLocationId ?? startLocation,
     endLocation: endLocationId ?? endLocation,

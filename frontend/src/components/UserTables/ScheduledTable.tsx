@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Driver, Ride } from '../../types/index';
-import RidesTable from './RidesTable';
+import { Ride } from '../../types/index';
 import moment from 'moment';
+import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
-type TableProps = {
-  drivers: Driver[];
+type ScheduledTableProp = {
+  driverId: string;
+  driverName: string;
 };
 
-const Table = ({ drivers }: TableProps) => {
+const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
   const { curDate } = useDate();
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
@@ -25,18 +26,20 @@ const Table = ({ drivers }: TableProps) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?type=unscheduled&date=${today}`, withDefaults())
+    fetch(`/api/rides?driver=${driverId}&date=${today}`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, curDate]);
+      .then(({ data }) => {
+        console.log(data);
+        setRides(data.sort(compRides));
+      });
+  }, [withDefaults, curDate, driverId]);
 
   return (
     <>
-      <img className={styles.profilePic} src="" alt="profile pic" />
-      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-      <RidesTable rides={rides} drivers={drivers} hasAssignButton={true} />
+      <h1 className={styles.formHeader}>{driverName}</h1>
+      <RidesTable rides={rides} drivers={[]} hasAssignButton={false} />
     </>
   );
 };
 
-export default Table;
+export default ScheduledTable;

@@ -1,4 +1,5 @@
 import dynamoose from 'dynamoose';
+import isEmail from 'validator/lib/isEmail';
 import { Vehicle, VehicleType } from './vehicle';
 
 type Availability = {
@@ -22,6 +23,7 @@ export type DriverType = {
   vehicle: VehicleType,
   phoneNumber: string,
   email: string,
+  photoLink?: string,
 };
 
 const availability = {
@@ -41,16 +43,35 @@ const availabilitySchema = {
 };
 
 const schema = new dynamoose.Schema({
-  id: String,
-  firstName: String,
-  lastName: String,
+  id: {
+    type: String,
+    required: true,
+    hashKey: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
   availability: {
     type: Object,
     schema: availabilitySchema,
   },
   vehicle: Vehicle as any,
-  phoneNumber: String,
-  email: String,
+  phoneNumber: {
+    type: String,
+    required: true,
+    validate: /^[0-9]{10}$/,
+  },
+  email: {
+    type: String,
+    required: true,
+    validate: (email) => isEmail(email as string),
+  },
+  photoLink: String,
 });
 
 export const Driver = dynamoose.model('Drivers', schema, { create: false });

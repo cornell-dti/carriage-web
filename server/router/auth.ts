@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
       if (payload?.aud === clientId && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
-            res.send({ success: false, err: err.message });
+            res.status(500).send({ err });
           } else if (data?.length) {
             // Dynamoose incorrectly types data[0] as Document[]
             type User = { id: string };
@@ -58,21 +58,21 @@ router.post('/', (req, res) => {
               id,
               userType: getUserType(table),
             };
-            res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+            res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
-            res.send({ success: false, err: 'User not found' });
+            res.status(400).send({ success: false, err: 'User not found' });
           }
         });
       } else if (payload?.aud !== clientId) {
-        res.send({ success: false, err: 'Invalid client id' });
+        res.status(400).send({ err: 'Invalid client id' });
       } else if (!model) {
-        res.send({ success: false, err: 'Table not found' });
+        res.status(400).send({ err: 'Table not found' });
       } else {
-        res.send({ success: false, err: 'Payload not found' });
+        res.status(400).send({ err: 'Payload not found' });
       }
     })
     .catch((err) => {
-      res.send({ success: false, err: err.message });
+      res.status(500).send({ err: err.message });
     });
 });
 
