@@ -29,7 +29,6 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
     fetch(`/api/rides?driver=${driverId}&date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        console.log(data);
         setRides(data.sort(compRides));
       });
   }, [withDefaults, curDate, driverId]);

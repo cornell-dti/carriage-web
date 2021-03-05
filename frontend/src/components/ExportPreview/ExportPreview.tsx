@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import ScheduledTable from '../UserTables/ScheduledTable';
 import moment from 'moment';
 import { Driver } from '../../types/index';
@@ -6,11 +6,14 @@ import styles from './exportPreview.module.css';
 import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
+import { CSVLink, CSVDownload } from "react-csv";
 
 const ExportPreview = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [downloadData, setDownloadData] = useState<string>("");
   const { withDefaults } = useReq();
   const { curDate } = useDate();
+  const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
   useEffect(() => {
     fetch('/api/drivers', withDefaults())
@@ -19,7 +22,16 @@ const ExportPreview = () => {
   }, [withDefaults]);
 
   const downloadCSV = () => {
-
+    const today = moment(curDate).format('YYYY-MM-DD');
+    fetch(`/api/rides/download?date=${today}`, withDefaults())
+      .then(res => res.text())
+      .then(data => {
+        console.log(data);
+        setDownloadData(data);
+        if (csvLink.current) {
+          csvLink.current.link.click(); 
+        }
+      })
   }
 
   return (
@@ -37,6 +49,13 @@ const ExportPreview = () => {
       </div>
       <div className={styles.exportButtonContainer}>
         <ExportButton onClick={downloadCSV}/>
+        <CSVLink
+         data={downloadData}
+         filename='scheduledRides.csv'
+         className='hidden'
+         ref={csvLink}
+         target='_blank'
+      />
       </div>
     </>
   );
