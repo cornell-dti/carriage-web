@@ -18,7 +18,7 @@ export function getById(
     } else if (callback) {
       callback(data);
     } else {
-      res.status(200).send({ data });
+      res.status(200).send(data);
     }
   });
 }
@@ -76,7 +76,7 @@ export function create(
     } else if (callback) {
       callback(data);
     } else {
-      res.status(200).send({ data });
+      res.status(200).send(data);
     }
   });
 }
@@ -97,7 +97,7 @@ export function update(
     } else if (callback) {
       callback(data);
     } else {
-      res.status(200).send({ data });
+      res.status(200).send(data);
     }
   });
 }
@@ -119,7 +119,7 @@ export function conditionalUpdate(
     } else if (callback) {
       callback(data);
     } else {
-      res.status(200).send({ data });
+      res.status(200).send(data);
     }
   });
 }
