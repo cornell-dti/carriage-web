@@ -4,7 +4,6 @@ export type VehicleType = {
   id: string,
   name: string,
   capacity: number,
-  wheelchairAccessible: boolean,
 };
 
 const schema = new dynamoose.Schema({
@@ -19,10 +18,6 @@ const schema = new dynamoose.Schema({
   },
   capacity: {
     type: Number,
-    required: true,
-  },
-  wheelchairAccessible: {
-    type: Boolean,
     required: true,
   },
 });
