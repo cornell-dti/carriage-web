@@ -79,6 +79,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         clientId={clientId}
         cookiePolicy='single_host_origin'
         isSignedIn
+        hostedDomain="cornell.edu"
       />
       <LandingPage />
     </>
