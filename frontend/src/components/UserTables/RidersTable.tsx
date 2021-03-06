@@ -79,15 +79,15 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       const valueJoinDate = { data: joinDate };
       const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
       const editRider = () => {
-        console.log('Edit rider pressed!')
+        console.log('Edit rider pressed!');
       };
       const valueEdit = {
         data: 'Edit',
-        buttonHandler: () => editRider(), //placeholder function
+        buttonHandler: () => editRider(), // placeholder function
       };
       const netId = email.split('@')[0];
-      const valueNameNetid = { 
-        data: valueFName.data + ' ' + valueLName.data + ' ' + netId
+      const valueNameNetid = {
+        data: `${valueFName.data} ${valueLName.data} ${netId}`,
       };
       console.log(valueAccessbility);
       const inputValues = [
