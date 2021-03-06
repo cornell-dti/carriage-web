@@ -46,7 +46,7 @@ router.post('/', (req, res) => {
     .then((authRes) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
-      if (payload?.aud === clientId && model) {
+      if (payload?.aud === clientId && payload?.hd === 'cornell.edu' && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
             res.status(500).send({ err });
@@ -65,6 +65,8 @@ router.post('/', (req, res) => {
         });
       } else if (payload?.aud !== clientId) {
         res.status(400).send({ err: 'Invalid client id' });
+      } else if (payload?.hd === 'cornell.edu') {
+        res.status(400).send({ err: 'Not a Cornell email' });
       } else if (!model) {
         res.status(400).send({ err: 'Table not found' });
       } else {
