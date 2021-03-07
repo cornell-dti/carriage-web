@@ -17,6 +17,21 @@ export type Rider = {
   address: string;
 };
 
+export type NewRider = {
+  id: string;
+  email: string;
+  phoneNumber: string;
+  firstName: string;
+  lastName: string;
+  pronouns: string;
+  accessibility: Array<string>;
+  description: string;
+  joinDate: string;
+  address: string;
+  favoriteLocations: Array<string>;
+  organization: string;
+};
+
 export type Availability = {
   startTime: string;
   endTime: string;
