@@ -1,13 +1,13 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
-import { Rider } from '../../types';
+import { NewRider } from '../../types'; 
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 
 type RidersTableProps = {
-  riders: Array<Rider>;
-  setRiders: Dispatch<SetStateAction<Rider[]>>;
+  riders: Array<NewRider>;
+  setRiders: Dispatch<SetStateAction<NewRider[]>>;
 };
 
 function renderTableHeader() {
@@ -53,7 +53,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     getExistingRiders();
   }, [setRiders, withDefaults]);
 
-  function deleteEntry(email: string, riderList: Rider[]) {
+  function deleteEntry(email: string, riderList: NewRider[]) {
     const riderId = riderList.filter((rider) => rider.email === email)[0].id;
     async function deleteBackend() {
       await fetch(`/riders/${riderId}`, withDefaults({ method: 'DELETE' }));
@@ -61,7 +61,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     deleteBackend();
     return riderList.filter((rider) => rider.email !== email);
   }
-  function renderTableData(allRiders: Rider[]) {
+  function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
       const {
         firstName,
@@ -70,14 +70,14 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         address,
         joinDate,
         email,
-        accessibilityNeeds,
+        accessibility,
       } = rider;
       const valueFName = { data: firstName };
       const valueLName = { data: lastName };
       const valuePhone = { data: phoneNumber };
       const valueAddress = { data: address };
       const valueJoinDate = { data: joinDate };
-      const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
+      const valueAccessbility = { data: renderAccessNeeds(accessibility) };
       const editRider = () => {
         console.log('Edit rider pressed!');
       };
@@ -87,7 +87,8 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       };
       const netId = email.split('@')[0];
       const valueNameNetid = {
-        data: `${valueFName.data} ${valueLName.data} ${netId}`,
+        data: <span style={{ fontWeight: 'bold' }}>{valueFName}</span>
+        // data: `${valueFName.data} ${valueLName.data} ${netId}`,
       };
       console.log(valueAccessbility);
       const inputValues = [
@@ -103,7 +104,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         lastName,
         netID: netId,
         phone: phoneNumber,
-        accessibility: renderAccessNeeds(accessibilityNeeds),
+        accessibility: renderAccessNeeds(accessibility),
       };
       const location = {
         pathname: '/riders/rider',

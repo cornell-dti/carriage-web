@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import cn from 'classnames';
 import styles from './cell.module.css';
 import { Button } from '../FormElements/FormElements';
 
 type TableCellProps = {
-  data: string | null;
+  data: string | ReactNode | null;
   index: number;
   first: boolean;
   last: boolean;
@@ -16,16 +16,17 @@ type TableCellProps = {
 const TableCell = (props: TableCellProps) => {
   const { data, index, first, last, tag, buttonHandler, ButtonModal } = props;
   if (first) {
-    const lastSpaceIndex = data?.lastIndexOf(' ');
-    const name = data?.substring(0, lastSpaceIndex); //student's name
-    const splitString = data?.split(' ');
-    const netId = splitString ? ' ' + splitString[splitString?.length-1] : '';
+    // const lastSpaceIndex = data?.lastIndexOf(' ');
+    // const name = data?.substring(0, lastSpaceIndex); //student's name
+    // const splitString = data?.split(' ');
+    // const netId = splitString ? ' ' + splitString[splitString?.length-1] : '';
 
     return (<td
       key={index}
       className={cn(styles.passInfo, styles.cell, styles.firstCell)}>
-      <span style={{ fontWeight: 'bold' }}>{name}</span>
-      {netId}
+        {JSON.stringify(data)}
+      {/* <span style={{ fontWeight: 'bold' }}>{name}</span> */}
+      {/* {netId} */}
     </td>);
   } if (last) {
     if (buttonHandler && ButtonModal) {

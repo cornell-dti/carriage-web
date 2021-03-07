@@ -1,15 +1,15 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType, Rider } from '../../types/index';
+import { ObjectType, NewRider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 
 
 type RiderModalProps = {
-  riders: Array<Rider>;
-  setRiders: Dispatch<SetStateAction<Rider[]>>;
+  riders: Array<NewRider>;
+  setRiders: Dispatch<SetStateAction<NewRider[]>>;
 }
 
 const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
@@ -19,11 +19,13 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
     lastName: '',
     phoneNumber: '',
     email: '',
-    accessibilityNeeds: [],
+    accessibility: [],
     description: '',
     joinDate: '',
     pronouns: '',
     address: '',
+    favoriteLocations: [],
+    organization: ''
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -54,11 +56,13 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         lastName: formData.lastName,
         phoneNumber: formData.phoneNumber,
         email: formData.email,
-        accessibilityNeeds: formData.accessibilityNeeds,
+        accessibility: formData.accessibility,
         description: '',
         joinDate: '',
         pronouns: '',
         address: formData.address,
+        favoriteLocations: [],
+        organization: ''
       };
       const addRider = async () => {
         await fetch('/api/riders', withDefaults({
@@ -75,7 +79,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
     <>
       <Button className={styles.addRiderButton} onClick={openModal}>+ Add Rider</Button>
       <Modal
-        title={['Add a Rider']}
+        title={['Add a student']}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}

@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export type AccessibilityNeeds = {
   hasCrutches: boolean;
   needsAssistant: boolean;
@@ -88,7 +90,7 @@ export type Location = {
 };
 
 export type TableValue = {
-  data: string | null;
+  data: string | ReactNode | null;
   tag?: string;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;

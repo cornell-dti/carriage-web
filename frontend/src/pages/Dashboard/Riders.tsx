@@ -11,11 +11,13 @@ const Riders = () => {
         lastName: '',
         phoneNumber: '',
         email: '',
-        accessibilityNeeds: new Array<string>(),
+        accessibility: new Array<string>(),
         description: '',
         joinDate: '',
         pronouns: '',
         address: '',
+        favoriteLocations: new Array<string>(),
+        organization: ''
       },
     ],
   );
