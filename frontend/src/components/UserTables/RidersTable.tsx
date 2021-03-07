@@ -13,7 +13,7 @@ type RidersTableProps = {
 function renderTableHeader() {
   return (
     <tr>
-      <th className={styles.tableHeader}>Name / Netid</th>
+      <th className={styles.tableHeader}>Name / NetId</th>
       <th className={styles.tableHeader}>Number</th>
       <th className={styles.tableHeader}>Address</th>
       <th className={styles.tableHeader}>Duration</th>
@@ -72,8 +72,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         email,
         accessibility,
       } = rider;
-      const valueFName = { data: firstName };
-      const valueLName = { data: lastName };
       const valuePhone = { data: phoneNumber };
       const valueAddress = { data: address };
       const valueJoinDate = { data: joinDate };
@@ -87,8 +85,13 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       };
       const netId = email.split('@')[0];
       const valueNameNetid = {
-        data: <span style={{ fontWeight: 'bold' }}>{valueFName}</span>
-        // data: `${valueFName.data} ${valueLName.data} ${netId}`,
+        data: 
+        <span>
+          <span style={{ fontWeight: 'bold' }}>
+            {firstName + ' ' + lastName}
+          </span>
+          {' ' + netId}
+        </span>
       };
       console.log(valueAccessbility);
       const inputValues = [

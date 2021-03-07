@@ -16,17 +16,10 @@ type TableCellProps = {
 const TableCell = (props: TableCellProps) => {
   const { data, index, first, last, tag, buttonHandler, ButtonModal } = props;
   if (first) {
-    // const lastSpaceIndex = data?.lastIndexOf(' ');
-    // const name = data?.substring(0, lastSpaceIndex); //student's name
-    // const splitString = data?.split(' ');
-    // const netId = splitString ? ' ' + splitString[splitString?.length-1] : '';
-
     return (<td
       key={index}
       className={cn(styles.passInfo, styles.cell, styles.firstCell)}>
-        {JSON.stringify(data)}
-      {/* <span style={{ fontWeight: 'bold' }}>{name}</span> */}
-      {/* {netId} */}
+        {data}
     </td>);
   } if (last) {
     if (buttonHandler && ButtonModal) {
