@@ -6,7 +6,7 @@ import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
-import { Ride, Type } from '../models/ride';
+import { Ride, RideType, Type } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Riders';
@@ -62,7 +62,7 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
   });
 });
 
-// Get current ride of rider, if exists
+// Get current/soonest ride (within next 30 min) of rider, if exists
 router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, () => {
@@ -73,7 +73,10 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
     const isSoon = new Condition('startTime').between(now, end);
     const isNow = new Condition('startTime').le(now).where('endTime').ge(now);
     const condition = isRider.group(isActive.group(isSoon.or().group(isNow)));
-    db.scan(res, Ride, condition);
+    db.scan(res, Ride, condition, (data: RideType[]) => {
+      data.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
+      res.send(data[0] ?? {});
+    });
   });
 });
 
