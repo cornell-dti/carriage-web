@@ -15,7 +15,7 @@ const TableRow = (props: TableRowProps) => {
   const { values } = props;
 
   const resultList = values.map((val, index) => {
-    const { data, tag, buttonHandler, ButtonModal } = val;
+    const { data, tag } = val;
     if (index === 0) {
       /* first cell */
       return (
@@ -23,7 +23,6 @@ const TableRow = (props: TableRowProps) => {
           key={index}
           data={data}
           index={index}
-          first={true}
         />
       );
     }
@@ -32,7 +31,6 @@ const TableRow = (props: TableRowProps) => {
         key={index}
         data={data}
         index={index}
-        first={false}
         tag={tag}
       />
     );

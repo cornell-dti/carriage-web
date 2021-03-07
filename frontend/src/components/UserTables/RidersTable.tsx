@@ -52,15 +52,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     }
     getExistingRiders();
   }, [setRiders, withDefaults]);
-
-  function deleteEntry(email: string, riderList: NewRider[]) {
-    const riderId = riderList.filter((rider) => rider.email === email)[0].id;
-    async function deleteBackend() {
-      await fetch(`/riders/${riderId}`, withDefaults({ method: 'DELETE' }));
-    }
-    deleteBackend();
-    return riderList.filter((rider) => rider.email !== email);
-  }
+  
   function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
       const {
