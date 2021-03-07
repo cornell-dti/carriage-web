@@ -76,13 +76,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       const valueAddress = { data: address };
       const valueJoinDate = { data: joinDate };
       const valueAccessbility = { data: renderAccessNeeds(accessibility) };
-      const editRider = () => {
-        console.log('Edit rider pressed!');
-      };
-      const valueEdit = {
-        data: 'Edit',
-        buttonHandler: () => editRider(), // placeholder function
-      };
       const netId = email.split('@')[0];
       const valueNameNetid = {
         data: 
@@ -100,7 +93,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         valueAddress,
         valueJoinDate,
         valueAccessbility,
-        valueEdit,
       ];
       const riderData = {
         firstName,
@@ -128,7 +120,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   return (
     <>
       <div>
-        <h1 className={styles.formHeader}>Riders</h1>
+        <h1 className={styles.formHeader}>Students</h1>
         <div className={styles.tableContainer}>
           <table cellSpacing="0" className={styles.table}>
             <tbody>
