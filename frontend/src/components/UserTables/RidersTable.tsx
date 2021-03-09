@@ -24,11 +24,12 @@ function renderTableHeader() {
 
 function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
-  const comma = ', ';
-  if (accessNeeds != null) {
+  const separator = ', ';
+  if (accessNeeds != null && accessNeeds.length > 0) {
+    console.log(accessNeeds);
     for (let i = 0; i < accessNeeds.length; i += 1) {
       if (i !== accessNeeds.length - 1) {
-        allNeeds = allNeeds + accessNeeds[i] + comma;
+        allNeeds = allNeeds + accessNeeds[i] + separator;
       } else {
         allNeeds += accessNeeds[i];
       }
@@ -52,7 +53,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     }
     getExistingRiders();
   }, [setRiders, withDefaults]);
-  
+
   function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
       const {
@@ -78,7 +79,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
           {' ' + netId}
         </span>
       };
-      console.log(valueAccessbility);
       const inputValues = [
         valueNameNetid,
         valuePhone,
