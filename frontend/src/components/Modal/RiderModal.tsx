@@ -77,7 +77,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
 
   return (
     <>
-      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Rider</Button>
+      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
         title={['Add a student']}
         isOpen={isOpen}
