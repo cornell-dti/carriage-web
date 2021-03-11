@@ -42,7 +42,7 @@ const DriverDetail = () => {
     : '';
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
-
+  const testboolean = true; 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -59,6 +59,7 @@ const DriverDetail = () => {
 
   function renderTableData(allRides: Ride[]) {
     return allRides.map((ride, index) => {
+      const testBool = true; 
       const date = new Date(ride.startTime).toLocaleDateString();
       const { rider } = ride;
       const name = `${rider.firstName} ${rider.lastName}`;
