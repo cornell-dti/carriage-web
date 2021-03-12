@@ -51,7 +51,6 @@ const RiderDetail = () => {
     <PastRides
      isStudent = {true}
      rides={rides}
-     netid={rider.netID}
      />
     </>
   )

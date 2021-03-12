@@ -5,15 +5,15 @@ import styles from '../UserTables/table.module.css';
 
   type pastRideProps = {
     isStudent: boolean, 
-    rides: Ride[],
-    netid: string
+    rides: Ride[]
   };
 
-const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
+const PastRides = ({isStudent, rides}: pastRideProps) => {
   function renderTableHeader() {
+    const student = !isStudent ?  <th className={styles.tableHeader}>Name</th> : null;
     return (
       <tr>
-        <th className={styles.tableHeader}>Name{isStudent ? "/Netid" : ""}</th>
+        {student}
         <th className={styles.tableHeader}>{isStudent ? "Time" : "Date"}</th>
         <th className={styles.tableHeader}>Pickup Location</th>
         <th className={styles.tableHeader}>Dropoff Location</th>
@@ -40,7 +40,7 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-
+      
       const inputValues = [
         valueName,
         valueDate,
@@ -48,10 +48,11 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
         valueDropoff,
         valueNeeds,
       ];
+      const [,...studentInputValues] = inputValues;
 
       return (
         <tr key={index}>
-          <TableRow values={inputValues} />
+          <TableRow values={isStudent ? studentInputValues : inputValues} />
         </tr>
       );
     });

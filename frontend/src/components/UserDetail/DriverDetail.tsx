@@ -63,7 +63,6 @@ const DriverDetail = () => {
      <PastRides
      isStudent = {false}
      rides={rides}
-     netid={""}
      />
     </>
   );
