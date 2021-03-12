@@ -23,6 +23,7 @@ const ExportPreview = () => {
 
   const downloadCSV = () => {
     const today = moment(curDate).format('YYYY-MM-DD');
+    console.log(today);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then(res => res.text())
       .then(data => {

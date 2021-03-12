@@ -13,14 +13,27 @@ const tableName = 'Rides';
 router.get('/download', function(req, res) {
   const dateStart = new Date(`${req.query.date} EST`).toISOString();
   const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
-  const condition = new Condition().where('startTime').between(dateStart, dateEnd);
+  const condition = new Condition().where('startTime').between(dateStart, dateEnd).where('type').eq('schduled');;
 
-  const callback = (value: any) => 
+  const callback = (value: any) => {
+    const dataToExport = value.map((doc: any) => {
+      const start = new Date(doc.startTime);
+      const end = new Date(doc.endTime);
+      return {
+        name: `${doc.rider.firstName} ${doc.rider.lastName.substring(0, 1)}.`,
+        pickUp: `${start.getHours()}:${start.getMinutes()}`,
+        from: doc.startLocation.address,
+        to: doc.endLocation.address,
+        dropOff: `${end.getHours()}:${end.getMinutes()}`,
+      }
+    })
     csv
-      .writeToBuffer(value, { headers: true })
-      .then((data) => res.send(data))
+      .writeToBuffer(dataToExport, { headers: ['Name', 'Pick Up', 'From', 'To', 'Drop Off'] })
+      .then((data) => {
+        res.send(data)
+      })
       .catch((err) => res.send(err));
-
+    }
   db.scan(res, Ride, condition, callback);
 })
 

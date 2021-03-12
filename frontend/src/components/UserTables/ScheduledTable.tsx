@@ -26,7 +26,7 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?driver=${driverId}&date=${today}`, withDefaults())
+    fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setRides(data.sort(compRides));
