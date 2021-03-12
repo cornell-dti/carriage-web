@@ -24,6 +24,21 @@ const TableRow = (props: TableRowProps) => {
           data={data}
           index={index}
           first={true}
+          last={false}
+        />
+      );
+    }
+    if (index === values.length - 1) {
+      /* last cell */
+      return (
+        <TableCell
+          key={index}
+          data={data}
+          index={index}
+          first={false}
+          last={true}
+          buttonHandler={buttonHandler}
+          ButtonModal={ButtonModal}
         />
       );
     }
@@ -33,6 +48,7 @@ const TableRow = (props: TableRowProps) => {
         data={data}
         index={index}
         first={false}
+        last={false}
         tag={tag}
       />
     );
