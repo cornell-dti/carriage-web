@@ -8,11 +8,12 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 0 20px;
+  padding: 0 1.25rem;
 }
 
-.title, .subtitle {
-  margin: 0
+.title,
+.subtitle {
+  margin: 0;
 }
 
 .footer {
@@ -26,10 +27,10 @@
   font-size: 1.1em;
   text-decoration: none;
   color: black;
-  border: black 1px solid;
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-top: 10px;
+  border: black 0.063rem solid;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.625rem;
+  margin-top: 0.625rem;
 }
 
 .readBtn:hover {

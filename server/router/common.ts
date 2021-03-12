@@ -12,13 +12,13 @@ export function getById(
 ) {
   model.get(id, (err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `id not found in ${table}` } });
+      res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 }
@@ -35,13 +35,13 @@ export function batchGet(
   }
   model.batchGet(keys, (err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `items not found in ${table}` } });
+      res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      res.send({ data });
+      res.status(200).send({ data });
     }
   });
 }
@@ -54,13 +54,13 @@ export function getAll(
 ) {
   model.scan().exec((err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `items not found in ${table}` } });
+      res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      res.send({ data });
+      res.status(200).send({ data });
     }
   });
 }
@@ -72,11 +72,11 @@ export function create(
 ) {
   doc.save((err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (callback) {
       callback(data);
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 }
@@ -91,13 +91,13 @@ export function update(
 ) {
   model.update(key, operation, (err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `id not found in ${table}` } });
+      res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 }
@@ -113,13 +113,13 @@ export function conditionalUpdate(
 ) {
   model.update(key, operation, { condition, return: 'document' }, (err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `id not found in ${table}` } });
+      res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      res.send(data);
+      res.status(200).send(data);
     }
   });
 }
@@ -133,13 +133,13 @@ export function deleteById(
 ) {
   model.get(id, (err, data) => {
     if (err) {
-      res.send({ err });
+      res.status(500).send({ err });
     } else if (!data) {
-      res.send({ err: { message: `id not found in ${table}` } });
+      res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
       callback(data);
     } else {
-      data.delete().then(() => res.send({ id }));
+      data.delete().then(() => res.status(200).send({ id }));
     }
   });
 }
@@ -156,11 +156,11 @@ export function query(
     .using(index)
     .exec((err: any, data: any) => {
       if (err) {
-        res.send({ err });
+        res.status(500).send({ err });
       } else if (callback) {
         callback(data);
       } else {
-        res.send({ data });
+        res.status(200).send({ data });
       }
     });
 }
@@ -175,11 +175,11 @@ export function scan(
     .scan(condition)
     .exec((err, data) => {
       if (err) {
-        res.send({ err });
+        res.status(500).send({ err });
       } else if (callback) {
         callback(data);
       } else {
-        res.send({ data });
+        res.status(200).send({ data });
       }
     });
 }
