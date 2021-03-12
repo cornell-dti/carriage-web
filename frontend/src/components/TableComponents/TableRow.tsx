@@ -16,16 +16,6 @@ const TableRow = (props: TableRowProps) => {
 
   const resultList = values.map((val, index) => {
     const { data, tag } = val;
-    if (index === 0) {
-      /* first cell */
-      return (
-        <TableCell
-          key={index}
-          data={data}
-          index={index}
-        />
-      );
-    }
     return (
       <TableCell
         key={index}
