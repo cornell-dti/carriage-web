@@ -4,7 +4,10 @@ import styles from './cell.module.css';
 type TableCellProps = {
   data: string | ReactNode | null;
   index: number;
+  first: boolean;
   tag?: string;
+  buttonHandler?: () => void;
+  ButtonModal?: () => JSX.Element;
 }
 
 const TableCell = (props: TableCellProps) => {
