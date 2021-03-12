@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
       if (payload?.aud === clientId && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
-            res.status(500).send({ err });
+            res.status(err.statusCode || 500).send({ err: err.message });
           } else if (data?.length) {
             // Dynamoose incorrectly types data[0] as Document[]
             type User = { id: string };
