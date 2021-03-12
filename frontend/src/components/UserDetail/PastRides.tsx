@@ -13,7 +13,7 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
   function renderTableHeader() {
     return (
       <tr>
-        <th className={styles.tableHeader}>Name {isStudent ? "/Netid" : ""}</th>
+        <th className={styles.tableHeader}>Name{isStudent ? "/Netid" : ""}</th>
         <th className={styles.tableHeader}>{isStudent ? "Time" : "Date"}</th>
         <th className={styles.tableHeader}>Pickup Location</th>
         <th className={styles.tableHeader}>Dropoff Location</th>
@@ -24,12 +24,11 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
   function renderTableData() {
     console.log(rides);
     return rides.map((ride, index) => {
-      const testBool = true; 
       const date = new Date(ride.startTime).toLocaleDateString();
       const startTime = new Date(ride.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const endTime = new Date(ride.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const { rider } = ride;
-      const name = `${rider.firstName} ${rider.lastName} ${netid.length > 0 ?  "/" + netid : netid}`;
+      const name = `${rider.firstName} ${rider.lastName}`;
       const needs = (rider.accessibilityNeeds || []).join(', ');
       const pickupLocation = ride.startLocation.name;
       const pickupTag = ride.startLocation.tag;
