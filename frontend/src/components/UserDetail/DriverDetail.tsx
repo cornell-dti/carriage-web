@@ -20,6 +20,7 @@ type DriverDetailProps = {
 const DriverDetail = () => {
   const location = useLocation<DriverDetailProps>();
   const driver: DriverDetailProps = location.state;
+  console.log(driver);
   const availToString = (acc: string, [day, timeRange]: string[]) =>
     `${acc + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
@@ -39,7 +40,7 @@ const DriverDetail = () => {
   };
 
   useEffect(() => {
-    fetch(`/rides?type=past&driver=${driver.id}`, withDefaults())
+    fetch(`/api/rides?type=past&driver=${driver.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, driver.id]);

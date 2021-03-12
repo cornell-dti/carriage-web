@@ -47,7 +47,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       const ridersData = await fetch('/api/riders', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
-
+      console.log(ridersData);
       setRiders(ridersData);
     }
     getExistingRiders();
@@ -64,6 +64,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   function renderTableData(allRiders: Rider[]) {
     return allRiders.map((rider, index) => {
       const {
+        id,
         firstName,
         lastName,
         phoneNumber,
@@ -90,6 +91,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       ];
       const netId = email.split('@')[0];
       const riderData = {
+        id,
         firstName,
         lastName,
         netID: netId,

@@ -22,10 +22,12 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
     );
   }
   function renderTableData() {
+    console.log(rides);
     return rides.map((ride, index) => {
       const testBool = true; 
       const date = new Date(ride.startTime).toLocaleDateString();
-      const time = new Date(ride.startTime).toLocaleTimeString();
+      const startTime = new Date(ride.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const endTime = new Date(ride.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const { rider } = ride;
       const name = `${rider.firstName} ${rider.lastName} ${netid.length > 0 ?  "/" + netid : netid}`;
       const needs = (rider.accessibilityNeeds || []).join(', ');
@@ -35,7 +37,7 @@ const PastRides = ({isStudent, rides, netid}: pastRideProps) => {
       const dropoffTag = ride.endLocation.tag;
 
       const valueName = { data: name };
-      const valueDate = { data: isStudent  ? time : date };
+      const valueDate = { data: isStudent  ? `${startTime}${" : "}${endTime}` : date };
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };

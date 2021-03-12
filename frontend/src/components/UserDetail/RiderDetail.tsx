@@ -11,7 +11,7 @@ type RiderDetailProps = {
   id: string;
   firstName: string;
   lastName: string;
-  netId: string;
+  netID: string;
   phone: string;
   // address: string;
   accessibility: string
@@ -19,6 +19,7 @@ type RiderDetailProps = {
 
 const RiderDetail = () => {
   const location = useLocation<RiderDetailProps>();
+  console.log(location);
   const rider: RiderDetailProps = location.state;
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
@@ -30,7 +31,7 @@ const RiderDetail = () => {
     return 0;
   };
   useEffect(() => {
-    fetch(`/rides?type=past&rider=${rider.id}`, withDefaults())
+    fetch(`/api/rides?type=past&rider=${rider.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, rider.id]);
@@ -40,7 +41,7 @@ const RiderDetail = () => {
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
-      netId={rider.netId}>
+      netId={rider.netID}>
       <UserContactInfo icon={phone} alt="" text={rider.phone} />
       <UserContactInfo icon="" alt="" text={rider.accessibility} />
       <OtherInfo>
@@ -50,7 +51,7 @@ const RiderDetail = () => {
     <PastRides
      isStudent = {true}
      rides={rides}
-     netid={rider.netId}
+     netid={rider.netID}
      />
     </>
   )
