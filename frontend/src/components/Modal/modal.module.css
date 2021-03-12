@@ -19,9 +19,25 @@
   z-index: 1010;
 }
 
+.titleContainer {
+  display: flex;
+  align-items: center;
+}
+
 .title {
   font-size: 28px;
   margin: 0;
+}
+
+.optionalText {
+  font-size: 0.75rem;
+  color: white;
+  background: black;
+  padding: 0.1rem 0.25rem;
+  margin-left: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 0.2rem;
 }
 
 .closeBtn {

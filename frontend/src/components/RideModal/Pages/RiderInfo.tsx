@@ -48,7 +48,6 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
-          {errors.name && <p className={styles.error}>Rider not found</p>}
           <Input
             name="name"
             type="text"
@@ -61,9 +60,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
               ),
             })}
           />
+          {errors.name && <p className={styles.error}>Rider not found</p>}
         </div>
         <div className={styles.pickupLocation}>
-          {errors.pickupLoc && <p className={styles.error}>Please enter a location</p>}
           <Input
             name="pickupLoc"
             type="text"
@@ -71,6 +70,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             list="locations"
             ref={register({ required: true })}
           />
+          {errors.pickupLoc && <p className={styles.error}>Please enter a location</p>}
           <datalist id="locations">
             {locations.map((l) => (
               l === 'Custom' ? null : <option key={l}>{l}</option>
@@ -78,7 +78,6 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          {errors.dropoffLoc && <p className={styles.error}>Please enter a location</p>}
           <Input
             name="dropoffLoc"
             type="text"
@@ -86,6 +85,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             list="locations"
             ref={register({ required: true })}
           />
+          {errors.dropoffLoc && <p className={styles.error}>Please enter a location</p>}
           <datalist id="locations">
             {locations.map((l) => (
               l === 'Custom' ? null : <option key={l}>{l}</option>

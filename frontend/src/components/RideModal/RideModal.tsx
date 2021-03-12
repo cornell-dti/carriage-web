@@ -34,20 +34,24 @@ const RideModal = () => {
   const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
-    // all fields are required so just checking length should be suitable
+    // all fields except driver are required so checking length is suitable
     const isFormComplete = Object.keys(formData).length === 7;
     if (isSubmitted && isFormComplete) {
       const {
         date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
       } = formData;
+      const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
+      const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
+      const isUnscheduled = driver === '';
       const ride = {
-        type: 'active',
+        type: isUnscheduled ? 'unscheduled' : 'active',
         startLocation,
         endLocation,
-        driver,
+        driver: isUnscheduled ? undefined : driver,
         rider,
-        startTime: new Date(`${date} ${pickupTime} EST`).toISOString(),
-        endTime: new Date(`${date} ${dropoffTime} EST`).toISOString(),
+        startTime,
+        endTime: isUnscheduled ? undefined : endTime,
+        requestedEndTime: isUnscheduled ? endTime : undefined,
       };
       fetch('/api/rides', withDefaults({
         method: 'POST',
@@ -66,6 +70,7 @@ const RideModal = () => {
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
         isOpen={isOpen}
         currentPage={currentPage}
+        optionalPages={[1]}
         onClose={closeModal}
       >
         <RideTimesPage

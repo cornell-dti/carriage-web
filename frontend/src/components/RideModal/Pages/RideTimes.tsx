@@ -19,30 +19,26 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={styles.date}>
-          {errors.date && <p className={styles.error}>Please enter a date</p>}
-          <Label htmlFor="date">Date:</Label>
-          <Input
-            type="date"
-            name="date"
-            ref={register({ required: true })}
-          />
+          <div>
+            <Label htmlFor="date">Date:</Label>
+            <Input
+              type="date"
+              name="date"
+              ref={register({ required: true })}
+            />
+            {errors.date && <p className={styles.error}>Please enter a date</p>}
+          </div>
         </div>
         <div className={styles.pickupTime}>
-          {errors.pickupTime && <p className={styles.error}>Please enter a time</p>}
           <Label htmlFor="pickupTime">Pickup time:</Label>
           <Input
             type="time"
             name="pickupTime"
             ref={register({ required: true })}
           />
+          {errors.pickupTime && <p className={styles.error}>Please enter a time</p>}
         </div>
         <div className={styles.dropoffTime}>
-          {errors.dropoffTime?.type === 'required' && (
-            <p className={styles.error}>Please enter a time</p>
-          )}
-          {errors.dropoffTime?.type === 'validate' && (
-            <p className={styles.error}>Invalid time</p>
-          )}
           <Label htmlFor="dropoffTime">Dropoff time:</Label>
           <Input
             type="time"
@@ -56,6 +52,12 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
               },
             })}
           />
+          {errors.dropoffTime?.type === 'required' && (
+            <p className={styles.error}>Please enter a time</p>
+          )}
+          {errors.dropoffTime?.type === 'validate' && (
+            <p className={styles.error}>Invalid time</p>
+          )}
         </div>
       </div>
       <Button type="submit">Next</Button>

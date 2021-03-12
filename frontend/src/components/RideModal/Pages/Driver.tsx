@@ -8,14 +8,13 @@ import { Driver } from '../../../types/index';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
-  const { register, formState, handleSubmit } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       driver: formData?.driver ?? '',
     },
   });
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const { withDefaults } = useReq();
-  const { errors } = formState;
 
   useEffect(() => {
     fetch('/api/drivers', withDefaults())
@@ -26,7 +25,6 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div style={{ textAlign: 'center' }}>
-        {errors.driver && <p className={styles.error}>Please select a driver</p>}
         <div className={cn(styles.inputContainer, styles.drivers)}>
           {drivers.map((d) => (
             <div className={styles.driver} key={d.id}>
@@ -38,7 +36,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
                 name="driver"
                 type="radio"
                 value={d.id}
-                ref={register({ required: true })}
+                ref={register()}
               />
             </div>
           ))}
