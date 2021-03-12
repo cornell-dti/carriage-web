@@ -15,6 +15,8 @@ const ExportPreview = () => {
   const { curDate } = useDate();
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
 
+  const today = moment(curDate).format('YYYY-MM-DD');
+
   useEffect(() => {
     fetch('/api/drivers', withDefaults())
       .then((res) => res.json())
@@ -22,8 +24,6 @@ const ExportPreview = () => {
   }, [withDefaults]);
 
   const downloadCSV = () => {
-    const today = moment(curDate).format('YYYY-MM-DD');
-    console.log(today);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then(res => res.text())
       .then(data => {
@@ -52,7 +52,7 @@ const ExportPreview = () => {
         <ExportButton onClick={downloadCSV}/>
         <CSVLink
          data={downloadData}
-         filename='scheduledRides.csv'
+         filename={`scheduledRides_${today}.csv`}
          className='hidden'
          ref={csvLink}
          target='_blank'
