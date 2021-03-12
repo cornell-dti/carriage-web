@@ -29,15 +29,6 @@
   background-color: #ffd8de;
 }
 
-.editButton {
-  color: black;
-  background: none;
-}
-
 Button {
   position: relative;
-}
-
-Button:hover {
-  text-decoration: underline;
 }

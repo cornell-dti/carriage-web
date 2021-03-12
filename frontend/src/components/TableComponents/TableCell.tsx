@@ -22,28 +22,18 @@ const TableCell = (props: TableCellProps) => {
         {data}
     </td>);
   } if (last) {
-    if (buttonHandler && ButtonModal) {
-      return (
-        <td key={index} className={`${styles.passInfo} ${styles.cell} 
+      if (buttonHandler && ButtonModal) {
+        return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
-          <Button className={styles.editButton} onClick={buttonHandler}>
-            {data} {<ButtonModal />}
-          </Button>
-        </td>
-      );
-    }
-    if (buttonHandler) {
-      return (<>
-        <td key={index} className={`${styles.passInfo} ${styles.cell} 
+          <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td>);
+      }
+      if (buttonHandler) {
+        return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
-          <Button className={styles.editButton} onClick={buttonHandler}>
-            {data}
-          </Button>
-        </td></>
-      );
-    }
-    return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
-    ${styles.lastCell}`}>{data}</td>);
+          <Button onClick={buttonHandler}>{data}</Button></td></>);
+      }
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
     const tagStyle = tag.toLowerCase();
     return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
