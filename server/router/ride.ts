@@ -10,6 +10,20 @@ import * as csv from '@fast-csv/format';
 const router = express.Router();
 const tableName = 'Rides';
 
+router.get('/download', function(req, res) {
+  const dateStart = new Date(`${req.query.date} EST`).toISOString();
+  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const condition = new Condition().where('startTime').between(dateStart, dateEnd);
+
+  const callback = (value: any) => 
+    csv
+      .writeToBuffer(value, { headers: true })
+      .then((data) => res.send(data))
+      .catch((err) => res.send(err));
+
+  db.scan(res, Ride, condition, callback);
+})
+
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
@@ -44,20 +58,6 @@ router.get('/', validateUser('User'), (req, res) => {
     db.scan(res, Ride, condition);
   }
 });
-
-router.get('/download', function(req, res) {
-  const dateStart = new Date(`${req.query.date} EST`).toISOString();
-  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
-  const condition = new Condition().where('startTime').between(dateStart, dateEnd);
-
-  const callback = (value: any) => 
-    csv
-      .writeToBuffer(value, { headers: true })
-      .then((data) => res.send(data))
-      .catch((err) => res.send(err));
-
-  db.scan(res, Ride, condition, callback);
-})
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
