@@ -2,8 +2,8 @@ import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as db from './common';
-import { Ride, RideType, Type } from '../models/ride';
-import { Location, Tag } from '../models/location';
+import { Ride, RideLocation } from '../models/ride';
+import { Tag } from '../models/location';
 import { validateUser } from '../util';
 
 const router = express.Router();
@@ -50,36 +50,32 @@ router.post('/', validateUser('User'), (req, res) => {
     body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
 
-  let startLocationId;
-  let endLocationId;
+  let startLocationObj: RideLocation | undefined;
+  let endLocationObj: RideLocation | undefined;
 
   if (!validate(startLocation)) {
-    startLocationId = uuid();
-    const location = new Location({
-      id: startLocationId,
-      name: 'Custom',
+    const name = startLocation.split(',')[0];
+    startLocationObj = {
+      name,
       address: startLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
   if (!validate(endLocation)) {
-    endLocationId = uuid();
-    const location = new Location({
-      id: endLocationId,
-      name: 'Custom',
+    const name = endLocation.split(',')[0];
+    endLocationObj = {
+      name,
       address: endLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
   const ride = new Ride({
     id: uuid(),
     rider,
-    startLocation: startLocationId ?? startLocation,
-    endLocation: endLocationId ?? endLocation,
+    startLocation: startLocationObj ?? startLocation,
+    endLocation: endLocationObj ?? endLocation,
     startTime,
     requestedEndTime,
     endTime: requestedEndTime,
@@ -91,25 +87,7 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
-  if (body.type === Type.PAST) {
-    db.getById(res, Ride, id, tableName, (ride) => {
-      const {
-        startLocation: { id: startId, tag: startTag },
-        endLocation: { id: endId, tag: endTag },
-      } = ride as RideType;
-      if (startTag === Tag.CUSTOM) {
-        body.startLocation = 'Custom';
-        Location.delete(startId);
-      }
-      if (endTag === Tag.CUSTOM) {
-        body.endLocation = 'Custom';
-        Location.delete(endId);
-      }
-      db.update(res, Ride, { id }, body, tableName);
-    });
-  } else {
-    db.update(res, Ride, { id }, body, tableName);
-  }
+  db.update(res, Ride, { id }, body, tableName);
 });
 
 // Delete an existing ride
