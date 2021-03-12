@@ -6,7 +6,7 @@ import styles from './exportPreview.module.css';
 import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
-import { CSVLink, CSVDownload } from "react-csv";
+import { CSVLink } from "react-csv";
 
 const ExportPreview = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -27,7 +27,6 @@ const ExportPreview = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then(res => res.text())
       .then(data => {
-        console.log(data);
         setDownloadData(data);
         if (csvLink.current) {
           csvLink.current.link.click(); 
