@@ -1,41 +1,52 @@
 import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
+import * as csv from '@fast-csv/format';
+import moment from 'moment';
 import * as db from './common';
 import { Ride, RideType, Type } from '../models/ride';
 import { Location, Tag } from '../models/location';
 import { validateUser } from '../util';
-import * as csv from '@fast-csv/format';
+import { DriverType } from '../models/driver';
+import { RiderType } from '../models/rider';
 
 const router = express.Router();
 const tableName = 'Rides';
 
-router.get('/download', function(req, res) {
+router.get('/download', (req, res) => {
   const dateStart = new Date(`${req.query.date} EST`).toISOString();
   const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
-  const condition = new Condition().where('startTime').between(dateStart, dateEnd).where('type').eq('schduled');;
+  const condition = new Condition()
+    .where('startTime')
+    .between(dateStart, dateEnd)
+    .where('type')
+    .not()
+    .eq('unscheduled');
 
   const callback = (value: any) => {
     const dataToExport = value.map((doc: any) => {
-      const start = new Date(doc.startTime);
-      const end = new Date(doc.endTime);
+      const start = moment(doc.startTime);
+      const end = moment(doc.endTime);
+      const fullName = (user: RiderType | DriverType) => (
+        `${user.firstName} ${user.lastName.substring(0, 1)}.`
+      );
       return {
-        name: `${doc.rider.firstName} ${doc.rider.lastName.substring(0, 1)}.`,
-        pickUp: `${start.getHours()}:${start.getMinutes()}`,
-        from: doc.startLocation.address,
-        to: doc.endLocation.address,
-        dropOff: `${end.getHours()}:${end.getMinutes()}`,
-      }
-    })
+        Name: fullName(doc.rider),
+        'Pick Up': start.format('h:mm A'),
+        From: doc.startLocation.name,
+        To: doc.endLocation.name,
+        'Drop Off': end.format('h:mm A'),
+        Needs: doc.rider.accessibility,
+        Driver: fullName(doc.driver),
+      };
+    });
     csv
-      .writeToBuffer(dataToExport, { headers: ['Name', 'Pick Up', 'From', 'To', 'Drop Off'] })
-      .then((data) => {
-        res.send(data)
-      })
+      .writeToBuffer(dataToExport, { headers: true })
+      .then((data) => res.send(data))
       .catch((err) => res.send(err));
-    }
+  };
   db.scan(res, Ride, condition, callback);
-})
+});
 
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {

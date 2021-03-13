@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CSVLink } from "react-csv";
+import { CSVLink } from 'react-csv';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
@@ -15,7 +15,7 @@ const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const { withDefaults } = useReq();
 
-  const [downloadData, setDownloadData] = useState<string>("");
+  const [downloadData, setDownloadData] = useState<string>('');
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const { curDate } = useDate();
   const today = moment(curDate).format('YYYY-MM-DD');
@@ -33,14 +33,14 @@ const Home = () => {
 
   const downloadCSV = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
-      .then(res => res.text())
-      .then(data => {
+      .then((res) => res.text())
+      .then((data) => {
         setDownloadData(data);
         if (csvLink.current) {
-          csvLink.current.link.click(); 
+          csvLink.current.link.click();
         }
-      })
-  }
+      });
+  };
 
   return (
     <div>
