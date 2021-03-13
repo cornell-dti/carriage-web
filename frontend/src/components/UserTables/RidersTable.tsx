@@ -1,7 +1,7 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
-import { NewRider } from '../../types'; 
+import { NewRider } from '../../types';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 
@@ -71,13 +71,13 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       const valueAccessbility = { data: renderAccessNeeds(accessibility) };
       const netId = email.split('@')[0];
       const valueNameNetid = {
-        data: 
-        <span>
-          <span style={{ fontWeight: 'bold' }}>
-            {firstName + ' ' + lastName}
-          </span>
-          {' ' + netId}
-        </span>
+        data:
+          <span>
+            <span style={{ fontWeight: 'bold' }}>
+              {`${firstName} ${lastName}`}
+            </span>
+            {` ${netId}`}
+          </span>,
       };
       const inputValues = [
         valueNameNetid,
@@ -112,7 +112,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   return (
     <>
       <div>
-        <h1 className={styles.formHeader}>Riders</h1>
         <div className={styles.tableContainer}>
           <table cellSpacing="0" className={styles.table}>
             <tbody>

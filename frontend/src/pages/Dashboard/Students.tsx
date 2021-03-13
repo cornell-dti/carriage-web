@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RidersTable from '../../components/UserTables/RidersTable';
 import RiderModal from '../../components/Modal/RiderModal';
+import styles from './page.module.css';
 
 const Riders = () => {
   const [riders, setRiders] = useState(
@@ -17,13 +18,16 @@ const Riders = () => {
         pronouns: '',
         address: '',
         favoriteLocations: new Array<string>(),
-        organization: ''
+        organization: '',
       },
     ],
   );
   return (
     <>
-      <RiderModal riders={riders} setRiders={setRiders} />
+      <div className={styles.pageTitle}>
+        <h1 className={styles.header}>Students</h1>
+        <RiderModal riders={riders} setRiders={setRiders} />
+      </div>
       <RidersTable riders={riders} setRiders={setRiders} />
     </>
   );
