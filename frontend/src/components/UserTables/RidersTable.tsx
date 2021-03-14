@@ -1,34 +1,35 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
-import { Rider } from '../../types';
+import { NewRider } from '../../types';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 
 type RidersTableProps = {
-  riders: Array<Rider>;
-  setRiders: Dispatch<SetStateAction<Rider[]>>;
+  riders: Array<NewRider>;
+  setRiders: Dispatch<SetStateAction<NewRider[]>>;
 };
 
 function renderTableHeader() {
   return (
     <tr>
-      <th className={styles.tableHeader}>First Name</th>
-      <th className={styles.tableHeader}>Last Name</th>
-      <th className={styles.tableHeader}>Phone Number</th>
-      <th className={styles.tableHeader}>Email</th>
-      <th className={styles.tableHeader}>Accessibility Needs</th>
+      <th className={styles.tableHeader}>Name / NetId</th>
+      <th className={styles.tableHeader}>Number</th>
+      <th className={styles.tableHeader}>Address</th>
+      <th className={styles.tableHeader}>Duration</th>
+      <th className={styles.tableHeader}>Disability</th>
     </tr>
   );
 }
 
 function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
-  const comma = ', ';
-  if (accessNeeds != null) {
+  const separator = ', ';
+  if (accessNeeds != null && accessNeeds.length > 0) {
+    console.log(accessNeeds);
     for (let i = 0; i < accessNeeds.length; i += 1) {
       if (i !== accessNeeds.length - 1) {
-        allNeeds = allNeeds + accessNeeds[i] + comma;
+        allNeeds = allNeeds + accessNeeds[i] + separator;
       } else {
         allNeeds += accessNeeds[i];
       }
@@ -53,48 +54,44 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     getExistingRiders();
   }, [setRiders, withDefaults]);
 
-  function deleteEntry(email: string, riderList: Rider[]) {
-    const riderId = riderList.filter((rider) => rider.email === email)[0].id;
-    async function deleteBackend() {
-      await fetch(`/riders/${riderId}`, withDefaults({ method: 'DELETE' }));
-    }
-    deleteBackend();
-    return riderList.filter((rider) => rider.email !== email);
-  }
-  function renderTableData(allRiders: Rider[]) {
+  function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
       const {
         firstName,
         lastName,
         phoneNumber,
+        address,
+        joinDate,
         email,
-        accessibilityNeeds,
+        accessibility,
       } = rider;
-      const buttonText = 'Delete';
-      const valueFName = { data: firstName };
-      const valueLName = { data: lastName };
       const valuePhone = { data: phoneNumber };
-      const valueEmail = { data: email };
-      const valueAccessbility = { data: renderAccessNeeds(accessibilityNeeds) };
-      const valueDelete = {
-        data: buttonText,
-        buttonHandler: () => setRiders(deleteEntry(email, allRiders)),
+      const valueAddress = { data: address };
+      const valueJoinDate = { data: joinDate };
+      const valueAccessbility = { data: renderAccessNeeds(accessibility) };
+      const netId = email.split('@')[0];
+      const valueNameNetid = {
+        data:
+          <span>
+            <span style={{ fontWeight: 'bold' }}>
+              {`${firstName} ${lastName}`}
+            </span>
+            {` ${netId}`}
+          </span>,
       };
       const inputValues = [
-        valueFName,
-        valueLName,
+        valueNameNetid,
         valuePhone,
-        valueEmail,
+        valueAddress,
+        valueJoinDate,
         valueAccessbility,
-        valueDelete,
       ];
-      const netId = email.split('@')[0];
       const riderData = {
         firstName,
         lastName,
         netID: netId,
         phone: phoneNumber,
-        accessibility: renderAccessNeeds(accessibilityNeeds),
+        accessibility: renderAccessNeeds(accessibility),
       };
       const location = {
         pathname: '/riders/rider',
@@ -115,7 +112,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
   return (
     <>
       <div>
-        <h1 className={styles.formHeader}>Riders</h1>
         <div className={styles.tableContainer}>
           <table cellSpacing="0" className={styles.table}>
             <tbody>
