@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Rider } from '../../types';
-import { useReq } from '../../context/req';
+import { Rider } from '../types';
+import { useReq } from './req';
 
 
 type ridersState = {
@@ -15,11 +15,11 @@ const initialState: ridersState = {
 const RidersContext = React.createContext(initialState);
 export const useRiders = () => React.useContext(RidersContext);
 
-type RidesProviderProps = {
+type RidersProviderProps = {
   children: React.ReactNode;
 }
 
-export const RidesProvider = ({ children }: RidesProviderProps) => {
+export const RidersProvider = ({ children }: RidersProviderProps) => {
   const [riders, setRiders] = useState<Array<Rider>>([])
   const { withDefaults } = useReq();
   const refreshRiders = async () => {
