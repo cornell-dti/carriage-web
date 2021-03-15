@@ -49,7 +49,7 @@ function findUserAndSendToken(
     if (err) {
       res.status(500).send({ err });
     } else if (data?.length) {
-      const { id } = data.toJSON()[0];
+      const { id } = data[0].toJSON();
       const userPayload = {
         id,
         userType: getUserType(table),
