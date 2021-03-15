@@ -21,7 +21,6 @@ const PastRides = ({isStudent, rides}: pastRideProps) => {
     );
   }
   function renderTableData() {
-    console.log(rides);
     return rides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
       const startTime = new Date(ride.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
