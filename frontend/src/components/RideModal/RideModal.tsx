@@ -10,17 +10,18 @@ type RideModalProps = {
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
   isOpen: boolean,
   setIsOpen:  React.Dispatch<React.SetStateAction<boolean>>,
+  setOpenRideModal?: React.Dispatch<React.SetStateAction<number>>,
   ride?: Ride
 }
 
-const RideModal = ({currentPage, setCurrentPage, isOpen, setIsOpen, ride}: RideModalProps) => {
+const RideModal = ({currentPage, setCurrentPage, isOpen, setIsOpen, setOpenRideModal, ride}: RideModalProps) => {
   const [formData, setFormData] = useState<ObjectType>(
     ride ? 
     {
       date: moment(ride.startTime).format('YYYY-MM-DD'),
       pickupTime: moment(ride.startTime).format('kk:mm'),
       dropoffTime: moment(ride.endTime).format('kk:mm'),
-      driver: ride.driver?.id,
+      driver: ride.driver,
       rider: ride.rider,
       startLocation: ride.startLocation,
       endLocation: ride.endLocation,
@@ -36,7 +37,9 @@ const RideModal = ({currentPage, setCurrentPage, isOpen, setIsOpen, ride}: RideM
   const goPrevPage = () => setCurrentPage((p) => p - 1);
 
   const closeModal = () => {
+    console.log('closing')
     setFormData({});
+    if (setOpenRideModal) setOpenRideModal(-1);
     setIsOpen(false);
   };
 

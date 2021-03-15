@@ -27,13 +27,13 @@ function renderTableHeader() {
 const RidesTable = (
   { rides, drivers, hasButtons }: RidesTableProps) => {
   const [openAssignModal, setOpenAssignModal] = useState(-1);
+  const [openRideModal, setOpenRideModal] = useState(-1);
   const [currentPage, setCurrentPage] = useState(0);
   const [rideModalIsOpen, setRideModalIsOpen] = useState(false);
 
   function renderTableData(allRides: Ride[]) {
     return allRides.filter(r => r.startLocation !== undefined &&
       r.endLocation !== undefined).map((ride, index) => {
-        console.log(ride)
         const startTime = new Date(ride.startTime).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
@@ -59,6 +59,8 @@ const RidesTable = (
         const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
         const valueNeeds = { data: needs };
         const openRidesModal = () => {
+          console.log('opening')
+          setOpenRideModal(index);
           setCurrentPage(0);
           setRideModalIsOpen(true);
         };
@@ -66,7 +68,7 @@ const RidesTable = (
           <RideModal
             currentPage={currentPage} 
             setCurrentPage={setCurrentPage} 
-            isOpen={rideModalIsOpen}
+            isOpen={openRideModal === index && rideModalIsOpen}
             setIsOpen={setRideModalIsOpen}
             ride={ride}
           />

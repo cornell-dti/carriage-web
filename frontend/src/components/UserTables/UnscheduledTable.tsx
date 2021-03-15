@@ -25,10 +25,7 @@ const Table = ({ drivers }: TableProps) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    const dayWithRides = new Date();
-    dayWithRides.setDate(dayWithRides.getDate() - 3);
-    const day = moment(dayWithRides).format('YYYY-MM-DD');
-    fetch(`/api/rides?type=unscheduled&date=${day}`, withDefaults())
+    fetch(`/api/rides?type=unscheduled&date=${today}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
