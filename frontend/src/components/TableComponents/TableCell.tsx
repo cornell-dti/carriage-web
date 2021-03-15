@@ -27,7 +27,9 @@ const TableCell = (props: TableCellProps) => {
         if (outline !== undefined) {
           return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
           ${styles.lastCell}`}>
-            <Button onClick={buttonHandler} outline={outline}>{data} {<ButtonModal />}</Button></td>);
+            <Button onClick={buttonHandler} outline={outline}>
+              {data} {<ButtonModal />}
+            </Button></td>);
         }
         return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
