@@ -67,6 +67,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             start: new Date(ride.startTime.toString()),
             end: new Date(ride.endTime.toString()),
             resourceId: ride.driver!.id,
+            ride,
           })),
         );
       });

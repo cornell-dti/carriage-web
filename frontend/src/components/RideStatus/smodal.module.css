@@ -5,7 +5,7 @@
   width: 370px;
   min-height: 340px;
   margin-left: -89px;
-  margin-top: -185px;
+  transform:translateY(-50%);
   z-index: 100000;
 }
 
@@ -39,7 +39,7 @@
 }
 
 .bar {
-  margin: 16px 0;
+  margin-top: 16px;
 }
 
 .row {
@@ -48,34 +48,39 @@
 
 .column {
   line-height: 32px;
-  flex: 160px;
-  padding: 4px;
+  width: 155px;
+  padding: 5px;
+}
+
+.column2 {
+  width: 30px;
 }
 
 .center {
-  flex: 30px;
+  flex: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .divider {
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-top: 1px solid #a5a5a5;
+  border-radius: 1px;
   margin: 16px 0;
 }
 
 .footer {
-    position: absolute;
     width: 320px;
-    bottom: 16px;
 }
 
 .location {
-  margin-left: 8px;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
 }
 
 .tag {
-  border-radius: 0.625rem;
+  border-radius: 5px;
   padding: 0.313rem;
 }
 .ctown {
