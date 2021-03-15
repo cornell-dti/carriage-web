@@ -1,7 +1,7 @@
 import React from 'react';
-import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
+import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import { phone } from '../../icons/userInfo/index';
 
 type RiderDetailProps = {
   // profilePic: string;
@@ -27,7 +27,7 @@ const RiderDetail = () => {
         <p>other info:</p>
       </OtherInfo>
     </UserDetail>
-  )
-}
+  );
+};
 
-export default RiderDetail
+export default RiderDetail;

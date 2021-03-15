@@ -25,7 +25,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
     pronouns: '',
     address: '',
     favoriteLocations: [],
-    organization: ''
+    organization: '',
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -62,7 +62,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         pronouns: '',
         address: formData.address,
         favoriteLocations: [],
-        organization: ''
+        organization: '',
       };
       const addRider = async () => {
         await fetch('/api/riders', withDefaults({

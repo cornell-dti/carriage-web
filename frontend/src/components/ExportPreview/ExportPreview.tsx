@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import ScheduledTable from '../UserTables/ScheduledTable';
 import moment from 'moment';
+import ScheduledTable from '../UserTables/ScheduledTable';
 import { Driver } from '../../types/index';
 import styles from './exportPreview.module.css';
 import { useReq } from '../../context/req';
@@ -26,7 +26,7 @@ const ExportPreview = () => {
           <ScheduledTable
             key={index}
             driverId={driver.id}
-            driverName={driver.firstName + ' ' + driver.lastName}
+            driverName={`${driver.firstName} ${driver.lastName}`}
           />
         ))}
       </div>
