@@ -53,7 +53,6 @@ router.post('/', validateUser('User'), (req, res) => {
       type,
       rider,
       startTime,
-      endTime,
       requestedEndTime,
       driver,
       startLocation,
@@ -89,7 +88,6 @@ router.post('/', validateUser('User'), (req, res) => {
   const ride = new Ride({
     id: uuid(),
     type: type ?? Type.UNSCHEDULED,
-    status: Status.NOT_STARTED,
     rider,
     startLocation: startLocationId ?? startLocation,
     endLocation: endLocationId ?? endLocation,
