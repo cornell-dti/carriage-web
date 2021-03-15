@@ -22,13 +22,13 @@ type RidesProviderProps = {
 export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [riders, setRiders] = useState<Array<Rider>>([]);
   const { withDefaults } = useReq();
-  const refreshRiders = useCallback(async () => {
+  const refreshRiders = async () => {
     const ridersData:Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
 
     setRiders([...ridersData]);
-  });
+  };
     // Initialize the data
   React.useEffect(() => {
     refreshRiders();
