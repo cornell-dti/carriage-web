@@ -36,9 +36,10 @@ const Home = () => {
       .then((res) => res.text())
       .then((data) => {
         if (data==='') {
-          data = 'Name,Pick Up,From,To,Drop Off,Needs,Driver';
+          setDownloadData('Name,Pick Up,From,To,Drop Off,Needs,Driver');
+        } else {
+          setDownloadData(data);
         }
-        setDownloadData(data);
         if (csvLink.current) {
           csvLink.current.link.click();
         }
