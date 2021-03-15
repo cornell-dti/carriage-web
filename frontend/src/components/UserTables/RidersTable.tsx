@@ -47,7 +47,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       const ridersData = await fetch('/api/riders', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
-      console.log(ridersData);
       setRiders(ridersData);
     }
     getExistingRiders();

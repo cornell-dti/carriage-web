@@ -20,7 +20,6 @@ type DriverDetailProps = {
 const DriverDetail = () => {
   const location = useLocation<DriverDetailProps>();
   const driver: DriverDetailProps = location.state;
-  console.log(driver);
   const availToString = (acc: string, [day, timeRange]: string[]) =>
     `${acc + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
