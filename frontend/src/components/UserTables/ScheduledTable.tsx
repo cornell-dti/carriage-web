@@ -36,7 +36,7 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
   return (
     <>
       <h1 className={styles.formHeader}>{driverName}</h1>
-      <RidesTable rides={rides} drivers={[]} hasAssignButton={false} />
+      <RidesTable rides={rides} drivers={[]} hasButtons={false} />
     </>
   );
 };

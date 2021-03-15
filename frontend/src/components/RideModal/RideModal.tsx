@@ -1,21 +1,35 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import Modal from '../Modal/Modal';
-import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType } from '../../types/index';
+import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 
-const RideModal = () => {
-  const [formData, setFormData] = useState<ObjectType>({});
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const { withDefaults } = useReq();
+type RideModalProps = {
+  currentPage: number,
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+  isOpen: boolean,
+  setIsOpen:  React.Dispatch<React.SetStateAction<boolean>>,
+  ride?: Ride
+}
 
-  const openModal = () => {
-    setCurrentPage(0);
-    setIsOpen(true);
-  };
+const RideModal = ({currentPage, setCurrentPage, isOpen, setIsOpen, ride}: RideModalProps) => {
+  const [formData, setFormData] = useState<ObjectType>(
+    ride ? 
+    {
+      date: moment(ride.startTime).format('YYYY-MM-DD'),
+      pickupTime: moment(ride.startTime).format('kk:mm'),
+      dropoffTime: moment(ride.endTime).format('kk:mm'),
+      driver: ride.driver?.id,
+      rider: ride.rider,
+      startLocation: ride.startLocation,
+      endLocation: ride.endLocation,
+    }
+    :
+    {}
+  );
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { withDefaults } = useReq();
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -43,21 +57,30 @@ const RideModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch('/api/rides', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(formData),
-      }));
+      if (ride) {
+        fetch(`/api/rides/${ride.id}`, withDefaults({
+          method: 'PUT',
+          body: JSON.stringify(formData),
+        }))
+      } else {
+        fetch('/api/rides', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(formData),
+        }));
+      }
       setIsSubmitted(false);
       closeModal();
     }
   }, [formData, isSubmitted, withDefaults]);
 
   return (
-    <>
-      <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate
-        title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
+        title={ride ? 
+          ['Edit a Ride', 'Available Drivers', 'Edit a Ride']
+          :
+          ['Add a Ride', 'Available Drivers', 'Add a Ride']
+        }
         isOpen={isOpen}
         currentPage={currentPage}
         onClose={closeModal}
@@ -75,7 +98,6 @@ const RideModal = () => {
           onSubmit={saveDataThen(submitData)}
         />
       </Modal>
-    </>
   );
 };
 

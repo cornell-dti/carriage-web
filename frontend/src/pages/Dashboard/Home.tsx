@@ -5,6 +5,7 @@ import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
+import { Button } from '../../components/FormElements/FormElements';
 import styles from './page.module.css';
 import { Driver } from '../../types/index';
 import { useReq } from '../../context/req';
@@ -14,6 +15,10 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 const Home = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const { withDefaults } = useReq();
+
+  // states for the rides model
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [downloadData, setDownloadData] = useState<string>('');
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
@@ -30,6 +35,11 @@ const Home = () => {
 
     fetchDrivers();
   }, [withDefaults]);
+
+  const openRidesModal = () => {
+    setCurrentPage(0);
+    setIsOpen(true);
+  };
 
   const downloadCSV = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
@@ -59,7 +69,13 @@ const Home = () => {
             ref={csvLink}
             target='_blank'
           />
-          <RideModal />
+          <Button onClick={openRidesModal}>+ Add ride</Button> 
+          <RideModal 
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage} 
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+          />
         </div>
       </div>
       <MiniCal />

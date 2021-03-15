@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Driver, Ride } from '../../types/index';
 import AssignDriverModal from '../Modal/AssignDriverModal';
+import RideModal from '../RideModal/RideModal';
 import styles from './table.module.css';
 import TableRow from '../TableComponents/TableRow';
 
 type RidesTableProps = {
   rides: Ride[];
   drivers: Driver[];
-  hasAssignButton: boolean;
+  hasButtons: boolean;
 }
 
 function renderTableHeader() {
@@ -24,12 +25,15 @@ function renderTableHeader() {
 }
 
 const RidesTable = (
-  { rides, drivers, hasAssignButton }: RidesTableProps) => {
-  const [openModal, setOpenModal] = useState(-1);
+  { rides, drivers, hasButtons }: RidesTableProps) => {
+  const [openAssignModal, setOpenAssignModal] = useState(-1);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [rideModalIsOpen, setRideModalIsOpen] = useState(false);
 
   function renderTableData(allRides: Ride[]) {
     return allRides.filter(r => r.startLocation !== undefined &&
       r.endLocation !== undefined).map((ride, index) => {
+        console.log(ride)
         const startTime = new Date(ride.startTime).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
@@ -54,18 +58,37 @@ const RidesTable = (
         const valuePickup = { data: pickupLocation, tag: pickupTag };
         const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
         const valueNeeds = { data: needs };
+        const openRidesModal = () => {
+          setCurrentPage(0);
+          setRideModalIsOpen(true);
+        };
+        const rideModal = () => (
+          <RideModal
+            currentPage={currentPage} 
+            setCurrentPage={setCurrentPage} 
+            isOpen={rideModalIsOpen}
+            setIsOpen={setRideModalIsOpen}
+            ride={ride}
+          />
+        )
         const assignModal = () => (
           <AssignDriverModal
-            isOpen={openModal === index}
-            close={() => setOpenModal(-1)}
+            isOpen={openAssignModal === index}
+            close={() => setOpenAssignModal(-1)}
             ride={rides[0]}
             allDrivers={drivers}
           />
         );
 
+        const editButton = {
+          data: 'Edit',
+          buttonHandler: () => openRidesModal(),
+          ButtonModal: rideModal,
+        };
+
         const assignButton = {
           data: 'Assign',
-          buttonHandler: () => setOpenModal(index),
+          buttonHandler: () => setOpenAssignModal(index),
           ButtonModal: assignModal,
         };
 
@@ -75,11 +98,12 @@ const RidesTable = (
           valueDropoff,
           valueNeeds,
         ];
-        const inputValuesAndButton = [
+        const inputValuesAndButtons = [
           valueName,
           valuePickup,
           valueDropoff,
           valueNeeds,
+          editButton,
           assignButton,
         ];
         return (
@@ -89,8 +113,8 @@ const RidesTable = (
               <span className={styles.bold}>{startTime}</span> <br></br>
               <span className={styles.gray}>-- {endTime}</span>
             </td>
-            {hasAssignButton ?
-              <TableRow values={inputValuesAndButton} /> :
+            {hasButtons ?
+              <TableRow values={inputValuesAndButtons} /> :
               <TableRow values={inputValues} />}
           </tr>
         );

@@ -28,8 +28,8 @@ const TableRow = (props: TableRowProps) => {
         />
       );
     }
-    if (index === values.length - 1) {
-      /* last cell */
+    if (buttonHandler) {
+      /* if the cell is a button */
       return (
         <TableCell
           key={index}
@@ -39,6 +39,7 @@ const TableRow = (props: TableRowProps) => {
           last={true}
           buttonHandler={buttonHandler}
           ButtonModal={ButtonModal}
+          outline={index !== values.length - 1}
         />
       );
     }
