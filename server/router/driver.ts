@@ -15,7 +15,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all drivers
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Driver, tableName);
 });
 
@@ -91,7 +91,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
 
 
 // Put a driver in Drivers table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
@@ -107,7 +107,7 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
 });
 
 // Delete an existing driver
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });
