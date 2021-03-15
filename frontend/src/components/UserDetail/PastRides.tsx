@@ -10,10 +10,9 @@ import styles from '../UserTables/table.module.css';
 
 const PastRides = ({isStudent, rides}: pastRideProps) => {
   function renderTableHeader() {
-    const student = !isStudent ?  <th className={styles.tableHeader}>Name</th> : null;
     return (
       <tr>
-        {student}
+        <th className={styles.tableHeader}>{isStudent ? "Date" : "Name"}</th>
         <th className={styles.tableHeader}>{isStudent ? "Time" : "Date"}</th>
         <th className={styles.tableHeader}>Pickup Location</th>
         <th className={styles.tableHeader}>Dropoff Location</th>
@@ -35,24 +34,23 @@ const PastRides = ({isStudent, rides}: pastRideProps) => {
       const dropoffLocation = ride.endLocation.name;
       const dropoffTag = ride.endLocation.tag;
 
-      const valueName = { data: name };
-      const valueDate = { data: isStudent  ? `${startTime}${" : "}${endTime}` : date };
+      const valueNameDate = { data: isStudent ? date: name };
+      const valueDateTime = { data: isStudent  ? `${startTime}${" : "}${endTime}` : date };
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
       
       const inputValues = [
-        valueName,
-        valueDate,
+        valueNameDate,
+        valueDateTime,
         valuePickup,
         valueDropoff,
         valueNeeds,
       ];
-      const [,...studentInputValues] = inputValues;
 
       return (
         <tr key={index}>
-          <TableRow values={isStudent ? studentInputValues : inputValues} />
+          <TableRow values={inputValues} />
         </tr>
       );
     });
