@@ -4,7 +4,7 @@ import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
 import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
-import {useDrivers, DriversProvider} from '../../context/DriversContext';
+import {useDrivers} from '../../context/DriversContext';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -87,7 +87,7 @@ const DriverCard = ({
     </Link>
   );
 };
-const Drivers = () => { 
+const DriverCards = () => { 
   const {
     drivers,
   } = useDrivers();
@@ -104,10 +104,5 @@ const Drivers = () => {
     </div>
   );
   };
-const DriverCards = () => (
-  <DriversProvider>
-    <Drivers/>
-  </DriversProvider>
-);
 
 export default DriverCards;

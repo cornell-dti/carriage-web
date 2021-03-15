@@ -7,16 +7,8 @@ import styles from './page.module.css';
 import {useDrivers, DriversProvider} from '../../context/DriversContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
 
-const Drivers = () => { 
-  const {
-    drivers,
-  } = useDrivers();
-
-  return (
-    <UnscheduledTable drivers={drivers} />
-  );
-  };
 const Home = () => {
+  const {drivers} = useDrivers();
   return (
     <div>
       <div className={styles.pageTitle}>
@@ -28,9 +20,7 @@ const Home = () => {
       </div>
       <MiniCal />
       <Schedule />
-      <DriversProvider>
-        <Drivers/>
-      </DriversProvider>
+      <UnscheduledTable drivers={drivers} />
     </div>
   );
 };

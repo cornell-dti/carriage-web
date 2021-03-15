@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
-import {useDrivers, DriversProvider} from '../../../context/DriversContext';
+import {useDrivers} from '../../../context/DriversContext';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const { register, handleSubmit } = useForm({
@@ -12,11 +12,9 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
       driver: formData?.driver ?? '',
     },
   });
-  const  Drivers = () => { 
-    const {
-      drivers,
-    } = useDrivers();
+    const {drivers} = useDrivers();
     return (
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.drivers)}>
         {drivers.map((d) => (
           <div className={styles.driver} key={d.id}>
@@ -33,20 +31,12 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
           </div>
         ))}
       </div>
-    );
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <DriversProvider>
-        <Drivers/>
-      </DriversProvider>
       <div className={styles.btnContainer}>
         <Button outline type="button" onClick={onBack}>Back</Button>
         <Button type="submit">Next</Button>
       </div>
     </form>
-  );
-};
+    );
+  };
 
 export default DriverPage;

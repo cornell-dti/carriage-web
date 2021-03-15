@@ -10,7 +10,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
-import {useDrivers, DriversProvider} from '../../context/DriversContext';
+import {useDrivers} from '../../context/DriversContext';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -32,12 +32,11 @@ type CalendarDriver = {
   resourceId: string;
   resourceTitle: string;
 };
-
+const Schedule = () => {
 const localizer = momentLocalizer(moment);
 
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
-const Drivers = () => {
   const { curDate } = useDate();
   const defaultStart = curDate;
   defaultStart.setHours(8, 0, 0, 0);
@@ -215,11 +214,5 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     </>
   );
 };
-const Schedule = () => {
-  return(
-  <DriversProvider>
-    <Drivers/>
-  </DriversProvider>
-  );
-};
+
 export default Schedule;
