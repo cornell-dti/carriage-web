@@ -35,6 +35,9 @@ const Home = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
+        if (data==='') {
+          data = 'Name,Pick Up,From,To,Drop Off,Needs,Driver';
+        }
         setDownloadData(data);
         if (csvLink.current) {
           csvLink.current.link.click();
