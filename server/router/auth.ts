@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ModelType } from 'dynamoose/dist/General';
 import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
-import { Dispatcher } from '../models/dispatcher';
+import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
 
 const router = express.Router();
@@ -30,13 +30,55 @@ function getModel(table: string) {
   const tableToModel: { [table: string]: ModelType<Document> } = {
     Riders: Rider,
     Drivers: Driver,
-    Dispatchers: Dispatcher,
+    Admins: Admin,
   };
   return tableToModel[table];
 }
 
 function getUserType(table: string) {
   return table.slice(0, table.length - 1);
+}
+
+function findUserAndSendToken(
+  res: express.Response,
+  model: ModelType<Document>,
+  table: string,
+  email: string,
+) {
+  model.scan({ email: { eq: email } }).exec((err, data) => {
+    if (err) {
+      res.status(500).send({ err });
+    } else if (data?.length) {
+      const { id } = data.toJSON()[0];
+      const userPayload = {
+        id,
+        userType: getUserType(table),
+      };
+      res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+    } else if (table === 'Admins') {
+      // Check drivers table for admins
+      Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
+        if (dErr) {
+          res.status(500).send({ err: dErr });
+        } else if (dData?.length) {
+          const { id, admin } = dData[0].toJSON();
+          if (admin) {
+            const userPayload = {
+              id,
+              userType: getUserType(table),
+            };
+            res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+          } else {
+            res.status(400).send({ err: 'User not found' });
+          }
+        } else {
+          res.status(400).send({ err: 'User not found' });
+        }
+      });
+    } else {
+      res.status(400).send({ err: 'User not found' });
+    }
+  });
 }
 
 // Verify an authentication token
@@ -47,22 +89,7 @@ router.post('/', (req, res) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
       if (payload?.aud === clientId && model) {
-        model.scan({ email: { eq: email } }).exec((err, data) => {
-          if (err) {
-            res.status(500).send({ err });
-          } else if (data?.length) {
-            // Dynamoose incorrectly types data[0] as Document[]
-            type User = { id: string };
-            const { id }: User = data[0] as any;
-            const userPayload = {
-              id,
-              userType: getUserType(table),
-            };
-            res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-          } else {
-            res.status(400).send({ success: false, err: 'User not found' });
-          }
-        });
+        findUserAndSendToken(res, model, table, email);
       } else if (payload?.aud !== clientId) {
         res.status(400).send({ err: 'Invalid client id' });
       } else if (!model) {
