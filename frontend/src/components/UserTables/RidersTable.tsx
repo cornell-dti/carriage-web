@@ -1,14 +1,9 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { NewRider } from '../../types';
 import styles from './table.module.css';
-import { useReq } from '../../context/req';
-
-type RidersTableProps = {
-  riders: Array<NewRider>;
-  setRiders: Dispatch<SetStateAction<NewRider[]>>;
-};
+import {useRiders, RidersProvider} from '../../context/RidersContext';
 
 function renderTableHeader() {
   return (
@@ -38,21 +33,6 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   }
   return null;
 }
-
-const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
-  const history = useHistory();
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    async function getExistingRiders() {
-      const ridersData = await fetch('/api/riders', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-
-      setRiders(ridersData);
-    }
-    getExistingRiders();
-  }, [setRiders, withDefaults]);
 
   function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
@@ -108,7 +88,10 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       );
     });
   }
-
+  const Riders = () => { 
+    const {
+      riders,
+    } = useRiders();
   return (
     <>
       <div>
@@ -124,5 +107,13 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     </>
   );
 };
+
+const RidersTable = () => {
+  return (
+    <RidersProvider>
+      <Riders/>
+    </RidersProvider>
+  );
+}
 
 export default RidersTable;
