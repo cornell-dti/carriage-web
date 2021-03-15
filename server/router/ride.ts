@@ -21,10 +21,12 @@ router.get('/', validateUser('User'), (req, res) => {
   if (query === {}) {
     db.getAll(res, Ride, tableName);
   } else {
-    const { type, status, rider, driver, date } = query;
+    const { type, status, rider, driver, date, scheduled } = query;
     let condition = new Condition();
     if (type) {
       condition = condition.where('type').eq(type);
+    } else if (scheduled) {
+      condition = condition.where('type').not().eq(Type.UNSCHEDULED);
     }
     if (status) {
       condition = condition.where('status').eq(status);

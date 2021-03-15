@@ -56,21 +56,18 @@ const Schedule = () => {
 
   useEffect(() => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
-    fetch(`/api/rides?date=${today}`, withDefaults())
+    fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(
-          data
-            .filter((ride: Ride) => ride.type !== 'unscheduled')
-            .map((ride: Ride) => ({
-              id: ride.id,
-              title: `${ride.startLocation.name} to ${ride.endLocation.name}
+          data.map((ride: Ride) => ({
+            id: ride.id,
+            title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-              start: new Date(ride.startTime.toString()),
-              end: new Date(ride.endTime.toString()),
-              resourceId: ride.driver!.id,
-              ride,
-            })),
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver!.id,
+          })),
         );
       });
   }, [scheduleDay, withDefaults]);
@@ -88,6 +85,17 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         );
       });
   }, [withDefaults]);
+
+  const updateRides = (rideId: string, updatedDriver: Driver) => {
+    fetch(
+      `/api/rides/${rideId}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driver: updatedDriver }),
+      }),
+    );
+  };
 
   const goUp = () => {
     if (curStart.getHours() > 0) {
@@ -143,17 +151,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       return s === c || s === c + 1 || e === c || e === c || outOfBounds;
     });
     return ff;
-  };
-
-  const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(
-      `/api/rides/${rideId}`,
-      withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driver: updatedDriver }),
-      }),
-    );
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
