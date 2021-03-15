@@ -28,7 +28,7 @@ const Riders = () => {
         <h1 className={styles.header}>Students</h1>
         <RiderModal riders={riders} setRiders={setRiders} />
       </div>
-      <RidersTable riders={riders} setRiders={setRiders} />
+      <RidersTable />
     </>
   );
 };
