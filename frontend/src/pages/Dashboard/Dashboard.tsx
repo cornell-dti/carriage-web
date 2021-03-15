@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Drivers from './Drivers';
-import Riders from './Riders';
+import Students from './Students';
 import Home from './Home';
 import Locations from './Locations';
 import Settings from './Settings';
@@ -47,7 +47,7 @@ const Dashboard = () => {
               path="/riders"
               render={({ match: { url } }) => (
                 <>
-                  <Route path={`${url}/`} component={Riders} exact />
+                  <Route path={`${url}/`} component={Students} exact />
                   <Route path={`${url}/rider`} component={RiderDetail} />
                 </>
               )}

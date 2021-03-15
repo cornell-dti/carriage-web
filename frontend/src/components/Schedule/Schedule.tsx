@@ -52,20 +52,18 @@ const Schedule = () => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?date=${today}`, withDefaults())
+    fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(
-          data
-            .filter((ride: Ride) => ride.type !== 'unscheduled')
-            .map((ride: Ride) => ({
-              id: ride.id,
-              title: `${ride.startLocation.name} to ${ride.endLocation.name}
+          data.map((ride: Ride) => ({
+            id: ride.id,
+            title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-              start: new Date(ride.startTime.toString()),
-              end: new Date(ride.endTime.toString()),
-              resourceId: ride.driver!.id,
-            }))
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver!.id,
+          })),
         );
       });
   }, [withDefaults, curDate]);
@@ -79,7 +77,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           data.map((driver: any) => ({
             resourceId: driver.id,
             resourceTitle: `${driver.firstName} ${driver.lastName}`,
-          }))
+          })),
         );
       });
   }, [withDefaults]);
@@ -91,7 +89,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driver: updatedDriver }),
-      })
+      }),
     );
   };
 
@@ -150,9 +148,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   };
 
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    const nextEvents = events.map((old) =>
-      old.id === event.id ? { ...old, resourceId } : old
-    );
+    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
 
     const updatedDriver = drivers.find((d) => d.id === resourceId);
     if (updatedDriver !== undefined) {
