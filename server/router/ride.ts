@@ -95,7 +95,7 @@ router.post('/', validateUser('User'), (req, res) => {
     endLocation: endLocationId ?? endLocation,
     startTime,
     requestedEndTime,
-    endTime: endTime ?? requestedEndTime,
+    endTime: requestedEndTime,
     driver,
   });
   db.create(res, ride);

@@ -34,7 +34,6 @@ const RideModal = () => {
   const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
-    // all fields except driver are required so checking length is suitable
     const isFormComplete = Object.keys(formData).length === 7;
     if (isSubmitted && isFormComplete) {
       const {
@@ -50,8 +49,7 @@ const RideModal = () => {
         driver: isUnscheduled ? undefined : driver,
         rider,
         startTime,
-        endTime: isUnscheduled ? undefined : endTime,
-        requestedEndTime: isUnscheduled ? endTime : undefined,
+        requestedEndTime: endTime,
       };
       fetch('/api/rides', withDefaults({
         method: 'POST',
