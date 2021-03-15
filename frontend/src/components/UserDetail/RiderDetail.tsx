@@ -19,7 +19,6 @@ type RiderDetailProps = {
 
 const RiderDetail = () => {
   const location = useLocation<RiderDetailProps>();
-  console.log(location);
   const rider: RiderDetailProps = location.state;
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
