@@ -1,0 +1,99 @@
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 370px;
+  min-height: 340px;
+  margin-left: -89px;
+  margin-top: -185px;
+  z-index: 100000;
+}
+
+.title {
+  margin: 0 0 16px;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.body{
+  position: relative;
+  padding: 25px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0.5rem 1.5rem 0 rgba(0, 0, 0, 0.2);
+  font-size: 12px;
+}
+
+.close {
+  cursor: pointer;
+  position:absolute;
+  top:15px;
+  right:15px;
+  background: none;
+  border: none;
+  height:16px;
+  width:16px;
+}
+.close:focus{
+  outline: none;
+}
+
+.bar {
+  margin: 16px 0;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  line-height: 32px;
+  flex: 160px;
+  padding: 4px;
+}
+
+.center {
+  flex: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divider {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  margin: 16px 0;
+}
+
+.footer {
+    position: absolute;
+    width: 320px;
+    bottom: 16px;
+}
+
+.location {
+  margin-left: 8px;
+}
+
+.tag {
+  border-radius: 0.625rem;
+  padding: 0.313rem;
+}
+.ctown {
+  background-color: #d5f2ea;
+}
+
+.west {
+  background-color: #ffd8de;
+}
+
+.central {
+  background-color: #fce4ab;
+}
+
+.north {
+  background-color: #fcc999;
+}
+
+.dtown {
+  background-color: #b0d7f9;
+}
