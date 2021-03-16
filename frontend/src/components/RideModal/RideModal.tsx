@@ -14,7 +14,14 @@ type RideModalProps = {
   ride?: Ride
 }
 
-const RideModal = ({currentPage, setCurrentPage, isOpen, setIsOpen, setOpenRideModal, ride}: RideModalProps) => {
+const RideModal = ({
+  currentPage, 
+  setCurrentPage, 
+  isOpen, 
+  setIsOpen, 
+  setOpenRideModal, 
+  ride
+}: RideModalProps) => {
   const [formData, setFormData] = useState<ObjectType>(
     ride ? 
     {
