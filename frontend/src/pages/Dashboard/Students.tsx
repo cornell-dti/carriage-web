@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { NewRider } from '../../types';
 import RidersTable from '../../components/UserTables/RidersTable';
 import RiderModal from '../../components/Modal/RiderModal';
 import styles from './page.module.css';
 
 const Riders = () => {
-  const [riders, setRiders] = useState(
+  const [riders, setRiders] = useState<NewRider[]>(
     [
       {
         id: '',
@@ -15,6 +16,7 @@ const Riders = () => {
         accessibility: new Array<string>(),
         description: '',
         joinDate: '',
+        endDate: '',
         pronouns: '',
         address: '',
         favoriteLocations: new Array<string>(),

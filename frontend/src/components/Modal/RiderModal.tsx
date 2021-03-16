@@ -59,6 +59,7 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         accessibility: formData.accessibility,
         description: '',
         joinDate: '',
+        endDate: '',
         pronouns: '',
         address: formData.address,
         favoriteLocations: [],

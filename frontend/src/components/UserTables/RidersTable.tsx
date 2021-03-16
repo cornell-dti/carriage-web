@@ -62,12 +62,19 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         phoneNumber,
         address,
         joinDate,
+        endDate,
         email,
         accessibility,
       } = rider;
       const valuePhone = { data: phoneNumber };
       const valueAddress = { data: address };
-      const valueJoinDate = { data: joinDate };
+      const valueDuration = { 
+        data: 
+          endDate ? 
+          `${joinDate} - ${endDate}` 
+          : 
+          `${joinDate} -`
+        };
       const valueAccessbility = { data: renderAccessNeeds(accessibility) };
       const netId = email.split('@')[0];
       const valueNameNetid = {
@@ -83,7 +90,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         valueNameNetid,
         valuePhone,
         valueAddress,
-        valueJoinDate,
+        valueDuration,
         valueAccessbility,
       ];
       const riderData = {
