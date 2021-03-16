@@ -9,6 +9,7 @@
     "@testing-library/react": "^10.0.2",
     "@types/classnames": "^2.2.10",
     "@types/react-big-calendar": "^0.24.7",
+    "@types/react-csv": "^1.1.1",
     "@types/react-datepicker": "^3.1.5",
     "@types/react-dom": "^16.9.9",
     "@types/react-router-dom": "^5.1.7",
@@ -27,9 +28,6 @@
     "react-scripts": "^3.4.4",
     "typescript": "^3.7.5",
     "use-async-effect": "^2.2.2"
-  },
-  "devDependencies": {
-    "@types/react-csv": "^1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
