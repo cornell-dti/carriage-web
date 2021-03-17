@@ -5,6 +5,7 @@ import { ObjectType, NewRider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
+import { useRiders } from '../../context/RidersContext';
 
 
 type RiderModalProps = {
@@ -12,7 +13,7 @@ type RiderModalProps = {
   setRiders: Dispatch<SetStateAction<NewRider[]>>;
 }
 
-const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
+const RiderModal = () => {
   const [formData, setFormData] = useState({
     id: '',
     firstName: '',
@@ -25,11 +26,12 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
     pronouns: '',
     address: '',
     favoriteLocations: [],
-    organization: ''
+    organization: '',
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { withDefaults } = useReq();
+  const { refreshRiders } = useRiders();
 
   const openModal = () => {
     setIsOpen(true);
@@ -49,7 +51,6 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
 
   useEffect(() => {
     if (isSubmitted) {
-      setIsSubmitted(false);
       const newRider = {
         id: formData.id,
         firstName: formData.firstName,
@@ -62,18 +63,15 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
         pronouns: '',
         address: formData.address,
         favoriteLocations: [],
-        organization: ''
+        organization: '',
       };
-      const addRider = async () => {
-        await fetch('/api/riders', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(newRider),
-        }));
-      };
-      addRider();
-      setRiders([...riders, newRider]);
+      fetch('/api/riders', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(newRider),
+      })).then(() => refreshRiders());
+      setIsSubmitted(false);
     }
-  }, [formData, isSubmitted, riders, setRiders, withDefaults]);
+  }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
     <>
