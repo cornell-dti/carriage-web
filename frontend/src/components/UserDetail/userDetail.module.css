@@ -16,9 +16,10 @@
 
 .profilePic {
   background-color: #dddddd;
-  width: 90%;
-  height: auto;
   display: inline-block;
+  object-fit: cover;
+  height: 7rem;
+  width: 7rem;
 }
 
 .basicInfoContainer {

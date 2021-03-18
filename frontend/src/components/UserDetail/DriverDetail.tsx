@@ -28,6 +28,7 @@ type DriverDetailProps = {
   phone: string;
   availability: string[][];
   vehicle: Vehicle;
+  photoLink: string;
 };
 
 const DriverDetail = () => {
@@ -96,6 +97,7 @@ const DriverDetail = () => {
         firstName={driver.firstName}
         lastName={driver.lastName}
         netId={driver.netId}
+        photoLink={driver.photoLink}
       >
         <UserContactInfo icon={phone} alt="" text={driver.phone} />
         <UserContactInfo icon={wheel} alt="" text={vehicle} />
