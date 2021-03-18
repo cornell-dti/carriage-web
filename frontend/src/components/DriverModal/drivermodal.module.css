@@ -27,6 +27,7 @@
 .uploadImg {
   display: block;
   margin-bottom: 1rem;
+  object-fit: cover;
   height: 5.875rem;
   width: 5.875rem;
 }

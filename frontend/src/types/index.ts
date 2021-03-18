@@ -35,6 +35,7 @@ export type Driver = {
   phoneNumber: string;
   email: string;
   phone: string;
+  photoLink: string;
 };
 
 export type ObjectType = {
