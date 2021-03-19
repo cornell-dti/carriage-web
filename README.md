@@ -18,6 +18,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 * Matthew Guo - Software Developer
 * Michael Ye - Software Developer
 * Becky Hu - Software Developer
+* Aaron Kang - Software Developer
 * Jay Joo - Software Developer
 * Chelsea Wang - Designer
 * Joanne Lee - Designer
