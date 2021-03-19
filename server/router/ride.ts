@@ -47,7 +47,7 @@ router.get('/', validateUser('User'), (req, res) => {
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
   const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation, info },
+    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
 
   let startLocationObj: RideLocation | undefined;
@@ -59,7 +59,6 @@ router.post('/', validateUser('User'), (req, res) => {
       name,
       address: startLocation,
       tag: Tag.CUSTOM,
-      info,
     };
   }
 
@@ -69,7 +68,6 @@ router.post('/', validateUser('User'), (req, res) => {
       name,
       address: endLocation,
       tag: Tag.CUSTOM,
-      info,
     };
   }
 

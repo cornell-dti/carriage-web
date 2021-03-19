@@ -1,7 +1,6 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
 import { ValueType } from 'dynamoose/dist/Schema';
-import { ObjectType } from 'dynamoose/dist/General';
 import { Location, Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
@@ -27,7 +26,6 @@ export type RideLocation = {
   name: string;
   address: string;
   tag: Tag;
-  info: string;
 };
 
 export type RideType = {
@@ -69,7 +67,6 @@ const locationSchema = {
       type: String,
       enum: Object.values(Tag),
     },
-    info: String,
   },
 };
 
