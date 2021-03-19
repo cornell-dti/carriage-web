@@ -10,6 +10,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
+import {useDrivers} from '../../context/DriversContext';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -31,12 +32,11 @@ type CalendarDriver = {
   resourceId: string;
   resourceTitle: string;
 };
-
+const Schedule = () => {
 const localizer = momentLocalizer(moment);
 
 const DnDCalendar = withDragAndDrop<any, any>(Calendar);
 
-const Schedule = () => {
   const { curDate } = useDate();
   const defaultStart = curDate;
   defaultStart.setHours(8, 0, 0, 0);
@@ -45,7 +45,7 @@ const Schedule = () => {
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const {drivers} = useDrivers();
   const [viewState, setviewState] = useState(false);
 
   const { withDefaults } = useReq();
@@ -69,18 +69,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   }, [withDefaults, curDate]);
 
   useEffect(() => {
-    fetch('/api/drivers', withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => {
-        setDrivers(data);
         setCalDrivers(
-          data.map((driver: any) => ({
+          drivers.map((driver: any) => ({
             resourceId: driver.id,
             resourceTitle: `${driver.firstName} ${driver.lastName}`,
           })),
         );
-      });
-  }, [withDefaults]);
+      }, [drivers]);
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
     fetch(
@@ -150,7 +145,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
     const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
 
-    const updatedDriver = drivers.find((d) => d.id === resourceId);
+    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
     if (updatedDriver !== undefined) {
       updateRides(event.id, updatedDriver);
     }
