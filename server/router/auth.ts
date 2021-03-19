@@ -18,6 +18,7 @@ const audience = [
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
+  '241748771473-c8p9845ouj8hh4sq6n37qv5fql1shk0c.apps.googleusercontent.com',
 ];
 
 async function verify(clientId: string, token: string): Promise<LoginTicket> {
@@ -47,7 +48,7 @@ function findUserAndSendToken(
 ) {
   model.scan({ email: { eq: email } }).exec((err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (data?.length) {
       const { id } = data[0].toJSON();
       const userPayload = {
@@ -59,7 +60,7 @@ function findUserAndSendToken(
       // Check drivers table for admins
       Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
         if (dErr) {
-          res.status(500).send({ err: dErr });
+          res.status(dErr.statusCode || 500).send({ err: dErr });
         } else if (dData?.length) {
           const { id, admin } = dData[0].toJSON();
           if (admin) {
@@ -99,7 +100,7 @@ router.post('/', (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).send({ err: err.message });
+      res.status(err.statusCode || 500).send({ err: err.message });
     });
 });
 

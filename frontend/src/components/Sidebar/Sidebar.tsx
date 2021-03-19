@@ -16,8 +16,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
 
   const menuItems: MenuItem[] = [
     { icon: home, caption: 'Home', path: '/home' },
-    { icon: drivers, caption: 'Drivers', path: '/drivers' },
-    { icon: riders, caption: 'Riders', path: '/riders' },
+    { icon: drivers, caption: 'Employees', path: '/drivers' },
+    { icon: riders, caption: 'Students', path: '/riders' },
     { icon: locations, caption: 'Locations', path: '/locations' },
     { icon: settings, caption: 'Settings', path: '/settings' },
   ];

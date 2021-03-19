@@ -1,33 +1,37 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType, Rider } from '../../types/index';
+import { ObjectType, NewRider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
+import { useRiders } from '../../context/RidersContext';
 
 
 type RiderModalProps = {
-  riders: Array<Rider>;
-  setRiders: Dispatch<SetStateAction<Rider[]>>;
+  riders: Array<NewRider>;
+  setRiders: Dispatch<SetStateAction<NewRider[]>>;
 }
 
-const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
+const RiderModal = () => {
   const [formData, setFormData] = useState({
     id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
-    accessibilityNeeds: [],
+    accessibility: [],
     description: '',
     joinDate: '',
     pronouns: '',
     address: '',
+    favoriteLocations: [],
+    organization: '',
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { withDefaults } = useReq();
+  const { refreshRiders } = useRiders();
 
   const openModal = () => {
     setIsOpen(true);
@@ -47,35 +51,33 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
 
   useEffect(() => {
     if (isSubmitted) {
-      setIsSubmitted(false);
       const newRider = {
         id: formData.id,
         firstName: formData.firstName,
         lastName: formData.lastName,
         phoneNumber: formData.phoneNumber,
         email: formData.email,
-        accessibilityNeeds: formData.accessibilityNeeds,
+        accessibility: formData.accessibility,
         description: '',
         joinDate: '',
         pronouns: '',
         address: formData.address,
+        favoriteLocations: [],
+        organization: '',
       };
-      const addRider = async () => {
-        await fetch('/api/riders', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(newRider),
-        }));
-      };
-      addRider();
-      setRiders([...riders, newRider]);
+      fetch('/api/riders', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(newRider),
+      })).then(() => refreshRiders());
+      setIsSubmitted(false);
     }
-  }, [formData, isSubmitted, riders, setRiders, withDefaults]);
+  }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
     <>
-      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Rider</Button>
+      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
-        title={['Add a Rider']}
+        title={['Add a student']}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}

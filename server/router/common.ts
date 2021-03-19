@@ -12,7 +12,7 @@ export function getById(
 ) {
   model.get(id, (err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
@@ -35,7 +35,7 @@ export function batchGet(
   }
   model.batchGet(keys, (err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
@@ -54,7 +54,7 @@ export function getAll(
 ) {
   model.scan().exec((err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
@@ -72,7 +72,7 @@ export function create(
 ) {
   doc.save((err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (callback) {
       callback(data);
     } else {
@@ -91,7 +91,7 @@ export function update(
 ) {
   model.update(key, operation, (err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
@@ -113,7 +113,7 @@ export function conditionalUpdate(
 ) {
   model.update(key, operation, { condition, return: 'document' }, (err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
@@ -133,7 +133,7 @@ export function deleteById(
 ) {
   model.get(id, (err, data) => {
     if (err) {
-      res.status(500).send({ err });
+      res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
@@ -156,7 +156,7 @@ export function query(
     .using(index)
     .exec((err: any, data: any) => {
       if (err) {
-        res.status(500).send({ err });
+        res.status(err.statusCode || 500).send({ err: err.message });
       } else if (callback) {
         callback(data);
       } else {
@@ -175,7 +175,7 @@ export function scan(
     .scan(condition)
     .exec((err, data) => {
       if (err) {
-        res.status(500).send({ err });
+        res.status(err.statusCode || 500).send({ err: err.message });
       } else if (callback) {
         callback(data);
       } else {
