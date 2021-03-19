@@ -1,4 +1,4 @@
-export type UserType = 'User' | 'Rider' | 'Driver' | 'Dispatcher';
+export type UserType = 'User' | 'Rider' | 'Driver' | 'Admin';
 
 export type JWTPayload = {
   id: string;
