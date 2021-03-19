@@ -8,10 +8,12 @@ import DriverInfo from './DriverInfo';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './drivermodal.module.css';
+import { useDrivers } from '../../context/DriversContext';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { withDefaults } = useReq();
+  const { refreshDrivers } = useDrivers();
   const methods = useForm();
 
   const openModal = () => setIsOpen(true);
@@ -48,7 +50,7 @@ const DriverModal = () => {
     fetch('/api/drivers', withDefaults({
       method: 'POST',
       body: JSON.stringify(driver),
-    }));
+    })).then(() => refreshDrivers());
     closeModal();
   };
 
