@@ -18,6 +18,7 @@ const audience = [
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
+  '241748771473-c8p9845ouj8hh4sq6n37qv5fql1shk0c.apps.googleusercontent.com',
 ];
 
 async function verify(clientId: string, token: string): Promise<LoginTicket> {
@@ -49,7 +50,7 @@ router.post('/', (req, res) => {
       if (payload?.aud === clientId && model) {
         model.scan({ email: { eq: email } }).exec((err, data) => {
           if (err) {
-            res.status(500).send({ err });
+            res.status(err.statusCode || 500).send({ err: err.message });
           } else if (data?.length) {
             // Dynamoose incorrectly types data[0] as Document[]
             type User = { id: string };
