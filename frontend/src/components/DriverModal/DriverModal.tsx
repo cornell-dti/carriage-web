@@ -8,12 +8,14 @@ import DriverInfo from './DriverInfo';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './drivermodal.module.css';
+import { useDrivers } from '../../context/DriversContext';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
 
   const { withDefaults } = useReq();
+  const { refreshDrivers } = useDrivers();
   const methods = useForm();
 
   const openModal = () => setIsOpen(true);
@@ -55,7 +57,10 @@ const DriverModal = () => {
       method: 'POST',
       body: JSON.stringify(driver),
     }))
-      .then((res) => res.json());
+      .then((res) => {
+        refreshDrivers();
+        res.json();
+      });
     
     // upload image
     const photo = { 

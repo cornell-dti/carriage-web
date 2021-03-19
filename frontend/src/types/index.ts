@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export type AccessibilityNeeds = {
   hasCrutches: boolean;
   needsAssistant: boolean;
@@ -15,6 +17,21 @@ export type Rider = {
   joinDate: string;
   pronouns: string;
   address: string;
+};
+
+export type NewRider = {
+  id: string;
+  email: string;
+  phoneNumber: string;
+  firstName: string;
+  lastName: string;
+  pronouns: string;
+  accessibility: Array<string>;
+  description: string;
+  joinDate: string;
+  address: string;
+  favoriteLocations: Array<string>;
+  organization: string;
 };
 
 export type Availability = {
@@ -36,6 +53,15 @@ export type Driver = {
   email: string;
   phone: string;
   photoLink: string;
+};
+
+export type Admin = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessLevel: string;
 };
 
 export type ObjectType = {
@@ -65,7 +91,7 @@ export type Location = {
 };
 
 export type TableValue = {
-  data: string | null;
+  data: string | ReactNode | null;
   tag?: string;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
