@@ -14,12 +14,12 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all vehicles
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Vehicle, tableName);
 });
 
 // Create a new vehicle
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const vehicle = new Vehicle({
     ...body,
@@ -29,13 +29,13 @@ router.post('/', validateUser('Dispatcher'), (req, res) => {
 });
 
 // Update an existing vehicle
-router.put('/:id', validateUser('Dispatcher'), (req, res) => {
+router.put('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id }, body } = req;
   db.update(res, Vehicle, { id }, body, tableName);
 });
 
 // Delete an existing vehicle
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Vehicle, id, tableName);
 });

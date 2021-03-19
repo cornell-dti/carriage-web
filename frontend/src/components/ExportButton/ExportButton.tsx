@@ -4,15 +4,15 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '../FormElements/FormElements';
 import styles from './exportButton.module.css';
 
-const ExportButton = () => {
-    const exportPreview = () => {
-        history.push('/home/export');
-      }
-      const history = useHistory();
+type clickHandler = {
+    onClick: () => void
+ } 
+
+const ExportButton = (props: clickHandler) => {
 
     return (
-        <Button onClick={exportPreview} outline={true} className={styles.exportButton}>
-            <img src={download} alt="capacity icon" /> Export
+        <Button onClick={() => props.onClick()} outline={true} className={styles.exportButton}>
+           <img src={download} alt="capacity icon" /> Export
         </Button>
     )
 }
