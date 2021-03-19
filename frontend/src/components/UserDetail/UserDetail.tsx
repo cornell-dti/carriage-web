@@ -24,7 +24,6 @@ export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
 );
 
 type UserDetailProps = {
-  // profilePic: string;
   firstName: string;
   lastName: string;
   netId: string;
@@ -44,7 +43,7 @@ const UserDetail = ({
     <div className={styles.userDetail}>
       <div className={styles.imgContainer}>
         { photoLink ? 
-          <img className={styles.profilePic} src={photoLink} /> : null }
+          <img className={styles.profilePic} src={'http://' + photoLink} /> : null }
       </div>
       <div className={styles.basicInfoContainer}>
         <p className={styles.name}>{fullName}</p>

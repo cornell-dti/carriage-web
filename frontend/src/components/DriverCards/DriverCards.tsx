@@ -70,7 +70,12 @@ const DriverCard = ({
   return (
     <Link to={{ pathname: '/drivers/driver', state: userInfo, search: `?name=${fullName}` }}
       style={{ textDecoration: 'none', color: 'inherit' }}>
-      <Card firstName={firstName} lastName={lastName} netId={netId} photoLink={photoLink}>
+      <Card 
+        firstName={firstName} 
+        lastName={lastName} 
+        netId={netId} 
+        photoLink={'http://' + photoLink}
+      >
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
         </CardInfo>
