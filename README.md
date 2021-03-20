@@ -22,6 +22,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 * Jay Joo - Software Developer
 * Chelsea Wang - Designer
 * Joanne Lee - Designer
+* Zack Ashen - Software Developer
 
 **Past Contributors**
 * Sam Steinberg - Product Manager
