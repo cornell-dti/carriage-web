@@ -13,24 +13,26 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 **Current Contributors**
 * Bryan Graeser - Product Manager
 * Nina Xie - Product Manager
-* Christopher Hansen - Technical Product Manager
-* Lucy Wang - Software Developer
-* Matthew Guo - Software Developer
+* Matthew Guo - Technical Project Manager
 * Michael Ye - Software Developer
 * Becky Hu - Software Developer
+* Laura Sizemore - Software Developer
+* Pinxuan Huang - Software Developer
 * Aaron Kang - Software Developer
 * Jay Joo - Software Developer
-* Chelsea Wang - Designer
-* Joanne Lee - Designer
 * Zack Ashen - Software Developer
+* Simran Puri - Software Developer
 
 **Past Contributors**
 * Sam Steinberg - Product Manager
-* Laura Sizemore - Technical Product Manager
+* Laura Sizemore - Technical Project Manager
+* Christopher Hansen - Technical Project Manager
 * Jessica Chen - Software Developer
 * Bryan Graeser - Software Developer
-* Christopher Hansen - Software Developer
+* Matthew Guo - Software Developer
 * Ishika Jain - Software Developer
-* Simran Puri - Software Developer
+* Lucy Wang - Software Developer
 * Aiden Kim - Designer
 * Yisu Zheng - Designer
+* Chelsea Wang - Designer
+* Joanne Lee - Designer
