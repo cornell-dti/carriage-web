@@ -39,6 +39,10 @@ const Sidebar: FunctionComponent = ({ children }) => {
             </div>
           </Link>
         ))}
+        <div className={styles.logout}>
+          <img alt="dummy_profile" src="https://sincerelyvictoriat.com/wp-content/uploads/2019/11/round-profile-picture-1.png" />
+          <Link to="">Logout</Link>
+        </div>
       </div>
 
       <div className={styles.content}>

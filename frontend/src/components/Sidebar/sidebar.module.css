@@ -61,6 +61,23 @@
   font-weight: 700;
 }
 
+.logout {
+  color: #0084F4;
+  position: absolute;
+  text-align: center;
+  top: 42rem;
+  width: 100%;
+}
+
+.logout>img {
+  width: 50%;
+}
+
+.logout>a {
+  color: #0084F4;
+  ;
+}
+
 .content {
   width: calc(100% - 6rem);
   height: 100%;
