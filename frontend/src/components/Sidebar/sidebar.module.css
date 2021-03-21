@@ -22,7 +22,8 @@
 
 .icon {
   cursor: pointer;
-  margin: 1.75rem 1.625rem;
+  margin: 1.75rem 0rem;
+  padding: 0rem 1.625rem;
 
   display: flex;
   flex-direction: column;
@@ -44,7 +45,7 @@
   background-color: #d3d2d2;
 }
 
-.circle > img {
+.circle>img {
   width: 50%;
 }
 
@@ -52,7 +53,7 @@
   background-color: black;
 }
 
-.selected > img {
+.selected>img {
   filter: invert(100%);
 }
 
