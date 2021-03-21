@@ -24,6 +24,7 @@ export type DriverType = {
   phoneNumber: string,
   email: string,
   photoLink?: string,
+  admin: boolean,
 };
 
 const availability = {
@@ -72,6 +73,11 @@ const schema = new dynamoose.Schema({
     validate: (email) => isEmail(email as string),
   },
   photoLink: String,
+  admin: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 export const Driver = dynamoose.model('Drivers', schema, { create: false });
