@@ -30,7 +30,6 @@ type ModalProps = {
   isOpen: boolean;
   paginate?: boolean;
   currentPage?: number;
-  optionalPages?: number[];
   children: React.ReactNode;
   onClose?: () => void;
 };
@@ -40,7 +39,6 @@ const Modal = ({
   isOpen,
   paginate = false,
   currentPage = 0,
-  optionalPages = [],
   children,
   onClose = () => { },
 }: ModalProps) => {
@@ -56,12 +54,7 @@ const Modal = ({
           <div className={styles.background}>
             <div className={styles.modal}>
               <div className={styles.topContainer}>
-                <div className={styles.titleContainer}>
-                  <h1 className={styles.title}>{currentTitle}</h1>
-                  {optionalPages.includes(currentPage) && (
-                    <p className={styles.optionalText}>OPTIONAL</p>
-                  )}
-                </div>
+                <h1 className={styles.title}>{currentTitle}</h1>
                 <button className={styles.closeBtn} onClick={onClose}>
                   <img alt="close" src={close} />
                 </button>
