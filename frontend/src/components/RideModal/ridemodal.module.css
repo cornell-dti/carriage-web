@@ -47,6 +47,10 @@
 
 .drivers {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 30rem;
+  margin: 0;
+  justify-content: center;
 }
 
 .driver {

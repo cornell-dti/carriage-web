@@ -6,15 +6,15 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
-import {useRiders} from '../../../context/RidersContext';
+import { useRiders } from '../../../context/RidersContext';
 
 const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
-  const { register, errors, handleSubmit } = useForm();
+  const { register, errors, handleSubmit, getValues } = useForm();
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { withDefaults } = useReq();
   const locations = Object.keys(locationToId).sort();
-  const {riders} = useRiders();
+  const { riders } = useRiders();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
     const rider = nameToId[name.toLowerCase()];
@@ -24,15 +24,14 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
+    const nameToIdObj = riders.reduce((acc: ObjectType, r: NewRider) => {
+      const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
+      acc[fullName] = r.id;
+      return acc;
+    }, {});
+    setNameToId(nameToIdObj);
 
-        const nameToIdObj = riders.reduce((acc: ObjectType, r:NewRider) => {
-          const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
-          acc[fullName] = r.id;
-          return acc;
-        }, {});
-        setNameToId(nameToIdObj);
-
-    fetch('/api/locations', withDefaults())
+    fetch('/api/locations?active=true', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Location[] }) => {
         const locationToIdObj = data.reduce((acc: ObjectType, l) => {
@@ -71,9 +70,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           />
           {errors.pickupLoc && <p className={styles.error}>Please enter a location</p>}
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => <option key={l}>{l}</option>)}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -82,13 +79,22 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             type="text"
             placeholder="Dropoff Location"
             list="locations"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              validate: (dropoffLoc) => {
+                const pickupLoc = getValues('pickupLoc');
+                return pickupLoc !== dropoffLoc;
+              },
+            })}
           />
-          {errors.dropoffLoc && <p className={styles.error}>Please enter a location</p>}
+          {errors.dropoffLoc?.type === 'required' && (
+            <p className={styles.error}>Please enter a location</p>
+          )}
+          {errors.dropoffLoc?.type === 'validate' && (
+            <p className={styles.error}>Locations cannot match</p>
+          )}
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => <option key={l}>{l}</option>)}
           </datalist>
         </div>
       </div>

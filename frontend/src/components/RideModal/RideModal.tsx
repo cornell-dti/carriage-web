@@ -41,7 +41,7 @@ const RideModal = () => {
       } = formData;
       const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
       const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-      const isUnscheduled = driver === '';
+      const isUnscheduled = driver === 'None';
       const ride = {
         type: isUnscheduled ? 'unscheduled' : 'active',
         startLocation,
@@ -68,7 +68,6 @@ const RideModal = () => {
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
         isOpen={isOpen}
         currentPage={currentPage}
-        optionalPages={[1]}
         onClose={closeModal}
       >
         <RideTimesPage
