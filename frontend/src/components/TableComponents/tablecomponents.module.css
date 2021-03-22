@@ -2,6 +2,12 @@
   padding: 0 2rem 1rem;
 }
 
+.header {
+  display: grid;
+  font-weight: bold;
+  padding: 1rem 1.5rem;
+}
+
 .row {
   display: grid;
   margin: 20px 0;
@@ -35,8 +41,37 @@
   text-align: center;
 }
 
-.header {
-  display: grid;
-  font-weight: bold;
-  padding: 1rem 1.5rem;
+.tag {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.smallTag {
+  margin-right: 0.5rem;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ctown {
+  background-color: rgba(125, 223, 195, 0.6);
+}
+
+.west {
+  background-color: rgba(187, 107, 217, 0.6);
+}
+
+.central {
+  background-color: rgba(102, 181, 248, 1);
+}
+
+.north {
+  background-color: rgba(255, 139, 157, 1);
+}
+
+.dtown {
+  background-color: rgba(255, 226, 157, 1)
 }

@@ -8,11 +8,23 @@ type CellProps = {
   smallTag?: boolean;
 }
 
-export const Cell = ({ data, tag, smallTag }: CellProps) => (
-  <div className={styles.cell}>
-    {data}
-  </div>
-);
+export const Cell = ({ data, tag, smallTag }: CellProps) => {
+  if (tag) {
+    const tagText = `${tag.slice(0, 1).toUpperCase()}${tag.slice(1)}`;
+    return (
+      <div className={styles.cell}>
+        {smallTag && <span className={cn(styles[tag], styles.smallTag)} />}
+        {data}
+        {!smallTag && <span className={cn(styles[tag], styles.tag)}>{tagText}</span>}
+      </div>
+    );
+  }
+  return (
+    <div className={styles.cell}>
+      {data}
+    </div>
+  );
+};
 
 type Row = Array<string | CellProps>;
 
