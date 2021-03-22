@@ -8,8 +8,7 @@ type InputProp = {
   handleInput: ((e: any) => void)
 }
 
-const DropDownInput = ({ labelName, labelText, options, handleInput }: InputProp) => {
-  return (
+const DropDownInput = ({ labelName, labelText, options, handleInput }: InputProp) => (
     <div className={styles.formDiv}>
       <label htmlFor={labelName} className={styles.formLabel}> {labelText} </label >
       <select name={labelName} onChange={(e) => handleInput(e)} defaultValue={options[0]}>
@@ -18,7 +17,6 @@ const DropDownInput = ({ labelName, labelText, options, handleInput }: InputProp
         ))}
       </select>
     </div>
-  )
-}
+);
 
-export default DropDownInput
+export default DropDownInput;

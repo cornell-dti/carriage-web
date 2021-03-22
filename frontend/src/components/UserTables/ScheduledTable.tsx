@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Ride } from '../../types/index';
 import moment from 'moment';
+import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';

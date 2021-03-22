@@ -103,14 +103,13 @@ const Form = (props: FormProps) => {
           <DropDownInput
             labelName="accessLevel"
             labelText="Access Level: "
-            options={["Admin", "SDS", "Dispatcher"]}
+            options={['Admin', 'SDS', 'Dispatcher']}
             handleInput={(e) => handleInput(e)} />
           <input type="submit" value="Submit" />
         </form>
       </div>
     </>
-  )
+  );
+};
 
-}
-
-export default Form
+export default Form;
