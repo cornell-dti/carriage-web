@@ -6,7 +6,7 @@ import { useRiders } from '../../context/RidersContext';
 export default () => {
   const { riders } = useRiders();
   const history = useHistory();
-  const colSizes = [0.75, 1, 1.5, 0.5, 1];
+  const colSizes = [1, 0.75, 1.5, 1, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Duration', 'Disability'];
   return (
     <Table>
