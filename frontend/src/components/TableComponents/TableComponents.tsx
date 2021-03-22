@@ -8,6 +8,11 @@ type CellProps = {
   smallTag?: boolean;
 }
 
+/**
+ * Cell component for tables. [data] are the contents of the cell. [tag] is the
+ * location tag that will be displayed next to [data]. [smallTag] is true if
+ * the tag should be a circle, otherwise false, and the tag text will be displayed.
+ */
 export const Cell = ({ data, tag, smallTag }: CellProps) => {
   if (tag) {
     const tagText = `${tag.slice(0, 1).toUpperCase()}${tag.slice(1)}`;
@@ -36,6 +41,13 @@ type RowProps = {
   onClick?: () => void;
 }
 
+/**
+ * Row component for tables. [data] are the cell data within this row. [colSizes]
+ * are the relative sizes of each column. [header] is true if this row displays
+ * the table headers. [groupStart] is the cell index where the row styles should
+ * begin (see rides table for example). [onClick] is a callback that is called
+ * when the row is clicked.
+ */
 export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) => {
   const formatColSizes = (sizes: number[]) => (
     sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
