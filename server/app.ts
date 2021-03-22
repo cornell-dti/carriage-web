@@ -6,7 +6,7 @@ import path from 'path';
 import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
-import dispatcher from './router/dispatcher';
+import admin from './router/admin';
 import ride from './router/ride';
 import vehicle from './router/vehicle';
 import location from './router/location';
@@ -23,7 +23,7 @@ app.use(bodyparser.urlencoded({ extended: false }));
 
 app.use('/api/riders', rider);
 app.use('/api/drivers', driver);
-app.use('/api/dispatchers', dispatcher);
+app.use('/api/admins', admin);
 app.use('/api/rides', ride);
 app.use('/api/vehicles', vehicle);
 app.use('/api/locations', location);

@@ -11,6 +11,7 @@ import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
+import { useDrivers } from '../../context/DriversContext';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -33,12 +34,11 @@ type CalendarDriver = {
   resourceId: string;
   resourceTitle: string;
 };
-
-const localizer = momentLocalizer(moment);
-
-const DnDCalendar = withDragAndDrop<any, any>(Calendar);
-
 const Schedule = () => {
+  const localizer = momentLocalizer(moment);
+
+  const DnDCalendar = withDragAndDrop<any, any>(Calendar);
+
   const scheduleDay = useDate().curDate;
   scheduleDay.setHours(0, 0, 0, 0);
   const defaultStart = scheduleDay;
@@ -48,7 +48,7 @@ const Schedule = () => {
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const { drivers } = useDrivers();
   const [viewState, setviewState] = useState(false);
   const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
 
@@ -74,18 +74,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   }, [scheduleDay, withDefaults]);
 
   useEffect(() => {
-    fetch('/api/drivers', withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => {
-        setDrivers(data);
-        setCalDrivers(
-          data.map((driver: any) => ({
-            resourceId: driver.id,
-            resourceTitle: `${driver.firstName} ${driver.lastName}`,
-          })),
-        );
-      });
-  }, [withDefaults]);
+    setCalDrivers(
+      drivers.map((driver: any) => ({
+        resourceId: driver.id,
+        resourceTitle: `${driver.firstName} ${driver.lastName}`,
+      })),
+    );
+  }, [drivers]);
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
     fetch(
@@ -157,7 +152,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   const onEventDrop = ({ start, end, event, resourceId }: any) => {
     const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
 
-    const updatedDriver = drivers.find((d) => d.id === resourceId);
+    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
     if (updatedDriver !== undefined) {
       updateRides(event.id, updatedDriver);
     }

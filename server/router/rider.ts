@@ -18,7 +18,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all riders
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Rider, tableName);
 });
 
@@ -81,7 +81,7 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
 });
 
 // Create a rider in Riders table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const rider = new Rider({
     ...body,
@@ -113,7 +113,7 @@ router.post('/:id/favorites', validateUser('Rider'), (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Rider, id, tableName);
 });

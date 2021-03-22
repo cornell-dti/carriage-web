@@ -42,7 +42,7 @@ router.get('/', validateUser('User'), (req, res) => {
 });
 
 // Put a location in Locations table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body: { name, address } } = req;
   const location = new Location({
     id: uuid(),
@@ -53,13 +53,13 @@ router.post('/', validateUser('Dispatcher'), (req, res) => {
 });
 
 // Update an existing location
-router.put('/:id', validateUser('Dispatcher'), (req, res) => {
+router.put('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id }, body } = req;
   db.update(res, Location, { id }, body, tableName);
 });
 
 // Delete an existing location
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Location, id, tableName);
 });

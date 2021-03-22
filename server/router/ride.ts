@@ -1,13 +1,52 @@
 import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
+import * as csv from '@fast-csv/format';
+import moment from 'moment';
 import * as db from './common';
-import { Ride, RideType, Type } from '../models/ride';
-import { Location, Tag } from '../models/location';
+import { Ride, RideLocation, Type } from '../models/ride';
+import { Tag } from '../models/location';
 import { validateUser } from '../util';
+import { DriverType } from '../models/driver';
+import { RiderType } from '../models/rider';
 
 const router = express.Router();
 const tableName = 'Rides';
+
+router.get('/download', (req, res) => {
+  const dateStart = new Date(`${req.query.date} EST`).toISOString();
+  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const condition = new Condition()
+    .where('startTime')
+    .between(dateStart, dateEnd)
+    .where('type')
+    .not()
+    .eq('unscheduled');
+
+  const callback = (value: any) => {
+    const dataToExport = value.map((doc: any) => {
+      const start = moment(doc.startTime);
+      const end = moment(doc.endTime);
+      const fullName = (user: RiderType | DriverType) => (
+        `${user.firstName} ${user.lastName.substring(0, 1)}.`
+      );
+      return {
+        Name: fullName(doc.rider),
+        'Pick Up': start.format('h:mm A'),
+        From: doc.startLocation.name,
+        To: doc.endLocation.name,
+        'Drop Off': end.format('h:mm A'),
+        Needs: doc.rider.accessibility,
+        Driver: fullName(doc.driver),
+      };
+    });
+    csv
+      .writeToBuffer(dataToExport, { headers: true })
+      .then((data) => res.send(data))
+      .catch((err) => res.send(err));
+  };
+  db.scan(res, Ride, condition, callback);
+});
 
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
@@ -52,36 +91,32 @@ router.post('/', validateUser('User'), (req, res) => {
     body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
   } = req;
 
-  let startLocationId;
-  let endLocationId;
+  let startLocationObj: RideLocation | undefined;
+  let endLocationObj: RideLocation | undefined;
 
   if (!validate(startLocation)) {
-    startLocationId = uuid();
-    const location = new Location({
-      id: startLocationId,
-      name: 'Custom',
+    const name = startLocation.split(',')[0];
+    startLocationObj = {
+      name,
       address: startLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
   if (!validate(endLocation)) {
-    endLocationId = uuid();
-    const location = new Location({
-      id: endLocationId,
-      name: 'Custom',
+    const name = endLocation.split(',')[0];
+    endLocationObj = {
+      name,
       address: endLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
   const ride = new Ride({
     id: uuid(),
     rider,
-    startLocation: startLocationId ?? startLocation,
-    endLocation: endLocationId ?? endLocation,
+    startLocation: startLocationObj ?? startLocation,
+    endLocation: endLocationObj ?? endLocation,
     startTime,
     requestedEndTime,
     endTime: requestedEndTime,
@@ -93,25 +128,7 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
-  if (body.type === Type.PAST) {
-    db.getById(res, Ride, id, tableName, (ride) => {
-      const {
-        startLocation: { id: startId, tag: startTag },
-        endLocation: { id: endId, tag: endTag },
-      } = ride as RideType;
-      if (startTag === Tag.CUSTOM) {
-        body.startLocation = 'Custom';
-        Location.delete(startId);
-      }
-      if (endTag === Tag.CUSTOM) {
-        body.endLocation = 'Custom';
-        Location.delete(endId);
-      }
-      db.update(res, Ride, { id }, body, tableName);
-    });
-  } else {
-    db.update(res, Ride, { id }, body, tableName);
-  }
+  db.update(res, Ride, { id }, body, tableName);
 });
 
 // Delete an existing ride

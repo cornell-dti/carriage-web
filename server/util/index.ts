@@ -42,7 +42,7 @@ function validateToken(
     if (bearer === 'Bearer') {
       jwt.verify(token, process.env.JWT_SECRET!, (err, payload) => {
         if (err) {
-          res.status(500).send({ err });
+          res.status(500).send({ err: err.message });
         } else {
           callback(payload as JWTPayload);
         }
@@ -59,7 +59,7 @@ const priority: { [type in UserType]: number } = {
   User: 0,
   Rider: 1,
   Driver: 1,
-  Dispatcher: 2,
+  Admin: 2,
 };
 
 function isUserValid(userType: UserType, authLevel: UserType) {
