@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
 
-export default () => {
+const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
   const colSizes = [1, 0.75, 1.5, 1, 1];
@@ -49,3 +49,5 @@ export default () => {
     </Table>
   );
 };
+
+export default StudentsTable;
