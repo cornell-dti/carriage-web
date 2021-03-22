@@ -6,8 +6,14 @@ import { useRiders } from '../../context/RidersContext';
 const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
-  const colSizes = [1, 0.75, 1.5, 1, 1];
+  const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Duration', 'Disability'];
+  const fmtPhone = (number: string) => {
+    const areaCode = number.slice(0, 3);
+    const firstPart = number.slice(3, 6);
+    const secondPart = number.slice(6);
+    return `(${areaCode}) ${firstPart} ${secondPart}`;
+  };
   return (
     <Table>
       <Row
@@ -28,11 +34,13 @@ const StudentsTable = () => {
             </span>,
         };
         const disability = accessibility.join(', ');
+        const phone = fmtPhone(phoneNumber);
+        const shortAddress = address.split(',')[0];
         const riderData = {
           firstName,
           lastName,
           netID: netId,
-          phone: phoneNumber,
+          phone,
           accessibility: disability,
         };
         const location = {
@@ -43,7 +51,7 @@ const StudentsTable = () => {
         const goToDetail = () => {
           history.push(location);
         };
-        const data = [nameNetId, phoneNumber, address, joinDate, disability];
+        const data = [nameNetId, phone, shortAddress, joinDate, disability];
         return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
       })}
     </Table>
