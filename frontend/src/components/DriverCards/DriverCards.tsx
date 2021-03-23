@@ -79,10 +79,10 @@ const DriverCard = ({
             ))}
           </div>
         </CardInfo>
-        <CardInfo icon={wheel} alt="wheel icon">
+        {/* <CardInfo icon={wheel} alt="wheel icon">
           <p>{`${vehicle.name} | ${vehicle.capacity}`}</p>
           <img src={capacity} alt="capacity icon" style={{ marginLeft: '0.1rem' }} />
-        </CardInfo>
+        </CardInfo> */}
       </Card>
     </Link>
   );

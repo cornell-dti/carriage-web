@@ -6,7 +6,7 @@ import styles from './page.module.css';
 const Drivers = () => (
   <>
     <div className={styles.pageTitle}>
-      <h1 className={styles.header}>Drivers</h1>
+      <h1 className={styles.header}>Employees</h1>
       <div className={styles.margin3}>
         <DriverModal />
       </div>

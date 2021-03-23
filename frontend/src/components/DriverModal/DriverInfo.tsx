@@ -40,21 +40,6 @@ const DriverInfo = () => {
         className={cn(styles.input, styles.col2)}
         ref={register({ required: true })}
       />
-      <Input
-        name='carType'
-        type='text'
-        placeholder='Car Type'
-        className={cn(styles.input, styles.col1)}
-        ref={register({ required: true })}
-      />
-      <Input
-        name='capacity'
-        type='number'
-        placeholder='Capacity'
-        min={1}
-        className={cn(styles.input, styles.col2)}
-        ref={register({ required: true, min: 1 })}
-      />
     </div>
   );
 };

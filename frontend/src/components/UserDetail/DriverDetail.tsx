@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
-import { Ride, Vehicle } from '../../types';
+import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel } from '../../icons/userInfo/index';
 import styles from '../UserTables/table.module.css';
@@ -27,7 +27,6 @@ type DriverDetailProps = {
   netId: string;
   phone: string;
   availability: string[][];
-  vehicle: Vehicle;
 };
 
 const DriverDetail = () => {
@@ -36,9 +35,9 @@ const DriverDetail = () => {
   const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
-  const vehicle = driver.vehicle
-    ? `${driver.vehicle.name} (${driver.vehicle.capacity} people)`
-    : '';
+  // const vehicle = driver.vehicle
+  //   ? `${driver.vehicle.name} (${driver.vehicle.capacity} people)`
+  //   : '';
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
 
@@ -97,7 +96,7 @@ const DriverDetail = () => {
         netId={driver.netId}
       >
         <UserContactInfo icon={phone} alt="" text={driver.phone} />
-        <UserContactInfo icon={wheel} alt="" text={vehicle} />
+        {/* <UserContactInfo icon={wheel} alt="" text={vehicle} /> */}
         <UserContactInfo icon={clock} alt="" text={avail} />
         <OtherInfo>
           <p>last week:</p>

@@ -5,6 +5,7 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import DriverInfo from './DriverInfo';
+import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './drivermodal.module.css';
@@ -31,13 +32,7 @@ const DriverModal = () => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { name, email, phoneNumber, carType, capacity, availability } = data;
-    const vehicle = { name: carType, capacity: Number(capacity) };
-    const vehicleJson = await fetch('/api/vehicles', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(vehicle),
-    }))
-      .then((res) => res.json());
+    const { name, email, phoneNumber, availability } = data;
     const [firstName, lastName] = name.split(' ');
     const driver = {
       firstName,
@@ -45,7 +40,6 @@ const DriverModal = () => {
       email,
       phoneNumber,
       availability: parseAvailability(availability),
-      vehicle: vehicleJson.id,
     };
     fetch('/api/drivers', withDefaults({
       method: 'POST',
@@ -58,7 +52,7 @@ const DriverModal = () => {
     <>
       <Button onClick={openModal}>+ Add driver</Button>
       <Modal
-        title='Add a Driver'
+        title='Add an Employee'
         isOpen={isOpen}
         onClose={closeModal}
       >
@@ -67,6 +61,7 @@ const DriverModal = () => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <DriverInfo />
             <WorkingHours />
+            <RoleSelector />
             <Button className={styles.submit} type='submit'>Add a Driver</Button>
           </form>
         </FormProvider>
