@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone, clock, wheel } from '../../icons/userInfo/index';
+import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import styles from '../UserTables/table.module.css';
 import { useReq } from '../../context/req';
 
@@ -27,6 +27,7 @@ type DriverDetailProps = {
   netId: string;
   phone: string;
   availability: string[][];
+  admin: boolean;
 };
 
 const DriverDetail = () => {
@@ -35,9 +36,7 @@ const DriverDetail = () => {
   const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
   const parsedAvail = driver.availability.reduce(availToString, '');
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
-  // const vehicle = driver.vehicle
-  //   ? `${driver.vehicle.name} (${driver.vehicle.capacity} people)`
-  //   : '';
+  const role = driver.admin ? 'Admin' : 'Driver';
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
 
@@ -96,7 +95,7 @@ const DriverDetail = () => {
         netId={driver.netId}
       >
         <UserContactInfo icon={phone} alt="" text={driver.phone} />
-        {/* <UserContactInfo icon={wheel} alt="" text={vehicle} /> */}
+        <UserContactInfo icon={driver.admin ? user : wheel} alt="" text={role} />
         <UserContactInfo icon={clock} alt="" text={avail} />
         <OtherInfo>
           <p>last week:</p>

@@ -52,6 +52,7 @@ export type Driver = {
   phoneNumber: string;
   email: string;
   phone: string;
+  admin: boolean;
 };
 
 export type Admin = {

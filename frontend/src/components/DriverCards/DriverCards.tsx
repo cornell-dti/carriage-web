@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './drivercards.module.css';
-import { capacity, clock, phone, wheel } from '../../icons/userInfo/index';
+import { clock, phone, wheel, user } from '../../icons/userInfo/index';
 import { Driver, AvailabilityType } from '../../types';
 import {useDrivers} from '../../context/DriversContext';
 
@@ -49,6 +49,7 @@ const DriverCard = ({
     phoneNumber,
     availability,
     vehicle,
+    admin
   },
 }: DriverCardProps) => {
   const netId = email.split('@')[0];
@@ -63,6 +64,7 @@ const DriverCard = ({
     phone: fmtPhone,
     availability: fmtAvailability,
     vehicle,
+    admin
   };
 
   return (
@@ -79,10 +81,9 @@ const DriverCard = ({
             ))}
           </div>
         </CardInfo>
-        {/* <CardInfo icon={wheel} alt="wheel icon">
-          <p>{`${vehicle.name} | ${vehicle.capacity}`}</p>
-          <img src={capacity} alt="capacity icon" style={{ marginLeft: '0.1rem' }} />
-        </CardInfo> */}
+        <CardInfo icon={admin ? user : wheel} alt={admin ? 'admin icon' : 'wheel icon'}>
+          <p>{admin ? 'Admin' : 'Driver'}</p>
+        </CardInfo>
       </Card>
     </Link>
   );
