@@ -61,11 +61,15 @@ function createRepeatingRides() {
                 // only look at edits that match tomorrow's date
                 if (editDateOnly === tomorrowDateOnly) {
                   if (editRide.deleted === true) {
-                    // find and remove the ride instance(s) that matches
-                    // this deleted edit
+                    // find and remove the ride instance that matches this edit
+                    // this condition excludes the edit itself (deleted field must not exist)
+                    // if there are multiple matches, only one is deleted
                     const conditionToDelete = new Condition()
                       .where('recurring').eq(false)
                       .and()
+                      .where('deleted')
+                      .not()
+                      .exists()
                       .where('startTime')
                       .eq(editRide.startTime)
                       .and()
@@ -84,13 +88,11 @@ function createRepeatingRides() {
                     Ride
                       .scan(conditionToDelete)
                       .exec((___, dataDelete) => {
-                      dataDelete?.forEach((dataToRemove) => {
-                        const rideToRemove = dataToRemove as unknown as RideType;
+                        const rideToRemove = dataDelete[0] as unknown as RideType;
 
                         Ride.get(rideToRemove.id, (____, dataGetToDelete) => {
                           dataGetToDelete?.delete();
                         });
-                      });
                       });
                   }
                   // if deleted = false, this ride instance should be kept
