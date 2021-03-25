@@ -5,6 +5,7 @@ import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
+import { useDate } from '../../../context/date';
 
 const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
   const { register, formState, handleSubmit, getValues } = useForm({
@@ -15,21 +16,11 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
     },
   });
   const { errors } = formState;
+  const { curDate } = useDate();
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={styles.date}>
-          <div>
-            <Label htmlFor="date">Date:</Label>
-            <Input
-              type="date"
-              name="date"
-              ref={register({ required: true })}
-            />
-            {errors.date && <p className={styles.error}>Please enter a date</p>}
-          </div>
-        </div>
         <div className={styles.pickupTime}>
           <Label htmlFor="pickupTime">Pickup time:</Label>
           <Input
@@ -38,7 +29,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
             ref={register({
               required: true,
               validate: (pickupTime) => {
-                const date = getValues('date');
+                const date = curDate.toLocaleDateString();
                 return moment().isBefore(moment(`${date} ${pickupTime}`));
               },
             })}

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
 import { useReq } from '../../context/req';
+import { useDate } from '../../context/date';
+
 
 const RideModal = () => {
   const [formData, setFormData] = useState<ObjectType>({});
@@ -11,6 +14,7 @@ const RideModal = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const { withDefaults } = useReq();
+  const { curDate } = useDate();
 
   const openModal = () => {
     setCurrentPage(0);
@@ -34,13 +38,14 @@ const RideModal = () => {
   const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
-    const isFormComplete = Object.keys(formData).length === 7;
+    const isFormComplete = Object.keys(formData).length === 6;
     if (isSubmitted && isFormComplete) {
       const {
-        date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
+        pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
       } = formData;
-      const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
-      const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
+      const date = curDate.toLocaleDateString();
+      const startTime = moment(`${date} ${pickupTime}`).toISOString();
+      const endTime = moment(`${date} ${dropoffTime}`).toISOString();
       const isUnscheduled = driver === 'None';
       const ride = {
         type: isUnscheduled ? 'unscheduled' : 'active',
@@ -58,7 +63,7 @@ const RideModal = () => {
       setIsSubmitted(false);
       closeModal();
     }
-  }, [formData, isSubmitted, withDefaults]);
+  }, [curDate, formData, isSubmitted, withDefaults]);
 
   return (
     <>
