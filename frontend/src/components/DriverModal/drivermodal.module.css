@@ -104,6 +104,11 @@
   color: white;
 }
 
+.error {
+  color: #FF647C;
+  font-size: 0.8rem;
+}
+
 .submit {
   float: right;
 }
