@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
@@ -6,30 +6,19 @@ import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
 import styles from './page.module.css';
-import { Driver } from '../../types/index';
+import {useDrivers} from '../../context/DriversContext';
+import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
-import ExportButton from '../../components/ExportButton/ExportButton';
 
 const Home = () => {
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const {drivers} = useDrivers();
   const { withDefaults } = useReq();
 
   const [downloadData, setDownloadData] = useState<string>('');
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const { curDate } = useDate();
   const today = moment(curDate).format('YYYY-MM-DD');
-
-  useEffect(() => {
-    const fetchDrivers = async () => {
-      const driverData = await fetch('/api/drivers', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-      setDrivers(driverData);
-    };
-
-    fetchDrivers();
-  }, [withDefaults]);
 
   const downloadCSV = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())

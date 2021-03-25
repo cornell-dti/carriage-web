@@ -1,14 +1,9 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { NewRider } from '../../types';
 import styles from './table.module.css';
-import { useReq } from '../../context/req';
-
-type RidersTableProps = {
-  riders: Array<NewRider>;
-  setRiders: Dispatch<SetStateAction<NewRider[]>>;
-};
+import {useRiders} from '../../context/RidersContext';
 
 function renderTableHeader() {
   return (
@@ -38,77 +33,63 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   }
   return null;
 }
-
-const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
-  const history = useHistory();
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    async function getExistingRiders() {
-      const ridersData = await fetch('/api/riders', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-
-      setRiders(ridersData);
+  const RidersTable = () => { 
+    const history = useHistory();
+    const {riders} = useRiders();
+    function renderTableData(allRiders: NewRider[]) {
+      return allRiders.map((rider, index) => {
+        const {
+          firstName,
+          lastName,
+          phoneNumber,
+          address,
+          joinDate,
+          email,
+          accessibility,
+        } = rider;
+        const valuePhone = { data: phoneNumber };
+        const valueAddress = { data: address };
+        const valueJoinDate = { data: joinDate };
+        const valueAccessbility = { data: renderAccessNeeds(accessibility) };
+        const netId = email.split('@')[0];
+        const valueNameNetid = {
+          data:
+            <span>
+              <span style={{ fontWeight: 'bold' }}>
+                {`${firstName} ${lastName}`}
+              </span>
+              {` ${netId}`}
+            </span>,
+        };
+        const inputValues = [
+          valueNameNetid,
+          valuePhone,
+          valueAddress,
+          valueJoinDate,
+          valueAccessbility,
+        ];
+        const riderData = {
+          firstName,
+          lastName,
+          netID: netId,
+          phone: phoneNumber,
+          accessibility: renderAccessNeeds(accessibility),
+        };
+        const location = {
+          pathname: '/riders/rider',
+          state: riderData,
+          search: `?name=${`${firstName}_${lastName}`}`,
+        };
+        const goToDetail = () => {
+          history.push(location);
+        };
+        return (
+          <tr key={index} onClick={goToDetail} className={styles.tableRow}>
+            <TableRow values={inputValues} />
+          </tr>
+        );
+      });
     }
-    getExistingRiders();
-  }, [setRiders, withDefaults]);
-
-  function renderTableData(allRiders: NewRider[]) {
-    return allRiders.map((rider, index) => {
-      const {
-        firstName,
-        lastName,
-        phoneNumber,
-        address,
-        joinDate,
-        email,
-        accessibility,
-      } = rider;
-      const valuePhone = { data: phoneNumber };
-      const valueAddress = { data: address };
-      const valueJoinDate = { data: joinDate };
-      const valueAccessbility = { data: renderAccessNeeds(accessibility) };
-      const netId = email.split('@')[0];
-      const valueNameNetid = {
-        data:
-          <span>
-            <span style={{ fontWeight: 'bold' }}>
-              {`${firstName} ${lastName}`}
-            </span>
-            {` ${netId}`}
-          </span>,
-      };
-      const inputValues = [
-        valueNameNetid,
-        valuePhone,
-        valueAddress,
-        valueJoinDate,
-        valueAccessbility,
-      ];
-      const riderData = {
-        firstName,
-        lastName,
-        netID: netId,
-        phone: phoneNumber,
-        accessibility: renderAccessNeeds(accessibility),
-      };
-      const location = {
-        pathname: '/riders/rider',
-        state: riderData,
-        search: `?name=${`${firstName}_${lastName}`}`,
-      };
-      const goToDetail = () => {
-        history.push(location);
-      };
-      return (
-        <tr key={index} onClick={goToDetail} className={styles.tableRow}>
-          <TableRow values={inputValues} />
-        </tr>
-      );
-    });
-  }
-
   return (
     <>
       <div>
@@ -124,5 +105,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     </>
   );
 };
+
 
 export default RidersTable;

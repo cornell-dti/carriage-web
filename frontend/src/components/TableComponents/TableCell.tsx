@@ -22,17 +22,17 @@ const TableCell = (props: TableCellProps) => {
         {data}
     </td>);
   } if (last) {
-      if (buttonHandler && ButtonModal) {
-        return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+    if (buttonHandler && ButtonModal) {
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
           <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td>);
-      }
-      if (buttonHandler) {
-        return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
+    }
+    if (buttonHandler) {
+      return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
           <Button onClick={buttonHandler}>{data}</Button></td></>);
-      }
-      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+    }
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
     const tagStyle = tag.toLowerCase();
