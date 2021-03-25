@@ -28,10 +28,11 @@ function createRepeatingRides() {
       const { rider, driver, startLocation, endLocation,
         endDate, edits } = masterRide as unknown as RideType;
 
-      if (!endDate || (endDate > tomorrowDateString)) {
-        // const tomorrowDateOnly = moment(new Date()).add(1, 'days').format('YYYY-MM-DD');
-        const tomorrowDateOnly = moment(new Date()).format('YYYY-MM-DD');
+      // only continue if the endDate has not passed
+      if (!endDate || (endDate >= tomorrowDateString)) {
+        const tomorrowDateOnly = moment(new Date()).add(1, 'days').format('YYYY-MM-DD');
 
+        // the repeating ride's instance start and end times use tomorrow's date
         const newStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');
         const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
 
@@ -67,14 +68,14 @@ function handleEdits(edits: string[], tomorrowDateOnly: string,
   edits.forEach(async (editId) => {
     Ride.get(editId).then(async (editRide) => {
       const editDate = moment(editRide.startTime);
-      const editDateOnly = moment(editDate).add(1, 'days').format('YYYY-MM-DD');
+      const editDateOnly = moment(editDate).format('YYYY-MM-DD');
 
       // only look at edits that match tomorrow's date
       if (editDateOnly === tomorrowDateOnly) {
         seenEdits.push(editId);
         // if deleted = true
         if (editRide.deleted === true) {
-          // create repeating ride only if it does NOT match the delete edit
+          // create repeating ride instance only if it does NOT match the delete edit
           if (!(repeatingRide.startTime === editRide.startTime
             && repeatingRide.requestedEndTime === editRide.requestedEndTime
             && repeatingRide.rider.id === editRide.rider.id
@@ -82,13 +83,14 @@ function handleEdits(edits: string[], tomorrowDateOnly: string,
             && repeatingRide.endLocation.id === editRide.endLocation.id)) {
             repeatingRide.save();
           }
-          // remove this delete edit
+          // remove this delete edit instance
           Ride.get(editId).then((dataGetToDelete) => {
             dataGetToDelete?.delete();
           });
         }
-        // if deleted = false, the instance is kept as a valid ride
+        // if deleted = false, the edit instance is kept as a valid ride
       }
+      // remove the seen edit ids from the master repeating ride's edits field
       editCount += 1;
       if (editCount === numEdits) {
         const newEdits = await masterRide.edits.filter((id: string) => !(seenEdits.includes(id)));
