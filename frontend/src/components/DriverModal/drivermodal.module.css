@@ -1,7 +1,7 @@
 .inputContainer {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-gap: 2.25rem;
+  grid-gap: 2.0rem;
   width: 38.75rem;
   margin-bottom: 3rem;
 }

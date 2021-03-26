@@ -58,7 +58,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         className={styles.timeInput}
         ref={register({ required: true })}
       />
-       {errors.string(`${instance}.startTime`) &&  <p className={styles.error}>Please enter a start time</p>}
+       {/* {errors.instance.startTime &&  <p className={styles.error}>Please enter a start time</p>} */}
       <p className={styles.toText}>to</p>
       <Input
         name={`${instance}.endTime`}
@@ -72,7 +72,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           },
         })}
       />
-       {errors.string(`${instance}.endTime`) &&  <p className={styles.error}>Please enter a start time</p>}
+       {/* {errors.instance.endTime &&  <p className={styles.error}>Please enter a start time</p>} */}
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
         <button
