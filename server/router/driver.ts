@@ -15,7 +15,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all drivers
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Driver, tableName);
 });
 
@@ -41,11 +41,15 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
   const reqEnd = moment(endTime);
 
   if (reqStart.date() !== reqEnd.date()) {
-    res.send({ err: { message: 'startTime and endTime dates must be equal' } });
+    res.status(400).send({ err: 'startTime and endTime dates must be equal' });
   }
 
   const reqStartTime = reqStart.format('HH:mm');
   const reqEndTime = reqEnd.format('HH:mm');
+
+  if (reqStartTime > reqEndTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
 
   const reqStartDay = moment(startTime).day();
   const reqEndDay = moment(endTime).day();
@@ -81,13 +85,13 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         available = true;
       }
     }
-    res.send(available);
+    res.status(200).send(available);
   });
 });
 
 
 // Put a driver in Drivers table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
@@ -103,7 +107,7 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
 });
 
 // Delete an existing driver
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });

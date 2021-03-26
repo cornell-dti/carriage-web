@@ -10,9 +10,8 @@ type InputProp = {
 }
 
 const TextInput = (
-  { labelName, labelText, feedback, showFormFeedback, handleInput }: InputProp
-) => {
-  return (
+  { labelName, labelText, feedback, showFormFeedback, handleInput }: InputProp,
+) => (
     <div className={styles.formDiv}>
       <label htmlFor={labelName} className={styles.formLabel}>
         {labelText}
@@ -20,11 +19,10 @@ const TextInput = (
       <input type="text"
         name={labelName}
         onChange={(e) => handleInput(e)} />
-      {showFormFeedback &&
-        <p>{feedback}</p>
+      {showFormFeedback
+        && <p>{feedback}</p>
       }
     </div>
-  )
-}
+);
 
-export default TextInput
+export default TextInput;

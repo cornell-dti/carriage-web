@@ -3,7 +3,7 @@ import * as AWS from 'aws-sdk';
 import * as db from './common';
 import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
-import { Dispatcher } from '../models/dispatcher';
+import { Admin } from '../models/admin';
 import { validateUser } from '../util';
 
 const router = express.Router();
@@ -15,7 +15,7 @@ const s3bucket = new AWS.S3();
 // Sets the user's DB photoLink field to the url of the uploaded image, if not set
 router.post('/', validateUser('User'), (req, res) => {
   const { body: { id, tableName, fileBuffer } } = req;
-  const validTables = ['Riders', 'Drivers', 'Dispatchers'];
+  const validTables = ['Riders', 'Drivers', 'Admins'];
 
   if (validTables.includes(tableName)) {
     const objectKey = `${tableName}/${id}`;
@@ -31,7 +31,7 @@ router.post('/', validateUser('User'), (req, res) => {
 
     s3bucket.putObject(params, (s3Err, _) => {
       if (s3Err) {
-        res.status(500).send(s3Err);
+        res.status(s3Err.statusCode || 500).send({ err: s3Err.message });
       } else {
         const photoLink = `${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
         const operation = { $SET: { photoLink } };
@@ -40,8 +40,8 @@ router.post('/', validateUser('User'), (req, res) => {
           db.update(res, Driver, { id }, operation, tableName);
         } else if (tableName === 'Riders') {
           db.update(res, Rider, { id }, operation, tableName);
-        } else if (tableName === 'Dispatchers') {
-          db.update(res, Dispatcher, { id }, operation, tableName);
+        } else if (tableName === 'Admins') {
+          db.update(res, Admin, { id }, operation, tableName);
         }
       }
     });

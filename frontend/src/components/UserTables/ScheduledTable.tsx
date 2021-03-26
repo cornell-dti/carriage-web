@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Ride } from '../../types/index';
 import moment from 'moment';
+import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
@@ -26,10 +26,9 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?driver=${driverId}&date=${today}`, withDefaults())
+    fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        console.log(data);
         setRides(data.sort(compRides));
       });
   }, [withDefaults, curDate, driverId]);

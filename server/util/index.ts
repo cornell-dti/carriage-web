@@ -42,16 +42,16 @@ function validateToken(
     if (bearer === 'Bearer') {
       jwt.verify(token, process.env.JWT_SECRET!, (err, payload) => {
         if (err) {
-          res.send({ err });
+          res.status(500).send({ err: err.message });
         } else {
           callback(payload as JWTPayload);
         }
       });
     } else {
-      res.send({ err: 'Invalid token format' });
+      res.status(400).send({ err: 'Invalid token format' });
     }
   } else {
-    res.send({ err: 'No token provided' });
+    res.status(400).send({ err: 'No token provided' });
   }
 }
 
@@ -59,7 +59,7 @@ const priority: { [type in UserType]: number } = {
   User: 0,
   Rider: 1,
   Driver: 1,
-  Dispatcher: 2,
+  Admin: 2,
 };
 
 function isUserValid(userType: UserType, authLevel: UserType) {
@@ -75,10 +75,10 @@ export function validateUser(authLevel: UserType) {
           res.locals.user = payload;
           next();
         } else {
-          res.send({ err: 'User does not have sufficient permissions' });
+          res.status(400).send({ err: 'User does not have sufficient permissions' });
         }
       } else {
-        res.send({ err: 'Invalid token' });
+        res.status(400).send({ err: 'Invalid token' });
       }
     });
   };

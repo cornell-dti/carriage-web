@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { ModelType } from 'dynamoose/dist/General';
 import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
-import { Dispatcher } from '../models/dispatcher';
+import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
 
 const router = express.Router();
@@ -18,6 +18,7 @@ const audience = [
   '346199868830-dfi7n737u4g6ajl3ketot11d1m3n1sr3.apps.googleusercontent.com',
   '322014396101-8u88pc3q00v6dre4doa64psr9349bhum.apps.googleusercontent.com',
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
+  '241748771473-c8p9845ouj8hh4sq6n37qv5fql1shk0c.apps.googleusercontent.com',
 ];
 
 async function verify(clientId: string, token: string): Promise<LoginTicket> {
@@ -30,13 +31,55 @@ function getModel(table: string) {
   const tableToModel: { [table: string]: ModelType<Document> } = {
     Riders: Rider,
     Drivers: Driver,
-    Dispatchers: Dispatcher,
+    Admins: Admin,
   };
   return tableToModel[table];
 }
 
 function getUserType(table: string) {
   return table.slice(0, table.length - 1);
+}
+
+function findUserAndSendToken(
+  res: express.Response,
+  model: ModelType<Document>,
+  table: string,
+  email: string,
+) {
+  model.scan({ email: { eq: email } }).exec((err, data) => {
+    if (err) {
+      res.status(err.statusCode || 500).send({ err: err.message });
+    } else if (data?.length) {
+      const { id } = data[0].toJSON();
+      const userPayload = {
+        id,
+        userType: getUserType(table),
+      };
+      res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+    } else if (table === 'Admins') {
+      // Check drivers table for admins
+      Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
+        if (dErr) {
+          res.status(dErr.statusCode || 500).send({ err: dErr });
+        } else if (dData?.length) {
+          const { id, admin } = dData[0].toJSON();
+          if (admin) {
+            const userPayload = {
+              id,
+              userType: getUserType(table),
+            };
+            res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+          } else {
+            res.status(400).send({ err: 'User not found' });
+          }
+        } else {
+          res.status(400).send({ err: 'User not found' });
+        }
+      });
+    } else {
+      res.status(400).send({ err: 'User not found' });
+    }
+  });
 }
 
 // Verify an authentication token
@@ -47,32 +90,17 @@ router.post('/', (req, res) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
       if (payload?.aud === clientId && model) {
-        model.scan({ email: { eq: email } }).exec((err, data) => {
-          if (err) {
-            res.send({ success: false, err: err.message });
-          } else if (data?.length) {
-            // Dynamoose incorrectly types data[0] as Document[]
-            type User = { id: string };
-            const { id }: User = data[0] as any;
-            const userPayload = {
-              id,
-              userType: getUserType(table),
-            };
-            res.send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-          } else {
-            res.send({ success: false, err: 'User not found' });
-          }
-        });
+        findUserAndSendToken(res, model, table, email);
       } else if (payload?.aud !== clientId) {
-        res.send({ success: false, err: 'Invalid client id' });
+        res.status(400).send({ err: 'Invalid client id' });
       } else if (!model) {
-        res.send({ success: false, err: 'Table not found' });
+        res.status(400).send({ err: 'Table not found' });
       } else {
-        res.send({ success: false, err: 'Payload not found' });
+        res.status(400).send({ err: 'Payload not found' });
       }
     })
     .catch((err) => {
-      res.send({ success: false, err: err.message });
+      res.status(err.statusCode || 500).send({ err: err.message });
     });
 });
 

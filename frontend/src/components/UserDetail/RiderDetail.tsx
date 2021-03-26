@@ -52,7 +52,7 @@ const RiderDetail = () => {
      rides={rides}
      />
     </>
-  )
-}
+  );
+};
 
-export default RiderDetail
+export default RiderDetail;
