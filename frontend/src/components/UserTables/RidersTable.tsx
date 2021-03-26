@@ -1,14 +1,9 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { NewRider } from '../../types';
 import styles from './table.module.css';
-import { useReq } from '../../context/req';
-
-type RidersTableProps = {
-  riders: Array<NewRider>;
-  setRiders: Dispatch<SetStateAction<NewRider[]>>;
-};
+import { useRiders } from '../../context/RidersContext';
 
 function renderTableHeader() {
   return (
@@ -26,7 +21,6 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
   const separator = ', ';
   if (accessNeeds != null && accessNeeds.length > 0) {
-    console.log(accessNeeds);
     for (let i = 0; i < accessNeeds.length; i += 1) {
       if (i !== accessNeeds.length - 1) {
         allNeeds = allNeeds + accessNeeds[i] + separator;
@@ -38,25 +32,13 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   }
   return null;
 }
-
-const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
+const RidersTable = () => {
   const history = useHistory();
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    async function getExistingRiders() {
-      const ridersData = await fetch('/api/riders', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-
-      setRiders(ridersData);
-    }
-    getExistingRiders();
-  }, [setRiders, withDefaults]);
-
+  const { riders } = useRiders();
   function renderTableData(allRiders: NewRider[]) {
     return allRiders.map((rider, index) => {
       const {
+        id,
         firstName,
         lastName,
         phoneNumber,
@@ -87,6 +69,7 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
         valueAccessbility,
       ];
       const riderData = {
+        id,
         firstName,
         lastName,
         netID: netId,
@@ -108,7 +91,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
       );
     });
   }
-
   return (
     <>
       <div>
@@ -124,5 +106,6 @@ const RidersTable = ({ riders, setRiders }: RidersTableProps) => {
     </>
   );
 };
+
 
 export default RidersTable;

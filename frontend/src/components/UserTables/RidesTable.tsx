@@ -32,8 +32,8 @@ const RidesTable = (
   const [rideModalIsOpen, setRideModalIsOpen] = useState(false);
 
   function renderTableData(allRides: Ride[]) {
-    return allRides.filter(r => r.startLocation !== undefined &&
-      r.endLocation !== undefined).map((ride, index) => {
+    return allRides.filter((r) => r.startLocation !== undefined
+      && r.endLocation !== undefined).map((ride, index) => {
         const startTime = new Date(ride.startTime).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
@@ -119,14 +119,14 @@ const RidesTable = (
               <TableRow values={inputValuesAndButtons} /> :
               <TableRow values={inputValues} />}
           </tr>
-        );
-      });
+      );
+    });
   }
 
   return (
     <>
-      {(rides.length) > 0 &&
-        <div>
+      {(rides.length) > 0
+        && <div>
           <table cellSpacing="0" className={styles.table}>
             <tbody>
               {renderTableHeader()}
@@ -137,6 +137,6 @@ const RidesTable = (
     </>
 
   );
-}
+};
 
-export default RidesTable
+export default RidesTable;

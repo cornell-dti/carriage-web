@@ -12,10 +12,13 @@ type TableCellProps = {
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
   outline?: boolean;
+  insideButton?: boolean;
 }
 
 const TableCell = (props: TableCellProps) => {
-  const { data, index, first, last, tag, buttonHandler, ButtonModal, outline } = props;
+  const { 
+    data, index, first, last, tag, buttonHandler, ButtonModal, outline, insideButton 
+  } = props;
   if (first) {
     return (<td
       key={index}
@@ -24,23 +27,32 @@ const TableCell = (props: TableCellProps) => {
     </td>);
   } if (last) {
       if (buttonHandler && ButtonModal) {
-        if (outline !== undefined) {
-          return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
-          ${styles.lastCell}`}>
-            <Button onClick={buttonHandler} outline={outline}>
-              {data} {<ButtonModal />}
-            </Button></td>);
-        }
         return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
-          <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td>);
-      }
-      if (buttonHandler) {
-        return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
+          {insideButton ?
+          (<>
+            <Button onClick={buttonHandler} outline={outline === undefined ? false : outline}>
+              {data} 
+              <ButtonModal />
+            </Button>
+            </>
+          )
+          :
+          (<>
+            <Button onClick={buttonHandler} outline={outline === undefined ? false : outline}>
+            {data} 
+            </Button>
+            <ButtonModal />
+            </>
+          )}
+        </td>);
+    }
+    if (buttonHandler) {
+      return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
           <Button onClick={buttonHandler}>{data}</Button></td></>);
-      }
-      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+    }
+    return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
     const tagStyle = tag.toLowerCase();

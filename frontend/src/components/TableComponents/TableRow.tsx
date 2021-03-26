@@ -40,6 +40,7 @@ const TableRow = (props: TableRowProps) => {
           buttonHandler={buttonHandler}
           ButtonModal={ButtonModal}
           outline={index !== values.length - 1}
+          insideButton={index === values.length - 1}
         />
       );
     }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
-import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
+import { RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 
@@ -29,9 +29,9 @@ const RideModal = ({
       pickupTime: moment(ride.startTime).format('kk:mm'),
       dropoffTime: moment(ride.endTime).format('kk:mm'),
       driver: ride.driver,
-      rider: ride.rider,
-      startLocation: ride.startLocation,
-      endLocation: ride.endLocation,
+      rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+      startLocation: ride.startLocation.address,
+      endLocation: ride.endLocation.address,
     }
     :
     {}
@@ -61,7 +61,10 @@ const RideModal = ({
     } = formData;
     const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
     const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    setFormData({ startTime, endTime, driver, rider, startLocation, endLocation });
+    const startLoc = startLocation.address;
+    const endLoc = endLocation.address;
+    const riderName = `${rider.firstName} ${rider.lastName}`
+    setFormData({ startTime, endTime, driver, riderName, startLoc, endLoc });
     setIsSubmitted(true);
   };
 
@@ -87,9 +90,9 @@ const RideModal = ({
       <Modal
         paginate
         title={ride ? 
-          ['Edit a Ride', 'Available Drivers', 'Edit a Ride']
+          ['Edit a Ride', 'Edit a Ride']
           :
-          ['Add a Ride', 'Available Drivers', 'Add a Ride']
+          ['Add a Ride', 'Add a Ride']
         }
         isOpen={isOpen}
         currentPage={currentPage}
@@ -99,11 +102,8 @@ const RideModal = ({
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />
-        <DriverPage
-          formData={formData}
-          onBack={goPrevPage}
-          onSubmit={saveDataThen(goNextPage)} />
         <RiderInfoPage
+          formData={formData}
           onBack={goPrevPage}
           onSubmit={saveDataThen(submitData)}
         />

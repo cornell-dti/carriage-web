@@ -29,6 +29,7 @@
 }
 
 .btn {
+  cursor: pointer;
   background-color: black;
   color: white;
   border-radius: 50%;
@@ -37,14 +38,18 @@
 }
 
 .btn2 {
+  cursor: pointer;
   background-color: white;
   color: black;
-  margin: 10px 34px;
+  margin: 10px;
   border-radius: 12px;
   border: none;
-  width: 95px;
-  height: 31px;
-  font-size: 14px;
+  width: 85px;
+  height: 28px;
+  font-size: 12px;
+}
+.btn2:focus {
+  outline: none;
 }
 
 .month {
