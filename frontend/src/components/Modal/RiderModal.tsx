@@ -66,7 +66,6 @@ const RiderModal = () => {
         favoriteLocations: [],
         organization: '',
       };
-      console.log(newRider)
       fetch('/api/riders', withDefaults({
         method: 'POST',
         body: JSON.stringify(newRider),
