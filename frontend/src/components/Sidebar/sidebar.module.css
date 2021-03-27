@@ -71,12 +71,9 @@
 
 .logout>img {
   width: 50%;
+  border-radius: 50%;
 }
 
-.logout>a {
-  color: #0084F4;
-  ;
-}
 
 .content {
   width: calc(100% - 6rem);

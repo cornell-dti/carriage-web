@@ -14,6 +14,10 @@ type MenuItem = {
   path: string
 }
 
+const blankProfile =
+  'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255626' +
+  '-stock-illustration-avatar-male-profile-gray-person.jpg'
+
 const Sidebar: FunctionComponent = ({ children }) => {
   const { pathname } = useLocation();
   const [selected, setSelected] = useState(pathname);
@@ -41,7 +45,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
           <div className={styles.sidebarLinks}>
-            <Link key={path} onClick={() => setSelected(path)} className={styles.icon} to={path}>
+            <Link key={path} onClick={() => setSelected(path)}
+              className={styles.icon} to={path}>
               <div className={
                 path === selected
                   ? cn(styles.selected, styles.circle)
@@ -54,7 +59,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
           </div>
         ))}
         <div className={styles.logout}>
-          <img alt="profile_picture" src={`https://${profile}`} />
+          <img alt="profile_picture"
+            src={profile === '' ? blankProfile : `https://${profile}`} />
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
