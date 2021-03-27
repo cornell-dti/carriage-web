@@ -5,11 +5,13 @@ import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
+import jwt_decode from 'jwt-decode';
 
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
+  const [id, setId] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -38,7 +40,6 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
     const { email } = googleUser.profileObj;
-
     const serverJWT = await fetch('/api/auth', withDefaults({
       method: 'POST',
       body:
@@ -53,6 +54,8 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       .then((json) => json.jwt);
 
     if (serverJWT) {
+      var decoded: any = jwt_decode(serverJWT);
+      setId(decoded.id);
       setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
@@ -64,7 +67,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   }
 
   const SiteContent = () => (
-    <AuthContext.Provider value={{ logout }}>
+    <AuthContext.Provider value={{ logout, id }}>
       <ReqContext.Provider value={{ withDefaults }}>
         {children}
       </ReqContext.Provider>

@@ -44,7 +44,7 @@
   background-color: #d3d2d2;
 }
 
-.circle > img {
+.circle>img {
   width: 50%;
 }
 
@@ -52,12 +52,29 @@
   background-color: black;
 }
 
-.selected > img {
+.selected>img {
   filter: invert(100%);
 }
 
 .caption {
   font-weight: 700;
+}
+
+.logout {
+  color: #0084F4;
+  position: absolute;
+  text-align: center;
+  bottom: 1.75rem;
+  width: 100%;
+}
+
+.logout>img {
+  width: 50%;
+}
+
+.logout>a {
+  color: #0084F4;
+  ;
 }
 
 .content {
