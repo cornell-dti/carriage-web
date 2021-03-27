@@ -50,7 +50,8 @@ const DriverInfo = () => {
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
-        {formState.errors.phoneNumber && <p className={styles.error}>Please enter a valid phone number</p>}
+        {formState.errors.phoneNumber && 
+          <p className={styles.error}>Please enter a valid phone number</p>}
       </div>
       <Input
         name='carType'

@@ -59,7 +59,10 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           className={styles.timeInput}
           ref={register({ required: true })}
         />
-        {errors.availability && errors.availability[index] && errors.availability[index].startTime &&  <p className={cn(styles.error, styles.workingHoursError)}>Please enter a start time</p>}  
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].startTime &&  
+          <p className={styles.error}>Please enter a start time</p>
+        }  
         </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
@@ -75,7 +78,10 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           },
         })}
       />
-        {errors.availability && errors.availability[index] && errors.availability[index].endTime &&  <p className={cn(styles.error, styles.workingHoursError)}>Please enter an end time</p>}    
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].endTime &&  
+          <p className={styles.error}>Please enter an end time</p>
+        }    
         </div>
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
