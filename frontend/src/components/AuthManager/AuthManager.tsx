@@ -5,7 +5,7 @@ import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
-import jwt_decode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 
 export const AuthManager: FunctionComponent = ({ children }) => {
@@ -54,7 +54,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       .then((json) => json.jwt);
 
     if (serverJWT) {
-      var decoded: any = jwt_decode(serverJWT);
+      var decoded: any = jwtDecode(serverJWT);
       setId(decoded.id);
       setJWT(serverJWT);
       setSignedIn(true);
