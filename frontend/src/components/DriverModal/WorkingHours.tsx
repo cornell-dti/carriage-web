@@ -17,7 +17,8 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
     isDaySelectedByInstance,
     getSelectedDays,
   } = useWeek();
-  const { register, setValue, getValues, errors } = useFormContext();
+  const { register, setValue, getValues, formState } = useFormContext();
+  const { errors } = formState;
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -31,7 +32,6 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
   // data in an array 'availability' at index 'index'
   const instance = `availability[${index}]`;
   const days = getSelectedDays(index);
-
   const handleClick = (day: string) => {
     if (isDaySelectedByInstance(day, index)) {
       deselectDay(day);
@@ -52,14 +52,17 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
 
   return (
     <div className={styles.availabilityInput}>
-      <Input
-        name={`${instance}.startTime`}
-        type='time'
-        className={styles.timeInput}
-        ref={register({ required: true })}
-      />
-       {/* {errors.instance.startTime &&  <p className={styles.error}>Please enter a start time</p>} */}
+      <div className={styles.timeFlexbox}>
+        <Input
+          name={`${instance}.startTime`}
+          type='time'
+          className={styles.timeInput}
+          ref={register({ required: true })}
+        />
+        {errors.availability && errors.availability[index] && errors.availability[index].startTime &&  <p className={cn(styles.error, styles.workingHoursError)}>Please enter a start time</p>}  
+        </div>
       <p className={styles.toText}>to</p>
+      <div className={styles.timeFlexbox}>
       <Input
         name={`${instance}.endTime`}
         type='time'
@@ -72,7 +75,8 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           },
         })}
       />
-       {/* {errors.instance.endTime &&  <p className={styles.error}>Please enter a start time</p>} */}
+        {errors.availability && errors.availability[index] && errors.availability[index].endTime &&  <p className={cn(styles.error, styles.workingHoursError)}>Please enter an end time</p>}    
+        </div>
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
         <button

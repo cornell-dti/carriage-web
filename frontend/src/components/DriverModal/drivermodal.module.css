@@ -1,9 +1,11 @@
 .inputContainer {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 20%;
   grid-gap: 2.0rem;
-  width: 38.75rem;
-  margin-bottom: 3rem;
+  width: 40rem;
+  height: 10rem; 
+  margin: 2rem 0;
 }
 
 .input {
@@ -71,6 +73,7 @@
   font-size: initial;
   background-color: rgba(0, 0, 0, 0.1);
   padding: 0.375rem 0.625rem;
+  margin-top:18%;
 }
 
 .toText {
@@ -84,9 +87,9 @@
 }
 
 .day {
-  border-radius: 50%;
-  height: 1.5rem;
-  width: 1.5rem;
+  border-radius: 40%;
+  height: 1.25rem;
+  width: 1.25rem;
   border: none;
   padding: 0;
   cursor: pointer;
@@ -106,9 +109,13 @@
 
 .error {
   color: #FF647C;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
-
+.timeFlexbox{
+  display:flex;
+  flex-direction:column;
+  max-height:5rem;
+}
 .submit {
   float: right;
 }
