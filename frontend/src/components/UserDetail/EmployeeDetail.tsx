@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import TableRow from '../TableComponents/TableRow';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
-import styles from '../UserTables/table.module.css';
 import { useReq } from '../../context/req';
-
-function renderTableHeader() {
-  return (
-    <tr>
-      <th className={styles.tableHeader}>Name</th>
-      <th className={styles.tableHeader}>Date</th>
-      <th className={styles.tableHeader}>Pickup Location</th>
-      <th className={styles.tableHeader}>Dropoff Location</th>
-      <th className={styles.tableHeader}>Needs</th>
-    </tr>
-  );
-}
+import PastRides from './PastRides';
 
 type EmployeeDetailProps = {
   id: string;
@@ -46,6 +33,7 @@ const EmployeeDetail = () => {
     return 'Driver';
   }
 
+  const testboolean = true; 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -55,43 +43,10 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
-    fetch(`/rides?type=past&driver=${employee.id}`, withDefaults())
+    fetch(`/api/rides?type=past&driver=${employee.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, employee.id]);
-
-  function renderTableData(allRides: Ride[]) {
-    return allRides.map((ride, index) => {
-      const date = new Date(ride.startTime).toLocaleDateString();
-      const { rider } = ride;
-      const name = `${rider.firstName} ${rider.lastName}`;
-      const needs = (rider.accessibilityNeeds || []).join(', ');
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
-
-      const valueName = { data: name };
-      const valueDate = { data: date };
-      const valuePickup = { data: pickupLocation, tag: pickupTag };
-      const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-      const valueNeeds = { data: needs };
-
-      const inputValues = [
-        valueName,
-        valueDate,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-      ];
-
-      return (
-        <tr key={index}>
-          <TableRow values={inputValues} />
-        </tr>
-      );
-    });
-  }
 
   return (
     <>
@@ -108,17 +63,10 @@ const EmployeeDetail = () => {
         </OtherInfo>
       </UserDetail>
 
-      <div>
-        <h1 className={styles.formHeader}>Past Rides</h1>
-        <div className={styles.tableContainer}>
-          <table cellSpacing="0" className={styles.table}>
-            <tbody>
-              {renderTableHeader()}
-              {renderTableData(rides)}
-            </tbody>
-          </table>
-        </div>
-      </div>
+     <PastRides
+     isStudent = {false}
+     rides={rides}
+     />
     </>
   );
 };

@@ -7,6 +7,12 @@ import { validateUser } from '../util';
 const router = express.Router();
 const tableName = 'Admins';
 
+// Get an admin
+router.get('/:id', validateUser('Admin'), (req, res) => {
+  const { params: { id } } = req;
+  db.getById(res, Admin, id, tableName);
+});
+
 // Get all admins
 router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Admin, tableName);
