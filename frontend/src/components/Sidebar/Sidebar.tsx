@@ -55,13 +55,16 @@ const Sidebar: FunctionComponent = ({ children }) => {
         ))}
         <div className={styles.logout}>
           <img alt="profile_picture" src={`https://${profile}`} />
-          <GoogleLogout onLogoutSuccess={aContext.logout} clientId={useClientId()} render={renderProps => (
-            <div
-              onClick={renderProps.onClick}
-            >
-              Logout
-            </div>
-          )} />
+          <GoogleLogout
+            onLogoutSuccess={aContext.logout}
+            clientId={useClientId()}
+            render={renderProps => (
+              <div
+                onClick={renderProps.onClick}
+              >
+                Logout
+              </div>
+            )} />
         </div>
       </div>
       <div className={styles.content}>
