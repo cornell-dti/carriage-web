@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Admin, Driver, Employee } from '../types';
+import { Admin, Driver } from '../types';
 import { useReq } from './req';
 
 
 type employeesState = {
-  // employees: Array<Employee>,
-  // refreshEmployees: () => Promise<void>
   drivers: Array<Driver>,
   admins: Array<Admin>,
   refreshDrivers: () => Promise<void>,
@@ -21,38 +19,11 @@ const initialState: employeesState = {
 const EmployeesContext = React.createContext(initialState);
 export const useEmployees = () => React.useContext(EmployeesContext);
 
-// type driversState = {
-//   drivers: Array<Driver>,
-//   refreshDrivers: () => Promise<void>
-// };
-
-// type adminsState = {
-//   admins: Array<Admin>,
-//   refreshAdmins: () => Promise<void>
-// };
-
-// const driversInitialState: driversState = {
-//   drivers: [],
-//   refreshDrivers: async () => undefined,
-// };
-
-// const adminsInitialState: adminsState = {
-//   admins: [],
-//   refreshAdmins: async () => undefined,
-// };
-
-// const DriversContext = React.createContext(driversInitialState);
-// const AdminsContext = React.createContext(adminsInitialState);
-
-// export const useDrivers = () => React.useContext(DriversContext);
-// export const useAdmins = () => React.useContext(AdminsContext);
-
 type EmployeesProviderProps = {
   children: React.ReactNode;
 }
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
-  // const [employees, setEmployees] = useState<Array<Employee>>([]);
   const [drivers, setDrivers] = useState<Array<Driver>>([]);
   const [admins, setAdmins] = useState<Array<Admin>>([]);
   const { withDefaults } = useReq();
@@ -68,7 +39,6 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     const adminsData: Array<Admin> = await fetch('/api/admins', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
-    // const employeesData = adminsData.concat(driversData);
     setAdmins([...adminsData]);
   };
 
