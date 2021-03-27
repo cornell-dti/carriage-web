@@ -1,13 +1,13 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import cn from 'classnames';
-import { useFormContext } from 'react-hook-form';
+import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import styles from './drivermodal.module.css';
 import { Label, Input } from '../FormElements/FormElements';
 
-const RoleSelector = () => {
-  const { register } = useFormContext();
-  const [selectedRole, setSelectedRole] = useState('driver');
+type Props = {
+  selectedRole: string;
+  setSelectedRole: Dispatch<SetStateAction<string>>;
+}
 
+const RoleSelector = ({selectedRole, setSelectedRole}: Props) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSelectedRole(e.target.value)
   };
@@ -21,7 +21,7 @@ const RoleSelector = () => {
           type="radio"
           value='driver'
           onChange={onChange}
-          checked={selectedRole === "driver"}
+          checked={selectedRole === "driver"}          
         />
         <Label className={styles.driverLabel}>Driver</Label>
       </div>

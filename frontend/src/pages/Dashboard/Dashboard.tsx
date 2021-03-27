@@ -35,11 +35,11 @@ const Dashboard = () => {
               )}
             />
             <Route
-              path="/drivers"
+              path="/employees"
               render={({ match: { url } }) => (
                 <>
                   <Route path={`${url}/`} component={Drivers} exact />
-                  <Route path={`${url}/driver`} component={DriverDetail} />
+                  <Route path={`${url}/employee`} component={DriverDetail} />
                 </>
               )}
             />

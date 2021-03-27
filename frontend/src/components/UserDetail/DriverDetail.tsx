@@ -19,26 +19,32 @@ function renderTableHeader() {
   );
 }
 
-type DriverDetailProps = {
-  // profilePic: string;
+type EmployeeDetailProps = {
   id: string;
   firstName: string;
   lastName: string;
   netId: string;
   phone: string;
-  availability: string[][];
-  admin: boolean;
+  availability?: string[][];
+  admin?: boolean;
 };
 
-const DriverDetail = () => {
-  const location = useLocation<DriverDetailProps>();
-  const driver: DriverDetailProps = location.state;
+const EmployeeDetail = () => {
+  const location = useLocation<EmployeeDetailProps>();
+  const employee: EmployeeDetailProps = location.state;
   const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
-  const parsedAvail = driver.availability.reduce(availToString, '');
+  const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
   const avail = parsedAvail.substring(0, parsedAvail.length - 2);
-  const role = driver.admin ? 'Admin' : 'Driver';
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
+
+  const isAdmin = employee.availability ? false : true;
+  const isBoth = !isAdmin && employee.admin; // admin and driver
+  const role = (): string => {
+    if (isBoth) return 'Admin • Driver';
+    if (isAdmin) return 'Admin';
+    return 'Driver';
+  }
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -49,10 +55,10 @@ const DriverDetail = () => {
   };
 
   useEffect(() => {
-    fetch(`/rides?type=past&driver=${driver.id}`, withDefaults())
+    fetch(`/rides?type=past&driver=${employee.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, driver.id]);
+  }, [withDefaults, employee.id]);
 
   function renderTableData(allRides: Ride[]) {
     return allRides.map((ride, index) => {
@@ -90,13 +96,13 @@ const DriverDetail = () => {
   return (
     <>
       <UserDetail
-        firstName={driver.firstName}
-        lastName={driver.lastName}
-        netId={driver.netId}
+        firstName={employee.firstName}
+        lastName={employee.lastName}
+        netId={employee.netId}
       >
-        <UserContactInfo icon={phone} alt="" text={driver.phone} />
-        <UserContactInfo icon={driver.admin ? user : wheel} alt="" text={role} />
-        <UserContactInfo icon={clock} alt="" text={avail} />
+        <UserContactInfo icon={phone} alt="" text={employee.phone} />
+        <UserContactInfo icon={employee.admin ? user : wheel} alt="" text={role()} />
+        <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
         <OtherInfo>
           <p>last week:</p>
         </OtherInfo>
@@ -117,4 +123,4 @@ const DriverDetail = () => {
   );
 };
 
-export default DriverDetail;
+export default EmployeeDetail;

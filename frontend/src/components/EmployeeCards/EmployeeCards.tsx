@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
-import styles from './drivercards.module.css';
+import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Driver, AvailabilityType } from '../../types';
-import {useDrivers} from '../../context/DriversContext';
+import { Employee, AvailabilityType } from '../../types';
+import { useEmployees } from '../../context/EmployeesContext';
 
 const formatTime = (time: string) => {
   const hours = Number(time.split(':')[0]);
@@ -13,7 +13,8 @@ const formatTime = (time: string) => {
   return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
 };
 
-const formatAvailability = (availability: AvailabilityType) => {
+const formatAvailability = (availability?: AvailabilityType) => {
+  if (!availability) return null;
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const availabilityList = days.reduce((acc, day) => {
     const availabilityTimes = availability[day];
@@ -35,27 +36,35 @@ const formatPhone = (phoneNumber: string) => {
   return `${areaCode}-${firstPart}-${secondPart}`;
 };
 
-type DriverCardProps = {
+type EmployeeCardProps = {
   id: string,
-  driver: Driver;
+  employee: Employee
 }
 
-const DriverCard = ({
+const EmployeeCard = ({
   id,
-  driver: {
+  employee: {
     firstName,
     lastName,
     email,
     phoneNumber,
     availability,
-    vehicle,
     admin
   },
-}: DriverCardProps) => {
+}: EmployeeCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const fmtAvailability = formatAvailability(availability);
   const fullName = `${firstName}_${lastName}`;
+  
+  const isAdmin = availability ? false : true;
+  const isBoth = !isAdmin && admin; // admin and driver
+  const role = (): string => {
+    if (isBoth) return 'Admin • Driver';
+    if (isAdmin) return 'Admin';
+    return 'Driver';
+  }
+
   const userInfo = {
     id,
     firstName,
@@ -63,47 +72,58 @@ const DriverCard = ({
     netId,
     phone: fmtPhone,
     availability: fmtAvailability,
-    vehicle,
     admin
   };
 
+
   return (
-    <Link to={{ pathname: '/drivers/driver', state: userInfo, search: `?name=${fullName}` }}
+    <Link to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}` }}
       style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card firstName={firstName} lastName={lastName} netId={netId} >
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
         </CardInfo>
+        
         <CardInfo icon={clock} alt="clock icon">
           <div>
-            {fmtAvailability.map(([day, timeRange]) => (
+          {fmtAvailability ? 
+            fmtAvailability.map(([day, timeRange]) => (
               <p key={day}><b>{day}:</b> {timeRange}</p>
-            ))}
+            )) : <p>N/A</p>}
           </div>
         </CardInfo>
-        <CardInfo icon={admin ? user : wheel} alt={admin ? 'admin icon' : 'wheel icon'}>
-          <p>{admin ? 'Admin' : 'Driver'}</p>
+
+        <CardInfo 
+          icon={isAdmin || isBoth ? user : wheel} 
+          alt={isAdmin || isBoth ? 'admin icon' : 'wheel icon'}
+        >
+          <p>{ role() }</p>
         </CardInfo>
       </Card>
     </Link>
   );
 };
-const DriverCards = () => { 
-  const {
-    drivers,
-  } = useDrivers();
+const EmployeeCards = () => { 
+  const { admins, drivers } = useEmployees();
 
   return (
     <div className={styles.cardsContainer}>
       {drivers && drivers.map((driver) => (
-        <DriverCard
+        <EmployeeCard
           key={driver.id}
           id={driver.id}
-          driver={driver}
+          employee={driver}
+        />
+      ))}
+      {admins && admins.map((admin) => (
+        <EmployeeCard
+          key={admin.id}
+          id={admin.id}
+          employee={admin}
         />
       ))}
     </div>
   );
-  };
+};
 
-export default DriverCards;
+export default EmployeeCards;

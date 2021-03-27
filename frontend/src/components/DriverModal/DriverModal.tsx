@@ -9,12 +9,13 @@ import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './drivermodal.module.css';
-import { useDrivers } from '../../context/DriversContext';
+import { useEmployees } from '../../context/EmployeesContext';
 
 const DriverModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('driver');
   const { withDefaults } = useReq();
-  const { refreshDrivers } = useDrivers();
+  const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
   const openModal = () => setIsOpen(true);
@@ -34,23 +35,41 @@ const DriverModal = () => {
   const onSubmit = async (data: ObjectType) => {
     const { name, email, phoneNumber, availability } = data;
     const [firstName, lastName] = name.split(' ');
-    const driver = {
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      availability: parseAvailability(availability),
-    };
-    fetch('/api/drivers', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(driver),
-    })).then(() => refreshDrivers());
+
+    if (selectedRole === 'admin') {
+      console.log('admin selected!')
+      const admin = {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+      };
+      fetch('/api/admins', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(admin),
+      })).then(() => refreshAdmins());
+    } else {
+      console.log('driver selected!');
+      console.log('both?: ' + (selectedRole === 'both'));
+      const driver = {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        availability: parseAvailability(availability),
+        admin: selectedRole === 'both'
+      };
+      fetch('/api/drivers', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(driver),
+      })).then(() => refreshDrivers());
+    }
     closeModal();
   };
 
   return (
     <>
-      <Button onClick={openModal}>+ Add driver</Button>
+      <Button onClick={openModal}>+ Add an employee</Button>
       <Modal
         title='Add an Employee'
         isOpen={isOpen}
@@ -60,8 +79,11 @@ const DriverModal = () => {
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <DriverInfo />
-            <WorkingHours />
-            <RoleSelector />
+            {selectedRole === 'admin' ? null : <WorkingHours />}
+            <RoleSelector 
+              selectedRole={selectedRole} 
+              setSelectedRole={setSelectedRole}
+            />
             <Button className={styles.submit} type='submit'>Add a Driver</Button>
           </form>
         </FormProvider>

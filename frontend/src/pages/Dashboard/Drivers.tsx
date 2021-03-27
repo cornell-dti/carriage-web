@@ -1,6 +1,6 @@
 import React from 'react';
 import DriverModal from '../../components/DriverModal/DriverModal';
-import DriverCards from '../../components/DriverCards/DriverCards';
+import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import styles from './page.module.css';
 
 const Drivers = () => (
@@ -11,7 +11,7 @@ const Drivers = () => (
         <DriverModal />
       </div>
     </div>
-    <DriverCards />
+    <EmployeeCards />
   </>
 );
 
