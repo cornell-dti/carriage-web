@@ -101,7 +101,7 @@ const EmployeeDetail = () => {
         netId={employee.netId}
       >
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
-        <UserContactInfo icon={employee.admin ? user : wheel} alt="" text={role()} />
+        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
         <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
         <OtherInfo>
           <p>last week:</p>
