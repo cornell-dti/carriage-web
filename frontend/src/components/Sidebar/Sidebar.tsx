@@ -18,12 +18,12 @@ const Sidebar: FunctionComponent = ({ children }) => {
   const { pathname } = useLocation();
   const [selected, setSelected] = useState(pathname);
   const [profile, setProfile] = useState('');
-  const aContext = useContext(AuthContext);
-  const rContext = useContext(ReqContext);
+  const authContext = useContext(AuthContext);
+  const reqContext = useContext(ReqContext);
 
   useEffect(() => {
-    const id = aContext.id;
-    fetch(`/api/admins/${id}`, rContext.withDefaults())
+    const id = authContext.id;
+    fetch(`/api/admins/${id}`, reqContext.withDefaults())
       .then((res) => res.json())
       .then((data) => setProfile(data.photoLink));
   }, []);
@@ -56,7 +56,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
         <div className={styles.logout}>
           <img alt="profile_picture" src={`https://${profile}`} />
           <GoogleLogout
-            onLogoutSuccess={aContext.logout}
+            onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
             render={renderProps => (
               <div
