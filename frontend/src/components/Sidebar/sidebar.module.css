@@ -1,6 +1,5 @@
 .sidebarLinks {
   text-decoration: none;
-  color: black;
 }
 
 .container {
@@ -23,6 +22,7 @@
 .icon {
   cursor: pointer;
   margin: 1.75rem 1.625rem;
+  text-decoration: none;
 
   display: flex;
   flex-direction: column;
@@ -57,6 +57,7 @@
 }
 
 .caption {
+  color: black;
   font-weight: 700;
 }
 
