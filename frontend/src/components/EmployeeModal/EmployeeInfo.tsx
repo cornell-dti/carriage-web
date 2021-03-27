@@ -1,11 +1,11 @@
 import React from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 import { Input } from '../FormElements/FormElements';
 
 
-const DriverInfo = () => {
+const EmployeeInfo = () => {
   const { register } = useFormContext();
   return (
     <div className={styles.inputContainer}>
@@ -44,4 +44,4 @@ const DriverInfo = () => {
   );
 };
 
-export default DriverInfo;
+export default EmployeeInfo;

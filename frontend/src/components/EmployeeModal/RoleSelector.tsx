@@ -1,5 +1,5 @@
 import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 import { Label, Input } from '../FormElements/FormElements';
 
 type Props = {

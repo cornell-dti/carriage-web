@@ -1,18 +1,18 @@
 import React from 'react';
-import DriverModal from '../../components/DriverModal/DriverModal';
+import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import styles from './page.module.css';
 
-const Drivers = () => (
+const Employees = () => (
   <>
     <div className={styles.pageTitle}>
       <h1 className={styles.header}>Employees</h1>
       <div className={styles.margin3}>
-        <DriverModal />
+        <EmployeeModal />
       </div>
     </div>
     <EmployeeCards />
   </>
 );
 
-export default Drivers;
+export default Employees;

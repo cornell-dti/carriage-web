@@ -64,7 +64,6 @@ export type Admin = {
   photoLink?: string;
 };
 
-// export type Employee = Admin | Driver;
 export type Employee = {
   id: string;
   firstName: string;

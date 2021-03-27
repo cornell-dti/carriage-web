@@ -4,14 +4,14 @@ import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
-import DriverInfo from './DriverInfo';
+import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 
-const DriverModal = () => {
+const EmployeeModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState('driver');
   const { withDefaults } = useReq();
@@ -78,13 +78,13 @@ const DriverModal = () => {
         <Upload />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <DriverInfo />
+            <EmployeeInfo />
             {selectedRole === 'admin' ? null : <WorkingHours />}
             <RoleSelector 
               selectedRole={selectedRole} 
               setSelectedRole={setSelectedRole}
             />
-            <Button className={styles.submit} type='submit'>Add a Driver</Button>
+            <Button className={styles.submit} type='submit'>Add</Button>
           </form>
         </FormProvider>
       </Modal>
@@ -92,4 +92,4 @@ const DriverModal = () => {
   );
 };
 
-export default DriverModal;
+export default EmployeeModal;
