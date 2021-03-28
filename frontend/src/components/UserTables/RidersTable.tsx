@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { NewRider } from '../../types';
 import styles from './table.module.css';
-import {useRiders} from '../../context/RidersContext';
+import { useRiders } from '../../context/RidersContext';
 
 function renderTableHeader() {
   return (
@@ -32,6 +32,7 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   }
   return null;
 }
+<<<<<<< HEAD
   const RidersTable = () => { 
     const history = useHistory();
     const {riders} = useRiders();
@@ -96,6 +97,67 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
         );
       });
     }
+=======
+const RidersTable = () => {
+  const history = useHistory();
+  const { riders } = useRiders();
+  function renderTableData(allRiders: NewRider[]) {
+    return allRiders.map((rider, index) => {
+      const {
+        id,
+        firstName,
+        lastName,
+        phoneNumber,
+        address,
+        joinDate,
+        email,
+        accessibility,
+      } = rider;
+      const valuePhone = { data: phoneNumber };
+      const valueAddress = { data: address };
+      const valueJoinDate = { data: joinDate };
+      const valueAccessbility = { data: renderAccessNeeds(accessibility) };
+      const netId = email.split('@')[0];
+      const valueNameNetid = {
+        data:
+          <span>
+            <span style={{ fontWeight: 'bold' }}>
+              {`${firstName} ${lastName}`}
+            </span>
+            {` ${netId}`}
+          </span>,
+      };
+      const inputValues = [
+        valueNameNetid,
+        valuePhone,
+        valueAddress,
+        valueJoinDate,
+        valueAccessbility,
+      ];
+      const riderData = {
+        id,
+        firstName,
+        lastName,
+        netID: netId,
+        phone: phoneNumber,
+        accessibility: renderAccessNeeds(accessibility),
+      };
+      const location = {
+        pathname: '/riders/rider',
+        state: riderData,
+        search: `?name=${`${firstName}_${lastName}`}`,
+      };
+      const goToDetail = () => {
+        history.push(location);
+      };
+      return (
+        <tr key={index} onClick={goToDetail} className={styles.tableRow}>
+          <TableRow values={inputValues} />
+        </tr>
+      );
+    });
+  }
+>>>>>>> 15e7a181302237ae821c741e2e559581b41dd931
   return (
     <>
       <div>

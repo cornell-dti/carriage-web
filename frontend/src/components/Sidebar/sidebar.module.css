@@ -1,6 +1,5 @@
 .sidebarLinks {
   text-decoration: none;
-  color: black;
 }
 
 .container {
@@ -23,6 +22,7 @@
 .icon {
   cursor: pointer;
   margin: 1.75rem 1.625rem;
+  text-decoration: none;
 
   display: flex;
   flex-direction: column;
@@ -44,7 +44,7 @@
   background-color: #d3d2d2;
 }
 
-.circle > img {
+.circle>img {
   width: 50%;
 }
 
@@ -52,13 +52,15 @@
   background-color: black;
 }
 
-.selected > img {
+.selected>img {
   filter: invert(100%);
 }
 
 .caption {
+  color: black;
   font-weight: 700;
 }
+
 
 .content {
   width: calc(100% - 6rem);
