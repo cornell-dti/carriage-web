@@ -15,15 +15,14 @@ const convertedVapidKey = urlBase64ToUint8Array(
   process.env.REACT_APP_PUBLIC_VAPID_KEY!,
 );
 
-const sendSubscription = (subscription: any) => fetch('/api/notification/subscribe', {
+type WithDefaultsType = (options?: RequestInit | undefined) => RequestInit;
+
+const sendSubscription = (subscription: any, withDefaults: WithDefaultsType) => fetch('/api/notification/subscribe', withDefaults({
   method: 'POST',
   body: JSON.stringify(subscription),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+}));
 
-const subscribeUser = () => {
+const subscribeUser = (withDefaults: WithDefaultsType) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
       .then((registration) => {
@@ -44,7 +43,7 @@ const subscribeUser = () => {
                 })
                 .then((newSubscription) => {
                   console.log('New subscription added.');
-                  sendSubscription(newSubscription);
+                  sendSubscription(newSubscription, withDefaults);
                 })
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
@@ -58,7 +57,7 @@ const subscribeUser = () => {
                 });
             } else {
               console.log('Existed subscription detected.');
-              sendSubscription(existedSubscription);
+              sendSubscription(existedSubscription, withDefaults);
             }
           });
       })

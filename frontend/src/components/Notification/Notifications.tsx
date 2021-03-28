@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { useReq } from '../../context/req';
+import subscribeUser from './subscribeUser';
 // TODO permission UX
 
 type Message = {
@@ -11,6 +13,7 @@ type Message = {
 const Notifications = () => {
   const [availability, setAvailability] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const { withDefaults } = useReq();
 
   // TODO proper checks
   const checkNotificationAvailability = () => {
@@ -19,10 +22,11 @@ const Notifications = () => {
 
   useEffect(checkNotificationAvailability);
 
+  useEffect(() => { subscribeUser(withDefaults); }, [withDefaults]);
+
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
-      console.log('Received a message from service worker: ', event.data);
-      setMessages([...messages, event.data]);
+      setMessages([event.data, ...messages]);
     });
   });
 
@@ -35,7 +39,7 @@ const Notifications = () => {
           : 'This browser does not support push messaging.'}
       </p>
       <h3>Messages</h3>
-      { messages.map(({ title, body }) => (<div><p>{title}</p><p>{body}</p></div>))}
+      { messages.map(({ title, body }, i) => (<div key={i}><p>{title}</p><p>{body}</p></div>))}
     </div>
   );
 };
