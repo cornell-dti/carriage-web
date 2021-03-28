@@ -39,7 +39,7 @@ const Notifications = () => {
           : 'This browser does not support push messaging.'}
       </p>
       <h3>Messages</h3>
-      { messages.map(({ title, body }, i) => (<div key={i}><p>{title}</p><p>{body}</p></div>))}
+      { messages.map(({ title, body }, i) => (<div key={i}><p>{title}</p><p>{body}</p><p>----------</p></div>))}
     </div>
   );
 };

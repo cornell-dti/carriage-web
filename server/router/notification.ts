@@ -36,7 +36,6 @@ router.post('/send', (req, res) => {
   let promiseChain: Promise<void | webpush.SendResult> = Promise.resolve();
 
   for (const subscription of subscriptionSet) {
-    console.log(subscription);
     promiseChain = promiseChain.then((webpushResult) => triggerPushMsg(JSON.parse(subscription), {
       title,
       body,
