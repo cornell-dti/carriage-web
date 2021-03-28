@@ -26,8 +26,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
     <div className={styles.container}>
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
-          <Link key={path} className={styles.sidebarLinks} to={path}>
-            <div onClick={() => setSelected(path)} className={styles.icon}>
+          <div className={styles.sidebarLinks}>
+            <Link key={path} onClick={() => setSelected(path)} className={styles.icon} to={path}>
               <div className={
                 path === selected
                   ? cn(styles.selected, styles.circle)
@@ -36,8 +36,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
                 <img alt={caption} src={icon} />
               </div>
               <div className={styles.caption}>{caption}</div>
-            </div>
-          </Link>
+            </Link>
+          </div>
         ))}
       </div>
 
