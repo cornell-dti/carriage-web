@@ -41,7 +41,7 @@ const Card = ({
       <div className={styles.contentContainer}>
         <div className={styles.titleContainer}>
           <p className={styles.name}>{fullName}</p>
-          <p className={styles.netId}>{photoLink}</p>
+          <p className={styles.netId}>{netId}</p>
         </div>
         {children}
       </div>
