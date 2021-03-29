@@ -1,7 +1,7 @@
 import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { home, drivers, riders, settings, locations } from '../../icons/sidebar/index';
+import { home, drivers, riders, settings, locations, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import { GoogleLogout } from 'react-google-login';
@@ -13,10 +13,6 @@ type MenuItem = {
   caption: string,
   path: string
 }
-
-const blankProfile =
-  'https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255626' +
-  '-stock-illustration-avatar-male-profile-gray-person.jpg'
 
 const Sidebar: FunctionComponent = ({ children }) => {
   const { pathname } = useLocation();
@@ -59,8 +55,8 @@ const Sidebar: FunctionComponent = ({ children }) => {
           </div>
         ))}
         <div className={styles.logout}>
-          <img alt="profile_picture"
-            src={profile === '' ? blankProfile : `https://${profile}`} />
+          <img alt="profile_picture" className={styles.profile}
+            src={profile === '' || undefined ? blank : `https://${profile}`} />
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
