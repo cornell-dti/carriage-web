@@ -1,8 +1,10 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { Location, LocationType } from './location';
+import { ValueType } from 'dynamoose/dist/Schema';
+import { Location, Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
+import { formatAddress, isAddress } from '../util';
 
 export enum Type {
   ACTIVE = 'active',
@@ -19,13 +21,20 @@ export enum Status {
   NO_SHOW = 'no_show',
 }
 
+export type RideLocation = {
+  id?: string,
+  name: string;
+  address: string;
+  tag: Tag;
+};
+
 export type RideType = {
   id: string,
   type: Type,
   status: Status,
   late: boolean,
-  startLocation: LocationType,
-  endLocation: LocationType,
+  startLocation: RideLocation,
+  endLocation: RideLocation,
   startTime: string,
   requestedEndTime: string,
   endTime?: string,
@@ -36,6 +45,29 @@ export type RideType = {
   endDate?: string
   deleted?: boolean,
   edits?: string[],
+};
+
+const locationSchema = {
+  type: [String, Object],
+  required: true,
+  get: (value: ValueType) => {
+    if (typeof value === 'string') {
+      return Location.get(value) as any;
+    }
+    return value;
+  },
+  schema: {
+    name: String,
+    address: {
+      type: String,
+      set: (address: any) => formatAddress(address as string),
+      validate: (address: any) => isAddress(address as string),
+    },
+    tag: {
+      type: String,
+      enum: Object.values(Tag),
+    },
+  },
 };
 
 const schema = new dynamoose.Schema({
@@ -61,8 +93,8 @@ const schema = new dynamoose.Schema({
     default: false,
     required: true,
   },
-  startLocation: Location as any,
-  endLocation: Location as any,
+  startLocation: locationSchema,
+  endLocation: locationSchema,
   startTime: {
     type: String,
     required: true,

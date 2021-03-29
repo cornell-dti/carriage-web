@@ -29,6 +29,7 @@ export type NewRider = {
   accessibility: Array<string>;
   description: string;
   joinDate: string;
+  endDate: string;
   address: string;
   favoriteLocations: Array<string>;
   organization: string;

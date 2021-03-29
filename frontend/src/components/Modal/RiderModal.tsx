@@ -24,6 +24,7 @@ const RiderModal = () => {
     accessibility: [],
     description: '',
     joinDate: '',
+    endDate: '',
     pronouns: '',
     address: '',
     favoriteLocations: [],

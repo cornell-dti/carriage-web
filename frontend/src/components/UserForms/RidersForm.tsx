@@ -134,8 +134,8 @@ const Form = (props: FormProps) => {
           <CheckBoxInput
             labelText="Accessibility Needs: "
             checkboxId="accessibility"
-            options={["needWheel", "needCrutches", "needAssist"]}
-            optionLabels={["Needs Wheelchair", "Has Crutches", "Needs Assistant"]}
+            options={['needWheel', 'needCrutches', 'needAssist']}
+            optionLabels={['Needs Wheelchair', 'Has Crutches', 'Needs Assistant']}
             handleInput={handleInput}
           />
           <TextInput
@@ -147,7 +147,7 @@ const Form = (props: FormProps) => {
           <DropDownInput
             labelName="pronouns"
             labelText="Pronouns: "
-            options={["she/her/hers", "he/him/his", "neutral"]}
+            options={['she/her/hers', 'he/him/his', 'neutral']}
             handleInput={(e) => handleInput(e)} />
           <TextInput
             labelName="address"

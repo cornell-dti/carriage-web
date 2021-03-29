@@ -15,7 +15,8 @@ export type LocationType = {
   id: string;
   name: string;
   address: string;
-  tag?: Tag;
+  tag: Tag;
+  info: string;
 };
 
 const schema = new dynamoose.Schema({
@@ -36,7 +37,12 @@ const schema = new dynamoose.Schema({
   },
   tag: {
     type: String,
+    required: true,
     enum: Object.values(Tag),
+  },
+  info: {
+    type: String,
+    required: true,
   },
 });
 
