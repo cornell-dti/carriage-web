@@ -36,12 +36,12 @@ const Card = ({
   return (
     <div className={styles.card}>
         {photoLink && photoLink !== '' ?
-        <img className={styles.image} alt="uploaded picture" src={photoLink} />
+        <img className={styles.image} alt="uploaded picture" src={'http://' + photoLink} />
         : <div className={styles.image}> </div>}
       <div className={styles.contentContainer}>
         <div className={styles.titleContainer}>
           <p className={styles.name}>{fullName}</p>
-          <p className={styles.netId}>{netId}</p>
+          <p className={styles.netId}>{photoLink}</p>
         </div>
         {children}
       </div>

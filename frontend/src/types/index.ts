@@ -32,6 +32,7 @@ export type NewRider = {
   address: string;
   favoriteLocations: Array<string>;
   organization: string;
+  photoLink?: string;
 };
 
 export type Availability = {
@@ -52,7 +53,7 @@ export type Driver = {
   phoneNumber: string;
   email: string;
   phone: string;
-  photoLink: string;
+  photoLink?: string;
 };
 
 export type Admin = {

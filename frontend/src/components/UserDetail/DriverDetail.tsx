@@ -20,7 +20,6 @@ function renderTableHeader() {
 }
 
 type DriverDetailProps = {
-  // profilePic: string;
   id: string;
   firstName: string;
   lastName: string;
@@ -28,7 +27,7 @@ type DriverDetailProps = {
   phone: string;
   availability: string[][];
   vehicle: Vehicle;
-  photoLink: string;
+  photoLink?: string;
 };
 
 const DriverDetail = () => {

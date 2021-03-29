@@ -74,7 +74,7 @@ const DriverCard = ({
         firstName={firstName} 
         lastName={lastName} 
         netId={netId} 
-        photoLink={'http://' + photoLink}
+        photoLink={photoLink}
       >
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>

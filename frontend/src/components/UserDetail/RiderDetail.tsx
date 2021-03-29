@@ -4,13 +4,12 @@ import { phone } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
 
 type RiderDetailProps = {
-  // profilePic: string;
   firstName: string;
   lastName: string;
   netId: string;
   phone: string;
-  // address: string;
-  accessibility: string
+  accessibility: string;
+  photoLink?: string;
 }
 
 const RiderDetail = () => {
@@ -20,7 +19,9 @@ const RiderDetail = () => {
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
-      netId={rider.netId}>
+      netId={rider.netId}
+      photoLink={rider.photoLink}
+    >
       <UserContactInfo icon={phone} alt="" text={rider.phone} />
       <UserContactInfo icon="" alt="" text={rider.accessibility} />
       <OtherInfo>

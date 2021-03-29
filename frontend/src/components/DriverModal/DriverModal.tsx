@@ -57,10 +57,7 @@ const DriverModal = () => {
       method: 'POST',
       body: JSON.stringify(driver),
     }))
-      .then((res) => {
-        refreshDrivers();
-        res.json();
-      });
+      .then((res) => res.json());
     
     // upload image
     const photo = { 
@@ -79,7 +76,8 @@ const DriverModal = () => {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photoLink: photoJson.fileBuffer }),
-      }));
+      }))
+        .then(() => refreshDrivers());
 
     closeModal();
   };
