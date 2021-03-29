@@ -78,7 +78,7 @@ const RiderModal = () => {
 
   const uploadImage = async () => {
     const photo = { 
-      id: 'tst1',//formData.id,
+      id: formData.id,
       tableName: 'Riders', 
       fileBuffer: imageBase64 
     };
@@ -92,7 +92,9 @@ const RiderModal = () => {
 
   useEffect(() => {
     if (isSubmitted) {
-      uploadImage();
+      if (imageBase64 !== '') {
+        uploadImage();
+      };
 
       const newRider = {
         id: formData.id,

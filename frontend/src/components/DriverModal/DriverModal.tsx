@@ -53,32 +53,40 @@ const DriverModal = () => {
       availability: parseAvailability(availability),
       vehicle: vehicleJson.id
     };
-    const createdDriver = await fetch('/api/drivers', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(driver),
-    }))
-      .then((res) => res.json());
-    
-    // upload image
-    const photo = { 
-      id: createdDriver.id,
-      tableName: 'Drivers', 
-      fileBuffer: imageBase64 
-    };
-    const photoJson = await fetch('/api/upload', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(photo),
-    }))
-      .then((res) => res.json());
-
-    // update driver photoLink
-    fetch(`/api/drivers/${createdDriver.id}`,withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoLink: photoJson.fileBuffer }),
+    if (imageBase64 === '') {
+      fetch('/api/drivers', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(driver),
       }))
         .then(() => refreshDrivers());
+    } 
+    else {
+      const createdDriver = await fetch('/api/drivers', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(driver),
+      }))
+        .then((res) => res.json());
+      
+      // upload image
+      const photo = { 
+        id: createdDriver.id,
+        tableName: 'Drivers', 
+        fileBuffer: imageBase64 
+      };
+      const photoJson = await fetch('/api/upload', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(photo),
+      }))
+        .then((res) => res.json());
 
+      // update driver photoLink
+      fetch(`/api/drivers/${createdDriver.id}`,withDefaults({
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photoLink: photoJson.fileBuffer }),
+        }))
+          .then(() => refreshDrivers());
+    }
     closeModal();
   };
 
