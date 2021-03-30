@@ -30,7 +30,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
 
   const menuItems: MenuItem[] = [
     { icon: home, caption: 'Home', path: '/home' },
-    { icon: drivers, caption: 'Employees', path: '/drivers' },
+    { icon: drivers, caption: 'Employees', path: '/employees' },
     { icon: riders, caption: 'Students', path: '/riders' },
     { icon: locations, caption: 'Locations', path: '/locations' },
     { icon: settings, caption: 'Settings', path: '/settings' },
