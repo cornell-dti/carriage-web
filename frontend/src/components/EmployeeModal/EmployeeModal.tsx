@@ -37,7 +37,7 @@ const EmployeeModal = () => {
     const [firstName, lastName] = name.split(' ');
 
     if (selectedRole === 'admin') {
-      console.log('admin selected!')
+      console.log('admin selected!');
       const admin = {
         firstName,
         lastName,
@@ -50,14 +50,14 @@ const EmployeeModal = () => {
       })).then(() => refreshAdmins());
     } else {
       console.log('driver selected!');
-      console.log('both?: ' + (selectedRole === 'both'));
+      console.log(`both?: ${selectedRole === 'both'}`);
       const driver = {
         firstName,
         lastName,
         email,
         phoneNumber,
         availability: parseAvailability(availability),
-        admin: selectedRole === 'both'
+        admin: selectedRole === 'both',
       };
       fetch('/api/drivers', withDefaults({
         method: 'POST',
@@ -80,8 +80,8 @@ const EmployeeModal = () => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo />
             {selectedRole === 'admin' ? null : <WorkingHours />}
-            <RoleSelector 
-              selectedRole={selectedRole} 
+            <RoleSelector
+              selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
             />
             <Button className={styles.submit} type='submit'>Add</Button>

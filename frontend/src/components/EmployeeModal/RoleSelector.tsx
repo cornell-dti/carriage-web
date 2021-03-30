@@ -7,9 +7,9 @@ type Props = {
   setSelectedRole: Dispatch<SetStateAction<string>>;
 }
 
-const RoleSelector = ({selectedRole, setSelectedRole}: Props) => {
+const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedRole(e.target.value)
+    setSelectedRole(e.target.value);
   };
 
   return (
@@ -21,7 +21,7 @@ const RoleSelector = ({selectedRole, setSelectedRole}: Props) => {
           type="radio"
           value='driver'
           onChange={onChange}
-          checked={selectedRole === "driver"}          
+          checked={selectedRole === 'driver'}
         />
         <Label className={styles.driverLabel}>Driver</Label>
       </div>
@@ -31,7 +31,7 @@ const RoleSelector = ({selectedRole, setSelectedRole}: Props) => {
           type="radio"
           value='admin'
           onChange={onChange}
-          checked={selectedRole === "admin"}
+          checked={selectedRole === 'admin'}
         />
         <Label className={styles.driverLabel}>Admin</Label>
       </div>
@@ -41,7 +41,7 @@ const RoleSelector = ({selectedRole, setSelectedRole}: Props) => {
           type="radio"
           value='both'
           onChange={onChange}
-          checked={selectedRole === "both"}
+          checked={selectedRole === 'both'}
         />
         <Label className={styles.driverLabel}>Both</Label>
       </div>

@@ -49,21 +49,21 @@ const EmployeeCard = ({
     email,
     phoneNumber,
     availability,
-    admin
+    admin,
   },
 }: EmployeeCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const fmtAvailability = formatAvailability(availability);
   const fullName = `${firstName}_${lastName}`;
-  
-  const isAdmin = availability ? false : true;
+
+  const isAdmin = !availability;
   const isBoth = !isAdmin && admin; // admin and driver
   const role = (): string => {
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
-  }
+  };
 
   const userInfo = {
     id,
@@ -72,7 +72,7 @@ const EmployeeCard = ({
     netId,
     phone: fmtPhone,
     availability: fmtAvailability,
-    admin
+    admin,
   };
 
 
@@ -83,27 +83,27 @@ const EmployeeCard = ({
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
         </CardInfo>
-        
+
         <CardInfo icon={clock} alt="clock icon">
           <div>
-          {fmtAvailability ? 
-            fmtAvailability.map(([day, timeRange]) => (
-              <p key={day}><b>{day}:</b> {timeRange}</p>
-            )) : <p>N/A</p>}
+            {fmtAvailability
+              ? fmtAvailability.map(([day, timeRange]) => (
+                <p key={day}><b>{day}:</b> {timeRange}</p>
+              )) : <p>N/A</p>}
           </div>
         </CardInfo>
 
-        <CardInfo 
-          icon={isAdmin || isBoth ? user : wheel} 
+        <CardInfo
+          icon={isAdmin || isBoth ? user : wheel}
           alt={isAdmin || isBoth ? 'admin icon' : 'wheel icon'}
         >
-          <p>{ role() }</p>
+          <p>{role()}</p>
         </CardInfo>
       </Card>
     </Link>
   );
 };
-const EmployeeCards = () => { 
+const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
   return (
