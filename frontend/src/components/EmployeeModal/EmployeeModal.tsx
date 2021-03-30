@@ -37,7 +37,6 @@ const EmployeeModal = () => {
     const [firstName, lastName] = name.split(' ');
 
     if (selectedRole === 'admin') {
-      console.log('admin selected!');
       const admin = {
         firstName,
         lastName,
@@ -49,8 +48,6 @@ const EmployeeModal = () => {
         body: JSON.stringify(admin),
       })).then(() => refreshAdmins());
     } else {
-      console.log('driver selected!');
-      console.log(`both?: ${selectedRole === 'both'}`);
       const driver = {
         firstName,
         lastName,
