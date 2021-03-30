@@ -1,11 +1,11 @@
 import React, { useState, FunctionComponent, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
+import { GoogleLogout } from 'react-google-login';
 import { home, drivers, riders, settings, locations, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
-import { GoogleLogout } from 'react-google-login';
-import useClientId from '../../hooks/useClientId'
+import useClientId from '../../hooks/useClientId';
 import styles from './sidebar.module.css';
 
 type MenuItem = {
@@ -22,11 +22,11 @@ const Sidebar: FunctionComponent = ({ children }) => {
   const reqContext = useContext(ReqContext);
 
   useEffect(() => {
-    const id = authContext.id;
+    const { id } = authContext;
     fetch(`/api/admins/${id}`, reqContext.withDefaults())
       .then((res) => res.json())
       .then((data) => setProfile(data.photoLink));
-  }, []);
+  }, [authContext, authContext.id, reqContext]);
 
   const menuItems: MenuItem[] = [
     { icon: home, caption: 'Home', path: '/home' },
@@ -56,15 +56,15 @@ const Sidebar: FunctionComponent = ({ children }) => {
         ))}
         <div className={styles.logout}>
           <img alt="profile_picture" className={styles.profile}
-            src={profile === '' || undefined ? blank : `https://${profile}`} />
+            src={profile === '' || !profile ? blank : `https://${profile}`} />
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
-            render={renderProps => (
+            render={(renderProps) => (
               <div
                 onClick={renderProps.onClick}
               >
-                Logout
+                Log out
               </div>
             )} />
         </div>
