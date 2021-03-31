@@ -14,8 +14,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 150px;
 }
 
-.margin3 {
-  margin: 3rem;
+.rightSection {
+  margin-right: 3rem;
+  display: flex;
+  align-items: center;
+}
+
+.rightSection > div {
+  margin-left: 1rem;
 }
