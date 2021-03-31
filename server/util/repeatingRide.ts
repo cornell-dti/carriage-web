@@ -5,10 +5,13 @@ import schedule from 'node-schedule';
 import { AnyDocument } from 'dynamoose/dist/Document';
 import { Ride, RideType } from '../models/ride';
 
+export default function initSchedule() {
 // run function at 10:05:00am every day
-schedule.scheduleJob('00 05 10 * * *', () => {
-  createRepeatingRides();
-});
+  schedule.scheduleJob('0 5 10 * * *', () => {
+    createRepeatingRides();
+  });
+}
+
 
 function createRepeatingRides() {
   let tomorrowDate = moment(new Date());
@@ -18,25 +21,28 @@ function createRepeatingRides() {
   const tomorrowDay = tomorrowDate.weekday();
 
   // condition: recurring ride that includes tomorrowDay
-  const condition = new Condition().where('recurring').eq(true)
+  const condition = new Condition()
+    .where('recurring')
+    .eq(true)
     .and()
     .where('recurringDays')
     .contains(tomorrowDay);
 
   Ride.scan(condition).exec((_, data) => {
     data?.forEach(async (masterRide) => {
-      const { rider, driver, startLocation, endLocation,
-        endDate, edits } = masterRide as unknown as RideType;
+      const {
+        id, rider, driver, startLocation, endLocation, startTime, endTime, endDate, edits,
+      } = masterRide.toJSON() as RideType;
 
       // only continue if the endDate has not passed
-      if (!endDate || (endDate >= tomorrowDateString)) {
+      if (endDate && endDate >= tomorrowDateString) {
         const tomorrowDateOnly = moment(new Date()).add(1, 'days').format('YYYY-MM-DD');
 
         // the repeating ride's instance start and end times use tomorrow's date
-        const newStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');
+        const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
         const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
 
-        const newEndTimeOnly = moment(masterRide.requestedEndTime).format('HH:mm:ss');
+        const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
         const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
 
         const repeatingRide = new Ride({
@@ -51,16 +57,22 @@ function createRepeatingRides() {
           recurring: false,
         });
 
-        if (edits) {
+        if (edits?.length) {
           handleEdits(edits, tomorrowDateOnly, repeatingRide, masterRide);
+        } else {
+          repeatingRide.save().catch((err) => console.log(err));
         }
       }
     });
   });
 }
 
-function handleEdits(edits: string[], tomorrowDateOnly: string,
-  repeatingRide: AnyDocument, masterRide: AnyDocument) {
+function handleEdits(
+  edits: string[],
+  tomorrowDateOnly: string,
+  repeatingRide: AnyDocument,
+  masterRide: AnyDocument,
+) {
   const seenEdits: string[] = [];
   let editCount = 0;
   const numEdits = edits.length;
@@ -74,14 +86,14 @@ function handleEdits(edits: string[], tomorrowDateOnly: string,
       if (editDateOnly === tomorrowDateOnly) {
         seenEdits.push(editId);
         // if deleted = true
-        if (editRide.deleted === true) {
+        if (editRide.deleted) {
           // create repeating ride instance only if it does NOT match the delete edit
           if (!(repeatingRide.startTime === editRide.startTime
-            && repeatingRide.requestedEndTime === editRide.requestedEndTime
+            && repeatingRide.endTime === editRide.endTime
             && repeatingRide.rider.id === editRide.rider.id
             && repeatingRide.startLocation.id === editRide.startLocation.id
             && repeatingRide.endLocation.id === editRide.endLocation.id)) {
-            repeatingRide.save();
+            repeatingRide.save().catch((err) => console.log(err));
           }
           // remove this delete edit instance
           Ride.get(editId).then((dataGetToDelete) => {

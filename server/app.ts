@@ -12,6 +12,7 @@ import vehicle from './router/vehicle';
 import location from './router/location';
 import upload from './router/upload';
 import auth from './router/auth';
+import initSchedule from './util/repeatingRide';
 
 const port = process.env.PORT || 3001;
 
@@ -40,5 +41,7 @@ app.use(express.static(path.join(__dirname, frontendBuild)));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, frontendBuild, 'index.html'));
 });
+
+initSchedule();
 
 app.listen(port, () => console.log('Listening at port', port));
