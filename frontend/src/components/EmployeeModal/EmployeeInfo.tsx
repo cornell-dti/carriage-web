@@ -1,12 +1,13 @@
 import React from 'react';
 import cn from 'classnames';
-import { useFormContext } from 'react-hook-form';
+import {useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
 import { Input } from '../FormElements/FormElements';
 
 
 const EmployeeInfo = () => {
   const { register, formState } = useFormContext();
+  const {errors} = formState;
   return (
     <div className={styles.inputContainer}>
       <div className = {styles.col1}>
@@ -15,9 +16,9 @@ const EmployeeInfo = () => {
           type='text'
           placeholder='Name'
           className={cn(styles.input)}
-          ref={register({ required: true })}
+          ref={register({ required: "Please enter a valid name" })}
         />
-        {formState.errors.name && <p className={styles.error}>Please enter a valid name</p>}
+        {errors.name && <p className={styles.error}>{errors.name.message}</p>}
       </div>
       <div className = {styles.col2}>
         <Input
@@ -25,9 +26,9 @@ const EmployeeInfo = () => {
           type='text'
           placeholder='NetID'
           className={cn(styles.input)}
-          ref={register({ required: true })}
+          ref={register({ required: "Please enter a valid NetID" })}
         />
-        {formState.errors.netid && <p className={styles.error}>Please enter a valid NetID</p>}
+        {errors.netid && <p className={styles.error}>{errors.netid.message}</p>}
       </div>
       <div className = {styles.col1}>
         <Input
@@ -35,9 +36,9 @@ const EmployeeInfo = () => {
           type='email'
           placeholder='Email'
           className={cn(styles.input)}
-          ref={register({ required: true })}
+          ref={register({ required: "Please enter a valid email" })}
         />
-        {formState.errors.email && <p className={styles.error}>Please enter a valid email</p>}
+        {errors.email && <p className={styles.error}>{errors.email.message}</p>}
       </div>
       <div className = {styles.col2}>
         <Input
@@ -48,10 +49,10 @@ const EmployeeInfo = () => {
           min={10}
           max={10}
           className={cn(styles.input)}
-          ref={register({ required: true })}
+          ref={register({ required: "Please enter a valid phone number" })}
         />
         {formState.errors.phoneNumber && 
-          <p className={styles.error}>Please enter a valid phone number</p>}
+          <p className={styles.error}>{errors.phoneNumber.message}</p>}
       </div>
     </div>
   );

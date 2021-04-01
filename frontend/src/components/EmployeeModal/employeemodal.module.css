@@ -120,6 +120,9 @@
   color: white;
 }
 
+.day:focus .daySelected {
+  background-color: black; 
+}
 .error {
   color: #FF647C;
   font-size: 0.75rem;

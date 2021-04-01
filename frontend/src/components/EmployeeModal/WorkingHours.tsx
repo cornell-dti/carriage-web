@@ -39,13 +39,13 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       selectDay(day, index);
     }
   };
-  // const validateDays = (index: number) => {
-  //   if()
-  // };
   useEffect(() => {
-    // Register day selector as custom form input
-    register(`${instance}.days`, { required: true });
-  }, [instance, register]);
+    // Register day selector as custom form input. 
+    //Not putting error message here since there is no default behavior to override
+    register(`${instance}.days`, { 
+      required: true, 
+      validate: () => {return days.length > 0}});
+  }, [instance, register, days]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -59,11 +59,11 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           name={`${instance}.startTime`}
           type='time'
           className={styles.timeInput}
-          ref={register({ required: true })}
+          ref={register({ required: "Please enter a valid start time"})}
         />
         {errors.availability && errors.availability[index] && 
           errors.availability[index].startTime &&  
-          <p className={styles.error}>Please enter a start time</p>
+          <p className={styles.error}>{errors.availability[index].startTime.message}</p>
         }  
         </div>
       <p className={styles.toText}>to</p>
@@ -73,7 +73,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         type='time'
         className={styles.timeInput}
         ref={register({
-          required: true,
+          required: "Please enter a valid end time",
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
             return startTime < endTime;
@@ -82,13 +82,14 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       />
         {errors.availability && errors.availability[index] && 
           errors.availability[index].endTime &&  
-          <p className={styles.error}>Please enter an end time</p>
+          <p className={styles.error}>{errors.availability[index].endTime.message}</p>
         }    
         </div>
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
         <Input
           key={day}
+          name={`${instance}.days`}
           type="button"
           value={label}
           className={cn(
@@ -100,7 +101,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       ))}
       {errors.availability && errors.availability[index] && 
           errors.availability[index].days &&  
-          <p className={styles.error}>Please enter a day</p>
+          <p className={styles.error}>Please select at least one day</p>
         }    
     </div>
   );
