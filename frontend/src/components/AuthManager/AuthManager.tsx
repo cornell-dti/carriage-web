@@ -45,7 +45,6 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       body:
         JSON.stringify({
           token,
-          email,
           table: 'Admins',
           clientId,
         }),
