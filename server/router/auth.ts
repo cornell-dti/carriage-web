@@ -84,13 +84,14 @@ function findUserAndSendToken(
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const { token, clientId, table, email } = req.body;
+  const { token, clientId, table } = req.body;
   verify(clientId, token)
     .then((authRes) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
       if (payload?.aud === clientId && model) {
-        findUserAndSendToken(res, model, table, email);
+        const email = payload?.email;
+        findUserAndSendToken(res, model, table, email!);
       } else if (payload?.aud !== clientId) {
         res.status(400).send({ err: 'Invalid client id' });
       } else if (!model) {
@@ -100,6 +101,7 @@ router.post('/', (req, res) => {
       }
     })
     .catch((err) => {
+      console.log("hi");
       res.status(err.statusCode || 500).send({ err: err.message });
     });
 });
