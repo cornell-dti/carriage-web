@@ -1,11 +1,11 @@
 import React from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 import { Input } from '../FormElements/FormElements';
 
 
-const DriverInfo = () => {
+const EmployeeInfo = () => {
   const { register, formState } = useFormContext();
   return (
     <div className={styles.inputContainer}>
@@ -53,23 +53,8 @@ const DriverInfo = () => {
         {formState.errors.phoneNumber && 
           <p className={styles.error}>Please enter a valid phone number</p>}
       </div>
-      <Input
-        name='carType'
-        type='text'
-        placeholder='Car Type'
-        className={cn(styles.input, styles.col1)}
-        ref={register({ required: true })}
-      />
-      <Input
-        name='capacity'
-        type='number'
-        placeholder='Capacity'
-        min={1}
-        className={cn(styles.input, styles.col2)}
-        ref={register({ required: true, min: 1 })}
-      />
     </div>
   );
 };
 
-export default DriverInfo;
+export default EmployeeInfo;

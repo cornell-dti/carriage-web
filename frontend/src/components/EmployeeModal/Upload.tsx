@@ -1,6 +1,6 @@
 import React from 'react';
 import uploadBox from './upload.svg';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 
 const Upload = () => (
   <div className={styles.uploadContainer}>
