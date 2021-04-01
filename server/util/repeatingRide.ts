@@ -16,7 +16,7 @@ export default function initSchedule() {
 function createRepeatingRides() {
   let tomorrowDate = moment(new Date());
   tomorrowDate = tomorrowDate.add(1, 'days');
-  const tomorrowDateString = tomorrowDate.format('MM/DD/YYYY');
+  const tomorrowDateOnly = tomorrowDate.format('YYYY-MM-DD');
 
   const tomorrowDay = tomorrowDate.weekday();
 
@@ -34,9 +34,12 @@ function createRepeatingRides() {
         id, rider, driver, startLocation, endLocation, startTime, endTime, endDate, edits,
       } = masterRide.toJSON() as RideType;
 
+      // change endDate format from MM/DD/YYYY to YYYY-MM-DD
+      const endDateMoment = moment(endDate, 'MM/DD/YYYY');
+      const endDateFormat = endDateMoment.format('YYYY-MM-DD');
+
       // only continue if the endDate has not passed
-      if (endDate && endDate >= tomorrowDateString) {
-        const tomorrowDateOnly = moment(new Date()).add(1, 'days').format('YYYY-MM-DD');
+      if (endDate && endDateFormat >= tomorrowDateOnly) {
 
         // the repeating ride's instance start and end times use tomorrow's date
         const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
