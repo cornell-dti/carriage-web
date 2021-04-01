@@ -39,7 +39,9 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       selectDay(day, index);
     }
   };
-
+  // const validateDays = (index: number) => {
+  //   if()
+  // };
   useEffect(() => {
     // Register day selector as custom form input
     register(`${instance}.days`, { required: true });
@@ -85,18 +87,21 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         </div>
       <p className={styles.repeatText}>Repeat on</p>
       {Object.entries(dayLabels).map(([day, label]) => (
-        <button
+        <Input
           key={day}
           type="button"
+          value={label}
           className={cn(
             styles.day,
             { [styles.daySelected]: isDaySelectedByInstance(day, index) },
           )}
           onClick={() => handleClick(day)}
-        >
-          {label}
-        </button>
+        />
       ))}
+      {errors.availability && errors.availability[index] && 
+          errors.availability[index].days &&  
+          <p className={styles.error}>Please enter a day</p>
+        }    
     </div>
   );
 };
