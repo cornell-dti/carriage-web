@@ -33,26 +33,25 @@ const EmployeeInfo = () => {
       <div className = {styles.col1}>
         <Input
           name='email'
-          type='email'
+          type='text'
           placeholder='Email'
           className={cn(styles.input)}
-          ref={register({ required: "Please enter a valid email" })}
+          ref={register({ required:true, pattern:/^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/})}
         />
-        {errors.email && <p className={styles.error}>{errors.email.message}</p>}
+        {errors.email && <p className={styles.error}> Please enter a valid email</p>}
       </div>
       <div className = {styles.col2}>
         <Input
           name='phoneNumber'
           type='tel'
-          pattern="[0-9]{10}"
           placeholder='Phone Number'
           min={10}
           max={10}
           className={cn(styles.input)}
-          ref={register({ required: "Please enter a valid phone number" })}
+          ref={register({ required: true, pattern:/[0-9]{10}/})}
         />
         {formState.errors.phoneNumber && 
-          <p className={styles.error}>{errors.phoneNumber.message}</p>}
+          <p className={styles.error}>Please enter a valid phone number </p>}
       </div>
     </div>
   );

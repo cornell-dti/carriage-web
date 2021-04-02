@@ -81,28 +81,32 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         })}
       />
         {errors.availability && errors.availability[index] && 
-          errors.availability[index].endTime &&  
-          <p className={styles.error}>{errors.availability[index].endTime.message}</p>
+          errors.availability[index].endTime &&
+          <p className={styles.error}>{errors.availability[index].endTime.message}</p> 
         }    
         </div>
       <p className={styles.repeatText}>Repeat on</p>
-      {Object.entries(dayLabels).map(([day, label]) => (
-        <Input
-          key={day}
-          name={`${instance}.days`}
-          type="button"
-          value={label}
-          className={cn(
-            styles.day,
-            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
-          )}
-          onClick={() => handleClick(day)}
-        />
-      ))}
-      {errors.availability && errors.availability[index] && 
-          errors.availability[index].days &&  
-          <p className={styles.error}>Please select at least one day</p>
-        }    
+      <div className={styles.timeFlexbox}>
+        <div className={styles.daysBox}>
+          {Object.entries(dayLabels).map(([day, label]) => (
+            <Input
+              key={day}
+              name={`${instance}.days`}
+              type="button"
+              value={label}
+              className={cn(
+                styles.day,
+                { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+              )}
+              onClick={() => handleClick(day)}
+            />
+          ))}
+        </div>
+        {errors.availability && errors.availability[index] && 
+            errors.availability[index].days &&  
+            <p className={styles.error}>Please select at least one day</p>
+          }    
+      </div>
     </div>
   );
 };
