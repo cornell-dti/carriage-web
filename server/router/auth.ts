@@ -91,6 +91,9 @@ router.post('/', (req, res) => {
       const model = getModel(table);
       if (payload?.aud === clientId && model) {
         const email = payload?.email;
+        if (email === undefined) {
+          res.status(400).send({err: 'Email not found'})
+        }
         findUserAndSendToken(res, model, table, email!);
       } else if (payload?.aud !== clientId) {
         res.status(400).send({ err: 'Invalid client id' });
