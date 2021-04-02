@@ -10,10 +10,10 @@ import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
-import Collapsible from 'components/Collapsible/Collapsible';
+import Collapsible from '../../components/Collapsible/Collapsible';
 
 const Home = () => {
-  const {drivers} = useEmployees();
+  const { drivers } = useEmployees();
   const { withDefaults } = useReq();
 
   const [downloadData, setDownloadData] = useState<string>('');
@@ -25,7 +25,7 @@ const Home = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
-        if (data==='') {
+        if (data === '') {
           setDownloadData('Name,Pick Up,From,To,Drop Off,Needs,Driver');
         } else {
           setDownloadData(data);
@@ -54,7 +54,7 @@ const Home = () => {
       </div>
       <MiniCal />
       <Schedule />
-      <Collapsible title={"Unscheduled Rides"}>
+      <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
     </div>
