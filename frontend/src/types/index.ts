@@ -53,6 +53,7 @@ export type Driver = {
   phoneNumber: string;
   email: string;
   phone: string;
+  admin: boolean;
 };
 
 export type Admin = {
@@ -61,7 +62,17 @@ export type Admin = {
   lastName: string;
   phoneNumber: string;
   email: string;
-  accessLevel: string;
+  photoLink?: string;
+};
+
+export type Employee = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  availability?: AvailabilityType;
+  admin?: boolean;
 };
 
 export type ObjectType = {

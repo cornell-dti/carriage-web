@@ -6,13 +6,13 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import Drivers from './Drivers';
+import Employees from './Employees';
 import Students from './Students';
 import Home from './Home';
 import Locations from './Locations';
 import Settings from './Settings';
 import Notifications from '../../components/Notification/Notifications';
-import DriverDetail from '../../components/UserDetail/DriverDetail';
+import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
 import RiderDetail from '../../components/UserDetail/RiderDetail';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
@@ -36,11 +36,11 @@ const Dashboard = () => {
               )}
             />
             <Route
-              path="/drivers"
+              path="/employees"
               render={({ match: { url } }) => (
                 <>
-                  <Route path={`${url}/`} component={Drivers} exact />
-                  <Route path={`${url}/driver`} component={DriverDetail} />
+                  <Route path={`${url}/`} component={Employees} exact />
+                  <Route path={`${url}/employee`} component={EmployeeDetail} />
                 </>
               )}
             />

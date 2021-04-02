@@ -43,11 +43,24 @@
 }
 
 .workingHours {
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
 }
 
 .workingHoursTitle {
   margin-bottom: 0.875rem;
+}
+
+.roleSelector {
+  margin-bottom: 1rem;
+}
+
+.roleSelectorTitle {
+  margin-bottom: 0.4rem;
+}
+
+.radioOption {
+  display: inline-block;
+  margin-right: 0.4rem;
 }
 
 .addAvailabilityInput {
