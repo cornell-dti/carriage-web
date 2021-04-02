@@ -89,22 +89,20 @@ router.post('/', (req, res) => {
     .then((authRes) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
-      if (payload?.aud === clientId && model) {
-        const email = payload?.email;
-        if (email === undefined) {
-          res.status(400).send({err: 'Email not found'})
-        }
-        findUserAndSendToken(res, model, table, email!);
+      const email = payload?.email;
+      if (payload?.aud === clientId && model && email) {
+        findUserAndSendToken(res, model, table, email);
       } else if (payload?.aud !== clientId) {
         res.status(400).send({ err: 'Invalid client id' });
       } else if (!model) {
         res.status(400).send({ err: 'Table not found' });
+      } else if (!email) {
+        res.status(400).send({ err: 'Email not found' });
       } else {
         res.status(400).send({ err: 'Payload not found' });
       }
     })
     .catch((err) => {
-      console.log("hi");
       res.status(err.statusCode || 500).send({ err: err.message });
     });
 });
