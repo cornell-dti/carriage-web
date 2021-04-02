@@ -1,27 +1,29 @@
-.header {
-  margin-left: 2rem;
-  text-align: left;
-  font-size: 28px;
-}
-
 .pageContainer {
   margin-top: 1rem;
   margin-left: 2rem;
+}
+
+.header {
+  text-align: left;
+  font-size: 28px;
+  margin: 0;
 }
 
 .pageTitle {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
+  padding-left: 40px;
+  padding-top: 36px;
+  padding-right: 46px;
+  padding-bottom: 40px;
 }
 
 .rightSection {
-  margin-right: 3rem;
   display: flex;
   align-items: center;
 }
 
 .rightSection > div {
-  margin-left: 1.5rem;
+  margin-left: 14px;
 }
