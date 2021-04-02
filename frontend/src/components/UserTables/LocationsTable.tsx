@@ -14,14 +14,17 @@ const LocationsTable = () => {
       const locationsData = await fetch('/api/locations', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
-      setLocations(
-        locationsData.map((location: any) => ({
-          id: location.id,
-          name: location.name,
-          address: location.address,
-          ...(location.tag && { tag: location.tag }),
-        })),
-      );
+      const sortedLocations = locationsData.map((location: any) => ({
+        id: location.id,
+        name: location.name,
+        address: location.address,
+        ...(location.tag && { tag: location.tag }),
+      })).sort((a: Location, b: Location) => {
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+        return 0;
+      });
+      setLocations(sortedLocations);
     };
     getExistingLocations();
   }, [withDefaults]);
@@ -48,7 +51,12 @@ const LocationsTable = () => {
           address: data.address,
           ...(data.tag && { tag: data.tag }),
         };
-        setLocations([...locations, validLocation]);
+        const sortedLocations = [...locations, validLocation].sort((a: Location, b: Location) => {
+          if (a.name < b.name) { return -1; }
+          if (a.name > b.name) { return 1; }
+          return 0;
+        });
+        setLocations(sortedLocations);
       })
       .catch((e) => console.error(e.message));
   };
