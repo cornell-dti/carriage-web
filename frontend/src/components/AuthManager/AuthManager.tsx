@@ -39,7 +39,6 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
-    const { email } = googleUser.profileObj;
     const serverJWT = await fetch('/api/auth', withDefaults({
       method: 'POST',
       body:
