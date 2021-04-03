@@ -43,29 +43,28 @@ function createRepeatingRides() {
 
       // only continue if tomorrow is between the startDate and endDate
       if (endDate && endDateFormat >= tomorrowDateOnly && startDate <= tomorrowDateOnly) {
-        // if there are edits, don't create a repeating ride instance
+        const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
+        const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
+
+        const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
+        const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
+
+        const repeatingRide = new Ride({
+          id: uuid(),
+          rider,
+          startLocation,
+          endLocation,
+          startTime: newStartTime,
+          requestedEndTime: newEndTime,
+          endTime: newEndTime,
+          driver,
+          recurring: false,
+        });
+
         if (edits?.length) {
-          handleEdits(edits, tomorrowDateOnly, masterRide);
+          handleEdits(edits, tomorrowDateOnly, repeatingRide, startDate, masterRide);
         } else if (tomorrowDateOnly !== startDate) {
-        // create a repeating ride instance if there are no edits and tomorrow
-        // is not the first occurrence
-          const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
-          const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
-
-          const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
-          const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
-
-          const repeatingRide = new Ride({
-            id: uuid(),
-            rider,
-            startLocation,
-            endLocation,
-            startTime: newStartTime,
-            requestedEndTime: newEndTime,
-            endTime: newEndTime,
-            driver,
-            recurring: false,
-          });
+          // create repeating ride if no edits and not first occurrence
           repeatingRide.save().catch((err) => console.log(err));
         }
       }
@@ -76,6 +75,8 @@ function createRepeatingRides() {
 function handleEdits(
   edits: string[],
   tomorrowDateOnly: string,
+  repeatingRide: AnyDocument,
+  startDate: string,
   masterRide: AnyDocument,
 ) {
   const seenEdits: string[] = [];
@@ -98,13 +99,20 @@ function handleEdits(
         }
         // if deleted = false, keep the edit instance as a valid ride
       }
-      // remove the seen edit ids from the master repeating ride's edits field
       editCount += 1;
       if (editCount === numEdits) {
-        const newEdits = await masterRide.edits.filter((id: string) => !(seenEdits.includes(id)));
-        const operation = { $SET: { edits: newEdits } };
-        const keyId = masterRide.id;
-        Ride.update({ id: keyId }, operation);
+        // create repeating ride if no edits for tomorrow and not first occurrence
+        if (seenEdits.length === 0) {
+          if (tomorrowDateOnly !== startDate) {
+            repeatingRide.save().catch((err) => console.log(err));
+          }
+        // otherwise, remove the seen edits from the master ride
+        } else {
+          const newEdits = await masterRide.edits.filter((id: string) => !(seenEdits.includes(id)));
+          const operation = { $SET: { edits: newEdits } };
+          const keyId = masterRide.id;
+          Ride.update({ id: keyId }, operation);
+        }
       }
     });
   });
