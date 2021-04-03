@@ -41,31 +41,31 @@ function createRepeatingRides() {
       // get startDate
       const startDate = moment(startTime).format('YYYY-MM-DD');
 
-      // only continue if the tomorrow is between the startDate and endDate
+      // only continue if tomorrow is between the startDate and endDate
       if (endDate && endDateFormat >= tomorrowDateOnly && startDate <= tomorrowDateOnly) {
-        // the repeating ride's instance start and end times use tomorrow's date
-        const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
-        const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
-
-        const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
-        const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
-
-        const repeatingRide = new Ride({
-          id: uuid(),
-          rider,
-          startLocation,
-          endLocation,
-          startTime: newStartTime,
-          requestedEndTime: newEndTime,
-          endTime: newEndTime,
-          driver,
-          recurring: false,
-        });
-
+        // if there are edits, don't create a repeating ride instance
         if (edits?.length) {
-          handleEdits(edits, tomorrowDateOnly, repeatingRide, masterRide);
-        } else {
-          // if no edits, create the repeating ride
+          handleEdits(edits, tomorrowDateOnly, masterRide);
+        } else if (tomorrowDateOnly !== startDate) {
+        // create a repeating ride instance if there are no edits and tomorrow
+        // is not the first occurrence
+          const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
+          const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
+
+          const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
+          const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
+
+          const repeatingRide = new Ride({
+            id: uuid(),
+            rider,
+            startLocation,
+            endLocation,
+            startTime: newStartTime,
+            requestedEndTime: newEndTime,
+            endTime: newEndTime,
+            driver,
+            recurring: false,
+          });
           repeatingRide.save().catch((err) => console.log(err));
         }
       }
@@ -76,7 +76,6 @@ function createRepeatingRides() {
 function handleEdits(
   edits: string[],
   tomorrowDateOnly: string,
-  repeatingRide: AnyDocument,
   masterRide: AnyDocument,
 ) {
   const seenEdits: string[] = [];
