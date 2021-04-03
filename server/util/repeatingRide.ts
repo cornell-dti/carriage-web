@@ -40,7 +40,6 @@ function createRepeatingRides() {
 
       // only continue if the endDate has not passed
       if (endDate && endDateFormat >= tomorrowDateOnly) {
-
         // the repeating ride's instance start and end times use tomorrow's date
         const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
         const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
@@ -63,6 +62,7 @@ function createRepeatingRides() {
         if (edits?.length) {
           handleEdits(edits, tomorrowDateOnly, repeatingRide, masterRide);
         } else {
+          // if no edits, create the repeating ride
           repeatingRide.save().catch((err) => console.log(err));
         }
       }
@@ -88,22 +88,13 @@ function handleEdits(
       // only look at edits that match tomorrow's date
       if (editDateOnly === tomorrowDateOnly) {
         seenEdits.push(editId);
-        // if deleted = true
+        // if deleted = true, remove the edit instance
         if (editRide.deleted) {
-          // create repeating ride instance only if it does NOT match the delete edit
-          if (!(repeatingRide.startTime === editRide.startTime
-            && repeatingRide.endTime === editRide.endTime
-            && repeatingRide.rider.id === editRide.rider.id
-            && repeatingRide.startLocation.id === editRide.startLocation.id
-            && repeatingRide.endLocation.id === editRide.endLocation.id)) {
-            repeatingRide.save().catch((err) => console.log(err));
-          }
-          // remove this delete edit instance
           Ride.get(editId).then((dataGetToDelete) => {
             dataGetToDelete?.delete();
           });
         }
-        // if deleted = false, the edit instance is kept as a valid ride
+        // if deleted = false, keep the edit instance as a valid ride
       }
       // remove the seen edit ids from the master repeating ride's edits field
       editCount += 1;
