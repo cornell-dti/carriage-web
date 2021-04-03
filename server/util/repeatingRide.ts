@@ -38,8 +38,11 @@ function createRepeatingRides() {
       const endDateMoment = moment(endDate, 'MM/DD/YYYY');
       const endDateFormat = endDateMoment.format('YYYY-MM-DD');
 
-      // only continue if the endDate has not passed
-      if (endDate && endDateFormat >= tomorrowDateOnly) {
+      // get startDate
+      const startDate = moment(startTime).format('YYYY-MM-DD');
+
+      // only continue if the tomorrow is between the startDate and endDate
+      if (endDate && endDateFormat >= tomorrowDateOnly && startDate <= tomorrowDateOnly) {
         // the repeating ride's instance start and end times use tomorrow's date
         const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
         const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
