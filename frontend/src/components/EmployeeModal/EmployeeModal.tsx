@@ -16,11 +16,18 @@ type EmployeeModalProps = {
   netId?: string;
   email?: string;
   phone?: string;
+  role?: string;
 }
 
-const EmployeeModal = ({name, netId, email, phone}:EmployeeModalProps) => {
+const EmployeeModal = ({
+  name, 
+  netId, 
+  email, 
+  phone, 
+  role
+}: EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('driver');
+  const [selectedRole, setSelectedRole] = useState(role ? role : 'driver');
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();

@@ -34,6 +34,11 @@ const EmployeeDetail = () => {
     if (isAdmin) return 'Admin';
     return 'Driver';
   }
+  const roleValue = (): string => {
+    if (isBoth) return 'both';
+    if (isAdmin) return 'admin';
+    return 'driver';
+  }
 
   const testboolean = true; 
   const compRides = (a: Ride, b: Ride) => {
@@ -57,6 +62,7 @@ const EmployeeDetail = () => {
         netId={employee.netId}
         email={employee.netId + '@cornell.edu'}
         phone={employee.phone}
+        role={roleValue()}
       />
       <UserDetail
         firstName={employee.firstName}
