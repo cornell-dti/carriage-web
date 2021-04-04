@@ -1,20 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 25.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 48 48" style="enable-background:new 0 0 48 48;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-	.st1{fill:#FF647C;}
-</style>
-<g>
-	<circle class="st0" cx="24" cy="24" r="24"/>
+<svg width="76" height="76" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d)">
+<circle cx="38" cy="34" r="24" fill="white"/>
 </g>
-<path class="st1" d="M33.2,16.7h-1.8h-2.8v-2.8c0-0.5-0.4-0.9-0.9-0.9h-7.3c-0.5,0-0.9,0.4-0.9,0.9v2.8h-2.8h-1.8
-	c-0.5,0-0.9,0.4-0.9,0.9s0.4,0.9,0.9,0.9h0.9v13.8c0,1.5,1.2,2.8,2.8,2.8h11c1.5,0,2.8-1.2,2.8-2.8V18.5h0.9c0.5,0,0.9-0.4,0.9-0.9
-	S33.8,16.7,33.2,16.7z M21.3,14.8h5.5v1.8h-5.5V14.8z M30.5,32.2c0,0.5-0.4,0.9-0.9,0.9h-11c-0.5,0-0.9-0.4-0.9-0.9V18.5h2.7h7.3
-	h2.8V32.2L30.5,32.2z"/>
-<path class="st1" d="M21.3,20.3c-0.5,0-0.9,0.4-0.9,0.9v8.2c0,0.5,0.4,0.9,0.9,0.9c0.5,0,0.9-0.4,0.9-0.9v-8.2
-	C22.2,20.7,21.8,20.3,21.3,20.3z"/>
-<path class="st1" d="M26.8,20.3c-0.5,0-0.9,0.4-0.9,0.9v8.2c0,0.5,0.4,0.9,0.9,0.9c0.5,0,0.9-0.4,0.9-0.9v-8.2
-	C27.7,20.7,27.3,20.3,26.8,20.3z"/>
+<path d="M47.25 26.6667H45.4166H42.6666V23.9167C42.6667 23.4107 42.2569 23 41.75 23H34.4167C33.9098 23 33.5 23.4107 33.5 23.9167V26.6667H30.75H28.9167C28.4098 26.6667 28 27.0773 28 27.5833C28 28.0893 28.4097 28.5 28.9167 28.5H29.8333V42.25C29.8333 43.7662 31.0672 45 32.5833 45H43.5833C45.0995 45 46.3333 43.7662 46.3333 42.25V28.5H47.25C47.7569 28.5 48.1666 28.0893 48.1666 27.5833C48.1666 27.0773 47.7569 26.6667 47.25 26.6667ZM35.3333 24.8333H40.8333V26.6667H35.3333V24.8333ZM44.5 42.25C44.5 42.7551 44.0893 43.1667 43.5833 43.1667H32.5833C32.0773 43.1667 31.6667 42.7551 31.6667 42.25V28.5H34.4167H41.75H44.5V42.25H44.5Z" fill="#FF647C"/>
+<path d="M35.3332 30.333C34.8263 30.333 34.4165 30.7437 34.4165 31.2497V39.4997C34.4165 40.0057 34.8263 40.4163 35.3332 40.4163C35.8401 40.4163 36.2498 40.0057 36.2498 39.4997V31.2497C36.2498 30.7437 35.8401 30.333 35.3332 30.333Z" fill="#FF647C"/>
+<path d="M40.8332 30.333C40.3263 30.333 39.9165 30.7437 39.9165 31.2497V39.4997C39.9165 40.0057 40.3263 40.4163 40.8332 40.4163C41.3401 40.4163 41.7498 40.0057 41.7498 39.4997V31.2497C41.7498 30.7437 41.3401 30.333 40.8332 30.333Z" fill="#FF647C"/>
+<defs>
+<filter id="filter0_d" x="0" y="0" width="76" height="76" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="7"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+</filter>
+</defs>
 </svg>
