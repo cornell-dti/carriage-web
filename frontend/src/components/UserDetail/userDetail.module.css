@@ -9,9 +9,8 @@
 }
 
 .imgContainer {
-  margin: 2% 2% 3% 3%;
+  margin: 2% 2% 1.5% 3%;
   display: inline-block;
-  width: 12%;
 }
 
 .profilePic {
@@ -19,6 +18,14 @@
   width: 90%;
   height: auto;
   display: inline-block;
+}
+
+.undefinedProfilePic {
+  background-color: #dddddd;
+  display: inline-block;
+  width: 8.063rem;
+  height: 8.063rem;
+  border-radius: 0.3rem;
 }
 
 .basicInfoContainer {
@@ -53,14 +60,16 @@
   width: 3.75rem;
 }
 
-.contactInfoContainaer {
-  display: inline-block;
+.contactInfoContainer {
+  display: flex;
+  flex-direction: row;
   width: 100%;
-  border-top: ridge;
+  margin-top: 0.8rem;
 }
 
 .contactInfo {
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
   width: fit-content;
   margin-right: 5%;
 }
