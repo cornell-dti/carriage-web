@@ -11,7 +11,14 @@ import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 
-const EmployeeModal = () => {
+type EmployeeModalProps = {
+  name?: string;
+  netId?: string;
+  email?: string;
+  phone?: string;
+}
+
+const EmployeeModal = ({name, netId, email, phone}:EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState('driver');
   const { withDefaults } = useReq();
@@ -75,7 +82,11 @@ const EmployeeModal = () => {
         <Upload />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <EmployeeInfo />
+            <EmployeeInfo 
+              name={name}
+              netId={netId}
+              email={email}
+              phone={phone}/>
             {selectedRole === 'admin' ? null : <WorkingHours />}
             <RoleSelector
               selectedRole={selectedRole}

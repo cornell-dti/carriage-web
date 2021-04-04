@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
+import { drivers } from 'icons/sidebar';
 
 type EmployeeDetailProps = {
   id: string;
@@ -50,6 +52,12 @@ const EmployeeDetail = () => {
 
   return (
     <>
+      <EmployeeModal 
+        name={employee.firstName + ' ' + employee.lastName}
+        netId={employee.netId}
+        email={employee.netId + '@cornell.edu'}
+        phone={employee.phone}
+      />
       <UserDetail
         firstName={employee.firstName}
         lastName={employee.lastName}
