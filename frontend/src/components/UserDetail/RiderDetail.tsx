@@ -40,7 +40,8 @@ const RiderDetail = () => {
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
-      netId={rider.netID}>
+      netId={rider.netID}
+      photoLink={undefined}>
       <UserContactInfo icon={phone} alt="" text={rider.phone} />
       <UserContactInfo icon="" alt="" text={rider.accessibility} />
       <OtherInfo>

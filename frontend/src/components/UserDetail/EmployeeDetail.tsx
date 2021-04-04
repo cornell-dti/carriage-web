@@ -54,13 +54,14 @@ const EmployeeDetail = () => {
         firstName={employee.firstName}
         lastName={employee.lastName}
         netId={employee.netId}
+        photoLink={undefined}
       >
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
         <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
-        <OtherInfo>
+        {/* <OtherInfo>
           <p>last week:</p>
-        </OtherInfo>
+        </OtherInfo> */}
       </UserDetail>
 
      <PastRides
