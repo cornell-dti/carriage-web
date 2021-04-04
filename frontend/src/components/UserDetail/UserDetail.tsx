@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './userDetail.module.css';
-import { edit } from '../../icons/other/index';
+import { edit, trash } from '../../icons/other/index';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -52,7 +52,10 @@ const UserDetail = ({
       <div className={styles.basicInfoContainer}>
         <p className={styles.name}>{fullName}</p>
         <p className={styles.netId}>{netId}</p>
-        <img className={styles.edit} alt="edit" src={edit} />
+        <div className={styles.userEditContainer}>
+          <img className={styles.editIcon} alt="edit" src={edit} />
+          <img className={styles.editIcon} alt="trash" src={trash} />
+        </div>
         <div className={styles.contactInfoContainer}>{children}</div>
       </div>
     </div>

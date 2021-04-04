@@ -52,12 +52,19 @@
   margin-left: 3%;
 }
 
-.edit {
+.userEditContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   position: absolute;
-  display: inline-block;
-  top: 2%;
+  top: 10%;
   right: 0;
+}
+
+.editIcon {
   width: 3.75rem;
+  height: auto;
 }
 
 .contactInfoContainer {
