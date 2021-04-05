@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Table } from '../TableComponents/TableComponents';
-import { Ride } from '../../types';
+import { Ride, Tag } from '../../types';
 import styles from '../UserTables/table.module.css';
 
 type pastRideProps = {
@@ -15,13 +15,14 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
   return (
     <>
     <h1 className={styles.formHeader}>Past Rides</h1>
+    {rides.length !== 0 ? (
     <Table>
       <Row
         header
         colSizes={colSizes}
         data={headers.map((h) => ({ data: h }))}
       />
-      {rides.map((ride) => {
+      {rides.map((ride, index) => {
         const date = new Date(ride.startTime).toLocaleDateString();
         const startTime = new Date(ride.startTime)
           .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -39,8 +40,12 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
         const valueNameDate = { data: isStudent ? date : name };
         const valueDateTime = { data: isStudent ? `${startTime}${' - '}${endTime}` : date };
-        const valuePickup = { data: pickupLocation, tag: pickupTag };
-        const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+        const valuePickup = pickupTag !== Tag.INACTIVE ?
+                            { data: pickupLocation, tag: pickupTag, smallTag: true } :
+                            { data: pickupLocation, tag: pickupTag};
+        const valueDropoff = dropoffTag !== Tag.INACTIVE ? 
+                            { data: dropoffLocation, tag: dropoffTag, smallTag: true } : 
+                            { data: dropoffLocation, tag: dropoffTag };
         const valueNeeds = { data: needs };
 
         const inputValues = [
@@ -50,9 +55,13 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
           valueDropoff,
           valueNeeds,
         ];
-        return <Row data={inputValues} colSizes={colSizes} />;
+        return <Row data={inputValues} 
+                    colSizes={colSizes} 
+                    key={index}/>;
       })}
-    </Table>
+    </Table>) :
+    (<p className={styles.noContentText}>You have not completed any rides.</p>
+    )}
     </>
   );
 };
