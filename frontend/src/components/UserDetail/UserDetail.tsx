@@ -42,19 +42,21 @@ const UserDetail = ({
   const fullName = `${firstName} ${lastName}`;
   return (
     <div className={styles.userDetail}>
-      <div className={styles.imgContainer}>
-        {photoLink !== undefined ? (
-          <img className={styles.profilePic} src={photoLink} />
-        ) : (
-          <div className={styles.undefinedProfilePic} />
-        )}
-      </div>
+      {photoLink !== undefined ? (
+        <img className={styles.profilePic} src={photoLink} />
+      ) : (
+        <div className={styles.undefinedProfilePic} />
+      )}
       <div className={styles.basicInfoContainer}>
-        <p className={styles.name}>{fullName}</p>
-        <p className={styles.netId}>{netId}</p>
-        <div className={styles.userEditContainer}>
-          <img className={styles.editIcon} alt="edit" src={edit} />
-          <img className={styles.editIcon} alt="trash" src={trash} />
+        <div className={styles.basicInfoTop}>
+          <div className={styles.nameInfoContainer}>
+            <p className={styles.name}>{fullName}</p>
+            <p className={styles.netId}>{netId}</p>
+          </div>
+          <div className={styles.userEditContainer}>
+            <img className={styles.editIcon} alt="edit" src={edit} />
+            <img className={styles.editIcon} alt="trash" src={trash} />
+          </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>
       </div>
