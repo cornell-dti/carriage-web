@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import uploadBox from './upload.svg';
 import styles from './drivermodal.module.css';
 
@@ -6,28 +6,27 @@ type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const Upload = ({imageChange}: UploadProps) => 
-{
+const Upload = ({ imageChange }: UploadProps) => {
   const [imageURL, setImageURL] = useState('');
-  
+
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      let file = e.target.files[0];
-      let photoURL = URL.createObjectURL(file);
+    const { files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
+      const photoURL = URL.createObjectURL(file);
       setImageURL(photoURL);
     } else {
       console.log('undefined file');
     }
     imageChange(e);
-  };
+  }
 
   return (
     <div className={styles.uploadContainer}>
-      {imageURL ? 
-      <img className={styles.uploadImg} alt="uploaded picture" src={imageURL} />
-      :
-      <img className={styles.uploadImg} alt="profile upload" src={uploadBox} />
+      {imageURL
+        ? <img className={styles.uploadImg} alt="uploaded picture" src={imageURL} />
+        : <img className={styles.uploadImg} alt="profile upload" src={uploadBox} />
       }
       <input
         id="driverPhotoInput"

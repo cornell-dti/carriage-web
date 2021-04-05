@@ -42,7 +42,7 @@ const UserDetail = ({
   return (
     <div className={styles.userDetail}>
       <div className={styles.imgContainer}>
-        {photoLink
+        {photoLink && photoLink !== ''
           ? <img className={styles.profilePic} src={`http://${photoLink}`} />
           : null}
       </div>

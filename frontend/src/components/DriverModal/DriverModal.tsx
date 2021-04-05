@@ -51,7 +51,7 @@ const DriverModal = () => {
       email,
       phoneNumber,
       availability: parseAvailability(availability),
-      vehicle: vehicleJson.id
+      vehicle: vehicleJson.id,
     };
     if (imageBase64 === '') {
       fetch('/api/drivers', withDefaults({
@@ -59,60 +59,51 @@ const DriverModal = () => {
         body: JSON.stringify(driver),
       }))
         .then(() => refreshDrivers());
-    } 
-    else {
+    } else {
       const createdDriver = await fetch('/api/drivers', withDefaults({
         method: 'POST',
         body: JSON.stringify(driver),
       }))
         .then((res) => res.json());
-      
+
       // upload image
-      const photo = { 
+      const photo = {
         id: createdDriver.id,
-        tableName: 'Drivers', 
-        fileBuffer: imageBase64 
+        tableName: 'Drivers',
+        fileBuffer: imageBase64,
       };
-      const photoJson = await fetch('/api/upload', withDefaults({
+      await fetch('/api/upload', withDefaults({
         method: 'POST',
         body: JSON.stringify(photo),
       }))
-        .then((res) => res.json());
-
-      // update driver photoLink
-      fetch(`/api/drivers/${createdDriver.id}`,withDefaults({
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ photoLink: photoJson.fileBuffer }),
-        }))
-          .then(() => refreshDrivers());
+        .then(() => refreshDrivers()).catch((err) => console.log(err));
     }
     closeModal();
   };
 
   function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    
+
     if (e.target.files && e.target.files[0]) {
-      let reader = new FileReader();
-      let file = e.target.files[0];
+      const reader = new FileReader();
+      const file = e.target.files[0];
       reader.readAsDataURL(file);
       reader.onload = function () {
-      let res = reader.result;
+        let res = reader.result;
         if (res) {
           res = res.toString();
           // remove "data:image/png;base64," and "data:image/jpeg;base64,"
-          let strBase64 = res.toString().substring(res.indexOf(",") + 1);
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
           setImageBase64(strBase64);
         }
       };
       reader.onerror = function (error) {
         console.log('Error reading file: ', error);
-      };  
+      };
     } else {
       console.log('Undefined file upload');
     }
-  };
+  }
 
   return (
     <>
@@ -122,7 +113,7 @@ const DriverModal = () => {
         isOpen={isOpen}
         onClose={closeModal}
       >
-        <Upload imageChange={updateBase64}/>
+        <Upload imageChange={updateBase64} />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <DriverInfo />
