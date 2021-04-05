@@ -7,10 +7,12 @@ interface NotificationProps {
 }
 
 const Notification = ({ isNotified }: NotificationProps) => (
-    <div className={styles.container}>
-      <img src={notificationBell} className={styles.bell} alt="notification bell icon" />
-      {isNotified && <img src={notificationBadge} className={styles.badge} alt="notification badge icon" />}
-    </div>
+  <div className={styles.container}>
+    <img src={notificationBell} className={styles.bell} alt="notification bell icon" />
+    {isNotified && (
+      <img src={notificationBadge} className={styles.badge} alt="notification badge icon" />
+    )}
+  </div>
 );
 
 export default Notification;
