@@ -92,6 +92,8 @@ export enum Tag {
   NORTH = 'north',
   CTOWN = 'ctown', // college town
   DTOWN = 'dtown', // downtown
+  INACTIVE = 'inactive',
+  CUSTOM = 'custom'
 }
 
 export type Location = {
