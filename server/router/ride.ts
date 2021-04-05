@@ -55,9 +55,7 @@ router.get('/repeating', validateUser('User'), (req, res) => {
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
-    .ge(now.substring(0, 10))
-    .where('startTime')
-    .le(now);
+    .ge(now.substring(0, 10));
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
