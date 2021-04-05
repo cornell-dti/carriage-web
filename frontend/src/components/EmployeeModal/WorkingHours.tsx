@@ -89,7 +89,11 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
   );
 };
 
-const WorkingHours = () => {
+type WorkingHoursProps = {
+  existingAvailability?: string[][];
+}
+
+const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
   const [numAvailability, setNumAvailability] = useState(1);
 
   const addAvailabilityInput = () => setNumAvailability((n) => n + 1);

@@ -12,25 +12,28 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 
 type EmployeeModalProps = {
-  name?: string;
-  netId?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
+  existingEmployee?: {
+    id?: string;
+    name?: string;
+    netId?: string;
+    email?: string;
+    phone?: string;
+    availability?: string[][];
+    role?: string;
+  }
 }
 
-const EmployeeModal = ({
-  name, 
-  netId, 
-  email, 
-  phone, 
-  role
-}: EmployeeModalProps) => {
+const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState(role ? role : 'driver');
+  const [selectedRole, setSelectedRole] = useState(
+    existingEmployee?.role ? existingEmployee?.role : 'driver');
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
+
+  const modalButtonText = existingEmployee ? 'Edit' : '+ Add an employee';
+  const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
+  const submitButtonText = existingEmployee ? 'Save' : 'Add';
 
   const openModal = () => setIsOpen(true);
 
@@ -57,10 +60,21 @@ const EmployeeModal = ({
         email,
         phoneNumber,
       };
-      fetch('/api/admins', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(admin),
-      })).then(() => refreshAdmins());
+      if (existingEmployee) {
+        // Update an existing admin
+        console.log('edit employee admin');
+        fetch(`/api/admins/${existingEmployee.id}`,withDefaults({
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(admin),
+        })).then(() => refreshAdmins());
+      } else { 
+        //Create a new admin
+        fetch('/api/admins', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(admin),
+        })).then(() => refreshAdmins());
+      }
     } else {
       const driver = {
         firstName,
@@ -70,19 +84,30 @@ const EmployeeModal = ({
         availability: parseAvailability(availability),
         admin: selectedRole === 'both',
       };
-      fetch('/api/drivers', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(driver),
-      })).then(() => refreshDrivers());
+      if (existingEmployee) {
+        // Update an existing driver
+        console.log('edit employee driver');
+        fetch(`/api/drivers/${existingEmployee.id}`,withDefaults({
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(driver),
+        })).then(() => refreshDrivers());
+      } else { 
+        //Create a new driver
+        fetch('/api/drivers', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(driver),
+        })).then(() => refreshDrivers());
+      }
     }
     closeModal();
   };
 
   return (
     <>
-      <Button onClick={openModal}>+ Add an employee</Button>
+      <Button onClick={openModal}>{ modalButtonText }</Button>
       <Modal
-        title='Add an Employee'
+        title={modalTitle}
         isOpen={isOpen}
         onClose={closeModal}
       >
@@ -90,16 +115,24 @@ const EmployeeModal = ({
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo 
-              name={name}
-              netId={netId}
-              email={email}
-              phone={phone}/>
-            {selectedRole === 'admin' ? null : <WorkingHours />}
+              name={existingEmployee?.name}
+              netId={existingEmployee?.netId}
+              email={existingEmployee?.email}
+              phone={existingEmployee?.phone}
+            />
+            {
+              selectedRole === 'admin' ? null : 
+                <WorkingHours 
+                  existingAvailability={existingEmployee?.availability}
+                />
+            }
             <RoleSelector
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
             />
-            <Button className={styles.submit} type='submit'>Add</Button>
+            <Button className={styles.submit} type='submit'>
+              {submitButtonText}
+            </Button>
           </form>
         </FormProvider>
       </Modal>

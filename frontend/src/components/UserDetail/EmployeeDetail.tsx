@@ -6,7 +6,6 @@ import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
-import { drivers } from 'icons/sidebar';
 
 type EmployeeDetailProps = {
   id: string;
@@ -58,18 +57,24 @@ const EmployeeDetail = () => {
   return (
     <>
       <EmployeeModal 
-        name={employee.firstName + ' ' + employee.lastName}
-        netId={employee.netId}
-        email={employee.netId + '@cornell.edu'}
-        phone={employee.phone}
-        role={roleValue()}
+        existingEmployee={
+          {
+            id: employee.id,
+            name: employee.firstName + ' ' + employee.lastName,
+            netId: employee.netId,
+            email: employee.netId + '@cornell.edu',
+            phone: employee.phone,
+            availability: employee.availability,
+            role: roleValue()
+          }
+        }
       />
       <UserDetail
         firstName={employee.firstName}
         lastName={employee.lastName}
         netId={employee.netId}
       >
-        <UserContactInfo icon={phone} alt="" text={employee.phone} />
+        <UserContactInfo icon={phone} alt="" text={employee.id} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
         <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
         <OtherInfo>
