@@ -48,6 +48,22 @@ router.get('/download', (req, res) => {
   db.scan(res, Ride, condition, callback);
 });
 
+// Get and query all master repeating rides in table
+router.get('/repeating', validateUser('User'), (req, res) => {
+  const { query: { rider } } = req;
+  const now = moment().toISOString();
+  let condition = new Condition('recurring')
+    .eq(true)
+    .where('endDate')
+    .ge(now.substring(0, 10))
+    .where('startTime')
+    .le(now);
+  if (rider) {
+    condition = condition.where('rider').eq(rider);
+  }
+  db.scan(res, Ride, condition);
+});
+
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
