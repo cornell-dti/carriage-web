@@ -5,8 +5,8 @@ import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
-import Card from '../Card/Card';
 import styles from './userDetail.module.css';
+import { clockStats, peopleStats, wheelStats } from '../../icons/employeeStats/index' ;
 
 type EmployeeDetailProps = {
   id: string;
@@ -19,7 +19,7 @@ type EmployeeDetailProps = {
 };
 
 type EmployeeStatisticsProps = {
-  rides: Ride[]
+  rides: Ride[];
 }
 
 type StatisticProps = {
@@ -34,17 +34,35 @@ const EmployeeStatistics = ({ rides } : EmployeeStatisticsProps) => {
       <div className={styles.statistic}>
         <img src={icon} className={styles.statIcon}/>
         <div className={styles.statDescription}>
-          <h2 className={styles.stat}>{stat}</h2>
+          {icon === peopleStats ? (
+          <h2 className={styles.stat}>{stat}</h2>) : 
+          (<h2 className={styles.stat}>{stat}<span className={styles.statsHrs}>hrs</span></h2> )}
+
+          <p>{description}</p>
         </div>
       </div>
     );
   }
 
+  const rideCount = rides.length;
+  const hoursDriving = rides.reduce((accumulator, ride) => {
+    const startDate = new Date(ride.startTime);
+    const endDate = new Date(ride.endTime);
+    const diff = Math.abs(endDate.getTime() - startDate.getTime()) / 3600000;
+    return diff + accumulator;
+  }, 0);
+
   return (
+    <>
+    <h3 className={styles.statisticsHeader}>Statistics</h3>
     <div className={styles.employeeStatistics}>
-      <h3>Last Week</h3>
-      <Statistic icon='' stat={40} description='rides' />
+      <h3 className={styles.statisticCardDesc}>Last Week</h3>
+      <div className={styles.statsContainer}>
+        <Statistic icon={peopleStats} stat={rideCount} description='rides' />
+        <Statistic icon={wheelStats} stat={hoursDriving} description='driving' />
+      </div>
     </div>
+    </>
   );
 }
 
@@ -97,7 +115,7 @@ const EmployeeDetail = () => {
         </OtherInfo> */}
       </UserDetail>
     
-    <EmployeeStatistics rides={rides}/>
+    <EmployeeStatistics rides={rides} />
 
      <PastRides
      isStudent = {false}
