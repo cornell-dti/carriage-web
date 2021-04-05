@@ -5,6 +5,8 @@ import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
+import Card from '../Card/Card';
+import styles from './userDetail.module.css';
 
 type EmployeeDetailProps = {
   id: string;
@@ -15,6 +17,37 @@ type EmployeeDetailProps = {
   availability?: string[][];
   admin?: boolean;
 };
+
+type EmployeeStatisticsProps = {
+  rides: Ride[]
+}
+
+type StatisticProps = {
+  icon: string;
+  stat: number;
+  description: string;
+}
+
+const EmployeeStatistics = ({ rides } : EmployeeStatisticsProps) => {
+  const Statistic = ({ icon, stat, description } : StatisticProps) => {
+    return (
+      <div className={styles.statistic}>
+        <img src={icon} className={styles.statIcon}/>
+        <div className={styles.statDescription}>
+          <h2 className={styles.stat}>{stat}</h2>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.employeeStatistics}>
+      <h3>Last Week</h3>
+      <Statistic icon='' stat={40} description='rides' />
+    </div>
+  );
+}
+
 
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
@@ -63,6 +96,8 @@ const EmployeeDetail = () => {
           <p>last week:</p>
         </OtherInfo> */}
       </UserDetail>
+    
+    <EmployeeStatistics rides={rides}/>
 
      <PastRides
      isStudent = {false}
