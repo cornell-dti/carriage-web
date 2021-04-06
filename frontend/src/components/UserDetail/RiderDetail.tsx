@@ -14,7 +14,7 @@ type RiderDetailProps = {
   lastName: string;
   netID: string;
   phone: string;
-  // address: string;
+  address: string;
   accessibility: string
 }
 
@@ -35,7 +35,7 @@ const RiderDetail = () => {
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, rider.id]);
-  
+  console.log(rider);
   return (
     <div className={styles.detailContainer}>
       <UserDetail
@@ -43,11 +43,17 @@ const RiderDetail = () => {
         lastName={rider.lastName}
         netId={rider.netID}
         photoLink={rider.photoLink}>
-        <UserContactInfo icon={phone} alt="" text={rider.phone} />
-        <UserContactInfo icon="" alt="" text={rider.accessibility} />
-        <OtherInfo>
-          <p>other info:</p>
-        </OtherInfo>
+        
+        <div className={styles.accessibilityContainer}>
+          <p>Reason for Ride:</p>
+        </div>
+
+
+        <div className={styles.riderContactInfo}>
+          <UserContactInfo icon={phone} alt="" text={rider.phone} />
+          <UserContactInfo icon={phone} alt="" text={rider.address} />
+        </div>
+        
       </UserDetail>
       <PastRides
       isStudent = {true}

@@ -107,13 +107,10 @@ const EmployeeDetail = () => {
         lastName={employee.lastName}
         netId={employee.netId}
         photoLink={employee.photoLink}>
-
+        
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
         <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
-        {/* <OtherInfo>
-          <p>last week:</p>
-        </OtherInfo> */}
       </UserDetail>
     
       <EmployeeStatistics rides={rides} />
