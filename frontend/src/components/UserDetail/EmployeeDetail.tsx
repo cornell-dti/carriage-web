@@ -6,7 +6,7 @@ import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
 import styles from './userDetail.module.css';
-import { clockStats, peopleStats, wheelStats } from '../../icons/employeeStats/index' ;
+import { clockStats, peopleStats, wheelStats } from '../../icons/stats/index' ;
 
 type EmployeeDetailProps = {
   id: string;
@@ -53,16 +53,16 @@ const EmployeeStatistics = ({ rides } : EmployeeStatisticsProps) => {
   }, 0);
 
   return (
-    <>
-    <h3 className={styles.statisticsHeader}>Statistics</h3>
-    <div className={styles.employeeStatistics}>
-      <h3 className={styles.statisticCardDesc}>Last Week</h3>
-      <div className={styles.statsContainer}>
-        <Statistic icon={peopleStats} stat={rideCount} description='rides' />
-        <Statistic icon={wheelStats} stat={hoursDriving} description='driving' />
+    <div className={styles.userDetailContainer}>
+      <h3 className={styles.userDetailHeader}>Statistics</h3>
+      <div className={styles.employeeStatistics}>
+        <h3 className={styles.statisticCardDesc}>Last Week</h3>
+        <div className={styles.statsContainer}>
+          <Statistic icon={peopleStats} stat={rideCount} description='rides' />
+          <Statistic icon={wheelStats} stat={hoursDriving} description='driving' />
+        </div>
       </div>
     </div>
-    </>
   );
 }
 
@@ -101,19 +101,21 @@ const EmployeeDetail = () => {
 
   return (
     <>
-      <UserDetail
-        firstName={employee.firstName}
-        lastName={employee.lastName}
-        netId={employee.netId}
-        photoLink={undefined}
-      >
-        <UserContactInfo icon={phone} alt="" text={employee.phone} />
-        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-        <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
-        {/* <OtherInfo>
-          <p>last week:</p>
-        </OtherInfo> */}
-      </UserDetail>
+      <div className={styles.userDetailContainer}>
+        <UserDetail
+          firstName={employee.firstName}
+          lastName={employee.lastName}
+          netId={employee.netId}
+          photoLink={undefined}
+        >
+          <UserContactInfo icon={phone} alt="" text={employee.phone} />
+          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
+          <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
+          {/* <OtherInfo>
+            <p>last week:</p>
+          </OtherInfo> */}
+        </UserDetail>
+      </div>
     
     <EmployeeStatistics rides={rides} />
 

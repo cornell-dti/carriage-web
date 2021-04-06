@@ -1,11 +1,14 @@
-.userDetail, .employeeStatistics {
+.userDetailContainer {
   width: 96%;
+  margin: auto;
+}
+
+.userDetail, .employeeStatistics {
   display: flex;
   flex-direction: row;
   border-radius: 0.5rem;
   background-color: white;
   box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
-  margin: auto;
   padding: 2% 3.5%;
 }
 
@@ -100,8 +103,7 @@
   margin-top: 3%;
 }
 
-.statisticsHeader {
-  margin: 6rem 0 0 2%;
+.userDetailHeader {
   font-size: 1.125rem;
 }
 
@@ -111,7 +113,11 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
 
+.noContentText {
+  text-align: center;
+  margin-top: 1rem;
 }
 
 .statsContainer {
