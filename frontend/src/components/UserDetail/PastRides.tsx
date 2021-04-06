@@ -13,7 +13,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
   const headers = [isStudent ? 'Date' : 'Name', isStudent ? 'Time' : 'Date', 'Pickup Location', 'Dropoff Location', 'Needs'];
 
   return (
-    <div className={styles.userDetailContainer}>
+    <div className={styles.pastRidesContainer}>
       <h3 className={styles.userDetailHeader}>Past Rides</h3>
       {rides.length !== 0 ? (
       <Table>
