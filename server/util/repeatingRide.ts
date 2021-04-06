@@ -34,15 +34,11 @@ function createRepeatingRides() {
         id, rider, driver, startLocation, endLocation, startTime, endTime, endDate, edits,
       } = masterRide.toJSON() as RideType;
 
-      // change endDate format from MM/DD/YYYY to YYYY-MM-DD
-      const endDateMoment = moment(endDate, 'MM/DD/YYYY');
-      const endDateFormat = endDateMoment.format('YYYY-MM-DD');
-
       // get startDate
       const startDate = moment(startTime).format('YYYY-MM-DD');
 
       // only continue if tomorrow is between the startDate and endDate
-      if (endDate && endDateFormat >= tomorrowDateOnly && startDate <= tomorrowDateOnly) {
+      if (endDate && endDate >= tomorrowDateOnly && startDate <= tomorrowDateOnly) {
         const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
         const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
 
