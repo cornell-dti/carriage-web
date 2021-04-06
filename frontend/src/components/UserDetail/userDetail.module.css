@@ -1,5 +1,5 @@
-.userDetailContainer {
-  width: 96%;
+.detailContainer {
+  width: 95%;
   margin: auto;
 }
 
@@ -105,6 +105,10 @@
 
 .userDetailHeader {
   font-size: 1.125rem;
+}
+
+.statisticsContainer, .pastRidesContainer {
+  margin-top: 5rem;
 }
 
 .employeeStatistics {
