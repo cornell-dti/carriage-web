@@ -16,6 +16,7 @@ type EmployeeDetailProps = {
   phone: string;
   availability?: string[][];
   admin?: boolean;
+  photoLink: string;
 };
 
 type EmployeeStatisticsProps = {
@@ -53,7 +54,7 @@ const EmployeeStatistics = ({ rides } : EmployeeStatisticsProps) => {
   }, 0);
 
   return (
-    <div className={styles.userDetailContainer}>
+    <div className={styles.statisticsContainer}>
       <h3 className={styles.userDetailHeader}>Statistics</h3>
       <div className={styles.employeeStatistics}>
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
@@ -100,30 +101,28 @@ const EmployeeDetail = () => {
   }, [withDefaults, employee.id]);
 
   return (
-    <>
-      <div className={styles.userDetailContainer}>
-        <UserDetail
-          firstName={employee.firstName}
-          lastName={employee.lastName}
-          netId={employee.netId}
-          photoLink={undefined}
-        >
-          <UserContactInfo icon={phone} alt="" text={employee.phone} />
-          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-          <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
-          {/* <OtherInfo>
-            <p>last week:</p>
-          </OtherInfo> */}
-        </UserDetail>
-      </div>
-    
-    <EmployeeStatistics rides={rides} />
+    <div className={styles.detailContainer}>
+      <UserDetail
+        firstName={employee.firstName}
+        lastName={employee.lastName}
+        netId={employee.netId}
+        photoLink={employee.photoLink}>
 
-     <PastRides
-     isStudent = {false}
-     rides={rides}
-     />
-    </>
+        <UserContactInfo icon={phone} alt="" text={employee.phone} />
+        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
+        <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
+        {/* <OtherInfo>
+          <p>last week:</p>
+        </OtherInfo> */}
+      </UserDetail>
+    
+      <EmployeeStatistics rides={rides} />
+
+      <PastRides
+      isStudent = {false}
+      rides={rides}
+      />
+    </div>
   );
 };
 

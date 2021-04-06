@@ -5,9 +5,10 @@ import { useLocation } from 'react-router-dom';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
+import styles from './userDetail.module.css';
 
 type RiderDetailProps = {
-  // profilePic: string;
+  photoLink: string;
   id: string;
   firstName: string;
   lastName: string;
@@ -36,23 +37,23 @@ const RiderDetail = () => {
   }, [withDefaults, rider.id]);
   
   return (
-    <>
-    <UserDetail
-      firstName={rider.firstName}
-      lastName={rider.lastName}
-      netId={rider.netID}
-      photoLink={undefined}>
-      <UserContactInfo icon={phone} alt="" text={rider.phone} />
-      <UserContactInfo icon="" alt="" text={rider.accessibility} />
-      <OtherInfo>
-        <p>other info:</p>
-      </OtherInfo>
-    </UserDetail>
-    <PastRides
-     isStudent = {true}
-     rides={rides}
-     />
-    </>
+    <div className={styles.detailContainer}>
+      <UserDetail
+        firstName={rider.firstName}
+        lastName={rider.lastName}
+        netId={rider.netID}
+        photoLink={rider.photoLink}>
+        <UserContactInfo icon={phone} alt="" text={rider.phone} />
+        <UserContactInfo icon="" alt="" text={rider.accessibility} />
+        <OtherInfo>
+          <p>other info:</p>
+        </OtherInfo>
+      </UserDetail>
+      <PastRides
+      isStudent = {true}
+      rides={rides}
+      />
+    </div>
   );
 };
 
