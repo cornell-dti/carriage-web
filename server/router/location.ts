@@ -43,11 +43,10 @@ router.get('/', validateUser('User'), (req, res) => {
 
 // Put a location in Locations table
 router.post('/', validateUser('Admin'), (req, res) => {
-  const { body: { name, address } } = req;
+  const { body } = req;
   const location = new Location({
+    ...body,
     id: uuid(),
-    name,
-    address,
   });
   db.create(res, location);
 });

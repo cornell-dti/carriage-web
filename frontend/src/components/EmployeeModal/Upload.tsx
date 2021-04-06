@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import uploadBox from './upload.svg';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
