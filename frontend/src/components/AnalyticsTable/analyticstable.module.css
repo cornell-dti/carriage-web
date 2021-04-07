@@ -1,0 +1,32 @@
+.tableContainer {
+  position: relative;
+  padding: 1.875rem;
+  box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.icon {
+  position: absolute;
+  top: 1.25rem;
+  right: 2.125rem;
+}
+
+.cell {
+  padding: 1.125rem 0;
+  text-align: center;
+}
+
+.input {
+  background: #F2F2F2;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  border-radius: 10px;
+  text-align: center;
+  width: 3.5rem;
+  font-size: 1rem;
+  outline: none;
+}
