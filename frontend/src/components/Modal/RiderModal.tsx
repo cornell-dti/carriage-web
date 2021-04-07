@@ -3,7 +3,7 @@ import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, NewRider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
-import Upload from '../DriverModal/Upload';
+import Upload from '../EmployeeModal/Upload';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
