@@ -7,6 +7,7 @@ import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
+import showToast from '../ConfirmationToast/ConfirmationToast';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -14,11 +15,15 @@ import { useEmployees } from '../../context/EmployeesContext';
 const EmployeeModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState('driver');
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    setIsOpen(true);
+    setToast(false);
+  };
 
   const closeModal = () => setIsOpen(false);
 
@@ -62,10 +67,12 @@ const EmployeeModal = () => {
       })).then(() => refreshDrivers());
     }
     closeModal();
+    setToast(true);
   };
 
   return (
     <>
+      {showingToast ? showToast('The employee has been added.') : null}
       <Button onClick={openModal}>+ Add an employee</Button>
       <Modal
         title='Add an Employee'

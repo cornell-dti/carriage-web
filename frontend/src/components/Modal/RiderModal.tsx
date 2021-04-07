@@ -2,11 +2,11 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, NewRider } from '../../types/index';
+import showToast from '../ConfirmationToast/ConfirmationToast';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
-
 
 type RiderModalProps = {
   riders: Array<NewRider>;
@@ -31,6 +31,7 @@ const RiderModal = () => {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
 
@@ -46,6 +47,7 @@ const RiderModal = () => {
   };
 
   const submitData = () => {
+    setToast(false);
     setIsSubmitted(true);
     closeModal();
   };
@@ -71,11 +73,13 @@ const RiderModal = () => {
         body: JSON.stringify(newRider),
       })).then(() => refreshRiders());
       setIsSubmitted(false);
+      setToast(true);
     }
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
     <>
+      {showingToast ? showToast('The student has been added.') : null}
       <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
         title={['Add a student']}
