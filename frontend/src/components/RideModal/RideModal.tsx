@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import showToast from '../ConfirmationToast/ConfirmationToast';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType } from '../../types/index';
 import { useReq } from '../../context/req';
@@ -58,7 +58,7 @@ const RideModal = () => {
 
   return (
     <>
-      {showingToast ? showToast('Ride has been added.') : null}
+      {showingToast ? <Toast message='Ride has been added.' /> : null}
       <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate

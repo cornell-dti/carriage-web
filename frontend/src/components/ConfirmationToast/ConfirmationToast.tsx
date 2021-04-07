@@ -6,10 +6,6 @@ type toastProps = {
   message: string;
 }
 
-function showToast(text: string) {
-  return (<Toast message={text} />);
-}
-
 const Toast = ({ message }: toastProps) => {
   const [visible, setVisible] = useState(true);
 
@@ -33,4 +29,4 @@ const Toast = ({ message }: toastProps) => {
   );
 };
 
-export default showToast;
+export default Toast;

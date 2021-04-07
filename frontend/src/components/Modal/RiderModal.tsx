@@ -2,7 +2,7 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, NewRider } from '../../types/index';
-import showToast from '../ConfirmationToast/ConfirmationToast';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
@@ -79,7 +79,7 @@ const RiderModal = () => {
 
   return (
     <>
-      {showingToast ? showToast('The student has been added.') : null}
+      {showingToast ? <Toast message='Ride has been added.' /> : null}
       <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
         title={['Add a student']}
