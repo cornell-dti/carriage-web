@@ -71,9 +71,9 @@ const RiderModal = () => {
       fetch('/api/riders', withDefaults({
         method: 'POST',
         body: JSON.stringify(newRider),
-      })).then(() => refreshRiders());
+      })).then(() => refreshRiders())
+        .then(() => setToast(true));
       setIsSubmitted(false);
-      setToast(true);
     }
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
