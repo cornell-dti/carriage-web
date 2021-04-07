@@ -51,7 +51,8 @@ const EmployeeModal = () => {
       fetch('/api/admins', withDefaults({
         method: 'POST',
         body: JSON.stringify(admin),
-      })).then(() => refreshAdmins());
+      })).then(() => refreshAdmins())
+        .then(() => setToast(true));
     } else {
       const driver = {
         firstName,
@@ -64,7 +65,8 @@ const EmployeeModal = () => {
       fetch('/api/drivers', withDefaults({
         method: 'POST',
         body: JSON.stringify(driver),
-      })).then(() => refreshDrivers());
+      })).then(() => refreshDrivers())
+        .then(() => setToast(true));
     }
     closeModal();
     setToast(true);
