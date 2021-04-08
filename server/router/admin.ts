@@ -28,6 +28,12 @@ router.post('/', validateUser('Admin'), (req, res) => {
   db.create(res, admin);
 });
 
+// Update an existing admin
+router.put('/:id', validateUser('Admin'), (req, res) => {
+  const { params: { id }, body } = req;
+  db.update(res, Admin, { id }, body, tableName);
+});
+
 // Remove an admin
 router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
