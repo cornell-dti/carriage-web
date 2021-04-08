@@ -26,7 +26,7 @@ const Dashboard = () => {
               component={() => null}
             />
             <Route path="*">
-              <Redirect to="/home" />
+              <Redirect to="/schedule" />
             </Route>
           </Switch>
         </Sidebar>
