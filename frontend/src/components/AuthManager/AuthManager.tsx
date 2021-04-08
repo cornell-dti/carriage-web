@@ -1,11 +1,12 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+import { ObjectType } from '../../types';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
-import jwtDecode from 'jwt-decode';
 
 
 export const AuthManager: FunctionComponent = ({ children }) => {
@@ -52,12 +53,12 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       .then((json) => json.jwt);
 
     if (serverJWT) {
-      var decoded: any = jwtDecode(serverJWT);
+      const decoded: ObjectType = jwtDecode(serverJWT);
       setId(decoded.id);
       setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
-        history.push('/dashboard/home');
+        history.push('/admin/home');
       }
     } else {
       logout();

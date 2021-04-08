@@ -22,8 +22,8 @@ const Dashboard = () => {
 
   return (
     <DateContext.Provider value={defaultVal}>
-      <Router basename="/dashboard">
-        <Sidebar>
+      <Router basename="/admin">
+        <Sidebar type="admin">
           <Switch>
             <Route
               path="/home"
