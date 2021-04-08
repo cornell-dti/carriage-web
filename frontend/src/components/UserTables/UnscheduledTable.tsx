@@ -32,8 +32,12 @@ const Table = ({ drivers }: TableProps) => {
 
   return (
     <>
+<<<<<<< HEAD
       <h1 className={styles.formHeader}>Unscheduled Rides</h1>
       <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
+=======
+      <RidesTable rides={rides} drivers={drivers} hasAssignButton={true} />
+>>>>>>> ac5b3ddb0a829f91dc2c09b058f9e6241d92ab83
     </>
   );
 };

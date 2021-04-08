@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import styles from './drivermodal.module.css';
+import styles from './employeemodal.module.css';
 import { Input } from '../FormElements/FormElements';
 import { WeekProvider, useWeek } from './WeekContext';
 

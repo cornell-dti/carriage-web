@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import LandingPage from './pages/Landing/Landing';
 import Dashboard from './pages/Dashboard/Dashboard';
 import { AuthManager } from './components/AuthManager/AuthManager';
-import {DriversProvider} from './context/DriversContext';
+import {EmployeesProvider} from './context/EmployeesContext';
 import {RidersProvider} from './context/RidersContext';
 
 import './styles/App.css';
@@ -11,14 +11,14 @@ import './styles/App.css';
 const App = () => (
   <Router>
     <AuthManager>
-      <DriversProvider>
+      <EmployeesProvider>
       <RidersProvider>
       <Switch>
         <Route exact path="/" component={LandingPage} />
         <Route path="/dashboard" component={Dashboard} />
       </Switch>
       </RidersProvider>
-      </DriversProvider>
+      </EmployeesProvider>
     </AuthManager>
   </Router>
 );
