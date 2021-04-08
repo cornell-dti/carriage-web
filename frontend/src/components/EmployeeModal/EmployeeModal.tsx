@@ -69,7 +69,6 @@ const EmployeeModal = () => {
         .then(() => setToast(true));
     }
     closeModal();
-    setToast(true);
   };
 
   return (
