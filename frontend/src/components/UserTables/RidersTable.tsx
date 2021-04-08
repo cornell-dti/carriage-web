@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
 import { NewRider } from '../../types';
 import styles from './table.module.css';
-import {useRiders} from '../../context/RidersContext';
+import { useRiders } from '../../context/RidersContext';
 
 function renderTableHeader() {
   return (
@@ -21,7 +21,6 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   let allNeeds = '';
   const separator = ', ';
   if (accessNeeds != null && accessNeeds.length > 0) {
-    console.log(accessNeeds);
     for (let i = 0; i < accessNeeds.length; i += 1) {
       if (i !== accessNeeds.length - 1) {
         allNeeds = allNeeds + accessNeeds[i] + separator;
@@ -44,12 +43,19 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
           phoneNumber,
           address,
           joinDate,
+          endDate,
           email,
           accessibility,
         } = rider;
         const valuePhone = { data: phoneNumber };
         const valueAddress = { data: address };
-        const valueJoinDate = { data: joinDate };
+        const valueDuration = { 
+          data: 
+            endDate ? 
+            `${joinDate} - ${endDate}` 
+            : 
+            `${joinDate} -`
+          };
         const valueAccessbility = { data: renderAccessNeeds(accessibility) };
         const netId = email.split('@')[0];
         const valueNameNetid = {
@@ -65,7 +71,7 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
           valueNameNetid,
           valuePhone,
           valueAddress,
-          valueJoinDate,
+          valueDuration,
           valueAccessbility,
         ];
         const riderData = {

@@ -46,13 +46,22 @@ const MiniCal = () => {
   }
 
   const Indicators = ({ date }: { date: Date }) => (
-    <div>
-      <svg width="60" height="14" viewBox="0 0 60 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="7" cy="7" r="7" fill={isToday(date) ? '#00C48C' : 'white'} />
-        <circle cx="53" cy="7" r="7" fill={isTomorrow(date) ? '#00C48C' : 'white'} />
-        <line x1="14" y1="7" x2="46" y2="7" stroke="white" />
-      </svg>
-    </div>
+    <svg
+      width="50"
+      height="14"
+      viewBox="0 0 60 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="7" cy="7" r="7" fill={isToday(date) ? '#00C48C' : 'white'} />
+      <circle
+        cx="53"
+        cy="7"
+        r="7"
+        fill={isTomorrow(date) ? '#00C48C' : 'white'}
+      />
+      <line x1="14" y1="7" x2="46" y2="7" stroke="white" />
+    </svg>
   );
 
   const pseudoScroll = () => {

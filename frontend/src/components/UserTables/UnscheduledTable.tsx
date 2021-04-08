@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
-import moment from 'moment';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
@@ -32,7 +32,6 @@ const Table = ({ drivers }: TableProps) => {
 
   return (
     <>
-      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
       <RidesTable rides={rides} drivers={drivers} hasAssignButton={true} />
     </>
   );
