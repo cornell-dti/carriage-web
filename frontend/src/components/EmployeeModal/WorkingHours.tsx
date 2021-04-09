@@ -17,7 +17,8 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
     isDaySelectedByInstance,
     getSelectedDays,
   } = useWeek();
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue, getValues, formState } = useFormContext();
+  const { errors } = formState;
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -31,7 +32,6 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
   // data in an array 'availability' at index 'index'
   const instance = `availability[${index}]`;
   const days = getSelectedDays(index);
-
   const handleClick = (day: string) => {
     if (isDaySelectedByInstance(day, index)) {
       deselectDay(day);
@@ -39,11 +39,13 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       selectDay(day, index);
     }
   };
-
   useEffect(() => {
-    // Register day selector as custom form input
-    register(`${instance}.days`, { required: true });
-  }, [instance, register]);
+    // Register day selector as custom form input. 
+    //Not putting error message here since there is no default behavior to override
+    register(`${instance}.days`, { 
+      required: true, 
+      validate: () => {return days.length > 0}});
+  }, [instance, register, days]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -52,39 +54,59 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
 
   return (
     <div className={styles.availabilityInput}>
-      <Input
-        name={`${instance}.startTime`}
-        type='time'
-        className={styles.timeInput}
-        ref={register({ required: true })}
-      />
+      <div className={styles.timeFlexbox}>
+        <Input
+          name={`${instance}.startTime`}
+          type='time'
+          className={styles.timeInput}
+          ref={register({ required: "Please enter a valid start time"})}
+        />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].startTime &&  
+          <p className={styles.error}>{errors.availability[index].startTime.message}</p>
+        }  
+        </div>
       <p className={styles.toText}>to</p>
+      <div className={styles.timeFlexbox}>
       <Input
         name={`${instance}.endTime`}
         type='time'
         className={styles.timeInput}
         ref={register({
-          required: true,
+          required: "Please enter a valid end time",
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
             return startTime < endTime;
           },
         })}
       />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].endTime &&
+          <p className={styles.error}>{errors.availability[index].endTime.message}</p> 
+        }    
+        </div>
       <p className={styles.repeatText}>Repeat on</p>
-      {Object.entries(dayLabels).map(([day, label]) => (
-        <button
-          key={day}
-          type="button"
-          className={cn(
-            styles.day,
-            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
-          )}
-          onClick={() => handleClick(day)}
-        >
-          {label}
-        </button>
-      ))}
+      <div className={styles.timeFlexbox}>
+        <div className={styles.daysBox}>
+          {Object.entries(dayLabels).map(([day, label]) => (
+            <Input
+              key={day}
+              name={`${instance}.days`}
+              type="button"
+              value={label}
+              className={cn(
+                styles.day,
+                { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+              )}
+              onClick={() => handleClick(day)}
+            />
+          ))}
+        </div>
+        {errors.availability && errors.availability[index] && 
+            errors.availability[index].days &&  
+            <p className={styles.error}>Please select at least one day</p>
+          }    
+      </div>
     </div>
   );
 };
