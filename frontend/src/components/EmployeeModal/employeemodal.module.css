@@ -2,12 +2,13 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: 20%;
-  grid-gap: 2.0rem;
+  grid-gap: 2.25rem;
   width: 40rem;
   height: 8rem; 
 }
 
 .input {
+  max-width:100%;
   font-size: 1.5rem;
 }
 
@@ -119,7 +120,7 @@
   color: white;
 }
 
-.day:focus .daySelected {
+.daySelected:focus{
   background-color: black; 
 }
 .error {
