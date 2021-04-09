@@ -79,7 +79,7 @@ const RiderModal = () => {
 
   return (
     <>
-      {showingToast ? <Toast message='Ride has been added.' /> : null}
+      {showingToast ? <Toast message='Student has been added.' /> : null}
       <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
         title={['Add a student']}
