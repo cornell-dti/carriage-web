@@ -64,8 +64,8 @@ type TableProps = {
 
 const Table = ({ type }: TableProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [rideTableData, setRideTableData] = useState<string[][]>();
-  const [driverTableData, setDriverTableData] = useState<string[][]>();
+  const [rideTableData, setRideTableData] = useState<(string | number)[][]>();
+  const [driverTableData, setDriverTableData] = useState<(string | number)[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const { drivers } = useEmployees();
 
@@ -80,18 +80,51 @@ const Table = ({ type }: TableProps) => {
     'Daily Total',
   ];
 
-  const driverNames = drivers
-    .sort((a, b) => (`${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1))
-    .map((d) => `${d.firstName} ${d.lastName}`);
+  const driverNames: string[] = [];
+  const driverShortNames: string[] = [];
 
-  const driverShortNames = drivers
+  drivers
     .sort((a, b) => (`${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1))
-    .map((d) => `${d.firstName} ${d.lastName.substring(0, 1)}.`);
+    .forEach((d) => {
+      driverNames.push(`${d.firstName} ${d.lastName}`);
+      driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
+    });
 
   const driverTableHeader = ['Date', ...driverShortNames, 'Daily Total'];
 
   const dbRideCols = ['dayCount', 'dayNoShow', 'dayCancel', 'nightCount', 'nightNoShow', 'nightCancel', 'dailyTotal'];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
+
+  const initTableData = (data: any[]) => {
+    const rideData: (string | number)[][] = [];
+    const driverData: (string | number)[][] = [];
+    data
+      .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
+      .forEach((d) => {
+        const month = d.monthday.substring(0, 2);
+        const day = d.monthday.substring(2);
+        const date = `${month}/${day}/${d.year}`;
+        const rideRow = [
+          date,
+          d.dayCount,
+          d.dayNoShows,
+          d.dayCancels,
+          d.nightCount,
+          d.nightNoShows,
+          d.nightCancels,
+          d.dailyTotal,
+        ];
+        const driverRow: any[] = [date];
+        driverNames.forEach((driver) => {
+          driverRow.push(d.drivers[driver] || 0);
+        });
+        driverRow.push(d.dailyTotal);
+        rideData.push(rideRow);
+        driverData.push(driverRow);
+      });
+    setRideTableData(rideData);
+    setDriverTableData(driverData);
+  };
 
   const handleEdit = (rowIndex: number, cellIndex: number, date: string, value: number) => {
     const cols = type === 'ride' ? dbRideCols : dbDriverCols;
@@ -134,37 +167,9 @@ const Table = ({ type }: TableProps) => {
   useEffect(() => console.log(editData), [editData]);
 
   useEffect(() => {
-    const rideData: any = [];
-    const driverData: any = [];
-    table.data
-      .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
-      .forEach((d) => {
-        const month = d.monthday.substring(0, 2);
-        const day = d.monthday.substring(2);
-        const date = `${month}/${day}/${d.year}`;
-        const total = String(d.dayCount + d.nightCount);
-        const rideRow = [
-          date,
-          d.dayCount,
-          d.dayNoShows,
-          d.dayCancels,
-          d.nightCount,
-          d.nightNoShows,
-          d.nightCancels,
-          total,
-        ];
-        const driverRow: any[] = [date];
-        driverNames.forEach((driver) => {
-          driverRow.push(d.drivers[driver] || 0);
-        });
-        driverRow.push(total);
-        rideData.push(rideRow);
-        driverData.push(driverRow);
-      });
-    setRideTableData(rideData);
-    setDriverTableData(driverData);
+    initTableData(table.data);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [driverNames.length]);
+  }, [drivers.length]);
 
   return (
     <div className={styles.tableContainer}>
