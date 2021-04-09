@@ -5,6 +5,7 @@ import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
+import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
@@ -12,7 +13,7 @@ import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
 const Home = () => {
-  const {drivers} = useEmployees();
+  const { drivers } = useEmployees();
   const { withDefaults } = useReq();
 
   const [downloadData, setDownloadData] = useState<string>('');
@@ -24,7 +25,7 @@ const Home = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
-        if (data==='') {
+        if (data === '') {
           setDownloadData('Name,Pick Up,From,To,Drop Off,Needs,Driver');
         } else {
           setDownloadData(data);
@@ -39,7 +40,7 @@ const Home = () => {
     <div>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
-        <div className={styles.margin3}>
+        <div className={styles.rightSection}>
           <ExportButton onClick={downloadCSV} />
           <CSVLink
             data={downloadData}
@@ -49,6 +50,7 @@ const Home = () => {
             target='_blank'
           />
           <RideModal />
+          <Notification />
         </div>
       </div>
       <MiniCal />
