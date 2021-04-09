@@ -59,7 +59,6 @@ const RidesTable = (
         const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
         const valueNeeds = { data: needs };
         const openRidesModal = () => {
-          console.log('opening')
           setOpenRideModal(index);
           setCurrentPage(0);
           setRideModalIsOpen(true);

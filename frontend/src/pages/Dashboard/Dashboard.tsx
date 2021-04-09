@@ -11,7 +11,7 @@ import Students from './Students';
 import Home from './Home';
 import Locations from './Locations';
 import Settings from './Settings';
-import Notifications from '../../components/Notification/Notifications';
+// import Notifications from '../../components/Notification/Notifications';
 import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
 import RiderDetail from '../../components/UserDetail/RiderDetail';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
@@ -55,7 +55,7 @@ const Dashboard = () => {
             />
             <Route path="/locations" component={Locations} />
             <Route path="/settings" component={Settings} />
-            <Route path="/notifications" component={Notifications} />
+            {/* <Route path="/notifications" component={Notifications} /> */}
             <Route path="*">
               <Redirect to="/home" />
             </Route>

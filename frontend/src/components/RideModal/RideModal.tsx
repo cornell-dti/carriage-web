@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
-import { RiderInfoPage, RideTimesPage } from './Pages';
+import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 
@@ -30,8 +30,10 @@ const RideModal = ({
       dropoffTime: moment(ride.endTime).format('kk:mm'),
       driver: ride.driver,
       rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
-      startLocation: ride.startLocation.address,
-      endLocation: ride.endLocation.address,
+      startLocation: 
+        ride.startLocation.name ? ride.startLocation.name : ride.startLocation.address,
+      endLocation: 
+        ride.endLocation.name ? ride.endLocation.name : ride.endLocation.address,
     }
     :
     {}
@@ -44,7 +46,6 @@ const RideModal = ({
   const goPrevPage = () => setCurrentPage((p) => p - 1);
 
   const closeModal = () => {
-    console.log('closing')
     setFormData({});
     if (setOpenRideModal) setOpenRideModal(-1);
     setIsOpen(false);
@@ -86,14 +87,13 @@ const RideModal = ({
     }
   }, [formData, isSubmitted, withDefaults]);
 
+  // have to do a ternary operator on the entire modal
+  // because otherwise the pages would show up wrongly
   return (
+    ride ? (
       <Modal
         paginate
-        title={ride ? 
-          ['Edit a Ride', 'Edit a Ride']
-          :
-          ['Add a Ride', 'Add a Ride']
-        }
+        title={['Edit a Ride', 'Edit a Ride']}
         isOpen={isOpen}
         currentPage={currentPage}
         onClose={closeModal}
@@ -108,6 +108,30 @@ const RideModal = ({
           onSubmit={saveDataThen(submitData)}
         />
       </Modal>
+    ) : (
+      <Modal
+        paginate
+        title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
+        isOpen={isOpen}
+        currentPage={currentPage}
+        onClose={closeModal}
+      >
+        <RideTimesPage
+          formData={formData}
+          onSubmit={saveDataThen(goNextPage)}
+        />
+        <DriverPage
+          formData={formData}
+          onBack={goPrevPage}
+          onSubmit={saveDataThen(goNextPage)} />
+        <RiderInfoPage
+          formData={formData}
+          onBack={goPrevPage}
+          onSubmit={saveDataThen(submitData)}
+        />
+      </Modal>
+    )
+      
   );
 };
 

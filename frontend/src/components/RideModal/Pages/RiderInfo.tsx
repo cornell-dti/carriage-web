@@ -9,7 +9,6 @@ import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  console.log(formData)
   const { register, handleSubmit } = useForm({
     defaultValues: {
       name: formData?.rider ?? '',
@@ -97,7 +96,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       </div>
       <div className={styles.btnContainer}>
         <Button outline type="button" onClick={onBack}>Back</Button>
-        <Button type="submit">{formData ? 'Edit a Ride' : 'Add a Ride'}</Button>
+        <Button type="submit">{formData?.rider ? 'Edit a Ride' : 'Add a Ride'}</Button>
       </div>
     </form>
   );
