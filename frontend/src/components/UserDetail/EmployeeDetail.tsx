@@ -14,6 +14,7 @@ type EmployeeDetailProps = {
   phone: string;
   availability?: string[][];
   admin?: boolean;
+  photoLink?: string;
 };
 
 const EmployeeDetail = () => {
@@ -54,6 +55,7 @@ const EmployeeDetail = () => {
         firstName={employee.firstName}
         lastName={employee.lastName}
         netId={employee.netId}
+        photoLink={employee.photoLink}
       >
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
