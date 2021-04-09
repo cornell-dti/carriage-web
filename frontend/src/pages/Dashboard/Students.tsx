@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import StudentsTable from '../../components/UserTables/StudentsTable';
 import RiderModal from '../../components/Modal/RiderModal';
 import Notification from '../../components/Notification/Notification';
 import RidersTable from '../../components/UserTables/RidersTable';
@@ -13,7 +14,7 @@ const Riders = () => (
         <Notification />
       </div>
     </div>
-    <RidersTable />
+    <StudentsTable />
   </>
 );
 
