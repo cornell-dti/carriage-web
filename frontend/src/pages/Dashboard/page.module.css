@@ -1,21 +1,26 @@
-.header {
-  margin-top: 1.875rem;
-  margin-bottom: 0.313rem;
-  margin-left: 2rem;
-  text-align: left;
-}
-
 .pageContainer {
   margin-top: 1rem;
   margin-left: 2rem;
+}
+
+.header {
+  text-align: left;
+  font-size: 1.75rem;
+  margin: 0;
 }
 
 .pageTitle {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 2.25rem 2.5rem;
 }
 
-.margin3 {
-  margin: 3rem;
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.rightSection > div {
+  margin-left: 14px;
 }
