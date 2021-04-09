@@ -118,7 +118,7 @@ const RiderModal = () => {
       })).then(() => refreshRiders());
       setIsSubmitted(false);
     }
-  // eslint-disable-next-line no-use-before-define
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
