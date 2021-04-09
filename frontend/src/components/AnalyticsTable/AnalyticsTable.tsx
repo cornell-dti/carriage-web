@@ -6,8 +6,10 @@ import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
 
+type Cell = string | number;
+
 type RowProps = {
-  data: Array<string | number>;
+  data: Cell[];
   index: number;
   isEditing: boolean;
   onEdit: (rowIndex: number, cellIndex: number, date: string, value: number) => void;
@@ -64,8 +66,8 @@ type TableProps = {
 
 const Table = ({ type }: TableProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [rideTableData, setRideTableData] = useState<(string | number)[][]>();
-  const [driverTableData, setDriverTableData] = useState<(string | number)[][]>();
+  const [rideTableData, setRideTableData] = useState<Cell[][]>();
+  const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const { drivers } = useEmployees();
 
@@ -84,7 +86,9 @@ const Table = ({ type }: TableProps) => {
   const driverShortNames: string[] = [];
 
   drivers
-    .sort((a, b) => (`${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1))
+    .sort((a, b) => (
+      `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
+    ))
     .forEach((d) => {
       driverNames.push(`${d.firstName} ${d.lastName}`);
       driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
@@ -92,12 +96,20 @@ const Table = ({ type }: TableProps) => {
 
   const driverTableHeader = ['Date', ...driverShortNames, 'Daily Total'];
 
-  const dbRideCols = ['dayCount', 'dayNoShow', 'dayCancel', 'nightCount', 'nightNoShow', 'nightCancel', 'dailyTotal'];
+  const dbRideCols = [
+    'dayCount',
+    'dayNoShow',
+    'dayCancel',
+    'nightCount',
+    'nightNoShow',
+    'nightCancel',
+    'dailyTotal',
+  ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
 
   const initTableData = (data: any[]) => {
-    const rideData: (string | number)[][] = [];
-    const driverData: (string | number)[][] = [];
+    const rideData: Cell[][] = [];
+    const driverData: Cell[][] = [];
     data
       .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
       .forEach((d) => {
@@ -126,7 +138,12 @@ const Table = ({ type }: TableProps) => {
     setDriverTableData(driverData);
   };
 
-  const handleEdit = (rowIndex: number, cellIndex: number, date: string, value: number) => {
+  const handleEdit = (
+    rowIndex: number,
+    cellIndex: number,
+    date: string,
+    value: number,
+  ) => {
     const cols = type === 'ride' ? dbRideCols : dbDriverCols;
     setEditData((prev) => {
       const newVal = { ...prev };
