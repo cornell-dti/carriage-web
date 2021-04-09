@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import table from './data';
 import editIcon from './edit.svg';
@@ -9,7 +10,7 @@ type RowProps = {
   data: Array<string | number>;
   index: number;
   isEditing: boolean;
-  onEdit: (date: string, cellIndex: number, value: number) => void;
+  onEdit: (rowIndex: number, cellIndex: number, date: string, value: number) => void;
 };
 
 const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
@@ -27,7 +28,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
 
   const handleEdit = (e: React.FormEvent<HTMLInputElement>, cellIndex: number) => {
     const { value } = e.currentTarget;
-    onEdit(data[0] as string, cellIndex, Number(value));
+    onEdit(index, cellIndex, data[0] as string, Number(value));
   };
 
   return (
@@ -65,7 +66,7 @@ const Table = ({ type }: TableProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [rideTableData, setRideTableData] = useState<string[][]>();
   const [driverTableData, setDriverTableData] = useState<string[][]>();
-  const [editData, setEditData] = useState<{[key: string]: any}>({ dates: {} });
+  const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const { drivers } = useEmployees();
 
   const rideTableHeader = [
@@ -89,19 +90,45 @@ const Table = ({ type }: TableProps) => {
 
   const driverTableHeader = ['Date', ...driverShortNames, 'Daily Total'];
 
-  const rideTableCols = ['dayCount', 'dayNoShow', 'dayCancel', 'nightCount', 'nightNoShow', 'nightCancel', 'dailyTotal'];
-  const driverTableCols = [...driverNames, 'dailyTotal'];
+  const dbRideCols = ['dayCount', 'dayNoShow', 'dayCancel', 'nightCount', 'nightNoShow', 'nightCancel', 'dailyTotal'];
+  const dbDriverCols = [...driverNames, 'dailyTotal'];
 
-  const handleEdit = (date: string, cellIndex: number, value: number) => {
-    const cols = type === 'ride' ? rideTableCols : driverTableCols;
+  const handleEdit = (rowIndex: number, cellIndex: number, date: string, value: number) => {
+    const cols = type === 'ride' ? dbRideCols : dbDriverCols;
     setEditData((prev) => {
       const newVal = { ...prev };
-      newVal.dates[date] = {
-        ...newVal.dates[date],
-        [cols[cellIndex - 1]]: value,
-      };
+      const currentEdit = newVal.dates[date];
+      if (type === 'driver') {
+        if (currentEdit === undefined) {
+          // need to populate all drivers
+          const driverRow = driverTableData![rowIndex].slice(1, driverTableHeader.length);
+          const driversEdit: ObjectType = {};
+          driverNames.forEach((name, i) => {
+            driversEdit[name] = driverRow[i];
+          });
+          driversEdit[cols[cellIndex - 1]] = value;
+          newVal.dates[date] = {
+            drivers: driversEdit,
+          };
+        } else {
+          newVal.dates[date].drivers = {
+            ...currentEdit.drivers,
+            [cols[cellIndex - 1]]: value,
+          };
+        }
+      } else {
+        newVal.dates[date] = {
+          ...currentEdit,
+          [cols[cellIndex - 1]]: value,
+        };
+      }
       return newVal;
     });
+  };
+
+  const handleSubmit = () => {
+    setEditData({ dates: {} });
+    setIsEditing(false);
   };
 
   useEffect(() => console.log(editData), [editData]);
@@ -151,7 +178,7 @@ const Table = ({ type }: TableProps) => {
       ) : (
         <img
           className={styles.icon}
-          onClick={() => setIsEditing(false)}
+          onClick={handleSubmit}
           src={checkIcon}
           alt="done icon"
         />
