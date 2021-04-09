@@ -118,6 +118,7 @@ const RiderModal = () => {
       })).then(() => refreshRiders());
       setIsSubmitted(false);
     }
+  // eslint-disable-next-line no-use-before-define
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
