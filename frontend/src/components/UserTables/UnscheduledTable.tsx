@@ -32,7 +32,6 @@ const Table = ({ drivers }: TableProps) => {
 
   return (
     <>
-      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
       <RidesTable rides={rides} drivers={drivers} hasAssignButton={true} />
     </>
   );

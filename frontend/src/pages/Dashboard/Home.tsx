@@ -11,6 +11,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
+import Collapsible from '../../components/Collapsible/Collapsible';
 
 const Home = () => {
   const { drivers } = useEmployees();
@@ -55,7 +56,9 @@ const Home = () => {
       </div>
       <MiniCal />
       <Schedule />
-      <UnscheduledTable drivers={drivers} />
+      <Collapsible title={'Unscheduled Rides'}>
+        <UnscheduledTable drivers={drivers} />
+      </Collapsible>
     </div>
   );
 };
