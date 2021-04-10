@@ -63,7 +63,7 @@ const EmployeeDetail = () => {
             name: employee.firstName + ' ' + employee.lastName,
             netId: employee.netId,
             email: employee.netId + '@cornell.edu',
-            phone: employee.phone,
+            phone: employee.phone.replaceAll('-', ''), //remove dashes'-'
             availability: employee.availability,
             role: roleValue()
           }
@@ -74,7 +74,7 @@ const EmployeeDetail = () => {
         lastName={employee.lastName}
         netId={employee.netId}
       >
-        <UserContactInfo icon={phone} alt="" text={employee.id} />
+        <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
         <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
         <OtherInfo>
