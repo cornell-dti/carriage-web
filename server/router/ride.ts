@@ -71,7 +71,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (query === {}) {
+  if (!Object.keys(query).length) {
     db.getAll(res, Ride, tableName);
   } else {
     const { type, status, rider, driver, date, scheduled } = query;
@@ -101,9 +101,8 @@ router.get('/', validateUser('User'), (req, res) => {
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
-  const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
-  } = req;
+  const { body } = req;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -126,17 +125,18 @@ router.post('/', validateUser('User'), (req, res) => {
     };
   }
 
-  const ride = new Ride({
-    id: uuid(),
-    rider,
-    startLocation: startLocationObj ?? startLocation,
-    endLocation: endLocationObj ?? endLocation,
-    startTime,
-    requestedEndTime,
-    endTime: requestedEndTime,
-    driver,
-  });
-  db.create(res, ride);
+  if (recurring && !(recurringDays && endDate)) {
+    res.status(400).send({ err: 'Invalid repeating ride.' });
+  } else {
+    const ride = new Ride({
+      ...body,
+      id: uuid(),
+      startLocation: startLocationObj ?? startLocation,
+      endLocation: endLocationObj ?? endLocation,
+      edits: recurring ? [] : undefined,
+    });
+    db.create(res, ride);
+  }
 });
 
 // Update an existing ride
