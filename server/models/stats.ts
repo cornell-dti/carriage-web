@@ -1,16 +1,18 @@
 import dynamoose from 'dynamoose';
 
 export type StatsType = {
-  year: number,
-  monthDay: number,
+  year: string,
+  monthDay: string,
   dayCount: number,
   dayNoShow: number,
   dayCancel: number,
   nightCount: number,
   nightNoShow: number,
   nightCancel: number,
-  dailyTotal: number
-  drivers: Object,
+  dailyTotal: number,
+  drivers: {
+    [name: string]: number
+  },
 };
 
 const schema = new dynamoose.Schema({
