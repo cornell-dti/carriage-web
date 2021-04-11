@@ -5,6 +5,7 @@ import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
+import Toast from '../../components/ConfirmationToast/ConfirmationToast';
 import styles from './page.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
@@ -19,9 +20,11 @@ const Home = () => {
   const [downloadData, setDownloadData] = useState<string>('');
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const { curDate } = useDate();
+  const [showingToast, setToast] = useState(false);
   const today = moment(curDate).format('YYYY-MM-DD');
 
   const downloadCSV = () => {
+    setToast(false);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
@@ -33,7 +36,8 @@ const Home = () => {
         if (csvLink.current) {
           csvLink.current.link.click();
         }
-      });
+      })
+      .then(() => setToast(true));
   };
 
   return (
@@ -41,6 +45,7 @@ const Home = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.margin3}>
+          {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
           <ExportButton onClick={downloadCSV} />
           <CSVLink
             data={downloadData}
