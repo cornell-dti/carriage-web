@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { check } from '../../icons/other/index';
 import styles from './confirmationtoast.module.css';
 
@@ -12,19 +13,19 @@ const Toast = ({ message }: toastProps) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 4000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {visible && (
+      {visible && createPortal(
         <div className={styles.toast}>
-          <img alt="toast" src={check} />
-          <div className={styles.toasttext}>
-            {message}
-          </div>
-        </div>)}
+          <img alt="toast check icon" src={check} />
+          <p className={styles.toasttext}>{message}</p>
+        </div>,
+        document.body,
+      )}
     </>
   );
 };
