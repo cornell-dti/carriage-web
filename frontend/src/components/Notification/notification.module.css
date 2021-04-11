@@ -1,13 +1,36 @@
-.container {
-  position: relative;
+.bell {
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.bell {
-  cursor: pointer;
+.bell:focus {
+  outline: none;
 }
 
 .badge {
   position: absolute;
+  width: 7px;
   top: 0;
   right: 0;
+}
+
+.span {
+  display: inline-block;
+  width: 7px;
+}
+
+.heading {
+  margin: 10px 10px 0px;
+  font-size: 14px;
+}
+
+.date {
+  font-size: 10px;
+  color: gray;
+}
+
+.body {
+  padding: 10px;
+  font-size: 12px;
 }
