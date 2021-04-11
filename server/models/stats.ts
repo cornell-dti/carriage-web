@@ -15,12 +15,12 @@ export type StatsType = {
 
 const schema = new dynamoose.Schema({
   year: {
-    type: Number,
+    type: String,
     required: true,
     hashKey: true,
   },
   monthDay: {
-    type: Number,
+    type: String,
     required: true,
     rangeKey: true,
   },
@@ -61,7 +61,8 @@ const schema = new dynamoose.Schema({
   },
   drivers: {
     type: Object,
+    required: true,
   },
-});
+}, { saveUnknown: ['drivers.*'] });
 
 export const Stats = dynamoose.model('Stats', schema, { create: false });
