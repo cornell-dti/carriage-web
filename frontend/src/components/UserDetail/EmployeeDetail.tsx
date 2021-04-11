@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
@@ -56,23 +55,12 @@ const EmployeeDetail = () => {
 
   return (
     <>
-      <EmployeeModal 
-        existingEmployee={
-          {
-            id: employee.id,
-            name: employee.firstName + ' ' + employee.lastName,
-            netId: employee.netId,
-            email: employee.netId + '@cornell.edu',
-            phone: employee.phone.replaceAll('-', ''), //remove dashes'-'
-            availability: employee.availability,
-            role: roleValue()
-          }
-        }
-      />
       <UserDetail
         firstName={employee.firstName}
         lastName={employee.lastName}
         netId={employee.netId}
+        employee={employee}
+        role={roleValue()}
       >
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
