@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { check } from '../../icons/other/index';
+import { check, downloadWhite } from '../../icons/other/index';
 import styles from './confirmationtoast.module.css';
 
 type toastProps = {
   message: string;
+  icon: string;
 }
 
-const Toast = ({ message }: toastProps) => {
+const Toast = ({ message, icon }: toastProps) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const Toast = ({ message }: toastProps) => {
     <>
       {visible && createPortal(
         <div className={styles.toast}>
-          <img alt="toast check icon" src={check} />
+          <img alt="toast-icon" src={icon == 'check' ? check : downloadWhite} />
           <p className={styles.toasttext}>{message}</p>
         </div>,
         document.body,

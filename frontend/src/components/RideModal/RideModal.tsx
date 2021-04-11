@@ -58,7 +58,7 @@ const RideModal = () => {
 
   return (
     <>
-      {showingToast ? <Toast message='Ride added.' /> : null}
+      {showingToast ? <Toast message='Ride added.' icon='check' /> : null}
       <Button onClick={openModal}>+ Add ride</Button>
       <Modal
         paginate

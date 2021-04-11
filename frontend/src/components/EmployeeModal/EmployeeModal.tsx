@@ -73,7 +73,7 @@ const EmployeeModal = () => {
 
   return (
     <>
-      {showingToast ? <Toast message='The employee has been added.' /> : null}
+      {showingToast ? <Toast message='The employee has been added.' icon='check' /> : null}
       <Button onClick={openModal}>+ Add an employee</Button>
       <Modal
         title='Add an Employee'

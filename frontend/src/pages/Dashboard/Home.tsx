@@ -45,7 +45,7 @@ const Home = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.margin3}>
-          {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
+          {showingToast ? <Toast message={`${today} data has been downloaded.`} icon='download' /> : null}
           <ExportButton onClick={downloadCSV} />
           <CSVLink
             data={downloadData}
