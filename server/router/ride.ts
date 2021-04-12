@@ -14,8 +14,8 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = new Date(`${req.query.date} EST`).toISOString();
-  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const dateStart = moment(req.query.date as string).toISOString();
+  const dateEnd = moment(req.query.date as string).endOf('day').toISOString();
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
@@ -91,8 +91,8 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = new Date(`${date} EST`).toISOString();
-      const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
+      const dateStart = moment(date as string).toISOString();
+      const dateEnd = moment(date as string).endOf('day').toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
