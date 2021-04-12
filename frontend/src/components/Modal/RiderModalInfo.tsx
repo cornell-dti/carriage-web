@@ -76,8 +76,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
               validate: (needs) => {
                 const needsArr = needs.split(',');
                 const isValidNeed = 
-                  (acc: boolean, val: Accessibility) => 
-                  acc && Object.values(Accessibility).includes(val);
+                  (acc: boolean, val: Accessibility) => {
+                    return acc && Object.values(Accessibility).includes(val);
+                  }
                 return needsArr.reduce(isValidNeed, true);
               }
             })}

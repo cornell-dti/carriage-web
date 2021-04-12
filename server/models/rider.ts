@@ -63,11 +63,11 @@ const schema = new dynamoose.Schema({
   organization: {
     type: String,
     enum: Object.values(Organization),
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   joinDate: {
     type: String,
@@ -81,7 +81,7 @@ const schema = new dynamoose.Schema({
   },
   pronouns: {
     type: String,
-    required: true,
+    required: false,
     validate: /^\w*\/\w*\/\w*$/,
   },
   address: {
@@ -92,7 +92,7 @@ const schema = new dynamoose.Schema({
   },
   favoriteLocations: {
     type: Array,
-    required: true,
+    required: false,
     schema: [String],
     default: [],
   },

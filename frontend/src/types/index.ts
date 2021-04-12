@@ -1,32 +1,13 @@
 import { ReactNode } from 'react';
+import { RiderType } from '../../../server/models/rider';
+
+export type Rider = RiderType;
 
 export enum Accessibility {
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
 }
-
-enum Organization {
-  REDRUNNER = 'RedRunner',
-  CULIFT = 'CULift'
-}
-
-export type Rider = {
-  id: string
-  firstName: string
-  lastName: string
-  phoneNumber: string
-  email: string
-  accessibility: Array<Accessibility>
-  organization?: Organization
-  description?: string
-  joinDate: string
-  endDate: string
-  pronouns: string
-  address: string
-  favoriteLocations?: Array<string>
-  photoLink?: string
-};
 
 export type Availability = {
   startTime: string;

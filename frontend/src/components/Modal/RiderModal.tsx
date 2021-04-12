@@ -3,7 +3,6 @@ import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
-import Upload from '../EmployeeModal/Upload';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
@@ -130,7 +129,6 @@ const RiderModal = () => {
         currentPage={0}
         onClose={closeModal}
       >
-        <Upload imageChange={updateBase64}/>
         <RiderModalInfo onSubmit={saveDataThen(submitData)} />
       </Modal>
     </>
