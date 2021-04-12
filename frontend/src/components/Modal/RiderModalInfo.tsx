@@ -86,7 +86,8 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           )}
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
-              Invalid needs. You can only enter 'Assistant', 'Crunches', or 'Wheelchair'
+              Invalid needs. 
+              You can only enter 'Assistant', 'Crunches', or 'Wheelchair'
             </p>
           )}
         </div>

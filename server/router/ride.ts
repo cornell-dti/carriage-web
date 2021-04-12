@@ -14,8 +14,8 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = new Date(`${req.query.date} EST`).toISOString();
-  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const dateStart = moment(req.query.date as string).toISOString();
+  const dateEnd = moment(req.query.date as string).endOf('day').toISOString();
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
@@ -71,7 +71,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (query === {}) {
+  if (!Object.keys(query).length) {
     db.getAll(res, Ride, tableName);
   } else {
     const { type, status, rider, driver, date, scheduled } = query;
@@ -91,8 +91,8 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = new Date(`${date} EST`).toISOString();
-      const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
+      const dateStart = moment(date as string).toISOString();
+      const dateEnd = moment(date as string).endOf('day').toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
@@ -101,9 +101,8 @@ router.get('/', validateUser('User'), (req, res) => {
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
-  const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
-  } = req;
+  const { body } = req;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -126,17 +125,18 @@ router.post('/', validateUser('User'), (req, res) => {
     };
   }
 
-  const ride = new Ride({
-    id: uuid(),
-    rider,
-    startLocation: startLocationObj ?? startLocation,
-    endLocation: endLocationObj ?? endLocation,
-    startTime,
-    requestedEndTime,
-    endTime: requestedEndTime,
-    driver,
-  });
-  db.create(res, ride);
+  if (recurring && !(recurringDays && endDate)) {
+    res.status(400).send({ err: 'Invalid repeating ride.' });
+  } else {
+    const ride = new Ride({
+      ...body,
+      id: uuid(),
+      startLocation: startLocationObj ?? startLocation,
+      endLocation: endLocationObj ?? endLocation,
+      edits: recurring ? [] : undefined,
+    });
+    db.create(res, ride);
+  }
 });
 
 // Update an existing ride
