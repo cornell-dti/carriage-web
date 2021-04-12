@@ -145,6 +145,58 @@ router.put('/:id', validateUser('User'), (req, res) => {
   db.update(res, Ride, { id }, body, tableName);
 });
 
+// Create edit instances and update a repeating ride's edits field
+router.put('/:id/edits', validateUser('User'), (req, res) => {
+  const { params: { id }, body: { deleteOnly, origDate, rider, startTime, endTime,
+    startLocation, endLocation, driver },
+  } = req;
+
+  db.getById(res, Ride, id, tableName, (masterRide) => {
+    const origStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');
+    const origStartTime = moment(`${origDate}T${origStartTimeOnly}`).toISOString();
+
+    const origEndTimeOnly = moment(masterRide.endTime).format('HH:mm:ss');
+    const origEndTime = moment(`${origDate}T${origEndTimeOnly}`).toISOString();
+
+    const deleteId = uuid();
+    const deleteRide = new Ride({
+      id: deleteId,
+      rider: masterRide.rider,
+      startLocation: masterRide.startLocation,
+      endLocation: masterRide.endLocation,
+      startTime: origStartTime,
+      endTime: origEndTime,
+      driver: masterRide.driver,
+      deleted: true,
+    });
+    db.create(res, deleteRide);
+
+    const newEdits = [deleteId];
+    if (masterRide.edits) {
+      newEdits.concat(masterRide.edits);
+    }
+
+    // if deleteOnly = false, create a replace edit with the new fields
+    if (!deleteOnly) {
+      const replaceId = uuid();
+      const replaceRide = new Ride({
+        id: replaceId,
+        rider,
+        startLocation,
+        endLocation,
+        startTime,
+        endTime,
+        driver,
+        deleted: false,
+      });
+      db.create(res, replaceRide);
+      newEdits.push(replaceId);
+    }
+    const operation = { $SET: { edits: newEdits } };
+    db.update(res, Ride, { id }, operation, tableName);
+  });
+});
+
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
