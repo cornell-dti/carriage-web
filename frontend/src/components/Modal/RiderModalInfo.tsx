@@ -75,7 +75,8 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
               required: true,
               validate: (needs) => {
                 const needsArr = needs.split(',');
-                const isValidNeed = (acc: boolean, val: Accessibility) => 
+                const isValidNeed = 
+                  (acc: boolean, val: Accessibility) => 
                   acc && Object.values(Accessibility).includes(val);
                 return needsArr.reduce(isValidNeed, true);
               }
@@ -87,7 +88,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. 
-              You can only enter 'Assistant', 'Crunches', or 'Wheelchair'
+              You can only enter 'Assistant', 'Crutches', or 'Wheelchair'
             </p>
           )}
         </div>
