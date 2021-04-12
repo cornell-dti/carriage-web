@@ -33,20 +33,36 @@ const RideModal = () => {
 
   const submitData = () => {
     const {
-      date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
+      date,
+      pickupTime,
+      dropoffTime,
+      driver,
+      rider,
+      startLocation,
+      endLocation,
     } = formData;
     const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
     const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    setFormData({ startTime, endTime, driver, rider, startLocation, endLocation });
+    setFormData({
+      startTime,
+      endTime,
+      driver,
+      rider,
+      startLocation,
+      endLocation,
+    });
     setIsSubmitted(true);
   };
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch('/api/rides', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(formData),
-      }));
+      fetch(
+        '/api/rides',
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify(formData),
+        }),
+      );
       setIsSubmitted(false);
       closeModal();
     }
@@ -69,7 +85,8 @@ const RideModal = () => {
         <DriverPage
           formData={formData}
           onBack={goPrevPage}
-          onSubmit={saveDataThen(goNextPage)} />
+          onSubmit={saveDataThen(goNextPage)}
+        />
         <RiderInfoPage
           onBack={goPrevPage}
           onSubmit={saveDataThen(submitData)}

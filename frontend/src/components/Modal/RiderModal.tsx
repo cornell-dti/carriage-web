@@ -8,11 +8,10 @@ import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 
-
 type RiderModalProps = {
   riders: Array<NewRider>;
   setRiders: Dispatch<SetStateAction<NewRider[]>>;
-}
+};
 
 const RiderModal = () => {
   const [formData, setFormData] = useState({
@@ -55,47 +54,50 @@ const RiderModal = () => {
 
   function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    
+
     if (e.target.files && e.target.files[0]) {
-      let reader = new FileReader();
-      let file = e.target.files[0];
+      const reader = new FileReader();
+      const file = e.target.files[0];
       reader.readAsDataURL(file);
       reader.onload = function () {
-      let res = reader.result;
+        let res = reader.result;
         if (res) {
           res = res.toString();
           // remove "data:image/png;base64," and "data:image/jpeg;base64,"
-          let strBase64 = res.toString().substring(res.indexOf(",") + 1);
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
           setImageBase64(strBase64);
         }
       };
       reader.onerror = function (error) {
         console.log('Error reading file: ', error);
-      };  
+      };
     } else {
       console.log('Undefined file upload');
     }
-  };
+  }
 
   const uploadImage = async () => {
-    const photo = { 
+    const photo = {
       id: formData.id,
-      tableName: 'Riders', 
-      fileBuffer: imageBase64 
+      tableName: 'Riders',
+      fileBuffer: imageBase64,
     };
-    const uploadedImage = await fetch('/api/upload', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(photo),
-    })).then((res) => res.json());
+    const uploadedImage = await fetch(
+      '/api/upload',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify(photo),
+      }),
+    ).then((res) => res.json());
 
     setPhotoJson(uploadedImage);
-  }
+  };
 
   useEffect(() => {
     if (isSubmitted) {
       if (imageBase64 !== '') {
         uploadImage();
-      };
+      }
 
       const newRider = {
         id: formData.id,
@@ -110,12 +112,15 @@ const RiderModal = () => {
         address: formData.address,
         favoriteLocations: [],
         organization: '',
-        photoLink: photoJson.fileBuffer
+        photoLink: photoJson.fileBuffer,
       };
-      fetch('/api/riders', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(newRider),
-      })).then(() => refreshRiders());
+      fetch(
+        '/api/riders',
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify(newRider),
+        }),
+      ).then(() => refreshRiders());
       setIsSubmitted(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,14 +128,16 @@ const RiderModal = () => {
 
   return (
     <>
-      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
+      <Button className={styles.addRiderButton} onClick={openModal}>
+        + Add Student
+      </Button>
       <Modal
         title={['Add a student']}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}
       >
-        <Upload imageChange={updateBase64}/>
+        <Upload imageChange={updateBase64} />
         <RiderModalInfo onSubmit={saveDataThen(submitData)} />
       </Modal>
     </>

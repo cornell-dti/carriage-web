@@ -46,15 +46,21 @@ const EmployeeModal = () => {
         phoneNumber,
       };
       if (imageBase64 === '') {
-        fetch('/api/admins', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(admin),
-        })).then(() => refreshAdmins());
+        fetch(
+          '/api/admins',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(admin),
+          }),
+        ).then(() => refreshAdmins());
       } else {
-        const createdAdmin = await fetch('/api/admins', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(admin),
-        })).then((res) => res.json());
+        const createdAdmin = await fetch(
+          '/api/admins',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(admin),
+          }),
+        ).then((res) => res.json());
 
         // upload image
         const photo = {
@@ -62,10 +68,15 @@ const EmployeeModal = () => {
           tableName: 'Admins',
           fileBuffer: imageBase64,
         };
-        await fetch('/api/upload', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(photo),
-        })).then(() => refreshAdmins()).catch((err) => console.log(err));
+        await fetch(
+          '/api/upload',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(photo),
+          }),
+        )
+          .then(() => refreshAdmins())
+          .catch((err) => console.log(err));
       }
     } else {
       const driver = {
@@ -77,15 +88,21 @@ const EmployeeModal = () => {
         admin: selectedRole === 'both',
       };
       if (imageBase64 === '') {
-      fetch('/api/drivers', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(driver),
-      })).then(() => refreshDrivers());
+        fetch(
+          '/api/drivers',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(driver),
+          }),
+        ).then(() => refreshDrivers());
       } else {
-        const createdDriver = await fetch('/api/drivers', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(driver),
-        })).then((res) => res.json());
+        const createdDriver = await fetch(
+          '/api/drivers',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(driver),
+          }),
+        ).then((res) => res.json());
 
         // upload image
         const photo = {
@@ -93,10 +110,15 @@ const EmployeeModal = () => {
           tableName: 'Drivers',
           fileBuffer: imageBase64,
         };
-        await fetch('/api/upload', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(photo),
-        })).then(() => refreshDrivers()).catch((err) => console.log(err));
+        await fetch(
+          '/api/upload',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(photo),
+          }),
+        )
+          .then(() => refreshDrivers())
+          .catch((err) => console.log(err));
       }
     }
     closeModal();
@@ -129,13 +151,9 @@ const EmployeeModal = () => {
   return (
     <>
       <Button onClick={openModal}>+ Add an employee</Button>
-      <Modal
-        title='Add an Employee'
-        isOpen={isOpen}
-        onClose={closeModal}
-      >
+      <Modal title="Add an Employee" isOpen={isOpen} onClose={closeModal}>
         <Upload imageChange={updateBase64} />
-        <FormProvider {...methods} >
+        <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo />
             {selectedRole === 'admin' ? null : <WorkingHours />}
@@ -143,7 +161,9 @@ const EmployeeModal = () => {
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
             />
-            <Button className={styles.submit} type='submit'>Add</Button>
+            <Button className={styles.submit} type="submit">
+              Add
+            </Button>
           </form>
         </FormProvider>
       </Modal>

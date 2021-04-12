@@ -27,10 +27,10 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     } = rider;
     res.send({
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     });
   });
 });
