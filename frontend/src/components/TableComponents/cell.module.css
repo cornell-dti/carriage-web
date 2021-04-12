@@ -17,16 +17,51 @@
   border-radius: 0 0.938rem 0.938rem 0;
 }
 
+.reducedTag {
+  height: 11px;
+  width: 11px;
+  float: left;
+  margin: 6px 7px 0px 0px;
+  border-radius: 50%;
+}
+
 .tag {
   border-radius: 0.625rem;
   padding: 0.313rem;
 }
+
 .ctown {
   background-color: #d5f2ea;
 }
 
+.dtown {
+  background-color: #66b4f8c1;
+  ;
+}
+
+.north {
+  background-color: #FFFF99;
+}
+
 .west {
-  background-color: #ffd8de;
+  background-color: #bc6bd995;
+  ;
+}
+
+.south {
+  background-color: #ff983883;
+}
+
+.central {
+  background-color: #ffce5c97;
+}
+
+.custom {
+  background-color: #fadadd;
+}
+
+.inactive {
+  background-color: #ECECEC;
 }
 
 Button {

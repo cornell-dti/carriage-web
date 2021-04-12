@@ -31,59 +31,59 @@ const RidesTable = (
   function renderTableData(allRides: Ride[]) {
     return allRides.filter((r) => r.startLocation !== undefined
       && r.endLocation !== undefined).map((ride, index) => {
-      const startTime = new Date(ride.startTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      const endTime = new Date(ride.endTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      const { rider } = ride;
-      const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
-      const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
+        const startTime = new Date(ride.startTime).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        const endTime = new Date(ride.endTime).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+        const { rider } = ride;
+        const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
+        const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
+        const pickupLocation = ride.startLocation.name;
+        const pickupTag = ride.startLocation.tag;
+        const dropoffLocation = ride.endLocation.name;
+        const dropoffTag = ride.endLocation.tag;
 
-      const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
-        hour: 'numeric',
-        hour12: true,
-      });
-      const valueName = { data: name };
-      const valuePickup = { data: pickupLocation, tag: pickupTag };
-      const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-      const valueNeeds = { data: needs };
-      const assignModal = () => (
+        const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
+          hour: 'numeric',
+          hour12: true,
+        });
+        const valueName = { data: name };
+        const valuePickup = { data: pickupLocation, tag: pickupTag };
+        const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+        const valueNeeds = { data: needs };
+        const assignModal = () => (
           <AssignDriverModal
             isOpen={openModal === index}
             close={() => setOpenModal(-1)}
             ride={rides[0]}
             allDrivers={drivers}
           />
-      );
+        );
 
-      const assignButton = {
-        data: 'Assign',
-        buttonHandler: () => setOpenModal(index),
-        ButtonModal: assignModal,
-      };
+        const assignButton = {
+          data: 'Assign',
+          buttonHandler: () => setOpenModal(index),
+          ButtonModal: assignModal,
+        };
 
-      const inputValues = [
-        valueName,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-      ];
-      const inputValuesAndButton = [
-        valueName,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-        assignButton,
-      ];
-      return (
+        const inputValues = [
+          valueName,
+          valuePickup,
+          valueDropoff,
+          valueNeeds,
+        ];
+        const inputValuesAndButton = [
+          valueName,
+          valuePickup,
+          valueDropoff,
+          valueNeeds,
+          assignButton,
+        ];
+        return (
           <tr key={index}>
             <td className={styles.cell}>{timeframe}</td>
             <td className={styles.cell}>
@@ -91,11 +91,11 @@ const RidesTable = (
               <span className={styles.gray}>-- {endTime}</span>
             </td>
             {hasAssignButton
-              ? <TableRow values={inputValuesAndButton} />
-              : <TableRow values={inputValues} />}
+              ? <TableRow values={inputValuesAndButton} reduced={true} />
+              : <TableRow values={inputValues} reduced={true} />}
           </tr>
-      );
-    });
+        );
+      });
   }
 
   return (

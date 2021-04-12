@@ -81,7 +81,7 @@ const Table = () => {
               {renderTableHeader()}
               {locations.map(({ id, name, address, tag }, index) => (
                 <tr key={index}>
-                  <TableRow
+                  <TableRow reduced={false}
                     values={[
                       { data: name },
                       { data: address },

@@ -91,7 +91,7 @@ const RidersTable = () => {
       };
       return (
         <tr key={index} onClick={goToDetail} className={styles.tableRow}>
-          <TableRow values={inputValues} />
+          <TableRow values={inputValues} reduced={false} />
         </tr>
       );
     });
