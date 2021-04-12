@@ -10,18 +10,44 @@
 
 .rideTime {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(2, 1fr);
   column-gap: 1rem;
   row-gap: 1rem;
 }
 
-.gridC1 {
-  grid-column: 1;
+.gridCSmall1 {
+  grid-column: 1 / span 2;
 }
 
-.gridC2 {
-  grid-column: 2;
+.gridCSmall2 {
+  grid-column: 3 / span 2;
+}
+
+.gridCSmall3 {
+  grid-column: 5 / span 2;
+}
+
+.gridCBig1 {
+  grid-column: 1 / span 3;
+}
+.gridCBig2 {
+  grid-column: 4 / span 3;
+}
+
+.duration {
+  font-size: 0.9rem;
+  margin-bottom: -30%;
+  margin-left: 2%;
+}
+.to {
+  font-size: 0.9rem;
+  grid-column: 3 / span 1;
+  margin-left: 70%;
+  margin-top: 5%;
+}
+.end {
+  grid-column: 4 / span 2;
 }
 
 .gridR1 {
@@ -39,4 +65,9 @@
 }
 .gridR5 {
   grid-row: 5;
+}
+
+.error {
+  color: #FF647C;
+  font-size: 0.8rem;
 }

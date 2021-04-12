@@ -1,7 +1,7 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType, NewRider } from '../../types/index';
+import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
@@ -9,8 +9,8 @@ import { useRiders } from '../../context/RidersContext';
 
 
 type RiderModalProps = {
-  riders: Array<NewRider>;
-  setRiders: Dispatch<SetStateAction<NewRider[]>>;
+  riders: Array<Rider>;
+  setRiders: Dispatch<SetStateAction<Rider[]>>;
 }
 
 const RiderModal = () => {

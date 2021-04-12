@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import TableRow from '../TableComponents/TableRow';
-import { NewRider } from '../../types';
+import { Rider } from '../../types';
 import styles from './table.module.css';
 import { useRiders } from '../../context/RidersContext';
 
@@ -35,7 +35,7 @@ function renderAccessNeeds(accessNeeds: Array<string>) {
   const RidersTable = () => { 
     const history = useHistory();
     const {riders} = useRiders();
-    function renderTableData(allRiders: NewRider[]) {
+    function renderTableData(allRiders: Rider[]) {
       return allRiders.map((rider, index) => {
         const {
           firstName,

@@ -21,11 +21,11 @@ export type RiderType = {
   phoneNumber: string
   email: string
   accessibility: Accessibility[]
-  organization: Organization
-  description: string
+  organization?: Organization
+  description?: string
   joinDate: string
   endDate: string
-  pronouns: string
+  pronouns?: string
   address: string
   favoriteLocations: string[]
   photoLink?: string

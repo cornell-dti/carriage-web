@@ -1,38 +1,31 @@
 import { ReactNode } from 'react';
 
-export type AccessibilityNeeds = {
-  hasCrutches: boolean;
-  needsAssistant: boolean;
-  needsWheelchair: boolean;
-};
+export enum Accessibility {
+  ASSISTANT = 'Assistant',
+  CRUTCHES = 'Crutches',
+  WHEELCHAIR = 'Wheelchair',
+}
+
+enum Organization {
+  REDRUNNER = 'RedRunner',
+  CULIFT = 'CULift'
+}
 
 export type Rider = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  accessibilityNeeds: Array<string>;
-  description: string;
-  joinDate: string;
-  pronouns: string;
-  address: string;
-};
-
-export type NewRider = {
-  id: string;
-  email: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  pronouns: string;
-  accessibility: Array<string>;
-  description: string;
-  joinDate: string;
-  endDate: string;
-  address: string;
-  favoriteLocations: Array<string>;
-  organization: string;
+  id: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
+  email: string
+  accessibility: Array<Accessibility>
+  organization?: Organization
+  description?: string
+  joinDate: string
+  endDate: string
+  pronouns: string
+  address: string
+  favoriteLocations?: Array<string>
+  photoLink?: string
 };
 
 export type Availability = {
