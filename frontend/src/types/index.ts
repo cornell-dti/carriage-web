@@ -11,7 +11,6 @@ enum Organization {
   CULIFT = 'CULift'
 }
 
-<<<<<<< HEAD
 export type Rider = {
   id: string
   firstName: string
@@ -27,23 +26,6 @@ export type Rider = {
   address: string
   favoriteLocations?: Array<string>
   photoLink?: string
-=======
-export type NewRider = {
-  id: string;
-  email: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  pronouns: string;
-  accessibility: Array<string>;
-  description: string;
-  joinDate: string;
-  endDate: string;
-  address: string;
-  favoriteLocations: Array<string>;
-  organization: string;
-  photoLink?: string;
->>>>>>> 73599080753fffce4615d9736fdab29081ee8366
 };
 
 export type Availability = {
