@@ -20,14 +20,14 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
     const splitName = name.split(' ');
     const firstName = splitName[0];
     const lastName = splitName[1];
-    const accessibilityNeeds = needs.split(',');
+    const accessibility = needs.split(',');
     onSubmit({
       id: netid,
       firstName,
       lastName,
       email,
       phoneNumber,
-      accessibilityNeeds,
+      accessibility,
       address,
       startDate,
       endDate,
@@ -75,10 +75,10 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
               required: true,
               validate: (needs) => {
                 const needsArr = needs.split(',');
-                const isValidNeed = 
-                  (acc: boolean, val: Accessibility) => {
-                    return acc && Object.values(Accessibility).includes(val);
-                  }
+                const isValidNeed = (
+                  acc: boolean, 
+                  val: Accessibility
+                ) => acc && Object.values(Accessibility).includes(val);
                 return needsArr.reduce(isValidNeed, true);
               }
             })}
@@ -98,9 +98,11 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
             name="address"
             type="text"
             placeholder="Address"
-            ref={register({ required: true })}
+            ref={register({ 
+              required: true,
+              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/
+            })}
           />
-          {/* TODO: may need to validate address */}
           {errors.address &&
           <p className={styles.error}>enter an address</p>}
         </div>
