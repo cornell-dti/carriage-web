@@ -2,7 +2,7 @@ import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import * as db from './common';
 import { Ride, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
@@ -14,8 +14,13 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = moment(req.query.date as string).toISOString();
-  const dateEnd = moment(req.query.date as string).endOf('day').toISOString();
+  const dateStart = moment
+    .tz(req.query.date as string, 'America/New_York')
+    .toISOString();
+  const dateEnd = moment
+    .tz(req.query.date as string, 'America/New_York')
+    .endOf('day')
+    .toISOString();
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
@@ -25,8 +30,8 @@ router.get('/download', (req, res) => {
 
   const callback = (value: any) => {
     const dataToExport = value.map((doc: any) => {
-      const start = moment(doc.startTime);
-      const end = moment(doc.endTime);
+      const start = moment.tz(doc.startTime, 'America/New_York');
+      const end = moment.tz(doc.endTime, 'America/New_York');
       const fullName = (user: RiderType | DriverType) => (
         `${user.firstName} ${user.lastName.substring(0, 1)}.`
       );
@@ -51,7 +56,7 @@ router.get('/download', (req, res) => {
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
   const { query: { rider } } = req;
-  const now = moment().toISOString();
+  const now = moment.tz('America/New_York').toISOString();
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
@@ -91,8 +96,8 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = moment(date as string).toISOString();
-      const dateEnd = moment(date as string).endOf('day').toISOString();
+      const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
+      const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
