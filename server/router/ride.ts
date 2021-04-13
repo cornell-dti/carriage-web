@@ -146,7 +146,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
 });
 
 // Create edit instances and update a repeating ride's edits field
-router.put('/:id/edits', validateUser('User'), (req, res) => {
+router.put('/:id/edits', (req, res) => {
   const { params: { id }, body: { deleteOnly, origDate, rider, startTime, endTime,
     startLocation, endLocation, driver },
   } = req;
