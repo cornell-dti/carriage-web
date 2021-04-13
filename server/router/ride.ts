@@ -158,42 +158,77 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
     const origEndTimeOnly = moment(masterRide.endTime).format('HH:mm:ss');
     const origEndTime = moment(`${origDate}T${origEndTimeOnly}`).toISOString();
 
-    const deleteId = uuid();
-    const deleteRide = new Ride({
-      id: deleteId,
-      rider: masterRide.rider,
-      startLocation: masterRide.startLocation,
-      endLocation: masterRide.endLocation,
-      startTime: origStartTime,
-      endTime: origEndTime,
-      driver: masterRide.driver,
-      deleted: true,
-    });
-    db.create(res, deleteRide);
+    const masterFirstDay = moment(masterRide.startTime).format('YYYY-MM-DD');
 
-    const newEdits = [deleteId];
-    if (masterRide.edits) {
-      newEdits.concat(masterRide.edits);
-    }
+    if (origDate === masterFirstDay) {
+      // if editing the first instance, move the start/endTimes to the next occurrence
+      const weekday = moment(origDate).weekday();
+      const weekdayIndex = masterRide.recurringDays.findIndex((day: number) => day === weekday);
 
-    // if deleteOnly = false, create a replace edit with the new fields
-    if (!deleteOnly) {
-      const replaceId = uuid();
-      const replaceRide = new Ride({
-        id: replaceId,
-        rider,
-        startLocation,
-        endLocation,
-        startTime,
-        endTime,
-        driver,
-        deleted: false,
+      const nextWeekdayIndex = ((weekdayIndex + 1) % masterRide.recurringDays.length);
+      const nextWeekday = masterRide.recurringDays[nextWeekdayIndex];
+
+      const addDays = (nextWeekday > weekday) ? nextWeekday - weekday : 7 - weekday + nextWeekday;
+      const nextOccurrence = moment(origDate).add(addDays, 'days');
+
+      const newDate = nextOccurrence.format('YYYY-MM-DD');
+      const newStartTime = moment(`${newDate}T${origStartTimeOnly}`).toISOString();
+      const newEndTime = moment(`${newDate}T${origEndTimeOnly}`).toISOString();
+
+      const setNextOperation = { $SET: { startTime: newStartTime, endTime: newEndTime } };
+      db.update(res, Ride, { id }, setNextOperation, tableName);
+
+      // if deleteOnly = false, create a one-time ride with the new fields
+      if (!deleteOnly) {
+        const newRide = new Ride({
+          id: uuid(),
+          rider,
+          startLocation,
+          endLocation,
+          startTime,
+          endTime,
+          driver,
+        });
+        db.create(res, newRide);
+      }
+    } else {
+      const deleteId = uuid();
+      const deleteRide = new Ride({
+        id: deleteId,
+        rider: masterRide.rider,
+        startLocation: masterRide.startLocation,
+        endLocation: masterRide.endLocation,
+        startTime: origStartTime,
+        endTime: origEndTime,
+        driver: masterRide.driver,
+        deleted: true,
       });
-      db.create(res, replaceRide);
-      newEdits.push(replaceId);
+      db.create(res, deleteRide);
+
+      const newEdits = [deleteId];
+      if (masterRide.edits) {
+        newEdits.concat(masterRide.edits);
+      }
+
+      // if deleteOnly = false, create a replace edit with the new fields
+      if (!deleteOnly) {
+        const replaceId = uuid();
+        const replaceRide = new Ride({
+          id: replaceId,
+          rider,
+          startLocation,
+          endLocation,
+          startTime,
+          endTime,
+          driver,
+          deleted: false,
+        });
+        db.create(res, replaceRide);
+        newEdits.push(replaceId);
+      }
+      const operation = { $SET: { edits: newEdits } };
+      db.update(res, Ride, { id }, operation, tableName);
     }
-    const operation = { $SET: { edits: newEdits } };
-    db.update(res, Ride, { id }, operation, tableName);
   });
 });
 
