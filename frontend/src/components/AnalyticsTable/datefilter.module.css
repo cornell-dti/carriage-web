@@ -1,0 +1,38 @@
+.dateFilter{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+.box{
+    display: flex; 
+    flex-direction: column;
+    margin: 0 1rem; 
+
+}
+.datePickerLabel{
+    font-weight: bold; 
+    font-size: 1.063rem;
+}
+.dropdown{
+    border-radius: 0.5em; 
+    min-width: 7.5 rem; 
+    padding: 0.625rem 1.125rem;
+    text-align: center;
+    font-size: 1.063rem;
+}
+
+.yearDropdown{
+    background-color: black;
+    color: white; 
+
+}
+
+.yearDropdown:focus{
+    background-color: white; 
+    color: black; 
+}
+
+.monthDropdown{
+    background-color: white; 
+    color: black;
+}
