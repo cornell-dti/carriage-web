@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+// import { Map } from 'immutable';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
@@ -49,6 +50,7 @@ const AvailabilityInput = ({
 
   const prefillDays = (): void => {
     existingDayArray?.forEach(day => {
+      console.log(`prefill day, index: ${day}, ${index}`);
       selectDay(day, index);
     });
   };
@@ -69,6 +71,8 @@ const AvailabilityInput = ({
     setValue(`${instance}.days`, days);
   }, [instance, days, setValue]);
 
+  // formats a time string to be suitable to pass into defaultValue 
+  // of the Input component
   const formatTime = (time: string): string => {
     if (time.includes('am')) {
       // remove 'am' from time
@@ -160,21 +164,25 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
 
   const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
 
+  // returns a map with time ranges as keys and repeating days as values
   const getAvailabilityMap = (): Map<string, string[]> => {
     let availabilityMap = new Map();
     existingAvailability?.forEach(availability => {
       const [day, timeRange] = availability;
       const dayArray: string[] | undefined = availabilityMap.get(timeRange);
-      if (dayArray) {
+      if (dayArray) { // push day onto dayArray
         dayArray.push(day);
         availabilityMap.set(timeRange, dayArray);
-      } else { //create new array
+      } else { // create new array
         availabilityMap.set(timeRange, [day]);
       }
     });
+    console.log(`availabilityMap!`);
+    console.log(availabilityMap);
     return availabilityMap;
   };
 
+  // transforms the availability map into an array
   const availabilityMapToArray = (map: Map<string, string[]>) => {
     const timeRangeArray = Array.from(map.keys());
     const dayArray = Array.from(map.values());
@@ -199,10 +207,10 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
   return (
     <div className={styles.workingHours}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
-      <p>Num Avail: { numAvailability }</p>
       { existingAvailability ? 
       <WeekProvider>
-        {availabilityArray.map(([timeRange, dayArray], index) => (
+        {availabilityArray && 
+          availabilityArray.map(([timeRange, dayArray], index) => (
             <AvailabilityInput 
             key={index} 
             index={index} 

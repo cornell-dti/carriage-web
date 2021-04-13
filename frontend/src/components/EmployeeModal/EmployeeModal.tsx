@@ -10,6 +10,7 @@ import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
+import { edit } from '../../icons/other/index';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -31,7 +32,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
-  const modalButtonText = existingEmployee ? 'Edit' : '+ Add an employee';
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
 
@@ -40,12 +40,14 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const closeModal = () => setIsOpen(false);
 
   const parseAvailability = (availability: ObjectType[]) => {
+    console.log(`parseAvailability len: ${availability.length}`);
     const result: ObjectType = {};
     availability.forEach(({ startTime, endTime, days }) => {
       days.forEach((day: string) => {
         result[day] = { startTime, endTime };
       });
     });
+    console.log(result);
     return result;
   };
 
@@ -62,7 +64,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       };
       if (existingEmployee) {
         // Update an existing admin
-        console.log('edit employee admin');
         fetch(`/api/admins/${existingEmployee.id}`,withDefaults({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -86,7 +87,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       };
       if (existingEmployee) {
         // Update an existing driver
-        console.log('edit employee driver');
         fetch(`/api/drivers/${existingEmployee.id}`,withDefaults({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -105,7 +105,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   return (
     <>
-      <Button onClick={openModal}>{ modalButtonText }</Button>
+      {
+        existingEmployee ? 
+          <img className={styles.edit} alt="edit" src={edit} onClick={openModal}/>
+          : <Button onClick={openModal}>+ Add an employee</Button>
+      }
       <Modal
         title={modalTitle}
         isOpen={isOpen}
