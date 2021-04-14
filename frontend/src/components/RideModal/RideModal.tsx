@@ -9,34 +9,34 @@ type RideModalProps = {
   currentPage: number,
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
   isOpen: boolean,
-  setIsOpen:  React.Dispatch<React.SetStateAction<boolean>>,
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setOpenRideModal?: React.Dispatch<React.SetStateAction<number>>,
   ride?: Ride
 }
 
 const RideModal = ({
-  currentPage, 
-  setCurrentPage, 
-  isOpen, 
-  setIsOpen, 
-  setOpenRideModal, 
-  ride
+  currentPage,
+  setCurrentPage,
+  isOpen,
+  setIsOpen,
+  setOpenRideModal,
+  ride,
 }: RideModalProps) => {
   const [formData, setFormData] = useState<ObjectType>(
-    ride ? 
-    {
-      date: moment(ride.startTime).format('YYYY-MM-DD'),
-      pickupTime: moment(ride.startTime).format('kk:mm'),
-      dropoffTime: moment(ride.endTime).format('kk:mm'),
-      driver: ride.driver,
-      rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
-      startLocation: 
-        ride.startLocation.name ? ride.startLocation.name : ride.startLocation.address,
-      endLocation: 
-        ride.endLocation.name ? ride.endLocation.name : ride.endLocation.address,
-    }
-    :
-    {}
+    ride
+      ? {
+        date: moment(ride.startTime).format('YYYY-MM-DD'),
+        pickupTime: moment(ride.startTime).format('kk:mm'),
+        dropoffTime: moment(ride.endTime).format('kk:mm'),
+        rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+        pickupLoc: ride.startLocation.id
+          ? ride.startLocation.name
+          : ride.startLocation.address,
+        dropoffLoc: ride.endLocation.id
+          ? ride.endLocation.name
+          : ride.endLocation.address,
+      }
+      : {},
   );
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { withDefaults } = useReq();
@@ -52,40 +52,41 @@ const RideModal = ({
   };
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
-    setFormData((prev) => ({ ...prev, ...data }));
+    setFormData((prev) => {
+      console.log({ ...prev, ...data }, 6);
+      return { ...prev, ...data };
+    });
     next();
   };
 
-  const submitData = () => {
-    const {
-      date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
-    } = formData;
-    const startTime = new Date(`${date} ${pickupTime} EST`).toISOString();
-    const endTime = new Date(`${date} ${dropoffTime} EST`).toISOString();
-    const startLoc = startLocation.address;
-    const endLoc = endLocation.address;
-    const riderName = `${rider.firstName} ${rider.lastName}`
-    setFormData({ startTime, endTime, driver, riderName, startLoc, endLoc });
-    setIsSubmitted(true);
-  };
+  const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
     if (isSubmitted) {
+      const {
+        date, pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
+      } = formData;
+      const startTime = moment(`${date} ${pickupTime}`).toISOString();
+      const endTime = moment(`${date} ${dropoffTime}`).toISOString();
+      const rideData = {
+        startTime, endTime, driver, rider, startLocation, endLocation,
+      };
       if (ride) {
         fetch(`/api/rides/${ride.id}`, withDefaults({
           method: 'PUT',
-          body: JSON.stringify(formData),
-        }))
+          body: JSON.stringify(rideData),
+        }));
       } else {
         fetch('/api/rides', withDefaults({
           method: 'POST',
-          body: JSON.stringify(formData),
+          body: JSON.stringify(rideData),
         }));
       }
       setIsSubmitted(false);
       closeModal();
     }
-  }, [formData, isSubmitted, withDefaults]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, isSubmitted, ride, withDefaults]);
 
   // have to do a ternary operator on the entire modal
   // because otherwise the pages would show up wrongly
@@ -131,7 +132,7 @@ const RideModal = ({
         />
       </Modal>
     )
-      
+
   );
 };
 

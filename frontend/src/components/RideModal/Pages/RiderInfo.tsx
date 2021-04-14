@@ -12,8 +12,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const { register, handleSubmit } = useForm({
     defaultValues: {
       name: formData?.rider ?? '',
-      pickupLoc: formData?.startLocation ?? '',
-      dropoffLoc: formData?.endLocation ?? '',
+      pickupLoc: formData?.pickupLoc ?? '',
+      dropoffLoc: formData?.dropoffLoc ?? '',
     },
   });
   const [nameToId, setNameToId] = useState<ObjectType>({});
