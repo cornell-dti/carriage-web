@@ -73,7 +73,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         type='time'
         className={styles.timeInput}
         ref={register({
-          required: "Please enter a valid end time",
+          required: true,
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
             return startTime < endTime;
@@ -82,7 +82,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       />
         {errors.availability && errors.availability[index] && 
           errors.availability[index].endTime &&
-          <p className={styles.error}>{errors.availability[index].endTime.message}</p> 
+          <p className={styles.error}>Please enter a valid end time</p> 
         }    
         </div>
       <p className={styles.repeatText}>Repeat on</p>
@@ -104,7 +104,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         </div>
         {errors.availability && errors.availability[index] && 
             errors.availability[index].days &&  
-            <p className={styles.error}>Please select at least one day</p>
+            <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
           }    
       </div>
     </div>

@@ -48,7 +48,7 @@ const EmployeeInfo = () => {
           min={10}
           max={10}
           className={cn(styles.input)}
-          ref={register({ required: true, pattern:/[0-9]{10}/})}
+          ref={register({ required: true, pattern:/[0-9]{10}/, maxLength: 10, minLength: 10})}
         />
         {formState.errors.phoneNumber && 
           <p className={styles.error}>Please enter a valid phone number </p>}
