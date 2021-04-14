@@ -55,9 +55,14 @@
   color: white;
   border: none;
 }
-
+.primaryBtn:focus{
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 1);
+}
 .secondaryBtn {
   background-color: white;
   border: 0.063rem solid #000000;
   box-sizing: border-box;
+}
+.secondaryBtn:focus{
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 1);
 }

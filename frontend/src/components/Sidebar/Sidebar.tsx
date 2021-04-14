@@ -37,7 +37,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
   ];
 
   return (
-    <div className={styles.container}>
+    <nav className={styles.container}>
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
           <div className={styles.sidebarLinks}>
@@ -72,7 +72,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
       <div className={styles.content}>
         {children}
       </div>
-    </div >
+    </nav >
   );
 };
 
