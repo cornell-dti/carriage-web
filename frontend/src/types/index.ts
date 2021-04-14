@@ -74,6 +74,7 @@ export type Employee = {
   email: string;
   availability?: AvailabilityType;
   admin?: boolean;
+  photoLink?: string;
 };
 
 export type ObjectType = {

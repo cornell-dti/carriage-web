@@ -21,13 +21,13 @@
   height: 11px;
   width: 11px;
   float: left;
-  margin: 6px 7px 0px 0px;
   border-radius: 50%;
 }
 
 .tag {
-  border-radius: 0.625rem;
-  padding: 0.313rem;
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 0.875rem;
 }
 
 .ctown {
