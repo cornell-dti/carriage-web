@@ -29,9 +29,11 @@ export type NewRider = {
   accessibility: Array<string>;
   description: string;
   joinDate: string;
+  endDate: string;
   address: string;
   favoriteLocations: Array<string>;
   organization: string;
+  photoLink?: string;
 };
 
 export type Availability = {
@@ -52,6 +54,8 @@ export type Driver = {
   phoneNumber: string;
   email: string;
   phone: string;
+  admin: boolean;
+  photoLink?: string;
 };
 
 export type Admin = {
@@ -60,7 +64,18 @@ export type Admin = {
   lastName: string;
   phoneNumber: string;
   email: string;
-  accessLevel: string;
+  photoLink?: string;
+};
+
+export type Employee = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  availability?: AvailabilityType;
+  admin?: boolean;
+  photoLink?: string;
 };
 
 export type ObjectType = {

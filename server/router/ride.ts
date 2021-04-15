@@ -4,8 +4,8 @@ import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment';
 import * as db from './common';
-import { Ride, RideType, Type } from '../models/ride';
-import { Location, Tag } from '../models/location';
+import { Ride, RideLocation, Type } from '../models/ride';
+import { Tag } from '../models/location';
 import { validateUser } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
@@ -14,8 +14,8 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = new Date(`${req.query.date} EST`).toISOString();
-  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const dateStart = moment(req.query.date as string).toISOString();
+  const dateEnd = moment(req.query.date as string).endOf('day').toISOString();
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
@@ -48,6 +48,20 @@ router.get('/download', (req, res) => {
   db.scan(res, Ride, condition, callback);
 });
 
+// Get and query all master repeating rides in table
+router.get('/repeating', validateUser('User'), (req, res) => {
+  const { query: { rider } } = req;
+  const now = moment().toISOString();
+  let condition = new Condition('recurring')
+    .eq(true)
+    .where('endDate')
+    .ge(now.substring(0, 10));
+  if (rider) {
+    condition = condition.where('rider').eq(rider);
+  }
+  db.scan(res, Ride, condition);
+});
+
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
@@ -57,7 +71,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (query === {}) {
+  if (!Object.keys(query).length) {
     db.getAll(res, Ride, tableName);
   } else {
     const { type, status, rider, driver, date, scheduled } = query;
@@ -77,8 +91,8 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = new Date(`${date} EST`).toISOString();
-      const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
+      const dateStart = moment(date as string).toISOString();
+      const dateEnd = moment(date as string).endOf('day').toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
@@ -87,70 +101,48 @@ router.get('/', validateUser('User'), (req, res) => {
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
-  const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
-  } = req;
+  const { body } = req;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
 
-  let startLocationId;
-  let endLocationId;
+  let startLocationObj: RideLocation | undefined;
+  let endLocationObj: RideLocation | undefined;
 
   if (!validate(startLocation)) {
-    startLocationId = uuid();
-    const location = new Location({
-      id: startLocationId,
-      name: 'Custom',
+    const name = startLocation.split(',')[0];
+    startLocationObj = {
+      name,
       address: startLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
   if (!validate(endLocation)) {
-    endLocationId = uuid();
-    const location = new Location({
-      id: endLocationId,
-      name: 'Custom',
+    const name = endLocation.split(',')[0];
+    endLocationObj = {
+      name,
       address: endLocation,
       tag: Tag.CUSTOM,
-    });
-    location.save();
+    };
   }
 
-  const ride = new Ride({
-    id: uuid(),
-    rider,
-    startLocation: startLocationId ?? startLocation,
-    endLocation: endLocationId ?? endLocation,
-    startTime,
-    requestedEndTime,
-    endTime: requestedEndTime,
-    driver,
-  });
-  db.create(res, ride);
+  if (recurring && !(recurringDays && endDate)) {
+    res.status(400).send({ err: 'Invalid repeating ride.' });
+  } else {
+    const ride = new Ride({
+      ...body,
+      id: uuid(),
+      startLocation: startLocationObj ?? startLocation,
+      endLocation: endLocationObj ?? endLocation,
+      edits: recurring ? [] : undefined,
+    });
+    db.create(res, ride);
+  }
 });
 
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
-  if (body.type === Type.PAST) {
-    db.getById(res, Ride, id, tableName, (ride) => {
-      const {
-        startLocation: { id: startId, tag: startTag },
-        endLocation: { id: endId, tag: endTag },
-      } = ride as RideType;
-      if (startTag === Tag.CUSTOM) {
-        body.startLocation = 'Custom';
-        Location.delete(startId);
-      }
-      if (endTag === Tag.CUSTOM) {
-        body.endLocation = 'Custom';
-        Location.delete(endId);
-      }
-      db.update(res, Ride, { id }, body, tableName);
-    });
-  } else {
-    db.update(res, Ride, { id }, body, tableName);
-  }
+  db.update(res, Ride, { id }, body, tableName);
 });
 
 // Delete an existing ride

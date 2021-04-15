@@ -24,6 +24,7 @@ export type RiderType = {
   organization: Organization
   description: string
   joinDate: string
+  endDate: string
   pronouns: string
   address: string
   favoriteLocations: string[]
@@ -69,6 +70,11 @@ const schema = new dynamoose.Schema({
     required: true,
   },
   joinDate: {
+    type: String,
+    required: true,
+    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+  },
+  endDate: {
     type: String,
     required: true,
     validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,

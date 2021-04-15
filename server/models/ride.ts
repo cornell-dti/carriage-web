@@ -1,8 +1,10 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { Location, LocationType } from './location';
+import { ValueType } from 'dynamoose/dist/Schema';
+import { Location, Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
+import { formatAddress, isAddress } from '../util';
 
 export enum Type {
   ACTIVE = 'active',
@@ -19,16 +21,22 @@ export enum Status {
   NO_SHOW = 'no_show',
 }
 
+export type RideLocation = {
+  id?: string,
+  name: string;
+  address: string;
+  tag: Tag;
+};
+
 export type RideType = {
   id: string,
   type: Type,
   status: Status,
   late: boolean,
-  startLocation: LocationType,
-  endLocation: LocationType,
+  startLocation: RideLocation,
+  endLocation: RideLocation,
   startTime: string,
-  requestedEndTime: string,
-  endTime?: string,
+  endTime: string,
   rider: RiderType,
   driver?: DriverType,
   recurring: boolean,
@@ -36,6 +44,29 @@ export type RideType = {
   endDate?: string
   deleted?: boolean,
   edits?: string[],
+};
+
+const locationSchema = {
+  type: [String, Object],
+  required: true,
+  get: (value: ValueType) => {
+    if (typeof value === 'string') {
+      return Location.get(value) as any;
+    }
+    return value;
+  },
+  schema: {
+    name: String,
+    address: {
+      type: String,
+      set: (address: any) => formatAddress(address as string),
+      validate: (address: any) => isAddress(address as string),
+    },
+    tag: {
+      type: String,
+      enum: Object.values(Tag),
+    },
+  },
 };
 
 const schema = new dynamoose.Schema({
@@ -61,20 +92,16 @@ const schema = new dynamoose.Schema({
     default: false,
     required: true,
   },
-  startLocation: Location as any,
-  endLocation: Location as any,
+  startLocation: locationSchema,
+  endLocation: locationSchema,
   startTime: {
-    type: String,
-    required: true,
-    validate: (time) => isISO8601(time as string),
-  },
-  requestedEndTime: {
     type: String,
     required: true,
     validate: (time) => isISO8601(time as string),
   },
   endTime: {
     type: String,
+    required: true,
     validate: (time) => isISO8601(time as string),
   },
   rider: Rider as any,
@@ -96,7 +123,7 @@ const schema = new dynamoose.Schema({
   endDate: {
     type: String,
     required: false,
-    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+    validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
 });
 
