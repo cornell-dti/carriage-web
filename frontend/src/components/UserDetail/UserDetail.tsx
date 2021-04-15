@@ -24,12 +24,12 @@ export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
 );
 
 type UserDetailProps = {
-  // profilePic: string;
   firstName: string;
   lastName: string;
   netId: string;
   photoLink: string | undefined;
   children: JSX.Element | JSX.Element[];
+  photoLink?: string;
 };
 
 const UserDetail = ({
@@ -47,6 +47,11 @@ const UserDetail = ({
       ) : (
         <div className={styles.undefinedProfilePic} />
       )}
+      <div className={styles.imgContainer}>
+        {photoLink && photoLink !== ''
+          ? <img className={styles.profilePic} src={`http://${photoLink}`} />
+          : null}
+      </div>
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>

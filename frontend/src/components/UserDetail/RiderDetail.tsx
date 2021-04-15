@@ -8,14 +8,13 @@ import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 
 type RiderDetailProps = {
-  photoLink: string;
   id: string;
   firstName: string;
   lastName: string;
   netID: string;
   phone: string;
-  address: string;
-  accessibility: string
+  accessibility: string;
+  photoLink?: string;
 }
 
 const RiderDetail = () => {
