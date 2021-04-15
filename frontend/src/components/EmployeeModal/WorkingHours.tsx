@@ -50,15 +50,24 @@ const AvailabilityInput = ({
 
   const prefillDays = (): void => {
     existingDayArray?.forEach(day => {
-      console.log(`prefill day, index: ${day}, ${index}`);
       selectDay(day, index);
     });
   };
 
+  const prefillTimeRange = (): void => {
+    if (existingTimeRange) {
+      //extract start and end times
+      let [startTime, endTime] = existingTimeRange.split('-');
+      startTime = formatTime(startTime);
+      endTime = formatTime(endTime);
+      setExisingTime([startTime, endTime]);
+    }
+  };
+
   useEffect(() => {
-    // Prefill time range and days once
-    prefillTimeRange();
+    // Prefill days and time range once
     prefillDays();
+    prefillTimeRange();
   }, []);
 
   useEffect(() => {
@@ -78,7 +87,7 @@ const AvailabilityInput = ({
       // remove 'am' from time
       let [timeAM] = time.split('am');
       if (timeAM === '12') { //12am edge case
-        timeAM = '00'; //00:00 translates to 12am
+        timeAM = '00'; //12am translates to 00:00
       } else if (timeAM.length === 1) { 
         // pad time to be in the format HH:MM
         timeAM = `0${timeAM}`;
@@ -89,7 +98,7 @@ const AvailabilityInput = ({
       let [timePM] = time.split('pm');
       // Add 12 to the hour
       let timePMInt = parseInt(timePM);
-      if (timePMInt !== 12) { //check for edge case, 12:00 translates to 12pm
+      if (timePMInt !== 12) { //check for edge case, 12pm translates to 12:00
         timePMInt += 12;
       }
       timePM = timePMInt.toString();
@@ -100,16 +109,6 @@ const AvailabilityInput = ({
       return `${timePM}:00`
     }
   }
-
-  const prefillTimeRange = (): void => {
-    if (existingTimeRange) {
-      //extract start and end times
-      let [startTime, endTime] = existingTimeRange.split('-');
-      startTime = formatTime(startTime);
-      endTime = formatTime(endTime);
-      setExisingTime([startTime, endTime]);
-    }
-  };
 
   return (
     <div className={styles.availabilityInput}>
@@ -177,8 +176,6 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
         availabilityMap.set(timeRange, [day]);
       }
     });
-    console.log(`availabilityMap!`);
-    console.log(availabilityMap);
     return availabilityMap;
   };
 
@@ -190,7 +187,7 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
       // Each element of newAvailabilityArray is a tuple of (string, string[])
       let newAvailabilityArray: availabilityPair[] = [];
       for (let i = 0; i < timeRangeArray.length; i++) {
-        const pair: availabilityPair = [timeRangeArray[i], dayArray[i]]; //auto concat issue
+        const pair: availabilityPair = [timeRangeArray[i], dayArray[i]];
         newAvailabilityArray.push(pair);
       }
       setAvailabilityArray(newAvailabilityArray);

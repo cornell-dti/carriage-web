@@ -40,14 +40,12 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const closeModal = () => setIsOpen(false);
 
   const parseAvailability = (availability: ObjectType[]) => {
-    console.log(`parseAvailability len: ${availability.length}`);
     const result: ObjectType = {};
     availability.forEach(({ startTime, endTime, days }) => {
       days.forEach((day: string) => {
         result[day] = { startTime, endTime };
       });
     });
-    console.log(result);
     return result;
   };
 
