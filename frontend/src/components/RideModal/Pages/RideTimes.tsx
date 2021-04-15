@@ -20,6 +20,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
         <div className={styles.date}>
           <Label htmlFor="date">Date:</Label>
           <Input
+            id="date"
             type="date"
             name="date"
             ref={register({ required: true })}
@@ -28,6 +29,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
         <div className={styles.pickupTime}>
           <Label htmlFor="pickupTime">Pickup time:</Label>
           <Input
+            id="pickupTime"
             type="time"
             name="pickupTime"
             ref={register({ required: true })}
@@ -36,6 +38,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
         <div className={styles.dropoffTime}>
           <Label htmlFor="dropoffTime">Dropoff time:</Label>
           <Input
+            id="dropoffTime"
             type="time"
             name="dropoffTime"
             ref={register({

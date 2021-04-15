@@ -18,6 +18,7 @@ const TextInput = (
       </label >
       <input type="text"
         name={labelName}
+        id={labelName}
         onChange={(e) => handleInput(e)} />
       {showFormFeedback
         && <p>{feedback}</p>

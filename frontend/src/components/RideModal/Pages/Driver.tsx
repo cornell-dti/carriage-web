@@ -23,6 +23,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
             </Label>
             <Input
               className={styles.driverRadio}
+              id="driver"
               name="driver"
               type="radio"
               value={d.id}

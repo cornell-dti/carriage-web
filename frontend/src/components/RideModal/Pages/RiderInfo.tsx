@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType, Location, NewRider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input } from '../../FormElements/FormElements';
+import { Button, Input, SRLabel } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
@@ -46,7 +46,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
+          <SRLabel htmlFor={"name"}>Name</SRLabel>
           <Input
+            id="name"
             name="name"
             type="text"
             placeholder="Name"
@@ -60,7 +62,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           />
         </div>
         <div className={styles.pickupLocation}>
+        <SRLabel htmlFor={"pickupLoc"}>Pickup Location</SRLabel>
           <Input
+            id="pickupLoc"
             name="pickupLoc"
             type="text"
             placeholder="Pickup Location"
@@ -74,7 +78,9 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
+          <SRLabel htmlFor={"dropoffLoc"}>Dropoff Location</SRLabel>
           <Input
+            id="dropoffLoc"
             name="dropoffLoc"
             type="text"
             placeholder="Dropoff Location"

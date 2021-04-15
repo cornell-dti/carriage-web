@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label } from '../FormElements/FormElements';
+import { Button, Input, Label, SRLabel } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType } from '../../types/index';
 
@@ -36,25 +36,31 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridC1)}>
+        <SRLabel htmlFor={"name"}>Name</SRLabel>
           <Input
+            id="name"
             name="name"
             type="text"
             placeholder="Name"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
           />
-          {errors.email && 'enter a valid name'}
+          {errors.name && 'enter a valid name'}
         </div>
         <div className={cn(styles.gridR1, styles.gridC2)}>
+          <SRLabel htmlFor={"netid"}>NetID</SRLabel>
           <Input
             name="netid"
+            id="netid"
             type="text"
             placeholder="NetID"
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
           />
-          {errors.email && 'enter a valid netid'}
+          {errors.netid && 'enter a valid netid'}
         </div>
         <div className={cn(styles.gridR2, styles.gridC1)}>
+        <SRLabel htmlFor={"email"}>Email</SRLabel>
           <Input
+            id="email"
             name="email"
             type="text"
             placeholder="Email"
@@ -63,7 +69,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           {errors.email && 'enter a valid email'}
         </div>
         <div className={cn(styles.gridR2, styles.gridC2)}>
+        <SRLabel htmlFor={"phoneNumber"}>Phone Number</SRLabel>
           <Input
+            id="phoneNumber"
             name="phoneNumber"
             type="text"
             placeholder="Phone Number"
@@ -72,26 +80,31 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           {errors.phoneNumber && 'enter a valid phone number'}
         </div>
         <div className={cn(styles.gridR3, styles.gridC1)}>
+        <SRLabel htmlFor={"needs"}>Phone Number</SRLabel>
           <Input
+            id="needs"
             name="needs"
             type="text"
             placeholder="Needs"
             ref={register({ required: true })}
           />
-          {errors.email && 'enter some needs'}
+          {errors.needs && 'enter some needs'}
         </div>
         <div className={cn(styles.gridR3, styles.gridC2)}>
+        <SRLabel htmlFor={"address"}>Phone Number</SRLabel>
           <Input
+            id="address"
             name="address"
             type="text"
             placeholder="Address"
             ref={register({ required: true })}
           />
-          {errors.email && 'enter an address'}
+          {errors.address && 'enter an address'}
         </div>
         <div className={cn(styles.gridR4, styles.gridC1)}>
           <Label htmlFor="start">Start Date:</Label>
           <Input
+            id="start"
             type="date"
             name="start"
             ref={register({ required: true })}
@@ -100,6 +113,7 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
         <div className={cn(styles.gridR4, styles.gridC2)}>
           <Label htmlFor="end">End Date:</Label>
           <Input
+            id="end"
             type="date"
             name="end"
             ref={register({ required: true })}

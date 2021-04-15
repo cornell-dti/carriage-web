@@ -54,6 +54,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
     <div className={styles.availabilityInput}>
       <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
       <Input
+        id={`${instance}.startTime`}
         name={`${instance}.startTime`}
         type='time'
         className={styles.timeInput}
@@ -62,6 +63,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
       <p className={styles.toText}>to</p>
       <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
       <Input
+        id={`${instance}.endTime`}
         name={`${instance}.endTime`}
         type='time'
         className={styles.timeInput}

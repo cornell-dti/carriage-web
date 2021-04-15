@@ -12,6 +12,7 @@ const EmployeeInfo = () => {
       <SRLabel htmlFor={'name'}>Name</SRLabel>
       <Input
         name='name'
+        id='name'
         type='text'
         placeholder='Name'
         className={cn(styles.input, styles.col1)}
@@ -20,6 +21,7 @@ const EmployeeInfo = () => {
       <SRLabel htmlFor={'netid'}>NetID</SRLabel>
       <Input
         name='netid'
+        id='netid'
         type='text'
         placeholder='NetID'
         className={cn(styles.input, styles.col2)}
@@ -28,6 +30,7 @@ const EmployeeInfo = () => {
       <SRLabel htmlFor={'email'}>Email</SRLabel>
       <Input
         name='email'
+        id='email'
         type='email'
         placeholder='Email'
         className={cn(styles.input, styles.col1)}
@@ -36,6 +39,7 @@ const EmployeeInfo = () => {
       <SRLabel htmlFor={'phoneNumber'}>Phone Number</SRLabel>
       <Input
         name='phoneNumber'
+        id='phoneNumber'
         type='tel'
         pattern="[0-9]{10}"
         placeholder='Phone Number'
