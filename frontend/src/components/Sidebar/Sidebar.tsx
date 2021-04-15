@@ -37,7 +37,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
   ];
 
   return (
-    <nav className={styles.container}>
+    <nav className={styles.container} role={"navigation"}>
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
           <div className={styles.sidebarLinks}>

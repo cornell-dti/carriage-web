@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
-import { Input } from '../FormElements/FormElements';
+import { Input, SRLabel } from '../FormElements/FormElements';
 import { WeekProvider, useWeek } from './WeekContext';
 
 type AvailabilityInputProps = {
@@ -52,6 +52,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
 
   return (
     <div className={styles.availabilityInput}>
+      <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
       <Input
         name={`${instance}.startTime`}
         type='time'
@@ -59,6 +60,7 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
         ref={register({ required: true })}
       />
       <p className={styles.toText}>to</p>
+      <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
       <Input
         name={`${instance}.endTime`}
         type='time'

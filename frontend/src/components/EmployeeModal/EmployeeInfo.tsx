@@ -2,13 +2,14 @@ import React from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
-import { Input } from '../FormElements/FormElements';
+import { Input, SRLabel } from '../FormElements/FormElements';
 
 
 const EmployeeInfo = () => {
   const { register } = useFormContext();
   return (
     <div className={styles.inputContainer}>
+      <SRLabel htmlFor={'name'}>Name</SRLabel>
       <Input
         name='name'
         type='text'
@@ -16,6 +17,7 @@ const EmployeeInfo = () => {
         className={cn(styles.input, styles.col1)}
         ref={register({ required: true })}
       />
+      <SRLabel htmlFor={'netid'}>NetID</SRLabel>
       <Input
         name='netid'
         type='text'
@@ -23,6 +25,7 @@ const EmployeeInfo = () => {
         className={cn(styles.input, styles.col2)}
         ref={register({ required: true })}
       />
+      <SRLabel htmlFor={'email'}>Email</SRLabel>
       <Input
         name='email'
         type='email'
@@ -30,6 +33,7 @@ const EmployeeInfo = () => {
         className={cn(styles.input, styles.col1)}
         ref={register({ required: true })}
       />
+      <SRLabel htmlFor={'phoneNumber'}>Phone Number</SRLabel>
       <Input
         name='phoneNumber'
         type='tel'

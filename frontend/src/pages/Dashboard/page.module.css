@@ -24,3 +24,6 @@
 .rightSection > div {
   margin-left: 14px;
 }
+.hidden{
+  display:none;
+}

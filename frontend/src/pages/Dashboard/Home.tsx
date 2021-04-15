@@ -38,19 +38,18 @@ const Home = () => {
   };
 
   return (
-    <main>
+    <main id = "main">
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.rightSection}>
+          <ExportButton onClick={downloadCSV} />
           <CSVLink
             data={downloadData}
             filename={`scheduledRides_${today}.csv`}
-            className='hidden'
+            className={styles.hidden}
             ref={csvLink}
             target='_blank'
-            tabIndex={-1}>
-               <ExportButton onClick={downloadCSV} />
-            </CSVLink>
+          />
           <RideModal />
           <Notification />
         </div>

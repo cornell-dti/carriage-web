@@ -23,7 +23,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           onChange={onChange}
           checked={selectedRole === 'driver'}
         />
-        <Label className={styles.driverLabel}>Driver</Label>
+        <Label className={styles.driverLabel} htmlFor={"driver"}>Driver</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
@@ -33,7 +33,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           onChange={onChange}
           checked={selectedRole === 'admin'}
         />
-        <Label className={styles.driverLabel}>Admin</Label>
+        <Label className={styles.driverLabel} htmlFor={"admin"}>Admin</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
@@ -43,7 +43,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           onChange={onChange}
           checked={selectedRole === 'both'}
         />
-        <Label className={styles.driverLabel}>Both</Label>
+        <Label className={styles.driverLabel} htmlFor={"both"}>Both</Label>
       </div>
     </div>
   );
