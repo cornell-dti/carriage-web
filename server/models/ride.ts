@@ -104,8 +104,8 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  rider: Rider as any,
-  driver: Driver as any,
+  rider: Rider,
+  driver: Driver,
   recurring: {
     type: Boolean,
     required: true,
