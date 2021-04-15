@@ -15,13 +15,12 @@ type RiderModalProps = {
 
 const RiderModal = () => {
   const [formData, setFormData] = useState({
-    id: '',
     firstName: '',
     lastName: '',
     phoneNumber: '',
     email: '',
     accessibility: [],
-    startDate: '',
+    joinDate: '',
     endDate: '',
     address: '',
   });
@@ -50,7 +49,7 @@ const RiderModal = () => {
 
   // function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
   //   e.preventDefault();
-    
+
   //   if (e.target.files && e.target.files[0]) {
   //     let reader = new FileReader();
   //     let file = e.target.files[0];
@@ -66,17 +65,17 @@ const RiderModal = () => {
   //     };
   //     reader.onerror = function (error) {
   //       console.log('Error reading file: ', error);
-  //     };  
+  //     };
   //   } else {
   //     console.log('Undefined file upload');
   //   }
   // };
 
   // const uploadImage = async () => {
-  //   const photo = { 
+  //   const photo = {
   //     id: formData.id,
-  //     tableName: 'Riders', 
-  //     fileBuffer: imageBase64 
+  //     tableName: 'Riders',
+  //     fileBuffer: imageBase64
   //   };
   //   const uploadedImage = await fetch('/api/upload', withDefaults({
   //     method: 'POST',
@@ -93,7 +92,7 @@ const RiderModal = () => {
       // };
 
       const newRider = {
-        ...formData
+        ...formData,
         // photoLink: photoJson.fileBuffer
       };
       fetch('/api/riders', withDefaults({

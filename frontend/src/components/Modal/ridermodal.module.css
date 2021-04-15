@@ -11,7 +11,7 @@
 .rideTime {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   column-gap: 1rem;
   row-gap: 1rem;
 }
@@ -34,18 +34,21 @@
 .gridCBig2 {
   grid-column: 4 / span 3;
 }
+.gridCAll {
+  grid-column: 1 / span 6;
+}
 
 .duration {
   font-size: 0.9rem;
-  margin-bottom: -30%;
-  margin-left: 2%;
 }
+
 .to {
   font-size: 0.9rem;
   grid-column: 3 / span 1;
   margin-left: 70%;
   margin-top: 5%;
 }
+
 .end {
   grid-column: 4 / span 2;
 }
@@ -58,13 +61,6 @@
 }
 .gridR3 {
   grid-row: 3;
-}
-
-.gridR4 {
-  grid-row: 4;
-}
-.gridR5 {
-  grid-row: 5;
 }
 
 .error {
