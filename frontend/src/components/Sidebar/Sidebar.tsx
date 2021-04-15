@@ -2,7 +2,7 @@ import React, { useState, FunctionComponent, useContext, useEffect } from 'react
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
-import { home, drivers, riders, settings, locations, analytics, blank } from '../../icons/sidebar/index';
+import { home, drivers, riders, locations, analytics, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -34,7 +34,6 @@ const Sidebar: FunctionComponent = ({ children }) => {
     { icon: riders, caption: 'Students', path: '/riders' },
     { icon: locations, caption: 'Locations', path: '/locations' },
     { icon: analytics, caption: 'Analytics', path: '/analytics' },
-    { icon: settings, caption: 'Settings', path: '/settings' },
   ];
 
   return (
