@@ -2,7 +2,7 @@ import React, { useState, FunctionComponent, useContext, useEffect } from 'react
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
-import { home, drivers, riders, settings, locations, blank } from '../../icons/sidebar/index';
+import { home, drivers, riders, settings, locations, analytics, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -33,6 +33,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
     { icon: drivers, caption: 'Employees', path: '/employees' },
     { icon: riders, caption: 'Students', path: '/riders' },
     { icon: locations, caption: 'Locations', path: '/locations' },
+    { icon: analytics, caption: 'Analytics', path: '/analytics' },
     { icon: settings, caption: 'Settings', path: '/settings' },
   ];
 
@@ -40,7 +41,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
     <div className={styles.container}>
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
-          <div className={styles.sidebarLinks}>
+          <div key={path} className={styles.sidebarLinks}>
             <Link key={path} onClick={() => setSelected(path)}
               className={styles.icon} to={path}>
               <div className={
