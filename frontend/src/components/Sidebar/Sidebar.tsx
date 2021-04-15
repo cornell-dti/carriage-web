@@ -61,11 +61,12 @@ const Sidebar: FunctionComponent = ({ children }) => {
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
             render={(renderProps) => (
-              <div
+              <a href = {"#"}
                 onClick={renderProps.onClick}
+                className={styles.logoutLink}
               >
                 Log out
-              </div>
+              </a>
             )} />
         </div>
       </div>

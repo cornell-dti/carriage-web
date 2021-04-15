@@ -25,7 +25,7 @@ const Upload = ({ imageChange }: UploadProps) => {
   return (
     <div className={styles.uploadContainer}>
       {imageURL
-        ? <img className={styles.uploadImg} alt="uploaded picture" src={imageURL} />
+        ? <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
         : <img className={styles.uploadImg} alt="profile upload" src={uploadBox} />
       }
       <input
