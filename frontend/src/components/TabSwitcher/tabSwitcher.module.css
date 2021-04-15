@@ -1,0 +1,18 @@
+.tab {
+  display: inline;
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #848484;
+  padding: 0 0.6rem 0.2rem 0.6rem;
+  border-bottom: solid #848484 1px;
+}
+
+.tab:hover {
+  cursor: pointer;
+}
+
+.current {
+  color: black;
+  border-bottom: solid black 4px;
+}
