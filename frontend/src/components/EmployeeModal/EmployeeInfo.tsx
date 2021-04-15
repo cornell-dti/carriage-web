@@ -16,9 +16,9 @@ const EmployeeInfo = () => {
           type='text'
           placeholder='Name'
           className={cn(styles.input)}
-          ref={register({ required: "Please enter a valid name" })}
+          ref={register({ required: true })}
         />
-        {errors.name && <p className={styles.error}>{errors.name.message}</p>}
+        {errors.name && <p className={styles.error}>Please enter a valid name</p>}
       </div>
       <div className = {styles.col2}>
         <Input
@@ -26,9 +26,9 @@ const EmployeeInfo = () => {
           type='text'
           placeholder='NetID'
           className={cn(styles.input)}
-          ref={register({ required: "Please enter a valid NetID" })}
+          ref={register({ required: true })}
         />
-        {errors.netid && <p className={styles.error}>{errors.netid.message}</p>}
+        {errors.netid && <p className={styles.error}>Please enter a valid NetID</p>}
       </div>
       <div className = {styles.col1}>
         <Input

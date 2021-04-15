@@ -59,11 +59,11 @@ const AvailabilityInput = ({ index }: AvailabilityInputProps) => {
           name={`${instance}.startTime`}
           type='time'
           className={styles.timeInput}
-          ref={register({ required: "Please enter a valid start time"})}
+          ref={register({ required: true})}
         />
         {errors.availability && errors.availability[index] && 
           errors.availability[index].startTime &&  
-          <p className={styles.error}>{errors.availability[index].startTime.message}</p>
+          <p className={styles.error}>Please enter a valid start time</p>
         }  
         </div>
       <p className={styles.toText}>to</p>
