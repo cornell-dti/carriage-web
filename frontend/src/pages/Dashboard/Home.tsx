@@ -38,7 +38,7 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <main>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
         <div className={styles.rightSection}>
@@ -60,7 +60,7 @@ const Home = () => {
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
-    </div>
+    </main>
   );
 };
 

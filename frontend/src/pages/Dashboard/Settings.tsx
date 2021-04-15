@@ -5,7 +5,7 @@ import Logout from '../../components/Logout/Logout';
 // import DispatcherTable from '../../components/UserTables/DispatcherTable';
 
 const Settings = () => (
-  <div>
+  <main>
     <div className={styles.pageTitle}>
       <h1 className={styles.header}>Settings</h1>
       <div className={styles.rightSection}>
@@ -16,7 +16,7 @@ const Settings = () => (
     <div className={styles.pageContainer}>
       {/* <DispatcherTable /> */}
     </div>
-  </div>
+  </main>
 );
 
 export default Settings;

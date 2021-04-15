@@ -1,3 +1,7 @@
 .cardsContainer {
   margin-top: 1rem;
 }
+
+.dayText{
+  font-weight: bold;
+}

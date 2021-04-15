@@ -94,7 +94,7 @@ const EmployeeCard = ({
           <div>
             {fmtAvailability
               ? fmtAvailability.map(([day, timeRange]) => (
-                <p key={day}><b>{day}:</b> {timeRange}</p>
+                <p key={day}><span className={styles.dayText}>{day}:</span> {timeRange}</p>
               )) : <p>N/A</p>}
           </div>
         </CardInfo>
