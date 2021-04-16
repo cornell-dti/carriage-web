@@ -53,8 +53,8 @@ const addDriver = (driver: Driver) => {
     withDefaults({
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ driver: driver, 
-                              type: "scheduled"}),
+      body: JSON.stringify({ "driver": driver, 
+                              "type": "scheduled"}),
     }),
   );
 }
