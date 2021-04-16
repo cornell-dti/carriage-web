@@ -1,9 +1,12 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
+import { Condition } from 'dynamoose';
+import { Document } from 'dynamoose/dist/Document';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
+import { Ride } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Drivers';
@@ -89,6 +92,33 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
   });
 });
 
+// Get a driver's weekly stats
+router.get('/:id/stats', validateUser('Admin'), (req, res) => {
+  const { params: { id } } = req;
+  const week = moment().subtract(1, 'week');
+  const weekStart = week.startOf('week').toISOString();
+  const weekEnd = week.endOf('week').toISOString();
+  const condition = new Condition('startTime')
+    .ge(weekStart)
+    .where('endTime')
+    .le(weekEnd)
+    .where('driver')
+    .eq(id);
+
+  const calculateHoursWorked = (driver: DriverType) => (
+    Object.values(driver.availability).reduce((acc, curr) => {
+      const { startTime, endTime } = curr!;
+      const hours = moment.duration(endTime).subtract(moment.duration(startTime)).asHours();
+      return acc + hours;
+    }, 0)
+  );
+
+  db.getById(res, Driver, id, tableName, (driver) => {
+    db.scan(res, Ride, condition, (data: Document[]) => {
+      res.send({ rides: data.length, workingHours: calculateHoursWorked(driver) });
+    });
+  });
+});
 
 // Put a driver in Drivers table
 router.post('/', validateUser('Admin'), (req, res) => {

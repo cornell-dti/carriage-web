@@ -36,8 +36,7 @@ export type RideType = {
   startLocation: RideLocation,
   endLocation: RideLocation,
   startTime: string,
-  requestedEndTime: string,
-  endTime?: string,
+  endTime: string,
   rider: RiderType,
   driver?: DriverType,
   recurring: boolean,
@@ -100,13 +99,9 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  requestedEndTime: {
-    type: String,
-    required: true,
-    validate: (time) => isISO8601(time as string),
-  },
   endTime: {
     type: String,
+    required: true,
     validate: (time) => isISO8601(time as string),
   },
   rider: Rider as any,
@@ -128,7 +123,7 @@ const schema = new dynamoose.Schema({
   endDate: {
     type: String,
     required: false,
-    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+    validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
 });
 

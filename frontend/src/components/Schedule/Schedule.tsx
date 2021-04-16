@@ -11,7 +11,7 @@ import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
-import { useDrivers } from '../../context/DriversContext';
+import { useEmployees } from '../../context/EmployeesContext';
 
 const colorMap = {
   red: ['FFA26B', 'FFC7A6'],
@@ -48,7 +48,7 @@ const Schedule = () => {
   const [curStart, setCurStart] = useState(defaultStart);
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
-  const { drivers } = useDrivers();
+  const { drivers } = useEmployees();
   const [viewState, setviewState] = useState(false);
   const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
 
@@ -60,7 +60,7 @@ const Schedule = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(
-          data.map((ride: Ride) => ({
+          data.filter((ride: Ride) => (ride.driver && ride.driver.id)).map((ride: Ride) => ({
             id: ride.id,
             title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
