@@ -46,7 +46,6 @@ const AssignDriverModal = ({
       };
     }, [ref]);
   }
-
 const addDriver = (driver: Driver) => {
   fetch(
     `/api/rides/${ride.id}`,
@@ -54,7 +53,7 @@ const addDriver = (driver: Driver) => {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ "driver": driver, 
-                              "type": "scheduled"}),
+                              "type": "active"}),
     }),
   );
 }
