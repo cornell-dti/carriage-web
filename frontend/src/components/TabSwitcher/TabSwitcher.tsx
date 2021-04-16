@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styles from './tabSwitcher.module.css';
+import Notification from '../Notification/Notification';
+import pageStyles from '../../pages/Dashboard/page.module.css';
+
+// Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 
 type TabSwitcherProps = {
   children: JSX.Element[];
@@ -9,7 +13,7 @@ const TabSwitcher = ({
   children
 }: TabSwitcherProps) => {
   const [tabLabels, setTabLabels] = useState<string[]>([]);
-  const [currentTab, setCurrentTab] = useState('Driver Data');
+  const [currentTab, setCurrentTab] = useState(children[0].props.label);
   const [currentContent, setCurrentContent] = useState(children[0].props.children);
 
   const getLabels = () => {
@@ -32,21 +36,27 @@ const TabSwitcher = ({
 
   return (
     <div>
-      <div>
-        {tabLabels.map(tabLabel =>{
-          return (
-            <div 
-              key={tabLabel}
-              className={tabLabel === currentTab 
-                ? `${styles.tab} ${styles.current}`: styles.tab} 
-              onClick={()=>switchTab(tabLabel)}>
-              {tabLabel}
-            </div>
-          )
-        })}
+      <div className={pageStyles.pageTitle}>
+        <div>
+          {tabLabels.map(tabLabel =>{
+            return (
+              <h1 
+                key={tabLabel}
+                className={tabLabel === currentTab 
+                  ? `${styles.tab} ${styles.current}`: styles.tab} 
+                onClick={()=>switchTab(tabLabel)}>
+                {tabLabel}
+              </h1>
+            )
+          })}
+        </div>
+
+        <div className={styles.rightSection}>
+          <Notification />
+        </div>
       </div>
 
-      <div className="tab-content">{currentContent}</div>
+      <div className={pageStyles.pageContainer}>{currentContent}</div>
 
     </div>
   );
