@@ -1,22 +1,18 @@
 import React from 'react';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
-import Logout from '../../components/Logout/Logout';
-// import DispatcherTable from '../../components/UserTables/DispatcherTable';
 
-const Settings = () => (
+const Analytics = () => (
   <div>
     <div className={styles.pageTitle}>
-      <h1 className={styles.header}>Settings</h1>
+      <h1 className={styles.header}>Analytics</h1>
       <div className={styles.rightSection}>
-        <Logout />
         <Notification />
       </div>
     </div>
     <div className={styles.pageContainer}>
-      {/* <DispatcherTable /> */}
     </div>
   </div>
 );
 
-export default Settings;
+export default Analytics;
