@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import cn from 'classnames';
 import styles from './cell.module.css';
+import Tag from '../Tag/Tag';
 import { Button } from '../FormElements/FormElements';
 
 type TableCellProps = {
@@ -36,47 +37,8 @@ const TableCell = (props: TableCellProps) => {
     return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
-    let tagStyle = tag.toLowerCase();
-
-    switch (tagStyle) {
-      case ('west'): {
-        tagStyle = styles.west;
-        break;
-      }
-      case ('central'): {
-        tagStyle = styles.central;
-        break;
-      }
-      case ('north'): {
-        tagStyle = styles.north;
-        break;
-      }
-      case ('ctown'): {
-        tagStyle = styles.ctown;
-        break;
-      }
-      case ('dtown'): {
-        tagStyle = styles.dtown;
-        break;
-      }
-      case ('custom'): {
-        tagStyle = styles.custom;
-        break;
-      }
-      default: {
-        tagStyle = styles.inactive;
-        break;
-      }
-    }
-
-    const smallTag = (<span className={`${styles.reducedTag} ${tagStyle}`}></span>);
-    const fullTag = (<span className={`${styles.tag} 
-    ${tagStyle}`}>
-      {tag}</span>);
     return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
-      {reduced ? smallTag : null}
-      {data}{' '}
-      {reduced ? null : fullTag}
+      <Tag reduced={reduced} location={data} tag={tag} />
     </td>);
   }
   return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
