@@ -27,7 +27,6 @@ type UserDetailProps = {
   firstName: string;
   lastName: string;
   netId: string;
-  photoLink: string | undefined;
   children: JSX.Element | JSX.Element[];
   photoLink?: string;
 };
@@ -42,16 +41,9 @@ const UserDetail = ({
   const fullName = `${firstName} ${lastName}`;
   return (
     <div className={styles.userDetail}>
-      {photoLink !== undefined ? (
-        <img className={styles.profilePic} src={photoLink} />
-      ) : (
-        <div className={styles.undefinedProfilePic} />
-      )}
-      <div className={styles.imgContainer}>
-        {photoLink && photoLink !== ''
+      {photoLink && photoLink !== ''
           ? <img className={styles.profilePic} src={`http://${photoLink}`} />
           : null}
-      </div>
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>

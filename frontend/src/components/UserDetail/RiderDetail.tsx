@@ -15,6 +15,7 @@ type RiderDetailProps = {
   phone: string;
   accessibility: string;
   photoLink?: string;
+  address: string;
 }
 
 const RiderDetail = () => {

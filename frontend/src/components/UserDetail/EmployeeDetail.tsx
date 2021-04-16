@@ -85,7 +85,6 @@ const EmployeeDetail = () => {
     return 'Driver';
   }
 
-  const testboolean = true; 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
