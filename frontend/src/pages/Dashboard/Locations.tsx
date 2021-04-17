@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from '../../components/UserTables/LocationsTable';
+import LocationsTable from '../../components/UserTables/LocationsTable';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
 
@@ -11,7 +11,7 @@ const Locations = () => (
         <Notification />
       </div>
     </div>
-    <Table />
+    <LocationsTable />
   </div>
 );
 
