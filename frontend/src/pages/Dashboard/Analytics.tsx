@@ -1,9 +1,8 @@
 import React from 'react';
-import Tab from '../../components/TabSwitcher/Tab';
-import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
+import TabSwitcher, { Tab } from '../../components/TabSwitcher/TabSwitcher';
 
 const Analytics = () => (
-  <div>
+   <div>
       <TabSwitcher>
          <Tab label="Rider Data">
             <p>rider data</p>
@@ -12,7 +11,7 @@ const Analytics = () => (
             <p>driver data</p>
          </Tab>
       </TabSwitcher>
-  </div>
+   </div>
 );
 
 export default Analytics;
