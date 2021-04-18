@@ -27,7 +27,8 @@ type EmployeeModalProps = {
 const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
-    existingEmployee?.role ? existingEmployee?.role : 'driver');
+    existingEmployee?.role ? existingEmployee?.role : 'driver',
+  );
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
@@ -62,13 +63,13 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       };
       if (existingEmployee) {
         // Update an existing admin
-        fetch(`/api/admins/${existingEmployee.id}`,withDefaults({
+        fetch(`/api/admins/${existingEmployee.id}`, withDefaults({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(admin),
         })).then(() => refreshAdmins());
-      } else { 
-        //Create a new admin
+      } else {
+        // Create a new admin
         fetch('/api/admins', withDefaults({
           method: 'POST',
           body: JSON.stringify(admin),
@@ -85,13 +86,13 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       };
       if (existingEmployee) {
         // Update an existing driver
-        fetch(`/api/drivers/${existingEmployee.id}`,withDefaults({
+        fetch(`/api/drivers/${existingEmployee.id}`, withDefaults({
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(driver),
         })).then(() => refreshDrivers());
-      } else { 
-        //Create a new driver
+      } else {
+        // Create a new driver
         fetch('/api/drivers', withDefaults({
           method: 'POST',
           body: JSON.stringify(driver),
@@ -104,8 +105,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   return (
     <>
       {
-        existingEmployee ? 
-          <img className={styles.edit} alt="edit" src={edit} onClick={openModal}/>
+        existingEmployee
+          ? <img className={styles.edit} alt="edit" src={edit} onClick={openModal} />
           : <Button onClick={openModal}>+ Add an employee</Button>
       }
       <Modal
@@ -116,15 +117,15 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         <Upload />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <EmployeeInfo 
+            <EmployeeInfo
               name={existingEmployee?.name}
               netId={existingEmployee?.netId}
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
             {
-              selectedRole === 'admin' ? null : 
-                <WorkingHours 
+              selectedRole === 'admin' ? null
+                : <WorkingHours
                   existingAvailability={existingEmployee?.availability}
                 />
             }
