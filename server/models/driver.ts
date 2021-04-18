@@ -61,7 +61,7 @@ const schema = new dynamoose.Schema({
     type: Object,
     schema: availabilitySchema,
   },
-  vehicle: Vehicle as any,
+  vehicle: Vehicle,
   phoneNumber: {
     type: String,
     required: true,

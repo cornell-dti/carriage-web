@@ -10,7 +10,7 @@ import Employees from './Employees';
 import Students from './Students';
 import Home from './Home';
 import Locations from './Locations';
-import Settings from './Settings';
+import Analytics from './Analytics';
 import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
 import RiderDetail from '../../components/UserDetail/RiderDetail';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
@@ -53,14 +53,14 @@ const Dashboard = () => {
               )}
             />
             <Route path="/locations" component={Locations} />
-            <Route path="/settings" component={Settings} />
+            <Route path="/analytics" component={Analytics} />
             <Route path="*">
               <Redirect to="/home" />
             </Route>
           </Switch>
         </Sidebar>
       </Router>
-    </DateContext.Provider>
+    </DateContext.Provider >
   );
 };
 
