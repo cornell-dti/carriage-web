@@ -49,9 +49,7 @@ function createRepeatingRides() {
         endLocation: endLocation.id ?? endLocation,
       });
 
-      ride.save()
-        .then((doc) => console.log(doc.toJSON()))
-        .catch((err) => console.log(err));
+      ride.save().catch((err) => console.log(err));
     });
   });
 }

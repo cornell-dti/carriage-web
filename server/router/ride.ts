@@ -139,6 +139,7 @@ router.post('/', validateUser('User'), (req, res) => {
       startLocation: startLocationObj ?? startLocation,
       endLocation: endLocationObj ?? endLocation,
       edits: recurring ? [] : undefined,
+      deleted: recurring ? [] : undefined,
     });
     db.create(res, ride);
   }
