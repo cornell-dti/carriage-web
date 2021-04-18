@@ -16,9 +16,9 @@ export function getById(
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send(data);
+      data.populate().then((doc) => res.status(200).send(doc));
     }
   });
 }
@@ -39,9 +39,9 @@ export function batchGet(
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send({ data });
+      data.populate().then((doc) => res.status(200).send({ data: doc }));
     }
   });
 }
@@ -58,25 +58,27 @@ export function getAll(
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send({ data });
+      data.populate().then((doc) => res.status(200).send({ data: doc }));
     }
   });
 }
 
 export function create(
   res: Response,
-  doc: Document,
+  document: Document,
   callback?: (value: any) => void,
 ) {
-  doc.save((err, data) => {
+  document.save((err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
+    } else if (!data) {
+      res.status(400).send({ err: 'error when saving document' });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send(data);
+      data.populate().then((doc) => res.status(200).send(doc));
     }
   });
 }
@@ -95,9 +97,9 @@ export function update(
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send(data);
+      data.populate().then((doc) => res.status(200).send(doc));
     }
   });
 }
@@ -117,9 +119,9 @@ export function conditionalUpdate(
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      callback(data);
+      data.populate().then((doc) => callback(doc));
     } else {
-      res.status(200).send(data);
+      data.populate().then((doc) => res.status(200).send(doc));
     }
   });
 }
@@ -129,15 +131,12 @@ export function deleteById(
   model: ModelType<Document>,
   id: string | ObjectType,
   table: string,
-  callback?: (value: any) => void,
 ) {
   model.get(id, (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
-    } else if (callback) {
-      callback(data);
     } else {
       data.delete().then(() => res.status(200).send({ id }));
     }
@@ -158,9 +157,9 @@ export function query(
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
       } else if (callback) {
-        callback(data);
+        data.populate().then((doc: Document) => callback(doc));
       } else {
-        res.status(200).send({ data });
+        data.populate().then((doc: Document) => res.status(200).send({ data: doc }));
       }
     });
 }
@@ -176,10 +175,12 @@ export function scan(
     .exec((err, data) => {
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
+      } else if (!data) {
+        res.status(400).send({ err: 'error when scanning table' });
       } else if (callback) {
-        callback(data);
+        data.populate().then((doc) => callback(doc));
       } else {
-        res.status(200).send({ data });
+        data.populate().then((doc) => res.status(200).send({ data: doc }));
       }
     });
 }
