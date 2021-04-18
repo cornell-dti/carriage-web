@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import * as db from './common';
 import { Ride, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
-import { validateUser } from '../util';
+import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 
@@ -56,11 +56,11 @@ router.get('/download', (req, res) => {
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
   const { query: { rider } } = req;
-  const now = moment.tz('America/New_York').toISOString();
+  const now = moment.tz('America/New_York').format('YYYY-MM-DD');
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
-    .ge(now.substring(0, 10));
+    .ge(now);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
@@ -139,6 +139,7 @@ router.post('/', validateUser('User'), (req, res) => {
       startLocation: startLocationObj ?? startLocation,
       endLocation: endLocationObj ?? endLocation,
       edits: recurring ? [] : undefined,
+      deleted: recurring ? [] : undefined,
     });
     db.create(res, ride);
   }
@@ -153,7 +154,22 @@ router.put('/:id', validateUser('User'), (req, res) => {
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
-  db.deleteById(res, Ride, id, tableName);
+  db.getById(res, Ride, id, tableName, (ride) => {
+    const { recurring, edits } = ride;
+    const deleteRide = () => {
+      Ride.delete(id)
+        .then(() => res.send({ id }))
+        .catch((err) => res.status(500).send({ err: err.message }));
+    };
+    if (recurring) {
+      const ids = createKeys('id', edits);
+      Ride.batchDelete(ids)
+        .then(deleteRide)
+        .catch((err) => res.status(500).send({ err: err.message }));
+    } else {
+      deleteRide();
+    }
+  });
 });
 
 export default router;
