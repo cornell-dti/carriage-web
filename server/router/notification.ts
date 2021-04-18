@@ -32,7 +32,20 @@ type SubscriptionRequest = {
 };
 
 const subscriptionSet = new Set() as Set<string>;
-let num = 0;
+
+const badPlatform =  (platform : String) => {
+  switch (platform) {
+    case 'web':
+    case 'android':
+    case 'ios':
+    case 'ios rider':
+    case 'ios driver':
+      return false;
+    default:
+      return true;
+  }
+  
+}
 
 const sendMsg = (sub: Subscription, msg: string) => {
   if (sub.platform === 'web') {
@@ -41,10 +54,9 @@ const sendMsg = (sub: Subscription, msg: string) => {
       keys: sub.keys!,
     };
     const payload = {
-      title: `msg #${num}`,
+      title: 'payload message',
       body: msg,
     };
-    num += 1;
     return new Promise((resolve, reject) => {
       webpush
         .sendNotification(webSub, JSON.stringify(payload))
@@ -129,7 +141,11 @@ router.post('/sendAll', (req, res) => {
 
 // subscribe a user
 router.post('/subscribe', validateUser('User'), (req, res) => {
-  // TODO validate
+  if (badPlatform(req.body.platform)) {
+    res.status(400).json({ err: 'invalid platform' });
+    return; // TODO additional validation
+  }
+
   const subReq = req.body.platform === 'web'
     ? { platform: req.body.platform, webSub: req.body.webSub }
     : { platform: req.body.platform, token: req.body.token };
