@@ -16,12 +16,13 @@ function createRepeatingRides() {
   const tomorrowDateOnly = tomorrowDate.format('YYYY-MM-DD');
   const tomorrowDay = tomorrowDate.weekday();
 
-  // condition: recurring ride that includes tomorrowDay
   const condition = new Condition()
     .where('recurring')
     .eq(true)
     .where('recurringDays')
     .contains(tomorrowDay)
+    .where('startTime')
+    .le(tomorrowDate.toISOString())
     .where('endDate')
     .ge(tomorrowDateOnly)
     .where('deleted')
