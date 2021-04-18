@@ -56,11 +56,11 @@ router.get('/download', (req, res) => {
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
   const { query: { rider } } = req;
-  const now = moment.tz('America/New_York').toISOString();
+  const now = moment.tz('America/New_York').format('YYYY-MM-DD');
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
-    .ge(now.substring(0, 10));
+    .ge(now);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
