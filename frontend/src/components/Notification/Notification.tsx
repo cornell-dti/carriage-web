@@ -91,10 +91,8 @@ const Notification = () => {
         }
         {newMessages.length === 0
           || mapMessages(newMessages)}
-        {messages.length === 0
-          || <h6 className={styles.heading}>Message History</h6>}
-        {messages.length === 0
-          || mapMessages(messages)}
+        <h6 className={styles.heading}>Message History</h6>
+        {mapMessages(messages)}
       </div>
     </Popup>
   );
