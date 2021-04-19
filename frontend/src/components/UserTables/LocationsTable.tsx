@@ -62,7 +62,7 @@ const LocationsTable = () => {
       .catch((e) => console.error('removing location failed'));
   };
 
-  const colSizes = [1, 1.5, 0.75, 0.75];
+  const colSizes = [1, 1, 0.75, 0.75];
   const headers = ['Name', 'Address', 'Tag'];
 
   return (
