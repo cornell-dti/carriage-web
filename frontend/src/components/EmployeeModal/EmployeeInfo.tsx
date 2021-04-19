@@ -40,7 +40,7 @@ const EmployeeInfo = () => {
         className={cn(styles.input, styles.col2)}
         ref={register({ required: true })}
       />
-    </div>
+    </div >
   );
 };
 

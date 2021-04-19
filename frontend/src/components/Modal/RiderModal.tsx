@@ -55,13 +55,13 @@ const RiderModal = () => {
 
   function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-    
+
     if (e.target.files && e.target.files[0]) {
       let reader = new FileReader();
       let file = e.target.files[0];
       reader.readAsDataURL(file);
       reader.onload = function () {
-      let res = reader.result;
+        let res = reader.result;
         if (res) {
           res = res.toString();
           // remove "data:image/png;base64," and "data:image/jpeg;base64,"
@@ -71,17 +71,17 @@ const RiderModal = () => {
       };
       reader.onerror = function (error) {
         console.log('Error reading file: ', error);
-      };  
+      };
     } else {
       console.log('Undefined file upload');
     }
   };
 
   const uploadImage = async () => {
-    const photo = { 
+    const photo = {
       id: formData.id,
-      tableName: 'Riders', 
-      fileBuffer: imageBase64 
+      tableName: 'Riders',
+      fileBuffer: imageBase64
     };
     const uploadedImage = await fetch('/api/upload', withDefaults({
       method: 'POST',
@@ -130,7 +130,7 @@ const RiderModal = () => {
         currentPage={0}
         onClose={closeModal}
       >
-        <Upload imageChange={updateBase64}/>
+        <Upload imageChange={updateBase64} />
         <RiderModalInfo onSubmit={saveDataThen(submitData)} />
       </Modal>
     </>

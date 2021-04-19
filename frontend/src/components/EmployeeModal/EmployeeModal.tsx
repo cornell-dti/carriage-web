@@ -6,6 +6,7 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
+import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
@@ -35,7 +36,7 @@ const EmployeeModal = () => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { name, email, phoneNumber, availability } = data;
+    const { name, email, phoneNumber, startDate, availability } = data;
     const [firstName, lastName] = name.split(' ');
 
     if (selectedRole === 'admin') {
@@ -73,14 +74,15 @@ const EmployeeModal = () => {
         lastName,
         email,
         phoneNumber,
+        startDate,
         availability: parseAvailability(availability),
         admin: selectedRole === 'both',
       };
       if (imageBase64 === '') {
-      fetch('/api/drivers', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(driver),
-      })).then(() => refreshDrivers());
+        fetch('/api/drivers', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(driver),
+        })).then(() => refreshDrivers());
       } else {
         const createdDriver = await fetch('/api/drivers', withDefaults({
           method: 'POST',
@@ -138,6 +140,7 @@ const EmployeeModal = () => {
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo />
+            {selectedRole === 'admin' ? null : <StartDate />}
             {selectedRole === 'admin' ? null : <WorkingHours />}
             <RoleSelector
               selectedRole={selectedRole}
