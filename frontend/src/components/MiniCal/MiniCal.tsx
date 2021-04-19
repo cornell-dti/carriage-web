@@ -73,7 +73,6 @@ const MiniCal = () => {
 
   return (
     <div className={styles.root}>
-      USERPROFILE{'   '}
       <DatePicker
         adjustDateOnChange
         selected={curDate}

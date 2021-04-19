@@ -40,7 +40,7 @@ const Home = () => {
   return (
     <div>
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Homepage</h1>
+        <MiniCal />
         <div className={styles.rightSection}>
           <ExportButton onClick={downloadCSV} />
           <CSVLink
@@ -54,7 +54,6 @@ const Home = () => {
           <Notification />
         </div>
       </div>
-      <MiniCal />
       <Schedule />
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
