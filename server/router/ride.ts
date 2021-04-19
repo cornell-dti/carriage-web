@@ -175,7 +175,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
       db.update(res, Ride, { id }, addDeleteOperation, tableName);
 
       // if deleteOnly = false, create a replace edit with the new fields
-      if (deleteOnly === 'false') {
+      if (!deleteOnly) {
         const newEdits = masterRide.edits;
         const replaceId = uuid();
         const replaceRide = new Ride({
