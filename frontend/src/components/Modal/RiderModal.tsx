@@ -71,10 +71,13 @@ const RiderModal = () => {
       fetch('/api/riders', withDefaults({
         method: 'POST',
         body: JSON.stringify(newRider),
-      })).then(() => refreshRiders())
-        .then(() => setToast(true));
+      })).then(() => {
+        refreshRiders();
+        setToast(true);
+      });
       setIsSubmitted(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (

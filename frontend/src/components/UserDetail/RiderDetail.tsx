@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
+import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import { phone } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
 
 type RiderDetailProps = {
-  // profilePic: string;
   id: string;
   firstName: string;
   lastName: string;
   netID: string;
   phone: string;
-  // address: string;
-  accessibility: string
+  accessibility: string;
+  photoLink?: string;
 }
 
 const RiderDetail = () => {
@@ -34,13 +33,15 @@ const RiderDetail = () => {
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, rider.id]);
-  
+
   return (
     <>
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
-      netId={rider.netID}>
+      netId={rider.netID}
+      photoLink={rider.photoLink}
+    >
       <UserContactInfo icon={phone} alt="" text={rider.phone} />
       <UserContactInfo icon="" alt="" text={rider.accessibility} />
       <OtherInfo>

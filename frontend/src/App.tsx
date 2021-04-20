@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import LandingPage from './pages/Landing/Landing';
 import Dashboard from './pages/Dashboard/Dashboard';
 import { AuthManager } from './components/AuthManager/AuthManager';
-import {EmployeesProvider} from './context/EmployeesContext';
-import {RidersProvider} from './context/RidersContext';
+import { EmployeesProvider } from './context/EmployeesContext';
+import { RidersProvider } from './context/RidersContext';
 
 import './styles/App.css';
 
