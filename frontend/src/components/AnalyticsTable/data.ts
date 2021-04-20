@@ -1,19 +1,19 @@
 type TableData = {
-  year: string
-  monthday: string
-  dayCount: number,
-  dayNoShows: number,
-  dayCancels: number,
-  nightCount: number,
-  nightNoShows: number,
-  nightCancels: number,
-  dailyTotal: number,
+  year: string;
+  monthday: string;
+  dayCount: number;
+  dayNoShows: number;
+  dayCancels: number;
+  nightCount: number;
+  nightNoShows: number;
+  nightCancels: number;
+  dailyTotal: number;
   drivers: {
-    [name: string]: number
-  }
-}
+    [name: string]: number;
+  };
+};
 
-const generate = () : TableData[] => {
+const generate = (): TableData[] => {
   const data = [...new Array(10)];
   return data.map((_, i) => ({
     year: '2021',

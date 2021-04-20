@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import cn from 'classnames';
 import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import table from './data';
@@ -43,7 +44,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
           className={styles.cell}
           style={{ borderRadius: getBorderRadius(cellIndex, data.length) }}
         >
-          {isEditing && cellIndex // excluding date column
+          {isEditing && cellIndex >= 2 // excluding first two columns
             ? (
               <input
                 type='number'
@@ -71,16 +72,16 @@ const Table = ({ type }: TableProps) => {
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const { drivers } = useEmployees();
 
-  const rideTableHeader = [
-    'Date',
-    'Day Ride Count',
+  const sharedCols = ['Date', 'Daily Total'];
+
+  const rideTableHeader = sharedCols.concat([
+    'Daily Ride Count',
     'Day No Shows',
     'Day Cancels',
     'Night Ride Count',
     'Night No Shows',
     'Night Cancels',
-    'Daily Total',
-  ];
+  ]);
 
   const driverNames: string[] = [];
   const driverShortNames: string[] = [];
@@ -94,7 +95,7 @@ const Table = ({ type }: TableProps) => {
       driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
     });
 
-  const driverTableHeader = ['Date', ...driverShortNames, 'Daily Total'];
+  const driverTableHeader = sharedCols.concat(driverShortNames);
 
   const dbRideCols = [
     'dayCount',
@@ -107,9 +108,8 @@ const Table = ({ type }: TableProps) => {
   ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
 
-  const initTableData = (data: any[]) => {
+  const initRideData = (data: any[]) => {
     const rideData: Cell[][] = [];
-    const driverData: Cell[][] = [];
     data
       .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
       .forEach((d) => {
@@ -118,23 +118,33 @@ const Table = ({ type }: TableProps) => {
         const date = `${month}/${day}/${d.year}`;
         const rideRow = [
           date,
+          d.dailyTotal,
           d.dayCount,
           d.dayNoShows,
           d.dayCancels,
           d.nightCount,
           d.nightNoShows,
           d.nightCancels,
-          d.dailyTotal,
         ];
-        const driverRow: any[] = [date];
+        rideData.push(rideRow);
+      });
+    setRideTableData(rideData);
+  };
+
+  const initDriverData = (data: any[]) => {
+    const driverData: Cell[][] = [];
+    data
+      .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
+      .forEach((d) => {
+        const month = d.monthday.substring(0, 2);
+        const day = d.monthday.substring(2);
+        const date = `${month}/${day}/${d.year}`;
+        const driverRow = [date, d.dailyTotal];
         driverNames.forEach((driver) => {
           driverRow.push(d.drivers[driver] || 0);
         });
-        driverRow.push(d.dailyTotal);
-        rideData.push(rideRow);
         driverData.push(driverRow);
       });
-    setRideTableData(rideData);
     setDriverTableData(driverData);
   };
 
@@ -147,29 +157,31 @@ const Table = ({ type }: TableProps) => {
     const cols = type === 'ride' ? dbRideCols : dbDriverCols;
     setEditData((prev) => {
       const newVal = { ...prev };
-      const currentEdit = newVal.dates[date];
+      const dateEdit = newVal.dates[date];
+      const offset = 2;
+      const index = cellIndex - offset;
       if (type === 'driver') {
-        if (currentEdit === undefined) {
+        if (dateEdit === undefined) {
           // need to populate all drivers
-          const driverRow = driverTableData![rowIndex].slice(1, driverTableHeader.length);
+          const driverRow = driverTableData![rowIndex].slice(offset);
           const driversEdit: ObjectType = {};
           driverNames.forEach((name, i) => {
             driversEdit[name] = driverRow[i];
           });
-          driversEdit[cols[cellIndex - 1]] = value;
+          driversEdit[cols[index]] = value;
           newVal.dates[date] = {
             drivers: driversEdit,
           };
         } else {
           newVal.dates[date].drivers = {
-            ...currentEdit.drivers,
-            [cols[cellIndex - 1]]: value,
+            ...dateEdit.drivers,
+            [cols[index]]: value,
           };
         }
       } else {
         newVal.dates[date] = {
-          ...currentEdit,
-          [cols[cellIndex - 1]]: value,
+          ...dateEdit,
+          [cols[index]]: value,
         };
       }
       return newVal;
@@ -184,71 +196,75 @@ const Table = ({ type }: TableProps) => {
   useEffect(() => console.log(editData), [editData]);
 
   useEffect(() => {
-    initTableData(table.data);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (type === 'ride') {
+      initRideData(table.data);
+    } else {
+      initDriverData(table.data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drivers.length]);
 
   return (
     <div className={styles.tableContainer}>
-      {!isEditing ? (
-        <img
-          className={styles.icon}
-          onClick={() => setIsEditing(true)}
-          src={editIcon}
-          alt="edit icon"
-        />
-      ) : (
-        <img
-          className={styles.icon}
-          onClick={handleSubmit}
-          src={checkIcon}
-          alt="done icon"
-        />
-      )}
+      <button
+        className={styles.editBtn}
+        onClick={!isEditing ? () => setIsEditing(true) : handleSubmit}
+      >
+        {!isEditing ? (
+          <img src={editIcon} alt="edit" />
+        ) : (
+          <img src={checkIcon} alt="done" />
+        )}
+      </button>
       <table className={styles.table}>
         <thead>
           <tr className={styles.row}>
             {type === 'ride'
               ? rideTableHeader.map((title, i) => {
                 let color;
-                if (i >= 1 && i <= 3) {
+                if (i >= 2 && i <= 4) {
                   color = '#F2911D';
                 }
-                if (i >= 4 && i <= 6) {
+                if (i >= 5 && i <= 7) {
                   color = '#1594F2';
                 }
                 return (
-                  <th className={styles.cell} style={{ color }}>
+                  <th
+                    className={cn(styles.cell, { [styles.sticky]: i < 2 })}
+                    style={{ color }}
+                  >
                     {title}
                   </th>
                 );
               })
               : driverTableHeader.map((title, i) => (
-                  <th className={styles.cell}>{title}</th>
+                <th className={cn(styles.cell, { [styles.sticky]: i < 2 })}>
+                  {title}
+                </th>
               ))}
           </tr>
         </thead>
         <tbody>
           {type === 'ride'
             ? rideTableData?.map((row, i) => (
-                <Row
-                  data={row}
-                  isEditing={isEditing}
-                  index={i}
-                  onEdit={handleEdit}
-                />
+              <Row
+                data={row}
+                isEditing={isEditing}
+                index={i}
+                onEdit={handleEdit}
+              />
             ))
             : driverTableData?.map((row, i) => (
-                <Row
-                  data={row}
-                  isEditing={isEditing}
-                  index={i}
-                  onEdit={handleEdit}
-                />
+              <Row
+                data={row}
+                isEditing={isEditing}
+                index={i}
+                onEdit={handleEdit}
+              />
             ))}
         </tbody>
       </table>
-    </div>
+    </div >
   );
 };
 
