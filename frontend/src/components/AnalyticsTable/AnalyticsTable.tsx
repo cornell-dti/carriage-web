@@ -205,7 +205,7 @@ const Table = ({ type }: TableProps) => {
       initDriverData(table.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [drivers.length]);
+  }, [type, drivers.length]);
 
   return (
     <div className={styles.tableContainer}>
