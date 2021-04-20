@@ -1,4 +1,4 @@
-type TableData = {
+export type TableData = {
   year: string;
   monthday: string;
   dayCount: number;
@@ -7,7 +7,6 @@ type TableData = {
   nightCount: number;
   nightNoShows: number;
   nightCancels: number;
-  dailyTotal: number;
   drivers: {
     [name: string]: number;
   };
@@ -31,7 +30,6 @@ const generate = (): TableData[] => {
       'Tony Yang': 6,
       'Laura Sizemore': 7,
     },
-    dailyTotal: 20 + i + 5,
   }));
 };
 

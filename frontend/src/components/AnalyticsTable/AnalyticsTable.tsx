@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
-import table from './data';
+import table, { TableData } from './data';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
+
 
 type Cell = string | number;
 
@@ -108,7 +109,7 @@ const Table = ({ type }: TableProps) => {
   ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
 
-  const initRideData = (data: any[]) => {
+  const initRideData = (data: TableData[]) => {
     const rideData: Cell[][] = [];
     data
       .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
@@ -116,9 +117,10 @@ const Table = ({ type }: TableProps) => {
         const month = d.monthday.substring(0, 2);
         const day = d.monthday.substring(2);
         const date = `${month}/${day}/${d.year}`;
+        const dailyTotal = d.dayCount + d.nightCount;
         const rideRow = [
           date,
-          d.dailyTotal,
+          dailyTotal,
           d.dayCount,
           d.dayNoShows,
           d.dayCancels,
@@ -131,7 +133,7 @@ const Table = ({ type }: TableProps) => {
     setRideTableData(rideData);
   };
 
-  const initDriverData = (data: any[]) => {
+  const initDriverData = (data: TableData[]) => {
     const driverData: Cell[][] = [];
     data
       .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
@@ -139,7 +141,8 @@ const Table = ({ type }: TableProps) => {
         const month = d.monthday.substring(0, 2);
         const day = d.monthday.substring(2);
         const date = `${month}/${day}/${d.year}`;
-        const driverRow = [date, d.dailyTotal];
+        const dailyTotal = Object.values(d.drivers).reduce((a, b) => a + b, 0);
+        const driverRow = [date, dailyTotal];
         driverNames.forEach((driver) => {
           driverRow.push(d.drivers[driver] || 0);
         });
