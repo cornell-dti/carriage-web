@@ -77,6 +77,7 @@ const EmployeeCard = ({
     photoLink,
   };
 
+
   return (
     <Link to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}` }}
       style={{ textDecoration: 'none', color: 'inherit' }}>

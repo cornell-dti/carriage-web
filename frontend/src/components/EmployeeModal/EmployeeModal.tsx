@@ -17,7 +17,6 @@ const EmployeeModal = () => {
   const [selectedRole, setSelectedRole] = useState('driver');
   const [showingToast, setToast] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
-
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
