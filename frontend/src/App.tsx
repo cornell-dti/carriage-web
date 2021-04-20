@@ -13,13 +13,13 @@ const App = () => (
   <Router>
     <AuthManager>
       <EmployeesProvider>
-      <RidersProvider>
-      <Switch>
-        <Route exact path="/" component={LandingPage} />
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/rider" component={RiderDashboard} />
-      </Switch>
-      </RidersProvider>
+        <RidersProvider>
+          <Switch>
+            <Route exact path="/" component={LandingPage} />
+            <Route path="/admin" component={AdminDashboard} />
+            <Route path="/rider" component={RiderDashboard} />
+          </Switch>
+        </RidersProvider>
       </EmployeesProvider>
     </AuthManager>
   </Router>
