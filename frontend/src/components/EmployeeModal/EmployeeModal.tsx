@@ -7,6 +7,7 @@ import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -14,13 +15,16 @@ import { useEmployees } from '../../context/EmployeesContext';
 const EmployeeModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState('driver');
+  const [showingToast, setToast] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
-
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
-  const openModal = () => setIsOpen(true);
+  const openModal = () => {
+    setIsOpen(true);
+    setToast(false);
+  };
 
   const closeModal = () => setIsOpen(false);
 
@@ -49,7 +53,10 @@ const EmployeeModal = () => {
         fetch('/api/admins', withDefaults({
           method: 'POST',
           body: JSON.stringify(admin),
-        })).then(() => refreshAdmins());
+        })).then(() => {
+          refreshAdmins();
+          setToast(true);
+        });
       } else {
         const createdAdmin = await fetch('/api/admins', withDefaults({
           method: 'POST',
@@ -65,7 +72,10 @@ const EmployeeModal = () => {
         await fetch('/api/upload', withDefaults({
           method: 'POST',
           body: JSON.stringify(photo),
-        })).then(() => refreshAdmins()).catch((err) => console.log(err));
+        })).then(() => {
+          refreshAdmins();
+          setToast(true);
+        }).catch((err) => console.log(err));
       }
     } else {
       const driver = {
@@ -77,10 +87,13 @@ const EmployeeModal = () => {
         admin: selectedRole === 'both',
       };
       if (imageBase64 === '') {
-      fetch('/api/drivers', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(driver),
-      })).then(() => refreshDrivers());
+        fetch('/api/drivers', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(driver),
+        })).then(() => {
+          refreshDrivers();
+          setToast(true);
+        });
       } else {
         const createdDriver = await fetch('/api/drivers', withDefaults({
           method: 'POST',
@@ -96,7 +109,10 @@ const EmployeeModal = () => {
         await fetch('/api/upload', withDefaults({
           method: 'POST',
           body: JSON.stringify(photo),
-        })).then(() => refreshDrivers()).catch((err) => console.log(err));
+        })).then(() => {
+          refreshDrivers();
+          setToast(true);
+        }).catch((err) => console.log(err));
       }
     }
     closeModal();
@@ -128,6 +144,7 @@ const EmployeeModal = () => {
 
   return (
     <>
+      {showingToast ? <Toast message='The employee has been added.' /> : null}
       <Button onClick={openModal}>+ Add an employee</Button>
       <Modal
         title='Add an Employee'

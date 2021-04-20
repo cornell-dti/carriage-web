@@ -12,12 +12,12 @@ const Upload = ({ imageChange }: UploadProps) => {
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const { files } = e.target;
-    if (files && files[0]) {
+    if (files && files[0] && files[0].size < 500000) {
       const file = files[0];
       const photoURL = URL.createObjectURL(file);
       setImageURL(photoURL);
     } else {
-      console.log('undefined file');
+      console.log('invalid file');
     }
     imageChange(e);
   }
