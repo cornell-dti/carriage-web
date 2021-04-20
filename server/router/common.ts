@@ -131,14 +131,17 @@ export function deleteById(
   model: ModelType<Document>,
   id: string | ObjectType,
   table: string,
+  callback?: (value: any) => void,
 ) {
   model.get(id, (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
+    } else if (callback) {
+      data.populate().then((doc) => callback(doc));
     } else {
-      data.delete().then(() => res.status(200).send({ id }));
+      data.populate().then((doc) => res.status(200).send({ id: doc.toJSON().id }));
     }
   });
 }
