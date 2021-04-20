@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
-import { home, drivers, riders, settings, locations, blank } from '../../icons/sidebar/index';
+import { home, drivers, riders, locations, analytics, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -38,7 +38,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     { icon: drivers, caption: 'Employees', path: '/employees' },
     { icon: riders, caption: 'Students', path: '/riders' },
     { icon: locations, caption: 'Locations', path: '/locations' },
-    { icon: settings, caption: 'Settings', path: '/settings' },
+    { icon: analytics, caption: 'Analytics', path: '/analytics' },
   ];
 
   const riderMenu: MenuItem[] = [
@@ -52,7 +52,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     <div className={styles.container}>
       <div className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
-          <div className={styles.sidebarLinks}>
+          <div key={path} className={styles.sidebarLinks}>
             <Link key={path} onClick={() => setSelected(path)}
               className={styles.icon} to={path}>
               <div className={

@@ -1,0 +1,13 @@
+.container {
+  position: relative;
+}
+
+.bell {
+  cursor: pointer;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
