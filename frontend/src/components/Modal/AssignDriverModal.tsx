@@ -6,6 +6,7 @@ import styles from './assigndrivermodal.module.css';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
+  setDriver: () => void; 
   ride: Ride;
   allDrivers: Driver[];
 };
@@ -27,6 +28,7 @@ const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => {
 const AssignDriverModal = ({
   isOpen,
   close,
+  setDriver, 
   ride,
   allDrivers,
 }: AssignModalProps) => {
@@ -56,6 +58,7 @@ const addDriver = (driver: Driver) => {
                               "type": "active"}),
     }),
   );
+  setDriver(); 
 }
 
   const wrapperRef = useRef(null);
