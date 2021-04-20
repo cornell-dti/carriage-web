@@ -35,13 +35,13 @@ type EmployeeDetailProps = {
 };
 
 type UserDetailProps = {
-  // profilePic: string;
   firstName: string;
   lastName: string;
   netId: string;
   children: JSX.Element | JSX.Element[];
   employee?: EmployeeDetailProps;
   role?: string;
+  photoLink?: string;
 };
 
 const UserDetail = ({
@@ -51,11 +51,15 @@ const UserDetail = ({
   children,
   employee,
   role,
+  photoLink,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
     <div className={styles.userDetail}>
       <div className={styles.imgContainer}>
+        {photoLink && photoLink !== ''
+          ? <img className={styles.profilePic} src={`http://${photoLink}`} />
+          : null}
       </div>
       
       <div className={styles.basicInfoContainer}>

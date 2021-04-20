@@ -14,6 +14,7 @@ type EmployeeDetailProps = {
   phone: string;
   availability?: string[][];
   admin?: boolean;
+  photoLink?: string;
 };
 
 const EmployeeDetail = () => {
@@ -25,7 +26,7 @@ const EmployeeDetail = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
 
-  const isAdmin = employee.availability ? false : true;
+  const isAdmin = !employee.availability;
   const isBoth = !isAdmin && employee.admin; // admin and driver
   const role = (): string => {
     if (isBoth) return 'Admin • Driver';
@@ -38,7 +39,6 @@ const EmployeeDetail = () => {
     return 'driver';
   }
 
-  const testboolean = true; 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -61,19 +61,20 @@ const EmployeeDetail = () => {
         netId={employee.netId}
         employee={employee}
         role={roleValue()}
+        photoLink={employee.photoLink}
       >
         <UserContactInfo icon={phone} alt="" text={employee.phone} />
         <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-        <UserContactInfo icon={clock} alt="" text={avail === "" ? "N/A" : avail} />
+        <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
         <OtherInfo>
           <p>last week:</p>
         </OtherInfo>
       </UserDetail>
 
-     <PastRides
-     isStudent = {false}
-     rides={rides}
-     />
+      <PastRides
+        isStudent={false}
+        rides={rides}
+      />
     </>
   );
 };
