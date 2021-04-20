@@ -50,16 +50,14 @@ const EmployeeModal = () => {
         email,
         phoneNumber,
       };
-      fetch('/api/admins', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(admin),
-      })).then(() => refreshAdmins())
-        .then(() => setToast(true));
       if (imageBase64 === '') {
         fetch('/api/admins', withDefaults({
           method: 'POST',
           body: JSON.stringify(admin),
-        })).then(() => refreshAdmins());
+        })).then(() => {
+          refreshAdmins();
+          setToast(true);
+        });
       } else {
         const createdAdmin = await fetch('/api/admins', withDefaults({
           method: 'POST',
@@ -75,7 +73,10 @@ const EmployeeModal = () => {
         await fetch('/api/upload', withDefaults({
           method: 'POST',
           body: JSON.stringify(photo),
-        })).then(() => refreshAdmins()).catch((err) => console.log(err));
+        })).then(() => {
+          refreshAdmins();
+          setToast(true);
+        }).catch((err) => console.log(err));
       }
     } else {
       const driver = {
@@ -87,12 +88,13 @@ const EmployeeModal = () => {
         admin: selectedRole === 'both',
       };
       if (imageBase64 === '') {
-      fetch('/api/drivers', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(driver),
-      })).then(() => refreshDrivers())
-        .then(() => setToast(true));
-      })).then(() => refreshDrivers());
+        fetch('/api/drivers', withDefaults({
+          method: 'POST',
+          body: JSON.stringify(driver),
+        })).then(() => {
+          refreshDrivers();
+          setToast(true);
+        });
       } else {
         const createdDriver = await fetch('/api/drivers', withDefaults({
           method: 'POST',
@@ -108,7 +110,10 @@ const EmployeeModal = () => {
         await fetch('/api/upload', withDefaults({
           method: 'POST',
           body: JSON.stringify(photo),
-        })).then(() => refreshDrivers()).catch((err) => console.log(err));
+        })).then(() => {
+          refreshDrivers();
+          setToast(true);
+        }).catch((err) => console.log(err));
       }
     }
     closeModal();
