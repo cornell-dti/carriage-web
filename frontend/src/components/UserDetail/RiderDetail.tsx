@@ -7,13 +7,14 @@ import { useReq } from '../../context/req';
 import { Ride } from '../../types';
 
 type RiderDetailProps = {
+  // profilePic: string;
   id: string;
   firstName: string;
   lastName: string;
   netID: string;
   phone: string;
-  accessibility: string;
-  photoLink?: string;
+  // address: string;
+  accessibility: string
 }
 
 const RiderDetail = () => {
@@ -39,9 +40,7 @@ const RiderDetail = () => {
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
-      netId={rider.netID}
-      photoLink={rider.photoLink}
-    >
+      netId={rider.netID}>
       <UserContactInfo icon={phone} alt="" text={rider.phone} />
       <UserContactInfo icon="" alt="" text={rider.accessibility} />
       <OtherInfo>

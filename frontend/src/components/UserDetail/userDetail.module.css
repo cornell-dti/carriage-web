@@ -9,15 +9,16 @@
 }
 
 .imgContainer {
+  margin: 2% 2% 3% 3%;
   display: inline-block;
-  padding: 2rem;
+  width: 12%;
 }
 
 .profilePic {
+  background-color: #dddddd;
+  width: 90%;
+  height: auto;
   display: inline-block;
-  object-fit: cover;
-  height: 8rem;
-  width: 8rem;
 }
 
 .basicInfoContainer {
