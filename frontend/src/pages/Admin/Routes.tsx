@@ -17,7 +17,7 @@ import RiderDetail from '../../components/UserDetail/RiderDetail';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
 
-const Dashboard = () => {
+const Routes = () => {
   const [curDate, setCurDate] = useState(new Date());
   const defaultVal = { curDate, setCurDate };
 
@@ -66,4 +66,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Routes;

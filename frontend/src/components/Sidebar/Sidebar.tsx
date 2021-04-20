@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
-import { home, drivers, riders, locations, analytics, blank } from '../../icons/sidebar/index';
+import { home, drivers, riders, locations, analytics, settings, blank } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
