@@ -58,9 +58,9 @@ const RidesTable = (
       const valueNeeds = { data: needs };
       const assignModal = () => (
           <AssignDriverModal
-            isOpen={(openModal === index) && driverSet[index] != true}
+            isOpen={(openModal === index) && driverSet[index] !== true}
             close={() => setOpenModal(-1)}
-            setDriver={() => driverSet[index] = true}
+            setDriver={() => {driverSet[index] = true; setDriverSet(driverSet)}}
             ride={rides[0]}
             allDrivers={drivers}
           />
@@ -92,7 +92,7 @@ const RidesTable = (
               <span className={styles.bold}>{startTime}</span> <br></br>
               <span className={styles.gray}>-- {endTime}</span>
             </td>
-            {(hasAssignButton && driverSet[index] != true) 
+            {(hasAssignButton && driverSet[index] !== true) 
               ? <TableRow values={inputValuesAndButton} />
               : <TableRow values={inputValues} />}
           </tr>
