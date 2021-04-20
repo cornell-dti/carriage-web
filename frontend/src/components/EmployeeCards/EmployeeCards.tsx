@@ -50,7 +50,6 @@ const EmployeeCard = ({
     phoneNumber,
     availability,
     admin,
-    photoLink
   },
 }: EmployeeCardProps) => {
   const netId = email.split('@')[0];
@@ -74,18 +73,13 @@ const EmployeeCard = ({
     phone: fmtPhone,
     availability: fmtAvailability,
     admin,
-    photoLink
   };
+
 
   return (
     <Link to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}` }}
       style={{ textDecoration: 'none', color: 'inherit' }}>
-      <Card 
-        firstName={firstName} 
-        lastName={lastName} 
-        netId={netId} 
-        photoLink={photoLink}
-      >
+      <Card firstName={firstName} lastName={lastName} netId={netId} >
         <CardInfo icon={phone} alt="phone icon">
           <p>{fmtPhone}</p>
         </CardInfo>
