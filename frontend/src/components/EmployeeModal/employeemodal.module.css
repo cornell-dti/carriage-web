@@ -36,7 +36,7 @@
 .uploadText {
   margin: 0;
   font-size: 0.75rem;
-  color: #0084f4;
+  color: #0075DB;
   cursor: pointer;
 }
 
@@ -67,7 +67,7 @@
 
 .addAvailabilityInput {
   display: inline-block;
-  color: #0084f4;
+  color: #0075DB;
   font-size: 0.75rem;
   cursor: pointer;
 }
@@ -124,7 +124,7 @@
   background-color: black; 
 }
 .error {
-  color: #FF647C;
+  color: #EB0023;
   font-size: 0.75rem;
 }
 .timeFlexbox{
