@@ -6,7 +6,7 @@ import styles from './assigndrivermodal.module.css';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  setDriver: () => void; 
+  setDriver: (driverName: string) => void; 
   ride: Ride;
   allDrivers: Driver[];
 };
@@ -50,6 +50,7 @@ const AssignDriverModal = ({
       };
     }, [ref]);
   }
+const wrapperRef = useRef(null);
 const addDriver = (driver: Driver) => {
   fetch(
     `/api/rides/${ride.id}`,
@@ -60,12 +61,10 @@ const addDriver = (driver: Driver) => {
                               "type": "active"}),
     }),
   );
-  setDriver(); 
+  setDriver(driver.firstName); 
   close(); 
   setIsOpen(false);
 }
-
-  const wrapperRef = useRef(null);
   useOutsideAlerter(wrapperRef);
 
   return (
