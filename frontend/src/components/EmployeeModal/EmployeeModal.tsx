@@ -26,6 +26,22 @@ type EmployeeModalProps = {
   }
 }
 
+type AdminData = {
+  firstName: any;
+  lastName: any;
+  email: any;
+  phoneNumber: any;
+}
+
+type DriverData = {
+  firstName: any;
+  lastName: any;
+  email: any;
+  phoneNumber: any;
+  availability: ObjectType;
+  admin: boolean;
+}
+
 const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
@@ -57,6 +73,69 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     return result;
   };
 
+  const uploadPhotoForEmployee = async (
+    employeeId: string, 
+    table: string,
+    refresh: () => Promise<void>,
+    isCreate: boolean //show toast if new employee is created
+    ) => {
+    console.log('called uploadPhotoForEmployee');
+
+    const photo = {
+      id: employeeId,
+      tableName: table,
+      fileBuffer: imageBase64,
+    };
+    // Upload image
+    await fetch('/api/upload', withDefaults({
+      method: 'POST',
+      body: JSON.stringify(photo),
+    })).then(() => {
+      refresh();
+      setToast(isCreate);
+    }).catch((err) => console.log(err));
+  };
+
+  const createNewEmployee = async (
+    employeeData: AdminData | DriverData, 
+    endpoint: string,
+    refresh: () => Promise<void>,
+    table: string,
+    ) => {
+    if (imageBase64 === '') {
+      // If no image has been uploaded, create new employee
+      fetch(endpoint, withDefaults({
+        method: 'POST',
+        body: JSON.stringify(employeeData),
+      })).then(() => {
+        refresh();
+        setToast(true);
+      });
+    } else {
+      const createdEmployee = await fetch(endpoint, withDefaults({
+        method: 'POST',
+        body: JSON.stringify(employeeData),
+      })).then((res) => res.json());
+
+      uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
+    }
+  };
+
+  const updateExistingEmployee = async (
+    employeeData: AdminData | DriverData, 
+    endpoint: string,
+    refresh: () => Promise<void>,
+    table: string,
+    ) => {
+    const updatedEmployee = await fetch(`${endpoint}/${existingEmployee!.id}`, withDefaults({
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(employeeData),
+    })).then((res) => res.json());
+
+    uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+  };
+
   const onSubmit = async (data: ObjectType) => {
     const { name, email, phoneNumber, availability } = data;
     const [firstName, lastName] = name.split(' ');
@@ -69,48 +148,9 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         phoneNumber,
       };
       if (existingEmployee) {
-        // Update an existing admin
-        fetch(`/api/admins/${existingEmployee.id}`, withDefaults({
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(admin),
-        })).then(() => refreshAdmins());
+        updateExistingEmployee(admin, '/api/admins', () => refreshAdmins(), 'Admins');
       } else {
-        // Create a new admin
-        fetch('/api/admins', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(admin),
-        })).then(() => refreshAdmins());
-
-        // If no image has been uploaded, post admin data to the endpoint
-        if (imageBase64 === '') {
-          fetch('/api/admins', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(admin),
-          })).then(() => {
-            refreshAdmins();
-            setToast(true);
-          });
-        } else {
-          const createdAdmin = await fetch('/api/admins', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(admin),
-          })).then((res) => res.json());
-
-          // Upload image
-          const photo = {
-            id: createdAdmin.id,
-            tableName: 'Admins',
-            fileBuffer: imageBase64,
-          };
-          await fetch('/api/upload', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(photo),
-          })).then(() => {
-            refreshAdmins();
-            setToast(true);
-          }).catch((err) => console.log(err));
-        }
+        createNewEmployee(admin, '/api/admins', () => refreshAdmins(), 'Admins');
       }
     } else {
       const driver = {
@@ -122,48 +162,9 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         admin: selectedRole === 'both',
       };
       if (existingEmployee) {
-        // Update an existing driver
-        fetch(`/api/drivers/${existingEmployee.id}`, withDefaults({
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(driver),
-        })).then(() => refreshDrivers());
+        updateExistingEmployee(driver, '/api/drivers', () => refreshDrivers(), 'Drivers');
       } else {
-        // Create a new driver
-        fetch('/api/drivers', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(driver),
-        })).then(() => refreshDrivers());
-
-        // If no image has been uploaded, post driver data to the endpoint
-        if (imageBase64 === '') {
-          fetch('/api/drivers', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(driver),
-          })).then(() => {
-            refreshDrivers();
-            setToast(true);
-          });
-        } else {
-          const createdDriver = await fetch('/api/drivers', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(driver),
-          })).then((res) => res.json());
-
-          // Upload image
-          const photo = {
-            id: createdDriver.id,
-            tableName: 'Drivers',
-            fileBuffer: imageBase64,
-          };
-          await fetch('/api/upload', withDefaults({
-            method: 'POST',
-            body: JSON.stringify(photo),
-          })).then(() => {
-            refreshDrivers();
-            setToast(true);
-          }).catch((err) => console.log(err));
-        }
+        createNewEmployee(driver, '/api/drivers', () => refreshDrivers(), 'Drivers');
       }
     }
     closeModal();
@@ -191,7 +192,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     } else {
       console.log('Undefined file upload');
     }
-  }
+  };
 
   return (
     <>
