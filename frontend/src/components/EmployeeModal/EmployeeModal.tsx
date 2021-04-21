@@ -22,6 +22,7 @@ type EmployeeModalProps = {
     phone?: string;
     availability?: string[][];
     role?: string;
+    photoLink?: string;
   }
 }
 
@@ -205,7 +206,10 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         isOpen={isOpen}
         onClose={closeModal}
       >
-        <Upload imageChange={updateBase64} />
+        <Upload 
+          imageChange={updateBase64} 
+          existingPhoto={existingEmployee?.photoLink}
+        />
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo

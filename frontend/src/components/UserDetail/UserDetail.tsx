@@ -32,6 +32,7 @@ type EmployeeDetailProps = {
   phone: string;
   availability?: string[][];
   admin?: boolean;
+  photoLink?: string;
 };
 
 type UserDetailProps = {
@@ -75,7 +76,8 @@ const UserDetail = ({
                 email: employee.netId + '@cornell.edu',
                 phone: employee.phone.replaceAll('-', ''), //remove dashes'-'
                 availability: employee.availability, 
-                role: role
+                role: role,
+                photoLink: employee.photoLink
             }}
           /> : <img className={styles.edit} alt="edit" src={edit} />
       }
