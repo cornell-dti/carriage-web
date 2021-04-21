@@ -194,13 +194,12 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   return (
     <>
-      {/* {
+      {
         existingEmployee
           ? <img className={styles.edit} alt="edit" src={edit} onClick={openModal} />
           : <Button onClick={openModal}>+ Add an employee</Button>
-      } */}
+      }
       {showingToast ? <Toast message='The employee has been added.' /> : null}
-      <Button onClick={openModal}>+ Add an employee</Button>
       <Modal
         title={modalTitle}
         isOpen={isOpen}
