@@ -1,7 +1,10 @@
-.tableContainer {
+.analyticsTable {
   position: relative;
   padding: 1.875rem;
   box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tableContainer {
   overflow: auto;
   white-space: nowrap;
 }

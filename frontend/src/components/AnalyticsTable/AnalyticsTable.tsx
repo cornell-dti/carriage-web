@@ -208,65 +208,68 @@ const Table = ({ type }: TableProps) => {
   }, [type, drivers.length]);
 
   return (
-    <div className={styles.tableContainer}>
+    <div className={styles.analyticsTable}>
       <button
         className={styles.editBtn}
+        aria-label={!isEditing ? 'Edit' : 'Submit'}
         onClick={!isEditing ? () => setIsEditing(true) : handleSubmit}
       >
         {!isEditing ? (
           <img src={editIcon} alt="edit" />
         ) : (
-          <img src={checkIcon} alt="done" />
+          <img src={checkIcon} alt="checkmark" />
         )}
       </button>
-      <table className={styles.table}>
-        <thead>
-          <tr className={styles.row}>
-            {type === 'ride'
-              ? rideTableHeader.map((title, i) => {
-                let color;
-                if (i >= 2 && i <= 4) {
-                  color = '#F2911D';
-                }
-                if (i >= 5 && i <= 7) {
-                  color = '#1594F2';
-                }
-                return (
-                  <th
-                    className={cn(styles.cell, { [styles.sticky]: i < 2 })}
-                    style={{ color }}
-                  >
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr className={styles.row}>
+              {type === 'ride'
+                ? rideTableHeader.map((title, i) => {
+                  let color;
+                  if (i >= 2 && i <= 4) {
+                    color = '#F2911D';
+                  }
+                  if (i >= 5 && i <= 7) {
+                    color = '#1594F2';
+                  }
+                  return (
+                    <th
+                      className={cn(styles.cell, { [styles.sticky]: i < 2 })}
+                      style={{ color }}
+                    >
+                      {title}
+                    </th>
+                  );
+                })
+                : driverTableHeader.map((title, i) => (
+                  <th className={cn(styles.cell, { [styles.sticky]: i < 2 })}>
                     {title}
                   </th>
-                );
-              })
-              : driverTableHeader.map((title, i) => (
-                <th className={cn(styles.cell, { [styles.sticky]: i < 2 })}>
-                  {title}
-                </th>
+                ))}
+            </tr>
+          </thead>
+          <tbody>
+            {type === 'ride'
+              ? rideTableData?.map((row, i) => (
+                <Row
+                  data={row}
+                  isEditing={isEditing}
+                  index={i}
+                  onEdit={handleEdit}
+                />
+              ))
+              : driverTableData?.map((row, i) => (
+                <Row
+                  data={row}
+                  isEditing={isEditing}
+                  index={i}
+                  onEdit={handleEdit}
+                />
               ))}
-          </tr>
-        </thead>
-        <tbody>
-          {type === 'ride'
-            ? rideTableData?.map((row, i) => (
-              <Row
-                data={row}
-                isEditing={isEditing}
-                index={i}
-                onEdit={handleEdit}
-              />
-            ))
-            : driverTableData?.map((row, i) => (
-              <Row
-                data={row}
-                isEditing={isEditing}
-                index={i}
-                onEdit={handleEdit}
-              />
-            ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div >
   );
 };
