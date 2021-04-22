@@ -95,17 +95,20 @@
 }
 
 .usage {
-  display: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .usageContainer {
-  float: left;
+  display: flex;
+  align-items: center;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
 }
 
 .usageTag {
-  float: left;
+  display: block;
   width: 20px;
   height: 20px;
   margin-right: 5px;
@@ -114,10 +117,8 @@
 
 .ridesCount {
   background-color: #C5E4FB;
-  ;
 }
 
 .noShow {
   background-color: #FF8B9D;
-  ;
 }

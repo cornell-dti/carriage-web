@@ -11,16 +11,16 @@ const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
   const { withDefaults } = useReq();
-  const colSizes = [1, 0.75, 0.75, 1.25, 1.25, 1];
-  const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Duration', 'Disability'];
-  const [usage, setUsage] = useState({ studentRides: -1, noShowCount: -1 });
+  const colSizes = [1, 0.75, 0.75, 1.25, 1];
+  const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
+  const [usage, setUsage] = useState({ studentRides: 0, noShowCount: 0 });
   const getUsageData = (id: string) => {
     fetch(`/api/riders/${id}/usage`, withDefaults())
       .then((res) => (res.json()))
       .then((data) => setUsage(data));
     return {
       data:
-        <span className={styles.usage}>
+        <div className={styles.usage}>
           <span className={styles.usageContainer}>
             <span className={cn(styles.ridesCount, styles.usageTag)}></span>
             {usage.studentRides} Rides
@@ -29,7 +29,7 @@ const StudentsTable = () => {
             <span className={cn(styles.noShow, styles.usageTag)}></span>
             {usage.noShowCount} No Shows
           </span>
-        </span>,
+        </div>,
     };
   };
 
@@ -47,7 +47,7 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { id, firstName, lastName, email, address, phoneNumber, joinDate, accessibility } = r;
+        const { id, firstName, lastName, email, address, phoneNumber, accessibility } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
@@ -77,7 +77,7 @@ const StudentsTable = () => {
         const goToDetail = () => {
           history.push(location);
         };
-        const data = [nameNetId, phone, shortAddress, usageData, joinDate, disability];
+        const data = [nameNetId, phone, shortAddress, usageData, disability];
         return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
       })}
     </Table>
