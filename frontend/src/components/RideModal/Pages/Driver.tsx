@@ -12,8 +12,8 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
       driver: formData?.driver ?? '',
     },
   });
-    const {drivers} = useEmployees();
-    return (
+  const { drivers } = useEmployees();
+  return (
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.drivers)}>
         {drivers.map((d) => (
@@ -37,7 +37,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
         <Button type="submit">Next</Button>
       </div>
     </form>
-    );
-  };
+  );
+};
 
 export default DriverPage;
