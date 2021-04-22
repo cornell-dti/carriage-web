@@ -79,7 +79,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     refresh: () => Promise<void>,
     isCreate: boolean //show toast if new employee is created
     ) => {
-    console.log('called uploadPhotoForEmployee');
 
     const photo = {
       id: employeeId,
