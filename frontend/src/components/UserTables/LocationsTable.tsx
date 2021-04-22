@@ -83,8 +83,6 @@ const LocationsTable = () => {
           return <Row key={id} data={data} colSizes={colSizes} />;
         })}
       </Table>
-
-      <Form onClick={addLocation} />
     </div>
   );
 };
