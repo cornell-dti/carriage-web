@@ -1,34 +1,26 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 
-const Header = () => (
-  <header className={styles.header}>
-    <h1 className={styles.title}>Welcome to Carriage</h1>
-    <h2 className={styles.subtitle}>Helping People Do Something</h2>
-  </header>
-);
+type LandingPropType = {
+  loginButton: ReactElement
+}
 
-const ReadMore = () => (
-  <a href="https://www.cornelldti.org" className={styles.readBtn}>
-    Read More
-  </a>
-);
-
-
-const Footer = () => (
-  <footer className={styles.footer}>
-    Some information about copyright can go here
-  </footer>
-);
-
-const Landing = () => (
+const Landing = ({ loginButton }: LandingPropType) => (
   <>
-    <div>
-      <div className={styles.home}>
-        <Header />
-        <ReadMore />
+    <div className={styles.home}>
+      <div className={styles.main}>
+        <div className={styles.left}><div className={styles.logo} /></div>
+        <div className={styles.right}>
+          <h1 className={styles.heading}>Login</h1>
+          <input className={styles.input} disabled type="text" name="email" placeholder="email" />
+          <input className={styles.input} disabled type="password" name="password" placeholder="password" />
+          <div>
+            {loginButton}
+          </div>
+        </div>
+        {/* hi
+        {btn} */}
       </div>
-      <Footer />
     </div>
   </>
 );
