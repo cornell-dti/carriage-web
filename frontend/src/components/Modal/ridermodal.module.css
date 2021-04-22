@@ -64,6 +64,15 @@
 }
 
 .error {
-  color: #FF647C;
+  color: #ff647c;
   font-size: 0.8rem;
+  padding: 0.25rem;
+}
+
+.riderDate {
+  font-size: 1rem !important;
+}
+
+.firstRow {
+  max-width: 90%;
 }

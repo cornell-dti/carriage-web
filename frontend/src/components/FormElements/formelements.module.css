@@ -16,7 +16,7 @@
 
 .timeInput,
 .dateInput {
-  font-size: 1rem;
+  font-size: 1.25rem;
   padding: 0.25rem;
 }
 
@@ -61,7 +61,7 @@
   border: 0.063rem solid #000000;
   box-sizing: border-box;
 }
-.srlabel{
+.srlabel {
   border: 0;
   clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
   clip: rect(1px, 1px, 1px, 1px);
@@ -70,5 +70,5 @@
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px; 
+  width: 1px;
 }
