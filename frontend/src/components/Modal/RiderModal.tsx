@@ -2,11 +2,11 @@ import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, NewRider } from '../../types/index';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
-
 
 type RiderModalProps = {
   riders: Array<NewRider>;
@@ -31,6 +31,7 @@ const RiderModal = () => {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
 
@@ -46,6 +47,7 @@ const RiderModal = () => {
   };
 
   const submitData = () => {
+    setToast(false);
     setIsSubmitted(true);
     closeModal();
   };
@@ -69,13 +71,18 @@ const RiderModal = () => {
       fetch('/api/riders', withDefaults({
         method: 'POST',
         body: JSON.stringify(newRider),
-      })).then(() => refreshRiders());
+      })).then(() => {
+        refreshRiders();
+        setToast(true);
+      });
       setIsSubmitted(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
     <>
+      {showingToast ? <Toast message='The student has been added.' /> : null}
       <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
       <Modal
         title={['Add a student']}

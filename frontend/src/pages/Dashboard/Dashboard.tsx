@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
-} from 'react-router-dom';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import Employees from './Employees';
-import Students from './Students';
-import Home from './Home';
-import Locations from './Locations';
-import Settings from './Settings';
-// import Notifications from '../../components/Notification/Notifications';
-import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
-import RiderDetail from '../../components/UserDetail/RiderDetail';
-import ExportPreview from '../../components/ExportPreview/ExportPreview';
-import DateContext from '../../context/date';
+} from "react-router-dom";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Employees from "./Employees";
+import Students from "./Students";
+import Home from "./Home";
+import Locations from "./Locations";
+import Analytics from "./Analytics";
+import Notifications from "../../components/Notification/Notifications";
+import EmployeeDetail from "../../components/UserDetail/EmployeeDetail";
+import RiderDetail from "../../components/UserDetail/RiderDetail";
+import ExportPreview from "../../components/ExportPreview/ExportPreview";
+import DateContext from "../../context/date";
 
 const Dashboard = () => {
   const [curDate, setCurDate] = useState(new Date());
@@ -54,8 +54,8 @@ const Dashboard = () => {
               )}
             />
             <Route path="/locations" component={Locations} />
-            <Route path="/settings" component={Settings} />
-            {/* <Route path="/notifications" component={Notifications} /> */}
+            <Route path="/analytics" component={Analytics} />
+            <Route path="/notifications" component={Notifications} />
             <Route path="*">
               <Redirect to="/home" />
             </Route>
