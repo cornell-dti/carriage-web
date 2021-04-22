@@ -42,13 +42,13 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
         <div>
           <div>
             {tabLabels.map((tabLabel) => (
-              <h1
+              <button
                 key={tabLabel}
                 className={cn(styles.tab, { [styles.current]: tabLabel === currentTab })}
                 onClick={() => switchTab(tabLabel)}
               >
                 {tabLabel}
-              </h1>
+              </button>
             ))}
           </div>
           <span className={styles.underline} />
