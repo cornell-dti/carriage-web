@@ -66,11 +66,7 @@ const Home = () => {
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
-<<<<<<< HEAD
     </main>
-=======
-    </div >
->>>>>>> master
   );
 };
 
