@@ -84,8 +84,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
                   return true;
                 }
                 const needsArr = needs.split(",").map((n: string) => n.trim());
-                const isValidNeed = (acc: boolean, val: Accessibility) =>
-                  acc && Object.values(Accessibility).includes(val);
+                const isValidNeed = (acc: boolean, val: Accessibility) => {
+                  return acc && Object.values(Accessibility).includes(val);
+                };
                 return needsArr.reduce(isValidNeed, true);
               },
             })}
