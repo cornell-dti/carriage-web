@@ -56,13 +56,18 @@ const RidesTable = (
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-      const driverString = (driverSet[index] !== undefined || driverSet[index].length > 0) ? driverSet[index].charAt(0) : "";
-      const valueDriver =  {data: driverString, driver: (driverSet[index] !== undefined || driverSet[index].length > 0)};
+      const driverString = (driverSet[index] !== undefined || 
+                            driverSet[index].length > 0) ? 
+                              driverSet[index].charAt(0) : "";
+      const valueDriver =  {data: driverString, 
+        driver: (driverSet[index] !== undefined || driverSet[index].length > 0)};
       const assignModal = () => (
           <AssignDriverModal
-            isOpen={(openModal === index) && (driverSet[index] === undefined || driverSet[index].length === 0)}
+            isOpen={(openModal === index) && (driverSet[index] === undefined || 
+              driverSet[index].length === 0)}
             close={() => setOpenModal(-1)}
-            setDriver={(driverName: string) => {driverSet[index] = driverName; setDriverSet([...driverSet])}}
+            setDriver={(driverName: string) => {driverSet[index] = driverName; 
+              setDriverSet([...driverSet])}}
             ride={rides[0]}
             allDrivers={drivers}
           />
