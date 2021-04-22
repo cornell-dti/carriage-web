@@ -94,6 +94,10 @@
   border-radius: 50%;
 }
 
+.usage {
+  display: center;
+}
+
 .usageContainer {
   float: left;
   margin-left: 0.5rem;

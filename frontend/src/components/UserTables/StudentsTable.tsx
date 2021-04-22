@@ -11,7 +11,7 @@ const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
   const { withDefaults } = useReq();
-  const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
+  const colSizes = [1, 0.75, 0.75, 1.25, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Duration', 'Disability'];
   const [usage, setUsage] = useState({ studentRides: -1, noShowCount: -1 });
   const getUsageData = (id: string) => {
@@ -20,7 +20,7 @@ const StudentsTable = () => {
       .then((data) => setUsage(data));
     return {
       data:
-        <span>
+        <span className={styles.usage}>
           <span className={styles.usageContainer}>
             <span className={cn(styles.ridesCount, styles.usageTag)}></span>
             {usage.studentRides} Rides

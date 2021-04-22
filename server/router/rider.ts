@@ -86,16 +86,10 @@ router.get('/:id/usage', validateUser('User'), (req, res) => {
   let studentRides: number;
   db.getById(res, Rider, id, tableName, () => {
     const isRider = new Condition('rider').eq(id);
-    const isNoshow = new Condition('status').eq(Status.NO_SHOW);
-    const conditionNoShow = isRider.group(isNoshow);
-    const isCompleted = new Condition('status').eq(Status.COMPLETED);
-    const conditionRides = isRider.group(isCompleted);
-    db.scan(res, Ride, conditionNoShow, (data: RideType[]) => {
-      noShowCount = data.length;
-      db.scan(res, Ride, conditionRides, (data_: RiderType[]) => {
-        studentRides = data_.length;
-        res.send({ studentRides, noShowCount });
-      });
+    db.scan(res, Ride, isRider, (data: RideType[]) => {
+      noShowCount = data.filter((ride) => ride.status === Status.NO_SHOW).length;
+      studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
+      res.send({ studentRides, noShowCount });
     });
   });
 });
