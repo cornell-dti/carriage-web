@@ -56,6 +56,8 @@ const RidesTable = (
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
+      const driverString = (driverSet[index] !== undefined || driverSet[index].length > 0) ? driverSet[index].charAt(0) : "";
+      const valueDriver =  {data: driverString, driver: (driverSet[index] !== undefined || driverSet[index].length > 0)};
       const assignModal = () => (
           <AssignDriverModal
             isOpen={(openModal === index) && (driverSet[index] === undefined || driverSet[index].length === 0)}
@@ -77,6 +79,7 @@ const RidesTable = (
         valuePickup,
         valueDropoff,
         valueNeeds,
+        valueDriver,
       ];
       const inputValuesAndButton = [
         valueName,
