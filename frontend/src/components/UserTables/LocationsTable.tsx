@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Table } from '../TableComponents/TableComponents';
-import Form from '../UserForms/LocationsForm'; 
+import Form from '../UserForms/LocationsForm';
 import { Button } from '../FormElements/FormElements';
 import { Location } from '../../types';
 import { useReq } from '../../context/req';
@@ -71,13 +71,13 @@ const LocationsTable = () => {
         <Row
           header
           colSizes={colSizes}
-          data={headers.map((h) => ({ data: h }))}
+          data={headers}
         />
         {locations.map((loc) => {
           const { id, name, address, tag } = loc;
           const tagData = { data: '', tag };
           const deleteButton = {
-            data: <Button onClick={() => deleteLocation(id)}>Delete</Button>
+            data: <Button small onClick={() => deleteLocation(id)}>Delete</Button>,
           };
           const data = [name, address, tagData, deleteButton];
           return <Row key={id} data={data} colSizes={colSizes} />;
