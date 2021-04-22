@@ -40,12 +40,8 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
           const valueNameDate = { data: isStudent ? date : name };
           const valueDateTime = { data: isStudent ? `${startTime}${' - '}${endTime}` : date };
-          const valuePickup = pickupTag !== Tag.INACTIVE ?
-                              { data: pickupLocation, tag: pickupTag, smallTag: true } :
-                              { data: pickupLocation, tag: pickupTag};
-          const valueDropoff = dropoffTag !== Tag.INACTIVE ? 
-                              { data: dropoffLocation, tag: dropoffTag, smallTag: true } : 
-                              { data: dropoffLocation, tag: dropoffTag };
+          const valuePickup = { data: pickupLocation };
+          const valueDropoff = { data: dropoffLocation };
           const valueNeeds = { data: needs };
 
           const inputValues = [

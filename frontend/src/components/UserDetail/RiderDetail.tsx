@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone } from "../../icons/userInfo/index";
+import { phone, home } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
@@ -44,14 +44,14 @@ const RiderDetail = () => {
         netId={rider.netID}
         photoLink={rider.photoLink}>
         
-        <div className={styles.accessibilityContainer}>
+        {/* <div className={styles.accessibilityContainer}>
           <p>Reason for Ride:</p>
-        </div>
+        </div> */}
 
 
         <div className={styles.riderContactInfo}>
           <UserContactInfo icon={phone} alt="" text={rider.phone} />
-          <UserContactInfo icon={phone} alt="" text={rider.address} />
+          <UserContactInfo icon={home} alt="" text={rider.address} />
         </div>
         
       </UserDetail>

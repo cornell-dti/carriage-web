@@ -24,8 +24,7 @@
 }
 
 .undefinedProfilePic {
-  background-color: #dddddd;
-  width: 8.063rem;
+  backgroundfdth: 8.063rem;
   height: 8.063rem;
   border-radius: 0.3rem;
 }
@@ -72,10 +71,10 @@
   height: auto;
 }
 
-.riderContactInfo {
+/* .riderContactInfo {
   border-top: 0.1rem solid rgba(0, 0, 0, 0.15);
   padding-top: 1.75rem;
-}
+} */
 
 .contactInfoContainer, .riderContactInfo {
   display: flex;

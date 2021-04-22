@@ -22,7 +22,7 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { firstName, lastName, email, address, phoneNumber, joinDate, accessibility } = r;
+        const { firstName, lastName, email, address, phoneNumber, joinDate, accessibility, photoLink } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
@@ -42,6 +42,8 @@ const StudentsTable = () => {
           netID: netId,
           phone,
           accessibility: disability,
+          address,
+          photoLink
         };
         const location = {
           pathname: '/riders/rider',
