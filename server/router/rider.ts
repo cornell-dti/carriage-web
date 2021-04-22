@@ -6,7 +6,7 @@ import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
-import { Ride, RideType, Type } from '../models/ride';
+import { Ride, RideType, Type, Status } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Riders';
@@ -76,6 +76,26 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
     db.scan(res, Ride, condition, (data: RideType[]) => {
       data.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
       res.send(data[0] ?? {});
+    });
+  });
+});
+
+router.get('/:id/usage', validateUser('User'), (req, res) => {
+  const { params: { id } } = req;
+  let noShowCount: number;
+  let studentRides: number;
+  db.getById(res, Rider, id, tableName, () => {
+    const isRider = new Condition('rider').eq(id);
+    const isNoshow = new Condition('status').eq(Status.NO_SHOW);
+    const conditionNoShow = isRider.group(isNoshow);
+    const isCompleted = new Condition('status').eq(Status.COMPLETED);
+    const conditionRides = isRider.group(isCompleted);
+    db.scan(res, Ride, conditionNoShow, (data: RideType[]) => {
+      noShowCount = data.length;
+      db.scan(res, Ride, conditionRides, (data_: RiderType[]) => {
+        studentRides = data_.length;
+        res.send({ studentRides, noShowCount });
+      });
     });
   });
 });
