@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import TableRow from '../TableComponents/TableRow';
+import { Row, Table } from '../TableComponents/TableComponents';
 import Form from '../UserForms/LocationsForm';
+import { Button } from '../FormElements/FormElements';
 import { Location } from '../../types';
-import styles from './table.module.css';
 import { useReq } from '../../context/req';
 
-const Table = () => {
+const LocationsTable = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const { withDefaults } = useReq();
 
@@ -62,45 +62,29 @@ const Table = () => {
       .catch((e) => console.error('removing location failed'));
   };
 
-  const renderTableHeader = () => (
-    <tr>
-      <th className={styles.tableHeader}>Name</th>
-      <th className={styles.tableHeader}>Address</th>
-      <th className={styles.tableHeader}>Tag</th>
-    </tr>
-  );
+  const colSizes = [1, 1, 0.75, 0.75];
+  const headers = ['Name', 'Address', 'Tag'];
 
   return (
     <div>
-      <div>
-        <h1 className={styles.formHeader}>Location Table</h1>
-
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <tbody>
-              {renderTableHeader()}
-              {locations.map(({ id, name, address, tag }, index) => (
-                <tr key={index}>
-                  <TableRow
-                    values={[
-                      { data: name },
-                      { data: address },
-                      { data: '', tag },
-                      {
-                        data: 'Delete',
-                        buttonHandler: () => deleteLocation(id),
-                      },
-                    ]}
-                  />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <Form onClick={addLocation} />
+      <Table>
+        <Row
+          header
+          colSizes={colSizes}
+          data={headers}
+        />
+        {locations.map((loc) => {
+          const { id, name, address, tag } = loc;
+          const tagData = { data: '', tag };
+          const deleteButton = {
+            data: <Button small onClick={() => deleteLocation(id)}>Delete</Button>,
+          };
+          const data = [name, address, tagData, deleteButton];
+          return <Row key={id} data={data} colSizes={colSizes} />;
+        })}
+      </Table>
     </div>
   );
 };
 
-export default Table;
+export default LocationsTable;

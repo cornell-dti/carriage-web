@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express';
 import dynamoose from 'dynamoose';
-import bodyparser from 'body-parser';
 import path from 'path';
 import cors from 'cors';
 import config from './config';
@@ -22,8 +21,8 @@ dynamoose.aws.sdk.config.update(config);
 
 const app = express();
 app.use(cors());
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: false }));
+app.use(express.json({ limit: '500kb' }));
+app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/riders', rider);
 app.use('/api/drivers', driver);

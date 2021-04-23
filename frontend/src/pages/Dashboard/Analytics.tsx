@@ -1,14 +1,15 @@
 import React from 'react';
+import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher, { Tab } from '../../components/TabSwitcher/TabSwitcher';
 
 const Analytics = () => (
    <div>
       <TabSwitcher>
          <Tab label="Rider Data">
-            <p>rider data</p>
+            <AnalyticsTable type="ride" />
          </Tab>
          <Tab label="Driver Data">
-            <p>driver data</p>
+            <AnalyticsTable type="driver" />
          </Tab>
       </TabSwitcher>
    </div>
