@@ -6,6 +6,7 @@ import table, { TableData } from './data';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
+import { SRLabel } from 'components/FormElements/FormElements';
 
 
 type Cell = string | number;
@@ -47,13 +48,17 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
         >
           {isEditing && cellIndex >= 2 // excluding first two columns
             ? (
-              <input
-                type='number'
-                min={0}
-                className={styles.input}
-                defaultValue={d}
-                onInput={(e) => handleEdit(e, cellIndex)}
-              />
+              <div>
+                <SRLabel htmlFor={`${index}${cellIndex}`}>Total</SRLabel>
+                <input
+                  type='number'
+                  min={0}
+                  id={`${index}${cellIndex}`}
+                  className={styles.input}
+                  defaultValue={d}
+                  onInput={(e) => handleEdit(e, cellIndex)}
+                />
+              </div>
             ) : d
           }
         </td>

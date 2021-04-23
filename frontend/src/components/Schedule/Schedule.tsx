@@ -211,11 +211,11 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         <div className={cn(styles.right, { [styles.long]: viewState })}>
           <div>
             <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
-              <i className={styles.uparrow}></i>
+              <div className={styles.uparrow}></div>
             </button>
             <span className={styles.pad}></span>
             <button className={styles.btn} onClick={goDown} disabled={okHr(22)}>
-              <i className={styles.downarrow}></i>
+              <div className={styles.downarrow}></div>
             </button>
           </div>
         </div>

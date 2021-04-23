@@ -20,7 +20,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
     <div className={styles.collapsible}>
       <div className={styles.banner} onClick={() => setExpanded(!expanded)} >
         <p className={styles.title}>{title}</p>
-        <img className={styles.icon} src={icon} role={"button"} aria-label={"see more"} 
+        <img className={styles.icon} src={icon} role={"button"}
           alt={"see more"} tabIndex={0} onKeyPress={handleKeywordKeyPress} />
       </div>
       {expanded && <div className={styles.contentContainer}>{children}</div>}
