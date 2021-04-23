@@ -1,5 +1,5 @@
 import React from 'react';
-import TableRow from '../TableComponents/TableRow';
+import { Row, Table } from '../TableComponents/TableComponents';
 import { Ride } from '../../types';
 import styles from '../UserTables/table.module.css';
 
@@ -9,17 +9,10 @@ type pastRideProps = {
 };
 
 const PastRides = ({ isStudent, rides }: pastRideProps) => {
-  function renderTableHeader() {
-    return (
-      <tr>
-        <th className={styles.tableHeader}>{isStudent ? 'Date' : 'Name'}</th>
-        <th className={styles.tableHeader}>{isStudent ? 'Time' : 'Date'}</th>
-        <th className={styles.tableHeader}>Pickup Location</th>
-        <th className={styles.tableHeader}>Dropoff Location</th>
-        <th className={styles.tableHeader}>Needs</th>
-      </tr>
-    );
-  }
+  const colSizes = [2, 2, 2, 2, 2];
+  const header1 = isStudent ? 'Date' : 'Name';
+  const header2 = isStudent ? 'Time' : 'Date';
+  const headers = [header1, header2, 'Pickup Location', 'Dropoff Location', 'Needs'];
   function renderTableData() {
     return rides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
@@ -53,7 +46,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
       return (
         <tr key={index}>
-          <TableRow values={inputValues} />
+          <Row data={inputValues} colSizes={colSizes} />
         </tr>
       );
     });
@@ -62,12 +55,14 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
     <div>
       <h1 className={styles.formHeader}>Past Rides</h1>
       <div className={styles.tableContainer}>
-        <table cellSpacing="0" className={styles.table}>
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData()}
-          </tbody>
-        </table>
+        <Table>
+          <Row
+            header
+            colSizes={colSizes}
+            data={headers.map((h) => ({ data: h }))}
+          />
+          {renderTableData()}
+        </Table>
       </div>
     </div>
   );
