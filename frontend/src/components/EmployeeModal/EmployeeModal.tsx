@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { ObjectType} from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import WorkingHours from './WorkingHours';
@@ -61,7 +61,9 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     setToast(false);
   };
 
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    methods.clearErrors();
+    setIsOpen(false);};
 
   const parseAvailability = (availability: ObjectType[]) => {
     const result: ObjectType = {};
