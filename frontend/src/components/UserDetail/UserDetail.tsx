@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './userDetail.module.css';
 import { edit, trash } from '../../icons/other/index';
+import EmployeeModal from '../EmployeeModal/EmployeeModal';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -23,11 +24,24 @@ export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   </div>
 );
 
+type EmployeeDetailProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  netId: string;
+  phone: string;
+  availability?: string[][];
+  admin?: boolean;
+  photoLink?: string;
+};
+
 type UserDetailProps = {
   firstName: string;
   lastName: string;
   netId: string;
   children: JSX.Element | JSX.Element[];
+  employee?: EmployeeDetailProps;
+  role?: string;
   photoLink?: string;
 };
 
@@ -35,6 +49,9 @@ const UserDetail = ({
   firstName,
   lastName,
   netId,
+  children,
+  employee,
+  role,
   photoLink,
   children
 }: UserDetailProps) => {

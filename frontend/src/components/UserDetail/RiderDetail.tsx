@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, home } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
+import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
+import { phone } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
@@ -35,7 +37,6 @@ const RiderDetail = () => {
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, rider.id]);
-  console.log(rider);
   return (
     <div className={styles.detailContainer}>
       <UserDetail
