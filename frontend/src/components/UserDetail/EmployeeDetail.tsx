@@ -32,12 +32,12 @@ const EmployeeDetail = () => {
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
-  }
+  };
   const roleValue = (): string => {
     if (isBoth) return 'both';
     if (isAdmin) return 'admin';
     return 'driver';
-  }
+  };
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
