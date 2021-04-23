@@ -4,8 +4,14 @@ import {useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
 import { Input } from '../FormElements/FormElements';
 
+type EmployeeInfoProps = {
+  name?: string;
+  netId?: string;
+  email?: string;
+  phone?: string;
+}
 
-const EmployeeInfo = () => {
+const EmployeeInfo = ({name, netId, email, phone}:EmployeeInfoProps) => {
   const { register, formState } = useFormContext();
   const {errors} = formState;
   return (
@@ -15,6 +21,7 @@ const EmployeeInfo = () => {
           name='name'
           type='text'
           placeholder='Name'
+          defaultValue={name}
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
@@ -25,6 +32,7 @@ const EmployeeInfo = () => {
           name='netid'
           type='text'
           placeholder='NetID'
+          defaultValue={netId}
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
@@ -35,6 +43,7 @@ const EmployeeInfo = () => {
           name='email'
           type='text'
           placeholder='Email'
+          defaultValue={email}
           className={cn(styles.input)}
           ref={register({ required:true, pattern:/^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/})}
         />
@@ -45,6 +54,7 @@ const EmployeeInfo = () => {
           name='phoneNumber'
           type='tel'
           placeholder='Phone Number'
+          defaultValue={phone}
           min={10}
           max={10}
           className={cn(styles.input)}

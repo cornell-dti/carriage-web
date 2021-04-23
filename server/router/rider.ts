@@ -27,10 +27,10 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     } = rider;
     res.send({
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     });
   });
 });
@@ -66,8 +66,8 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
 router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, () => {
-    const now = moment().toISOString();
-    const end = moment().add(30, 'minutes').toISOString();
+    const now = moment.tz('America/New_York').toISOString();
+    const end = moment.tz('America/New_York').add(30, 'minutes').toISOString();
     const isRider = new Condition('rider').eq(id);
     const isActive = new Condition('type').eq(Type.ACTIVE);
     const isSoon = new Condition('startTime').between(now, end);
