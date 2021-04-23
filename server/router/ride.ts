@@ -24,9 +24,6 @@ router.get('/download', (req, res) => {
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
-    .where('type')
-    .not()
-    .eq(req.query.rideType as string);
 
   const callback = (value: any) => {
     const dataToExport = value.map((doc: any) => {
@@ -35,25 +32,15 @@ router.get('/download', (req, res) => {
       const fullName = (user: RiderType | DriverType) => (
         `${user.firstName} ${user.lastName.substring(0, 1)}.`
       );
-
-      const rideData = doc.driver ? {
+      return {
         Name: fullName(doc.rider),
         'Pick Up': start.format('h:mm A'),
         From: doc.startLocation.name,
         To: doc.endLocation.name,
         'Drop Off': end.format('h:mm A'),
         Needs: doc.rider.accessibility,
-        Driver: fullName(doc.driver),
-      } : {
-        Name: fullName(doc.rider),
-        'Pick Up': start.format('h:mm A'),
-        From: doc.startLocation.name,
-        To: doc.endLocation.name,
-        'Drop Off': end.format('h:mm A'),
-        Needs: doc.rider.accessibility,
-      }
-      
-      return rideData
+        Driver: doc.driver ? fullName(doc.driver) : '',
+      };
     });
     csv
       .writeToBuffer(dataToExport, { headers: true })

@@ -26,7 +26,7 @@ const Home = () => {
 
   const downloadCSV = () => {
     setToast(false);
-    fetch(`/api/rides/download?date=${today}&rideType=scheduled`, withDefaults())
+    fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
         if (data === '') {
