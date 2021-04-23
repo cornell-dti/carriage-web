@@ -56,15 +56,13 @@ const RidesTable = (
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
-      const driverString = (driverSet[index] !== undefined || 
-                            driverSet[index].length > 0) ? 
-                              driverSet[index].charAt(0) : "";
-      const valueDriver =  {data: driverString, 
-        driver: (driverSet[index] !== undefined || driverSet[index].length > 0)};
+      const hasDriver = (driverSet[index] !== undefined && 
+        driverSet[index].length > 0)
+      const driverString = hasDriver ? driverSet[index].charAt(0) : "";
+      const valueDriver =  {data: driverString, driver: hasDriver};
       const assignModal = () => (
           <AssignDriverModal
-            isOpen={(openModal === index) && (driverSet[index] === undefined || 
-              driverSet[index].length === 0)}
+            isOpen={(openModal === index) && !hasDriver}
             close={() => setOpenModal(-1)}
             setDriver={(driverName: string) => {driverSet[index] = driverName; 
               setDriverSet([...driverSet])}}
@@ -100,7 +98,7 @@ const RidesTable = (
               <span className={styles.bold}>{startTime}</span> <br></br>
               <span className={styles.gray}>-- {endTime}</span>
             </td>
-            {(hasAssignButton && (driverSet[index] === undefined || driverSet[index].length === 0)) 
+            {(hasAssignButton && !hasDriver) 
               ? <TableRow values={inputValuesAndButton} />
               : <TableRow values={inputValues} />}
           </tr>
