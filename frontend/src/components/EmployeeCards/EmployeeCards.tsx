@@ -115,6 +115,11 @@ const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
   const allDrivers = [...admins, ...drivers];
+  allDrivers.sort((a: Admin, b: Admin) => {
+    if (a.firstName < b.firstName) { return -1; }
+    if (a.firstName > b.firstName) { return 1; }
+    return 0;
+  });
 
   return (
     <div className={styles.cardsContainer}>
