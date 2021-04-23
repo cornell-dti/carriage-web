@@ -14,7 +14,7 @@ type RiderModalProps = {
 };
 
 const RiderModal = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ObjectType>({
     firstName: "",
     lastName: "",
     phoneNumber: "",
@@ -78,7 +78,10 @@ const RiderModal = () => {
         currentPage={0}
         onClose={closeModal}
       >
-        <RiderModalInfo onSubmit={saveDataThen(submitData)} />
+        <RiderModalInfo 
+          onSubmit={saveDataThen(submitData)} 
+          setIsOpen={setIsOpen} 
+          setFormData={setFormData}/>
       </Modal>
     </>
   );

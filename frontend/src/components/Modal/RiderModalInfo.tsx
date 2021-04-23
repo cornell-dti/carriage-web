@@ -1,16 +1,18 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
-import { Button, Input } from "../FormElements/FormElements";
+import { Button, Input, SRLabel } from "../FormElements/FormElements";
 import styles from "./ridermodal.module.css";
 import { ObjectType, Accessibility } from "../../types/index";
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
   formData?: ObjectType;
+  setFormData: React.Dispatch<React.SetStateAction<ObjectType>>
 };
 
-const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
+const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) => {
   const { register, errors, handleSubmit, getValues } = useForm();
   const beforeSubmit = ({
     name,
@@ -38,11 +40,18 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
     });
   };
 
+  const cancel = () => {
+    setFormData({});
+    setIsOpen(false);
+  }
+
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
+          <SRLabel htmlFor='name'>Name: </SRLabel>
           <Input
+            id='name'
             name="name"
             type="text"
             placeholder="Name"
@@ -52,7 +61,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           {errors.name && <p className={styles.error}>enter a valid name</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
+          <SRLabel htmlFor='netid'>NetID: </SRLabel>
           <Input
+            id="netid"
             name="netid"
             type="text"
             placeholder="NetID"
@@ -62,7 +73,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           {errors.netid && <p className={styles.error}>enter a valid netid</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
+          <SRLabel htmlFor='phoneNumber'>Phone Number: </SRLabel>
           <Input
+            id="phoneNumber"
             name="phoneNumber"
             type="text"
             placeholder="Phone Number"
@@ -74,7 +87,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
+          <SRLabel htmlFor='needs'>Needs: </SRLabel>
           <Input
+            id="needs"
             name="needs"
             type="text"
             placeholder="Needs"
@@ -100,7 +115,9 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
+          <SRLabel htmlFor='address'>Address: </SRLabel>
           <Input
+            id="address"
             name="address"
             type="text"
             placeholder="Address"
@@ -115,9 +132,11 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
         </div>
         <div className={cn(styles.gridR3, styles.gridCAll)}>
           <p>Duration</p>
-          <div style={{ display: "flex" }}>
+          <div className={styles.lastRow}>
             <div>
+              <SRLabel htmlFor='joinDate'>Join Date: </SRLabel>
               <Input
+                id='joinDate'
                 type="date"
                 name="joinDate"
                 ref={register({ required: true })}
@@ -127,10 +146,11 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
                 <p className={styles.error}>Please enter a join date</p>
               )}
             </div>
-            <p style={{ margin: "0 1rem" }}>to</p>
+            <p className={styles.to}>to</p>
             <div>
+              <SRLabel htmlFor='endDate'>End Date: </SRLabel>
               <Input
-                type="date"
+                type="endDate"
                 name="endDate"
                 ref={register({
                   required: true,
@@ -151,7 +171,8 @@ const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
           </div>
         </div>
       </div>
-      <Button type="submit">Add a Student</Button>
+      <Button className={styles.cancel} outline={true} onClick={() => cancel()}>Cancel</Button>
+      <Button type="submit" className={styles.submit}>Add a Student</Button>
     </form>
   );
 };

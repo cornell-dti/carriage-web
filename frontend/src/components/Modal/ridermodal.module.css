@@ -76,3 +76,21 @@
 .firstRow {
   max-width: 90%;
 }
+
+.lastRow {
+  display: flex;
+}
+
+.to {
+  margin: 0 1rem;
+}
+
+.submit {
+  margin-left: 5rem;
+  display: inline-block !important;
+}
+
+.cancel {
+  /* margin-left: 5rem; */
+  display: inline-block !important;
+}
