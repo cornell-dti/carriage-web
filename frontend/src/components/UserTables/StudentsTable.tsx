@@ -22,7 +22,14 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { firstName, lastName, email, address, phoneNumber, joinDate, accessibility, photoLink } = r;
+        const { firstName, 
+               lastName, 
+               email, 
+               address, 
+               phoneNumber, 
+               joinDate, 
+               accessibility, 
+               photoLink } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
