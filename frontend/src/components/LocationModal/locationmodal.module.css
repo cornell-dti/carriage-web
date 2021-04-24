@@ -1,0 +1,131 @@
+.inputContainer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-gap: 2.25rem;
+  width: 38.75rem;
+  margin-bottom: 3rem;
+}
+
+.input {
+  font-size: 1.5rem;
+}
+
+.col1 {
+  grid-column: 1;
+}
+
+.col2 {
+  grid-column: 2;
+}
+
+.uploadContainer {
+  position: absolute;
+  right: 0;
+  text-align: center;
+}
+
+.uploadImg {
+  display: block;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  height: 5.875rem;
+  width: 5.875rem;
+}
+
+.uploadText {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #0084f4;
+  cursor: pointer;
+}
+
+.uploadText:hover {
+  text-decoration: underline;
+}
+
+.workingHours {
+  margin-bottom: 1rem;
+}
+
+.workingHoursTitle {
+  margin-bottom: 0.875rem;
+}
+
+.roleSelector {
+  margin-bottom: 1rem;
+}
+
+.roleSelectorTitle {
+  margin-bottom: 0.4rem;
+}
+
+.radioOption {
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+
+.addAvailabilityInput {
+  display: inline-block;
+  color: #0084f4;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.addAvailabilityInput:hover {
+  text-decoration: underline;
+}
+
+.availabilityInput {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.timeInput {
+  font-size: initial;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.375rem 0.625rem;
+}
+
+.toText {
+  font-size: 0.875rem;
+  margin: 0 0.875rem;
+}
+
+.repeatText {
+  font-size: 1.063rem;
+  margin: 0 1.5rem;
+}
+
+.day {
+  border-radius: 50%;
+  height: 1.5rem;
+  width: 1.5rem;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  margin: 0 0.125rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.daySelected {
+  background-color: black;
+  color: white;
+}
+
+.submit {
+  float: right;
+}
+
+.edit {
+  position: absolute;
+  display: inline-block;
+  top: 2%;
+  right: 0;
+  width: 3.75rem;
+}
+
+.edit:hover {
+  cursor: pointer;
+}
