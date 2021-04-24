@@ -60,7 +60,7 @@ const Schedule = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(
-          data.filter((ride: Ride) => (ride.driver && ride.driver.id)).map((ride: Ride) => ({
+          data.map((ride: Ride) => ({
             id: ride.id,
             title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
