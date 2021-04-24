@@ -11,8 +11,9 @@ const StartDate = () => {
 
   return (
     <div className={cn(styles.col1, styles.workingHours)}>
-      <Label htmlFor="start">Start Date:</Label>
+      <Label htmlFor="startDate">Start Date:</Label>
       <Input
+        id="startDate"
         type="date"
         name="startDate"
         ref={register({ required: true })}
