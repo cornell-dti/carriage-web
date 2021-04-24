@@ -53,7 +53,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
       return (
         <tr key={index}>
-          <TableRow values={inputValues} reduced={true} />
+          <TableRow values={inputValues} reduced={false} />
         </tr>
       );
     });
