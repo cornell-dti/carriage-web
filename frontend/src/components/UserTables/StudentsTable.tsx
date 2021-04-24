@@ -17,12 +17,6 @@ type UsageType = {
 
 const StudentsTable = () => {
   const { riders } = useRiders();
-  riders.sort((a: NewRider, b: NewRider) => {
-    if (a.firstName < b.firstName) { return -1; }
-    if (a.firstName > b.firstName) { return 1; }
-    return 0;
-  });
-
   const history = useHistory();
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];

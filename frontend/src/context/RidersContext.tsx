@@ -25,6 +25,11 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
     const ridersData: Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
+    ridersData.sort((a: NewRider, b: NewRider) => {
+      if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) { return -1; }
+      if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) { return 1; }
+      return 0;
+    });
     setRiders([...ridersData]);
   };
   // Initialize the data
