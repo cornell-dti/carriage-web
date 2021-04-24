@@ -111,7 +111,7 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
               className={cn(styles.input)}
               ref={register({ required: true, validate: isAddress })}
             />
-            {address && address.message && <p className={cn(styles.errorMsg)}>{address?.message}</p>}
+            {address?.message && <p className={cn(styles.errorMsg)}>{address?.message}</p>}
             <div>
               <Button className={styles.submit} type='submit'>
                 {submitButtonText}
