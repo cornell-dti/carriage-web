@@ -153,53 +153,57 @@ router.put('/:id', validateUser('User'), (req, res) => {
 
 // Create edit instances and update a repeating ride's edits field
 router.put('/:id/edits', validateUser('User'), (req, res) => {
-  const { params: { id }, body: { deleteOnly, origDate, startTime, endTime,
-    startLocation, endLocation },
+  const {
+    params: { id },
+    body: { deleteOnly, origDate, startTime, endTime, startLocation, endLocation },
   } = req;
 
   db.getById(res, Ride, id, tableName, (masterRide) => {
-    const origDateTime = moment(origDate).toISOString();
-    if (origDateTime >= masterRide.startTime) {
-      const origStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');
-      const origStartTime = moment(`${origDate}T${origStartTimeOnly}`).toISOString();
+    const masterStartDate = moment
+      .tz(masterRide.startTime, 'America/New_York')
+      .format('YYYY-MM-DD');
+    if (origDate >= masterStartDate) {
+      const origStartTimeOnly = moment
+        .tz(masterRide.startTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origStartTime = moment
+        .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
+        .toISOString();
 
-      const origEndTimeOnly = moment(masterRide.endTime).format('HH:mm:ss');
-      const origEndTime = moment(`${origDate}T${origEndTimeOnly}`).toISOString();
+      const origEndTimeOnly = moment
+        .tz(masterRide.endTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origEndTime = moment
+        .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
+        .toISOString();
 
       // add origDate to masterRide.deleted
-      const newDeleteDates = [origDate];
-      if (masterRide.deleted) {
-        newDeleteDates.concat(masterRide.deleted);
-      }
-      const addDeleteOperation = { $SET: { deleted: newDeleteDates } };
-      db.update(res, Ride, { id }, addDeleteOperation, tableName);
-
-      // if deleteOnly = false, create a replace edit with the new fields
-      if (!deleteOnly) {
-        const newEdits = masterRide.edits;
-        const replaceId = uuid();
-        const replaceRide = new Ride({
-          id: replaceId,
-          rider: masterRide.rider,
-          startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
-          endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
-          startTime: startTime || origStartTime,
-          endTime: endTime || origEndTime,
-        });
-        newEdits.push(replaceId);
-        const addEditOperation = { $SET: { edits: newEdits } };
-        // create replace edit and add replaceId to edits field
-        replaceRide.save((err, data) => {
-          if (err) {
-            res.status(err.statusCode || 500).send({ err: err.message });
-          } else if (!data) {
-            res.status(400).send({ err: 'error when saving document' });
-          } else {
-            data.populate().then((doc) => res.status(200).send(doc));
-            db.update(res, Ride, { id }, addEditOperation, tableName);
-          }
-        });
-      }
+      const addDeleteOperation = { $ADD: { deleted: [origDate] } };
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, (ride) => {
+        // if deleteOnly = false, create a replace edit with the new fields
+        if (!deleteOnly) {
+          const replaceId = uuid();
+          const replaceRide = new Ride({
+            id: replaceId,
+            rider: masterRide.rider,
+            startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
+            endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
+            startTime: startTime || origStartTime,
+            endTime: endTime || origEndTime,
+          });
+          const addEditOperation = { $ADD: { edits: [replaceId] } };
+          // create replace edit and add replaceId to edits field
+          db.create(res, replaceRide, (editRide) => {
+            db.update(res, Ride, { id }, addEditOperation, tableName, () => {
+              res.send(editRide);
+            });
+          });
+        } else {
+          res.send(ride);
+        }
+      });
+    } else {
+      res.status(400).send({ err: 'Invalid date' });
     }
   });
 });
