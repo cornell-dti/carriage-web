@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useReq } from 'context/req';
-import { Location } from 'types';
+import { useReq } from '../../context/req';
+import { Location } from '../../types';
 import LocationsTable from '../../components/UserTables/LocationsTable';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';

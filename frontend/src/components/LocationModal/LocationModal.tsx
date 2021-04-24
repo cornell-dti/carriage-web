@@ -1,9 +1,8 @@
 import { parseAddress } from 'addresser';
 import cn from 'classnames';
-import { useReq } from 'context/req';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { edit } from '../../icons/other/index';
+import { useReq } from '../../context/req';
 import { Location, ObjectType, Tag } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { Button, Input } from '../FormElements/FormElements';

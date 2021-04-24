@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import LocationModal from 'components/LocationModal/LocationModal';
-import { Row, Table } from '../TableComponents/TableComponents';
-import Form from '../UserForms/LocationsForm';
-import { Button } from '../FormElements/FormElements';
-import { Location } from '../../types';
+import React, { useEffect } from 'react';
 import { useReq } from '../../context/req';
+import { Location } from '../../types';
+import { Button } from '../FormElements/FormElements';
+import LocationModal from '../LocationModal/LocationModal';
+import { Row, Table } from '../TableComponents/TableComponents';
 
 interface LocationsTableProps {
   locations: Location[]
