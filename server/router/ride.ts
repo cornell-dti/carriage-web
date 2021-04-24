@@ -218,7 +218,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         .then(() => res.send({ id }))
         .catch((err) => res.status(500).send({ err: err.message }));
     };
-    if (recurring) {
+    if (recurring && edits.length) {
       const ids = createKeys('id', edits);
       Ride.batchDelete(ids)
         .then(deleteRide)
