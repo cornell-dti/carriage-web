@@ -93,3 +93,7 @@
 .proflePic {
   border-radius: 50%;
 }
+
+.ridesTableRow {
+  display: flex;
+}

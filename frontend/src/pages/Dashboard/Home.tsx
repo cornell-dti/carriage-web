@@ -3,6 +3,7 @@ import { CSVLink } from 'react-csv';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
+import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
 import Notification from '../../components/Notification/Notification';
@@ -56,6 +57,9 @@ const Home = () => {
       </div>
       <MiniCal />
       <Schedule />
+      <Collapsible title={'Scheduled Rides'}>
+        <ScheduledTable />
+      </Collapsible>
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
