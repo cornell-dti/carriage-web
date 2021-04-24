@@ -7,8 +7,8 @@ import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
 type ScheduledTableProp = { 
-  driverId?: string;
-  driverName?: string;
+  driverId: string;
+  driverName: string;
 };
 
 const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
@@ -26,13 +26,10 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    // fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
-    fetch(`/api/rides?scheduled=true`, withDefaults())
+    fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setRides(data.sort(compRides));
-        console.log('fetch scheduled rides!');
-        console.log(rides.length);
       });
   }, [withDefaults, curDate, driverId]);
 
