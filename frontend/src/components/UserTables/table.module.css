@@ -97,3 +97,19 @@
 .ridesTableRow {
   display: flex;
 }
+
+.ridesTableHeader {
+  display: flex;
+  flex-direction: row;
+}
+
+.ridesEmptyHeader,
+.ridesTimeHeader {
+  width: 6.25rem;
+  padding: 1rem 2rem;
+}
+
+.ridesTimeHeader {
+  margin: auto;
+  margin-right: 1.5rem;
+}
