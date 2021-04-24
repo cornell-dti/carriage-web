@@ -1,9 +1,6 @@
-.inputContainer {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-gap: 2.25rem;
-  width: 38.75rem;
-  margin-bottom: 3rem;
+.inputContainer > * {
+  display: block;
+  margin-bottom: 1rem;
 }
 
 .input {
@@ -16,6 +13,14 @@
 
 .col2 {
   grid-column: 2;
+}
+
+.errorMsg {
+  color: red;
+}
+
+.styledSelect {
+  padding: .2rem;
 }
 
 .uploadContainer {

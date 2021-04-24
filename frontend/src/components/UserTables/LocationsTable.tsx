@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import LocationModal from 'components/LocationModal/LocationModal';
 import { Row, Table } from '../TableComponents/TableComponents';
 import Form from '../UserForms/LocationsForm';
 import { Button } from '../FormElements/FormElements';
 import { Location } from '../../types';
 import { useReq } from '../../context/req';
 
-const LocationsTable = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
+interface LocationsTableProps {
+  locations: Location[]
+  setLocations: (locations: Location[]) => void
+}
+
+const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
   const { withDefaults } = useReq();
 
   useEffect(() => {
@@ -62,7 +67,7 @@ const LocationsTable = () => {
   };
 
   const deleteLocation = (locationId: string) => {
-    fetch(`/locations/${locationId}`, withDefaults({ method: 'DELETE' }))
+    fetch(`/api/locations/${locationId}`, withDefaults({ method: 'DELETE' }))
       .then((res) => {
         if (res.status === 200) {
           setLocations(locations.filter((l) => l.id !== locationId));
@@ -73,7 +78,16 @@ const LocationsTable = () => {
       .catch((e) => console.error('removing location failed'));
   };
 
-  const colSizes = [1, 1, 0.75, 0.75];
+  const handleEditLocation = (editedLocation: Location) => {
+    setLocations(locations.map((location) => {
+      if (location.id === editedLocation.id) {
+        return editedLocation;
+      }
+      return location;
+    }));
+  };
+
+  const colSizes = [1, 1, 0.75, 0.75, 0.75];
   const headers = ['Name', 'Address', 'Tag'];
 
   return (
@@ -87,10 +101,13 @@ const LocationsTable = () => {
         {locations.map((loc) => {
           const { id, name, address, tag } = loc;
           const tagData = { data: '', tag };
+          const editButton = {
+            data: <LocationModal existingLocation={loc} onEditLocation={handleEditLocation} />,
+          };
           const deleteButton = {
             data: <Button small onClick={() => deleteLocation(id)}>Delete</Button>,
           };
-          const data = [name, address, tagData, deleteButton];
+          const data = [name, address, tagData, editButton, deleteButton];
           return <Row key={id} data={data} colSizes={colSizes} />;
         })}
       </Table>
