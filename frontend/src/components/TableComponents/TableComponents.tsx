@@ -19,15 +19,19 @@ export const Cell = ({ data, tag, smallTag }: CellProps) => {
     return (
       <div className={styles.cell}>
         {smallTag && <span className={cn(styles[tag], styles.smallTag)} />}
-        {data}
+        <p>{data}</p>
         {!smallTag && <span className={cn(styles[tag], styles.tag)}>{tagText}</span>}
       </div>
     );
   }
-  return (
+  return typeof data === 'object' ? (
     <div className={styles.cell}>
       {data}
     </div>
+  ) : (
+    <p className={styles.cell}>
+      {data}
+    </p>
   );
 };
 
