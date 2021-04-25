@@ -5,3 +5,10 @@
 .dayText{
   font-weight: bold;
 }
+
+.link {
+  margin: 0 1.56rem 1.56rem;
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}

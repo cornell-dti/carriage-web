@@ -38,7 +38,6 @@ type RowProps = {
   colSizes: number[];
   header?: boolean;
   groupStart?: number;
-  onClick?: () => void;
 }
 
 /**
@@ -48,7 +47,7 @@ type RowProps = {
  * begin (see rides table for example). [onClick] is a callback that is called
  * when the row is clicked.
  */
-export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) => {
+export const Row = ({ data, colSizes, header, groupStart }: RowProps) => {
   const formatColSizes = (sizes: number[]) => (
     sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
   );
@@ -71,9 +70,7 @@ export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) =
         className={styles.rowGroup}
         style={{
           gridTemplateColumns: formatColSizes(colSizes),
-          cursor: onClick ? 'pointer' : undefined,
         }}
-        onClick={onClick}
       >
         <div
           className={styles.nongroup}
@@ -101,9 +98,7 @@ export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) =
       className={cn({ [styles.row]: !header }, { [styles.header]: header })}
       style={{
         gridTemplateColumns: formatColSizes(colSizes),
-        cursor: onClick ? 'pointer' : undefined,
       }}
-      onClick={onClick}
     >
       {createCells(data)}
     </div>

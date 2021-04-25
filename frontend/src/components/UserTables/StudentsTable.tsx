@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
 
@@ -48,11 +48,12 @@ const StudentsTable = () => {
           state: riderData,
           search: `?name=${`${firstName}_${lastName}`}`,
         };
-        const goToDetail = () => {
-          history.push(location);
-        };
         const data = [nameNetId, phone, shortAddress, joinDate, disability];
-        return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
+        return (
+          <Link to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+            <Row data={data} colSizes={colSizes} />
+          </Link>
+        );
       })}
     </Table>
   );
