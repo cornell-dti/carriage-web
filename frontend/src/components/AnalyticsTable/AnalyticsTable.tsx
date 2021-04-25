@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
+import { SRLabel } from '../FormElements/FormElements';
 import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import table, { TableData } from './data';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
-import { SRLabel } from 'components/FormElements/FormElements';
 
 
 type Cell = string | number;
