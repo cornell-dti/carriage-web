@@ -26,25 +26,20 @@
   align-items: center;
 }
 
-.left,
-.right {
-  display: inline-block;
-  height: 100%;
-  flex-direction: row;
+.left {
+  display: flex;
+  width: 35%;
   margin: 0.5rem;
 }
 
-.left {
-  width: 35%;
-}
 .right {
   width: 65%;
+  margin: 0.5rem;
 }
 
 .icon {
   border-radius: 100%;
   width: 2.5rem;
-  margin-top: 0.5rem;
 }
 
 .stats {
