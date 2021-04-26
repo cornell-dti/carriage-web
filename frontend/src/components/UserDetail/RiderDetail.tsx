@@ -32,11 +32,9 @@ const RiderDetail = () => {
 
   useEffect(() => {
     if (riderId && !rider) {
-      console.log(riderId);
       fetch(`/api/riders/${riderId}`, withDefaults())
         .then((res) => res.json())
         .then((data) => setRider(data));
-
       fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
         .then((res) => res.json())
         .then(({ data }) => setRides(data.sort(compRides)));
