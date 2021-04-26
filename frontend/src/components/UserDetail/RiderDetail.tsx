@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone, home } from "../../icons/userInfo/index";
 import { useLocation } from 'react-router-dom';
-import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
-import { phone } from '../../icons/userInfo/index';
+import UserDetail, { UserContactInfo } from './UserDetail';
+import { phone, home } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
@@ -43,22 +41,16 @@ const RiderDetail = () => {
         firstName={rider.firstName}
         lastName={rider.lastName}
         netId={rider.netID}
-        photoLink={rider.photoLink}>
-        
-        {/* <div className={styles.accessibilityContainer}>
-          <p>Reason for Ride:</p>
-        </div> */}
-
-
+        photoLink={rider.photoLink}
+      >
         <div className={styles.riderContactInfo}>
           <UserContactInfo icon={phone} alt="" text={rider.phone} />
           <UserContactInfo icon={home} alt="" text={rider.address} />
         </div>
-        
       </UserDetail>
       <PastRides
-      isStudent = {true}
-      rides={rides}
+        isStudent={true}
+        rides={rides}
       />
     </div>
   );

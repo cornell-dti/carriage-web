@@ -53,14 +53,13 @@ const UserDetail = ({
   employee,
   role,
   photoLink,
-  children
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
     <div className={styles.userDetail}>
       {photoLink && photoLink !== ''
-          ? <img className={styles.profilePic} src={`http://${photoLink}`} />
-          : null}
+        ? <img className={styles.profilePic} src={`http://${photoLink}`} alt='profile' />
+        : null}
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>
