@@ -37,6 +37,7 @@ const StudentsTable = () => {
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
         const riderData = {
+          id: r.id,
           firstName,
           lastName,
           netID: netId,
@@ -44,7 +45,7 @@ const StudentsTable = () => {
           accessibility: disability,
         };
         const location = {
-          pathname: '/riders/rider',
+          pathname: '/riders/rider/' + r.id + '/',
           state: riderData,
           search: `?name=${`${firstName}_${lastName}`}`,
         };

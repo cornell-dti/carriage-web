@@ -18,9 +18,10 @@ type RiderDetailProps = {
 
 const RiderDetail = () => {
   const location = useLocation<RiderDetailProps>();
-  const rider: RiderDetailProps = location.state;
-  const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
+  const riderId = location.pathname.split('/')[3];
+  const [rider, setRider] = useState(location.state);
+  const [rides, setRides] = useState<Ride[]>([]);
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -29,13 +30,19 @@ const RiderDetail = () => {
     return 0;
   };
   useEffect(() => {
-    fetch(`/api/rides?type=past&rider=${rider.id}`, withDefaults())
+    fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, rider.id]);
+    if (rider === undefined) {
+      fetch(`/api/riders/${riderId}`, withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => console.log(data));
+    }
+  }, [withDefaults, riderId]);
 
   return (
     <>
+    {rider !== undefined && <>
     <UserDetail
       firstName={rider.firstName}
       lastName={rider.lastName}
@@ -52,7 +59,7 @@ const RiderDetail = () => {
      isStudent = {true}
      rides={rides}
      />
-    </>
+    </> } </>
   );
 };
 
