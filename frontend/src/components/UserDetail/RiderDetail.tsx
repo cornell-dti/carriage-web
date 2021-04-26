@@ -29,37 +29,40 @@ const RiderDetail = () => {
     if (x > y) return 1;
     return 0;
   };
+
   useEffect(() => {
-    fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-    if (rider === undefined) {
+    if (riderId && !rider) {
+      console.log(riderId);
       fetch(`/api/riders/${riderId}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => console.log(data));
+        .then((res) => res.json())
+        .then((data) => setRider(data));
+
+      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
+        .then((res) => res.json())
+        .then(({ data }) => setRides(data.sort(compRides)));
     }
-  }, [withDefaults, riderId]);
+  }, [rider, riderId, withDefaults]);
 
   return (
     <>
-    {rider !== undefined && <>
-    <UserDetail
-      firstName={rider.firstName}
-      lastName={rider.lastName}
-      netId={rider.netID}
-      photoLink={rider.photoLink}
-    >
-      <UserContactInfo icon={phone} alt="" text={rider.phone} />
-      <UserContactInfo icon="" alt="" text={rider.accessibility} />
-      <OtherInfo>
-        <p>other info:</p>
-      </OtherInfo>
-    </UserDetail>
-    <PastRides
-     isStudent = {true}
-     rides={rides}
-     />
-    </> } </>
+      {rider !== undefined && <>
+        <UserDetail
+          firstName={rider.firstName}
+          lastName={rider.lastName}
+          netId={rider.netID}
+          photoLink={rider.photoLink}
+        >
+          <UserContactInfo icon={phone} alt="" text={rider.phone} />
+          <UserContactInfo icon="" alt="" text={rider.accessibility} />
+          <OtherInfo>
+            <p>other info:</p>
+          </OtherInfo>
+        </UserDetail>
+        <PastRides
+          isStudent={true}
+          rides={rides}
+        />
+      </>} </>
   );
 };
 
