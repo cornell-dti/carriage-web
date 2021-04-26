@@ -13,3 +13,9 @@ export const webpushValues = {
   public: process.env.PUBLIC_VAPID_KEY!,
   private: process.env.PRIVATE_VAPID_KEY!,
 };
+
+export const snsValues = {
+  ios_driver: process.env.IOS_DRIVER_ARN!,
+  ios_rider: process.env.IOS_RIDER_ARN!,
+  android: process.env.ANDROID_ARN!,
+};

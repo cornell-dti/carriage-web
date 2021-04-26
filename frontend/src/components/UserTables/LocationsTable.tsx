@@ -28,10 +28,13 @@ const LocationsTable = () => {
 
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
-    fetch('/api/locations', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(body),
-    }))
+    fetch(
+      '/api/locations',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+    )
       .then((res) => {
         if (res.status !== 200) {
           throw new Error('adding location failed');
