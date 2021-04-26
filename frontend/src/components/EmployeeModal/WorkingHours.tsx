@@ -220,9 +220,9 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
           ))
         )}
       </WeekProvider>
-      <p className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
+      <button type={'button'} className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
         + Add more
-      </p>
+      </button>
     </div>
   );
 };

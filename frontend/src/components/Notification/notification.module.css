@@ -5,7 +5,7 @@
 }
 
 .bell:focus {
-  outline: none;
+  outline: 3px solid black;
 }
 
 .badge {

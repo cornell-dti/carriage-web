@@ -194,17 +194,13 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       console.log('Undefined file upload');
     }
   };
-  const handleKeywordKeyPress = (e: React.KeyboardEvent) =>{
-    if( e.key === 'Enter' ){
-      openModal();
-    }
-  };
+  
   return (
     <>
       {
         existingEmployee
-          ? <img className={styles.edit} role="button" tabIndex={0} alt="edit" 
-            src={edit} onClick={openModal} onKeyPress={handleKeywordKeyPress} />
+          ? <input type={"image"} className={styles.edit} alt="edit" 
+            src={edit} onClick={openModal}/>
           : <Button onClick={openModal}>+ Add an employee</Button>
       }
       {showingToast ? <Toast message='The employee has been added.' /> : null}

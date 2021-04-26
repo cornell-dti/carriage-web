@@ -72,10 +72,16 @@
   color: #0075DB;
   font-size: 0.75rem;
   cursor: pointer;
+  background-color: white;
+  border: none; 
+  outline: none; 
 }
 
 .addAvailabilityInput:hover {
   text-decoration: underline;
+}
+.addAvailabilityInput:focus{
+  border: 3px solid #0075DB; 
 }
 
 .availabilityInput {

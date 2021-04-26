@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
 import styles from './modal.module.css';
 import { close } from '../../icons/other/index';
@@ -46,16 +47,26 @@ const Modal = ({
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
   const numPages = pages.length;
   const currentTitle = paginate ? title[currentPage] : title;
-
+  const [activeTrap, setActiveTrap] = useState(isOpen);
+  const onCloseWithFocusTrap = () => {
+    setActiveTrap(!activeTrap);
+    onClose(); 
+  }
   return (
     <>
       {isOpen
         && createPortal(
+          <FocusTrap
+          focusTrapOptions={{
+            onDeactivate: () => setActiveTrap(false), 
+            onActivate: () => setActiveTrap(true), 
+            returnFocusOnDeactivate: true,
+          }}>
           <div className={styles.background}>
             <div className={styles.modal}>
               <div className={styles.topContainer}>
                 <h1 className={styles.title}>{currentTitle}</h1>
-                <button className={styles.closeBtn} onClick={onClose}>
+                <button className={styles.closeBtn} id={"close"} onClick={onCloseWithFocusTrap}>
                   <img alt="close" src={close} />
                 </button>
               </div>
@@ -66,7 +77,8 @@ const Modal = ({
                 <PageIndicators pages={numPages} current={currentPage} />
               )}
             </div>
-          </div>,
+          </div>
+          </FocusTrap>,
           document.body,
         )}
     </>
