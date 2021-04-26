@@ -10,9 +10,9 @@ type pastRideProps = {
 
 const PastRides = ({ isStudent, rides }: pastRideProps) => {
   const colSizes = [2, 2, 2, 2, 2];
-  const header1 = isStudent ? 'Date' : 'Name';
-  const header2 = isStudent ? 'Time' : 'Date';
-  const headers = [header1, header2, 'Pickup Location', 'Dropoff Location', 'Needs'];
+  const studentHeaders = ['Date', 'Time', 'Pickup Location', 'Dropoff Location', 'Needs'];
+  const employeeHeaders = ['Name', 'Date', 'Pickup Location', 'Dropoff Location', 'Needs'];
+  const headers = isStudent ? studentHeaders : employeeHeaders;
   function renderTableData() {
     return rides.map((ride, index) => {
       const date = new Date(ride.startTime).toLocaleDateString();
@@ -30,11 +30,11 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
       const dropoffLocation = ride.endLocation.name;
       const dropoffTag = ride.endLocation.tag;
 
-      const valueNameDate = { data: isStudent ? date : name };
-      const valueDateTime = { data: isStudent ? `${startTime}${' - '}${endTime}` : date };
+      const valueNameDate = isStudent ? date : name;
+      const valueDateTime = isStudent ? `${startTime}${' - '}${endTime}` : date;
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-      const valueNeeds = { data: needs };
+      const valueNeeds = needs;
 
       const inputValues = [
         valueNameDate,
@@ -45,9 +45,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
       ];
 
       return (
-        <tr key={index}>
-          <Row data={inputValues} colSizes={colSizes} />
-        </tr>
+        <Row data={inputValues} colSizes={colSizes} />
       );
     });
   }
@@ -59,7 +57,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
           <Row
             header
             colSizes={colSizes}
-            data={headers.map((h) => ({ data: h }))}
+            data={headers.map((h) => (h))}
           />
           {renderTableData()}
         </Table>
