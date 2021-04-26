@@ -11,7 +11,7 @@ import { useRiders } from '../../context/RidersContext';
 type RiderModalProps = {
   riders: Array<NewRider>;
   setRiders: Dispatch<SetStateAction<NewRider[]>>;
-}
+};
 
 const RiderModal = () => {
   const [formData, setFormData] = useState({

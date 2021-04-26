@@ -55,9 +55,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             className={styles.nameInput}
             ref={register({
               required: true,
-              validate: (name: string) => (
-                nameToId[name.toLowerCase()] !== undefined
-              ),
+              validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
             })}
           />
         </div>
@@ -72,9 +70,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -88,14 +84,14 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
       </div>
       <div className={styles.btnContainer}>
-        <Button outline type="button" onClick={onBack}>Back</Button>
+        <Button outline type="button" onClick={onBack}>
+          Back
+        </Button>
         <Button type="submit">Add a Ride</Button>
       </div>
     </form>

@@ -24,7 +24,8 @@ const AvailabilityInput = ({
     isDaySelectedByInstance,
     getSelectedDays,
   } = useWeek();
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue, getValues, formState } = useFormContext();
+  const { errors } = formState;
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -39,7 +40,6 @@ const AvailabilityInput = ({
   // data in an array 'availability' at index 'index'
   const instance = `availability[${index}]`;
   const days = getSelectedDays(index);
-
   const handleClick = (day: string) => {
     if (isDaySelectedByInstance(day, index)) {
       deselectDay(day);
@@ -72,9 +72,12 @@ const AvailabilityInput = ({
   }, []);
 
   useEffect(() => {
-    // Register day selector as custom form input
-    register(`${instance}.days`, { required: true });
-  }, [instance, register]);
+    // Register day selector as custom form input. 
+    //Not putting error message here since there is no default behavior to override
+    register(`${instance}.days`, { 
+      required: true, 
+      validate: () => {return days.length > 0}});
+  }, [instance, register, days]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -87,16 +90,23 @@ const AvailabilityInput = ({
 
   return (
     <div className={styles.availabilityInput}>
-      <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
-      <Input
-        id={`${instance}.startTime`}
-        name={`${instance}.startTime`}
-        type='time'
-        className={styles.timeInput}
-        defaultValue={existingTime?.[0]}
-        ref={register({ required: true })}
-      />
+      <div className={styles.timeFlexbox}>
+        <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
+        <Input
+          id={`${instance}.startTime`}
+          name={`${instance}.startTime`}
+          type='time'
+          className={styles.timeInput}
+          defaultValue={existingTime?.[0]}
+          ref={register({ required: true})}
+        />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].startTime &&  
+          <p className={styles.error}>Please enter a valid start time</p>
+        }  
+        </div>
       <p className={styles.toText}>to</p>
+      <div className={styles.timeFlexbox}>
       <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
       <Input
         id={`${instance}.endTime`}
@@ -112,20 +122,33 @@ const AvailabilityInput = ({
           },
         })}
       />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].endTime &&
+          <p className={styles.error}>Please enter a valid end time</p> 
+        }    
+        </div>
       <p className={styles.repeatText}>Repeat on</p>
-      {Object.entries(dayLabels).map(([day, label]) => (
-        <button
-          key={day}
-          type="button"
-          className={cn(
-            styles.day,
-            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
-          )}
-          onClick={() => handleClick(day)}
-        >
-          {label}
-        </button>
-      ))}
+      <div className={styles.timeFlexbox}>
+        <div className={styles.daysBox}>
+          {Object.entries(dayLabels).map(([day, label]) => (
+            <Input
+              key={day}
+              name={`${instance}.days`}
+              type="button"
+              value={label}
+              className={cn(
+                styles.day,
+                { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+              )}
+              onClick={() => handleClick(day)}
+            />
+          ))}
+        </div>
+        {errors.availability && errors.availability[index] && 
+            errors.availability[index].days &&  
+            <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
+          }    
+      </div>
     </div>
   );
 };

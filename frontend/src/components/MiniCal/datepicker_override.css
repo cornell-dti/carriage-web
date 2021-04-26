@@ -19,6 +19,10 @@
   position: relative;
 }
 
+.react-datepicker-popper {
+  z-index: 100;
+}
+
 .react-datepicker__header:not(.react-datepicker__header--has-time-select) {
   border-top-right-radius: 0rem;
 }

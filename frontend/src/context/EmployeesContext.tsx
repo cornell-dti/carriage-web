@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Admin, Driver } from '../types';
 import { useReq } from './req';
 
-
 type employeesState = {
-  drivers: Array<Driver>,
-  admins: Array<Admin>,
-  refreshDrivers: () => Promise<void>,
-  refreshAdmins: () => Promise<void>
+  drivers: Array<Driver>;
+  admins: Array<Admin>;
+  refreshDrivers: () => Promise<void>;
+  refreshAdmins: () => Promise<void>;
 };
 
 const initialState: employeesState = {
@@ -21,7 +20,7 @@ export const useEmployees = () => React.useContext(EmployeesContext);
 
 type EmployeesProviderProps = {
   children: React.ReactNode;
-}
+};
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const [drivers, setDrivers] = useState<Array<Driver>>([]);
@@ -29,7 +28,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const { withDefaults } = useReq();
 
   const refreshDrivers = async () => {
-    const driversData: Array<Driver> = await fetch('/api/drivers', withDefaults())
+    const driversData: Array<Driver> = await fetch(
+      '/api/drivers',
+      withDefaults(),
+    )
       .then((res) => res.json())
       .then((data) => data.data);
     setDrivers([...driversData]);
