@@ -35,9 +35,9 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .then((res) => res.json())
       .then((data) => data.data);
     driversData.sort((a: Driver, b: Driver) => {
-      if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) { return -1; }
-      if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) { return 1; }
-      return 0;
+      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+      return aFull < bFull ? -1 : 1;
     });
     setDrivers([...driversData]);
   };
@@ -47,9 +47,9 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .then((res) => res.json())
       .then((data) => data.data);
     adminsData.sort((a: Admin, b: Admin) => {
-      if (a.firstName.toLowerCase() < b.firstName.toLowerCase()) { return -1; }
-      if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) { return 1; }
-      return 0;
+      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+      return aFull < bFull ? -1 : 1;
     });
     setAdmins([...adminsData]);
   };
