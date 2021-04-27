@@ -1,28 +1,17 @@
-import React from "react";
-import styles from "./AnalyticsOverview.module.css";
-import {
-  addOn,
-  cancel,
-  dayRide,
-  nightRide,
-  noShow,
-} from "../../icons/analytics/index";
-
-// enum Icon {
-//     AddOn = addOn,
-//     Cancel = cancel
-// }
+import React from 'react';
+import styles from './AnalyticsOverview.module.css';
 
 export type StatsBoxProps = {
   icon: string;
+  alt: string;
   stats: number;
   description: string;
 };
 
-const StatsBox = ({ icon, stats, description }: StatsBoxProps) => (
+const StatsBox = ({ icon, alt, stats, description }: StatsBoxProps) => (
   <div className={styles.statsbox}>
     <div className={styles.left}>
-      <img className={styles.icon} src={icon} />
+      <img className={styles.icon} src={icon} alt={alt} />
     </div>
     <div className={styles.right}>
       <p className={styles.stats}>{stats}</p>

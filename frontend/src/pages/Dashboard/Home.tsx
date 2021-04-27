@@ -22,15 +22,15 @@ const Home = () => {
   const [showingToast, setToast] = useState(false);
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const { curDate } = useDate();
-  const today = moment(curDate).format("YYYY-MM-DD");
+  const today = moment(curDate).format('YYYY-MM-DD');
 
   const downloadCSV = () => {
     setToast(false);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
-        if (data === "") {
-          setDownloadData("Name,Pick Up,From,To,Drop Off,Needs,Driver");
+        if (data === '') {
+          setDownloadData('Name,Pick Up,From,To,Drop Off,Needs,Driver');
         } else {
           setDownloadData(data);
         }
@@ -60,7 +60,7 @@ const Home = () => {
         </div>
       </div>
       <Schedule />
-      <Collapsible title={"Unscheduled Rides"}>
+      <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
     </div >
