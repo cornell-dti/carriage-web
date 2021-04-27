@@ -171,8 +171,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
           </div>
         </div>
       </div>
-      <Button className={styles.cancel} outline={true} onClick={() => cancel()}>Cancel</Button>
-      <Button type="submit" className={styles.submit}>Add a Student</Button>
+      {/* TODO: styling */}
+      <div className={styles.buttonContainer}>
+        <Button className={styles.cancel} outline={true} onClick={() => cancel()}>Cancel</Button>
+        <Button type="submit" className={styles.submit}>Add a Student</Button>
+      </div>
     </form>
   );
 };
