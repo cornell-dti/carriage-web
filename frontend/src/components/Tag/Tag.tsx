@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'classnames';
 import styles from './tag.module.css';
 
 type TagProps = {
@@ -10,10 +11,8 @@ type TagProps = {
 const Tag = (props: TagProps) => {
   const { reduced, location, tag } = props;
   const tagStyle = tag.toLowerCase();
-  const smallTag = (<span className={`${styles.reducedTag} ${styles[tagStyle]}`}></span>);
-  const fullTag = (<span className={`${styles.tag} 
-  ${tagStyle}`}>
-    {tag}</span>);
+  const smallTag = <span className={cn(styles.reducedTag, styles[tagStyle])}></span>;
+  const fullTag = <span className={cn(styles.tag, styles[tagStyle])}>{tag}</span>;
 
   return (
     <>
