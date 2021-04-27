@@ -49,18 +49,19 @@ const Modal = ({
   const currentTitle = paginate ? title[currentPage] : title;
   const [activeTrap, setActiveTrap] = useState(isOpen);
   const onCloseWithFocusTrap = () => {
-    setActiveTrap(!activeTrap);
+    setActiveTrap(false);
     onClose(); 
-  }
+  };
   return (
     <>
       {isOpen
-        && createPortal(
+        && createPortal (
           <FocusTrap
           focusTrapOptions={{
             onDeactivate: () => setActiveTrap(false), 
             onActivate: () => setActiveTrap(true), 
             returnFocusOnDeactivate: true,
+            escapeDeactivates: false, 
           }}>
           <div className={styles.background}>
             <div className={styles.modal}>

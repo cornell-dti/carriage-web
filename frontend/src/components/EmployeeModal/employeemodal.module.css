@@ -81,7 +81,7 @@
   text-decoration: underline;
 }
 .addAvailabilityInput:focus{
-  border: 3px solid #0075DB; 
+  outline: 3px solid #0075DB; 
 }
 
 .availabilityInput {

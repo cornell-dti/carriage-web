@@ -34,7 +34,7 @@
 }
 
 .closeBtn:focus{
-  border: 3px solid black; 
+  outline: 3px solid black; 
 }
 .topContainer {
   display: flex;
