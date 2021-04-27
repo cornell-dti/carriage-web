@@ -17,10 +17,16 @@ const convertedVapidKey = urlBase64ToUint8Array(
 
 type WithDefaultsType = (options?: RequestInit | undefined) => RequestInit;
 
-const sendSubscription = (subscription: any, withDefaults: WithDefaultsType) => fetch('/api/notification/subscribe', withDefaults({
-  method: 'POST',
-  body: JSON.stringify(subscription),
-}));
+const sendSubscription = (sub: PushSubscription, withDefaults: WithDefaultsType) => {
+  const subscription = {
+    platform: 'web',
+    webSub: sub,
+  };
+  fetch('/api/notification/subscribe', withDefaults({
+    method: 'POST',
+    body: JSON.stringify(subscription),
+  }));
+};
 
 const subscribeUser = (withDefaults: WithDefaultsType) => {
   if ('serviceWorker' in navigator) {
@@ -57,6 +63,7 @@ const subscribeUser = (withDefaults: WithDefaultsType) => {
                 });
             } else {
               console.log('Existed subscription detected.');
+              // TODO TEMP for testing
               sendSubscription(existedSubscription, withDefaults);
             }
           });

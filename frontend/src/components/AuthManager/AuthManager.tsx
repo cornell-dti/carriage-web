@@ -1,12 +1,11 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
-import jwtDecode from 'jwt-decode';
-
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
@@ -39,20 +38,22 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
-    const serverJWT = await fetch('/api/auth', withDefaults({
-      method: 'POST',
-      body:
-        JSON.stringify({
+    const serverJWT = await fetch(
+      '/api/auth',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify({
           token,
           table: 'Admins',
           clientId,
         }),
-    }))
+      }),
+    )
       .then((res) => res.json())
       .then((json) => json.jwt);
 
     if (serverJWT) {
-      var decoded: any = jwtDecode(serverJWT);
+      const decoded: any = jwtDecode(serverJWT);
       setId(decoded.id);
       setJWT(serverJWT);
       setSignedIn(true);
@@ -78,7 +79,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         onSuccess={onSignIn}
         onFailure={(err) => console.error(err)}
         clientId={clientId}
-        cookiePolicy='single_host_origin'
+        cookiePolicy="single_host_origin"
         isSignedIn
       />
       <LandingPage />
