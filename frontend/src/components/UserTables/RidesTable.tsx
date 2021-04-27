@@ -27,6 +27,7 @@ const RidesTable = (
   { rides, drivers, hasAssignButton }: RidesTableProps,
 ) => {
   const [openModal, setOpenModal] = useState(-1);
+  const [driverSet, setDriverSet] = useState([""]);
 
   function renderTableData(allRides: Ride[]) {
     return allRides.filter((r) => r.startLocation !== undefined
@@ -55,10 +56,16 @@ const RidesTable = (
       const valuePickup = { data: pickupLocation, tag: pickupTag };
       const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
       const valueNeeds = { data: needs };
+      const hasDriver = (driverSet[index] !== undefined && 
+        driverSet[index].length > 0)
+      const driverString = hasDriver ? driverSet[index].charAt(0) : "";
+      const valueDriver =  {data: driverString, driver: hasDriver};
       const assignModal = () => (
           <AssignDriverModal
-            isOpen={openModal === index}
+            isOpen={(openModal === index) && !hasDriver}
             close={() => setOpenModal(-1)}
+            setDriver={(driverName: string) => {driverSet[index] = driverName; 
+              setDriverSet([...driverSet])}}
             ride={rides[0]}
             allDrivers={drivers}
           />
@@ -75,6 +82,7 @@ const RidesTable = (
         valuePickup,
         valueDropoff,
         valueNeeds,
+        valueDriver,
       ];
       const inputValuesAndButton = [
         valueName,
@@ -90,7 +98,7 @@ const RidesTable = (
               <span className={styles.bold}>{startTime}</span> <br></br>
               <span className={styles.gray}>-- {endTime}</span>
             </td>
-            {hasAssignButton
+            {(hasAssignButton && !hasDriver) 
               ? <TableRow values={inputValuesAndButton} />
               : <TableRow values={inputValues} />}
           </tr>
