@@ -6,7 +6,7 @@ import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
-type ScheduledTableProp = { 
+type ScheduledTableProp = {
   driverId: string;
   driverName: string;
 };
