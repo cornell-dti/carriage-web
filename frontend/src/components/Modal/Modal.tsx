@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
 import styles from './modal.module.css';
@@ -47,27 +47,28 @@ const Modal = ({
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
   const numPages = pages.length;
   const currentTitle = paginate ? title[currentPage] : title;
-  const [activeTrap, setActiveTrap] = useState(isOpen);
-  const onCloseWithFocusTrap = () => {
-    setActiveTrap(false);
-    onClose(); 
-  };
+  useEffect(()=>{
+    if(isOpen){
+      document.body.style.overflow = 'hidden';
+    }
+    else{
+      document.body.style.overflow = 'unset';
+    }
+  }, [isOpen])
   return (
     <>
-      {isOpen
+      {isOpen 
         && createPortal (
           <FocusTrap
           focusTrapOptions={{
-            onDeactivate: () => setActiveTrap(false), 
-            onActivate: () => setActiveTrap(true), 
+            onDeactivate: () => onClose(), 
             returnFocusOnDeactivate: true,
-            escapeDeactivates: false, 
           }}>
           <div className={styles.background}>
             <div className={styles.modal}>
               <div className={styles.topContainer}>
                 <h1 className={styles.title}>{currentTitle}</h1>
-                <button className={styles.closeBtn} id={"close"} onClick={onCloseWithFocusTrap}>
+                <button className={styles.closeBtn} id={"close"} onClick={onClose}>
                   <img alt="close" src={close} />
                 </button>
               </div>

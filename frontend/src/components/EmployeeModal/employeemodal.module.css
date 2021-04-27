@@ -67,6 +67,10 @@
   margin-right: 0.4rem;
 }
 
+.radioOption:focus{
+  outline: 3px solid black; 
+}
+
 .addAvailabilityInput {
   display: inline-block;
   color: #0075DB;
