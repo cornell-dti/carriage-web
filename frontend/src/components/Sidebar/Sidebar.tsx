@@ -55,7 +55,7 @@ const Sidebar: FunctionComponent = ({ children }) => {
           </div>
         ))}
         <div className={styles.logout}>
-          <img alt="profile_picture" className={styles.profile}
+          <img alt="profile" className={styles.profile}
             src={profile === '' || !profile ? blank : `https://${profile}`} />
           <GoogleLogout
             onLogoutSuccess={authContext.logout}

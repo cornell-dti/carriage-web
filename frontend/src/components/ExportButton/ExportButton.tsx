@@ -9,7 +9,7 @@ type clickHandler = {
 
 const ExportButton = (props: clickHandler) => (
   <Button onClick={() => props.onClick()} outline={true} className={styles.exportButton}>
-    <img src={download} alt="capacity icon" /> Export
+    <img src={download} alt="capacity" /> Export
   </Button>
 );
 

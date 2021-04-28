@@ -63,9 +63,9 @@ const EmployeeDetail = () => {
         role={roleValue()}
         photoLink={employee.photoLink}
       >
-        <UserContactInfo icon={phone} alt="" text={employee.phone} />
-        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-        <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
+        <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
+        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="role" text={role()} />
+        <UserContactInfo icon={clock} alt="availability" text={avail === '' ? 'N/A' : avail} />
         <OtherInfo>
           <p>last week:</p>
         </OtherInfo>

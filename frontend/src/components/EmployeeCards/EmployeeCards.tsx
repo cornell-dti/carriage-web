@@ -88,11 +88,11 @@ const EmployeeCard = ({
         netId={netId}
         photoLink={photoLink}
       >
-        <CardInfo icon={phone} alt="phone icon">
+        <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
         </CardInfo>
 
-        <CardInfo icon={clock} alt="clock icon">
+        <CardInfo icon={clock} alt="clock">
           <div>
             {fmtAvailability
               ? fmtAvailability.map(([day, timeRange]) => (
@@ -103,7 +103,7 @@ const EmployeeCard = ({
 
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
-          alt={isAdmin || isBoth ? 'admin icon' : 'wheel icon'}
+          alt={isAdmin || isBoth ? 'admin' : 'wheel'}
         >
           <p>{role()}</p>
         </CardInfo>

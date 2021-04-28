@@ -42,8 +42,8 @@ const RiderDetail = () => {
       netId={rider.netID}
       photoLink={rider.photoLink}
     >
-      <UserContactInfo icon={phone} alt="" text={rider.phone} />
-      <UserContactInfo icon="" alt="" text={rider.accessibility} />
+      <UserContactInfo icon={phone} alt="phone" text={rider.phone} />
+      <UserContactInfo icon="" alt="needs" text={rider.accessibility} />
       <OtherInfo>
         <p>other info:</p>
       </OtherInfo>

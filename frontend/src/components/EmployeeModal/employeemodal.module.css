@@ -67,8 +67,8 @@
   margin-right: 0.4rem;
 }
 
-.radioOption:focus{
-  outline: 3px solid black; 
+.radioButton:focus{
+  outline: 2px solid black; 
 }
 
 .addAvailabilityInput {

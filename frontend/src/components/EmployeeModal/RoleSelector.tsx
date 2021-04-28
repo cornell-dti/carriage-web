@@ -17,6 +17,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
       <p className={styles.roleSelectorTitle}>Role</p>
       <div className={styles.radioOption}>
         <Input
+          className={styles.radioButton}
           id="driver"
           name="role"
           type="radio"
@@ -28,6 +29,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
       </div>
       <div className={styles.radioOption}>
         <Input
+          className={styles.radioButton}
           id="admin"
           name="role"
           type="radio"
@@ -39,6 +41,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
       </div>
       <div className={styles.radioOption}>
         <Input
+          className={styles.radioButton}
           id="both"
           name="role"
           type="radio"
