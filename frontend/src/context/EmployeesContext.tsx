@@ -55,7 +55,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         drivers,
         admins,
         refreshDrivers,
-        refreshAdmins
+        refreshAdmins,
       }}
     >
       {children}
