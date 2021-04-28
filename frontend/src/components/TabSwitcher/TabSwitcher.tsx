@@ -7,7 +7,7 @@ import { Driver } from '../../types/index';
 import styles from './tabSwitcher.module.css';
 import Notification from '../Notification/Notification';
 import pageStyles from '../../pages/Dashboard/page.module.css';
-import ExportButton from 'components/ExportButton/ExportButton';
+import ExportButton from '../../components/ExportButton/ExportButton';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 
