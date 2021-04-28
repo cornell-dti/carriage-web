@@ -7,7 +7,6 @@ import { Ride, Driver } from '../../types';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
@@ -60,7 +59,7 @@ const Schedule = () => {
       .then((res) => res.json())
       .then(({ data }) => {
         setEvents(
-          data.filter((ride: Ride) => (ride.driver && ride.driver.id)).map((ride: Ride) => ({
+          data.map((ride: Ride) => ({
             id: ride.id,
             title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,

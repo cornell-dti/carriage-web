@@ -5,6 +5,7 @@ import RideModal from '../../components/RideModal/RideModal';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
+import Toast from '../../components/ConfirmationToast/ConfirmationToast';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -18,11 +19,13 @@ const Home = () => {
   const { withDefaults } = useReq();
 
   const [downloadData, setDownloadData] = useState<string>('');
+  const [showingToast, setToast] = useState(false);
   const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
   const { curDate } = useDate();
   const today = moment(curDate).format('YYYY-MM-DD');
 
   const downloadCSV = () => {
+    setToast(false);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
@@ -34,32 +37,33 @@ const Home = () => {
         if (csvLink.current) {
           csvLink.current.link.click();
         }
-      });
+      })
+      .then(() => setToast(true));
   };
 
   return (
     <div>
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Homepage</h1>
+        <MiniCal />
+        {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
         <div className={styles.rightSection}>
           <ExportButton onClick={downloadCSV} />
           <CSVLink
             data={downloadData}
             filename={`scheduledRides_${today}.csv`}
-            className='hidden'
+            className="hidden"
             ref={csvLink}
-            target='_blank'
+            target="_blank"
           />
           <RideModal />
           <Notification />
         </div>
       </div>
-      <MiniCal />
       <Schedule />
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
-    </div>
+    </div >
   );
 };
 

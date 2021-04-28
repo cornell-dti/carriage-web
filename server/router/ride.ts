@@ -2,11 +2,11 @@ import express from 'express';
 import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import * as db from './common';
 import { Ride, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
-import { validateUser } from '../util';
+import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 
@@ -14,8 +14,13 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = new Date(`${req.query.date} EST`).toISOString();
-  const dateEnd = new Date(`${req.query.date} 23:59:59.999 EST`).toISOString();
+  const dateStart = moment
+    .tz(req.query.date as string, 'America/New_York')
+    .toISOString();
+  const dateEnd = moment
+    .tz(req.query.date as string, 'America/New_York')
+    .endOf('day')
+    .toISOString();
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
@@ -25,8 +30,8 @@ router.get('/download', (req, res) => {
 
   const callback = (value: any) => {
     const dataToExport = value.map((doc: any) => {
-      const start = moment(doc.startTime);
-      const end = moment(doc.endTime);
+      const start = moment.tz(doc.startTime, 'America/New_York');
+      const end = moment.tz(doc.endTime, 'America/New_York');
       const fullName = (user: RiderType | DriverType) => (
         `${user.firstName} ${user.lastName.substring(0, 1)}.`
       );
@@ -51,11 +56,11 @@ router.get('/download', (req, res) => {
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
   const { query: { rider } } = req;
-  const now = moment().toISOString();
+  const now = moment.tz('America/New_York').format('YYYY-MM-DD');
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
-    .ge(now.substring(0, 10));
+    .ge(now);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
@@ -71,7 +76,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (query === {}) {
+  if (!Object.keys(query).length) {
     db.getAll(res, Ride, tableName);
   } else {
     const { type, status, rider, driver, date, scheduled } = query;
@@ -91,8 +96,8 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = new Date(`${date} EST`).toISOString();
-      const dateEnd = new Date(`${date} 23:59:59.999 EST`).toISOString();
+      const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
+      const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
@@ -101,9 +106,8 @@ router.get('/', validateUser('User'), (req, res) => {
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
-  const {
-    body: { rider, startTime, requestedEndTime, driver, startLocation, endLocation },
-  } = req;
+  const { body } = req;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -126,17 +130,19 @@ router.post('/', validateUser('User'), (req, res) => {
     };
   }
 
-  const ride = new Ride({
-    id: uuid(),
-    rider,
-    startLocation: startLocationObj ?? startLocation,
-    endLocation: endLocationObj ?? endLocation,
-    startTime,
-    requestedEndTime,
-    endTime: requestedEndTime,
-    driver,
-  });
-  db.create(res, ride);
+  if (recurring && !(recurringDays && endDate)) {
+    res.status(400).send({ err: 'Invalid repeating ride.' });
+  } else {
+    const ride = new Ride({
+      ...body,
+      id: uuid(),
+      startLocation: startLocationObj ?? startLocation,
+      endLocation: endLocationObj ?? endLocation,
+      edits: recurring ? [] : undefined,
+      deleted: recurring ? [] : undefined,
+    });
+    db.create(res, ride);
+  }
 });
 
 // Update an existing ride
@@ -145,10 +151,82 @@ router.put('/:id', validateUser('User'), (req, res) => {
   db.update(res, Ride, { id }, body, tableName);
 });
 
+// Create edit instances and update a repeating ride's edits field
+router.put('/:id/edits', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+    body: { deleteOnly, origDate, startTime, endTime, startLocation, endLocation },
+  } = req;
+
+  db.getById(res, Ride, id, tableName, (masterRide) => {
+    const masterStartDate = moment
+      .tz(masterRide.startTime, 'America/New_York')
+      .format('YYYY-MM-DD');
+    if (origDate >= masterStartDate) {
+      const origStartTimeOnly = moment
+        .tz(masterRide.startTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origStartTime = moment
+        .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
+        .toISOString();
+
+      const origEndTimeOnly = moment
+        .tz(masterRide.endTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origEndTime = moment
+        .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
+        .toISOString();
+
+      // add origDate to masterRide.deleted
+      const addDeleteOperation = { $ADD: { deleted: [origDate] } };
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, (ride) => {
+        // if deleteOnly = false, create a replace edit with the new fields
+        if (!deleteOnly) {
+          const replaceId = uuid();
+          const replaceRide = new Ride({
+            id: replaceId,
+            rider: masterRide.rider,
+            startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
+            endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
+            startTime: startTime || origStartTime,
+            endTime: endTime || origEndTime,
+          });
+          const addEditOperation = { $ADD: { edits: [replaceId] } };
+          // create replace edit and add replaceId to edits field
+          db.create(res, replaceRide, (editRide) => {
+            db.update(res, Ride, { id }, addEditOperation, tableName, () => {
+              res.send(editRide);
+            });
+          });
+        } else {
+          res.send(ride);
+        }
+      });
+    } else {
+      res.status(400).send({ err: 'Invalid date' });
+    }
+  });
+});
+
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
-  db.deleteById(res, Ride, id, tableName);
+  db.getById(res, Ride, id, tableName, (ride) => {
+    const { recurring, edits } = ride;
+    const deleteRide = () => {
+      Ride.delete(id)
+        .then(() => res.send({ id }))
+        .catch((err) => res.status(500).send({ err: err.message }));
+    };
+    if (recurring && edits.length) {
+      const ids = createKeys('id', edits);
+      Ride.batchDelete(ids)
+        .then(deleteRide)
+        .catch((err) => res.status(500).send({ err: err.message }));
+    } else {
+      deleteRide();
+    }
+  });
 });
 
 export default router;
