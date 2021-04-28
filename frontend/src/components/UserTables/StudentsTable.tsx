@@ -14,10 +14,10 @@ const StudentsTable = () => {
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
   const [usage, setUsage] = useState({ studentRides: 0, noShowCount: 0 });
-  const getUsageData = (id: string) => {
-    fetch(`/api/riders/${id}/usage`, withDefaults())
-      .then((res) => (res.json()))
-      .then((data) => setUsage(data));
+  const getUsageData = () => {
+    fetch('/api/riders/usage', withDefaults())
+      .then((res) => (console.log(res.json())));
+    // .then((data) => setUsage(data));
     return {
       data:
         <div className={styles.usage}>
@@ -61,7 +61,7 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
-        const usageData = getUsageData(id);
+        const usageData = getUsageData();
         const riderData = {
           firstName,
           lastName,

@@ -80,7 +80,7 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
   });
 });
 
-router.get('/:id/usage', validateUser('User'), (req, res) => {
+router.get('/:id/usage', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   let noShowCount: number;
   let studentRides: number;
@@ -91,6 +91,36 @@ router.get('/:id/usage', validateUser('User'), (req, res) => {
       studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
       res.send({ studentRides, noShowCount });
     });
+  });
+});
+
+router.get('/usage', validateUser('Admin'), (req, res) => {
+  type usageData = {
+    noShow: number | undefined,
+    totalRides: number | undefined
+  }
+  const usageMap = new Map<string, usageData>();
+  const isPast = new Condition('type').eq(Type.PAST);
+  db.scan(res, Ride, isPast, (data: RideType[]) => {
+    data.forEach((ride) => {
+      const currID = ride.rider.id;
+      if (usageMap.has(currID)) {
+        let currNoShow = usageMap.get(currID)?.noShow;
+        let currRides = usageMap.get(currID)?.totalRides;
+        if (ride.status === Status.COMPLETED) {
+          currRides = currRides === undefined ? 1 : currRides + 1;
+          usageMap.set(currID, { noShow: currNoShow, totalRides: currRides });
+        } else {
+          currNoShow = currNoShow === undefined ? 1 : currNoShow + 1;
+          usageMap.set(currID, { noShow: currNoShow, totalRides: currRides });
+        }
+      } else {
+        const dummy = ride.status === Status.COMPLETED
+          ? { noShow: 0, totalRides: 1 } : { noShow: 1, totalRides: 0 };
+        usageMap.set(currID, dummy);
+      }
+    });
+    res.send(usageMap);
   });
 });
 
