@@ -18,35 +18,35 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
       <div className={styles.radioOption}>
         <Input
           id="driver"
-          name="driver"
+          name="role"
           type="radio"
           value='driver'
           onChange={onChange}
-          checked={selectedRole === 'driver'}
+          defaultChecked={selectedRole === 'driver' || true}
         />
-        <Label className={styles.driverLabel} htmlFor={"driver"}>Driver</Label>
+        <Label className={styles.driverLabel} htmlFor={'driver'}>Driver</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
           id="admin"
-          name="admin"
+          name="role"
           type="radio"
           value='admin'
           onChange={onChange}
-          checked={selectedRole === 'admin'}
+          defaultChecked={selectedRole === 'admin' || false}
         />
-        <Label className={styles.driverLabel} htmlFor={"admin"}>Admin</Label>
+        <Label className={styles.driverLabel} htmlFor={'admin'}>Admin</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
           id="both"
-          name="both"
+          name="role"
           type="radio"
           value='both'
           onChange={onChange}
-          checked={selectedRole === 'both'}
+          defaultChecked={selectedRole === 'both' || false}
         />
-        <Label className={styles.driverLabel} htmlFor={"both"}>Both</Label>
+        <Label className={styles.driverLabel} htmlFor={'both'}>Both</Label>
       </div>
     </div>
   );
