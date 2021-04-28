@@ -150,7 +150,8 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
             <div>
               <SRLabel htmlFor='endDate'>End Date: </SRLabel>
               <Input
-                type="endDate"
+                id='endDate'
+                type="date"
                 name="endDate"
                 ref={register({
                   required: true,
@@ -171,9 +172,10 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
           </div>
         </div>
       </div>
-      {/* TODO: styling */}
       <div className={styles.buttonContainer}>
-        <Button className={styles.cancel} outline={true} onClick={() => cancel()}>Cancel</Button>
+        <Button type = "button" className={styles.cancel} outline={true} onClick={() => {console.log('clicked');cancel()}}>
+          Cancel
+        </Button>
         <Button type="submit" className={styles.submit}>Add a Student</Button>
       </div>
     </form>
