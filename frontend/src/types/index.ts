@@ -80,6 +80,7 @@ export type Location = {
 export type TableValue = {
   data: string | ReactNode | null;
   tag?: string;
+  driver?: boolean;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
 };

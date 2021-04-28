@@ -1,0 +1,54 @@
+.analyticsOverview {
+  display: inline-block;
+  width: 90%;
+  margin-left: 5rem;
+}
+
+.title {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: space-evenly;
+  flex-flow: row;
+  align-items: center;
+  box-shadow: 0.25rem 0.25rem 1rem rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+}
+
+.statsbox {
+  flex-direction: row;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  width: 35%;
+  margin: 0.5rem;
+}
+
+.right {
+  width: 65%;
+  margin: 0.5rem;
+}
+
+.icon {
+  border-radius: 100%;
+  width: 2.5rem;
+}
+
+.stats {
+  font-size: 1.35rem;
+  font-weight: bold;
+  margin-bottom: -5%;
+}
+
+.description {
+  font-size: 0.75rem;
+  margin-top: -5%;
+}
