@@ -6,6 +6,7 @@ import table, { TableData } from './data';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
+import DateFilter from './DateFilter';
 
 
 type Cell = string | number;
@@ -208,6 +209,8 @@ const Table = ({ type }: TableProps) => {
   }, [type, drivers.length]);
 
   return (
+    <>
+    <DateFilter/>
     <div className={styles.analyticsTable}>
       <button
         className={styles.editBtn}
@@ -271,6 +274,7 @@ const Table = ({ type }: TableProps) => {
         </table>
       </div>
     </div >
+    </>
   );
 };
 

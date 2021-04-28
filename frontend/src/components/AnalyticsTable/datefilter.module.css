@@ -2,6 +2,8 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
 }
 .box{
     display: flex; 
@@ -35,4 +37,16 @@
 .monthDropdown{
     background-color: white; 
     color: black;
+}
+
+.dateRangeContainer {
+    display: flex; 
+    align-items: center;
+}
+.datePicker1 {
+    padding: 0.625rem 1.125rem 0.625rem 0 !important;
+}
+
+.dateCalendar {
+    border-radius: 0.5rem;
 }

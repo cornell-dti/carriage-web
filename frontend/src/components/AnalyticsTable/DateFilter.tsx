@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
+import DatePicker from 'react-date-picker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './datefilter.module.css';
@@ -12,6 +13,9 @@ const DateFilter = () => {
     const currDate = new Date(); 
     const [selectedYear, setSelectedYear] = useState(currDate.getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(currDate.getMonth());
+    const [startDate, setStartDate] = useState<Date | Date[]>(currDate);
+    const [endDate, setEndDate] = useState<Date | Date[]>(currDate);
+
     return(
         <div className = {styles.dateFilter}>
           <div className = {styles.box}>
@@ -43,6 +47,24 @@ const DateFilter = () => {
             name={'month'}
             classes={cn(styles.dropdown, styles.monthDropdown)}
             />
+          </div>
+          <div className={styles.box}>
+            <label className = {styles.datePickerLabel}>Date Range</label>
+            <div className={styles.dateRangeContainer}>
+              <DatePicker
+                className={cn(styles.dropdown, styles.datePicker1)}
+                calendarClassName={styles.dateCalendar}
+                onChange={setStartDate}
+                value={startDate}
+              />
+              <span>-</span>
+              <DatePicker
+                className={styles.dropdown}
+                calendarClassName={styles.dateCalendar}
+                onChange={setEndDate}
+                value={endDate}
+              />
+            </div>
           </div>
       </div>
     ); 
