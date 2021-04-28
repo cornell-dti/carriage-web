@@ -44,24 +44,21 @@ const Home = () => {
   return (
     <div>
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Homepage</h1>
-        <div className={styles.margin3}>
-          {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
-          <div className={styles.rightSection}>
-            <ExportButton onClick={downloadCSV} />
-            <CSVLink
-              data={downloadData}
-              filename={`scheduledRides_${today}.csv`}
-              className='hidden'
-              ref={csvLink}
-              target='_blank'
-            />
-            <RideModal />
-            <Notification />
-          </div>
+        <MiniCal />
+        {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
+        <div className={styles.rightSection}>
+          <ExportButton onClick={downloadCSV} />
+          <CSVLink
+            data={downloadData}
+            filename={`scheduledRides_${today}.csv`}
+            className="hidden"
+            ref={csvLink}
+            target="_blank"
+          />
+          <RideModal />
+          <Notification />
         </div>
       </div>
-      <MiniCal />
       <Schedule />
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />

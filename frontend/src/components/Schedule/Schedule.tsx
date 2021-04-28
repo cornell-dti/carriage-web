@@ -7,7 +7,6 @@ import { Ride, Driver } from '../../types';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './dnd.scss';
 import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';

@@ -62,7 +62,10 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     setToast(false);
   };
 
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    methods.clearErrors();
+    setIsOpen(false);
+  };
 
   const parseAvailability = (availability: ObjectType[]) => {
     const result: ObjectType = {};
@@ -78,9 +81,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     employeeId: string,
     table: string,
     refresh: () => Promise<void>,
-    isCreate: boolean //show toast if new employee is created
+    isCreate: boolean, // show toast if new employee is created
   ) => {
-
     const photo = {
       id: employeeId,
       tableName: table,
@@ -193,7 +195,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     } else {
       console.log('Undefined file upload');
     }
-  };
+  }
 
   return (
     <>
