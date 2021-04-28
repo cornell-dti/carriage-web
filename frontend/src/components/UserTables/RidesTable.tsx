@@ -13,6 +13,7 @@ type RidesTableProps = {
 
 const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
   const [openModal, setOpenModal] = useState(-1);
+  const [driverSet, setDriverSet] = useState([""]);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = ['', 'Time', 'Passenger', 'Pickup Location', 'Dropoff Location', 'Needs', ''];
@@ -44,7 +45,6 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
           const dropoffTag = ride.endLocation.tag;
-          const assignedDriver = driver ? `${driver.firstName} ${driver.lastName}` : 'N/A';
 
           const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
             hour: 'numeric',
@@ -52,6 +52,9 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
           });
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+          const hasDriver = (driverSet[index] !== undefined && 
+            driverSet[index].length > 0);
+          const valueDriver = driver ? `${driver.firstName} ${driver.lastName}` : 'N/A';
 
           const startEndTime = {
             data:
@@ -91,7 +94,7 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
             valuePickup,
             valueDropoff,
             needs,
-            assignedDriver,
+            valueDriver,
             valueEdit,
           ];
 
@@ -117,8 +120,10 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
             <>
               {hasAssignButton ? unscheduledRow() : scheduledRow()}
               <AssignDriverModal
-                isOpen={openModal === index}
+                isOpen={(openModal === index) && !hasDriver}
                 close={() => setOpenModal(-1)}
+                setDriver={(driverName: string) => {driverSet[index] = driverName; 
+                  setDriverSet([...driverSet])}}
                 ride={rides[index]}
                 allDrivers={drivers}
               />
