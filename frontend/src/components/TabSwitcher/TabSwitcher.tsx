@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
+import moment from 'moment';
+import { useDate } from '../../context/date';
+import { useEmployees } from '../../context/EmployeesContext';
+import { Driver } from '../../types/index';
 import styles from './tabSwitcher.module.css';
 import Notification from '../Notification/Notification';
 import pageStyles from '../../pages/Dashboard/page.module.css';
+import ExportButton from 'components/ExportButton/ExportButton';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 
@@ -22,6 +27,10 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
   const [currentTab, setCurrentTab] = useState(children[0].props.label);
   const [currentContent, setCurrentContent] = useState(children[0].props.children);
 
+  const { curDate } = useDate();
+  const today = moment(curDate).format('YYYY-MM-DD');
+  const { drivers } = useEmployees();
+
   useEffect(() => {
     const labels = children.map((child) => child.props.label);
     setTabLabels(labels);
@@ -35,6 +44,26 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
       }
     });
   };
+
+  const generateCols = () => {
+    const sharedCols = 'Date,Daily Total';
+
+    if (currentTab === 'Rider Data') {
+      return `${sharedCols},Daily Ride Count,Day No Shows,Day Cancels, \
+      Night Ride Count, Night No Shows, Night Cancels`
+    } else {
+      const driverNamesReducer = (acc: string, curr: Driver) => 
+      `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
+
+      const driverShortNames = drivers
+      .sort((a, b) => (
+        `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
+      ))
+      .reduce(driverNamesReducer, sharedCols);
+
+     return driverShortNames;
+    }
+  }
 
   return (
     <div>
@@ -54,6 +83,13 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
           <span className={styles.underline} />
         </div>
         <div className={styles.rightSection}>
+          {/* TODO: implement the backend and change the endpoint */}
+          <ExportButton 
+            toastMsg={`${today} data has been downloaded.`}
+            endpoint={`/api/rides/download?date=${today}`} 
+            csvCols={generateCols()}
+            filename={`${currentTab} ${today}.csv`} 
+          />
           <Notification />
         </div>
       </div>
