@@ -222,6 +222,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
+            {selectedRole === 'admin' ? null : <StartDate />}
             {
               selectedRole === 'admin' ? null
                 : <WorkingHours
