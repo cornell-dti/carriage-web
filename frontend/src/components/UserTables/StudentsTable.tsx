@@ -6,6 +6,13 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
 import styles from './table.module.css';
 
+type usageData = {
+  noShows: number | undefined,
+  totalRides: number | undefined
+}
+type usageType = {
+  [id: string]: usageData
+}
 
 const StudentsTable = () => {
   const { riders } = useRiders();
@@ -13,25 +20,23 @@ const StudentsTable = () => {
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
-  const [usage, setUsage] = useState({ studentRides: 0, noShowCount: 0 });
-  const getUsageData = () => {
-    fetch('/api/riders/usage', withDefaults())
-      .then((res) => (console.log(res.json())));
-    // .then((data) => setUsage(data));
-    return {
-      data:
-        <div className={styles.usage}>
-          <span className={styles.usageContainer}>
-            <span className={cn(styles.ridesCount, styles.usageTag)}></span>
-            {usage.studentRides} Rides
+  const [usage, setUsage] = useState<usageType>({});
+  fetch('/api/riders/usage', withDefaults())
+    .then((res) => res.json())
+    .then((data) => setUsage(data));
+  const getUsageData = (id: string) => ({
+    data:
+      <div className={styles.usage}>
+        <span className={styles.usageContainer}>
+          <span className={cn(styles.ridesCount, styles.usageTag)}></span>
+          {id in usage ? usage[id].totalRides : 0} Rides
           </span>
-          <span className={styles.usageContainer}>
-            <span className={cn(styles.noShow, styles.usageTag)}></span>
-            {usage.noShowCount} No Shows
+        <span className={styles.usageContainer}>
+          <span className={cn(styles.noShow, styles.usageTag)}></span>
+          {id in usage ? usage[id].noShows : 0} No Shows
           </span>
-        </div>,
-    };
-  };
+      </div>,
+  });
 
   const fmtPhone = (number: string) => {
     const areaCode = number.slice(0, 3);
@@ -61,7 +66,7 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
-        const usageData = getUsageData();
+        const usageData = getUsageData(id);
         const riderData = {
           firstName,
           lastName,

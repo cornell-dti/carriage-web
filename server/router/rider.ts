@@ -11,6 +11,40 @@ import { Ride, RideType, Type, Status } from '../models/ride';
 const router = express.Router();
 const tableName = 'Riders';
 
+router.get('/usage', validateUser('Admin'), (req, res) => {
+  type usageData = {
+    noShows: number | undefined,
+    totalRides: number | undefined
+  }
+  type usage = {
+    [id: string]: usageData
+  }
+  let currID = '';
+  const usageObj: usage = {};
+  const isPast = new Condition('type').eq(Type.PAST);
+  db.scan(res, Ride, isPast, (data: RideType[]) => {
+    data.forEach((ride) => {
+      currID = ride.rider.id;
+      if (currID in usageObj) {
+        let currNoShow = usageObj[currID].noShows;
+        let currRides = usageObj[currID].totalRides;
+        if (ride.status === Status.COMPLETED) {
+          currRides = currRides === undefined ? 1 : currRides + 1;
+          usageObj[currID] = { noShows: currNoShow, totalRides: currRides };
+        } else {
+          currNoShow = currNoShow === undefined ? 1 : currNoShow + 1;
+          usageObj[currID] = { noShows: currNoShow, totalRides: currRides };
+        }
+      } else {
+        const dummy = ride.status === Status.COMPLETED
+          ? { noShows: 0, totalRides: 1 } : { noShows: 1, totalRides: 0 };
+        usageObj[currID] = dummy;
+      }
+    });
+    res.send(usageObj);
+  });
+});
+
 // Get a rider by id in Riders table
 router.get('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
@@ -91,36 +125,6 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
       studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
       res.send({ studentRides, noShowCount });
     });
-  });
-});
-
-router.get('/usage', validateUser('Admin'), (req, res) => {
-  type usageData = {
-    noShow: number | undefined,
-    totalRides: number | undefined
-  }
-  const usageMap = new Map<string, usageData>();
-  const isPast = new Condition('type').eq(Type.PAST);
-  db.scan(res, Ride, isPast, (data: RideType[]) => {
-    data.forEach((ride) => {
-      const currID = ride.rider.id;
-      if (usageMap.has(currID)) {
-        let currNoShow = usageMap.get(currID)?.noShow;
-        let currRides = usageMap.get(currID)?.totalRides;
-        if (ride.status === Status.COMPLETED) {
-          currRides = currRides === undefined ? 1 : currRides + 1;
-          usageMap.set(currID, { noShow: currNoShow, totalRides: currRides });
-        } else {
-          currNoShow = currNoShow === undefined ? 1 : currNoShow + 1;
-          usageMap.set(currID, { noShow: currNoShow, totalRides: currRides });
-        }
-      } else {
-        const dummy = ride.status === Status.COMPLETED
-          ? { noShow: 0, totalRides: 1 } : { noShow: 1, totalRides: 0 };
-        usageMap.set(currID, dummy);
-      }
-    });
-    res.send(usageMap);
   });
 });
 
