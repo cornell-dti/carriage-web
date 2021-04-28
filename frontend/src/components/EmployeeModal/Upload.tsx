@@ -3,11 +3,12 @@ import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 
 type UploadProps = {
-  imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  existingPhoto?: string;
 }
 
-const Upload = ({ imageChange }: UploadProps) => {
-  const [imageURL, setImageURL] = useState('');
+const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
+  const [imageURL, setImageURL] = useState(existingPhoto ? `http://${existingPhoto}` : '');
 
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();

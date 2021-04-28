@@ -7,7 +7,6 @@ import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 
-
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
@@ -39,15 +38,17 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
-    const serverJWT = await fetch('/api/auth', withDefaults({
-      method: 'POST',
-      body:
-        JSON.stringify({
+    const serverJWT = await fetch(
+      '/api/auth',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify({
           token,
           table: 'Admins',
           clientId,
         }),
-    }))
+      }),
+    )
       .then((res) => res.json())
       .then((json) => json.jwt);
 
@@ -78,7 +79,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         onSuccess={onSignIn}
         onFailure={(err) => console.error(err)}
         clientId={clientId}
-        cookiePolicy='single_host_origin'
+        cookiePolicy="single_host_origin"
         isSignedIn
       />
       <LandingPage />

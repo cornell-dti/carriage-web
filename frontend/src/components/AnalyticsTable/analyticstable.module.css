@@ -1,0 +1,40 @@
+.analyticsTable {
+  position: relative;
+  padding: 1.875rem;
+  box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tableContainer {
+  overflow: auto;
+  white-space: nowrap;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.editBtn {
+  position: absolute;
+  top: 1.25rem;
+  right: 2.125rem;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.cell {
+  padding: 1.125rem 0.5rem;
+  text-align: center;
+}
+
+.input {
+  background: #f2f2f2;
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  border-radius: 10px;
+  text-align: center;
+  width: 3.5rem;
+  font-size: 1rem;
+  outline: none;
+}
