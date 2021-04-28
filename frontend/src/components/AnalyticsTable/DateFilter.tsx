@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-// import DatePicker from 'react-datepicker';
 import DatePicker from 'react-date-picker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -7,9 +6,6 @@ import styles from './datefilter.module.css';
 import { YearPicker, MonthPicker} from 'react-dropdown-date';
 
 const DateFilter = () => {
-    const monthNames =  ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
     const currDate = new Date(); 
     const [selectedYear, setSelectedYear] = useState(currDate.getFullYear());
     const [selectedMonth, setSelectedMonth] = useState(currDate.getMonth());
