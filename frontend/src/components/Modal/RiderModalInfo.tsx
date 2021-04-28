@@ -162,10 +162,10 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
                 })}
                 className={styles.riderDate}
               />
-              {errors.end?.type === "required" && (
+              {errors.endDate?.type === "required" && (
                 <p className={styles.error}>Please enter an end date</p>
               )}
-              {errors.end?.type === "validate" && (
+              {errors.endDate?.type === "validate" && (
                 <p className={styles.error}>Invalid end time</p>
               )}
             </div>
@@ -173,7 +173,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
         </div>
       </div>
       <div className={styles.buttonContainer}>
-        <Button type = "button" className={styles.cancel} outline={true} onClick={() => {console.log('clicked');cancel()}}>
+        <Button type = "button" className={styles.cancel} outline={true} onClick={() => cancel()}>
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>Add a Student</Button>

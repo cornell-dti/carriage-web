@@ -94,13 +94,11 @@
 }
 
 .submit {
-  /* margin-left: 5rem; */
   display: inline-block !important;
   grid-column: 4;
 }
 
 .cancel {
-  /* margin-left: 5rem; */
   display: inline-block !important;
   grid-column: 3;
 }
