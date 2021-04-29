@@ -51,9 +51,9 @@ const Home = () => {
           <CSVLink
             data={downloadData}
             filename={`scheduledRides_${today}.csv`}
-            className='hidden'
+            className="hidden"
             ref={csvLink}
-            target='_blank'
+            target="_blank"
           />
           <RideModal />
           <Notification />
