@@ -5,6 +5,7 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DateContext from '../../context/date';
@@ -14,7 +15,7 @@ const Routes = () => {
   return (
     <>
       <div tabIndex={-1} ref={skipRef}></div>
-      <a className='skip-main' href='#main'>Skip to main content</a>
+      <HashLink className='skip-main' to='#main'>Skip to main content</HashLink>
       <Sidebar type="rider">
         <Switch>
           <Route
