@@ -5,7 +5,7 @@ import config, { webpushValues, snsValues } from '../config';
 import { validateUser } from '../util';
 
 const router = express.Router();
-AWS.config.update(config);
+AWS.config.update({ ...config, region: 'us-east-1' });
 const sns = new AWS.SNS();
 webpush.setVapidDetails(
   webpushValues.contact,
@@ -15,8 +15,7 @@ webpush.setVapidDetails(
 type WebSub = webpush.PushSubscription;
 
 
-type Subscription = {
-  // TODO user id
+type Subscription = { // TODO update functions with user id
   platform: string;
   endpoint: string;
   keys?: {
@@ -33,7 +32,7 @@ type SubscriptionRequest = {
 
 const subscriptionSet = new Set() as Set<string>;
 
-const badPlatform =  (platform : String) => {
+const badPlatform = (platform: String) => {
   switch (platform) {
     case 'web':
     case 'android':
@@ -44,8 +43,7 @@ const badPlatform =  (platform : String) => {
     default:
       return true;
   }
-  
-}
+};
 
 const sendMsg = (sub: Subscription, msg: string) => {
   if (sub.platform === 'web') {
@@ -108,9 +106,13 @@ const subscribe = (req: SubscriptionRequest) => {
     Token: req.token!,
     PlatformApplicationArn: arn,
   };
+
   return new Promise((resolve, reject) => {
     sns.createPlatformEndpoint(snsParams, (err, data) => {
-      if (err) reject(err);
+      if (err || !data) {
+        reject();
+        return;
+      }
 
       const subscription = {
         platform: plat,
