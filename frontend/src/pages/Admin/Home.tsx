@@ -15,7 +15,7 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
-import { NewRider } from '../../types/index';
+import { Rider } from '../../types/index';
 
 const Home = () => {
   const { drivers } = useEmployees();
@@ -46,7 +46,7 @@ const Home = () => {
   };
 
   const renderScheduledRides = (): JSX.Element[] => {
-    return riders.map((rider: NewRider, index: number) => (
+    return riders.map((rider: Rider, index: number) => (
       <ScheduledTable
         key={index}
         query='rider'
