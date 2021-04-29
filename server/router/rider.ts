@@ -12,32 +12,28 @@ const router = express.Router();
 const tableName = 'Riders';
 
 router.get('/usage', validateUser('Admin'), (req, res) => {
-  type usageData = {
-    noShows: number | undefined,
-    totalRides: number | undefined
+  type UsageData = {
+    noShows: number,
+    totalRides: number,
   }
-  type usage = {
-    [id: string]: usageData
+  type Usage = {
+    [id: string]: UsageData
   }
-  let currID = '';
-  const usageObj: usage = {};
+  const usageObj: Usage = {};
   const isPast = new Condition('type').eq(Type.PAST);
   db.scan(res, Ride, isPast, (data: RideType[]) => {
     data.forEach((ride) => {
-      currID = ride.rider.id;
+      const currID = ride.rider.id;
       if (currID in usageObj) {
-        let currNoShow = usageObj[currID].noShows;
-        let currRides = usageObj[currID].totalRides;
         if (ride.status === Status.COMPLETED) {
-          currRides = currRides === undefined ? 1 : currRides + 1;
-          usageObj[currID] = { noShows: currNoShow, totalRides: currRides };
+          usageObj[currID].totalRides += 1;
         } else {
-          currNoShow = currNoShow === undefined ? 1 : currNoShow + 1;
-          usageObj[currID] = { noShows: currNoShow, totalRides: currRides };
+          usageObj[currID].noShows += 1;
         }
       } else {
         const dummy = ride.status === Status.COMPLETED
-          ? { noShows: 0, totalRides: 1 } : { noShows: 1, totalRides: 0 };
+          ? { noShows: 0, totalRides: 1 }
+          : { noShows: 1, totalRides: 0 };
         usageObj[currID] = dummy;
       }
     });
