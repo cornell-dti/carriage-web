@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import styles from './tabSwitcher.module.css';
 import Notification from '../Notification/Notification';
-import pageStyles from '../../pages/Dashboard/page.module.css';
+import pageStyles from '../../pages/Admin/page.module.css';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 

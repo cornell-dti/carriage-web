@@ -9,7 +9,6 @@ export type StatsType = {
   nightCount: number,
   nightNoShow: number,
   nightCancel: number,
-  dailyTotal: number,
   drivers: {
     [name: string]: number
   },
@@ -52,11 +51,6 @@ const schema = new dynamoose.Schema({
     default: 0,
   },
   nightCancel: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  dailyTotal: {
     type: Number,
     required: true,
     default: 0,
