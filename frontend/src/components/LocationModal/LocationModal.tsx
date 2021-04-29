@@ -36,7 +36,7 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
   const [isOpen, setIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { register, handleSubmit, errors } = useForm();
-  const { address } = errors;
+  const { address, info } = errors;
   const { withDefaults } = useReq();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
@@ -86,15 +86,6 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
       >
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={cn(styles.inputContainer)}>
-            <select
-              name='tag'
-              ref={register({ required: true })}
-              className={cn(styles.styledSelect)}
-            >
-              {Object.values(Tag).map((value) => (
-                <option key={value} value={value}>{value}</option>
-              ))}
-            </select>
             <Input
               name='name'
               type='text'
@@ -112,6 +103,24 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
               ref={register({ required: true, validate: isAddress })}
             />
             {address?.message && <p className={cn(styles.errorMsg)}>{address?.message}</p>}
+            <Input
+              name='info'
+              type='text'
+              placeholder='Info'
+              defaultValue={existingLocation?.info}
+              className={cn(styles.input)}
+              ref={register({ required: true })}
+            />
+            {info?.message && <p className={cn(styles.errorMsg)}>{info?.message}</p>}
+            <select
+              name='tag'
+              ref={register({ required: true })}
+              className={cn(styles.styledSelect)}
+            >
+              {Object.values(Tag).map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
+            </select>
             <div>
               <Button className={styles.submit} type='submit'>
                 {submitButtonText}

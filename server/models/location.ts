@@ -42,7 +42,7 @@ const schema = new dynamoose.Schema({
   },
   info: {
     type: String,
-    // required: true,
+    required: true,
   },
 });
 

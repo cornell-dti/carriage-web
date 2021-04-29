@@ -74,6 +74,7 @@ export type Location = {
   name: string;
   address: string;
   tag?: Tag;
+  info?: string;
 };
 
 export type TableValue = {
