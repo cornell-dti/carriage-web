@@ -26,22 +26,27 @@ router.get('/download', (req, res) => {
     .between(dateStart, dateEnd)
 
   const callback = (value: any) => {
-    const dataToExport = value.map((doc: any) => {
-      const start = moment.tz(doc.startTime, 'America/New_York');
-      const end = moment.tz(doc.endTime, 'America/New_York');
-      const fullName = (user: RiderType | DriverType) => (
-        `${user.firstName} ${user.lastName.substring(0, 1)}.`
-      );
-      return {
-        Name: fullName(doc.rider),
-        'Pick Up': start.format('h:mm A'),
-        From: doc.startLocation.name,
-        To: doc.endLocation.name,
-        'Drop Off': end.format('h:mm A'),
-        Needs: doc.rider.accessibility,
-        Driver: doc.driver ? fullName(doc.driver) : '',
-      };
-    });
+    const dataToExport = 
+    value
+      .sort((a: any, b: any) => {
+        return moment(a.startTime).diff(moment(b.startTime));
+      })
+      .map((doc: any) => {
+        const start = moment.tz(doc.startTime, 'America/New_York');
+        const end = moment.tz(doc.endTime, 'America/New_York');
+        const fullName = (user: RiderType | DriverType) => (
+          `${user.firstName} ${user.lastName.substring(0, 1)}.`
+        );
+        return {
+          Name: fullName(doc.rider),
+          'Pick Up': start.format('h:mm A'),
+          From: doc.startLocation.name,
+          To: doc.endLocation.name,
+          'Drop Off': end.format('h:mm A'),
+          Needs: doc.rider.accessibility,
+          Driver: doc.driver ? fullName(doc.driver) : '',
+        };
+      });
     csv
       .writeToBuffer(dataToExport, { headers: true })
       .then((data) => res.send(data))
