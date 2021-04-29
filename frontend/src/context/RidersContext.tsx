@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { NewRider } from '../types';
+import { Rider } from '../types';
 import { useReq } from './req';
 
 type ridersState = {
-  riders: Array<NewRider>;
-  refreshRiders: () => Promise<void>;
+  riders: Array<Rider>,
+  refreshRiders: () => Promise<void>
 };
 
 const initialState: ridersState = {
@@ -19,13 +19,10 @@ type RidersProviderProps = {
 };
 
 export const RidersProvider = ({ children }: RidersProviderProps) => {
-  const [riders, setRiders] = useState<Array<NewRider>>([]);
+  const [riders, setRiders] = useState<Array<Rider>>([]);
   const { withDefaults } = useReq();
   const refreshRiders = async () => {
-    const ridersData: Array<NewRider> = await fetch(
-      '/api/riders',
-      withDefaults(),
-    )
+    const ridersData: Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
     setRiders([...ridersData]);
