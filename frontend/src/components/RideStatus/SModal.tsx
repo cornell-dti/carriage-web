@@ -136,8 +136,8 @@ const SModal = ({ isOpen, close, ride }: SModalProps) => {
                 </div>
                 <div>
 
-                  {ride.rider.accessibilityNeeds
-                    ? ride.rider.accessibilityNeeds.join(', ')
+                  {ride.rider.accessibility
+                    ? ride.rider.accessibility.join(', ')
                     : 'No accessibility needs'}
                 </div>
               </div>

@@ -78,8 +78,14 @@
   color: #0084F4;
   text-align: center;
   display:block; 
+  margin:auto; 
+  background-color: Transparent;
+  border: none; 
+  outline: none; 
 }
-
+.logoutLink:focus{
+  outline: 3px solid #0084F4; 
+}
 .profile {
   width: 2.5rem;
   height: 2.5rem;

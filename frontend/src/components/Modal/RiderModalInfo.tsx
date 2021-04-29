@@ -1,126 +1,183 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import cn from 'classnames';
-import { Button, Input, Label, SRLabel } from '../FormElements/FormElements';
-import styles from './ridermodal.module.css';
-import { ObjectType } from '../../types/index';
+import React from "react";
+import { useForm } from "react-hook-form";
+import cn from "classnames";
+import { Button, Input, SRLabel } from "../FormElements/FormElements";
+import styles from "./ridermodal.module.css";
+import { ObjectType, Accessibility } from "../../types/index";
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
   formData?: ObjectType;
-}
+  setFormData: React.Dispatch<React.SetStateAction<ObjectType>>
+};
 
-const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
-  const { register, errors, handleSubmit } = useForm();
-  const beforeSubmit = ({ name, netid, email, phoneNumber, needs,
-    address, start, end }: ObjectType) => {
-    const startDate = new Date(`${start}`).toISOString();
-    const endDate = new Date(`${end}`).toISOString();
-    const splitName = name.split(' ');
+const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) => {
+  const { register, errors, handleSubmit, getValues } = useForm();
+  const beforeSubmit = ({
+    name,
+    netid,
+    phoneNumber,
+    needs,
+    address,
+    joinDate,
+    endDate,
+  }: ObjectType) => {
+    const email = `${netid}@cornell.edu`;
+    const splitName = name.split(" ");
     const firstName = splitName[0];
     const lastName = splitName[1];
-    const accessibilityNeeds = needs.split(',');
+    const accessibility = needs.split(",").map((n: string) => n.trim());
     onSubmit({
-      id: netid,
       firstName,
       lastName,
       email,
       phoneNumber,
-      accessibilityNeeds,
+      accessibility,
       address,
-      startDate,
+      joinDate,
       endDate,
     });
   };
+
+  const cancel = () => {
+    setFormData({});
+    setIsOpen(false);
+  }
+
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={cn(styles.gridR1, styles.gridC1)}>
-        <SRLabel htmlFor={"name"}>Name</SRLabel>
+        <div className={cn(styles.gridR1, styles.gridCSmall1)}>
+          <SRLabel htmlFor='name'>Name: </SRLabel>
           <Input
-            id="name"
+            id='name'
             name="name"
             type="text"
             placeholder="Name"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
+            className={styles.firstRow}
           />
-          {errors.name && 'enter a valid name'}
+          {errors.name && <p className={styles.error}>enter a valid name</p>}
         </div>
-        <div className={cn(styles.gridR1, styles.gridC2)}>
-          <SRLabel htmlFor={"netid"}>NetID</SRLabel>
+        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
+          <SRLabel htmlFor='netid'>NetID: </SRLabel>
           <Input
-            name="netid"
             id="netid"
+            name="netid"
             type="text"
             placeholder="NetID"
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+            className={styles.firstRow}
           />
-          {errors.netid && 'enter a valid netid'}
+          {errors.netid && <p className={styles.error}>enter a valid netid</p>}
         </div>
-        <div className={cn(styles.gridR2, styles.gridC1)}>
-        <SRLabel htmlFor={"email"}>Email</SRLabel>
-          <Input
-            id="email"
-            name="email"
-            type="text"
-            placeholder="Email"
-            ref={register({ required: true, pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ })}
-          />
-          {errors.email && 'enter a valid email'}
-        </div>
-        <div className={cn(styles.gridR2, styles.gridC2)}>
-        <SRLabel htmlFor={"phoneNumber"}>Phone Number</SRLabel>
+        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
+          <SRLabel htmlFor='phoneNumber'>Phone Number: </SRLabel>
           <Input
             id="phoneNumber"
             name="phoneNumber"
             type="text"
             placeholder="Phone Number"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+            className={styles.firstRow}
           />
-          {errors.phoneNumber && 'enter a valid phone number'}
+          {errors.phoneNumber && (
+            <p className={styles.error}>enter a valid phone number</p>
+          )}
         </div>
-        <div className={cn(styles.gridR3, styles.gridC1)}>
-        <SRLabel htmlFor={"needs"}>Phone Number</SRLabel>
+        <div className={cn(styles.gridR2, styles.gridCBig1)}>
+          <SRLabel htmlFor='needs'>Needs: </SRLabel>
           <Input
             id="needs"
             name="needs"
             type="text"
             placeholder="Needs"
-            ref={register({ required: true })}
+            ref={register({
+              validate: (needs) => {
+                if (needs === "") {
+                  return true;
+                }
+                const needsArr = needs.split(",").map((n: string) => n.trim());
+                const isValidNeed = (
+                  acc: boolean, 
+                  val: Accessibility
+                ) => acc && Object.values(Accessibility).includes(val);
+                return needsArr.reduce(isValidNeed, true);
+              },
+            })}
           />
-          {errors.needs && 'enter some needs'}
+          {errors.needs?.type === "validate" && (
+            <p className={styles.error}>
+              Invalid needs. You can enter 'Assistant', 'Crutches', or
+              'Wheelchair'
+            </p>
+          )}
         </div>
-        <div className={cn(styles.gridR3, styles.gridC2)}>
-        <SRLabel htmlFor={"address"}>Phone Number</SRLabel>
+        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+          <SRLabel htmlFor='address'>Address: </SRLabel>
           <Input
             id="address"
             name="address"
             type="text"
             placeholder="Address"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+            })}
           />
-          {errors.address && 'enter an address'}
+          {errors.address && (
+            <p className={styles.error}>Please enter an address</p>
+          )}
         </div>
-        <div className={cn(styles.gridR4, styles.gridC1)}>
-          <Label htmlFor="start">Start Date:</Label>
-          <Input
-            id="start"
-            type="date"
-            name="start"
-            ref={register({ required: true })}
-          />
-        </div>
-        <div className={cn(styles.gridR4, styles.gridC2)}>
-          <Label htmlFor="end">End Date:</Label>
-          <Input
-            id="end"
-            type="date"
-            name="end"
-            ref={register({ required: true })}
-          />
+        <div className={cn(styles.gridR3, styles.gridCAll)}>
+          <p>Duration</p>
+          <div className={styles.lastRow}>
+            <div>
+              <SRLabel htmlFor='joinDate'>Join Date: </SRLabel>
+              <Input
+                id='joinDate'
+                type="date"
+                name="joinDate"
+                ref={register({ required: true })}
+                className={styles.riderDate}
+              />
+              {errors.joinDate && (
+                <p className={styles.error}>Please enter a join date</p>
+              )}
+            </div>
+            <p className={styles.to}>to</p>
+            <div>
+              <SRLabel htmlFor='endDate'>End Date: </SRLabel>
+              <Input
+                id='endDate'
+                type="date"
+                name="endDate"
+                ref={register({
+                  required: true,
+                  validate: (endDate) => {
+                    const joinDate = getValues("joinDate");
+                    return joinDate < endDate;
+                  },
+                })}
+                className={styles.riderDate}
+              />
+              {errors.endDate?.type === "required" && (
+                <p className={styles.error}>Please enter an end date</p>
+              )}
+              {errors.endDate?.type === "validate" && (
+                <p className={styles.error}>Invalid end time</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <Button type="submit">Add a Rider</Button>
+      <div className={styles.buttonContainer}>
+        <Button type = "button" className={styles.cancel} outline={true} onClick={() => cancel()}>
+          Cancel
+        </Button>
+        <Button type="submit" className={styles.submit}>Add a Student</Button>
+      </div>
     </form>
   );
 };
