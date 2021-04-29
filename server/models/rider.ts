@@ -21,11 +21,11 @@ export type RiderType = {
   phoneNumber: string
   email: string
   accessibility: Accessibility[]
-  organization: Organization
-  description: string
+  organization?: Organization
+  description?: string
   joinDate: string
   endDate: string
-  pronouns: string
+  pronouns?: string
   address: string
   favoriteLocations: string[]
   photoLink?: string
@@ -58,30 +58,31 @@ const schema = new dynamoose.Schema({
   accessibility: {
     type: Array,
     schema: [String],
-    required: true,
+    required: false,
+    default: [],
   },
   organization: {
     type: String,
     enum: Object.values(Organization),
-    required: true,
+    required: false,
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   joinDate: {
     type: String,
     required: true,
-    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+    validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
   endDate: {
     type: String,
     required: true,
-    validate: /^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d{2}$/,
+    validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
   pronouns: {
     type: String,
-    required: true,
+    required: false,
     validate: /^\w*\/\w*\/\w*$/,
   },
   address: {
@@ -92,7 +93,7 @@ const schema = new dynamoose.Schema({
   },
   favoriteLocations: {
     type: Array,
-    required: true,
+    required: false,
     schema: [String],
     default: [],
   },

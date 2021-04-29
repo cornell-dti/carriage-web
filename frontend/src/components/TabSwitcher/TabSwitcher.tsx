@@ -46,23 +46,19 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
   };
 
   const generateCols = () => {
-    const sharedCols = 'Date,Daily Total';
+    const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels, \
+    Night Ride Count, Night No Shows, Night Cancels';
 
-    if (currentTab === 'Rider Data') {
-      return `${sharedCols},Daily Ride Count,Day No Shows,Day Cancels, \
-      Night Ride Count, Night No Shows, Night Cancels`
-    } else {
-      const driverNamesReducer = (acc: string, curr: Driver) => 
-      `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
+    const driverNamesReducer = (acc: string, curr: Driver) => 
+    `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
 
-      const driverShortNames = drivers
-      .sort((a, b) => (
-        `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
-      ))
-      .reduce(driverNamesReducer, sharedCols);
+    const finalCols = drivers
+    .sort((a, b) => (
+      `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
+    ))
+    .reduce(driverNamesReducer, cols);
 
-     return driverShortNames;
-    }
+     return finalCols;
   }
 
   return (
