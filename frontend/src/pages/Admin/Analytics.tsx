@@ -3,7 +3,7 @@ import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher, { Tab } from '../../components/TabSwitcher/TabSwitcher';
 
 const Analytics = () => (
-   <div>
+   <main id = "main">
       <TabSwitcher>
          <Tab label="Rider Data">
             <AnalyticsTable type="ride" />
@@ -12,7 +12,7 @@ const Analytics = () => (
             <AnalyticsTable type="driver" />
          </Tab>
       </TabSwitcher>
-   </div>
+   </main>
 );
 
 export default Analytics;

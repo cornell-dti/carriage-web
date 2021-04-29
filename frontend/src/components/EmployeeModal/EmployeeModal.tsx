@@ -6,6 +6,7 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
+import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import Upload from './Upload';
@@ -138,7 +139,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { name, email, phoneNumber, availability } = data;
+    const { name, email, phoneNumber, startDate, availability } = data;
     const [firstName, lastName] = name.split(' ');
 
     if (selectedRole === 'admin') {
@@ -159,6 +160,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         lastName,
         email,
         phoneNumber,
+        startDate,
         availability: parseAvailability(availability),
         admin: selectedRole === 'both',
       };
@@ -221,6 +223,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
+            {selectedRole === 'admin' ? null : <StartDate />}
             {
               selectedRole === 'admin' ? null
                 : <WorkingHours

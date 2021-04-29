@@ -53,7 +53,7 @@ const Home = () => {
             filename={`scheduledRides_${today}.csv`}
             className={styles.hidden}
             ref={csvLink}
-            target='_blank'
+            target="_blank"
           />
           <RideModal />
           <Notification />
