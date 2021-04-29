@@ -120,7 +120,7 @@ function computeStats(
         });
       });
     } else {
-      console.log('oh no');
+      console.log('Should be unreachable');
     }
   });
 }
