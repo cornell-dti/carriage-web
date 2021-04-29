@@ -40,7 +40,7 @@ const Card = ({
         : <div className={styles.image}> </div>}
       <div className={styles.contentContainer}>
         <div className={styles.titleContainer}>
-          <p className={styles.name}>{fullName}</p>
+          <h2 className={styles.name}>{fullName}</h2>
           <p className={styles.netId}>{netId}</p>
         </div>
         {children}
