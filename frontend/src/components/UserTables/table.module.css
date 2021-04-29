@@ -93,3 +93,32 @@
 .proflePic {
   border-radius: 50%;
 }
+
+.usage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.usageContainer {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.usageTag {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.ridesCount {
+  background-color: #C5E4FB;
+}
+
+.noShow {
+  background-color: #FF8B9D;
+}
