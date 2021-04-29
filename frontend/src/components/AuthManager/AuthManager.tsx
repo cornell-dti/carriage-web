@@ -58,7 +58,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
-        history.push('/dashboard/home');
+        history.push('/admin/home');
       }
     } else {
       logout();
