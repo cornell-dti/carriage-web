@@ -79,7 +79,7 @@ const EmployeeCard = ({
 
   return (
     <Link
-      to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}` }}
+      to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}`, hash:"#main" }}
       className={styles.link}
     >
       <Card

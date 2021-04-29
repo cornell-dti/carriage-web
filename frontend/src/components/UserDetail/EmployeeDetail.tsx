@@ -54,28 +54,31 @@ const EmployeeDetail = () => {
   }, [withDefaults, employee.id]);
 
   return (
-    <>
-      <UserDetail
-        firstName={employee.firstName}
-        lastName={employee.lastName}
-        netId={employee.netId}
-        employee={employee}
-        role={roleValue()}
-        photoLink={employee.photoLink}
-      >
-        <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
-        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="role" text={role()} />
-        <UserContactInfo icon={clock} alt="availability" text={avail === '' ? 'N/A' : avail} />
-        <OtherInfo>
-          <p>last week:</p>
-        </OtherInfo>
-      </UserDetail>
-
-      <PastRides
-        isStudent={false}
-        rides={rides}
-      />
-    </>
+    <main id = "main">
+      <section>
+        <UserDetail
+          firstName={employee.firstName}
+          lastName={employee.lastName}
+          netId={employee.netId}
+          employee={employee}
+          role={roleValue()}
+          photoLink={employee.photoLink}
+        >
+          <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
+          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="role" text={role()} />
+          <UserContactInfo icon={clock} alt="availability" text={avail === '' ? 'N/A' : avail} />
+          <OtherInfo>
+            <p>last week:</p>
+          </OtherInfo>
+        </UserDetail>
+      </section>
+      <section>
+        <PastRides
+          isStudent={false}
+          rides={rides}
+        />
+      </section>
+    </main>
   );
 };
 

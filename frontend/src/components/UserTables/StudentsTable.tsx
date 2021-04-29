@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import cn from 'classnames';
 import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
@@ -17,7 +17,6 @@ type UsageType = {
 
 const StudentsTable = () => {
   const { riders } = useRiders();
-  const history = useHistory();
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
@@ -83,6 +82,7 @@ const StudentsTable = () => {
           pathname: '/riders/rider',
           state: riderData,
           search: `?name=${`${firstName}_${lastName}`}`,
+          hash: '#main',
         };
         const data = [nameNetId, phone, shortAddress, usageData, disability];
         return (
