@@ -75,7 +75,7 @@
   font-size: 1.063rem; 
   text-decoration: none;
   font-weight: 500;
-  color: #0084F4;
+  color: #0075DB;
   text-align: center;
   display:block; 
   margin:auto; 
@@ -84,7 +84,7 @@
   outline: none; 
 }
 .logoutLink:focus{
-  outline: 3px solid #0084F4; 
+  outline: 3px solid #0075DB; 
 }
 .profile {
   width: 2.5rem;

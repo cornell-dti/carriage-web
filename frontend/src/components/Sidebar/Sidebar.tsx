@@ -60,7 +60,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                   ? cn(styles.selected, styles.circle)
                   : styles.circle
               }>
-                <img alt={caption} src={icon} />
+                <img alt={""} src={icon} />
               </div>
               <div className={styles.caption}>{caption}</div>
             </Link>

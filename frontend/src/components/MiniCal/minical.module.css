@@ -51,9 +51,6 @@
   height: 28px;
   font-size: 12px;
 }
-.btn2:focus {
-  outline: none;
-}
 
 .month {
   width: 160px;
