@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './landing.module.css';
+import Footer from '../../components/Footer/Footer';
 
 const Header = () => (
   <header className={styles.header}>
@@ -12,13 +13,6 @@ const ReadMore = () => (
   <a href="https://www.cornelldti.org" className={styles.readBtn}>
     Read More
   </a>
-);
-
-
-const Footer = () => (
-  <footer className={styles.footer}>
-    Some information about copyright can go here
-  </footer>
 );
 
 const Landing = () => (
