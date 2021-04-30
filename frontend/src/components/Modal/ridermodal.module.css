@@ -8,6 +8,7 @@
   margin-bottom: 1.5rem;
 }
 
+
 .rideTime {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -101,4 +102,8 @@
 .cancel {
   display: inline-block !important;
   grid-column: 3;
+}
+
+.label{
+  display:block;
 }

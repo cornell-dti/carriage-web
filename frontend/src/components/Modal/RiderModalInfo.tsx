@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import cn from "classnames";
-import { Button, Input, SRLabel } from "../FormElements/FormElements";
+import { Button, Input, SRLabel, Label } from "../FormElements/FormElements";
 import styles from "./ridermodal.module.css";
 import { ObjectType, Accessibility } from "../../types/index";
 
@@ -49,36 +49,33 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <SRLabel htmlFor='name'>Name: </SRLabel>
+          <Label className={styles.label} htmlFor='name'>Name: </Label>
           <Input
             id='name'
             name="name"
             type="text"
-            placeholder="Name"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
             className={styles.firstRow}
           />
           {errors.name && <p className={styles.error}>enter a valid name</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <SRLabel htmlFor='netid'>NetID: </SRLabel>
+          <Label className={styles.label} htmlFor='netid'>NetID: </Label>
           <Input
             id="netid"
             name="netid"
             type="text"
-            placeholder="NetID"
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
             className={styles.firstRow}
           />
           {errors.netid && <p className={styles.error}>enter a valid netid</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <SRLabel htmlFor='phoneNumber'>Phone Number: </SRLabel>
+          <Label className={styles.label} htmlFor='phoneNumber'>Phone Number: </Label>
           <Input
             id="phoneNumber"
             name="phoneNumber"
             type="text"
-            placeholder="Phone Number"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
             className={styles.firstRow}
           />
@@ -87,12 +84,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <SRLabel htmlFor='needs'>Needs: </SRLabel>
+          <Label className={styles.label} htmlFor='needs'>Needs: </Label>
           <Input
             id="needs"
             name="needs"
             type="text"
-            placeholder="Needs"
             ref={register({
               validate: (needs) => {
                 if (needs === "") {
@@ -115,12 +111,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData }: ModalFormProps) =>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <SRLabel htmlFor='address'>Address: </SRLabel>
+          <Label className={styles.label} htmlFor='address'>Address: </Label>
           <Input
             id="address"
             name="address"
             type="text"
-            placeholder="Address"
             ref={register({
               required: true,
               pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
