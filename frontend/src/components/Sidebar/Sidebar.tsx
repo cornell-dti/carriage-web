@@ -7,6 +7,7 @@ import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import styles from './sidebar.module.css';
+import Footer from '../Footer/Footer';
 
 type SidebarProps = {
   type: 'admin' | 'rider'
@@ -49,8 +50,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const menuItems = type === 'admin' ? adminMenu : riderMenu;
 
   return (
-    <nav className={styles.container}>
-      <div className={styles.sidebar}>
+    <div className={styles.container}>
+      <nav className={styles.sidebar}>
         {menuItems.map(({ path, icon, caption }) => (
           <div key={path} className={styles.sidebarLinks}>
             <Link key={path} onClick={() => setSelected(path)}
@@ -81,11 +82,12 @@ const Sidebar = ({ type, children }: SidebarProps) => {
               </button>
             )} />
         </div>
-      </div>
+      </nav>
       <div className={styles.content}>
         {children}
+        <Footer />
       </div>
-    </nav >
+    </div >
   );
 };
 
