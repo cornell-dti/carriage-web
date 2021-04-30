@@ -42,6 +42,7 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
         <div>
           <div>
             {tabLabels.map((tabLabel) => (
+              <h1 className={styles.tabHeading}>
               <button
                 key={tabLabel}
                 className={cn(styles.tab, { [styles.current]: tabLabel === currentTab })}
@@ -49,6 +50,7 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
               >
                 {tabLabel}
               </button>
+              </h1>
             ))}
           </div>
           <span className={styles.underline} />

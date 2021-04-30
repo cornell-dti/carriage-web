@@ -13,6 +13,9 @@
 .tab:hover {
   cursor: pointer;
 }
+.tabHeading{
+  display:inline; 
+}
 
 .tab:focus{
   border: 3px solid black; 
