@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import moment from 'moment-timezone';
-import { Stats } from '../models/stats';
+import { Stats, StatsType } from '../models/stats';
 import * as db from './common';
 import { validateUser } from '../util';
 
@@ -11,6 +11,9 @@ router.put('/', validateUser('User'), (req, res) => {
   const { body: { dates } } = req;
 
   const datesObject = JSON.parse(dates);
+  const numEdits = Object.keys(datesObject).length;
+
+  const statsAcc: StatsType[] = [];
 
   for (const date in datesObject) {
     if (date) {
@@ -19,9 +22,22 @@ router.put('/', validateUser('User'), (req, res) => {
       const operation = { $SET: datesObject[date] };
       const key = { year, monthDay };
 
-      db.update(res, Stats, key, operation, tableName);
+      Stats.update(key, operation).then((doc) => {
+        statsAcc.push(doc.toJSON() as StatsType);
+        checkSend(res, statsAcc, numEdits);
+      });
     }
   }
 });
+
+function checkSend(
+  res: Response,
+  statsAcc: StatsType[],
+  numEdits: number,
+) {
+  if (statsAcc.length === numEdits) {
+    res.send(statsAcc);
+  }
+}
 
 export default router;
