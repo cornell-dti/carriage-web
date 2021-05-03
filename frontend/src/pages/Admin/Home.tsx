@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
+import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
@@ -13,6 +14,7 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
+import { Driver } from '../../types/index';
 
 const Home = () => {
   const { drivers } = useEmployees();
@@ -41,6 +43,17 @@ const Home = () => {
       .then(() => setToast(true));
   };
 
+  const renderScheduledRides = (): JSX.Element[] => {
+    return drivers.map((driver: Driver, index: number) => (
+      <ScheduledTable
+        key={index}
+        query='driver'
+        id={driver.id}
+        name={`${driver.firstName} ${driver.lastName}`}
+      />
+    ))
+  };
+
   return (
     <div>
       <div className={styles.pageTitle}>
@@ -59,9 +72,15 @@ const Home = () => {
           <Notification />
         </div>
       </div>
+
       <Schedule />
+
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
+      </Collapsible>
+
+      <Collapsible title={'Scheduled Rides'}>
+        {renderScheduledRides()}
       </Collapsible>
     </div >
   );
