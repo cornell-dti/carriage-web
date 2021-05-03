@@ -12,6 +12,7 @@ import vehicle from './router/vehicle';
 import location from './router/location';
 import upload from './router/upload';
 import auth from './router/auth';
+import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
 import notification from './router/notification';
 
@@ -33,6 +34,7 @@ app.use('/api/locations', location);
 app.use('/api/auth', auth);
 app.use('/api/upload', upload);
 app.use('/api/notification', notification);
+app.use('/api/stats', stats);
 app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
 
 // Serve static files from frontend

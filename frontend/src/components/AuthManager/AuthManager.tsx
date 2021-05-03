@@ -27,7 +27,6 @@ const icon = <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg">
   </g>
 </svg>;
 
-
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
@@ -59,15 +58,17 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   async function onSignIn(googleUser: any) {
     const { id_token: token } = googleUser.getAuthResponse();
-    const serverJWT = await fetch('/api/auth', withDefaults({
-      method: 'POST',
-      body:
-        JSON.stringify({
+    const serverJWT = await fetch(
+      '/api/auth',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify({
           token,
           table: 'Admins',
           clientId,
         }),
-    }))
+      }),
+    )
       .then((res) => res.json())
       .then((json) => json.jwt);
 
@@ -77,7 +78,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       setJWT(serverJWT);
       setSignedIn(true);
       if (pathname === '/') {
-        history.push('/dashboard/home');
+        history.push('/admin/home');
       }
     } else {
       logout();
@@ -94,7 +95,14 @@ export const AuthManager: FunctionComponent = ({ children }) => {
 
   const AuthBarrier = () => (
     <>
-      <LandingPage loginButton={
+      <GoogleLogin
+        onSuccess={onSignIn}
+        onFailure={(err) => console.error(err)}
+        clientId={clientId}
+        cookiePolicy="single_host_origin"
+        isSignedIn
+      />
+      {/* <LandingPage loginButton={
         <GoogleLogin
           render={
             (renderProps) => (
@@ -114,7 +122,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
           clientId={clientId}
           cookiePolicy='single_host_origin'
           isSignedIn
-        />} />
+        />} /> */}
     </>
   );
 
