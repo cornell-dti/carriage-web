@@ -64,18 +64,6 @@ const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
       .catch((e) => console.error(e.message));
   };
 
-  // const deleteLocation = (locationId: string) => {
-  //   fetch(`/api/locations/${locationId}`, withDefaults({ method: 'DELETE' }))
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         setLocations(locations.filter((l) => l.id !== locationId));
-  //       } else {
-  //         throw new Error('adding location failed');
-  //       }
-  //     })
-  //     .catch((e) => console.error('removing location failed'));
-  // };
-
   const handleEditLocation = (editedLocation: Location) => {
     setLocations(locations.map((location) => {
       if (location.id === editedLocation.id) {
@@ -102,9 +90,6 @@ const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
           const editButton = {
             data: <LocationModal existingLocation={loc} onEditLocation={handleEditLocation} />,
           };
-          // const deleteButton = {
-          //   data: <Button small onClick={() => deleteLocation(id)}>Delete</Button>,
-          // };
           const data = [name, address, tagData, editButton];
           return <Row key={id} data={data} colSizes={colSizes} />;
         })}

@@ -1,11 +1,10 @@
 import { parseAddress } from 'addresser';
-import cn from 'classnames';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useReq } from '../../context/req';
 import { Location, ObjectType, Tag } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
-import { Button, Input } from '../FormElements/FormElements';
+import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 
@@ -18,14 +17,17 @@ type LocationModalProps = {
 const isAddress = (address: string) => {
   let parsedAddr;
   try {
-    parsedAddr = parseAddress(address);
+    if (address.includes(',')) {
+      parsedAddr = parseAddress(address);
+    } else {
+      parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`);
+    }
   } catch {
     return 'Invalid address';
   }
   const {
     streetNumber, streetName, streetSuffix, placeName, stateName, zipCode,
   } = parsedAddr;
-
   if (!(streetNumber && streetName && streetSuffix && placeName && stateName && zipCode)) {
     return 'Invalid address';
   }
@@ -36,7 +38,7 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
   const [isOpen, setIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { register, handleSubmit, errors } = useForm();
-  const { address, info } = errors;
+  const { name, address, info } = errors;
   const { withDefaults } = useReq();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
@@ -75,50 +77,60 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
   return (
     <>
       {existingLocation
-        ? <Button onClick={openModal} outline>Edit</Button>
+        ? <Button onClick={openModal} outline small>Edit</Button>
         : <Button onClick={openModal}>+ Add a location</Button>
       }
-      {showingToast ? <Toast message={existingLocation ? 'Location has been updated.' : 'Location has been added.'} /> : null}
+      {showingToast
+        ? <Toast message={existingLocation ? 'Location has been updated.' : 'Location has been added.'} />
+        : null
+      }
       <Modal
         title={modalTitle}
         isOpen={isOpen}
         onClose={closeModal}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className={cn(styles.inputContainer)}>
+          <div className={styles.inputContainer}>
+            <Label htmlFor='name'>Name</Label>
             <Input
               name='name'
               type='text'
-              placeholder='Name'
+              id='name'
               defaultValue={existingLocation?.name}
-              className={cn(styles.input)}
+              className={styles.input}
               ref={register({ required: true })}
             />
+            {name && <p className={styles.errorMsg}>Please enter a name</p>}
+            <Label htmlFor='address'>Address</Label>
             <Input
               name='address'
               type='text'
-              placeholder='Address'
+              id='address'
               defaultValue={existingLocation?.address}
-              className={cn(styles.input)}
+              className={styles.input}
               ref={register({ required: true, validate: isAddress })}
             />
-            {address?.message && <p className={cn(styles.errorMsg)}>{address?.message}</p>}
+            {address && <p className={styles.errorMsg}>{address.message}</p>}
+            <Label htmlFor='info'>Pickup/Dropoff Info</Label>
             <Input
               name='info'
               type='text'
-              placeholder='Info'
+              id='info'
               defaultValue={existingLocation?.info}
-              className={cn(styles.input)}
+              className={styles.input}
               ref={register({ required: true })}
             />
-            {info?.message && <p className={cn(styles.errorMsg)}>{info?.message}</p>}
+            {info && <p className={styles.errorMsg}>Please enter pickup/dropoff info</p>}
+            <Label htmlFor='tag'>Tag</Label>
             <select
               name='tag'
+              id='tag'
+              defaultValue={existingLocation?.tag}
               ref={register({ required: true })}
-              className={cn(styles.styledSelect)}
+              className={styles.styledSelect}
             >
               {Object.values(Tag).map((value) => (
-                <option key={value} value={value}>{value}</option>
+                value === 'custom' ? null : <option key={value} value={value}>{value}</option>
               ))}
             </select>
             <div>

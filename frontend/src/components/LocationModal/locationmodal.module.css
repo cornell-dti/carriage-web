@@ -1,6 +1,6 @@
-.inputContainer > * {
+.inputContainer > input, .inputContainer > p {
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .input {
@@ -8,7 +8,8 @@
 }
 
 .errorMsg {
-  color: red;
+  color: #EB0023;
+  font-size: 0.8rem;
 }
 
 .styledSelect {
