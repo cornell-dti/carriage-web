@@ -19,7 +19,7 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
   const unscheduledHeaders = ['', 'Time', 'Passenger', 'Pickup Location', 'Dropoff Location', 'Needs', ''];
 
   const scheduledColSizes = [1, 1, 1, 1, 1, 1];
-  const scheduledHeaders = ['Time', 'Pickup Location', 'Dropoff Location', 'Needs', 'Driver'];
+  const scheduledHeaders = ['Time', 'Pickup Location', 'Dropoff Location', 'Needs', 'Rider'];
 
   return (
     <>
@@ -38,8 +38,8 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
             hour: '2-digit',
             minute: '2-digit',
           });
-          const { rider, driver } = ride;
-          const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
+          const { rider } = ride;
+          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
           const needs = rider ? (rider.accessibility || []).join(', ') : '';
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
@@ -54,7 +54,6 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
           const hasDriver = (driverSet[index] !== undefined && 
             driverSet[index].length > 0);
-          const valueDriver = driver ? `${driver.firstName} ${driver.lastName}` : 'N/A';
 
           const startEndTime = {
             data:
@@ -94,14 +93,14 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
             valuePickup,
             valueDropoff,
             needs,
-            valueDriver,
+            riderName,
             valueEdit,
           ];
 
           const unscheduledRideData = [
             timeframe,
             startEndTime,
-            name,
+            riderName,
             valuePickup,
             valueDropoff,
             needs,
