@@ -9,10 +9,11 @@ import TableCell from './TableCell';
  */
 type TableRowProps = {
   values: Array<TableValue>;
+  reduced: boolean;
 };
 
 const TableRow = (props: TableRowProps) => {
-  const { values } = props;
+  const { values, reduced } = props;
 
   const resultList = values.map((val, index) => {
     const { data, tag, driver, buttonHandler, ButtonModal } = val;
@@ -53,6 +54,7 @@ const TableRow = (props: TableRowProps) => {
         last={false}
         driver={false}
         tag={tag}
+        reduced={reduced}
       />
     );
   });
