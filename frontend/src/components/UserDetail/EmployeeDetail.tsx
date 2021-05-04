@@ -40,14 +40,16 @@ const EmployeeDetail = () => {
     if (!employee && employeeId) {
       fetch(`/api/drivers/${employeeId}`, withDefaults())
         .then((res) => res.json())
-        .then((data) => {
-          if (!data.hasOwnProperty('err')) {
-            setEmployee({...data, availability: formatAvailability(data.availability), phone: data.phoneNumber})
+        .then((driver) => {
+          if (!driver.hasOwnProperty('err')) {
+            setEmployee({...driver, availability: formatAvailability(driver.availability), 
+                          phone: driver.phoneNumber})
           } else {
             fetch (`/api/admins/${employeeId}`, withDefaults())
             .then((res) => res.json())
-            .then((data) => {
-              setEmployee({...data, availability: formatAvailability(data.availability), phone: data.phoneNumber})
+            .then((admin) => {
+              setEmployee({...admin, availability: formatAvailability(admin.availability), 
+                            phone: admin.phoneNumber})
             })
           }
         });
