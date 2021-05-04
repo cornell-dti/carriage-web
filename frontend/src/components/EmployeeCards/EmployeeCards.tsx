@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, AvailabilityType } from '../../types';
+import { Employee, AvailabilityType, Driver, Admin } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 
 const formatTime = (time: string) => {
@@ -111,23 +111,24 @@ const EmployeeCard = ({
     </Link>
   );
 };
+
 const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
+  const allDrivers = [...admins, ...drivers];
+  allDrivers.sort((a: Admin, b: Admin) => {
+    if (a.firstName < b.firstName) { return -1; }
+    if (a.firstName > b.firstName) { return 1; }
+    return 0;
+  });
+
   return (
     <div className={styles.cardsContainer}>
-      {drivers && drivers.map((driver) => (
+      {allDrivers && allDrivers.map((driver) => (
         <EmployeeCard
           key={driver.id}
           id={driver.id}
           employee={driver}
-        />
-      ))}
-      {admins && admins.map((admin) => (
-        <EmployeeCard
-          key={admin.id}
-          id={admin.id}
-          employee={admin}
         />
       ))}
     </div>

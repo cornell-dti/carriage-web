@@ -1,6 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import styles from './tablecomponents.module.css';
+import Tag from '../Tag/Tag';
 
 type CellProps = {
   data: React.ReactNode;
@@ -15,12 +16,9 @@ type CellProps = {
  */
 export const Cell = ({ data, tag, smallTag }: CellProps) => {
   if (tag) {
-    const tagText = `${tag.slice(0, 1).toUpperCase()}${tag.slice(1)}`;
     return (
       <div className={styles.cell}>
-        {smallTag && <span className={cn(styles[tag], styles.smallTag)} />}
-        <p>{data}</p>
-        {!smallTag && <span className={cn(styles[tag], styles.tag)}>{tagText}</span>}
+        <Tag location={data} tag={tag} reduced={smallTag} />
       </div>
     );
   }
@@ -102,6 +100,8 @@ export const Row = ({ data, colSizes, header, groupStart }: RowProps) => {
       className={cn({ [styles.row]: !header }, { [styles.header]: header })}
       style={{
         gridTemplateColumns: formatColSizes(colSizes),
+        cursor: onClick ? 'pointer' : undefined,
+        width: '100%'
       }}
     >
       {createCells(data)}

@@ -94,6 +94,10 @@
   border-radius: 50%;
 }
 
+.assignButton {
+  margin-left: 0.75rem;
+}
+
 .usage {
   display: flex;
   justify-content: center;
@@ -116,9 +120,9 @@
 }
 
 .ridesCount {
-  background-color: #C5E4FB;
+  background-color: #c5e4fb;
 }
 
 .noShow {
-  background-color: #FF8B9D;
+  background-color: #ff8b9d;
 }

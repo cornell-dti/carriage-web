@@ -32,8 +32,8 @@
 
 .modal {
   position: absolute;
-  margin-top: 1.25rem;
-  left: -1.25rem;
+  margin-top: -2rem;
+  right: 1.25rem;
   padding-bottom: 1.875rem;
   width: 15.875rem;
   background-color: white;
