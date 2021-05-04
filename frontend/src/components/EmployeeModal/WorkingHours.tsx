@@ -71,13 +71,13 @@ const AvailabilityInput = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    // Register day selector as custom form input. 
-    //Not putting error message here since there is no default behavior to override
-    register(`${instance}.days`, { 
-      required: true, 
-      validate: () => {return days.length > 0}});
-  }, [instance, register, days]);
+  // useEffect(() => {
+  //   // Register day selector as custom form input. 
+  //   //Not putting error message here since there is no default behavior to override
+  //   register(`${instance}.days`, { 
+  //     required: true, 
+  //     validate: () => {return days.length > 0}});
+  // }, [instance, register, days]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -132,6 +132,10 @@ const AvailabilityInput = ({
               name={`${instance}.days`}
               type="button"
               value={label}
+              ref={register({
+                required: true,
+                validate: () => {return days.length > 0;}
+              })}
               className={cn(
                 styles.day,
                 { [styles.daySelected]: isDaySelectedByInstance(day, index) },
