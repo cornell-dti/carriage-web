@@ -32,7 +32,6 @@ const AssignDriverModal = ({
   ride,
   allDrivers,
 }: AssignModalProps) => {
-  const [open, setIsOpen] = useState(isOpen);
   const { withDefaults } = useReq();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
   function useOutsideAlerter(ref: any) {
@@ -40,7 +39,6 @@ const AssignDriverModal = ({
       function handleClickOutside(event: any) {
         if (ref.current && !ref.current.contains(event.target)) {
           close();
-          setIsOpen(false);
         }
       }
 
@@ -63,13 +61,12 @@ const addDriver = (driver: Driver) => {
   );
   setDriver(driver.firstName); 
   close(); 
-  setIsOpen(false);
 }
   useOutsideAlerter(wrapperRef);
 
   return (
     <>
-      {isOpen && open && (
+      {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
           <h1 className={styles.titleText}>Available Drivers</h1>
           {allDrivers.map((driver, id) => (

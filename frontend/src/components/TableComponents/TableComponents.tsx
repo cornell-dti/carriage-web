@@ -102,6 +102,7 @@ export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) =
       style={{
         gridTemplateColumns: formatColSizes(colSizes),
         cursor: onClick ? 'pointer' : undefined,
+        width: '100%'
       }}
       onClick={onClick}
     >
