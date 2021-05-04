@@ -45,9 +45,8 @@ const StudentsTable = () => {
           accessibility: disability,
         };
         const location = {
-          pathname: '/riders/rider/' + r.id + '/',
-          state: riderData,
-          search: `?name=${`${firstName}_${lastName}`}`,
+          pathname: '/riders/rider/' + r.id,
+          state: riderData
         };
         const goToDetail = () => {
           history.push(location);
