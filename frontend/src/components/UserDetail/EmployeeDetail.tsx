@@ -41,7 +41,7 @@ const EmployeeDetail = () => {
       fetch(`/api/drivers/${employeeId}`, withDefaults())
         .then((res) => res.json())
         .then((driver) => {
-          if (!driver.hasOwnProperty('err')) {
+          if (!driver['err']) {
             setEmployee({...driver, availability: formatAvailability(driver.availability), 
                           phone: driver.phoneNumber})
           } else {
