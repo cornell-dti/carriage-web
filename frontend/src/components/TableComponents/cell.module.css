@@ -21,3 +21,14 @@
 Button {
   position: relative;
 }
+
+.driver {
+  background-color: #FFDEDE;
+  width: 2.25rem;
+  height: 2.25rem;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 50%;
+  padding: 0.35rem 0;
+  color: #BA3636;
+}

@@ -9,6 +9,7 @@ type TableCellProps = {
   index: number;
   first: boolean;
   last: boolean;
+  driver: boolean;
   tag?: string;
   reduced?: boolean;
   buttonHandler?: () => void;
@@ -16,7 +17,7 @@ type TableCellProps = {
 }
 
 const TableCell = (props: TableCellProps) => {
-  const { data, index, first, last, tag, reduced, buttonHandler, ButtonModal } = props;
+  const { data, index, first, last, tag, driver, reduced, buttonHandler, ButtonModal } = props;
   if (first) {
     return (<td
       key={index}
@@ -24,6 +25,10 @@ const TableCell = (props: TableCellProps) => {
       {data}
     </td>);
   } if (last) {
+    if (driver) {
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}><div className={styles.driver}>{data}</div></td>);
+    }
     if (buttonHandler && ButtonModal) {
       return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
+import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
@@ -13,6 +14,7 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
+import { Driver } from '../../types/index';
 
 const Home = () => {
   const { drivers } = useEmployees();
@@ -41,30 +43,44 @@ const Home = () => {
       .then(() => setToast(true));
   };
 
+  const renderScheduledRides = (): JSX.Element[] => {
+    return drivers.map((driver: Driver, index: number) => (
+      <ScheduledTable
+        key={index}
+        query='driver'
+        id={driver.id}
+        name={`${driver.firstName} ${driver.lastName}`}
+      />
+    ))
+  };
+
   return (
     <div>
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Homepage</h1>
-        <div className={styles.margin3}>
-          {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
-          <div className={styles.rightSection}>
-            <ExportButton onClick={downloadCSV} />
-            <CSVLink
-              data={downloadData}
-              filename={`scheduledRides_${today}.csv`}
-              className='hidden'
-              ref={csvLink}
-              target='_blank'
-            />
-            <RideModal />
-            <Notification />
-          </div>
+        <MiniCal />
+        {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
+        <div className={styles.rightSection}>
+          <ExportButton onClick={downloadCSV} />
+          <CSVLink
+            data={downloadData}
+            filename={`scheduledRides_${today}.csv`}
+            className="hidden"
+            ref={csvLink}
+            target="_blank"
+          />
+          <RideModal />
+          <Notification />
         </div>
       </div>
-      <MiniCal />
+
       <Schedule />
+
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
+      </Collapsible>
+
+      <Collapsible title={'Scheduled Rides'}>
+        {renderScheduledRides()}
       </Collapsible>
     </div >
   );

@@ -6,6 +6,7 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
+import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import Upload from './Upload';
@@ -61,7 +62,10 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     setToast(false);
   };
 
-  const closeModal = () => setIsOpen(false);
+  const closeModal = () => {
+    methods.clearErrors();
+    setIsOpen(false);
+  };
 
   const parseAvailability = (availability: ObjectType[]) => {
     const result: ObjectType = {};
@@ -74,12 +78,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const uploadPhotoForEmployee = async (
-    employeeId: string, 
+    employeeId: string,
     table: string,
     refresh: () => Promise<void>,
-    isCreate: boolean //show toast if new employee is created
-    ) => {
-
+    isCreate: boolean, // show toast if new employee is created
+  ) => {
     const photo = {
       id: employeeId,
       tableName: table,
@@ -96,11 +99,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const createNewEmployee = async (
-    employeeData: AdminData | DriverData, 
+    employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
     table: string,
-    ) => {
+  ) => {
     if (imageBase64 === '') {
       // If no image has been uploaded, create new employee
       fetch(endpoint, withDefaults({
@@ -121,11 +124,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const updateExistingEmployee = async (
-    employeeData: AdminData | DriverData, 
+    employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
     table: string,
-    ) => {
+  ) => {
     const updatedEmployee = await fetch(`${endpoint}/${existingEmployee!.id}`, withDefaults({
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -136,7 +139,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { name, email, phoneNumber, availability } = data;
+    const { name, email, phoneNumber, startDate, availability } = data;
     const [firstName, lastName] = name.split(' ');
 
     if (selectedRole === 'admin') {
@@ -157,6 +160,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         lastName,
         email,
         phoneNumber,
+        startDate,
         availability: parseAvailability(availability),
         admin: selectedRole === 'both',
       };
@@ -191,7 +195,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     } else {
       console.log('Undefined file upload');
     }
-  };
+  }
 
   return (
     <>
@@ -206,8 +210,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         isOpen={isOpen}
         onClose={closeModal}
       >
-        <Upload 
-          imageChange={updateBase64} 
+        <Upload
+          imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
         <FormProvider {...methods} >
@@ -218,6 +222,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
+            {selectedRole === 'admin' ? null : <StartDate />}
             {
               selectedRole === 'admin' ? null
                 : <WorkingHours

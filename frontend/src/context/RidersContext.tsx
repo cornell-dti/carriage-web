@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { NewRider } from '../types';
+import { Rider } from '../types';
 import { useReq } from './req';
 
-
 type ridersState = {
-  riders: Array<NewRider>,
+  riders: Array<Rider>,
   refreshRiders: () => Promise<void>
 };
 
@@ -17,15 +16,20 @@ export const useRiders = () => React.useContext(RidersContext);
 
 type RidersProviderProps = {
   children: React.ReactNode;
-}
+};
 
 export const RidersProvider = ({ children }: RidersProviderProps) => {
-  const [riders, setRiders] = useState<Array<NewRider>>([]);
+  const [riders, setRiders] = useState<Array<Rider>>([]);
   const { withDefaults } = useReq();
   const refreshRiders = async () => {
-    const ridersData: Array<NewRider> = await fetch('/api/riders', withDefaults())
+    const ridersData: Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
+    ridersData.sort((a: Rider, b: Rider) => {
+      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+      return aFull < bFull ? -1 : 1;
+    });
     setRiders([...ridersData]);
   };
   // Initialize the data
