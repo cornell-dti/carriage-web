@@ -5,6 +5,7 @@ import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
+import { formatAvailability } from '../../util/employee';
 
 type EmployeeDetailProps = {
   id: string;
@@ -19,25 +20,13 @@ type EmployeeDetailProps = {
 
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
-  const employee: EmployeeDetailProps = location.state;
-  const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
-  const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
-  const avail = parsedAvail.substring(0, parsedAvail.length - 2);
+  const [employee, setEmployee] = useState(location.state);
+
+  const employeeId = location.pathname.split('/')[3];
+
+
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
-
-  const isAdmin = !employee.availability;
-  const isBoth = !isAdmin && employee.admin; // admin and driver
-  const role = (): string => {
-    if (isBoth) return 'Admin • Driver';
-    if (isAdmin) return 'Admin';
-    return 'Driver';
-  };
-  const roleValue = (): string => {
-    if (isBoth) return 'both';
-    if (isAdmin) return 'admin';
-    return 'driver';
-  };
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -48,13 +37,46 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
-    fetch(`/api/rides?type=past&driver=${employee.id}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, employee.id]);
+    if (!employee && employeeId) {
+      fetch(`/api/drivers/${employeeId}`, withDefaults())
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.hasOwnProperty('err')) {
+            setEmployee({...data, availability: formatAvailability(data.availability), phone: data.phoneNumber})
+          } else {
+            fetch (`/api/admins/${employeeId}`, withDefaults())
+            .then((res) => res.json())
+            .then((data) => {
+              setEmployee({...data, availability: formatAvailability(data.availability), phone: data.phoneNumber})
+            })
+          }
+        });
+      fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
+        .then((res) => res.json())
+        .then(({ data }) => setRides(data.sort(compRides)));
+    }
+  }, [employeeId, employee, withDefaults]);
 
-  return (
-    <>
+  if (employee) {
+    console.log(employee.availability)
+    const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
+    const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
+    const avail = parsedAvail.substring(0, parsedAvail.length - 2);
+    const isAdmin = !employee.availability;
+    const isBoth = !isAdmin && employee.admin; // admin and driver
+    const role = (): string => {
+      if (isBoth) return 'Admin • Driver';
+      if (isAdmin) return 'Admin';
+      return 'Driver';
+    };
+    const roleValue = (): string => {
+      if (isBoth) return 'both';
+      if (isAdmin) return 'admin';
+      return 'driver';
+    };
+
+    return (
+      <>
       <UserDetail
         firstName={employee.firstName}
         lastName={employee.lastName}
@@ -75,8 +97,11 @@ const EmployeeDetail = () => {
         isStudent={false}
         rides={rides}
       />
-    </>
-  );
+      </>
+    );
+  } else {
+    return (<></>)
+  }
 };
 
 export default EmployeeDetail;

@@ -43,7 +43,7 @@ const RiderDetail = () => {
 
   return (
     <>
-      {rider !== undefined && <>
+      {rider && <>
         <UserDetail
           firstName={rider.firstName}
           lastName={rider.lastName}
