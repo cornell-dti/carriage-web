@@ -7,7 +7,7 @@ const formatTime = (time: string) => {
     return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
   };
   
-export const formatAvailability = (availability?: AvailabilityType) => {
+const formatAvailability = (availability?: AvailabilityType) => {
   if (!availability) return null;
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const availabilityList = days.reduce((acc, day) => {
@@ -22,3 +22,5 @@ export const formatAvailability = (availability?: AvailabilityType) => {
   }, [] as string[][]);
   return availabilityList;
 };
+
+export default formatAvailability;

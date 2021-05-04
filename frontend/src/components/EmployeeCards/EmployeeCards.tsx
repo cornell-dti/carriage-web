@@ -5,7 +5,7 @@ import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
 import { Employee, AvailabilityType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
-import { formatAvailability } from '../../util/employee';
+import formatAvailability from '../../util/employee';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);

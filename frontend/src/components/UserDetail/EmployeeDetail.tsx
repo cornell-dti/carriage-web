@@ -5,7 +5,7 @@ import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
-import { formatAvailability } from '../../util/employee';
+import formatAvailability from '../../util/employee';
 
 type EmployeeDetailProps = {
   id: string;
