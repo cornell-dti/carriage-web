@@ -1,0 +1,40 @@
+.reducedTag {
+  height: 11px;
+  width: 11px;
+  float: left;
+  border-radius: 50%;
+}
+
+.tag {
+  border-radius: 0.25rem;
+  padding: 0.25rem;
+  font-size: 14px;
+}
+
+.ctown {
+  background-color: #FFB26A;
+}
+
+.dtown {
+  background-color: #FF8B9D;
+}
+
+.north {
+  background-color: #66B5F8;
+}
+
+.west {
+  background-color: #FFE29D;
+}
+
+.central {
+  background-color: #7DDFC3;
+}
+
+.custom {
+  background-color: #F695FF;
+}
+
+.inactive {
+  background-color: #CAC9C9;
+}
