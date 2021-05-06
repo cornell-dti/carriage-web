@@ -2,10 +2,10 @@ import React, { useState, useRef } from "react";
 import { CSVLink } from "react-csv";
 import moment from "moment";
 import RideModal from "../../components/RideModal/RideModal";
+import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from "../../components/UserTables/UnscheduledTable";
 import Schedule from "../../components/Schedule/Schedule";
 import MiniCal from "../../components/MiniCal/MiniCal";
-import { Button } from "../../components/FormElements/FormElements";
 import Toast from "../../components/ConfirmationToast/ConfirmationToast";
 import Notification from "../../components/Notification/Notification";
 import styles from "./page.module.css";
@@ -14,14 +14,11 @@ import ExportButton from "../../components/ExportButton/ExportButton";
 import { useReq } from "../../context/req";
 import { useDate } from "../../context/date";
 import Collapsible from "../../components/Collapsible/Collapsible";
+import { Driver } from '../../types/index';
 
 const Home = () => {
   const { drivers } = useEmployees();
   const { withDefaults } = useReq();
-
-  // states for the rides model
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
 
   const [downloadData, setDownloadData] = useState<string>("");
   const [showingToast, setToast] = useState(false);
@@ -30,11 +27,6 @@ const Home = () => {
   >(null);
   const { curDate } = useDate();
   const today = moment(curDate).format("YYYY-MM-DD");
-
-  const openRidesModal = () => {
-    setCurrentPage(0);
-    setIsOpen(true);
-  };
 
   const downloadCSV = () => {
     setToast(false);
@@ -53,10 +45,22 @@ const Home = () => {
       .then(() => setToast(true));
   };
 
+  const renderScheduledRides = (): JSX.Element[] => {
+    return drivers.map((driver: Driver, index: number) => (
+      <ScheduledTable
+        key={index}
+        query='driver'
+        id={driver.id}
+        name={`${driver.firstName} ${driver.lastName}`}
+      />
+    ))
+  };
+
   return (
     <div>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Homepage</h1>
+        <MiniCal />
         <div className={styles.margin3}>
           {showingToast ? (
             <Toast message={`${today} data has been downloaded.`} />
@@ -70,23 +74,22 @@ const Home = () => {
               ref={csvLink}
               target="_blank"
             />
-            <Button onClick={openRidesModal}>+ Add ride</Button>
-            <RideModal
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-            />
+            <RideModal />
             <Notification />
           </div>
         </div>
       </div>
-      <MiniCal />
+
       <Schedule />
-      <Collapsible title={"Unscheduled Rides"}>
+
+      <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable drivers={drivers} />
       </Collapsible>
-    </div>
+
+      <Collapsible title={'Scheduled Rides'}>
+        {renderScheduledRides()}
+      </Collapsible>
+    </div >
   );
 };
 

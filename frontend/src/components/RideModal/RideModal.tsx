@@ -1,44 +1,38 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Modal from "../Modal/Modal";
+import { Button } from "../FormElements/FormElements";
 import Toast from "../ConfirmationToast/ConfirmationToast";
 import { DriverPage, RiderInfoPage, RideTimesPage } from "./Pages";
 import { ObjectType, Ride } from "../../types/index";
 import { useReq } from "../../context/req";
 
 type RideModalProps = {
-  currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenRideModal?: React.Dispatch<React.SetStateAction<number>>;
+  open?: boolean;
+  close?: () => void;
   ride?: Ride;
 };
 
 const RideModal = ({
-  currentPage,
-  setCurrentPage,
-  isOpen,
-  setIsOpen,
-  setOpenRideModal,
+  open,
+  close,
   ride,
 }: RideModalProps) => {
-  const [formData, setFormData] = useState<ObjectType>(
-    ride
-      ? {
-          date: moment(ride.startTime).format("YYYY-MM-DD"),
-          pickupTime: moment(ride.startTime).format("kk:mm"),
-          dropoffTime: moment(ride.endTime).format("kk:mm"),
-          rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
-          pickupLoc: ride.startLocation.id
-            ? ride.startLocation.name
-            : ride.startLocation.address,
-          dropoffLoc: ride.endLocation.id
-            ? ride.endLocation.name
-            : ride.endLocation.address,
-        }
-      : {}
-  );
+  const originalRideData = ride ? {
+    date: moment(ride.startTime).format("YYYY-MM-DD"),
+    pickupTime: moment(ride.startTime).format("kk:mm"),
+    dropoffTime: moment(ride.endTime).format("kk:mm"),
+    rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+    pickupLoc: ride.startLocation.id
+      ? ride.startLocation.name
+      : ride.startLocation.address,
+    dropoffLoc: ride.endLocation.id
+      ? ride.endLocation.name
+      : ride.endLocation.address,
+  } : {}
+  const [formData, setFormData] = useState<ObjectType>(originalRideData);
+  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
@@ -47,9 +41,20 @@ const RideModal = ({
 
   const goPrevPage = () => setCurrentPage((p) => p - 1);
 
+  const openModal = () => {
+    setCurrentPage(0);
+    setIsOpen(true);
+    setToast(false);
+  };
+
   const closeModal = () => {
-    setFormData({});
-    if (setOpenRideModal) setOpenRideModal(-1);
+    if (close) {
+      setFormData(originalRideData);
+      close()
+    } else {
+      setFormData({});
+    }
+    setCurrentPage(0)
     setIsOpen(false);
   };
 
@@ -97,7 +102,7 @@ const RideModal = ({
           "/api/rides",
           withDefaults({
             method: "POST",
-            body: JSON.stringify(rideData),
+            body: JSON.stringify(formData),
           })
         );
       }
@@ -116,7 +121,7 @@ const RideModal = ({
       <Modal
         paginate
         title={["Edit a Ride", "Edit a Ride"]}
-        isOpen={isOpen}
+        isOpen={open || isOpen}
         currentPage={currentPage}
         onClose={closeModal}
       >
@@ -134,6 +139,8 @@ const RideModal = ({
   ) : (
     <>
       {showingToast ? <Toast message="Ride added." /> : null}
+      {/* only have a button if this modal is not controlled by a table */}
+      {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal
         paginate
         title={["Add a Ride", "Available Drivers", "Add a Ride"]}

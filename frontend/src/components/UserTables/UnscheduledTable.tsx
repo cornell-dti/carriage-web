@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
-import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
+import styles from './table.module.css';
 
 type TableProps = {
   drivers: Driver[];

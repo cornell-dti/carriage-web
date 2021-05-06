@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import cn from 'classnames';
 import styles from './cell.module.css';
+import Tag from '../Tag/Tag';
 import { Button } from '../FormElements/FormElements';
 
 type TableCellProps = {
@@ -8,7 +9,9 @@ type TableCellProps = {
   index: number;
   first: boolean;
   last: boolean;
+  driver: boolean;
   tag?: string;
+  reduced?: boolean;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
   outline?: boolean;
@@ -16,51 +19,34 @@ type TableCellProps = {
 }
 
 const TableCell = (props: TableCellProps) => {
-  const { 
-    data, index, first, last, tag, buttonHandler, ButtonModal, outline, insideButton 
-  } = props;
+  const { data, index, first, last, tag, driver, reduced, buttonHandler, ButtonModal } = props;
   if (first) {
     return (<td
       key={index}
       className={cn(styles.passInfo, styles.cell, styles.firstCell)}>
-        {data}
+      {data}
     </td>);
   } if (last) {
-      if (buttonHandler && ButtonModal) {
-        return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+    if (driver) {
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
+      ${styles.lastCell}`}><div className={styles.driver}>{data}</div></td>);
+    }
+    if (buttonHandler && ButtonModal) {
+      return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
-          {insideButton ?
-          (<>
-            <Button onClick={buttonHandler} outline={outline === undefined ? false : outline}>
-              {data} 
-              <ButtonModal />
-            </Button>
-            </>
-          )
-          :
-          (<>
-            <Button onClick={buttonHandler} outline={outline === undefined ? false : outline}>
-            {data} 
-            </Button>
-            <ButtonModal />
-            </>
-          )}
-        </td>);
+        <Button onClick={buttonHandler}>{data} {<ButtonModal />}</Button></td>);
     }
     if (buttonHandler) {
       return (<><td key={index} className={`${styles.passInfo} ${styles.cell} 
         ${styles.lastCell}`}>
-          <Button onClick={buttonHandler}>{data}</Button></td></>);
+        <Button onClick={buttonHandler}>{data}</Button></td></>);
     }
     return (<td key={index} className={`${styles.passInfo} ${styles.cell} 
       ${styles.lastCell}`}>{data}</td>);
   } if (tag) {
-    const tagStyle = tag.toLowerCase();
     return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
-      {data}{' '}
-      <span className={`${styles.tag} 
-        ${tagStyle === 'ctown' ? styles.ctown : styles.west}`}>
-        {tag}</span></td>);
+      <Tag reduced={reduced} location={data} tag={tag} />
+    </td>);
   }
   return (<td key={index} className={`${styles.passInfo} ${styles.cell}`}>
     {data}</td>);

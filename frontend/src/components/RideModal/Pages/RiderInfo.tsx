@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { ObjectType, Location, NewRider } from '../../../types';
+import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
@@ -30,7 +30,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    const nameToIdObj = riders.reduce((acc: ObjectType, r: NewRider) => {
+    const nameToIdObj = riders.reduce((acc: ObjectType, r: Rider) => {
       const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
       acc[fullName] = r.id;
       return acc;
@@ -59,9 +59,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             className={styles.nameInput}
             ref={register({
               required: true,
-              validate: (name: string) => (
-                nameToId[name.toLowerCase()] !== undefined
-              ),
+              validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
             })}
           />
         </div>
@@ -74,9 +72,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -88,9 +84,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
       </div>

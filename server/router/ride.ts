@@ -24,27 +24,29 @@ router.get('/download', (req, res) => {
   const condition = new Condition()
     .where('startTime')
     .between(dateStart, dateEnd)
-    .where('type')
-    .not()
-    .eq('unscheduled');
 
   const callback = (value: any) => {
-    const dataToExport = value.map((doc: any) => {
-      const start = moment.tz(doc.startTime, 'America/New_York');
-      const end = moment.tz(doc.endTime, 'America/New_York');
-      const fullName = (user: RiderType | DriverType) => (
-        `${user.firstName} ${user.lastName.substring(0, 1)}.`
-      );
-      return {
-        Name: fullName(doc.rider),
-        'Pick Up': start.format('h:mm A'),
-        From: doc.startLocation.name,
-        To: doc.endLocation.name,
-        'Drop Off': end.format('h:mm A'),
-        Needs: doc.rider.accessibility,
-        Driver: fullName(doc.driver),
-      };
-    });
+    const dataToExport = 
+    value
+      .sort((a: any, b: any) => {
+        return moment(a.startTime).diff(moment(b.startTime));
+      })
+      .map((doc: any) => {
+        const start = moment.tz(doc.startTime, 'America/New_York');
+        const end = moment.tz(doc.endTime, 'America/New_York');
+        const fullName = (user: RiderType | DriverType) => (
+          `${user.firstName} ${user.lastName.substring(0, 1)}.`
+        );
+        return {
+          Name: fullName(doc.rider),
+          'Pick Up': start.format('h:mm A'),
+          From: doc.startLocation.name,
+          To: doc.endLocation.name,
+          'Drop Off': end.format('h:mm A'),
+          Needs: doc.rider.accessibility,
+          Driver: doc.driver ? fullName(doc.driver) : '',
+        };
+      });
     csv
       .writeToBuffer(dataToExport, { headers: true })
       .then((data) => res.send(data))
@@ -170,6 +172,63 @@ router.put('/:id', validateUser('User'), (req, res) => {
   db.update(res, Ride, { id }, body, tableName);
 });
 
+// Create edit instances and update a repeating ride's edits field
+router.put('/:id/edits', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+    body: { deleteOnly, origDate, startTime, endTime, startLocation, endLocation },
+  } = req;
+
+  db.getById(res, Ride, id, tableName, (masterRide) => {
+    const masterStartDate = moment
+      .tz(masterRide.startTime, 'America/New_York')
+      .format('YYYY-MM-DD');
+    if (origDate >= masterStartDate) {
+      const origStartTimeOnly = moment
+        .tz(masterRide.startTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origStartTime = moment
+        .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
+        .toISOString();
+
+      const origEndTimeOnly = moment
+        .tz(masterRide.endTime, 'America/New_York')
+        .format('HH:mm:ss');
+      const origEndTime = moment
+        .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
+        .toISOString();
+
+      // add origDate to masterRide.deleted
+      const addDeleteOperation = { $ADD: { deleted: [origDate] } };
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, (ride) => {
+        // if deleteOnly = false, create a replace edit with the new fields
+        if (!deleteOnly) {
+          const replaceId = uuid();
+          const replaceRide = new Ride({
+            id: replaceId,
+            rider: masterRide.rider,
+            startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
+            endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
+            startTime: startTime || origStartTime,
+            endTime: endTime || origEndTime,
+          });
+          const addEditOperation = { $ADD: { edits: [replaceId] } };
+          // create replace edit and add replaceId to edits field
+          db.create(res, replaceRide, (editRide) => {
+            db.update(res, Ride, { id }, addEditOperation, tableName, () => {
+              res.send(editRide);
+            });
+          });
+        } else {
+          res.send(ride);
+        }
+      });
+    } else {
+      res.status(400).send({ err: 'Invalid date' });
+    }
+  });
+});
+
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
@@ -180,7 +239,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         .then(() => res.send({ id }))
         .catch((err) => res.status(500).send({ err: err.message }));
     };
-    if (recurring) {
+    if (recurring && edits.length) {
       const ids = createKeys('id', edits);
       Ride.batchDelete(ids)
         .then(deleteRide)

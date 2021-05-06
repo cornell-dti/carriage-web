@@ -7,11 +7,12 @@ import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
 type ScheduledTableProp = {
-  driverId: string;
-  driverName: string;
+  query: string; // either 'rider' or 'driver'
+  id: string;
+  name: string;
 };
 
-const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
+const ScheduledTable = ({ query, id, name }: ScheduledTableProp) => {
   const { curDate } = useDate();
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
@@ -26,17 +27,20 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
+    fetch(`/api/rides?${query}=${id}&date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         setRides(data.sort(compRides));
       });
-  }, [withDefaults, curDate, driverId]);
+  }, [withDefaults, curDate, id]);
 
   return (
     <>
-      <h1 className={styles.formHeader}>{driverName}</h1>
-      <RidesTable rides={rides} drivers={[]} hasButtons={false} />
+      {rides.length > 0 && 
+      <>
+        <h1 className={styles.formHeader}>{name}</h1>
+        <RidesTable rides={rides} drivers={[]} hasButtons={false} />
+      </>}
     </>
   );
 };
