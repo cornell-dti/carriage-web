@@ -79,12 +79,12 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
           <span className={styles.underline} />
         </div>
         <div className={styles.rightSection}>
-          {/* TODO: implement the backend and change the endpoint */}
+          {/* TODO: need to merge with the date selector PR */}
           <ExportButton 
             toastMsg={`${today} data has been downloaded.`}
-            endpoint={`/api/rides/download?date=${today}`} 
+            endpoint={`/api/stats/download?from=${today}&to=${today}`} 
             csvCols={generateCols()}
-            filename={`${currentTab} ${today}.csv`} 
+            filename={`${today}_analytics.csv`} 
           />
           <Notification />
         </div>
