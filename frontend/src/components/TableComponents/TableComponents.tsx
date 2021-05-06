@@ -40,6 +40,7 @@ type RowProps = {
   colSizes: number[];
   header?: boolean;
   groupStart?: number;
+  onClick?: () => void;
 }
 
 /**
@@ -49,7 +50,7 @@ type RowProps = {
  * begin (see rides table for example). [onClick] is a callback that is called
  * when the row is clicked.
  */
-export const Row = ({ data, colSizes, header, groupStart }: RowProps) => {
+export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) => {
   const formatColSizes = (sizes: number[]) => (
     sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
   );
