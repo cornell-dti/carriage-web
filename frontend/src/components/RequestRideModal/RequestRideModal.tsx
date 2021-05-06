@@ -24,6 +24,7 @@ const RequestRideModal = () => {
 
       return(
           <>
+            <Button onClick={openModal}>+ Request a ride</Button>
             {showingToast ? <Toast message='The employee has been added.' /> : null}
             <Modal
                 title={"Request a Ride"}
