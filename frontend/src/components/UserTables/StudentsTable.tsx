@@ -1,13 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
+import cn from 'classnames';
+import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
+import styles from './table.module.css';
+
+
+type UsageData = {
+  noShows: number,
+  totalRides: number
+}
+type UsageType = {
+  [id: string]: UsageData
+}
 
 const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
+  const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
-  const headers = ['Name / NetId', 'Number', 'Address', 'Duration', 'Disability'];
+  const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
+  const [usage, setUsage] = useState<UsageType>({});
+
+  useEffect(() => {
+    fetch('/api/riders/usage', withDefaults())
+      .then((res) => res.json())
+      .then((data) => setUsage(data));
+  }, [withDefaults]);
+
+  const getUsageData = (id: string) => ({
+    data:
+      <div className={styles.usage}>
+        <span className={styles.usageContainer}>
+          <span className={cn(styles.ridesCount, styles.usageTag)}></span>
+          {usage[id]?.totalRides ?? 0} Rides
+          </span>
+        <span className={styles.usageContainer}>
+          <span className={cn(styles.noShow, styles.usageTag)}></span>
+          {usage[id]?.noShows ?? 0} No Shows
+          </span>
+      </div>,
+  });
+
   const fmtPhone = (number: string) => {
     const areaCode = number.slice(0, 3);
     const firstPart = number.slice(3, 6);
@@ -22,7 +57,7 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { firstName, lastName, email, address, phoneNumber, joinDate, accessibility } = r;
+        const { id, firstName, lastName, email, address, phoneNumber, accessibility } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
@@ -36,6 +71,7 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
+        const usageData = getUsageData(id);
         const riderData = {
           firstName,
           lastName,
@@ -51,7 +87,7 @@ const StudentsTable = () => {
         const goToDetail = () => {
           history.push(location);
         };
-        const data = [nameNetId, phone, shortAddress, joinDate, disability];
+        const data = [nameNetId, phone, shortAddress, usageData, disability];
         return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
       })}
     </Table>
