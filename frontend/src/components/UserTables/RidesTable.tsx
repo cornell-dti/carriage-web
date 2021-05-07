@@ -13,7 +13,7 @@ type RidesTableProps = {
 
 const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
   const [openModal, setOpenModal] = useState(-1);
-  const [driverSet, setDriverSet] = useState([""]);
+  const [driverSet, setDriverSet] = useState(['']);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = ['', 'Time', 'Passenger', 'Pickup Location', 'Dropoff Location', 'Needs', ''];
@@ -52,8 +52,8 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
           });
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-          const hasDriver = (driverSet[index] !== undefined && 
-            driverSet[index].length > 0);
+          const hasDriver = (driverSet[index] !== undefined
+            && driverSet[index].length > 0);
 
           const startEndTime = {
             data:
@@ -121,8 +121,10 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
               <AssignDriverModal
                 isOpen={(openModal === index) && !hasDriver}
                 close={() => setOpenModal(-1)}
-                setDriver={(driverName: string) => {driverSet[index] = driverName; 
-                  setDriverSet([...driverSet])}}
+                setDriver={(driverName: string) => {
+                  driverSet[index] = driverName;
+                  setDriverSet([...driverSet])
+                }}
                 ride={rides[index]}
                 allDrivers={drivers}
               />
