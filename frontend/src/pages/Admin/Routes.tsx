@@ -25,44 +25,45 @@ const Routes = () => {
   return (
     <DateContext.Provider value={defaultVal}>
       <EmployeesProvider>
-        <RidersProvider><Router basename="/admin">
-          <Sidebar type="admin">
-            <Switch>
-              <Route
-                path="/home"
-                render={({ match: { url } }) => (
-                  <>
-                    <Route path={`${url}/`} component={Home} exact />
-                    <Route path={`${url}/export`} component={ExportPreview} />
-                  </>
-                )}
-              />
-              <Route
-                path="/employees"
-                render={({ match: { url } }) => (
-                  <>
-                    <Route path={`${url}/`} component={Employees} exact />
-                    <Route path={`${url}/employee`} component={EmployeeDetail} />
-                  </>
-                )}
-              />
-              <Route
-                path="/riders"
-                render={({ match: { url } }) => (
-                  <>
-                    <Route path={`${url}/`} component={Students} exact />
-                    <Route path={`${url}/rider`} component={RiderDetail} />
-                  </>
-                )}
-              />
-              <Route path="/locations" component={Locations} />
-              <Route path="/analytics" component={Analytics} />
-              <Route path="*">
-                <Redirect to="/home" />
-              </Route>
-            </Switch>
-          </Sidebar>
-        </Router>
+        <RidersProvider>
+          <Router basename="/admin">
+            <Sidebar type="admin">
+              <Switch>
+                <Route
+                  path="/home"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Home} exact />
+                      <Route path={`${url}/export`} component={ExportPreview} />
+                    </>
+                  )}
+                />
+                <Route
+                  path="/employees"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Employees} exact />
+                      <Route path={`${url}/employee`} component={EmployeeDetail} />
+                    </>
+                  )}
+                />
+                <Route
+                  path="/riders"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Students} exact />
+                      <Route path={`${url}/rider`} component={RiderDetail} />
+                    </>
+                  )}
+                />
+                <Route path="/locations" component={Locations} />
+                <Route path="/analytics" component={Analytics} />
+                <Route path="*">
+                  <Redirect to="/home" />
+                </Route>
+              </Switch>
+            </Sidebar>
+          </Router>
         </RidersProvider>
       </EmployeesProvider>
     </DateContext.Provider >

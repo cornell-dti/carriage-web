@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
-
 import { logo } from '../../icons/other';
+
 type LandingPropType = {
   students: ReactElement,
   admins: ReactElement
@@ -18,7 +18,6 @@ const Landing = ({ students, admins }: LandingPropType) => (
             alt="Carriage logo"
           />
           <div className={styles.title}>Carriage</div>
-
         </div>
         <div className={styles.right}>
           <h1 className={styles.heading}>Login</h1>
