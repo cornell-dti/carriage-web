@@ -8,7 +8,7 @@ type LandingPropType = {
 }
 
 const Landing = ({ students, admins }: LandingPropType) => (
-  <>
+  <main id="main">
     <div className={styles.home}>
       <div className={styles.main}>
         <div className={styles.left}>
@@ -28,7 +28,7 @@ const Landing = ({ students, admins }: LandingPropType) => (
         </div>
       </div>
     </div>
-  </>
+  </main>
 );
 
 export default Landing;
