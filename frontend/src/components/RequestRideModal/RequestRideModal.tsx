@@ -6,6 +6,7 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import styles from './requestridemodal.module.css';
+import RequestRideInfo from './RequestRideInfo';
 
 const RequestRideModal = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,12 @@ const RequestRideModal = () => {
         setIsOpen(false);
       };
 
+      const onSubmit = async (data: ObjectType) => {
+        const { startLocation, endLocation, startTime, endTime, recurringDays, startDate, endDate } = data;
+        closeModal();
+      };
+    
+
       return(
           <>
             <Button onClick={openModal}>+ Request a ride</Button>
@@ -31,6 +38,14 @@ const RequestRideModal = () => {
                 isOpen={isOpen}
                 onClose={closeModal}
             >
+               <FormProvider {...methods} >
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <RequestRideInfo/>
+            <Button className={styles.submit} type='submit'>
+              Request a Ride
+            </Button>
+          </form>
+        </FormProvider>
             </Modal>
           </>
       );
