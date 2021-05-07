@@ -58,17 +58,18 @@ const Schedule = () => {
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        setEvents(
-          data.filter((ride: Ride) => ride.driver).map((ride: Ride) => ({
-            id: ride.id,
-            title: `${ride.startLocation.name} to ${ride.endLocation.name}
+        data
+          && setEvents(
+            data.filter((ride: Ride) => ride.driver).map((ride: Ride) => ({
+              id: ride.id,
+              title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-            start: new Date(ride.startTime.toString()),
-            end: new Date(ride.endTime.toString()),
-            resourceId: ride.driver!.id,
-            ride,
-          })),
-        );
+              start: new Date(ride.startTime.toString()),
+              end: new Date(ride.endTime.toString()),
+              resourceId: ride.driver!.id,
+              ride,
+            })),
+          );
       });
   }, [scheduleDay, withDefaults]);
 
