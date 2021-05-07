@@ -6,7 +6,6 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom';
-import Schedule from './Schedule';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from './Schedule';
 import DateContext from '../../context/date';
