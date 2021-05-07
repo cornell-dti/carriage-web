@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
 body {
   margin: 0;
-  font-family: 'Roboto', Arial, sans-serif;
+  font-family: 'Inter', Arial, sans-serif;
   color: black;
   line-height: 1.6;
   overflow-x: hidden;
@@ -14,7 +12,7 @@ p {
 
 input,
 button {
-  font-family: 'Roboto', Arial, sans-serif;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 * {
