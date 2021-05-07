@@ -1,18 +1,18 @@
-import React, { useState, FunctionComponent } from "react";
-import { GoogleLogin } from "react-google-login";
-import { useHistory, useLocation } from "react-router-dom";
-import jwtDecode from "jwt-decode";
-import ReqContext from "../../context/req";
-import useClientId from "../../hooks/useClientId";
-import AuthContext from "../../context/auth";
-import LandingPage from "../../pages/Landing/Landing";
-import styles from "./authmanager.module.css";
+import React, { useState, FunctionComponent } from 'react';
+import { GoogleLogin } from 'react-google-login';
+import { useHistory, useLocation } from 'react-router-dom';
+import jwtDecode from 'jwt-decode';
+import ReqContext from '../../context/req';
+import useClientId from '../../hooks/useClientId';
+import AuthContext from '../../context/auth';
+import LandingPage from '../../pages/Landing/Landing';
+import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
-  const [jwt, setJWT] = useState("");
-  const [id, setId] = useState("");
+  const [jwt, setJWT] = useState('');
+  const [id, setId] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -20,11 +20,11 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   function logout() {
     localStorage.clear();
     if (jwt) {
-      setJWT("");
+      setJWT('');
     }
     setSignedIn(false);
-    if (pathname !== "/") {
-      history.push("/");
+    if (pathname !== '/') {
+      history.push('/');
     }
   }
 
@@ -33,38 +33,40 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       ...options,
       headers: {
         authorization: `Bearer ${jwt}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     } as RequestInit;
   }
 
-  async function onSignIn(googleUser: any) {
-    const { id_token: token } = googleUser.getAuthResponse();
-    const serverJWT = await fetch(
-      "/api/auth",
-      withDefaults({
-        method: "POST",
-        body: JSON.stringify({
-          token,
-          table: "Admins",
-          clientId,
+  function generateOnSignIn(isAdmin: boolean) {
+    return async function onSignIn(googleUser: any) {
+      const { id_token: token } = googleUser.getAuthResponse();
+      const serverJWT = await fetch(
+        '/api/auth',
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify({
+            token,
+            table: isAdmin ? 'Admins' : 'Riders',
+            clientId,
+          }),
         }),
-      })
-    )
-      .then((res) => res.json())
-      .then((json) => json.jwt);
+      )
+        .then((res) => res.json())
+        .then((json) => json.jwt);
 
-    if (serverJWT) {
-      const decoded: any = jwtDecode(serverJWT);
-      setId(decoded.id);
-      setJWT(serverJWT);
-      setSignedIn(true);
-      if (pathname === "/") {
-        history.push("/admin/home");
+      if (serverJWT) {
+        const decoded: any = jwtDecode(serverJWT);
+        setId(decoded.id);
+        setJWT(serverJWT);
+        setSignedIn(true);
+        if (pathname === '/') {
+          history.push(isAdmin ? '/admin/home' : '/rider/home');
+        }
+      } else {
+        logout();
       }
-    } else {
-      logout();
-    }
+    };
   }
 
   const SiteContent = () => (
@@ -94,7 +96,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
               Sign in with Google
             </button>
           )}
-          onSuccess={onSignIn}
+          onSuccess={generateOnSignIn(false)}
           onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"
@@ -118,7 +120,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
               Sign in with Google
             </button>
           )}
-          onSuccess={onSignIn}
+          onSuccess={generateOnSignIn(true)}
           onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"

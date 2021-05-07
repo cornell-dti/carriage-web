@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -5,6 +6,7 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom';
+import Schedule from './Schedule';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DateContext from '../../context/date';
 
@@ -19,7 +21,7 @@ const Dashboard = () => {
           <Switch>
             <Route
               path="/schedule"
-              component={() => null}
+              component={Schedule}
             />
             <Route
               path="/settings"
