@@ -1,0 +1,10 @@
+.react-date-picker__wrapper {
+    border-radius: 0.5rem !important;
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 0;
+    border: thin solid gray;
+    padding: 0.275rem 1.125rem;
+    font-family: Arial;
+    font-size: 1.063rem;
+}

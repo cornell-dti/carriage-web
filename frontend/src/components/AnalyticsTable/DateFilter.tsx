@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import DatePicker from 'react-date-picker';
 import cn from 'classnames';
+import { YearPicker, MonthPicker} from 'react-dropdown-date';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './datefilter.module.css';
-import { YearPicker, MonthPicker} from 'react-dropdown-date';
+import './datefilter_override.css';
 
 const DateFilter = () => {
     const currDate = new Date(); 
@@ -48,14 +49,14 @@ const DateFilter = () => {
             <label className = {styles.datePickerLabel}>Date Range</label>
             <div className={styles.dateRangeContainer}>
               <DatePicker
-                className={cn(styles.dropdown, styles.datePicker1)}
+                className={styles.datePicker1}
                 calendarClassName={styles.dateCalendar}
                 onChange={setStartDate}
                 value={startDate}
               />
               <span>-</span>
               <DatePicker
-                className={styles.dropdown}
+                className={styles.datePicker2}
                 calendarClassName={styles.dateCalendar}
                 onChange={setEndDate}
                 value={endDate}

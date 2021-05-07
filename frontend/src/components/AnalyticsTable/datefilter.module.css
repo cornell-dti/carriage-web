@@ -18,7 +18,7 @@
 .dropdown{
     border-radius: 0.5em; 
     min-width: 7.5 rem; 
-    padding: 0.625rem 1.125rem;
+    padding: 0.425rem 1.125rem;
     text-align: center;
     font-size: 1.063rem;
 }
@@ -44,7 +44,10 @@
     align-items: center;
 }
 .datePicker1 {
-    padding: 0.625rem 1.125rem 0.625rem 0 !important;
+    padding: 0 1.125rem 0 0;
+}
+.datePicker2 {
+    padding: 0 1.125rem 0 1.125rem;
 }
 
 .dateCalendar {
