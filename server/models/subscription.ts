@@ -32,7 +32,7 @@ export type SubscriptionType = {
     driver?: DriverType;
     rider?: RiderType;
   };
-  preferences?: string[];
+  preferences: string[];
 };
 
 const schema = new dynamoose.Schema({
@@ -78,6 +78,7 @@ const schema = new dynamoose.Schema({
   preferences: {
     type: Array,
     schema: [String],
+    default: [],
   },
 });
 

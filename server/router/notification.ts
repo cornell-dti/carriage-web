@@ -96,6 +96,7 @@ const subscribe = (req: SubscriptionRequest) => new Promise((resolve, reject) =>
       userType,
       platform,
       timeAdded,
+      preferences: [],
       keys: req.webSub!.keys, // TODO user id to user
     };
     addSub(subscription).then(() => resolve('success')).catch(reject);
@@ -114,6 +115,7 @@ const subscribe = (req: SubscriptionRequest) => new Promise((resolve, reject) =>
           userType,
           platform,
           timeAdded,
+          preferences: [],
         };
         addSub(subscription).then(() => resolve('success')).catch(reject);
       }
