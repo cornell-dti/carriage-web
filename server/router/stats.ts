@@ -101,7 +101,7 @@ function computeStats(
         let dayNoShowStat = 0;
         let nightCountStat = 0;
         let nightNoShowStat = 0;
-        const driversStat: {[name: string]: number } = {};
+        const driversStat: { [name: string]: number } = {};
 
         dataDay.forEach((rideData: RideType) => {
           const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
