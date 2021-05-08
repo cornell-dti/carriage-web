@@ -64,6 +64,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
 
 type TableProps = {
   type: 'ride' | 'driver';
+  data: TableData[];
 };
 
 const Table = ({ type }: TableProps) => {
@@ -192,6 +193,7 @@ const Table = ({ type }: TableProps) => {
   };
 
   const handleSubmit = () => {
+    // fetch put
     setEditData({ dates: {} });
     setIsEditing(false);
   };
@@ -200,6 +202,7 @@ const Table = ({ type }: TableProps) => {
 
   useEffect(() => {
     if (type === 'ride') {
+      // edit to passed in data
       initRideData(table.data);
     } else {
       initDriverData(table.data);
