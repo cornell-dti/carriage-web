@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Ride, RideLocation, Type } from '../models/ride';
+import { Ride, Status, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
@@ -26,7 +26,7 @@ router.get('/download', (req, res) => {
     .between(dateStart, dateEnd)
 
   const callback = (value: any) => {
-    const dataToExport = 
+    const dataToExport =
     value
       .sort((a: any, b: any) => {
         return moment(a.startTime).diff(moment(b.startTime));
@@ -214,19 +214,24 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
-    const { recurring, edits } = ride;
-    const deleteRide = () => {
-      Ride.delete(id)
-        .then(() => res.send({ id }))
-        .catch((err) => res.status(500).send({ err: err.message }));
-    };
-    if (recurring && edits.length) {
-      const ids = createKeys('id', edits);
-      Ride.batchDelete(ids)
-        .then(deleteRide)
-        .catch((err) => res.status(500).send({ err: err.message }));
+    const { recurring, edits, status } = ride;
+    if (status === Type.ACTIVE) {
+      const operation = { $SET: { status: Status.CANCELLED } };
+      db.update(res, Ride, { id }, operation, tableName);
     } else {
-      deleteRide();
+      const deleteRide = () => {
+        Ride.delete(id)
+          .then(() => res.send({ id }))
+          .catch((err) => res.status(500).send({ err: err.message }));
+      };
+      if (recurring && edits.length) {
+        const ids = createKeys('id', edits);
+        Ride.batchDelete(ids)
+          .then(deleteRide)
+          .catch((err) => res.status(500).send({ err: err.message }));
+      } else {
+        deleteRide();
+      }
     }
   });
 });
