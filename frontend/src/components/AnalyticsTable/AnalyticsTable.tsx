@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
+import { useReq } from '../../context/req';
 import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import editIcon from './edit.svg';
@@ -78,13 +79,15 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
 type TableProps = {
   type: 'ride' | 'driver';
   data: TableData[];
+  fetchURL: string;
 };
 
-const Table = ({ type, data }: TableProps) => {
+const Table = ({ type, data, fetchURL }: TableProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
+  const { withDefaults } = useReq();
   const { drivers } = useEmployees();
 
   const sharedCols = ['Date', 'Daily Total'];
@@ -100,6 +103,7 @@ const Table = ({ type, data }: TableProps) => {
 
   const driverNames: string[] = [];
   const driverShortNames: string[] = [];
+
 
   drivers
     .sort((a, b) => (
@@ -123,7 +127,7 @@ const Table = ({ type, data }: TableProps) => {
   ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
 
-  const initRideData = (initdata: TableData[]) => {
+  const convertToRideData = (initdata: TableData[]) => {
     const rideData: Cell[][] = [];
     initdata
       .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
@@ -144,10 +148,10 @@ const Table = ({ type, data }: TableProps) => {
         ];
         rideData.push(rideRow);
       });
-    setRideTableData(rideData);
+    return rideData;
   };
 
-  const initDriverData = (initdata: TableData[]) => {
+  const convertToDriverData = (initdata: TableData[]) => {
     const driverData: Cell[][] = [];
     initdata
       .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
@@ -162,7 +166,7 @@ const Table = ({ type, data }: TableProps) => {
         });
         driverData.push(driverRow);
       });
-    setDriverTableData(driverData);
+    return driverData;
   };
 
   const handleEdit = (
@@ -205,8 +209,19 @@ const Table = ({ type, data }: TableProps) => {
     });
   };
 
+  const updateTable = (tdata: TableData[]) => {
+    setRideTableData(convertToRideData(tdata));
+    setDriverTableData(convertToDriverData(tdata));
+  };
+
   const handleSubmit = () => {
-    // fetch put
+    fetch('/api/stats/', withDefaults({
+      method: 'PUT',
+      body: JSON.stringify(editData),
+    }))
+      .then(() => fetch(fetchURL, withDefaults())
+        .then((res) => res.json())
+        .then((tdata) => updateTable(tdata)));
     setEditData({ dates: {} });
     setIsEditing(false);
   };
@@ -215,13 +230,12 @@ const Table = ({ type, data }: TableProps) => {
 
   useEffect(() => {
     if (type === 'ride') {
-      // edit to passed in data
-      initRideData(data);
+      setRideTableData(convertToRideData(data));
     } else {
-      initDriverData(data);
+      setDriverTableData(convertToDriverData(data));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, drivers.length]);
+  }, [type, data.length]);
 
   return (
     <div className={styles.analyticsTable}>
