@@ -3,8 +3,8 @@ import Toast from '../../components/ConfirmationToast/ConfirmationToast';
 import Notification from '../../components/Notification/Notification';
 
 const Schedule = () => (
-    <main id = "main">
+  <main id="main">
 
-    </main>
+  </main>
 );
 export default Schedule;
