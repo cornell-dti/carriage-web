@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../../components/FormElements/FormElements';
-import { useReq } from '../../context/req';
+import styles from './deleteModal.module.css';
 
 type DeleteSingleRideModalProps = {
     open: boolean,
@@ -11,31 +11,38 @@ type DeleteSingleRideModalProps = {
 
 const DeleteRecurRideModal = ({ open, ride }: DeleteSingleRideModalProps) => {
     const [isOpen, setIsOpen] = useState(open);
-    const { withDefaults } = useReq();
+    const [cancelSingle, setCancelSingle] = useState(false);
+
+    const changeSelection = (e: any) => {
+        if (e.target.value === 'single') setCancelSingle(true);
+        else setCancelSingle(false);
+    }
 
     const closeModal = () => {
         setIsOpen(false);
     }
 
+    // TODO
     const confirmCancel = () => {
-        fetch(`/api/ride/${ride.id}`, withDefaults({
-            method: 'DELETE'
-        }))
-            .then(_ => closeModal())
+        console.log('deleted')
     }
 
     const renderDeleteModal = () => (
         <form onSubmit={confirmCancel}>
             <div>
-                <Label htmlFor="single">This Ride Only</Label>
-                <Input type='radio' id='single' value='single'/>
+                <Input type='radio' id='single' name='rideType' value='single' 
+                    onClick={(e) => changeSelection(e)}/>
+                <Label htmlFor="single" className={styles.modalText}>This Ride Only</Label>
             </div>
             <div>
-                <Label htmlFor="recurring">All Recurring Rides</Label>
-                <Input type='radio' id='recurring' value='recurring'/>
+                <Input type='radio' id='recurring' name='rideType' value='recurring'
+                    onClick={(e) => changeSelection(e)}/>
+                <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
             </div>
-            <Button type="button" onClick={closeModal}> Back </Button>
-            <Button type="submit"> OK </Button>
+            <div className={styles.buttonContainer}>
+                <Button type="button" onClick={closeModal} outline={true}> Back </Button>
+                <Button type="submit" className={styles.redButton}> OK </Button>
+            </div>
         </form>
     )
 
