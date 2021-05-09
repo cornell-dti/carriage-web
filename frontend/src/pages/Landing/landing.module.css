@@ -1,39 +1,96 @@
 .home {
-  background-image: url("./showcase.jpg");
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(./campus.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size: cover;
-  background-size: center;
   height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 0 1.25rem;
 }
-
-.title,
-.subtitle {
-  margin: 0;
+.main {
+  border: 1px solid black;
+  border-radius: 16px;
+  max-width: 850px;
+  min-height: 550px;
+  display: flex;
+  flex-grow: 1;
 }
 
-.footer {
-  padding: 1rem;
-  background: black;
+.left {
+  border-radius: 16px 0 0 16px;
+  background: #191919;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 600;
   color: white;
+  margin-top: 16px;
+}
+
+.right {
+  border-radius: 0 16px 16px 0;
+  background: white;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  padding: 8px;
 }
 
-.readBtn {
-  font-size: 1.1em;
-  text-decoration: none;
-  color: black;
-  border: black 0.063rem solid;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.625rem;
-  margin-top: 0.625rem;
+@media (max-width: 400px) {
+  .container {
+    flex-direction: column;
+  }
 }
 
-.readBtn:hover {
-  background: black;
-  color: white;
+@media (max-width: 550px) {
+  .main {
+    flex-direction: column;
+  }
+  .left {
+    border-radius: 16px 16px 0 0;
+  }
+  .right {
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+@media (max-height: 600px) {
+  .main {
+    min-height: 0px;
+  }
+}
+
+.heading {
+  width: 100%;
+  font-size: 32;
+  font-weight: bold;
+}
+
+.input {
+  width: 100%;
+  outline: 0;
+  background: none;
+  border-width: 0 0 1px;
+  margin-bottom: 40px;
 }
