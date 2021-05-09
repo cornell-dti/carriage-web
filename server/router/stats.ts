@@ -32,35 +32,40 @@ router.put('/', validateUser('User'), (req, res) => {
 
 router.get('/', validateUser('User'), (req, res) => {
   const { query: { from, to } } = req;
+  const regexp = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
 
-  let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
-  const dates = [date];
-  if (to) {
-    date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
-    while (date <= to) {
-      dates.push(date);
+  if ((from as string).match(regexp) && (to as string).match(regexp)) {
+    let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+    const dates = [date];
+    if (to) {
       date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
+      while (date <= to) {
+        dates.push(date);
+        date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
+      }
     }
+
+    const statsAcc: StatsType[] = [];
+
+    dates.forEach((currDate) => {
+      const year = moment.tz(currDate, 'YYYY-MM-DD', 'America/New_York').format('YYYY');
+      const monthDay = moment.tz(currDate, 'YYYY-MM-DD', 'America/New_York').format('MMDD');
+
+      const dateMoment = moment.tz(currDate, 'America/New_York');
+      // day = 12am to 5:00pm
+      const dayStart = dateMoment.toISOString();
+      const dayEnd = dateMoment.add(17, 'hours').toISOString();
+      // night = 5:01pm to 11:59:59pm
+      const nightStart = moment.tz(dayEnd, 'America/New_York').add(1, 'seconds').toISOString();
+      const nightEnd = moment.tz(currDate as string, 'America/New_York').endOf('day').toISOString();
+
+      computeStats(
+        res, statsAcc, dates.length, dayStart, dayEnd, nightStart, nightEnd, year, monthDay,
+      );
+    });
+  } else {
+    res.status(400).send({ err: 'Invalid from/to query date format' });
   }
-
-  const statsAcc: StatsType[] = [];
-
-  dates.forEach((currDate) => {
-    const year = moment.tz(currDate, 'YYYY-MM-DD', 'America/New_York').format('YYYY');
-    const monthDay = moment.tz(currDate, 'YYYY-MM-DD', 'America/New_York').format('MMDD');
-
-    const dateMoment = moment.tz(currDate, 'America/New_York');
-    // day = 12am to 5:00pm
-    const dayStart = dateMoment.toISOString();
-    const dayEnd = dateMoment.add(17, 'hours').toISOString();
-    // night = 5:01pm to 11:59:59pm
-    const nightStart = moment.tz(dayEnd, 'America/New_York').add(1, 'seconds').toISOString();
-    const nightEnd = moment.tz(currDate as string, 'America/New_York').endOf('day').toISOString();
-
-    computeStats(
-      res, statsAcc, dates.length, dayStart, dayEnd, nightStart, nightEnd, year, monthDay,
-    );
-  });
 });
 
 function checkSend(
@@ -101,7 +106,7 @@ function computeStats(
         let dayNoShowStat = 0;
         let nightCountStat = 0;
         let nightNoShowStat = 0;
-        const driversStat: {[name: string]: number } = {};
+        const driversStat: { [name: string]: number } = {};
 
         dataDay.forEach((rideData: RideType) => {
           const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
