@@ -11,27 +11,24 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body,
-    // TODO icon, tag, etc.
   };
   if (Notification.permission === 'granted') {
-    event.waitUntil(self.registration.showNotification(data.title, options));
-
-    let promiseChain = Promise.resolve();
-
-    // TODO if client is focused
-    promiseChain = promiseChain.then(() => {
-      self.clients.matchAll().then((clientList) => {
-        for (const client of clientList) {
-          client.postMessage({
-            title: data.title,
-            body: data.body,
-            time: new Date().toString(),
-          });
+    self.clients.matchAll().then((clientList) => {
+      let show = clientList.length > 0;
+      for (const client of clientList) {
+        if (client.visibilityState === 'visible') {
+          show = false;
         }
-      });
+        client.postMessage({
+          title: data.title,
+          body: data.body,
+          time: new Date().toString(),
+        });
+      }
+      if (show) {
+        self.registration.showNotification(data.title, options);
+      }
     });
-
-    event.waitUntil(promiseChain);
   } else {
     console.log('needs permission');
   }
