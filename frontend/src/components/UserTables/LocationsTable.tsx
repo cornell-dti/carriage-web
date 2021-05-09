@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Table } from '../TableComponents/TableComponents';
-import Form from '../UserForms/LocationsForm';
 import { Button } from '../FormElements/FormElements';
 import { Location } from '../../types';
 import { useReq } from '../../context/req';
@@ -29,6 +28,7 @@ const LocationsTable = () => {
     getExistingLocations();
   }, [withDefaults]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
     fetch(

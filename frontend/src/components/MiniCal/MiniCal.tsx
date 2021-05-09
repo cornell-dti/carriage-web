@@ -6,14 +6,14 @@ import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 
-const currentDate = new Date(); 
-const isToday = (date: Date) => date.getDate() === currentDate.getDate() && 
-  date.getMonth() == currentDate.getMonth() && 
-  date.getFullYear() == currentDate.getFullYear();
+const currentDate = new Date();
+const isToday = (date: Date) => date.getDate() === currentDate.getDate()
+  && date.getMonth() === currentDate.getMonth()
+  && date.getFullYear() === currentDate.getFullYear();
 
-const isTomorrow = (date: Date) =>  date.getDate() === currentDate.getDate() + 1 && 
-  date.getMonth() == currentDate.getMonth() && 
-  date.getFullYear() == currentDate.getFullYear();
+const isTomorrow = (date: Date) => date.getDate() === currentDate.getDate() + 1
+  && date.getMonth() === currentDate.getMonth()
+  && date.getFullYear() === currentDate.getFullYear();
 
 const Icon = () => (
   <svg
