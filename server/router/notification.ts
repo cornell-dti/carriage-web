@@ -1,6 +1,7 @@
 import express from 'express';
 import webpush from 'web-push';
 import AWS from 'aws-sdk';
+import e from 'express';
 import config, { webpushValues, snsValues } from '../config';
 import { Subscription, SubscriptionType, UserType, PlatformType } from '../models/subscription';
 import { validateUser } from '../util';
@@ -134,12 +135,16 @@ router.post('/sendAll', (req, res) => {
         const sub = JSON.parse(JSON.stringify(doc.toJSON()));
         return sendMsg(sub, msg);
       });
-      Promise.all(promises)
-        .then(() => {
-          res.status(200).send({ success: true });
+      Promise.allSettled(promises)
+        .then((results) => {
+          const status = results.map((el) => el.status);
+          const map = status.reduce((acc, el) => acc.set(el, (acc.get(el) || 0) + 1), new Map());
+          const passed = map.get('fulfilled') || 0;
+          const total = (map.get('rejected') || 0) + passed;
+          res.status(200).send({ success: `${passed}/${total} passed` });
         })
         .catch(() => {
-          res.status(500).send({ err: 'could not send all messages' });
+          res.status(500).send({ err: 'failed to send messages' });
         });
     }
   });
