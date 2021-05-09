@@ -81,7 +81,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     };
   }
 
-  const AuthBarrier = () => (
+  const LoginPage = () => (
     <LandingPage
       students={
         <GoogleLogin
@@ -140,7 +140,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     <AuthContext.Provider value={{ logout, id }}>
       <ReqContext.Provider value={{ withDefaults }}>
         <Switch>
-          <Route exact path="/" component={AuthBarrier} />
+          <Route exact path="/" component={LoginPage} />
           <PrivateRoute path="/admin" component={AdminRoutes} />
           <PrivateRoute forRider path="/rider" component={RiderRoutes} />
           <Route path="*">
@@ -149,6 +149,15 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         </Switch>
       </ReqContext.Provider>
     </AuthContext.Provider>
+  );
+
+  const AuthBarrier = () => (
+    <Switch>
+      <Route exact path="/" component={LoginPage} />
+      <Route path="*">
+        <Redirect to="/" />
+      </Route>
+    </Switch>
   );
 
   return signedIn ? <SiteContent /> : <AuthBarrier />;
