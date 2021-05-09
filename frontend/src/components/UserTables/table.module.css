@@ -90,6 +90,10 @@
   color: #707070;
 }
 
+.left {
+  text-align: left;
+}
+
 .proflePic {
   border-radius: 50%;
 }
@@ -125,4 +129,13 @@
 
 .noShow {
   background-color: #ff8b9d;
+}
+
+.deleteIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  padding: 0.5em;
+  margin-left: 0.5em;
 }

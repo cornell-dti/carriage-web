@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DateContext from '../../context/date';
+import RiderHome from './RiderHome';
 
 const Dashboard = () => {
   const [curDate, setCurDate] = useState(new Date());
@@ -19,7 +20,7 @@ const Dashboard = () => {
           <Switch>
             <Route
               path="/schedule"
-              component={() => null}
+              component={RiderHome}
             />
             <Route
               path="/settings"
