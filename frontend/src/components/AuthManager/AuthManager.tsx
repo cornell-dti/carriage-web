@@ -1,5 +1,5 @@
 import React, { useState, FunctionComponent } from 'react';
-import { GoogleLogin } from 'react-google-login';
+import { GoogleLogin, useGoogleLogout } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
@@ -16,9 +16,11 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
+  const { signOut } = useGoogleLogout({ clientId });
 
   function logout() {
-    localStorage.clear();
+    signOut();
+    localStorage.removeItem('userType');
     if (jwt) {
       setJWT('');
     }
@@ -39,32 +41,38 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   }
 
   function generateOnSignIn(isAdmin: boolean) {
+    const userType = isAdmin ? 'Admin' : 'Rider';
+    const table = `${userType}s`;
+    const localUserType = localStorage.getItem('userType');
     return async function onSignIn(googleUser: any) {
-      const { id_token: token } = googleUser.getAuthResponse();
-      const serverJWT = await fetch(
-        '/api/auth',
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify({
-            token,
-            table: isAdmin ? 'Admins' : 'Riders',
-            clientId,
+      if (!localUserType || localUserType === userType) {
+        const { id_token: token } = googleUser.getAuthResponse();
+        const serverJWT = await fetch(
+          '/api/auth',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify({
+              token,
+              table,
+              clientId,
+            }),
           }),
-        }),
-      )
-        .then((res) => res.json())
-        .then((json) => json.jwt);
+        )
+          .then((res) => res.json())
+          .then((json) => json.jwt);
 
-      if (serverJWT) {
-        const decoded: any = jwtDecode(serverJWT);
-        setId(decoded.id);
-        setJWT(serverJWT);
-        setSignedIn(true);
-        if (pathname === '/') {
-          history.push(isAdmin ? '/admin/home' : '/rider/home');
+        if (serverJWT) {
+          const decoded: any = jwtDecode(serverJWT);
+          setId(decoded.id);
+          localStorage.setItem('userType', decoded.userType);
+          setJWT(serverJWT);
+          setSignedIn(true);
+          if (pathname === '/') {
+            history.push(isAdmin ? '/admin/home' : '/rider/home');
+          }
+        } else {
+          logout();
         }
-      } else {
-        logout();
       }
     };
   }
