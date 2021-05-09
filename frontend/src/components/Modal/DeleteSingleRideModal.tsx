@@ -25,7 +25,7 @@ const DeleteSingleRideModal = ({ open, ride }: DeleteSingleRideModalProps) => {
             .then(_ => closeModal())
     }
 
-    const renderDeleteModal = (ride: Ride) => (
+    const renderDeleteModal = () => (
         <div className={styles.modal}>
             <p className={styles.modalText}>Are you sure you want to cancel this ride?</p>
             <div className={styles.buttonContainer}>
@@ -40,7 +40,7 @@ const DeleteSingleRideModal = ({ open, ride }: DeleteSingleRideModalProps) => {
             title=''
             isOpen={isOpen}
         >
-            {renderDeleteModal(ride)}
+            {renderDeleteModal()}
         </Modal>
     )
 }
