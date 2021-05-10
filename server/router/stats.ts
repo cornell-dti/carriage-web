@@ -105,6 +105,15 @@ function downloadStats(
       .map((doc: any) => {
         const drivers = doc.drivers;
         // TODO: may need to fill in drivers that are not listed in `drivers`
+        // model.scan().exec((err, data) => {
+        //   if (err) {
+        //     res.status(err.statusCode || 500).send({ err: err.message });
+        //   } else if (!data) {
+        //     res.status(400).send({ err: `items not found in ${table}` });
+        //   } else {
+        //     data.populate().then((doc) => );
+        //   }
+        // })
         const monthDay = doc.monthDay;
         const row = {
           Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${doc.year}`,
