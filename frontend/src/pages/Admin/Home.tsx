@@ -18,16 +18,16 @@ const Home = () => {
   const { curDate } = useDate();
   const today = moment(curDate).format("YYYY-MM-DD");
 
-  const renderScheduledRides = (): JSX.Element[] => {
-    return drivers.map((driver: Driver, index: number) => (
+  const renderScheduledRides = (): JSX.Element[] => (
+    drivers.map((driver: Driver, index: number) => (
       <ScheduledTable
         key={index}
         query="driver"
         id={driver.id}
         name={`${driver.firstName} ${driver.lastName}`}
       />
-    ));
-  };
+    ))
+  );
 
   return (
     <div>

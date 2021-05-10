@@ -23,14 +23,11 @@ router.get('/download', (req, res) => {
     .toISOString();
   const condition = new Condition()
     .where('startTime')
-    .between(dateStart, dateEnd)
+    .between(dateStart, dateEnd);
 
   const callback = (value: any) => {
-    const dataToExport = 
-    value
-      .sort((a: any, b: any) => {
-        return moment(a.startTime).diff(moment(b.startTime));
-      })
+    const dataToExport = value
+      .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
@@ -150,6 +147,29 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
+  const { type, startLocation, endLocation } = body;
+
+  if (type && type === Type.UNSCHEDULED) {
+    body.$REMOVE = ['driver'];
+  }
+
+  if (startLocation && !validate(startLocation)) {
+    const name = startLocation.split(',')[0];
+    body.startLocation = {
+      name,
+      address: startLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
+
+  if (endLocation && !validate(endLocation)) {
+    const name = endLocation.split(',')[0];
+    body.endLocation = {
+      name,
+      address: endLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
   db.update(res, Ride, { id }, body, tableName);
 });
 
