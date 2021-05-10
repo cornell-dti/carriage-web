@@ -71,7 +71,6 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
 
   // transforms the rides map into an array
   const rideMapToArray = (rideMap: Map<string, Ride[]>) => {
-    console.log('rideMapToArray!');
     const dateArray = Array.from(rideMap.keys());
     const rideArray = Array.from(rideMap.values());
     if (dateArray.length === rideArray.length) {
@@ -79,11 +78,9 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
       const newRideMapArray: any[] = [];
       for (let i = 0; i < dateArray.length; i += 1) {
         const pair = [dateArray[i], rideArray[i]];
-        console.log(rideArray[i]);
         newRideMapArray.push(pair);
       }
       setRideMapArray(newRideMapArray);
-      console.log(`len newRideMapArray: ${newRideMapArray.length}`);
     } else {
       console.log('Error: Sizes of date and ride arrays are not equal. \
                     This error should be impossible.');
@@ -92,10 +89,11 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
 
   const getWeekday = (time: string): string => {
     const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    console.log('getWeekday!');
     return weekdays[new Date(time).getDay()];
   };
 
-  const renderRides = (): JSX.Element[] => (
+  const rideList = (): JSX.Element[] => (
     rideMapArray.map(([date, rideArray]: [string, Ride[]], index: number) => (
       <>
         {rideArray.length > 0 &&
@@ -107,10 +105,15 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
             </span>
           </h1>
           <RiderRidesTable rides={rideArray} />
-        </>
-        }
+        </>}
       </>
     ))
+  );
+
+  const renderRides = (): JSX.Element => (
+    <>
+      {rideMapArray ? rideList() : null}
+    </>
   );
 
   return (
