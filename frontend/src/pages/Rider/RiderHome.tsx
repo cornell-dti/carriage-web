@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
 import Collapsible from '../../components/Collapsible/Collapsible';
+import AuthContext from '../../context/auth';
 
 const RiderHome = () => {
-  const riderId = 'e4586b99-5dce-47ac-b27d-0fbb3f8b4389';
+  const { id } = useContext(AuthContext);
 
   return (
     <div>
       <Collapsible title={'Your Upcoming Rides'}>
-        <RiderScheduleTable riderId={riderId} isPast={false}/>
+        <RiderScheduleTable riderId={id} isPast={false}/>
       </Collapsible>
 
       <Collapsible title={'Your Past Rides'}>
-        <RiderScheduleTable riderId={riderId} isPast={true}/>
+        <RiderScheduleTable riderId={id} isPast={true}/>
       </Collapsible>
     </div >
   );
