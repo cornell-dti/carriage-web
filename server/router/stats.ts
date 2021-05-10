@@ -49,17 +49,21 @@ router.put('/', validateUser('User'), (req, res) => {
 
 router.get('/', validateUser('User'), (req, res) => {
   const { query: { from, to } } = req;
-  let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
-  const dates = [date];
-  if (to) {
-    date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
-    while (date <= to) {
-      dates.push(date);
-      date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
-    }
-  }
+  const regexp = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
 
-  statsFromDates(dates, res, false);
+  if ((from as string).match(regexp) && (to as string).match(regexp)) {
+    let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+    const dates = [date];
+    if (to) {
+      date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
+      while (date <= to) {
+        dates.push(date);
+        date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
+      }
+    }
+  } else {
+    res.status(400).send({ err: 'Invalid from/to query date format' });
+  }
 });
 
 function statsFromDates(
@@ -165,7 +169,7 @@ function computeStats(
         let dayNoShowStat = 0;
         let nightCountStat = 0;
         let nightNoShowStat = 0;
-        const driversStat: {[name: string]: number } = {};
+        const driversStat: { [name: string]: number } = {};
 
         dataDay.forEach((rideData: RideType) => {
           const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
