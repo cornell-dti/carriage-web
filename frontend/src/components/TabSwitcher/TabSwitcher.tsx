@@ -7,7 +7,7 @@ import { Driver } from '../../types/index';
 import styles from './tabSwitcher.module.css';
 import Notification from '../Notification/Notification';
 import pageStyles from '../../pages/Admin/page.module.css';
-import ExportButton from '../../components/ExportButton/ExportButton';
+import ExportButton from '../ExportButton/ExportButton';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 
@@ -28,6 +28,7 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
   const [currentContent, setCurrentContent] = useState(children[0].props.children);
 
   const { curDate } = useDate();
+  const from = moment(curDate).subtract(10, 'days').format('YYYY-MM-DD');
   const today = moment(curDate).format('YYYY-MM-DD');
   const { drivers } = useEmployees();
 
@@ -46,20 +47,12 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
   };
 
   const generateCols = () => {
-    const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels, \
-    Night Ride Count, Night No Shows, Night Cancels';
-
-    const driverNamesReducer = (acc: string, curr: Driver) => 
-    `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
-
-    const finalCols = drivers
-    .sort((a, b) => (
-      `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
-    ))
-    .reduce(driverNamesReducer, cols);
-
-     return finalCols;
-  }
+    const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
+    const finalCols = drivers.reduce((acc: string, curr: Driver) => (
+      `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
+    ), cols);
+    return finalCols;
+  };
 
   return (
     <div>
@@ -80,11 +73,11 @@ const TabSwitcher = ({ children }: TabSwitcherProps) => {
         </div>
         <div className={styles.rightSection}>
           {/* TODO: need to merge with the date selector PR */}
-          <ExportButton 
-            toastMsg={`${today} data has been downloaded.`}
-            endpoint={`/api/stats/download?from=${today}&to=${today}`} 
+          <ExportButton
+            toastMsg={`${from} to ${today} data has been downloaded.`}
+            endpoint={`/api/stats/download?from=${from}&to=${today}`}
             csvCols={generateCols()}
-            filename={`${today}_analytics.csv`} 
+            filename={`${from}-${today}_analytics.csv`}
           />
           <Notification />
         </div>
