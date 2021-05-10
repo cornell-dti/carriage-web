@@ -28,6 +28,7 @@ export type Driver = {
   email: string;
   phone: string;
   admin: boolean;
+  photoLink?: string;
 };
 
 export type Admin = {

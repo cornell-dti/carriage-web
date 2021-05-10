@@ -4,7 +4,7 @@ import styles from './AnalyticsOverview.module.css';
 export type StatsBoxProps = {
   icon: string;
   alt: string;
-  stats: number;
+  stats: string | number;
   description: string;
 };
 

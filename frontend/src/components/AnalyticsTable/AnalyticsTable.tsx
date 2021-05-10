@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
+import moment from 'moment';
 import { ObjectType } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import table, { TableData } from './data';
+import AnalyticsOverview from '../AnalyticsOverview/AnalyticsOverview';
+import { Driver } from '../../types/index';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
 import DateFilter from './DateFilter';
-
+import {addOn, cancel, dayRide, nightRide, noShow} from '../../icons/analytics/index';
 
 type Cell = string | number;
 
@@ -73,6 +76,99 @@ const Table = ({ type }: TableProps) => {
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const { drivers } = useEmployees();
+
+  const generateStatsArr = () => {
+    const today = moment();
+    const year = today.year();
+    const month = today.month();
+
+    if (type === 'ride' && rideTableData) {
+      const data = {
+        dayRide: 0,
+        nightRide: 0,
+        noShow: 0,
+        cancel: 0,
+        addOn: 0,
+      }
+      rideTableData.forEach((row: Cell[]) => {
+        // the first element is the date
+        if (typeof row[0] === 'string') {
+          const mon = parseInt(row[0].substr(0, 2));
+          const y = parseInt(row[0].substr(5));
+          if (mon === month && y === year) {
+            data.dayRide += typeof row[0][2] === 'number' ? row[0][2] : 0;
+            data.nightRide += typeof row[0][5] === 'number' ? row[0][5] : 0;
+            data.noShow += 
+              typeof row[0][3] === 'number' && typeof row[0][6] === 'number' ?
+              row[0][3] + row[0][6] : 0;
+            data.cancel += 
+              typeof row[0][4] === 'number' && typeof row[0][7] === 'number' ?
+              row[0][4] + row[0][7] : 0;
+          }
+        }
+      });
+
+      return [{
+        icon: dayRide,
+        alt: 'day',
+        stats: data.dayRide,
+        description: 'day rides',
+      }, {
+        icon: nightRide,
+        alt: 'night',
+        stats: data.nightRide,
+        description: 'night rides',
+      }, {
+        icon: noShow,
+        alt: 'no show',
+        stats: data.noShow,
+        description: 'no shows',
+      }, {
+        icon: cancel,
+        alt: 'cancel',
+        stats: data.cancel,
+        description: 'cancels',
+      }, {
+        icon: addOn,
+        alt: 'day',
+        stats: 0, // TODO
+        description: 'add-ons',
+      }]
+    } else if (type === 'driver' && driverTableData) {
+      const filtered = driverTableData.filter((row: Cell[]) => {
+        if (typeof row[0] === 'string') {
+          const mon = parseInt(row[0].substr(0, 2));
+          const y = parseInt(row[0].substr(6, 4));
+          return mon === month+1 && y === year;
+        }
+      });
+      const data = drivers.map((driver: Driver) => {
+        const idx = drivers.indexOf(driver);
+        let acc = 0;
+        filtered.forEach((row: Cell[])=> {
+          // the first two columns are date and total
+          const cell = row[idx+2];
+          acc += typeof cell === 'number' ? cell : 0;
+        });
+
+        return ({
+          icon: driver.photoLink ? driver.photoLink : '',
+          alt: `${driver.firstName} ${driver.lastName.substr(0,1)}.`,
+          stats: acc,
+          description: `${driver.firstName} ${driver.lastName.substr(0,1)}.`,
+        })
+      })
+      return data
+    } else {
+      // should never get here
+      return [{
+        icon: dayRide,
+        alt: 'day',
+        stats: 0,
+        description: 'day rides',
+      }]
+    }
+  }
 
   const sharedCols = ['Date', 'Daily Total'];
 
@@ -211,6 +307,7 @@ const Table = ({ type }: TableProps) => {
   return (
     <>
     <DateFilter/>
+    <AnalyticsOverview stats={generateStatsArr()} />
     <div className={styles.analyticsTable}>
       <button
         className={styles.editBtn}
