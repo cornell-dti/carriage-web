@@ -98,7 +98,7 @@ function downloadStats(
       const defaultDrivers = scanRes.reduce((acc, curr) => {
         const { firstName, lastName } = curr;
         const fullName = `${firstName} ${lastName}`;
-        acc[fullName] = '';
+        acc[fullName] = 0;
         return acc;
       }, {} as ObjectType);
       const dataToExport = statsAcc
