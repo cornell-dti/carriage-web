@@ -140,7 +140,7 @@ const Table = ({ type }: TableProps) => {
           const mon = parseInt(row[0].substr(0, 2), 10);
           const y = parseInt(row[0].substr(6, 4), 10);
           return mon === month+1 && y === year;
-        }
+        } else return false;
       });
       const data = drivers.map((driver: Driver) => {
         const idx = drivers.indexOf(driver);
