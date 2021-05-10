@@ -2,10 +2,12 @@ import express, { Response } from 'express';
 import moment from 'moment-timezone';
 import { Condition } from 'dynamoose/dist/Condition';
 import * as csv from '@fast-csv/format';
+import { ObjectType } from 'dynamoose/dist/General';
 import { Stats, StatsType } from '../models/stats';
 import { Ride, RideType, Status } from '../models/ride';
 import * as db from './common';
 import { validateUser } from '../util';
+import { Driver } from '../models/driver';
 
 const router = express.Router();
 const tableName = 'Stats';
@@ -23,7 +25,6 @@ router.get('/download', validateUser('User'), (req, res) => {
   }
 
   statsFromDates(dates, res, true);
-
 });
 
 router.put('/', validateUser('User'), (req, res) => {
@@ -65,7 +66,7 @@ router.get('/', validateUser('User'), (req, res) => {
 function statsFromDates(
   dates: string[],
   res: Response,
-  download: boolean
+  download: boolean,
 ) {
   const statsAcc: StatsType[] = [];
 
@@ -93,33 +94,37 @@ function downloadStats(
   numDays: number,
 ) {
   if (statsAcc.length === numDays) {
-    const dataToExport = 
-      statsAcc
-      .sort((a: any, b: any) => {
-        return moment(a.startTime).diff(moment(b.startTime));
-      })
-      .map((doc: any) => {
-        const drivers = doc.drivers;
-        // TODO: may need to fill in drivers that are not listed in `drivers`
-        const monthDay = doc.monthDay;
-        const row = {
-          Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${doc.year}`,
-          'Daily Total': doc.dayCount + doc.nightCount,
-          'Daily Ride Count': doc.dayCount,
-          'Day No Shows': doc.dayNoShow,
-          'Day Cancels': doc.dayCancel,
-          'Night Ride Count': doc.nightCount, 
-          'Night No Shows': doc.nightNoShow, 
-          'Night Cancels': doc.nightCancel,
-          ...drivers
-        };
-        return row;
-      });
-    csv
-      .writeToBuffer(dataToExport, { headers: true })
-      .then((data) => res.send(data))
-      .catch((err) => res.send(err));
-    }
+    Driver.scan().exec().then((scanRes) => {
+      const defaultDrivers = scanRes.reduce((acc, curr) => {
+        const { firstName, lastName } = curr;
+        const fullName = `${firstName} ${lastName}`;
+        acc[fullName] = '';
+        return acc;
+      }, {} as ObjectType);
+      const dataToExport = statsAcc
+        .sort((a: any, b: any) => Number(a.year + a.monthDay) - Number(b.year + b.monthDay))
+        .map((doc: any) => {
+          const { drivers, monthDay } = doc;
+          const row = {
+            Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${doc.year}`,
+            'Daily Total': doc.dayCount + doc.nightCount,
+            'Daily Ride Count': doc.dayCount,
+            'Day No Shows': doc.dayNoShow,
+            'Day Cancels': doc.dayCancel,
+            'Night Ride Count': doc.nightCount,
+            'Night No Shows': doc.nightNoShow,
+            'Night Cancels': doc.nightCancel,
+            ...defaultDrivers,
+            ...drivers,
+          };
+          return row;
+        });
+      csv
+        .writeToBuffer(dataToExport, { headers: true })
+        .then((data) => res.send(data))
+        .catch((err) => res.send(err));
+    });
+  }
 }
 
 function checkSend(
@@ -165,7 +170,7 @@ function computeStats(
         let dayNoShowStat = 0;
         let nightCountStat = 0;
         let nightNoShowStat = 0;
-        const driversStat: {[name: string]: number } = {};
+        const driversStat: { [name: string]: number } = {};
 
         dataDay.forEach((rideData: RideType) => {
           const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
