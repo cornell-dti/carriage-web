@@ -30,12 +30,7 @@ const Table = ({ drivers }: TableProps) => {
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
-  return (
-    <>
-      <h1 className={styles.formHeader}>Unscheduled Rides</h1>
-      <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
-    </>
-  );
+  return <RidesTable rides={rides} drivers={drivers} hasButtons={true} />;
 };
 
 export default Table;
