@@ -23,14 +23,11 @@ router.get('/download', (req, res) => {
     .toISOString();
   const condition = new Condition()
     .where('startTime')
-    .between(dateStart, dateEnd)
+    .between(dateStart, dateEnd);
 
   const callback = (value: any) => {
-    const dataToExport = 
-    value
-      .sort((a: any, b: any) => {
-        return moment(a.startTime).diff(moment(b.startTime));
-      })
+    const dataToExport = value
+      .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
@@ -150,7 +147,11 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
-  const { startLocation, endLocation } = body;
+  const { type, startLocation, endLocation } = body;
+
+  if (type && type === Type.UNSCHEDULED) {
+    body.$REMOVE = ['driver'];
+  }
 
   if (startLocation && !validate(startLocation)) {
     const name = startLocation.split(',')[0];

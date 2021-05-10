@@ -1,40 +1,40 @@
-import React, { useState, useRef } from "react";
-import { CSVLink } from "react-csv";
-import moment from "moment";
-import RideModal from "../../components/RideModal/RideModal";
+import React, { useState, useRef } from 'react';
+import { CSVLink } from 'react-csv';
+import moment from 'moment';
+import RideModal from '../../components/RideModal/RideModal';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
-import UnscheduledTable from "../../components/UserTables/UnscheduledTable";
-import Schedule from "../../components/Schedule/Schedule";
-import MiniCal from "../../components/MiniCal/MiniCal";
-import Toast from "../../components/ConfirmationToast/ConfirmationToast";
-import Notification from "../../components/Notification/Notification";
-import styles from "./page.module.css";
-import { useEmployees } from "../../context/EmployeesContext";
-import ExportButton from "../../components/ExportButton/ExportButton";
-import { useReq } from "../../context/req";
-import { useDate } from "../../context/date";
-import Collapsible from "../../components/Collapsible/Collapsible";
+import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
+import Schedule from '../../components/Schedule/Schedule';
+import MiniCal from '../../components/MiniCal/MiniCal';
+import Toast from '../../components/ConfirmationToast/ConfirmationToast';
+import Notification from '../../components/Notification/Notification';
+import styles from './page.module.css';
+import { useEmployees } from '../../context/EmployeesContext';
+import ExportButton from '../../components/ExportButton/ExportButton';
+import { useReq } from '../../context/req';
+import { useDate } from '../../context/date';
+import Collapsible from '../../components/Collapsible/Collapsible';
 import { Driver } from '../../types/index';
 
 const Home = () => {
   const { drivers } = useEmployees();
   const { withDefaults } = useReq();
 
-  const [downloadData, setDownloadData] = useState<string>("");
+  const [downloadData, setDownloadData] = useState<string>('');
   const [showingToast, setToast] = useState(false);
   const csvLink = useRef<
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
   >(null);
   const { curDate } = useDate();
-  const today = moment(curDate).format("YYYY-MM-DD");
+  const today = moment(curDate).format('YYYY-MM-DD');
 
   const downloadCSV = () => {
     setToast(false);
     fetch(`/api/rides/download?date=${today}`, withDefaults())
       .then((res) => res.text())
       .then((data) => {
-        if (data === "") {
-          setDownloadData("Name,Pick Up,From,To,Drop Off,Needs,Driver");
+        if (data === '') {
+          setDownloadData('Name,Pick Up,From,To,Drop Off,Needs,Driver');
         } else {
           setDownloadData(data);
         }
@@ -45,8 +45,8 @@ const Home = () => {
       .then(() => setToast(true));
   };
 
-  const renderScheduledRides = (): JSX.Element[] => {
-    return drivers.map((driver: Driver, index: number) => (
+  const renderScheduledRides = (): JSX.Element[] => (
+    drivers.map((driver: Driver, index: number) => (
       <ScheduledTable
         key={index}
         query='driver'
@@ -54,12 +54,11 @@ const Home = () => {
         name={`${driver.firstName} ${driver.lastName}`}
       />
     ))
-  };
+  );
 
   return (
     <div>
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Homepage</h1>
         <MiniCal />
         <div className={styles.margin3}>
           {showingToast ? (

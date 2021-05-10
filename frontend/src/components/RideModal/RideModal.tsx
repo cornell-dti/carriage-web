@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import moment from "moment";
-import Modal from "../Modal/Modal";
-import { Button } from "../FormElements/FormElements";
-import Toast from "../ConfirmationToast/ConfirmationToast";
-import { DriverPage, RiderInfoPage, RideTimesPage } from "./Pages";
-import { ObjectType, Ride } from "../../types/index";
-import { useReq } from "../../context/req";
+import React, { useEffect, useState } from 'react';
+import moment from 'moment';
+import Modal from '../Modal/Modal';
+import { Button } from '../FormElements/FormElements';
+import Toast from '../ConfirmationToast/ConfirmationToast';
+import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
+import { ObjectType, Ride } from '../../types/index';
+import { useReq } from '../../context/req';
 
 type RideModalProps = {
   open?: boolean;
@@ -19,9 +19,9 @@ const RideModal = ({
   ride,
 }: RideModalProps) => {
   const originalRideData = ride ? {
-    date: moment(ride.startTime).format("YYYY-MM-DD"),
-    pickupTime: moment(ride.startTime).format("kk:mm"),
-    dropoffTime: moment(ride.endTime).format("kk:mm"),
+    date: moment(ride.startTime).format('YYYY-MM-DD'),
+    pickupTime: moment(ride.startTime).format('kk:mm'),
+    dropoffTime: moment(ride.endTime).format('kk:mm'),
     rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
     pickupLoc: ride.startLocation.id
       ? ride.startLocation.name
@@ -29,7 +29,7 @@ const RideModal = ({
     dropoffLoc: ride.endLocation.id
       ? ride.endLocation.name
       : ride.endLocation.address,
-  } : {}
+  } : {};
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -50,18 +50,16 @@ const RideModal = ({
   const closeModal = () => {
     if (close) {
       setFormData(originalRideData);
-      close()
+      close();
     } else {
       setFormData({});
     }
-    setCurrentPage(0)
+    setCurrentPage(0);
     setIsOpen(false);
   };
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
-    setFormData((prev) => {
-      return { ...prev, ...data };
-    });
+    setFormData((prev) => ({ ...prev, ...data }));
     next();
   };
 
@@ -80,7 +78,7 @@ const RideModal = ({
       } = formData;
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
-      const rideData = {
+      const rideData: ObjectType = {
         startTime,
         endTime,
         driver,
@@ -89,20 +87,23 @@ const RideModal = ({
         endLocation,
       };
       if (ride) {
+        if (ride.type === 'active') {
+          rideData.type = 'unscheduled';
+        }
         fetch(
           `/api/rides/${ride.id}`,
           withDefaults({
-            method: "PUT",
+            method: 'PUT',
             body: JSON.stringify(rideData),
-          })
+          }),
         );
       } else {
         fetch(
-          "/api/rides",
+          '/api/rides',
           withDefaults({
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify(formData),
-          })
+          }),
         );
       }
       setIsSubmitted(false);
@@ -119,7 +120,7 @@ const RideModal = ({
       {showingToast ? <Toast message="Ride edited." /> : null}
       <Modal
         paginate
-        title={["Edit a Ride", "Edit a Ride"]}
+        title={['Edit a Ride', 'Edit a Ride']}
         isOpen={open || isOpen}
         currentPage={currentPage}
         onClose={closeModal}
@@ -142,7 +143,7 @@ const RideModal = ({
       {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal
         paginate
-        title={["Add a Ride", "Available Drivers", "Add a Ride"]}
+        title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
         isOpen={isOpen}
         currentPage={currentPage}
         onClose={closeModal}
