@@ -93,8 +93,8 @@ const Table = ({ type }: TableProps) => {
       rideTableData.forEach((row: Cell[]) => {
         // the first element is the date
         if (typeof row[0] === 'string') {
-          const mon = parseInt(row[0].substr(0, 2));
-          const y = parseInt(row[0].substr(5));
+          const mon = parseInt(row[0].substr(0, 2), 10);
+          const y = parseInt(row[0].substr(5), 10);
           if (mon === month && y === year) {
             data.dayRide += typeof row[0][2] === 'number' ? row[0][2] : 0;
             data.nightRide += typeof row[0][5] === 'number' ? row[0][5] : 0;
@@ -137,8 +137,8 @@ const Table = ({ type }: TableProps) => {
     } else if (type === 'driver' && driverTableData) {
       const filtered = driverTableData.filter((row: Cell[]) => {
         if (typeof row[0] === 'string') {
-          const mon = parseInt(row[0].substr(0, 2));
-          const y = parseInt(row[0].substr(6, 4));
+          const mon = parseInt(row[0].substr(0, 2), 10);
+          const y = parseInt(row[0].substr(6, 4), 10);
           return mon === month+1 && y === year;
         }
       });
