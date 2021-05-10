@@ -4,6 +4,7 @@ import { Condition } from 'dynamoose/dist/Condition';
 import * as csv from '@fast-csv/format';
 import { Stats, StatsType } from '../models/stats';
 import { Ride, RideType, Status } from '../models/ride';
+import { Driver, DriverType } from '../models/driver';
 import * as db from './common';
 import { validateUser } from '../util';
 
@@ -97,42 +98,51 @@ function downloadStats(
   numDays: number,
 ) {
   if (statsAcc.length === numDays) {
-    const dataToExport = 
-      statsAcc
-      .sort((a: any, b: any) => {
-        return moment(a.startTime).diff(moment(b.startTime));
-      })
-      .map((doc: any) => {
-        const drivers = doc.drivers;
-        // TODO: may need to fill in drivers that are not listed in `drivers`
-        // model.scan().exec((err, data) => {
-        //   if (err) {
-        //     res.status(err.statusCode || 500).send({ err: err.message });
-        //   } else if (!data) {
-        //     res.status(400).send({ err: `items not found in ${table}` });
-        //   } else {
-        //     data.populate().then((doc) => );
-        //   }
-        // })
-        const monthDay = doc.monthDay;
-        const row = {
-          Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${doc.year}`,
-          'Daily Total': doc.dayCount + doc.nightCount,
-          'Daily Ride Count': doc.dayCount,
-          'Day No Shows': doc.dayNoShow,
-          'Day Cancels': doc.dayCancel,
-          'Night Ride Count': doc.nightCount, 
-          'Night No Shows': doc.nightNoShow, 
-          'Night Cancels': doc.nightCancel,
-          ...drivers
-        };
-        return row;
-      });
-    csv
-      .writeToBuffer(dataToExport, { headers: true })
-      .then((data) => res.send(data))
-      .catch((err) => res.send(err));
-    }
+    let allDrivers: ({[x: string]: any}) = {};
+    Driver.scan().exec((err, data) => {
+      if (err) {
+        res.status(err.statusCode || 500).send({ err: err.message });
+      } else if (!data) {
+        res.status(400).send({ err: 'items not found in Drivers' });
+      } else {
+        data.populate().then((docs) => {
+          docs.forEach(doc => {
+            const name = `${doc.firstName} ${doc.lastName.substr(0, 1)}.`;
+            console.log(name)
+            allDrivers[name] = 0
+          })
+          const dataToExport = 
+            statsAcc
+            .sort((a: any, b: any) => {
+              return moment(a.startTime).diff(moment(b.startTime));
+            })
+            .map((doc: any) => {
+              const drivers = doc.drivers;
+              const driversData = {...allDrivers, ...drivers}
+              
+              console.log(driversData)
+              const monthDay = doc.monthDay;
+              const row = {
+                Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${doc.year}`,
+                'Daily Total': doc.dayCount + doc.nightCount,
+                'Daily Ride Count': doc.dayCount,
+                'Day No Shows': doc.dayNoShow,
+                'Day Cancels': doc.dayCancel,
+                'Night Ride Count': doc.nightCount, 
+                'Night No Shows': doc.nightNoShow, 
+                'Night Cancels': doc.nightCancel,
+                ...driversData
+              };
+              return row;
+            });
+          csv
+            .writeToBuffer(dataToExport, { headers: true })
+            .then((data) => res.send(data))
+            .catch((err) => res.send(err));
+        });
+      }
+    })
+  }  
 }
 
 function checkSend(
