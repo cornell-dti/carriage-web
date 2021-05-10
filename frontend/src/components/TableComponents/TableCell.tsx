@@ -14,6 +14,8 @@ type TableCellProps = {
   reduced?: boolean;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
+  outline?: boolean;
+  insideButton?: boolean;
 }
 
 const TableCell = (props: TableCellProps) => {
