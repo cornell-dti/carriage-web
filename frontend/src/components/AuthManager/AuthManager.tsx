@@ -8,6 +8,7 @@ import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
+import SubscribeWrapper from './SubscrbeWrapper';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
@@ -80,7 +81,9 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   const SiteContent = () => (
     <AuthContext.Provider value={{ logout, id }}>
       <ReqContext.Provider value={{ withDefaults }}>
-        {children}
+        <SubscribeWrapper userId={id}>
+          {children}
+        </SubscribeWrapper>
       </ReqContext.Provider>
     </AuthContext.Provider>
   );

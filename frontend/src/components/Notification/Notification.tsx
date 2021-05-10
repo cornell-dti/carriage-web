@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import Popup from 'reactjs-popup';
 import cn from 'classnames';
-import { useReq } from '../../context/req';
-import subscribeUser from './subscribeUser';
 import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
@@ -15,20 +13,9 @@ type Message = {
 };
 
 const Notification = () => {
-  const [availability, setAvailability] = useState(true); // TODO
   const [newMessages, setNewMessages] = useState<Message[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
-  const { withDefaults } = useReq();
-
-  const checkNotificationAvailability = () => {
-    setAvailability('serviceWorker' in navigator && 'PushManager' in window);
-  };
-  useEffect(checkNotificationAvailability);
-
-  useEffect(() => {
-    subscribeUser(withDefaults);
-  }, [withDefaults]);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
@@ -63,7 +50,7 @@ const Notification = () => {
       trigger={
         <button className={styles.bell}>
           <img src={notificationBell} alt='notification bell icon' />
-          {availability && notify && (
+          {notify && (
             <img
               src={notificationBadge}
               className={styles.badge}

@@ -9,6 +9,8 @@ import { Tag } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
+import { UserType } from '../models/subscription';
+import { sendToUsers } from '../util/notification';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -170,7 +172,24 @@ router.put('/:id', validateUser('User'), (req, res) => {
       tag: Tag.CUSTOM,
     };
   }
-  db.update(res, Ride, { id }, body, tableName);
+  db.update(res, Ride, { id }, body, tableName, (doc) => {
+    const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+    const riderId = ride.rider.id;
+    const driverId = ride.driver ? ride.driver.id : null;
+    const userId = res.locals.user.id;
+    const { userType } = res.locals.user;
+    sendToUsers(`ride ${id} updated by ${userId}`, UserType.ADMIN);
+    if (userType === UserType.ADMIN) {
+      sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
+      sendToUsers(`ride ${id} updated by ${userId}`, UserType.RIDER, riderId);
+    }
+    if (userType === UserType.RIDER) {
+      sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
+    }
+    if (userType === UserType.DRIVER) {
+      sendToUsers(`ride ${id} updated by ${userId}`, UserType.RIDER, riderId);
+    }
+  });
 });
 
 // Create edit instances and update a repeating ride's edits field
