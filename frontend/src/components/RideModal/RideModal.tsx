@@ -89,7 +89,6 @@ const RideModal = ({
       if (ride) {
         if (ride.type === 'active') {
           rideData.type = 'unscheduled';
-          rideData.driver = '';
         }
         fetch(
           `/api/rides/${ride.id}`,
