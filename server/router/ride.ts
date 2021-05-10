@@ -180,10 +180,10 @@ router.put('/:id', validateUser('User'), (req, res) => {
     const { userType } = res.locals.user;
     sendToUsers(`ride ${id} updated by ${userId}`, UserType.ADMIN);
     if (userType === UserType.ADMIN) {
-      sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
+      ride.driver && sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
       sendToUsers(`ride ${id} updated by ${userId}`, UserType.RIDER, riderId);
     }
-    if (userType === UserType.RIDER) {
+    if (userType === UserType.RIDER && ride.driver) {
       sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
     }
     if (userType === UserType.DRIVER) {
