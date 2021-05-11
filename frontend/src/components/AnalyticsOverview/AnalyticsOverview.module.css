@@ -27,7 +27,7 @@
 
 .statsbox {
   flex-direction: row;
-  min-width: 20%;
+  min-width: 25%;
   display: flex;
   flex-flow: row;
   align-items: center;

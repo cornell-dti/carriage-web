@@ -10,7 +10,7 @@ import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
 import DateFilter from './DateFilter';
-import {addOn, cancel, dayRide, nightRide, noShow} from '../../icons/analytics/index';
+import {cancel, dayRide, nightRide, noShow} from '../../icons/analytics/index';
 
 type Cell = string | number;
 
@@ -128,11 +128,6 @@ const Table = ({ type }: TableProps) => {
         alt: 'cancel',
         stats: data.cancel,
         description: 'cancels',
-      }, {
-        icon: addOn,
-        alt: 'day',
-        stats: 0, // TODO
-        description: 'add-ons',
       }]
     } else if (type === 'driver' && driverTableData) {
       const filtered = driverTableData.filter((row: Cell[]) => {
