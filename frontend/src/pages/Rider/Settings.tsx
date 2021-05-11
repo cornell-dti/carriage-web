@@ -3,7 +3,6 @@ import UserDetail, { UserContactInfo } from '../../components/UserDetail/UserDet
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
-import settingsStyles from './settings.module.css';
 import styles from "../Admin/page.module.css"
 import Notification from '../../components/Notification/Notification';
 
