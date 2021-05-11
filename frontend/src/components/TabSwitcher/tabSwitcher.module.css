@@ -22,3 +22,8 @@
   height: 1px;
   background-color: #848484;
 }
+
+.rightSection {
+  display: flex;
+  align-items: center;
+}
