@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone, clock, wheel, user } from '../../icons/userInfo/index';
@@ -21,9 +21,9 @@ type EmployeeDetailProps = {
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
   const [employee, setEmployee] = useState(location.state);
-
-  const employeeId = location.pathname.split('/')[3];
-
+  const pathArr = location.pathname.split('/');
+  const userType = pathArr[1];
+  const { id: employeeId } = useParams<{ id: string }>();
 
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
@@ -38,29 +38,34 @@ const EmployeeDetail = () => {
 
   useEffect(() => {
     if (!employee && employeeId) {
-      fetch(`/api/drivers/${employeeId}`, withDefaults())
-        .then((res) => res.json())
-        .then((driver) => {
-          if (!driver['err']) {
-            setEmployee({...driver, availability: formatAvailability(driver.availability), 
-                          phone: driver.phoneNumber})
-          } else {
-            fetch (`/api/admins/${employeeId}`, withDefaults())
-            .then((res) => res.json())
-            .then((admin) => {
-              setEmployee({...admin, availability: formatAvailability(admin.availability), 
-                            phone: admin.phoneNumber})
-            })
-          }
-        });
-      fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
-        .then((res) => res.json())
-        .then(({ data }) => setRides(data.sort(compRides)));
+      if (userType === 'admins') {
+        fetch(`/api/admins/${employeeId}`, withDefaults())
+          .then((res) => res.json())
+          .then((admin) => {
+            setEmployee({
+              ...admin,
+              availability: '',
+              phone: admin.phoneNumber,
+            });
+          });
+      } else {
+        fetch(`/api/drivers/${employeeId}`, withDefaults())
+          .then((res) => res.json())
+          .then((driver) => {
+            setEmployee({
+              ...driver,
+              availability: formatAvailability(driver.availability),
+              phone: driver.phoneNumber,
+            });
+          });
+      }
     }
-  }, [employeeId, employee, withDefaults]);
+    fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
+      .then((res) => res.json())
+      .then(({ data }) => setRides(data.sort(compRides)));
+  }, [employeeId, employee, withDefaults, userType]);
 
   if (employee) {
-    console.log(employee.availability)
     const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
     const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
     const avail = parsedAvail.substring(0, parsedAvail.length - 2);
@@ -79,31 +84,30 @@ const EmployeeDetail = () => {
 
     return (
       <>
-      <UserDetail
-        firstName={employee.firstName}
-        lastName={employee.lastName}
-        netId={employee.netId}
-        employee={employee}
-        role={roleValue()}
-        photoLink={employee.photoLink}
-      >
-        <UserContactInfo icon={phone} alt="" text={employee.phone} />
-        <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-        <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
-        <OtherInfo>
-          <p>last week:</p>
-        </OtherInfo>
-      </UserDetail>
+        <UserDetail
+          firstName={employee.firstName}
+          lastName={employee.lastName}
+          netId={employee.netId}
+          employee={employee}
+          role={roleValue()}
+          photoLink={employee.photoLink}
+        >
+          <UserContactInfo icon={phone} alt="" text={employee.phone} />
+          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
+          <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
+          <OtherInfo>
+            <p>last week:</p>
+          </OtherInfo>
+        </UserDetail>
 
-      <PastRides
-        isStudent={false}
-        rides={rides}
-      />
+        <PastRides
+          isStudent={false}
+          rides={rides}
+        />
       </>
     );
-  } else {
-    return (<></>)
   }
+  return (<></>);
 };
 
 export default EmployeeDetail;

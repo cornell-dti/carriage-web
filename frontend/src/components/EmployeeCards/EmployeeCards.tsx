@@ -34,7 +34,6 @@ const EmployeeCard = ({
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const fmtAvailability = formatAvailability(availability);
-  const fullName = `${firstName}_${lastName}`;
 
   const isAdmin = !availability;
   const isBoth = !isAdmin && admin; // admin and driver
@@ -55,9 +54,13 @@ const EmployeeCard = ({
     photoLink,
   };
 
-
   return (
-    <Link to={{ pathname: '/employees/employee/' + userInfo.id, state: userInfo }}
+    <Link to={{
+      pathname: isAdmin
+        ? `/admins/${userInfo.id}`
+        : `/drivers/${userInfo.id}`,
+      state: userInfo,
+    }}
       style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card
         firstName={firstName}

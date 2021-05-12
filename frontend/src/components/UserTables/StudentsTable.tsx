@@ -81,8 +81,8 @@ const StudentsTable = () => {
           accessibility: disability,
         };
         const location = {
-          pathname: '/riders/' + r.id,
-          state: riderData
+          pathname: `/riders/${r.id}`,
+          state: riderData,
         };
         const goToDetail = () => {
           history.push(location);

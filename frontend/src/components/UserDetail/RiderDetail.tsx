@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import UserDetail, { UserContactInfo, OtherInfo } from './UserDetail';
 import { phone } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
@@ -19,7 +19,7 @@ type RiderDetailProps = {
 const RiderDetail = () => {
   const location = useLocation<RiderDetailProps>();
   const { withDefaults } = useReq();
-  const riderId = location.pathname.split('/')[3];
+  const { id: riderId } = useParams<{ id: string }>();
   const [rider, setRider] = useState(location.state);
   const [rides, setRides] = useState<Ride[]>([]);
   const compRides = (a: Ride, b: Ride) => {
