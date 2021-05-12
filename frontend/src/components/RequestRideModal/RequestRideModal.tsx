@@ -25,7 +25,8 @@ const RequestRideModal = () => {
       };
 
       const onSubmit = async (data: ObjectType) => {
-        const { startLocation, endLocation, startTime, endTime, recurringDays, startDate, endDate } = data;
+        const { startLocation, endLocation, startTime, endTime, 
+          recurringDays, startDate, endDate } = data;
         const {id} = authContext; 
         closeModal();
       };
