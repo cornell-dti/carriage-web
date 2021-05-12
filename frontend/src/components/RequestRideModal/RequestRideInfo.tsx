@@ -46,44 +46,22 @@ const RequestRideInfo = () => {
   return (
     <div className={styles.inputContainer}>
         <div className = {styles.col1}>
-            <Label htmlFor="startLocation">Pickup Location</Label>
+            <Label id="day" className={styles.largeLabel}>Day</Label>
             <Input
-                id='startLocation'
-                name='startLocation'
-                type='text'
+                id='dayInput'
+                name='day'
+                type='date'
                 className={cn(styles.input)}
                 ref={register({ required: true })}
             />
         </div>
         <div className = {styles.col2}>
-            <Label htmlFor="endLocation">Dropoff Location</Label>
+            <Label htmlFor={"repeating"}>Repeating?</Label>
             <Input
-                id='endLocation'
-                name='endLocation'
-                type='text'
-                className={cn(styles.input)}
-                ref={register({ required: true })}
-            />
-        </div>
-        <div className = {styles.col1}>
-            <Label htmlFor="pickupTime">Pickup Time</Label>
-            <Input
-                id='pickupTime'
-                name='pickupTime'
-                type='time'
-                className={cn(styles.input)}
-                ref={register({ required: true })}
-            />
-        </div>
-        <div className = {styles.col2}>
-            <Label htmlFor="dropoffTime">Dropoff Time</Label>
-            <Input
-                id='dropoffTime'
-                name='dropoffTime'
-                type='time'
-                className={cn(styles.input)}
-                ref={register({ required: true })}
-            />
+            type="checkbox"
+            id="repeating"
+            name="repeating"
+            ref={register({ required: false })}/>
         </div>
         <div className={styles.dayBox}>
             <label id = {"repeatDays"}>Repeat On</label>
@@ -105,22 +83,6 @@ const RequestRideInfo = () => {
             </div>
           ))}
         </div>
-        <Label id = "duration"> Duration </Label>
-        <SRLabel id= "startDate">Start Date</SRLabel>
-        <Input 
-            type = "date"
-            name = "startDate"
-            aria-labelledby="duration startDate"
-            ref={register({ required: true })}
-        />
-        <p> to </p>
-        <SRLabel id= "endDate">End Date</SRLabel>
-        <Input
-            type="date"
-            name="endDate"
-            aria-labelledby="duration endDate"
-            ref={register({ required: true })}
-          />
     </div>
   ); 
 };

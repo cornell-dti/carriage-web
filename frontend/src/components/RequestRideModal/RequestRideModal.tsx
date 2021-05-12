@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
@@ -12,7 +13,7 @@ const RequestRideModal = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showingToast, setToast] = useState(false);
     const methods = useForm();
-
+    const authContext = useContext(AuthContext);
     const openModal = () => {
         setIsOpen(true);
         setToast(false);
@@ -25,6 +26,7 @@ const RequestRideModal = () => {
 
       const onSubmit = async (data: ObjectType) => {
         const { startLocation, endLocation, startTime, endTime, recurringDays, startDate, endDate } = data;
+        const {id} = authContext; 
         closeModal();
       };
     
