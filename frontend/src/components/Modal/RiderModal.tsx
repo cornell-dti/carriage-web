@@ -1,33 +1,28 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
-import Modal from './Modal';
-import { Button } from '../FormElements/FormElements';
-import { ObjectType, NewRider } from '../../types/index';
-import Toast from '../ConfirmationToast/ConfirmationToast';
-import RiderModalInfo from './RiderModalInfo';
-import styles from './ridermodal.module.css';
-import { useReq } from '../../context/req';
-import { useRiders } from '../../context/RidersContext';
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import Modal from "./Modal";
+import { Button } from "../FormElements/FormElements";
+import { ObjectType, Rider } from "../../types/index";
+import Toast from "../ConfirmationToast/ConfirmationToast";
+import RiderModalInfo from "./RiderModalInfo";
+import styles from "./ridermodal.module.css";
+import { useReq } from "../../context/req";
+import { useRiders } from "../../context/RidersContext";
 
 type RiderModalProps = {
-  riders: Array<NewRider>;
-  setRiders: Dispatch<SetStateAction<NewRider[]>>;
+  riders: Array<Rider>;
+  setRiders: Dispatch<SetStateAction<Rider[]>>;
 };
 
 const RiderModal = () => {
-  const [formData, setFormData] = useState({
-    id: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    email: '',
+  const [formData, setFormData] = useState<ObjectType>({
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
     accessibility: [],
-    description: '',
-    joinDate: '',
-    endDate: '',
-    pronouns: '',
-    address: '',
-    favoriteLocations: [],
-    organization: '',
+    joinDate: "",
+    endDate: "",
+    address: "",
   });
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -55,42 +50,38 @@ const RiderModal = () => {
   useEffect(() => {
     if (isSubmitted) {
       const newRider = {
-        id: formData.id,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phoneNumber: formData.phoneNumber,
-        email: formData.email,
-        accessibility: formData.accessibility,
-        description: '',
-        joinDate: '',
-        pronouns: '',
-        address: formData.address,
-        favoriteLocations: [],
-        organization: '',
+        ...formData,
       };
-      fetch('/api/riders', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(newRider),
-      })).then(() => {
+      fetch(
+        "/api/riders",
+        withDefaults({
+          method: "POST",
+          body: JSON.stringify(newRider),
+        })
+      ).then(() => {
         refreshRiders();
         setToast(true);
       });
       setIsSubmitted(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, isSubmitted, refreshRiders, withDefaults]);
 
   return (
     <>
-      {showingToast ? <Toast message='The student has been added.' /> : null}
-      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Student</Button>
+      {showingToast ? <Toast message="The student has been added." /> : null}
+      <Button className={styles.addRiderButton} onClick={openModal}>
+        + Add Student
+      </Button>
       <Modal
-        title={['Add a student']}
+        title={["Add a student"]}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}
       >
-        <RiderModalInfo onSubmit={saveDataThen(submitData)} />
+        <RiderModalInfo 
+          onSubmit={saveDataThen(submitData)} 
+          setIsOpen={setIsOpen} 
+          setFormData={setFormData}/>
       </Modal>
     </>
   );

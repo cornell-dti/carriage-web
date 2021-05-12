@@ -34,14 +34,24 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     )
       .then((res) => res.json())
       .then((data) => data.data);
-    setDrivers([...driversData]);
+    driversData && driversData.sort((a: Driver, b: Driver) => {
+      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+      return aFull < bFull ? -1 : 1;
+    });
+    driversData && setDrivers([...driversData]);
   };
 
   const refreshAdmins = async () => {
     const adminsData: Array<Admin> = await fetch('/api/admins', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
-    setAdmins([...adminsData]);
+    adminsData && adminsData.sort((a: Admin, b: Admin) => {
+      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+      return aFull < bFull ? -1 : 1;
+    });
+    adminsData && setAdmins([...adminsData]);
   };
 
   // Initialize the data

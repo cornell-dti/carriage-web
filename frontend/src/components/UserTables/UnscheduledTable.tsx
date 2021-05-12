@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
-import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
+import styles from './table.module.css';
 
 type TableProps = {
   drivers: Driver[];
@@ -30,11 +30,7 @@ const Table = ({ drivers }: TableProps) => {
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
-  return (
-    <>
-      <RidesTable rides={rides} drivers={drivers} hasAssignButton={true} />
-    </>
-  );
+  return <RidesTable rides={rides} drivers={drivers} hasButtons={true} />;
 };
 
 export default Table;

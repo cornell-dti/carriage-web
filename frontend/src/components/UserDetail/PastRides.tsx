@@ -31,7 +31,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
         .toLowerCase();
       const { rider } = ride;
       const name = `${rider.firstName} ${rider.lastName}`;
-      const needs = (rider.accessibilityNeeds || []).join(', ');
+      const needs = (rider.accessibility || []).join(', ');
       const pickupLocation = ride.startLocation.name;
       const pickupTag = ride.startLocation.tag;
       const dropoffLocation = ride.endLocation.name;
@@ -53,7 +53,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
       return (
         <tr key={index}>
-          <TableRow values={inputValues} />
+          <TableRow values={inputValues} reduced={false} />
         </tr>
       );
     });

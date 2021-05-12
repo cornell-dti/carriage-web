@@ -9,13 +9,14 @@ import TableCell from './TableCell';
  */
 type TableRowProps = {
   values: Array<TableValue>;
+  reduced: boolean;
 };
 
 const TableRow = (props: TableRowProps) => {
-  const { values } = props;
+  const { values, reduced } = props;
 
   const resultList = values.map((val, index) => {
-    const { data, tag, buttonHandler, ButtonModal } = val;
+    const { data, tag, driver, buttonHandler, ButtonModal } = val;
     if (index === 0) {
       /* first cell */
       return (
@@ -25,11 +26,12 @@ const TableRow = (props: TableRowProps) => {
           index={index}
           first={true}
           last={false}
+          driver={false}
         />
       );
     }
-    if (index === values.length - 1) {
-      /* last cell */
+    if (buttonHandler) {
+      /* if the cell is a button */
       return (
         <TableCell
           key={index}
@@ -37,8 +39,11 @@ const TableRow = (props: TableRowProps) => {
           index={index}
           first={false}
           last={true}
+          driver={driver === undefined ? false : driver}
           buttonHandler={buttonHandler}
           ButtonModal={ButtonModal}
+          outline={index !== values.length - 1}
+          insideButton={index === values.length - 1}
         />
       );
     }
@@ -49,7 +54,9 @@ const TableRow = (props: TableRowProps) => {
         index={index}
         first={false}
         last={false}
+        driver={false}
         tag={tag}
+        reduced={reduced}
       />
     );
   });

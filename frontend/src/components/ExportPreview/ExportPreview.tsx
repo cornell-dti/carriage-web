@@ -37,13 +37,14 @@ const ExportPreview = () => {
         {drivers.map((driver: Driver, index: number) => (
           <ScheduledTable
             key={index}
-            driverId={driver.id}
-            driverName={`${driver.firstName} ${driver.lastName}`}
+            query='driver'
+            id={driver.id}
+            name={`${driver.firstName} ${driver.lastName}`}
           />
         ))}
       </div>
       <div className={styles.exportButtonContainer}>
-        <ExportButton onClick={downloadCSV} />
+        {/* <ExportButton onClick={downloadCSV} /> */}
         <CSVLink
           data={downloadData}
           filename={`scheduledRides_${today}.csv`}
