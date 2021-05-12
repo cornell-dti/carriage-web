@@ -22,7 +22,9 @@ const Home = () => {
 
   const [downloadData, setDownloadData] = useState<string>('');
   const [showingToast, setToast] = useState(false);
-  const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+  const csvLink = useRef<
+    CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
+  >(null);
   const { curDate } = useDate();
   const today = moment(curDate).format('YYYY-MM-DD');
 
@@ -43,8 +45,8 @@ const Home = () => {
       .then(() => setToast(true));
   };
 
-  const renderScheduledRides = (): JSX.Element[] => {
-    return drivers.map((driver: Driver, index: number) => (
+  const renderScheduledRides = (): JSX.Element[] => (
+    drivers.map((driver: Driver, index: number) => (
       <ScheduledTable
         key={index}
         query='driver'
@@ -52,24 +54,28 @@ const Home = () => {
         name={`${driver.firstName} ${driver.lastName}`}
       />
     ))
-  };
+  );
 
   return (
     <main id = "main">
       <div className={styles.pageTitle}>
         <MiniCal />
-        {showingToast ? <Toast message={`${today} data has been downloaded.`} /> : null}
-        <div className={styles.rightSection}>
-          <ExportButton onClick={downloadCSV} />
-          <CSVLink
-            data={downloadData}
-            filename={`scheduledRides_${today}.csv`}
-            className={styles.hidden}
-            ref={csvLink}
-            target="_blank"
-          />
-          <RideModal />
-          <Notification />
+        <div className={styles.margin3}>
+          {showingToast ? (
+            <Toast message={`${today} data has been downloaded.`} />
+          ) : null}
+          <div className={styles.rightSection}>
+            <ExportButton onClick={downloadCSV} />
+            <CSVLink
+              data={downloadData}
+              filename={`scheduledRides_${today}.csv`}
+              className={styles.hidden}
+              ref={csvLink}
+              target="_blank"
+            />
+            <RideModal />
+            <Notification />
+          </div>
         </div>
       </div>
 

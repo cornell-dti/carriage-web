@@ -23,28 +23,27 @@ router.get('/download', (req, res) => {
     .toISOString();
   const condition = new Condition()
     .where('startTime')
-    .between(dateStart, dateEnd)
-    .where('type')
-    .not()
-    .eq('unscheduled');
+    .between(dateStart, dateEnd);
 
   const callback = (value: any) => {
-    const dataToExport = value.map((doc: any) => {
-      const start = moment.tz(doc.startTime, 'America/New_York');
-      const end = moment.tz(doc.endTime, 'America/New_York');
-      const fullName = (user: RiderType | DriverType) => (
-        `${user.firstName} ${user.lastName.substring(0, 1)}.`
-      );
-      return {
-        Name: fullName(doc.rider),
-        'Pick Up': start.format('h:mm A'),
-        From: doc.startLocation.name,
-        To: doc.endLocation.name,
-        'Drop Off': end.format('h:mm A'),
-        Needs: doc.rider.accessibility,
-        Driver: fullName(doc.driver),
-      };
-    });
+    const dataToExport = value
+      .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
+      .map((doc: any) => {
+        const start = moment.tz(doc.startTime, 'America/New_York');
+        const end = moment.tz(doc.endTime, 'America/New_York');
+        const fullName = (user: RiderType | DriverType) => (
+          `${user.firstName} ${user.lastName.substring(0, 1)}.`
+        );
+        return {
+          Name: fullName(doc.rider),
+          'Pick Up': start.format('h:mm A'),
+          From: doc.startLocation.name,
+          To: doc.endLocation.name,
+          'Drop Off': end.format('h:mm A'),
+          Needs: doc.rider.accessibility,
+          Driver: doc.driver ? fullName(doc.driver) : '',
+        };
+      });
     csv
       .writeToBuffer(dataToExport, { headers: true })
       .then((data) => res.send(data))
@@ -148,6 +147,29 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
+  const { type, startLocation, endLocation } = body;
+
+  if (type && type === Type.UNSCHEDULED) {
+    body.$REMOVE = ['driver'];
+  }
+
+  if (startLocation && !validate(startLocation)) {
+    const name = startLocation.split(',')[0];
+    body.startLocation = {
+      name,
+      address: startLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
+
+  if (endLocation && !validate(endLocation)) {
+    const name = endLocation.split(',')[0];
+    body.endLocation = {
+      name,
+      address: endLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
   db.update(res, Ride, { id }, body, tableName);
 });
 

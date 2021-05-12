@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -18,6 +18,8 @@ import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
 import RiderDetail from '../../components/UserDetail/RiderDetail';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
+import { EmployeesProvider } from '../../context/EmployeesContext';
+import { RidersProvider } from '../../context/RidersContext';
 
 const Routes = () => {
   const skipRef = useSkipMain();
@@ -71,9 +73,48 @@ const AdminRoutes = () => {
 
   return (
     <DateContext.Provider value={defaultVal}>
-      <Router basename="/admin">
-        <Routes />
-      </Router>
+      <EmployeesProvider>
+        <RidersProvider>
+          <Router basename="/admin">
+            <Sidebar type="admin">
+              <Switch>
+                <Route
+                  path="/home"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Home} exact />
+                      <Route path={`${url}/export`} component={ExportPreview} />
+                    </>
+                  )}
+                />
+                <Route
+                  path="/employees"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Employees} exact />
+                      <Route path={`${url}/employee`} component={EmployeeDetail} />
+                    </>
+                  )}
+                />
+                <Route
+                  path="/riders"
+                  render={({ match: { url } }) => (
+                    <>
+                      <Route path={`${url}/`} component={Students} exact />
+                      <Route path={`${url}/rider`} component={RiderDetail} />
+                    </>
+                  )}
+                />
+                <Route path="/locations" component={Locations} />
+                <Route path="/analytics" component={Analytics} />
+                <Route path="*">
+                  <Redirect to="/home" />
+                </Route>
+              </Switch>
+            </Sidebar>
+          </Router>
+        </RidersProvider>
+      </EmployeesProvider>
     </DateContext.Provider >
 
   );

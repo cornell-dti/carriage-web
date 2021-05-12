@@ -1,7 +1,9 @@
 import express from 'express';
 import webpush from 'web-push';
 import AWS from 'aws-sdk';
+import e from 'express';
 import config, { webpushValues, snsValues } from '../config';
+import { Subscription, SubscriptionType, UserType, PlatformType } from '../models/subscription';
 import { validateUser } from '../util';
 
 const router = express.Router();
@@ -12,41 +14,39 @@ webpush.setVapidDetails(
   webpushValues.public,
   webpushValues.private,
 );
-type WebSub = webpush.PushSubscription;
 
-
-type Subscription = { // TODO update functions with user id
-  platform: string;
-  endpoint: string;
-  keys?: {
-    p256dh: string;
-    auth: string;
-  };
-};
 
 type SubscriptionRequest = {
+  userType?: string;
+  userId?: string;
+  preferences?: string[];
   platform: string;
   token?: string;
-  webSub?: WebSub;
+  webSub?: webpush.PushSubscription;
 };
 
-const subscriptionSet = new Set() as Set<string>;
 
-const badPlatform = (platform: String) => {
-  switch (platform) {
-    case 'web':
-    case 'android':
-    case 'ios':
-    case 'ios rider':
-    case 'ios driver':
-      return false;
-    default:
-      return true;
-  }
-};
+const addSub = (sub: SubscriptionType) => new Promise((resolve, reject) => {
+  Subscription.get(sub.id, (err, data) => {
+    if (err) {
+      reject();
+    } else if (data) {
+      // TODO check add time
+      resolve('success');
+    } else {
+      (new Subscription(sub)).save((err2, data2) => {
+        if (err2 || !data2) {
+          reject();
+        } else {
+          data2.populate().then(() => resolve('success'));
+        }
+      });
+    }
+  });
+});
 
-const sendMsg = (sub: Subscription, msg: string) => {
-  if (sub.platform === 'web') {
+const sendMsg = (sub: SubscriptionType, msg: string) => {
+  if (sub.platform === PlatformType.WEB) {
     const webSub = {
       endpoint: sub.endpoint!,
       keys: sub.keys!,
@@ -58,10 +58,16 @@ const sendMsg = (sub: Subscription, msg: string) => {
     return new Promise((resolve, reject) => {
       webpush
         .sendNotification(webSub, JSON.stringify(payload))
-        .then(resolve)
+        .then(() => resolve('success'))
         .catch((err) => {
           if (err.statusCode === 404 || err.statusCode === 410) {
-            subscriptionSet.delete(JSON.stringify(sub));
+            Subscription.get(sub.id, (err2, data) => {
+              if (err2 || !data) {
+                reject();
+              } else {
+                data.delete().then(() => resolve('success'));
+              }
+            });
           } else {
             reject(err);
           }
@@ -69,88 +75,95 @@ const sendMsg = (sub: Subscription, msg: string) => {
     });
   }
 
-  const ios = sub.platform !== 'android';
-  const payloadKey = ios ? 'APNS' : 'GCM';
-  const payload = ios
-    ? { aps: { alert: msg } }
-    : { notification: { text: msg } };
   const snsParams = {
-    Message: JSON.stringify({ [payloadKey]: payload }),
+    Message: msg,
     TargetArn: sub.endpoint,
-    MessageStructure: 'json',
   };
   return new Promise((resolve, reject) => {
     sns.publish(snsParams, (err, data) => {
-      err ? reject(err) : resolve(data);
+      err ? reject(err) : resolve(data); // TODO if error remove? which errors?
     });
   });
 };
 
-const subscribe = (req: SubscriptionRequest) => {
-  const plat = req.platform;
-  if (plat === 'web') {
+const subscribe = (req: SubscriptionRequest) => new Promise((resolve, reject) => {
+  const userType = req.userType ? req.userType as UserType : UserType.USER;
+  const platform = req.platform as PlatformType;
+  const timeAdded = (new Date()).toISOString();
+  if (platform === PlatformType.WEB) {
     const subscription = {
-      platform: plat,
+      id: req.webSub!.endpoint + userType + platform,
       endpoint: req.webSub!.endpoint,
-      keys: req.webSub!.keys,
+      userType,
+      platform,
+      timeAdded,
+      preferences: [],
+      keys: req.webSub!.keys, // TODO user id to user
     };
-    subscriptionSet.add(JSON.stringify(subscription));
-    return new Promise((resolve, reject) => {
-      resolve('success');
-    });
-  }
-
-  const ios = plat === 'ios rider' ? snsValues.ios_rider : snsValues.ios_driver;
-  const arn = plat === 'android' ? snsValues.android : ios;
-  const snsParams = {
-    Token: req.token!,
-    PlatformApplicationArn: arn,
-  };
-
-  return new Promise((resolve, reject) => {
+    addSub(subscription).then(() => resolve('success')).catch(reject);
+  } else {
+    const snsParams = {
+      Token: req.token!,
+      PlatformApplicationArn: snsValues.android,
+    };
     sns.createPlatformEndpoint(snsParams, (err, data) => {
       if (err || !data) {
         reject();
-        return;
+      } else {
+        const subscription = {
+          id: data.EndpointArn + userType + platform,
+          endpoint: data.EndpointArn!,
+          userType,
+          platform,
+          timeAdded,
+          preferences: [],
+        };
+        addSub(subscription).then(() => resolve('success')).catch(reject);
       }
-
-      const subscription = {
-        platform: plat,
-        endpoint: data.EndpointArn,
-      };
-      subscriptionSet.add(JSON.stringify(subscription));
-      resolve('success');
     });
-  });
-};
+  }
+});
 
 // send out a notification to everyone
 router.post('/sendAll', (req, res) => {
   const { msg } = req.body; // TODO validation, error codes
-
-  const promises = [...subscriptionSet].map((strSub) => {
-    const sub = JSON.parse(strSub);
-    return sendMsg(sub, msg);
+  Subscription.scan().exec((err, data) => {
+    if (err || !data) {
+      res.status(400).send({ err: 'could not get all subscriptions' });
+    } else {
+      const promises = data.map((doc) => {
+        const sub = JSON.parse(JSON.stringify(doc.toJSON()));
+        return sendMsg(sub, msg);
+      });
+      Promise.allSettled(promises)
+        .then((results) => {
+          const status = results.map((el) => el.status);
+          const map = status.reduce((acc, el) => acc.set(el, (acc.get(el) || 0) + 1), new Map());
+          const passed = map.get('fulfilled') || 0;
+          const total = (map.get('rejected') || 0) + passed;
+          res.status(200).send({ success: `${passed}/${total} passed` });
+        })
+        .catch(() => {
+          res.status(500).send({ err: 'failed to send messages' });
+        });
+    }
   });
-  Promise.all(promises)
-    .then((data) => {
-      res.status(200).send({ success: true });
-    })
-    .catch((err) => {
-      res.status(500).send({ err: 'could not send all messages' });
-    });
 });
 
 // subscribe a user
 router.post('/subscribe', validateUser('User'), (req, res) => {
-  if (badPlatform(req.body.platform)) {
+  const { platform } = req.body;
+  if (platform !== PlatformType.WEB && platform !== PlatformType.ANDROID) {
     res.status(400).json({ err: 'invalid platform' });
     return; // TODO additional validation
   }
 
-  const subReq = req.body.platform === 'web'
-    ? { platform: req.body.platform, webSub: req.body.webSub }
-    : { platform: req.body.platform, token: req.body.token };
+  // TODO user and preferences
+  const subReq = {
+    platform,
+    ...(platform === PlatformType.WEB
+      ? { webSub: req.body.webSub } : { token: req.body.token }),
+  };
   subscribe(subReq)
     .then(() => {
       res.status(200).json({ success: true });

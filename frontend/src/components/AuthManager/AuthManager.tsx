@@ -1,11 +1,13 @@
 import React, { useState, FunctionComponent } from 'react';
-import { GoogleLogin } from 'react-google-login';
+import { GoogleLogin, useGoogleLogout } from 'react-google-login';
 import { useHistory, useLocation } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
+import styles from './authmanager.module.css';
+import { googleLogin } from '../../icons/other';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
@@ -14,9 +16,11 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
+  const { signOut } = useGoogleLogout({ clientId });
 
   function logout() {
-    localStorage.clear();
+    signOut();
+    localStorage.removeItem('userType');
     if (jwt) {
       setJWT('');
     }
@@ -36,33 +40,41 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     } as RequestInit;
   }
 
-  async function onSignIn(googleUser: any) {
-    const { id_token: token } = googleUser.getAuthResponse();
-    const serverJWT = await fetch(
-      '/api/auth',
-      withDefaults({
-        method: 'POST',
-        body: JSON.stringify({
-          token,
-          table: 'Admins',
-          clientId,
-        }),
-      }),
-    )
-      .then((res) => res.json())
-      .then((json) => json.jwt);
+  function generateOnSignIn(isAdmin: boolean) {
+    const userType = isAdmin ? 'Admin' : 'Rider';
+    const table = `${userType}s`;
+    const localUserType = localStorage.getItem('userType');
+    return async function onSignIn(googleUser: any) {
+      if (!localUserType || localUserType === userType) {
+        const { id_token: token } = googleUser.getAuthResponse();
+        const serverJWT = await fetch(
+          '/api/auth',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify({
+              token,
+              table,
+              clientId,
+            }),
+          }),
+        )
+          .then((res) => res.json())
+          .then((json) => json.jwt);
 
-    if (serverJWT) {
-      const decoded: any = jwtDecode(serverJWT);
-      setId(decoded.id);
-      setJWT(serverJWT);
-      setSignedIn(true);
-      if (pathname === '/') {
-        history.push('/admin/home');
+        if (serverJWT) {
+          const decoded: any = jwtDecode(serverJWT);
+          setId(decoded.id);
+          localStorage.setItem('userType', decoded.userType);
+          setJWT(serverJWT);
+          setSignedIn(true);
+          if (pathname === '/') {
+            history.push(isAdmin ? '/admin/home' : '/rider/home');
+          }
+        } else {
+          logout();
+        }
       }
-    } else {
-      logout();
-    }
+    };
   }
 
   const SiteContent = () => (
@@ -74,16 +86,56 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   );
 
   const AuthBarrier = () => (
-    <>
-      <GoogleLogin
-        onSuccess={onSignIn}
-        onFailure={(err) => console.error(err)}
-        clientId={clientId}
-        cookiePolicy="single_host_origin"
-        isSignedIn
-      />
-      <LandingPage />
-    </>
+    <LandingPage
+      students={
+        <GoogleLogin
+          render={(renderProps) => (
+            <button
+              onClick={renderProps.onClick}
+              className={styles.btn}
+              disabled={renderProps.disabled}
+            >
+              <img
+                src={googleLogin}
+                className={styles.icon}
+                alt="google logo"
+              />
+              <div className={styles.heading}>Students</div>
+              Sign in with Google
+            </button>
+          )}
+          onSuccess={generateOnSignIn(false)}
+          onFailure={console.error}
+          clientId={clientId}
+          cookiePolicy="single_host_origin"
+          isSignedIn
+        />
+      }
+      admins={
+        <GoogleLogin
+          render={(renderProps) => (
+            <button
+              onClick={renderProps.onClick}
+              className={styles.btn}
+              disabled={renderProps.disabled}
+            >
+              <img
+                src={googleLogin}
+                className={styles.icon}
+                alt="google logo"
+              />
+              <div className={styles.heading}>Admins</div>
+              Sign in with Google
+            </button>
+          )}
+          onSuccess={generateOnSignIn(true)}
+          onFailure={console.error}
+          clientId={clientId}
+          cookiePolicy="single_host_origin"
+          isSignedIn
+        />
+      }
+    />
   );
 
   return signedIn ? <SiteContent /> : <AuthBarrier />;

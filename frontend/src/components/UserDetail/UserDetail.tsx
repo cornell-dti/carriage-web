@@ -20,7 +20,7 @@ type UserContactInfo = {
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   <div className={styles.contactInfo}>
     <img className={styles.contactIcon} src={icon} alt={""} />
-    <p className={styles.contactText}>{text} aria-description={"contact information"}</p>
+    <p className={styles.contactText} aria-describedby={"contact information"}>{text}</p>
   </div>
 );
 
@@ -65,7 +65,7 @@ const UserDetail = ({
       
       <div className={styles.basicInfoContainer}>
         <h1 className={styles.name}>{fullName}</h1>
-        <p aria-description={"netid"} className={styles.netId}>{netId}</p>
+        <p aria-describedby={"netid"} className={styles.netId}>{netId}</p>
       {
         employee ?
           <EmployeeModal 

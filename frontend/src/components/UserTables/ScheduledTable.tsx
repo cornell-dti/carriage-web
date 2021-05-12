@@ -39,7 +39,7 @@ const ScheduledTable = ({ query, id, name }: ScheduledTableProp) => {
       {rides.length > 0 && 
       <>
         <h1 className={styles.formHeader}>{name}</h1>
-        <RidesTable rides={rides} drivers={[]} hasAssignButton={false} />
+        <RidesTable rides={rides} drivers={[]} hasButtons={false} />
       </>}
     </>
   );
