@@ -105,6 +105,22 @@ const RequestRideInfo = () => {
             </div>
           ))}
         </div>
+        <Label id = "duration"> Duration </Label>
+        <SRLabel id= "startDate">Start Date</SRLabel>
+        <Input 
+            type = "date"
+            name = "startDate"
+            aria-labelledby="duration startDate"
+            ref={register({ required: true })}
+        />
+        <p> to </p>
+        <SRLabel id= "endDate">End Date</SRLabel>
+        <Input
+            type="date"
+            name="endDate"
+            aria-labelledby="duration endDate"
+            ref={register({ required: true })}
+          />
     </div>
   ); 
 };
