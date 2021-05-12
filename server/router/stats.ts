@@ -51,8 +51,10 @@ router.put('/', validateUser('User'), (req, res) => {
 router.get('/', validateUser('User'), (req, res) => {
   const { query: { from, to } } = req;
   const regexp = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
+  const fromMatch = from ? (from as string).match(regexp) : false;
+  const toMatch = to ? (to as string).match(regexp) : true;
 
-  if ((from as string).match(regexp) && (to as string).match(regexp)) {
+  if (fromMatch && toMatch) {
     let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
@@ -62,6 +64,7 @@ router.get('/', validateUser('User'), (req, res) => {
         date = moment.tz(date, 'America/New_York').add(1, 'days').format('YYYY-MM-DD');
       }
     }
+    statsFromDates(dates, res, false);
   } else {
     res.status(400).send({ err: 'Invalid from/to query date format' });
   }
