@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Table } from '../TableComponents/TableComponents';
-import Form from '../UserForms/LocationsForm';
-import { Button } from '../FormElements/FormElements';
-import { Location } from '../../types';
+import React, { useEffect } from 'react';
 import { useReq } from '../../context/req';
+import { Location } from '../../types';
+import LocationModal from '../LocationModal/LocationModal';
+import { Row, Table } from '../TableComponents/TableComponents';
 
-const LocationsTable = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
+interface LocationsTableProps {
+  locations: Location[]
+  setLocations: (locations: Location[]) => void
+}
+
+const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
   const { withDefaults } = useReq();
 
   useEffect(() => {
@@ -61,16 +64,13 @@ const LocationsTable = () => {
       .catch((e) => console.error(e.message));
   };
 
-  const deleteLocation = (locationId: string) => {
-    fetch(`/locations/${locationId}`, withDefaults({ method: 'DELETE' }))
-      .then((res) => {
-        if (res.status === 200) {
-          setLocations(locations.filter((l) => l.id !== locationId));
-        } else {
-          throw new Error('adding location failed');
-        }
-      })
-      .catch((e) => console.error('removing location failed'));
+  const handleEditLocation = (editedLocation: Location) => {
+    setLocations(locations.map((location) => {
+      if (location.id === editedLocation.id) {
+        return editedLocation;
+      }
+      return location;
+    }));
   };
 
   const colSizes = [1, 1, 0.75, 0.75];
@@ -87,10 +87,10 @@ const LocationsTable = () => {
         {locations.map((loc) => {
           const { id, name, address, tag } = loc;
           const tagData = { data: '', tag };
-          const deleteButton = {
-            data: <Button small onClick={() => deleteLocation(id)}>Delete</Button>,
+          const editButton = {
+            data: <LocationModal existingLocation={loc} onEditLocation={handleEditLocation} />,
           };
-          const data = [name, address, tagData, deleteButton];
+          const data = [name, address, tagData, editButton];
           return <Row key={id} data={data} colSizes={colSizes} />;
         })}
       </Table>
