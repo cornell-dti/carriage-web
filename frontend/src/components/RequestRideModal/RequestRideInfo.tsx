@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import cn from 'classnames';
 import moment from 'moment';
+import { useReq } from '../../context/req';
 import {useFormContext } from 'react-hook-form';
 import styles from './requestridemodal.module.css';
+import { Location } from '../../types';
 import { Label, Input, SRLabel } from '../FormElements/FormElements';
-
+import CustomRepeatingRides from './CustomRepeatingRides';
 type RequestRideInfoProps = {
     startLocation?: string; 
     endLocation?: string; 
@@ -14,35 +16,30 @@ type RequestRideInfoProps = {
     startDate?: string; 
     endDate?: string; 
 }
-const dayLabels = {
-    Sun: 'S',
-    Mon: 'M',
-    Tue: 'T',
-    Wed: 'W',
-    Thu: 'T',
-    Fri: 'F',
-    Sat: 'S',
-  };
-
-  type WeekType = {
-    [day: string]: boolean;
-  };
-
 const RequestRideInfo = () => {
-    const { register, formState } = useFormContext();
+  const { register, formState, getValues } = useFormContext();
   const {errors} = formState;
-  const [week, setWeek] = useState<WeekType>({
-    Sun: false,
-    Mon: false,
-    Tue: false,
-    Wed: false,
-    Thu: false,
-    Fri: false,
-    Sat: false,
-  });
-  const handleClick = (day: string) => {
-    setWeek((prev) => ({ ...prev, [day]: !week[day] }));
-  };
+  const { withDefaults } = useReq();
+  const [locations, setLocations] = useState<Location[]>([]);
+  useEffect(() => {
+    const getExistingLocations = async () => {
+      const locationsData = await fetch('/api/locations', withDefaults())
+        .then((res) => res.json())
+        .then((data) => data.data);
+      const sortedLocations = locationsData.map((location: any) => ({
+        id: location.id,
+        name: location.name,
+        address: location.address,
+        ...(location.tag && { tag: location.tag }),
+      })).sort((a: Location, b: Location) => {
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+        return 0;
+      });
+      setLocations(sortedLocations);
+    };
+    getExistingLocations();
+  }, [withDefaults]);
   return (
     <div className={styles.inputContainer}>
         <div className = {styles.col1}>
@@ -63,26 +60,17 @@ const RequestRideInfo = () => {
             name="repeating"
             ref={register({ required: false })}/>
         </div>
-        <div className={styles.dayBox}>
-            <label id = {"repeatDays"}>Repeat On</label>
-          {Object.entries(dayLabels).map(([day, label]) => (
-             <div> 
-                <SRLabel id = {label}>{day}</SRLabel>
-                <Input
-                aria-labelledby={`${label} repeatDays`}
-                key={day}
-                name={"days"}
-                type="button"
-                value={label}
-                className={cn(
-                    styles.day,
-                    { [styles.daySelected]: week[day] },
-                )}
-                onClick={() => handleClick(day)}
-                />
-            </div>
-          ))}
-        </div>
+        <CustomRepeatingRides />
+        <Label htmlFor="endDate">Ends</Label>    
+        <Input type={'date'} name="endDate" id="endDate" 
+          ref={register({ required: getValues("repeating") })}/>
+        <h2 id = "pickupLabel">Pickup</h2>
+        <Label id = "pickupLocation">Location</Label>
+        <select name="pickupLocations" aria-labelledby="pickupLabel pickupLocations">
+        {locations.map(location => {
+          return (<option value={location.id}>{location.name}</option>);
+        })}
+        </select>
     </div>
   ); 
 };

@@ -4,6 +4,11 @@
   margin: 5%;
   font-size: 1rem; 
 }
+.numberInput{
+  max-width:10%; 
+  margin: 0 0.5rem; 
+  background-color: #f2f2f2
+}
 .largeLabel{
   font-size: 1.25rem; 
   font-weight: bold; 
