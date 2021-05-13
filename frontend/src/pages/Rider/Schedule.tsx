@@ -1,4 +1,4 @@
-import NoRidesView from 'components/NoRidesView/NoRidesView';
+import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import React from 'react';
 import Toast from '../../components/ConfirmationToast/ConfirmationToast';
 import Notification from '../../components/Notification/Notification';
