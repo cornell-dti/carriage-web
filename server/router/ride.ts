@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Ride, RideLocation, Type } from '../models/ride';
+import { Ride, Status, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
@@ -234,11 +234,16 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
-    const { recurring, edits } = ride;
+    const { recurring, edits, type } = ride;
     const deleteRide = () => {
-      Ride.delete(id)
-        .then(() => res.send({ id }))
-        .catch((err) => res.status(500).send({ err: err.message }));
+      if (type === Type.ACTIVE) {
+        const operation = { $SET: { status: Status.CANCELLED } };
+        db.update(res, Ride, { id }, operation, tableName);
+      } else {
+        Ride.delete(id)
+          .then(() => res.send({ id }))
+          .catch((err) => res.status(500).send({ err: err.message }));
+      }
     };
     if (recurring && edits.length) {
       const ids = createKeys('id', edits);

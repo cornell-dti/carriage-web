@@ -44,7 +44,7 @@ const ExportPreview = () => {
         ))}
       </div>
       <div className={styles.exportButtonContainer}>
-        <ExportButton onClick={downloadCSV} />
+        {/* <ExportButton onClick={downloadCSV} /> */}
         <CSVLink
           data={downloadData}
           filename={`scheduledRides_${today}.csv`}
