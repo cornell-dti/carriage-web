@@ -175,8 +175,10 @@ function computeStats(
       db.scan(res, Ride, conditionRidesDate, (dataDay: RideType[]) => {
         let dayCountStat = 0;
         let dayNoShowStat = 0;
+        let dayCancelStat = 0;
         let nightCountStat = 0;
         let nightNoShowStat = 0;
+        let nightCancelStat = 0;
         const driversStat: { [name: string]: number } = {};
 
         dataDay.forEach((rideData: RideType) => {
@@ -198,6 +200,12 @@ function computeStats(
             } else {
               driversStat[driverName] = 1;
             }
+          } else if (rideData.status === Status.CANCELLED) {
+            if (rideData.startTime <= dayEnd) {
+              dayCancelStat += 1;
+            } else {
+              nightCancelStat += 1;
+            }
           }
         });
         const stats = new Stats({
@@ -205,10 +213,10 @@ function computeStats(
           monthDay,
           dayCount: dayCountStat,
           dayNoShow: dayNoShowStat,
-          dayCancel: 0,
+          dayCancel: dayCancelStat,
           nightCount: nightCountStat,
           nightNoShow: nightNoShowStat,
-          nightCancel: 0,
+          nightCancel: nightCancelStat,
           drivers: driversStat,
         });
         Stats.create(stats).then((doc) => {
