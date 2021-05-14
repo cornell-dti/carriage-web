@@ -30,8 +30,8 @@ const TableRow = (props: TableRowProps) => {
         />
       );
     }
-    if (index === values.length - 1) {
-      /* last cell */
+    if (buttonHandler) {
+      /* if the cell is a button */
       return (
         <TableCell
           key={index}
@@ -42,6 +42,8 @@ const TableRow = (props: TableRowProps) => {
           driver={driver === undefined ? false : driver}
           buttonHandler={buttonHandler}
           ButtonModal={ButtonModal}
+          outline={index !== values.length - 1}
+          insideButton={index === values.length - 1}
         />
       );
     }
