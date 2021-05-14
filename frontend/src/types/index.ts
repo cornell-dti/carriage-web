@@ -62,11 +62,13 @@ export type Vehicle = {
 };
 
 export enum Tag {
-  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  CTOWN = 'ctown', // college town
-  DTOWN = 'dtown', // downtown
+  WEST = 'west',
+  CTOWN = 'ctown',
+  DTOWN = 'dtown',
+  INACTIVE = 'inactive',
+  CUSTOM = 'custom'
 }
 
 export type Location = {
@@ -74,6 +76,7 @@ export type Location = {
   name: string;
   address: string;
   tag?: Tag;
+  info?: string;
 };
 
 export type TableValue = {
