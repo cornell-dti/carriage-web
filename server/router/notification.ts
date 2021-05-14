@@ -1,7 +1,6 @@
 import express from 'express';
 import webpush from 'web-push';
 import AWS from 'aws-sdk';
-import e from 'express';
 import config, { webpushValues, snsValues } from '../config';
 import { Subscription, SubscriptionType, UserType, PlatformType } from '../models/subscription';
 import { validateUser } from '../util';

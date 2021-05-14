@@ -1,6 +1,6 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation, Redirect, Route, Switch } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -8,6 +8,10 @@ import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
+
+import AdminRoutes from '../../pages/Admin/Routes';
+import RiderRoutes from '../../pages/Rider/Routes';
+import PrivateRoute from '../PrivateRoute';
 
 export const AuthManager: FunctionComponent = ({ children }) => {
   const [signedIn, setSignedIn] = useState(false);
@@ -77,15 +81,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
     };
   }
 
-  const SiteContent = () => (
-    <AuthContext.Provider value={{ logout, id }}>
-      <ReqContext.Provider value={{ withDefaults }}>
-        {children}
-      </ReqContext.Provider>
-    </AuthContext.Provider>
-  );
-
-  const AuthBarrier = () => (
+  const LoginPage = () => (
     <LandingPage
       students={
         <GoogleLogin
@@ -105,6 +101,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             </button>
           )}
           onSuccess={generateOnSignIn(false)}
+          // eslint-disable-next-line no-console
           onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"
@@ -129,6 +126,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             </button>
           )}
           onSuccess={generateOnSignIn(true)}
+          // eslint-disable-next-line no-console
           onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"
@@ -136,6 +134,30 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         />
       }
     />
+  );
+
+  const SiteContent = () => (
+    <AuthContext.Provider value={{ logout, id }}>
+      <ReqContext.Provider value={{ withDefaults }}>
+        <Switch>
+          <Route exact path="/" component={LoginPage} />
+          <PrivateRoute path="/admin" component={AdminRoutes} />
+          <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+          <Route path="*">
+            <Redirect to="/" />
+          </Route>
+        </Switch>
+      </ReqContext.Provider>
+    </AuthContext.Provider>
+  );
+
+  const AuthBarrier = () => (
+    <Switch>
+      <Route exact path="/" component={LoginPage} />
+      <Route path="*">
+        <Redirect to="/" />
+      </Route>
+    </Switch>
   );
 
   return signedIn ? <SiteContent /> : <AuthBarrier />;

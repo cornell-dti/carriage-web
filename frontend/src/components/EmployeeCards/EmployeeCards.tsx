@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, AvailabilityType, Driver, Admin } from '../../types';
+import { Employee, AvailabilityType, Admin } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 
 const formatTime = (time: string) => {
