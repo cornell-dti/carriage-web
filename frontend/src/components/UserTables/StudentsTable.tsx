@@ -73,6 +73,7 @@ const StudentsTable = () => {
         const shortAddress = address.split(',')[0];
         const usageData = getUsageData(id);
         const riderData = {
+          id: r.id,
           firstName,
           lastName,
           netID: netId,
@@ -80,9 +81,8 @@ const StudentsTable = () => {
           accessibility: disability,
         };
         const location = {
-          pathname: '/riders/rider',
+          pathname: `/riders/${r.id}`,
           state: riderData,
-          search: `?name=${`${firstName}_${lastName}`}`,
         };
         const goToDetail = () => {
           history.push(location);
