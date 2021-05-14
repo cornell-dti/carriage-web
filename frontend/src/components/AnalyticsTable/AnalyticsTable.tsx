@@ -79,10 +79,11 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
 type TableProps = {
   type: 'ride' | 'driver';
   data: TableData[];
-  fetchURL: string;
+  refreshTable: () => void;
 };
 
-const Table = ({ type, data, fetchURL }: TableProps) => {
+const Table = ({ type, data, refreshTable }: TableProps) => {
+  const [tableData, setTableData] = useState<TableData[]>(data);
   const [isEditing, setIsEditing] = useState(false);
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
@@ -103,7 +104,6 @@ const Table = ({ type, data, fetchURL }: TableProps) => {
 
   const driverNames: string[] = [];
   const driverShortNames: string[] = [];
-
 
   drivers
     .sort((a, b) => (
@@ -126,48 +126,6 @@ const Table = ({ type, data, fetchURL }: TableProps) => {
     'dailyTotal',
   ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
-
-  const convertToRideData = (initdata: TableData[]) => {
-    const rideData: Cell[][] = [];
-    initdata
-      .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
-      .forEach((d) => {
-        const month = d.monthDay.substring(0, 2);
-        const day = d.monthDay.substring(2);
-        const date = `${month}/${day}/${d.year}`;
-        const dailyTotal = d.dayCount + d.nightCount;
-        const rideRow = [
-          date,
-          dailyTotal,
-          d.dayCount,
-          d.dayNoShow,
-          d.dayCancel,
-          d.nightCount,
-          d.nightNoShow,
-          d.nightCancel,
-        ];
-        rideData.push(rideRow);
-      });
-    return rideData;
-  };
-
-  const convertToDriverData = (initdata: TableData[]) => {
-    const driverData: Cell[][] = [];
-    initdata
-      .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
-      .forEach((d) => {
-        const month = d.monthDay.substring(0, 2);
-        const day = d.monthDay.substring(2);
-        const date = `${month}/${day}/${d.year}`;
-        const dailyTotal = Object.values(d.drivers).reduce((a, b) => a + b, 0);
-        const driverRow = [date, dailyTotal];
-        driverNames.forEach((driver) => {
-          driverRow.push(d.drivers[driver] || 0);
-        });
-        driverData.push(driverRow);
-      });
-    return driverData;
-  };
 
   const handleEdit = (
     rowIndex: number,
@@ -209,33 +167,55 @@ const Table = ({ type, data, fetchURL }: TableProps) => {
     });
   };
 
-  const updateTable = (tdata: TableData[]) => {
-    setRideTableData(convertToRideData(tdata));
-    setDriverTableData(convertToDriverData(tdata));
-  };
-
   const handleSubmit = () => {
     fetch('/api/stats/', withDefaults({
       method: 'PUT',
       body: JSON.stringify(editData),
     }))
-      .then(() => fetch(fetchURL, withDefaults())
-        .then((res) => res.json())
-        .then((tdata) => updateTable(tdata)));
+      .then(() => refreshTable())
+      .catch(console.error);
     setEditData({ dates: {} });
     setIsEditing(false);
   };
 
-  useEffect(() => console.log(editData), [editData]);
+  useEffect(() => {
+    const rideData: Cell[][] = [];
+    const driverData: Cell[][] = [];
+    tableData
+      .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
+      .forEach((d) => {
+        const month = d.monthDay.substring(0, 2);
+        const day = d.monthDay.substring(2);
+        const date = `${month}/${day}/${d.year}`;
+        const dailyTotal = d.dayCount + d.nightCount;
+        if (type === 'ride') {
+          rideData.push([
+            date,
+            dailyTotal,
+            d.dayCount,
+            d.dayNoShow,
+            d.dayCancel,
+            d.nightCount,
+            d.nightNoShow,
+            d.nightCancel,
+          ]);
+        } else {
+          const driverRow = [date, dailyTotal];
+          driverNames.forEach((driver) => {
+            driverRow.push(d.drivers[driver] || 0);
+          });
+          driverData.push(driverRow);
+        }
+      });
+    setRideTableData([...rideData]);
+    setDriverTableData([...driverData]);
+  }, [driverNames, tableData, type]);
 
   useEffect(() => {
-    if (type === 'ride') {
-      setRideTableData(convertToRideData(data));
-    } else {
-      setDriverTableData(convertToDriverData(data));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, data.length]);
+    // because initial state is only set once, need to re-set after
+    // refreshTable is called
+    setTableData([...data]);
+  }, [data]);
 
   return (
     <div className={styles.analyticsTable}>
