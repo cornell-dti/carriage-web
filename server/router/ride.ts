@@ -33,9 +33,8 @@ router.get('/download', (req, res) => {
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
-        const fullName = (user: RiderType | DriverType) => (
-          `${user.firstName} ${user.lastName.substring(0, 1)}.`
-        );
+        const fullName = (user: RiderType | DriverType) =>
+          `${user.firstName} ${user.lastName.substring(0, 1)}.`;
         return {
           Name: fullName(doc.rider),
           'Pick Up': start.format('h:mm A'),
@@ -56,12 +55,11 @@ router.get('/download', (req, res) => {
 
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
-  const { query: { rider } } = req;
+  const {
+    query: { rider },
+  } = req;
   const now = moment.tz('America/New_York').format('YYYY-MM-DD');
-  let condition = new Condition('recurring')
-    .eq(true)
-    .where('endDate')
-    .ge(now);
+  let condition = new Condition('recurring').eq(true).where('endDate').ge(now);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
@@ -70,7 +68,9 @@ router.get('/repeating', validateUser('User'), (req, res) => {
 
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Ride, id, tableName);
 });
 
@@ -97,8 +97,13 @@ router.get('/', validateUser('User'), (req, res) => {
       condition = condition.where('driver').eq(driver);
     }
     if (date) {
-      const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
-      const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
+      const dateStart = moment
+        .tz(date as string, 'America/New_York')
+        .toISOString();
+      const dateEnd = moment
+        .tz(date as string, 'America/New_York')
+        .endOf('day')
+        .toISOString();
       condition = condition.where('startTime').between(dateStart, dateEnd);
     }
     db.scan(res, Ride, condition);
@@ -108,7 +113,8 @@ router.get('/', validateUser('User'), (req, res) => {
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
   const { body } = req;
-  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } =
+    body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -148,7 +154,10 @@ router.post('/', validateUser('User'), (req, res) => {
 
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   const { type, startLocation, endLocation } = body;
 
   if (type && type === Type.UNSCHEDULED) {
@@ -178,17 +187,29 @@ router.put('/:id', validateUser('User'), (req, res) => {
     const driverId = ride.driver ? ride.driver.id : null;
     const userId = res.locals.user.id;
     const { userType } = res.locals.user;
-    sendToUsers(`ride ${id} updated by ${userId}`, UserType.ADMIN);
+
+    const info = JSON.stringify({
+      ride,
+      change: body,
+      changedBy: {
+        userType,
+        userId,
+      },
+    });
+
+    sendToUsers(info, UserType.ADMIN);
+
     if (userType === UserType.ADMIN) {
-      ride.driver && sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
-      sendToUsers(`ride ${id} updated by ${userId}`, UserType.RIDER, riderId);
+      ride.driver && sendToUsers(info, UserType.DRIVER, driverId);
+      sendToUsers(info, UserType.RIDER, riderId);
     }
     if (userType === UserType.RIDER && ride.driver) {
-      sendToUsers(`ride ${id} updated by ${userId}`, UserType.DRIVER, driverId);
+      sendToUsers(info, UserType.DRIVER, driverId);
     }
     if (userType === UserType.DRIVER) {
-      sendToUsers(`ride ${id} updated by ${userId}`, UserType.RIDER, riderId);
+      sendToUsers(info, UserType.RIDER, riderId);
     }
+    res.send(ride);
   });
 });
 
@@ -196,7 +217,14 @@ router.put('/:id', validateUser('User'), (req, res) => {
 router.put('/:id/edits', validateUser('User'), (req, res) => {
   const {
     params: { id },
-    body: { deleteOnly, origDate, startTime, endTime, startLocation, endLocation },
+    body: {
+      deleteOnly,
+      origDate,
+      startTime,
+      endTime,
+      startLocation,
+      endLocation,
+    },
   } = req;
 
   db.getById(res, Ride, id, tableName, (masterRide) => {
@@ -227,8 +255,14 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
           const replaceRide = new Ride({
             id: replaceId,
             rider: masterRide.rider,
-            startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
-            endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
+            startLocation:
+              startLocation ||
+              masterRide.startLocation.id ||
+              masterRide.startLocation,
+            endLocation:
+              endLocation ||
+              masterRide.endLocation.id ||
+              masterRide.endLocation,
             startTime: startTime || origStartTime,
             endTime: endTime || origEndTime,
           });
@@ -251,7 +285,9 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
     const { recurring, edits, type } = ride;
     const deleteRide = () => {

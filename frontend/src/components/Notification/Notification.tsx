@@ -12,6 +12,13 @@ type Message = {
   body: string;
 };
 
+const truncate = (str: string, num: number) => {
+  if (str.length <= num) {
+    return str;
+  }
+  return `${str.slice(0, num)}...`;
+};
+
 const Notification = () => {
   const [newMessages, setNewMessages] = useState<Message[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -19,10 +26,14 @@ const Notification = () => {
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
+      const { body, time } = event.data;
+      const parsed = JSON.parse(body);
+      console.log(parsed);
       const newMsg = {
-        time: new Date(event.data.time),
-        title: event.data.title,
-        body: event.data.body,
+        time: new Date(time),
+        title: `Ride with ID ${truncate(parsed.ride.id, 8)}`,
+        body: `Changed by ${parsed.changedBy.userType}`,
+        day: parsed.ride.startTime,
       };
 
       setNewMessages([newMsg, ...newMessages]);

@@ -1,6 +1,12 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
-import { useHistory, useLocation, Redirect, Route, Switch } from 'react-router-dom';
+import {
+  useHistory,
+  useLocation,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -90,8 +96,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -115,8 +120,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -136,29 +140,20 @@ export const AuthManager: FunctionComponent = ({ children }) => {
       }
     />
   );
-  // const SiteContent = () => (
-  //   <AuthContext.Provider value={{ logout, id }}>
-  //     <ReqContext.Provider value={{ withDefaults }}>
-  //       <SubscribeWrapper userId={id}>
-  //         {children}
-  //       </SubscribeWrapper>
-  //     </ReqContext.Provider>
-  //   </AuthContext.Provider>
-  // );
-
-  // const AuthBarrier = () => (
 
   const SiteContent = () => (
     <AuthContext.Provider value={{ logout, id }}>
       <ReqContext.Provider value={{ withDefaults }}>
-        <Switch>
-          <Route exact path="/" component={LoginPage} />
-          <PrivateRoute path="/admin" component={AdminRoutes} />
-          <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
+        <SubscribeWrapper userId={id}>
+          <Switch>
+            <Route exact path="/" component={LoginPage} />
+            <PrivateRoute path="/admin" component={AdminRoutes} />
+            <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
+          </Switch>
+        </SubscribeWrapper>
       </ReqContext.Provider>
     </AuthContext.Provider>
   );
