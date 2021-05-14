@@ -33,9 +33,9 @@ const RequestRideModal = () => {
         setIsOpen(false);
       };
 
-      const onSubmit = async (data: ObjectType) => {
+      const onSubmit = async (formData: ObjectType) => {
         const { startLocation, endLocation, startTime, endTime, 
-          repeating, whenRepeat, days, startDate, endDate } = data;
+          repeating, whenRepeat, days, startDate, endDate } = formData;
         const {id} = authContext; 
         const rider: Rider = await fetch(`/api/riders/${id}`, withDefaults())
         .then((res) => res.json())
@@ -44,7 +44,7 @@ const RequestRideModal = () => {
         const dropoffTime = moment(`${startDate} ${endTime}`).toISOString();
         if(repeating){
          //Add a repeating ride
-          let finDays = [];
+          let finDays:Number[] = [];
           switch(whenRepeat){
             case "daily":{
               finDays = [1, 2, 3, 4, 5];
@@ -55,9 +55,7 @@ const RequestRideModal = () => {
               break; 
             }
             case "custom":{
-              for(let i = 0; i<days.length; i++){
-                finDays[i] = Number(days[i]);
-              }
+              days.forEach((day:string) =>  finDays.push(Number(day)));
               break; 
             }
             default:{

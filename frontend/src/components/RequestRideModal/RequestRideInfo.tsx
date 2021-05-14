@@ -99,7 +99,8 @@ const RequestRideInfo = () => {
         <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations">
           <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option>
         {locations.map(location => {
-          return (<option key={location.id} value={location.id}>{location.name}</option>);
+          return (<option key={location.id} 
+            value={location.id}>{location.name}</option>);
         })}
         </select>
         <Label id = "pickupTime">Time</Label>
@@ -112,10 +113,13 @@ const RequestRideInfo = () => {
         <h2 className={styles.formHeading}id = "dropoffLabel">Dropoff</h2>
         <div className ={styles.dayBox}>
         <Label id = "dropoffLocation">Location</Label>
-        <select className={styles.input} name="endLocation" aria-labelledby="dropoffLabel dropoffLocations">
-          <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option>
+        <select className={styles.input} name="endLocation" 
+        aria-labelledby="dropoffLabel dropoffLocations">
+          <option disabled={true} aria-disabled={true} 
+          selected={true}>Select a Location</option>
         {locations.map(location => {
-          return (<option key={location.id} value={location.id}>{location.name}</option>);
+          return (<option key={location.id} 
+            value={location.id}>{location.name}</option>);
         })}
         </select>
         <Label id = "dropoffTime">Time</Label>
