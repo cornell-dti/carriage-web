@@ -1,8 +1,11 @@
 .input{
+  display: inline-block;
   border-radius: 0.5rem;
   border: 1px solid black; 
-  margin: 5%;
   font-size: 1rem; 
+  max-width: 100%; 
+  margin: 0.5rem; 
+  padding: 0 0.25rem; 
 }
 .numberInput{
   max-width:10%; 
@@ -12,13 +15,16 @@
 .largeLabel{
   font-size: 1.25rem; 
   font-weight: bold; 
+  display: block; 
 }
 .dayBox {
     display: flex;
     align-items: center;
-    margin: 0.5rem 0;
   }
-
+.formHeading{
+  margin: 0; 
+  padding:0; 
+}
 .day {
     border-radius: 40%;
     height: 1.25rem;
@@ -42,4 +48,7 @@
   
   .daySelected:focus {
     background-color: black; 
+  }
+  .submit{
+    float: right; 
   }

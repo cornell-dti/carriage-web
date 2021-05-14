@@ -5,11 +5,11 @@ import { useReq } from '../../context/req';
 import {useFormContext } from 'react-hook-form';
 import styles from './requestridemodal.module.css';
 import { Location } from '../../types';
-import { Label, Input, SRLabel } from '../FormElements/FormElements';
+import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 type RequestRideInfoProps = {
-    startLocation?: string; 
-    endLocation?: string; 
+    startLocation?: Location; 
+    endLocation?: Location; 
     startTime?: string; 
     endTime?: string; 
     recurringDays?: number[]; 
@@ -21,6 +21,8 @@ const RequestRideInfo = () => {
   const {errors} = formState;
   const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
+  const [repeatingRide, setRepeatingRide] = useState(false);
+  const [custom, setCustom] = useState(false);
   useEffect(() => {
     const getExistingLocations = async () => {
       const locationsData = await fetch('/api/locations', withDefaults())
@@ -42,35 +44,87 @@ const RequestRideInfo = () => {
   }, [withDefaults]);
   return (
     <div className={styles.inputContainer}>
-        <div className = {styles.col1}>
-            <Label id="day" className={styles.largeLabel}>Day</Label>
+      <Label htmlFor={"startDate"} className={styles.largeLabel}>Day</Label>
+        <div className = {styles.dayBox}>
             <Input
-                id='dayInput'
-                name='day'
+                id='startDate'
+                name='startDate'
                 type='date'
                 className={cn(styles.input)}
                 ref={register({ required: true })}
             />
-        </div>
-        <div className = {styles.col2}>
             <Label htmlFor={"repeating"}>Repeating?</Label>
             <Input
             type="checkbox"
             id="repeating"
             name="repeating"
+            onChange={() => setRepeatingRide(!repeatingRide)}
             ref={register({ required: false })}/>
         </div>
-        <CustomRepeatingRides />
-        <Label htmlFor="endDate">Ends</Label>    
-        <Input type={'date'} name="endDate" id="endDate" 
-          ref={register({ required: getValues("repeating") })}/>
-        <h2 id = "pickupLabel">Pickup</h2>
+        {repeatingRide ? 
+        <div>
+          <div className ={styles.dayBox}>
+          <input 
+            name="whenRepeat" 
+            id="daily"
+            ref={register({ required: repeatingRide})} 
+            type="radio" 
+            value="daily"
+            onChange={() => setCustom(false)} />
+            <Label htmlFor="daily">Daily</Label> 
+          <input 
+            name="whenRepeat" 
+            id="weekly"
+            ref={register({ required: repeatingRide})} 
+            type="radio" value="weekly"
+            onChange={() => setCustom(false)} />
+          <Label htmlFor="weekly">Weekly</Label> 
+          <input 
+            name="whenRepeat" 
+            id="custom"
+            ref={register({ required: repeatingRide})} 
+            type="radio" 
+            value="custom" 
+            onChange={() => setCustom(true)}/>
+          <Label htmlFor="custom">Custom</Label> 
+            </div>
+          {custom && repeatingRide ? <CustomRepeatingRides /> : null}
+          <Label htmlFor="endDate">Ends</Label>    
+          <Input type={'date'} name="endDate" id="endDate" 
+          ref={register({ required: getValues("repeating") })}/> 
+        </div> : null}
+        <h2 className={styles.formHeading} id = "pickupLabel">Pickup</h2>
+        <div className ={styles.dayBox}>
         <Label id = "pickupLocation">Location</Label>
-        <select name="pickupLocations" aria-labelledby="pickupLabel pickupLocations">
+        <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations">
+          <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option>
         {locations.map(location => {
-          return (<option value={location.id}>{location.name}</option>);
+          return (<option key={location.id} value={location.id}>{location.name}</option>);
         })}
         </select>
+        <Label id = "pickupTime">Time</Label>
+        <Input
+          type="time"
+          name="startTime"
+          className={styles.input}
+          aria-labelledby="pickupLabel pickupTime"/>
+        </div>
+        <h2 className={styles.formHeading}id = "dropoffLabel">Dropoff</h2>
+        <div className ={styles.dayBox}>
+        <Label id = "dropoffLocation">Location</Label>
+        <select className={styles.input} name="endLocation" aria-labelledby="dropoffLabel dropoffLocations">
+          <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option>
+        {locations.map(location => {
+          return (<option key={location.id} value={location.id}>{location.name}</option>);
+        })}
+        </select>
+        <Label id = "dropoffTime">Time</Label>
+        <Input
+          type="time"
+          name="endTime"
+          className={styles.input}
+          aria-labelledby="dropoffLabel dropoffTime"/>
+        </div>
     </div>
   ); 
 };
