@@ -32,15 +32,15 @@ const ScheduledTable = ({ query, id, name }: ScheduledTableProp) => {
       .then(({ data }) => {
         setRides(data.sort(compRides));
       });
-  }, [withDefaults, curDate, id]);
+  }, [withDefaults, curDate, id, query]);
 
   return (
     <>
-      {rides.length > 0 && 
-      <>
-        <h1 className={styles.formHeader}>{name}</h1>
-        <RidesTable rides={rides} drivers={[]} hasAssignButton={false} />
-      </>}
+      {rides.length > 0
+        && <>
+          <h1 className={styles.formHeader}>{name}</h1>
+          <RidesTable rides={rides} drivers={[]} hasButtons={false} />
+        </>}
     </>
   );
 };

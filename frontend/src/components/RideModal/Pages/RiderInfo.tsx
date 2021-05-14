@@ -8,8 +8,14 @@ import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
 
-const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit } = useForm();
+const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      name: formData?.rider ?? '',
+      pickupLoc: formData?.pickupLoc ?? '',
+      dropoffLoc: formData?.dropoffLoc ?? '',
+    },
+  });
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { withDefaults } = useReq();
@@ -83,10 +89,8 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
         </div>
       </div>
       <div className={styles.btnContainer}>
-        <Button outline type="button" onClick={onBack}>
-          Back
-        </Button>
-        <Button type="submit">Add a Ride</Button>
+        <Button outline type="button" onClick={onBack}>Back</Button>
+        <Button type="submit">{formData?.rider ? 'Edit a Ride' : 'Add a Ride'}</Button>
       </div>
     </form>
   );

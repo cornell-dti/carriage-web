@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import cn from 'classnames';
 import styles from './tabSwitcher.module.css';
-import Notification from '../Notification/Notification';
 import pageStyles from '../../pages/Admin/page.module.css';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
@@ -16,9 +15,10 @@ export const Tab = ({ children }: TabProps) => <>{children}</>;
 type TabSwitcherProps = {
   labels: string[];
   children: JSX.Element[];
+  renderRight: () => React.ReactNode;
 }
 
-const TabSwitcher = ({ labels, children }: TabSwitcherProps) => {
+const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
   const [currentTab, setCurrentTab] = useState(0);
 
   return (
@@ -39,7 +39,7 @@ const TabSwitcher = ({ labels, children }: TabSwitcherProps) => {
           <span className={styles.underline} />
         </div>
         <div className={styles.rightSection}>
-          <Notification />
+          {renderRight()}
         </div>
       </div>
       <div className={pageStyles.pageContainer}>{children[currentTab]}</div>

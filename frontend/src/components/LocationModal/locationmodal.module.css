@@ -1,0 +1,21 @@
+.inputContainer > input, .inputContainer > p {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.input {
+  font-size: 1.5rem;
+}
+
+.errorMsg {
+  color: #EB0023;
+  font-size: 0.8rem;
+}
+
+.styledSelect {
+  padding: .2rem;
+}
+
+.submit {
+  float: right;
+}

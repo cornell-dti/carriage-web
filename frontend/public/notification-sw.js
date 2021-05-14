@@ -1,5 +1,30 @@
 /* eslint-disable no-restricted-globals */
 
+// Try making the service worker immediately claim the page
+self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()));
+self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+
+self.addEventListener('notificationclick', (event) => {
+  // navigates to client
+  self.clients.matchAll().then((clis) => {
+    const client = clis.find((c) => c.visibilityState === 'visible');
+    if (client !== undefined) {
+      client.navigate('some_url');
+      client.focus();
+    } else {
+      // there are no visible windows. Open one.
+      self.clients.openWindow('some_url');
+      self.notification.close();
+    }
+  });
+  // close all notifications
+  self.registration.getNotifications().then((notifications) => {
+    notifications.forEach((notification) => {
+      notification.close();
+    });
+  });
+});
+
 self.addEventListener('push', (event) => {
   let data = {
     title: 'default title',
@@ -8,31 +33,29 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     data = event.data.json();
   }
-
   const options = {
     body: data.body,
-    // TODO icon, tag, etc.
   };
+
   if (Notification.permission === 'granted') {
-    event.waitUntil(self.registration.showNotification(data.title, options));
-
-    let promiseChain = Promise.resolve();
-
-    // TODO if client is focused
-    promiseChain = promiseChain.then(() => {
-      self.clients.matchAll().then((clientList) => {
-        for (const client of clientList) {
+    self.clients.matchAll().then((c) => {
+      if (c.length === 0) {
+        // Show notification
+        event.waitUntil(
+          self.registration.showNotification.showNotification(data.title, options),
+        );
+      } else {
+        // Send a message to the page to update the UI
+        for (const client of c) {
           client.postMessage({
             title: data.title,
             body: data.body,
             time: new Date().toString(),
           });
         }
-      });
+      }
     });
-
-    event.waitUntil(promiseChain);
   } else {
-    console.log('needs permission');
+    console.log('notification needs permission');
   }
 });

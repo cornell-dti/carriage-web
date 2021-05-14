@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Ride, RideLocation, Type } from '../models/ride';
+import { Ride, Status, RideLocation, Type } from '../models/ride';
 import { Tag } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
@@ -23,14 +23,11 @@ router.get('/download', (req, res) => {
     .toISOString();
   const condition = new Condition()
     .where('startTime')
-    .between(dateStart, dateEnd)
+    .between(dateStart, dateEnd);
 
   const callback = (value: any) => {
-    const dataToExport = 
-    value
-      .sort((a: any, b: any) => {
-        return moment(a.startTime).diff(moment(b.startTime));
-      })
+    const dataToExport = value
+      .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
@@ -150,6 +147,29 @@ router.post('/', validateUser('User'), (req, res) => {
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
   const { params: { id }, body } = req;
+  const { type, startLocation, endLocation } = body;
+
+  if (type && type === Type.UNSCHEDULED) {
+    body.$REMOVE = ['driver'];
+  }
+
+  if (startLocation && !validate(startLocation)) {
+    const name = startLocation.split(',')[0];
+    body.startLocation = {
+      name,
+      address: startLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
+
+  if (endLocation && !validate(endLocation)) {
+    const name = endLocation.split(',')[0];
+    body.endLocation = {
+      name,
+      address: endLocation,
+      tag: Tag.CUSTOM,
+    };
+  }
   db.update(res, Ride, { id }, body, tableName);
 });
 
@@ -214,11 +234,16 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 router.delete('/:id', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
-    const { recurring, edits } = ride;
+    const { recurring, edits, type } = ride;
     const deleteRide = () => {
-      Ride.delete(id)
-        .then(() => res.send({ id }))
-        .catch((err) => res.status(500).send({ err: err.message }));
+      if (type === Type.ACTIVE) {
+        const operation = { $SET: { status: Status.CANCELLED } };
+        db.update(res, Ride, { id }, operation, tableName);
+      } else {
+        Ride.delete(id)
+          .then(() => res.send({ id }))
+          .catch((err) => res.status(500).send({ err: err.message }));
+      }
     };
     if (recurring && edits.length) {
       const ids = createKeys('id', edits);
