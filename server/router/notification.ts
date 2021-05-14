@@ -25,7 +25,8 @@ router.post('/subscribe', validateUser('User'), (req, res) => {
   const subReq = {
     platform,
     ...(platform === PlatformType.WEB
-      ? { webSub: req.body.webSub } : { token: req.body.token }),
+      ? { webSub: req.body.webSub }
+      : { token: req.body.token }),
     userType,
     userId,
   };
