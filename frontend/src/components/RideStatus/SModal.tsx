@@ -4,14 +4,16 @@ import cn from 'classnames';
 import { Ride } from '../../types';
 import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
+import { trash, x } from '../../icons/other/index';
 
 type SModalProps = {
   isOpen: boolean;
   close: () => void;
   ride: Ride | undefined;
+  cancel: (rideId:string) => void;
 };
 
-const SModal = ({ isOpen, close, ride }: SModalProps) => {
+const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
@@ -34,9 +36,14 @@ const SModal = ({ isOpen, close, ride }: SModalProps) => {
       {isOpen && ride && (
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
-            <button className={styles.close} onClick={close}>
-              ✕
-            </button>
+            <div className={styles.modalOptions}>
+              <button className={styles.cancel} onClick={() => cancel(ride.id)}>
+                <img src={trash} />
+              </button>
+              <button className={styles.close} onClick={close}>
+                <img src={x} />
+              </button>
+            </div>
             <h3 className={styles.title}>
               {`${ride.rider.firstName} ${ride.rider.lastName}`}
             </h3>

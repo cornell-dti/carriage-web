@@ -53,14 +53,15 @@ const Schedule = () => {
 
   const { withDefaults } = useReq();
 
-  useEffect(() => {
+  const getRides = (scheduleDay: Date, withDefaults: (options?: RequestInit | undefined) => RequestInit) => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
         data
           && setEvents(
-            data.map((ride: Ride) => ({
+            data.filter((ride: Ride) => (ride.status !== 'cancelled'))
+            .map((ride: Ride) => ({
               id: ride.id,
               title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
@@ -71,6 +72,10 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             })),
           );
       });
+  }
+
+  useEffect(() => {
+    getRides(scheduleDay, withDefaults)
   }, [scheduleDay, withDefaults]);
 
   useEffect(() => {
@@ -89,7 +94,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driver: updatedDriver }),
-      }),
+      })
     );
   };
 
@@ -163,6 +168,35 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const closeModal = () => setIsOpen(false);
 
+  const cancelRide = (rideId : string) => {
+    fetch(`/api/rides/${rideId}`, withDefaults())
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.recurring) {
+        fetch(
+          `api/rides/${rideId}/edits`,
+          withDefaults({
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 'deleteOnly': 'true', 'origDate': scheduleDay}),
+          }),
+        )
+        .then(() => getRides(scheduleDay, withDefaults))
+        .then(closeModal);
+      } else {
+        fetch(
+          `/api/rides/${rideId}`,
+          withDefaults({
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        )
+        .then(() => getRides(scheduleDay, withDefaults))
+        .then(closeModal);
+      }
+    })
+  }
+
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
@@ -177,6 +211,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         isOpen={isOpen}
         close={closeModal}
         ride={currentRide}
+        cancel={cancelRide}
       />
       <div
         className={cn(styles.calendar_container, { [styles.long]: viewState })}
