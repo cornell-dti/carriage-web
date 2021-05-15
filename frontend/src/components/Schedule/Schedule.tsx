@@ -53,7 +53,7 @@ const Schedule = () => {
 
   const { withDefaults } = useReq();
 
-  const getRides = (scheduleDay: Date, withDefaults: (options?: RequestInit | undefined) => RequestInit) => {
+  const getRides = () => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
@@ -75,7 +75,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   }
 
   useEffect(() => {
-    getRides(scheduleDay, withDefaults)
+    getRides()
   }, [scheduleDay, withDefaults]);
 
   useEffect(() => {
@@ -181,7 +181,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             body: JSON.stringify({ 'deleteOnly': 'true', 'origDate': scheduleDay}),
           }),
         )
-        .then(() => getRides(scheduleDay, withDefaults))
+        .then(() => getRides())
         .then(closeModal);
       } else {
         fetch(
@@ -191,7 +191,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             headers: { 'Content-Type': 'application/json' },
           }),
         )
-        .then(() => getRides(scheduleDay, withDefaults))
+        .then(() => getRides())
         .then(closeModal);
       }
     })
