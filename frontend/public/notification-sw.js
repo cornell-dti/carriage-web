@@ -33,7 +33,10 @@ self.addEventListener('push', (event) => {
   if (event.data) {
     data = event.data.json();
   }
+  const parsed = JSON.parse(data.body);
+
   const options = {
+    title: `Ride changed by ${parsed.changedBy.userType}`,
     body: data.body,
   };
 
@@ -42,13 +45,15 @@ self.addEventListener('push', (event) => {
       if (c.length === 0) {
         // Show notification
         event.waitUntil(
-          self.registration.showNotification.showNotification(data.title, options),
+          self.registration.showNotification.showNotification(
+            data.title,
+            options,
+          ),
         );
       } else {
         // Send a message to the page to update the UI
         for (const client of c) {
           client.postMessage({
-            title: data.title,
             body: data.body,
             time: new Date().toString(),
           });
