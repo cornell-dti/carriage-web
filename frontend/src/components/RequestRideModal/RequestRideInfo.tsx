@@ -93,11 +93,12 @@ const RequestRideInfo = () => {
           <Input type={'date'} name="endDate" id="endDate" 
           ref={register({ required: getValues("repeating") })}/> 
         </div> : null}
-        <h2 className={styles.formHeading} id = "pickupLabel">Pickup</h2>
+        <Label className={styles.largeLabel} id = "pickupLabel">Pickup</Label>
         <div className ={styles.dayBox}>
         <Label id = "pickupLocation">Location</Label>
-        <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations">
-          <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option>
+        <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations"
+          ref={register({required: true})}>
+          {/* <option disabled={true} aria-disabled={true} selected={true}>Select a Location</option> */}
         {locations.map(location => {
           return (<option key={location.id} 
             value={location.id}>{location.name}</option>);
@@ -108,15 +109,16 @@ const RequestRideInfo = () => {
           type="time"
           name="startTime"
           className={styles.input}
-          aria-labelledby="pickupLabel pickupTime"/>
+          aria-labelledby="pickupLabel pickupTime"
+          ref={register({required: true})}
+          />
         </div>
         <h2 className={styles.formHeading}id = "dropoffLabel">Dropoff</h2>
         <div className ={styles.dayBox}>
         <Label id = "dropoffLocation">Location</Label>
         <select className={styles.input} name="endLocation" 
-        aria-labelledby="dropoffLabel dropoffLocations">
-          <option disabled={true} aria-disabled={true} 
-          selected={true}>Select a Location</option>
+        aria-labelledby="dropoffLabel dropoffLocations" 
+        ref={register({required: true})}>
         {locations.map(location => {
           return (<option key={location.id} 
             value={location.id}>{location.name}</option>);
@@ -127,7 +129,8 @@ const RequestRideInfo = () => {
           type="time"
           name="endTime"
           className={styles.input}
-          aria-labelledby="dropoffLabel dropoffTime"/>
+          aria-labelledby="dropoffLabel dropoffTime"
+          ref={register({required: true})}/>
         </div>
     </div>
   ); 

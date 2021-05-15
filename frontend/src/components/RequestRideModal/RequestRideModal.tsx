@@ -34,8 +34,8 @@ const RequestRideModal = () => {
       };
 
       const onSubmit = async (formData: ObjectType) => {
-        const { startLocation, endLocation, startTime, endTime, 
-          repeating, whenRepeat, days, startDate, endDate } = formData;
+        const { startDate, repeating, whenRepeat, days,  
+          startLocation, endLocation, startTime, endTime, endDate } = formData;
         const {id} = authContext; 
         const rider: Rider = await fetch(`/api/riders/${id}`, withDefaults())
         .then((res) => res.json())
@@ -73,13 +73,14 @@ const RequestRideModal = () => {
             finDays, 
             endDate
           };
-          fetch(
-            '/api/rides',
-            withDefaults({
-              method: 'POST',
-              body: JSON.stringify(repeatingRideData),
-            }),
-          );
+          // fetch(
+          //   '/api/rides',
+          //   withDefaults({
+          //     method: 'POST',
+          //     body: JSON.stringify(repeatingRideData),
+          //   }),
+          // );
+          console.log(repeatingRideData);
         }
         else{
           //Not repeating
@@ -90,15 +91,15 @@ const RequestRideModal = () => {
             startLocation,
             endLocation,
           };
-          fetch(
-            '/api/rides',
-            withDefaults({
-              method: 'POST',
-              body: JSON.stringify(rideData),
-            }),
-          );
+          // fetch(
+          //   '/api/rides',
+          //   withDefaults({
+          //     method: 'POST',
+          //     body: JSON.stringify(rideData),
+          //   }),
+          // );
+          console.log(rideData);
         }
-
         closeModal();
         setToast(true);
       };
@@ -107,7 +108,7 @@ const RequestRideModal = () => {
       return(
           <>
             <Button onClick={openModal}>+ Request a ride</Button>
-            {showingToast ? <Toast message='The employee has been added.' /> : null}
+            {showingToast ? <Toast message='Your ride has been requested' /> : null}
             <Modal
                 title={"Request a Ride"}
                 isOpen={isOpen}
