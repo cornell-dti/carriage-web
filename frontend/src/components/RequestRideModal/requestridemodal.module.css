@@ -4,12 +4,11 @@
   border: 1px solid black; 
   font-size: 1rem; 
   max-width: 100%; 
-  margin: 0.5rem; 
+  margin:  0.5rem; 
   padding: 0 0.25rem; 
 }
 .numberInput{
   max-width:10%; 
-  margin: 0 0.5rem; 
   background-color: #f2f2f2
 }
 .largeLabel{
@@ -17,10 +16,15 @@
   font-weight: bold; 
   display: block; 
 }
-.dayBox {
+.box {
     display: flex;
-    align-items: center;
   }
+.errorBox{
+  display: flex; 
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
 .formHeading{
   margin: 0; 
   padding:0; 
@@ -56,4 +60,5 @@
     display: block; 
     color: #EB0023;
     font-size: 0.75rem;
+    margin: 0.5rem; 
   }

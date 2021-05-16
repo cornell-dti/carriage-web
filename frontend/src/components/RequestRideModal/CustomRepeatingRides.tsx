@@ -19,7 +19,6 @@ const dayLabels: dayLabelType = {
   };
 
   const CustomRepeatingRides = () => {
-    const currDate = new Date(); 
     const { register, formState } = useFormContext();
     const {errors} = formState;
     const [week, setWeek] = useState<WeekType>({
@@ -32,26 +31,35 @@ const dayLabels: dayLabelType = {
       const handleClick = (day: string) => {
         setWeek((prev) => ({ ...prev, [day]: !week[day] }));
       };
+      const dayClicked = () => {
+        return week["Mon"] || week["Tue"] || week["Wed"] || week["Thu"] || week["Fri"];
+      }
       return (
-        <div className={styles.dayBox}>
+        <div className={styles.box}>
         <Label id = {"repeatDays"}>Repeat every</Label>
       {Object.entries(dayLabels).map(([day, label]) => (
          <div> 
             <SRLabel id = {label[0]}>{day}</SRLabel>
-            <Input
-            aria-labelledby={`${label} repeatDays`}
+            <button
+            aria-labelledby={`${label[0]} repeatDays`}
             key={day}
             name={"days"}
             type="button"
+            ref={register({ required: true, 
+            validate: () => {return dayClicked() }})}
             value={label[1]}
             className={cn(
                 styles.day,
                 { [styles.daySelected]: week[day] },
             )}
             onClick={() => handleClick(day)}
-            />
+            >
+              {label[0]}
+            </button>
         </div>
       ))}
+       {errors.days && <p className={styles.error}>
+              Please select at least one day</p>}
     </div>
       );
   };
