@@ -13,6 +13,7 @@ type RiderProfile = {
   lastName: string;
   phoneNumber: string;
   pronouns: string;
+  photoLink?: string;
 }
 
 const Settings = () => {
@@ -39,6 +40,7 @@ const Settings = () => {
           firstName={rider?.firstName || ""}
           lastName={rider?.lastName || ""}
           netId={netId}
+          photoLink={rider?.photoLink}
           isRider={true}
       >
           <UserContactInfo icon={phone} alt="" text={rider?.phoneNumber || ""} />
