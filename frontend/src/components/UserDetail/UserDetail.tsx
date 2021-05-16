@@ -43,6 +43,7 @@ type UserDetailProps = {
   employee?: EmployeeDetailProps;
   role?: string;
   photoLink?: string;
+  isRider?: boolean;
 };
 
 const UserDetail = ({
@@ -53,10 +54,11 @@ const UserDetail = ({
   employee,
   role,
   photoLink,
+  isRider
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
-    <div className={styles.userDetail}>
+    <div className={`${styles.userDetail} ${isRider ? styles.rider : ""}`}>
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== ''
           ? <img className={styles.profilePic} src={`http://${photoLink}`} />

@@ -39,6 +39,7 @@ const Settings = () => {
           firstName={rider?.firstName || ""}
           lastName={rider?.lastName || ""}
           netId={netId}
+          isRider={true}
       >
           <UserContactInfo icon={phone} alt="" text={rider?.phoneNumber || ""} />
           <UserContactInfo icon={mail} alt="" text={rider?.email || ""} />
