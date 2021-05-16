@@ -21,7 +21,7 @@ type EmployeeDetailProps = {
 };
 
 type EmployeeStatisticsProps = {
-  rides: Ride[];
+  rideCount: number;
 }
 
 type StatisticProps = {
@@ -31,30 +31,21 @@ type StatisticProps = {
   description: string;
 }
 
-const EmployeeStatistics = ({ rides }: EmployeeStatisticsProps) => {
+const EmployeeStatistics = ({rideCount} : EmployeeStatisticsProps) => {
+
   const Statistic = ({ icon, stat, description, alt }: StatisticProps) => (
     <div className={styles.statistic}>
       <img src={icon} className={styles.statIcon} alt={alt} />
       <div className={styles.statDescription}>
-        {icon === peopleStats
-          ? (
+          {stat >= 0 &&
             <p className={styles.stat}>{stat}</p>
-          )
-          : (
-            <p className={styles.stat}>{stat}<span className={styles.statsHrs}> hrs</span></p>
-          )}
+          } {stat < 0 &&
+            <p className={styles.stat}>N/A</p>
+          }
         <p>{description}</p>
       </div>
     </div>
   );
-
-  const rideCount = rides.length;
-  const hoursDriving = Math.floor(rides.reduce((accumulator, ride) => {
-    const startDate = new Date(ride.startTime);
-    const endDate = new Date(ride.endTime);
-    const diff = Math.abs(endDate.getTime() - startDate.getTime()) / 3600000;
-    return diff + accumulator;
-  }, 0));
 
   return (
     <div className={styles.statisticsContainer}>
@@ -63,7 +54,6 @@ const EmployeeStatistics = ({ rides }: EmployeeStatisticsProps) => {
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>
           <Statistic icon={peopleStats} stat={rideCount} description='rides' alt='people' />
-          <Statistic icon={wheelStats} stat={hoursDriving} description='driving' alt='wheel' />
         </div>
       </div>
     </div>
@@ -79,10 +69,15 @@ const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
 
   const [rides, setRides] = useState<Ride[]>([]);
+  const [rideCount, setRideCount] = useState(-1);
   const { withDefaults } = useReq();
 
   const isAdmin = !employee.availability;
   const isBoth = !isAdmin && employee.admin; // admin and driver
+  const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
+  const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
+  const avail = parsedAvail.substring(0, parsedAvail.length - 2);
+
   const role = (): string => {
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
@@ -129,24 +124,15 @@ const EmployeeDetail = () => {
     fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
-  }, [employeeId, employee, withDefaults, userType]);
 
-  if (employee) {
-    const availToString = (acc: string, [day, timeRange]: string[]) => `${acc + day}: ${timeRange} • `;
-    const parsedAvail = employee.availability ? employee.availability.reduce(availToString, '') : '';
-    const avail = parsedAvail.substring(0, parsedAvail.length - 2);
-    const isAdmin = !employee.availability;
-    const isBoth = !isAdmin && employee.admin; // admin and driver
-    const role = (): string => {
-      if (isBoth) return 'Admin • Driver';
-      if (isAdmin) return 'Admin';
-      return 'Driver';
-    };
-    const roleValue = (): string => {
-      if (isBoth) return 'both';
-      if (isAdmin) return 'admin';
-      return 'driver';
-    };
+    fetch(`/api/drivers/${employeeId}/stats`, withDefaults())
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.err) {
+          setRideCount(data.rides)
+        }
+      })
+  }, [employeeId, employee, withDefaults, userType]);
 
   return (
     <div className={styles.detailContainer}>
@@ -163,7 +149,7 @@ const EmployeeDetail = () => {
         <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
       </UserDetail>
 
-      <EmployeeStatistics rides={rides} />
+      <EmployeeStatistics rideCount={rideCount} />
 
       <PastRides
         isStudent={false}
@@ -171,6 +157,6 @@ const EmployeeDetail = () => {
       />
     </div>
   );
-};
+}
 
 export default EmployeeDetail;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
@@ -33,7 +33,6 @@ const RiderDetail = () => {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
     fetch(`/api/rides?type=past&rider=${rider.id}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
@@ -56,38 +55,6 @@ const RiderDetail = () => {
         rides={rides}
       />
     </div>
-=======
-    if (riderId && !rider) {
-      fetch(`/api/riders/${riderId}`, withDefaults())
-        .then((res) => res.json())
-        .then((data) => setRider(data));
-      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
-        .then((res) => res.json())
-        .then(({ data }) => setRides(data.sort(compRides)));
-    }
-  }, [rider, riderId, withDefaults]);
-
-  return (
-    <>
-      {rider && <>
-        <UserDetail
-          firstName={rider.firstName}
-          lastName={rider.lastName}
-          netId={rider.netID}
-          photoLink={rider.photoLink}
-        >
-          <UserContactInfo icon={phone} alt="" text={rider.phone} />
-          <UserContactInfo icon="" alt="" text={rider.accessibility} />
-          <OtherInfo>
-            <p>other info:</p>
-          </OtherInfo>
-        </UserDetail>
-        <PastRides
-          isStudent={true}
-          rides={rides}
-        />
-      </>} </>
->>>>>>> master
   );
 };
 
