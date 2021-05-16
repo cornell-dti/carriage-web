@@ -74,33 +74,28 @@ router.get('/:id', validateUser('User'), (req, res) => {
 
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
-  const { query } = req;
-  if (!Object.keys(query).length) {
-    db.getAll(res, Ride, tableName);
-  } else {
-    const { type, status, rider, driver, date, scheduled } = query;
-    let condition = new Condition();
-    if (type) {
-      condition = condition.where('type').eq(type);
-    } else if (scheduled) {
-      condition = condition.where('type').not().eq(Type.UNSCHEDULED);
-    }
-    if (status) {
-      condition = condition.where('status').eq(status);
-    }
-    if (rider) {
-      condition = condition.where('rider').eq(rider);
-    }
-    if (driver) {
-      condition = condition.where('driver').eq(driver);
-    }
-    if (date) {
-      const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
-      const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
-      condition = condition.where('startTime').between(dateStart, dateEnd);
-    }
-    db.scan(res, Ride, condition);
+  const { type, status, rider, driver, date, scheduled } = req.query;
+  let condition = new Condition('status').not().eq(Status.CANCELLED);
+  if (type) {
+    condition = condition.where('type').eq(type);
+  } else if (scheduled) {
+    condition = condition.where('type').not().eq(Type.UNSCHEDULED);
   }
+  if (status) {
+    condition = condition.where('status').eq(status);
+  }
+  if (rider) {
+    condition = condition.where('rider').eq(rider);
+  }
+  if (driver) {
+    condition = condition.where('driver').eq(driver);
+  }
+  if (date) {
+    const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
+    const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
+    condition = condition.where('startTime').between(dateStart, dateEnd);
+  }
+  db.scan(res, Ride, condition);
 });
 
 // Put a ride in Rides table

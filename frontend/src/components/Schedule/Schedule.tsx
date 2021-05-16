@@ -58,25 +58,24 @@ const Schedule = () => {
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        data
-          && setEvents(
-            data.filter((ride: Ride) => (ride.status !== 'cancelled'))
-            .map((ride: Ride) => ({
-              id: ride.id,
-              title: `${ride.startLocation.name} to ${ride.endLocation.name}
+        data && setEvents(
+          data.map((ride: Ride) => ({
+            id: ride.id,
+            title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-              start: new Date(ride.startTime.toString()),
-              end: new Date(ride.endTime.toString()),
-              resourceId: ride.driver!.id,
-              ride,
-            })),
-          );
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver!.id,
+            ride,
+          })),
+        );
       });
-  }
+  };
 
   useEffect(() => {
-    getRides()
-  }, [scheduleDay, withDefaults]);
+    getRides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleDay]);
 
   useEffect(() => {
     setCalDrivers(
@@ -94,7 +93,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driver: updatedDriver }),
-      })
+      }),
     );
   };
 
@@ -168,32 +167,30 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const closeModal = () => setIsOpen(false);
 
-  const cancelRide = (ride : Ride) => {
+  const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
-    const recurring = ride.recurring;
+    const { recurring } = ride;
     if (recurring) {
       fetch(
         `api/rides/${rideId}/edits`,
         withDefaults({
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 'deleteOnly': 'true', 'origDate': scheduleDay}),
+          body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
         }),
       )
-      .then(() => getRides())
-      .then(closeModal);
+        .then(() => getRides())
+        .then(closeModal);
     } else {
       fetch(
         `/api/rides/${rideId}`,
         withDefaults({
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
         }),
       )
-      .then(() => getRides())
-      .then(closeModal);
+        .then(() => getRides())
+        .then(closeModal);
     }
-  }
+  };
 
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
