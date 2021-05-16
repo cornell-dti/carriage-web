@@ -119,10 +119,12 @@ const RequestRideModal = () => {
             >
                <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className={styles.inputContainer}>
             <RequestRideInfo/>
             <Button className={styles.submit} type='submit'>
               Request a Ride
             </Button>
+            </div>
           </form>
         </FormProvider>
             </Modal>

@@ -43,9 +43,9 @@ const RequestRideInfo = () => {
     getExistingLocations();
   }, [withDefaults]);
   return (
-    <div className={styles.inputContainer}>
+    <div>
       <Label htmlFor={"startDate"} className={styles.largeLabel}>Day</Label>
-      <div className={styles.box}>
+      <div className={styles.alignedBox}>
         <div className={styles.errorBox}>
           <Input
             id='startDate'
@@ -57,7 +57,8 @@ const RequestRideInfo = () => {
           {errors.startDate && <p className={styles.error}>
             Please enter a valid start date</p>}
         </div>
-        <Label htmlFor={"recurring"}>Repeating?</Label>
+        <Label className={styles.boldLabel} 
+        htmlFor={"recurring"}>Repeating?</Label>
         <Input
           type="checkbox"
           id="recurring"
@@ -67,8 +68,8 @@ const RequestRideInfo = () => {
       </div>
       {repeatingRide ?
         <div>
-          <div className={styles.errorBox}>
             <div className={styles.box}>
+              <Label className={styles.boldLabel} id = "repeats">Repeats</Label>
               <Input
                 name="whenRepeat"
                 id="daily"
@@ -76,14 +77,14 @@ const RequestRideInfo = () => {
                 type="radio"
                 value="daily"
                 onChange={() => setCustom(false)} />
-              <Label htmlFor="daily">Daily</Label>
+              <Label className={styles.label} htmlFor="daily">Daily</Label>
               <input
                 name="whenRepeat"
                 id="weekly"
                 ref={register({ required: repeatingRide })}
                 type="radio" value="weekly"
                 onChange={() => setCustom(false)} />
-              <Label htmlFor="weekly">Weekly</Label>
+              <Label className={styles.label} htmlFor="weekly">Weekly</Label>
               <input
                 name="whenRepeat"
                 id="custom"
@@ -91,14 +92,13 @@ const RequestRideInfo = () => {
                 type="radio"
                 value="custom"
                 onChange={() => setCustom(true)} />
-              <Label htmlFor="custom">Custom</Label>
-            </div>
+              <Label className={styles.label} htmlFor="custom">Custom</Label>
             {errors.whenRepeat && <p className={styles.error}>
               Please select a value</p>}
-          </div>
+              </div>
           {custom && repeatingRide ? <CustomRepeatingRides /> : null}
-          <Label htmlFor="endDate">Ends</Label>
-          <Input type={'date'} name="endDate" id="endDate"
+          <Label className={styles.boldLabel} htmlFor="endDate">Ends</Label>
+          <Input className={styles.input} type={'date'} name="endDate" id="endDate"
             ref=
             {register({
               required: getValues("repeating"),
@@ -116,8 +116,8 @@ const RequestRideInfo = () => {
       <Label className={styles.largeLabel} id="pickupLabel">Pickup</Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
-          <div>
-            <Label id="pickupLocation">Location</Label>
+
+            <Label className={styles.label} id="pickupLocation">Location</Label>
             <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations"
               ref={register(
                 { required: true })}>
@@ -126,13 +126,11 @@ const RequestRideInfo = () => {
                   value={location.id}>{location.name}</option>);
               })}
             </select>
-          </div>
           {errors.startLocation && <p className={styles.error}>
             Please select a valid location</p>}
         </div>
         <div className={styles.errorBox}>
-          <div>
-            <Label id="pickupTime">Time</Label>
+            <Label className={styles.label} id="pickupTime">Time</Label>
             <Input
               type="time"
               name="pickupTime"
@@ -140,16 +138,14 @@ const RequestRideInfo = () => {
               aria-labelledby="pickupLabel pickupTime"
               ref={register({ required: true })}
             />
-          </div>
           {errors.pickupTime && <p className={styles.error}>
             Please choose a valid pickup time</p>}
         </div>
       </div>
-      <h2 className={styles.formHeading} id="dropoffLabel">Dropoff</h2>
+      <Label className={styles.largeLabel} id="dropoffLabel">Dropoff</Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
-          <div>
-            <Label id="dropoffLocation">Location</Label>
+            <Label className={styles.label} id="dropoffLocation">Location</Label>
             <select className={styles.input} name="endLocation"
               aria-labelledby="dropoffLabel dropoffLocations"
               ref={register({
@@ -164,13 +160,11 @@ const RequestRideInfo = () => {
                   value={location.id}>{location.name}</option>);
               })}
             </select>
-          </div>
           {errors.endLocation && <p className={styles.error}>
             Please select a valid pickup location</p>}
         </div>
         <div className={styles.errorBox}>
-          <div>
-            <Label id="dropoffTime">Time</Label>
+            <Label className={styles.label} id="dropoffTime">Time</Label>
             <Input
               type="time"
               name="dropoffTime"
@@ -184,7 +178,6 @@ const RequestRideInfo = () => {
                   return dropoffTi < pickupTi;
                 }
               })} />
-          </div>
           {errors.dropoffTime && <p className={styles.error}>
             Please choose a valid dropoff time</p>}
         </div>
