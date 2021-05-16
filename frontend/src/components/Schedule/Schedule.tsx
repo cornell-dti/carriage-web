@@ -168,33 +168,31 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const closeModal = () => setIsOpen(false);
 
-  const cancelRide = (rideId : string) => {
-    fetch(`/api/rides/${rideId}`, withDefaults())
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.recurring) {
-        fetch(
-          `api/rides/${rideId}/edits`,
-          withDefaults({
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 'deleteOnly': 'true', 'origDate': scheduleDay}),
-          }),
-        )
-        .then(() => getRides())
-        .then(closeModal);
-      } else {
-        fetch(
-          `/api/rides/${rideId}`,
-          withDefaults({
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-          }),
-        )
-        .then(() => getRides())
-        .then(closeModal);
-      }
-    })
+  const cancelRide = (ride : Ride) => {
+    const rideId = ride.id;
+    const recurring = ride.recurring;
+    if (recurring) {
+      fetch(
+        `api/rides/${rideId}/edits`,
+        withDefaults({
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 'deleteOnly': 'true', 'origDate': scheduleDay}),
+        }),
+      )
+      .then(() => getRides())
+      .then(closeModal);
+    } else {
+      fetch(
+        `/api/rides/${rideId}`,
+        withDefaults({
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      )
+      .then(() => getRides())
+      .then(closeModal);
+    }
   }
 
   const onSelectEvent = (event: any) => {

@@ -10,7 +10,7 @@ type SModalProps = {
   isOpen: boolean;
   close: () => void;
   ride: Ride | undefined;
-  cancel: (rideId:string) => void;
+  cancel: (ride: Ride) => void;
 };
 
 const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
@@ -37,7 +37,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
             <div className={styles.modalOptions}>
-              <button className={styles.cancel} onClick={() => cancel(ride.id)}>
+              <button className={styles.cancel} onClick={() => cancel(ride)}>
                 <img src={trash} />
               </button>
               <button className={styles.close} onClick={close}>

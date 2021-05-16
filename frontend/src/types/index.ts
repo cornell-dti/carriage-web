@@ -106,4 +106,5 @@ export type Ride = {
   endTime: string;
   rider: Rider;
   driver?: Driver;
+  recurring?: boolean;
 };
