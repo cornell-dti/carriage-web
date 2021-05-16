@@ -44,8 +44,8 @@ const Settings = () => {
             photoLink={rider?.photoLink}
             isRider={true}
         >
-            <UserContactInfo icon={phone} alt="" text={rider?.phoneNumber || ""} />
-            <UserContactInfo icon={mail} alt="" text={rider?.email || ""} />
+            <UserContactInfo icon={phone} alt="Phone icon" text={rider?.phoneNumber || ""} />
+            <UserContactInfo icon={mail} alt="Email icon" text={rider?.email || ""} />
         </UserDetail>
         <div className={styles.settings}>
             <div>
