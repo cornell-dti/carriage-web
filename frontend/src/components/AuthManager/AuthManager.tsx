@@ -1,6 +1,12 @@
 import React, { useState, FunctionComponent } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
-import { useHistory, useLocation, Redirect, Route, Switch } from 'react-router-dom';
+import {
+  useHistory,
+  useLocation,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -8,6 +14,7 @@ import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
+import SubscribeWrapper from './SubscrbeWrapper';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
@@ -89,8 +96,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -114,8 +120,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -139,14 +144,16 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   const SiteContent = () => (
     <AuthContext.Provider value={{ logout, id }}>
       <ReqContext.Provider value={{ withDefaults }}>
-        <Switch>
-          <Route exact path="/" component={LoginPage} />
-          <PrivateRoute path="/admin" component={AdminRoutes} />
-          <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
+        <SubscribeWrapper userId={id}>
+          <Switch>
+            <Route exact path="/" component={LoginPage} />
+            <PrivateRoute path="/admin" component={AdminRoutes} />
+            <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
+          </Switch>
+        </SubscribeWrapper>
       </ReqContext.Provider>
     </AuthContext.Provider>
   );

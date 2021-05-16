@@ -9,6 +9,8 @@ import { Tag } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
+import { UserType } from '../models/subscription';
+import { sendToUsers } from '../util/notification';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -31,9 +33,7 @@ router.get('/download', (req, res) => {
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
-        const fullName = (user: RiderType | DriverType) => (
-          `${user.firstName} ${user.lastName.substring(0, 1)}.`
-        );
+        const fullName = (user: RiderType | DriverType) => `${user.firstName} ${user.lastName.substring(0, 1)}.`;
         return {
           Name: fullName(doc.rider),
           'Pick Up': start.format('h:mm A'),
@@ -54,12 +54,11 @@ router.get('/download', (req, res) => {
 
 // Get and query all master repeating rides in table
 router.get('/repeating', validateUser('User'), (req, res) => {
-  const { query: { rider } } = req;
+  const {
+    query: { rider },
+  } = req;
   const now = moment.tz('America/New_York').format('YYYY-MM-DD');
-  let condition = new Condition('recurring')
-    .eq(true)
-    .where('endDate')
-    .ge(now);
+  let condition = new Condition('recurring').eq(true).where('endDate').ge(now);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }
@@ -68,7 +67,9 @@ router.get('/repeating', validateUser('User'), (req, res) => {
 
 // Get a ride by id in Rides table
 router.get('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Ride, id, tableName);
 });
 
@@ -141,7 +142,10 @@ router.post('/', validateUser('User'), (req, res) => {
 
 // Update an existing ride
 router.put('/:id', validateUser('User'), (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   const { type, startLocation, endLocation } = body;
 
   if (type && type === Type.UNSCHEDULED) {
@@ -165,14 +169,50 @@ router.put('/:id', validateUser('User'), (req, res) => {
       tag: Tag.CUSTOM,
     };
   }
-  db.update(res, Ride, { id }, body, tableName);
+  db.update(res, Ride, { id }, body, tableName, (doc) => {
+    const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+    const riderId = ride.rider.id;
+    const driverId = ride.driver ? ride.driver.id : null;
+    const userId = res.locals.user.id;
+    const { userType } = res.locals.user;
+
+    const info = JSON.stringify({
+      ride,
+      change: body,
+      changedBy: {
+        userType,
+        userId,
+      },
+    });
+
+    sendToUsers(info, UserType.ADMIN);
+
+    if (userType === UserType.ADMIN) {
+      ride.driver && sendToUsers(info, UserType.DRIVER, driverId);
+      sendToUsers(info, UserType.RIDER, riderId);
+    }
+    if (userType === UserType.RIDER && ride.driver) {
+      sendToUsers(info, UserType.DRIVER, driverId);
+    }
+    if (userType === UserType.DRIVER) {
+      sendToUsers(info, UserType.RIDER, riderId);
+    }
+    res.send(ride);
+  });
 });
 
 // Create edit instances and update a repeating ride's edits field
 router.put('/:id/edits', validateUser('User'), (req, res) => {
   const {
     params: { id },
-    body: { deleteOnly, origDate, startTime, endTime, startLocation, endLocation },
+    body: {
+      deleteOnly,
+      origDate,
+      startTime,
+      endTime,
+      startLocation,
+      endLocation,
+    },
   } = req;
 
   db.getById(res, Ride, id, tableName, (masterRide) => {
@@ -203,8 +243,14 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
           const replaceRide = new Ride({
             id: replaceId,
             rider: masterRide.rider,
-            startLocation: startLocation || masterRide.startLocation.id || masterRide.startLocation,
-            endLocation: endLocation || masterRide.endLocation.id || masterRide.endLocation,
+            startLocation:
+              startLocation
+              || masterRide.startLocation.id
+              || masterRide.startLocation,
+            endLocation:
+              endLocation
+              || masterRide.endLocation.id
+              || masterRide.endLocation,
             startTime: startTime || origStartTime,
             endTime: endTime || origEndTime,
           });
@@ -227,7 +273,9 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 
 // Delete an existing ride
 router.delete('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
     const { recurring, edits, type } = ride;
     const deleteRide = () => {
