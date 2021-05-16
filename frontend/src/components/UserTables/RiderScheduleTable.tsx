@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { Ride } from '../../types/index';
 import RiderRidesTable from './RiderRidesTable';
 import styles from './table.module.css';
@@ -41,16 +42,9 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
       })
   }, [withDefaults, curDate]);
 
+  // returns date in the format "MM/DD/YYYY"
   const formatDate = (date: string): string => {
-    var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
-    if (month.length < 2) 
-      month = '0' + month;
-    if (day.length < 2) 
-      day = '0' + day;
-    return [month, day, year].join('/');
+    return moment(date).format('MM/DD/YYYY');
   };
 
   // returns a map with date as keys and a list of rides as values

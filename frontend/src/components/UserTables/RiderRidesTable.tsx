@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -30,28 +31,14 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
             hour: '2-digit',
             minute: '2-digit',
           });
-
-          const { rider } = ride;
-          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
-          const rideType = ride.type;
-
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
           const dropoffTag = ride.endLocation.tag;
 
           // returns date in the format "MM/DD/YYYY"
-          // source: https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd
           const formatDate = (date: string): string => {
-            let d = new Date(date),
-              month = '' + (d.getMonth() + 1),
-              day = '' + d.getDate(),
-              year = d.getFullYear();
-            if (month.length < 2) 
-              month = '0' + month;
-            if (day.length < 2) 
-              day = '0' + day;
-            return [month, day, year].join('/');
+            return moment(date).format('MM/DD/YYYY');
           };
 
           const startDate = formatDate(ride.startTime);
