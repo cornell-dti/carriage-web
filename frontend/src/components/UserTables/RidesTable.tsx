@@ -1,116 +1,141 @@
 import React, { useState } from 'react';
 import { Driver, Ride } from '../../types/index';
+import { Row, Table } from '../TableComponents/TableComponents';
+import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
+import RideModal from '../RideModal/RideModal';
 import styles from './table.module.css';
-import TableRow from '../TableComponents/TableRow';
 
 type RidesTableProps = {
   rides: Ride[];
   drivers: Driver[];
-  hasAssignButton: boolean;
+  hasButtons: boolean;
 }
 
-function renderTableHeader() {
-  return (
-    <tr>
-      <th></th>
-      <th className={styles.tableHeader}>Time</th>
-      <th className={styles.tableHeader}>Passenger</th>
-      <th className={styles.tableHeader}>Pickup Location</th>
-      <th className={styles.tableHeader}>Dropoff Location</th>
-      <th className={styles.tableHeader}>Needs</th>
-    </tr>
-  );
-}
+const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
+  const [openAssignModal, setOpenAssignModal] = useState(-1);
+  const [openEditModal, setOpenEditModal] = useState(-1);
+  const [driverSet, setDriverSet] = useState(['']);
 
-const RidesTable = (
-  { rides, drivers, hasAssignButton }: RidesTableProps,
-) => {
-  const [openModal, setOpenModal] = useState(-1);
+  const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
+  const unscheduledHeaders = ['', 'Time', 'Passenger', 'Pickup Location', 'Dropoff Location', 'Needs', ''];
 
-  function renderTableData(allRides: Ride[]) {
-    return allRides.filter((r) => r.startLocation !== undefined
-      && r.endLocation !== undefined).map((ride, index) => {
-      const startTime = new Date(ride.startTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      const endTime = new Date(ride.endTime).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      const { rider } = ride;
-      const name = rider ? `${rider.firstName} ${rider.lastName}` : '';
-      const needs = rider ? (rider.accessibilityNeeds || []).join(', ') : '';
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
-
-      const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
-        hour: 'numeric',
-        hour12: true,
-      });
-      const valueName = { data: name };
-      const valuePickup = { data: pickupLocation, tag: pickupTag };
-      const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-      const valueNeeds = { data: needs };
-      const assignModal = () => (
-          <AssignDriverModal
-            isOpen={openModal === index}
-            close={() => setOpenModal(-1)}
-            ride={rides[0]}
-            allDrivers={drivers}
-          />
-      );
-
-      const assignButton = {
-        data: 'Assign',
-        buttonHandler: () => setOpenModal(index),
-        ButtonModal: assignModal,
-      };
-
-      const inputValues = [
-        valueName,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-      ];
-      const inputValuesAndButton = [
-        valueName,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-        assignButton,
-      ];
-      return (
-          <tr key={index}>
-            <td className={styles.cell}>{timeframe}</td>
-            <td className={styles.cell}>
-              <span className={styles.bold}>{startTime}</span> <br></br>
-              <span className={styles.gray}>-- {endTime}</span>
-            </td>
-            {hasAssignButton
-              ? <TableRow values={inputValuesAndButton} />
-              : <TableRow values={inputValues} />}
-          </tr>
-      );
-    });
-  }
+  const scheduledColSizes = [1, 1, 1, 1, 1, 1];
+  const scheduledHeaders = ['Time', 'Pickup Location', 'Dropoff Location', 'Needs', 'Rider'];
 
   return (
     <>
-      {(rides.length) > 0
-        && <div>
-          <table cellSpacing="0" className={styles.table}>
-            <tbody>
-              {renderTableHeader()}
-              {renderTableData(rides)}
-            </tbody>
-          </table>
-        </div>}
-    </>
+      <Table>
+        <Row
+          header
+          colSizes={hasButtons ? unscheduledColSizes : scheduledColSizes}
+          data={hasButtons ? unscheduledHeaders : scheduledHeaders}
+        />
+        {rides.map((ride, index) => {
+          const startTime = new Date(ride.startTime).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const endTime = new Date(ride.endTime).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          const { rider } = ride;
+          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
+          const needs = rider ? (rider.accessibility || []).join(', ') : '';
+          const pickupLocation = ride.startLocation.name;
+          const pickupTag = ride.startLocation.tag;
+          const dropoffLocation = ride.endLocation.name;
+          const dropoffTag = ride.endLocation.tag;
 
+          const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
+            hour: 'numeric',
+            hour12: true,
+          });
+          const valuePickup = { data: pickupLocation, tag: pickupTag };
+          const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+          const hasDriver = (driverSet[index] !== undefined
+            && driverSet[index].length > 0);
+
+          const startEndTime = {
+            data:
+              <span>
+                <p className={styles.bold}>{startTime}</p>
+                <p className={styles.gray}> -- {endTime}</p>
+              </span>,
+          };
+
+          const assignButton = (
+            <Button className={styles.assignButton} onClick={() => setOpenAssignModal(index)} small>
+              Assign
+            </Button>
+          );
+
+          const editButton = (
+            <Button outline small onClick={() => setOpenEditModal(index)}>Edit</Button>
+          );
+
+          const valueEditAssign = {
+            data: <>
+              {editButton}
+              {assignButton}
+            </>,
+          };
+
+          const valueEdit = {
+            data: editButton,
+          };
+
+          const scheduledRideData = [
+            startEndTime,
+            valuePickup,
+            valueDropoff,
+            needs,
+            riderName,
+            valueEdit,
+          ];
+
+          const unscheduledRideData = [
+            timeframe,
+            startEndTime,
+            riderName,
+            valuePickup,
+            valueDropoff,
+            needs,
+            valueEditAssign,
+          ];
+
+          const scheduledRow = () => (
+            <Row data={scheduledRideData} colSizes={scheduledColSizes} />
+          );
+
+          const unscheduledRow = () => (
+            <Row data={unscheduledRideData} colSizes={unscheduledColSizes} groupStart={2} />
+          );
+
+          return (
+            <>
+              {hasButtons ? unscheduledRow() : scheduledRow()}
+              <AssignDriverModal
+                isOpen={(openAssignModal === index) && !hasDriver}
+                close={() => setOpenAssignModal(-1)}
+                setDriver={(driverName: string) => {
+                  driverSet[index] = driverName;
+                  setDriverSet([...driverSet])
+                }}
+                ride={rides[index]}
+                allDrivers={drivers}
+              />
+              <RideModal 
+                open={openEditModal === index}
+                close={() => setOpenEditModal(-1)}
+                ride={rides[index]}
+              />
+            </>
+          );
+        })}
+      </Table>
+    </>
   );
 };
 

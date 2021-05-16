@@ -7,3 +7,5 @@ export { default as download } from './download.svg';
 export { default as trash } from './trash.svg';
 export { default as notificationBadge } from './notification-badge.svg';
 export { default as notificationBell } from './notification-bell.svg';
+export { default as logo } from './logo.svg';
+export { default as googleLogin } from './google-login.svg';

@@ -1,21 +1,24 @@
 import React, { useRef, useEffect } from 'react';
 import { Ride, Driver } from '../../types/index';
+import { useReq } from '../../context/req';
 import styles from './assigndrivermodal.module.css';
 
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
+  setDriver: (driverName: string) => void;
   ride: Ride;
   allDrivers: Driver[];
 };
 
 type DriverRowProps = {
+  onclick: () => void;
   firstName: string;
   imageURL: string;
 };
 
-const DriverRow = ({ firstName, imageURL }: DriverRowProps) => (
-  <div className={styles.driverRow}>
+const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
+  <div className={styles.driverRow} onClick={onclick}>
     <img className={styles.driverImage} src={imageURL} alt="Avatar"></img>
     <p className={styles.driverName}>{firstName}</p>
   </div>
@@ -24,9 +27,11 @@ const DriverRow = ({ firstName, imageURL }: DriverRowProps) => (
 const AssignDriverModal = ({
   isOpen,
   close,
+  setDriver,
   ride,
   allDrivers,
 }: AssignModalProps) => {
+  const { withDefaults } = useReq();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
@@ -42,8 +47,22 @@ const AssignDriverModal = ({
       };
     }, [ref]);
   }
-
   const wrapperRef = useRef(null);
+  const addDriver = (driver: Driver) => {
+    fetch(
+      `/api/rides/${ride.id}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          driver,
+          type: 'active',
+        }),
+      }),
+    );
+    setDriver(driver.firstName);
+    close();
+  };
   useOutsideAlerter(wrapperRef);
 
   return (
@@ -53,6 +72,7 @@ const AssignDriverModal = ({
           <h1 className={styles.titleText}>Available Drivers</h1>
           {allDrivers.map((driver, id) => (
             <DriverRow
+              onclick={() => { addDriver(driver); }}
               key={id}
               firstName={driver.firstName}
               imageURL="https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg"

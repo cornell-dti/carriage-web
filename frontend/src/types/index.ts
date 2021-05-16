@@ -1,40 +1,13 @@
 import { ReactNode } from 'react';
+import { RiderType } from '../../../server/models/rider';
 
-export type AccessibilityNeeds = {
-  hasCrutches: boolean;
-  needsAssistant: boolean;
-  needsWheelchair: boolean;
-};
+export type Rider = RiderType;
 
-export type Rider = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  accessibilityNeeds: Array<string>;
-  description: string;
-  joinDate: string;
-  pronouns: string;
-  address: string;
-};
-
-export type NewRider = {
-  id: string;
-  email: string;
-  phoneNumber: string;
-  firstName: string;
-  lastName: string;
-  pronouns: string;
-  accessibility: Array<string>;
-  description: string;
-  joinDate: string;
-  endDate: string;
-  address: string;
-  favoriteLocations: Array<string>;
-  organization: string;
-  photoLink?: string;
-};
+export enum Accessibility {
+  ASSISTANT = 'Assistant',
+  CRUTCHES = 'Crutches',
+  WHEELCHAIR = 'Wheelchair',
+}
 
 export type Availability = {
   startTime: string;
@@ -55,7 +28,6 @@ export type Driver = {
   email: string;
   phone: string;
   admin: boolean;
-  photoLink?: string;
 };
 
 export type Admin = {
@@ -90,11 +62,11 @@ export type Vehicle = {
 };
 
 export enum Tag {
-  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  CTOWN = 'ctown', // college town
-  DTOWN = 'dtown', // downtown
+  WEST = 'west',
+  CTOWN = 'ctown',
+  DTOWN = 'dtown',
   INACTIVE = 'inactive',
   CUSTOM = 'custom'
 }
@@ -104,11 +76,13 @@ export type Location = {
   name: string;
   address: string;
   tag?: Tag;
+  info?: string;
 };
 
 export type TableValue = {
   data: string | ReactNode | null;
   tag?: string;
+  driver?: boolean;
   buttonHandler?: () => void;
   ButtonModal?: () => JSX.Element;
 };

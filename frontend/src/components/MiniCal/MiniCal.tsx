@@ -6,9 +6,14 @@ import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 
-const isToday = (date: Date) => date.getDate() === new Date().getDate();
+const currentDate = new Date();
+const isToday = (date: Date) => date.getDate() === currentDate.getDate()
+  && date.getMonth() === currentDate.getMonth()
+  && date.getFullYear() === currentDate.getFullYear();
 
-const isTomorrow = (date: Date) => date.getDate() === new Date().getDate() + 1;
+const isTomorrow = (date: Date) => date.getDate() === currentDate.getDate() + 1
+  && date.getMonth() === currentDate.getMonth()
+  && date.getFullYear() === currentDate.getFullYear();
 
 const Icon = () => (
   <svg
@@ -73,7 +78,6 @@ const MiniCal = () => {
 
   return (
     <div className={styles.root}>
-      USERPROFILE{'   '}
       <DatePicker
         adjustDateOnChange
         selected={curDate}

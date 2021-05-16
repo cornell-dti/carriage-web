@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { ObjectType, Location, NewRider } from '../../../types';
+import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
 
-const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit } = useForm();
+const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      name: formData?.rider ?? '',
+      pickupLoc: formData?.pickupLoc ?? '',
+      dropoffLoc: formData?.dropoffLoc ?? '',
+    },
+  });
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { withDefaults } = useReq();
@@ -24,7 +30,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    const nameToIdObj = riders.reduce((acc: ObjectType, r: NewRider) => {
+    const nameToIdObj = riders.reduce((acc: ObjectType, r: Rider) => {
       const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
       acc[fullName] = r.id;
       return acc;
@@ -53,9 +59,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             className={styles.nameInput}
             ref={register({
               required: true,
-              validate: (name: string) => (
-                nameToId[name.toLowerCase()] !== undefined
-              ),
+              validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
             })}
           />
         </div>
@@ -68,9 +72,7 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -82,15 +84,13 @@ const RiderInfoPage = ({ onBack, onSubmit }: ModalPageProps) => {
             ref={register({ required: true })}
           />
           <datalist id="locations">
-            {locations.map((l) => (
-              l === 'Custom' ? null : <option key={l}>{l}</option>
-            ))}
+            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
           </datalist>
         </div>
       </div>
       <div className={styles.btnContainer}>
         <Button outline type="button" onClick={onBack}>Back</Button>
-        <Button type="submit">Add a Ride</Button>
+        <Button type="submit">{formData?.rider ? 'Edit a Ride' : 'Add a Ride'}</Button>
       </div>
     </form>
   );

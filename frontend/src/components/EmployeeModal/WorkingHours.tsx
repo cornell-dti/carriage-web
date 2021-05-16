@@ -10,12 +10,14 @@ type AvailabilityInputProps = {
   index: number;
   existingTimeRange?: string;
   existingDayArray?: string[];
+  hide: boolean;
 }
 
 const AvailabilityInput = ({
   index,
   existingTimeRange,
   existingDayArray,
+  hide
 }: AvailabilityInputProps) => {
   const {
     selectDay,
@@ -24,7 +26,8 @@ const AvailabilityInput = ({
     isDaySelectedByInstance,
     getSelectedDays,
   } = useWeek();
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue, getValues, formState } = useFormContext();
+  const { errors } = formState;
   const dayLabels = {
     Sun: 'S',
     Mon: 'M',
@@ -39,7 +42,6 @@ const AvailabilityInput = ({
   // data in an array 'availability' at index 'index'
   const instance = `availability[${index}]`;
   const days = getSelectedDays(index);
-
   const handleClick = (day: string) => {
     if (isDaySelectedByInstance(day, index)) {
       deselectDay(day);
@@ -72,9 +74,12 @@ const AvailabilityInput = ({
   }, []);
 
   useEffect(() => {
-    // Register day selector as custom form input
-    register(`${instance}.days`, { required: true });
-  }, [instance, register]);
+    // Register day selector as custom form input. 
+    //Not putting error message here since there is no default behavior to override
+    register(`${instance}.days`, { 
+      required: !hide, 
+      validate: () => {return hide? true : days.length > 0}});
+  }, [instance, register, days, hide]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -87,50 +92,71 @@ const AvailabilityInput = ({
 
   return (
     <div className={styles.availabilityInput}>
-      <Input
-        name={`${instance}.startTime`}
-        type='time'
-        className={styles.timeInput}
-        defaultValue={existingTime?.[0]}
-        ref={register({ required: true })}
-      />
+      <div className={styles.timeFlexbox}>
+        <Input
+          name={`${instance}.startTime`}
+          type='time'
+          className={styles.timeInput}
+          defaultValue={existingTime?.[0]}
+          ref={register({ required: !hide})}
+        />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].startTime &&  
+          <p className={styles.error}>Please enter a valid start time</p>
+        }  
+        </div>
       <p className={styles.toText}>to</p>
+      <div className={styles.timeFlexbox}>
       <Input
         name={`${instance}.endTime`}
         type='time'
         className={styles.timeInput}
         defaultValue={existingTime?.[1]}
         ref={register({
-          required: true,
+          required: !hide,
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
-            return startTime < endTime;
+            return hide? true : startTime < endTime;
           },
         })}
       />
+        {errors.availability && errors.availability[index] && 
+          errors.availability[index].endTime &&
+          <p className={styles.error}>Please enter a valid end time</p> 
+        }    
+        </div>
       <p className={styles.repeatText}>Repeat on</p>
-      {Object.entries(dayLabels).map(([day, label]) => (
-        <button
-          key={day}
-          type="button"
-          className={cn(
-            styles.day,
-            { [styles.daySelected]: isDaySelectedByInstance(day, index) },
-          )}
-          onClick={() => handleClick(day)}
-        >
-          {label}
-        </button>
-      ))}
+      <div className={styles.timeFlexbox}>
+        <div className={styles.daysBox}>
+          {Object.entries(dayLabels).map(([day, label]) => (
+            <Input
+              key={day}
+              name={`${instance}.days`}
+              type="button"
+              value={label}
+              className={cn(
+                styles.day,
+                { [styles.daySelected]: isDaySelectedByInstance(day, index) },
+              )}
+              onClick={() => handleClick(day)}
+            />
+          ))}
+        </div>
+        {errors.availability && errors.availability[index] && 
+            errors.availability[index].days &&  
+            <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
+          }    
+      </div>
     </div>
   );
 };
 
 type WorkingHoursProps = {
   existingAvailability?: string[][];
+  hide: boolean;
 }
 
-const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
+const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
   const [numAvailability, setNumAvailability] = useState(existingAvailability ? 0 : 1);
   const [availabilityArray, setAvailabilityArray] = useState<any[]>([]);
 
@@ -175,7 +201,7 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
   }, []);
 
   return (
-    <div className={styles.workingHours}>
+    <div className={cn(styles.workingHours, { [styles.hidden]: hide })}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       <WeekProvider>
         {existingAvailability ? (
@@ -185,11 +211,12 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
               index={index}
               existingTimeRange={timeRange}
               existingDayArray={dayArray}
+              hide={hide}
             />
           ))
         ) : (
           [...new Array(numAvailability)].map((_, index) => (
-            <AvailabilityInput key={index} index={index} />
+            <AvailabilityInput key={index} index={index} hide={hide} />
           ))
         )}
       </WeekProvider>
