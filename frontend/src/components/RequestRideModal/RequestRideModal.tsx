@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
@@ -20,9 +20,10 @@ const daysToNumber = {
 const RequestRideModal = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showingToast, setToast] = useState(false);
+    const [rider, setRider] = useState(undefined);
     const methods = useForm();
     const { withDefaults } = useReq();
-    const authContext = useContext(AuthContext);
+    const {id} = useContext(AuthContext);
     const openModal = () => {
         setIsOpen(true);
         setToast(false);
@@ -32,73 +33,75 @@ const RequestRideModal = () => {
         methods.clearErrors();
         setIsOpen(false);
       };
-
+      useEffect(() => {
+        fetch(`/api/riders/${id}`, withDefaults())
+          .then((res) => res.json())
+          .then((data) => setRider(data));
+      }, [withDefaults]);
       const onSubmit = async (formData: ObjectType) => {
-        const { startDate, repeating, whenRepeat, days,  
-          startLocation, endLocation, startTime, endTime, endDate } = formData;
-        const {id} = authContext; 
-        const rider: Rider = await fetch(`/api/riders/${id}`, withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data); 
-        const pickupTime = moment(`${startDate} ${startTime}`).toISOString();
-        const dropoffTime = moment(`${startDate} ${endTime}`).toISOString();
-        if(repeating){
+        const { startDate, recurring, whenRepeat, days,  
+          startLocation, endLocation, pickupTime, dropoffTime, endDate } = formData;
+        const startTime = moment(`${startDate} ${pickupTime}`).toISOString();
+        const endTime = moment(`${startDate} ${dropoffTime}`).toISOString();
+        if(recurring){
          //Add a repeating ride
-          let finDays:Number[] = [];
+          let recurringDays:Number[] = [];
           switch(whenRepeat){
             case "daily":{
-              finDays = [1, 2, 3, 4, 5];
+              recurringDays = [1, 2, 3, 4, 5];
               break; 
               }
             case "weekly":{
-              finDays= [moment(`${startDate}`).toDate().getDay()]; 
+              recurringDays= [moment(`${startDate}`).toDate().getDay()]; 
               break; 
             }
             case "custom":{
-              days.forEach((day:string) =>  finDays.push(Number(day)));
+              days.forEach((day:string) =>  recurringDays.push(Number(day)));
               break; 
             }
             default:{
-              finDays= [moment(`${startDate}`).toDate().getDay()]; 
+              recurringDays= [moment(`${startDate}`).toDate().getDay()]; 
               break; 
             }
           }
           const repeatingRideData: ObjectType = {
-            pickupTime,
-            dropoffTime, 
-            rider, 
+            type: 'unscheduled',
             startLocation,
             endLocation, 
-            repeating, 
-            finDays, 
+            driver: undefined,
+            rider, 
+            startTime,
+            endTime, 
+            recurring, 
+            recurringDays, 
             endDate
           };
-          // fetch(
-          //   '/api/rides',
-          //   withDefaults({
-          //     method: 'POST',
-          //     body: JSON.stringify(repeatingRideData),
-          //   }),
-          // );
-          console.log(repeatingRideData);
+          fetch(
+            '/api/rides',
+            withDefaults({
+              method: 'POST',
+              body: JSON.stringify(repeatingRideData),
+            }),
+          );
         }
         else{
           //Not repeating
           const rideData: ObjectType = {
-            pickupTime,
-            dropoffTime,
-            rider,
+            type: 'unscheduled',
             startLocation,
-            endLocation,
+            endLocation, 
+            driver: undefined,
+            rider, 
+            startTime,
+            endTime,  
           };
-          // fetch(
-          //   '/api/rides',
-          //   withDefaults({
-          //     method: 'POST',
-          //     body: JSON.stringify(rideData),
-          //   }),
-          // );
-          console.log(rideData);
+          fetch(
+            '/api/rides',
+            withDefaults({
+              method: 'POST',
+              body: JSON.stringify(rideData),
+            }),
+          );
         }
         closeModal();
         setToast(true);

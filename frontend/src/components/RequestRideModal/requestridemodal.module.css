@@ -52,3 +52,8 @@
   .submit{
     float: right; 
   }
+  .error {
+    display: block; 
+    color: #EB0023;
+    font-size: 0.75rem;
+  }
