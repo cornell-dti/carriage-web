@@ -33,8 +33,7 @@ router.get('/download', (req, res) => {
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
-        const fullName = (user: RiderType | DriverType) =>
-          `${user.firstName} ${user.lastName.substring(0, 1)}.`;
+        const fullName = (user: RiderType | DriverType) => `${user.firstName} ${user.lastName.substring(0, 1)}.`;
         return {
           Name: fullName(doc.rider),
           'Pick Up': start.format('h:mm A'),
@@ -76,45 +75,34 @@ router.get('/:id', validateUser('User'), (req, res) => {
 
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
-  const { query } = req;
-  if (!Object.keys(query).length) {
-    db.getAll(res, Ride, tableName);
-  } else {
-    const { type, status, rider, driver, date, scheduled } = query;
-    let condition = new Condition();
-    if (type) {
-      condition = condition.where('type').eq(type);
-    } else if (scheduled) {
-      condition = condition.where('type').not().eq(Type.UNSCHEDULED);
-    }
-    if (status) {
-      condition = condition.where('status').eq(status);
-    }
-    if (rider) {
-      condition = condition.where('rider').eq(rider);
-    }
-    if (driver) {
-      condition = condition.where('driver').eq(driver);
-    }
-    if (date) {
-      const dateStart = moment
-        .tz(date as string, 'America/New_York')
-        .toISOString();
-      const dateEnd = moment
-        .tz(date as string, 'America/New_York')
-        .endOf('day')
-        .toISOString();
-      condition = condition.where('startTime').between(dateStart, dateEnd);
-    }
-    db.scan(res, Ride, condition);
+  const { type, status, rider, driver, date, scheduled } = req.query;
+  let condition = new Condition('status').not().eq(Status.CANCELLED);
+  if (type) {
+    condition = condition.where('type').eq(type);
+  } else if (scheduled) {
+    condition = condition.where('type').not().eq(Type.UNSCHEDULED);
   }
+  if (status) {
+    condition = condition.where('status').eq(status);
+  }
+  if (rider) {
+    condition = condition.where('rider').eq(rider);
+  }
+  if (driver) {
+    condition = condition.where('driver').eq(driver);
+  }
+  if (date) {
+    const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
+    const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
+    condition = condition.where('startTime').between(dateStart, dateEnd);
+  }
+  db.scan(res, Ride, condition);
 });
 
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
   const { body } = req;
-  const { startLocation, endLocation, recurring, recurringDays, endDate } =
-    body;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -256,13 +244,13 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
             id: replaceId,
             rider: masterRide.rider,
             startLocation:
-              startLocation ||
-              masterRide.startLocation.id ||
-              masterRide.startLocation,
+              startLocation
+              || masterRide.startLocation.id
+              || masterRide.startLocation,
             endLocation:
-              endLocation ||
-              masterRide.endLocation.id ||
-              masterRide.endLocation,
+              endLocation
+              || masterRide.endLocation.id
+              || masterRide.endLocation,
             startTime: startTime || origStartTime,
             endTime: endTime || origEndTime,
           });
