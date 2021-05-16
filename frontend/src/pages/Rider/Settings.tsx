@@ -3,7 +3,8 @@ import UserDetail, { UserContactInfo } from '../../components/UserDetail/UserDet
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
-import styles from "../Admin/page.module.css"
+import pageStyles from "../Admin/page.module.css"
+import styles from "./settings.module.css"
 import Notification from '../../components/Notification/Notification';
 
 type RiderProfile = {
@@ -30,22 +31,41 @@ const Settings = () => {
 
   return (
       <>
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Settings</h1>
-        <div className={styles.rightSection}>
-          <Notification />
+        <div className={pageStyles.pageTitle}>
+          <h1 className={pageStyles.header}>Settings</h1>
+          <div className={pageStyles.rightSection}>
+            <Notification />
+          </div>
         </div>
-      </div>
-      <UserDetail
-          firstName={rider?.firstName || ""}
-          lastName={rider?.lastName || ""}
-          netId={netId}
-          photoLink={rider?.photoLink}
-          isRider={true}
-      >
-          <UserContactInfo icon={phone} alt="" text={rider?.phoneNumber || ""} />
-          <UserContactInfo icon={mail} alt="" text={rider?.email || ""} />
-      </UserDetail>
+        <UserDetail
+            firstName={rider?.firstName || ""}
+            lastName={rider?.lastName || ""}
+            netId={netId}
+            photoLink={rider?.photoLink}
+            isRider={true}
+        >
+            <UserContactInfo icon={phone} alt="" text={rider?.phoneNumber || ""} />
+            <UserContactInfo icon={mail} alt="" text={rider?.email || ""} />
+        </UserDetail>
+        <div className={styles.settings}>
+            <div>
+              <h3>Notifications</h3>
+              <div>
+                  <label className={styles.checkbox}><input type="checkbox" value="confirm"/> Ride request confirmed</label>
+                  <label className={styles.checkbox}><input type="checkbox" value="cancel"/> Ride info cancelled/edited</label>
+              </div>
+              <hr className={styles.divider}/>
+            </div>
+            <div>
+              <h3>Email Preferences</h3>
+              <div>
+                <label className={styles.checkbox}><input type="checkbox" value="confirm"/> Ride confirmation</label>
+                <label className={styles.checkbox}><input type="checkbox" value="edit"/> Ride information edited</label>
+                <label className={styles.checkbox}><input type="checkbox" value="cancel"/> Ride Ride cancelled</label>
+              </div>
+              <hr className={styles.divider}/>
+            </div>
+        </div>
       </>
     );
 };
