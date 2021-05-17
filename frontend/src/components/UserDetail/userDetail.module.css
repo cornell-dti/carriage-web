@@ -13,7 +13,6 @@
 }
 
 .userDetail {
-  align-items: top;
   margin-top: 6rem;
 }
 
@@ -94,6 +93,10 @@
   border-top: ridge;
   padding-top: 3%;
   margin-top: 3%;
+}
+
+.rider {
+  margin: 0 2.5rem;
 }
 
 .userDetailHeader {
