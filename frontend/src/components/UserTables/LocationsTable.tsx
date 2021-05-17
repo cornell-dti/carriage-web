@@ -30,8 +30,9 @@ const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
       setLocations(sortedLocations);
     };
     getExistingLocations();
-  }, [withDefaults]);
+  }, [setLocations, withDefaults]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const addLocation = (newLocation: Location) => {
     const { id, ...body } = { ...newLocation };
     fetch(

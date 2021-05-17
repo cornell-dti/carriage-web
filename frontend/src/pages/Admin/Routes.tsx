@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -38,21 +38,15 @@ const Routes = () => {
                     </>
                   )}
                 />
-                <Route
-                  path="/employees"
-                  render={({ match: { url } }) => (
-                    <>
-                      <Route path={`${url}/`} component={Employees} exact />
-                      <Route path={`${url}/employee`} component={EmployeeDetail} />
-                    </>
-                  )}
-                />
+                <Route path="/employees" component={Employees} />
+                <Route path='/admins/:id' component={EmployeeDetail} />
+                <Route path='/drivers/:id' component={EmployeeDetail} />
                 <Route
                   path="/riders"
                   render={({ match: { url } }) => (
                     <>
                       <Route path={`${url}/`} component={Students} exact />
-                      <Route path={`${url}/rider`} component={RiderDetail} />
+                      <Route path={`${url}/:id`} component={RiderDetail} />
                     </>
                   )}
                 />

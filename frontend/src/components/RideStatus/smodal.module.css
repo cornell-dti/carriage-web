@@ -24,17 +24,27 @@
   font-size: 12px;
 }
 
-.close {
-  cursor: pointer;
+.modalOptions {
   position:absolute;
   top:15px;
   right:15px;
+  display: inline;
+}
+
+.close, .cancel {
+  cursor: pointer;
   background: none;
   border: none;
   height:16px;
   width:16px;
 }
-.close:focus{
+
+.cancel {
+  padding-bottom: 0.1rem;
+  margin-right: 0.7rem;
+}
+
+.close:focus, .cancel:focus {
   outline: none;
 }
 
