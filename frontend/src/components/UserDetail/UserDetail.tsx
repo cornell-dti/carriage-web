@@ -88,7 +88,7 @@ const UserDetail = ({
                 />
                 : <img className={styles.editIcon} alt="edit" src={edit} />
             }
-            <img className={styles.editIcon} alt="trash" src={detailTrash} />
+            {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

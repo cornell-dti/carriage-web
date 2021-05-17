@@ -13,7 +13,6 @@
 }
 
 .userDetail {
-  align-items: top;
   margin-top: 6rem;
 }
 
@@ -97,7 +96,7 @@
 }
 
 .rider {
-  margin-top: 0%;
+  margin: 0 2.5rem;
 }
 
 .userDetailHeader {
