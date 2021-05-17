@@ -33,12 +33,18 @@ const RiderDetail = () => {
   };
 
   useEffect(() => {
-    fetch(`/api/rides?type=past&rider=${rider.id}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, rider.id]);
-  return (
-    <div className={styles.detailContainer}>
+    if (riderId && !rider) {
+      fetch(`/api/riders/${riderId}`, withDefaults())
+        .then((res) => res.json())
+        .then((data) => setRider(data));
+      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
+        .then((res) => res.json())
+        .then(({ data }) => setRides(data.sort(compRides)));
+    }
+  }, [rider, riderId, withDefaults]);
+
+  return rider
+    ? <div className={styles.detailContainer}>
       <UserDetail
         firstName={rider.firstName}
         lastName={rider.lastName}
@@ -55,7 +61,7 @@ const RiderDetail = () => {
         rides={rides}
       />
     </div>
-  );
+    : null;
 };
 
 export default RiderDetail;

@@ -67,7 +67,22 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
-            <img className={styles.editIcon} alt="edit" src={edit} />
+            {
+              employee
+                ? <EmployeeModal
+                  existingEmployee={{
+                    id: employee.id,
+                    name: `${employee.firstName} ${employee.lastName}`,
+                    netId: employee.netId,
+                    email: `${employee.netId}@cornell.edu`,
+                    phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
+                    availability: employee.availability,
+                    role,
+                    photoLink: employee.photoLink,
+                  }}
+                />
+                : <img className={styles.editIcon} alt="edit" src={edit} />
+            }
             <img className={styles.editIcon} alt="trash" src={detailTrash} />
           </div>
         </div>
