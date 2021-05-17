@@ -1,4 +1,4 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, useEffect, FunctionComponent } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
 import {
   useHistory,
@@ -20,14 +20,20 @@ import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
 
-export const AuthManager: FunctionComponent = ({ children }) => {
+export const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
   const [id, setId] = useState('');
+  const [initPath, setInitPath] = useState('');
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
   const { signOut } = useGoogleLogout({ clientId });
+
+  useEffect(() => {
+    setInitPath(pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function logout() {
     signOut();
@@ -78,8 +84,10 @@ export const AuthManager: FunctionComponent = ({ children }) => {
           localStorage.setItem('userType', decoded.userType);
           setJWT(serverJWT);
           setSignedIn(true);
-          if (pathname === '/') {
+          if (initPath === '/') {
             history.push(isAdmin ? '/admin/home' : '/rider/home');
+          } else {
+            history.push(initPath);
           }
         } else {
           logout();

@@ -143,6 +143,8 @@
 }
 
 .edit {
+  width: 4rem;
+  height: auto;
 }
 
 .edit:hover {
