@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './userDetail.module.css';
-import { edit, trash } from '../../icons/other/index';
+import { edit, detailTrash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 
 type otherInfo = {
@@ -68,7 +68,7 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             <img className={styles.editIcon} alt="edit" src={edit} />
-            <img className={styles.editIcon} alt="trash" src={trash} />
+            <img className={styles.editIcon} alt="trash" src={detailTrash} />
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>
