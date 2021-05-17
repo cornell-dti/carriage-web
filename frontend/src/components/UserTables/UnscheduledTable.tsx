@@ -4,7 +4,6 @@ import { Driver, Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
-import styles from './table.module.css';
 
 type TableProps = {
   drivers: Driver[];
@@ -30,7 +29,9 @@ const Table = ({ drivers }: TableProps) => {
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
-  return <RidesTable rides={rides} drivers={drivers} hasButtons={true} />;
+  return rides.length
+    ? <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
+    : null;
 };
 
 export default Table;

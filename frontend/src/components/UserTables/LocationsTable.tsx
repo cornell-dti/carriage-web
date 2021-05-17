@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useReq } from '../../context/req';
+import React from 'react';
 import { Location } from '../../types';
 import LocationModal from '../LocationModal/LocationModal';
 import { Row, Table } from '../TableComponents/TableComponents';
@@ -10,61 +9,6 @@ interface LocationsTableProps {
 }
 
 const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
-  const { withDefaults } = useReq();
-
-  useEffect(() => {
-    const getExistingLocations = async () => {
-      const locationsData = await fetch('/api/locations', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-      const sortedLocations = locationsData.map((location: any) => ({
-        id: location.id,
-        name: location.name,
-        address: location.address,
-        ...(location.tag && { tag: location.tag }),
-      })).sort((a: Location, b: Location) => {
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
-        return 0;
-      });
-      setLocations(sortedLocations);
-    };
-    getExistingLocations();
-  }, [setLocations, withDefaults]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const addLocation = (newLocation: Location) => {
-    const { id, ...body } = { ...newLocation };
-    fetch(
-      '/api/locations',
-      withDefaults({
-        method: 'POST',
-        body: JSON.stringify(body),
-      }),
-    )
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('adding location failed');
-        }
-        return res.json();
-      })
-      .then((data) => {
-        const validLocation = {
-          id: data.id,
-          name: data.name,
-          address: data.address,
-          ...(data.tag && { tag: data.tag }),
-        };
-        const sortedLocations = [...locations, validLocation].sort((a: Location, b: Location) => {
-          if (a.name < b.name) { return -1; }
-          if (a.name > b.name) { return 1; }
-          return 0;
-        });
-        setLocations(sortedLocations);
-      })
-      .catch((e) => console.error(e.message));
-  };
-
   const handleEditLocation = (editedLocation: Location) => {
     setLocations(locations.map((location) => {
       if (location.id === editedLocation.id) {

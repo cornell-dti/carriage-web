@@ -8,18 +8,15 @@ type TagProps = {
   tag: string;
 }
 
-const Tag = (props: TagProps) => {
-  const { reduced, location, tag } = props;
+const Tag = ({ reduced, location, tag }: TagProps) => {
   const tagStyle = tag.toLowerCase();
-  const smallTag = <span className={cn(styles.reducedTag, styles[tagStyle])}></span>;
-  const fullTag = <span className={cn(styles.tag, styles[tagStyle])}>{tag}</span>;
-
   return (
-    <>
-      {reduced ? smallTag : null}
+    <p>
+      {reduced && <span className={cn(styles.reducedTag, styles[tagStyle])} />}
       {location}{' '}
-      {reduced ? null : fullTag}
-    </>);
+      {!reduced && <span className={cn(styles.tag, styles[tagStyle])}>{tag}</span>}
+    </p>
+  );
 };
 
 export default Tag;
