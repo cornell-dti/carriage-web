@@ -143,11 +143,6 @@
 }
 
 .edit {
-  position: absolute;
-  display: inline-block;
-  top: 2%;
-  right: 0;
-  width: 3.75rem;
 }
 
 .edit:hover {

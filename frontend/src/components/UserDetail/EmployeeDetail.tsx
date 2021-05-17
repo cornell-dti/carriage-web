@@ -22,6 +22,7 @@ type EmployeeDetailProps = {
 
 type EmployeeStatisticsProps = {
   rideCount: number;
+  hours: number;
 }
 
 type StatisticProps = {
@@ -31,14 +32,19 @@ type StatisticProps = {
   description: string;
 }
 
-const EmployeeStatistics = ({rideCount} : EmployeeStatisticsProps) => {
-
+const EmployeeStatistics = ({rideCount, hours} : EmployeeStatisticsProps) => {
   const Statistic = ({ icon, stat, description, alt }: StatisticProps) => (
     <div className={styles.statistic}>
       <img src={icon} className={styles.statIcon} alt={alt} />
       <div className={styles.statDescription}>
-          {stat >= 0 &&
-            <p className={styles.stat}>{stat}</p>
+          {stat >= 0 && 
+            <>
+            {icon === peopleStats ? 
+              (<h2 className={styles.stat}>{stat}</h2>) 
+              : 
+              (<h2 className={styles.stat}>{stat}<span className={styles.statsHrs}>hrs</span></h2> )
+            }
+            </>
           } {stat < 0 &&
             <p className={styles.stat}>N/A</p>
           }
@@ -54,6 +60,7 @@ const EmployeeStatistics = ({rideCount} : EmployeeStatisticsProps) => {
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>
           <Statistic icon={peopleStats} stat={rideCount} description='rides' alt='people' />
+          <Statistic icon={wheelStats} stat={hours} description='driving' alt='people' />
         </div>
       </div>
     </div>
@@ -70,6 +77,7 @@ const EmployeeDetail = () => {
 
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
+  const [workingHours, setWorkingHours] = useState(-1);
   const { withDefaults } = useReq();
 
   const isAdmin = !employee.availability;
@@ -130,6 +138,7 @@ const EmployeeDetail = () => {
       .then((data) => {
         if (!data.err) {
           setRideCount(data.rides)
+          setWorkingHours(data.workingHours)
         }
       })
   }, [employeeId, employee, withDefaults, userType]);
@@ -149,7 +158,7 @@ const EmployeeDetail = () => {
         <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
       </UserDetail>
 
-      <EmployeeStatistics rideCount={rideCount} />
+      <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
 
       <PastRides
         isStudent={false}
