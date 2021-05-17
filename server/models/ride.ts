@@ -19,6 +19,7 @@ export enum Status {
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
   NO_SHOW = 'no_show',
+  CANCELLED = 'cancelled',
 }
 
 export type RideLocation = {

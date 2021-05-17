@@ -3,31 +3,9 @@ import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, AvailabilityType, Driver, Admin } from '../../types';
+import { Employee, AvailabilityType, Admin } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
-
-const formatTime = (time: string) => {
-  const hours = Number(time.split(':')[0]);
-  // set fmtHours to 12 if hours is multiple of 12
-  const fmtHours = hours % 12 || 12;
-  return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
-};
-
-const formatAvailability = (availability?: AvailabilityType) => {
-  if (!availability) return null;
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const availabilityList = days.reduce((acc, day) => {
-    const availabilityTimes = availability[day];
-    if (availabilityTimes) {
-      const { startTime, endTime } = availabilityTimes;
-      const fmtStart = formatTime(startTime);
-      const fmtEnd = formatTime(endTime);
-      acc.push([day, `${fmtStart}-${fmtEnd}`]);
-    }
-    return acc;
-  }, [] as string[][]);
-  return availabilityList;
-};
+import formatAvailability from '../../util/employee';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -56,7 +34,6 @@ const EmployeeCard = ({
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
   const fmtAvailability = formatAvailability(availability);
-  const fullName = `${firstName}_${lastName}`;
 
   const isAdmin = !availability;
   const isBoth = !isAdmin && admin; // admin and driver
@@ -77,9 +54,13 @@ const EmployeeCard = ({
     photoLink,
   };
 
-
   return (
-    <Link to={{ pathname: '/employees/employee', state: userInfo, search: `?name=${fullName}` }}
+    <Link to={{
+      pathname: isAdmin
+        ? `/admins/${userInfo.id}`
+        : `/drivers/${userInfo.id}`,
+      state: userInfo,
+    }}
       style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card
         firstName={firstName}

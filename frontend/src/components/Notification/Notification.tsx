@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import Popup from 'reactjs-popup';
 import cn from 'classnames';
-import { useReq } from '../../context/req';
-import subscribeUser from './subscribeUser';
 import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
@@ -14,28 +12,28 @@ type Message = {
   body: string;
 };
 
+const truncate = (str: string, num: number) => {
+  if (str.length <= num) {
+    return str;
+  }
+  return `${str.slice(0, num)}...`;
+};
+
 const Notification = () => {
-  const [availability, setAvailability] = useState(true); // TODO
   const [newMessages, setNewMessages] = useState<Message[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
-  const { withDefaults } = useReq();
-
-  const checkNotificationAvailability = () => {
-    setAvailability('serviceWorker' in navigator && 'PushManager' in window);
-  };
-  useEffect(checkNotificationAvailability);
-
-  useEffect(() => {
-    subscribeUser(withDefaults);
-  }, [withDefaults]);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
+      const { body, time } = event.data;
+      const parsed = JSON.parse(body);
+      console.log(parsed);
       const newMsg = {
-        time: new Date(event.data.time),
-        title: event.data.title,
-        body: event.data.body,
+        time: new Date(time),
+        title: `Ride with ID ${truncate(parsed.ride.id, 8)}`,
+        body: `Changed by ${parsed.changedBy.userType}`,
+        day: parsed.ride.startTime,
       };
 
       setNewMessages([newMsg, ...newMessages]);
@@ -63,7 +61,7 @@ const Notification = () => {
       trigger={
         <button className={styles.bell}>
           <img src={notificationBell} alt='notification bell icon' />
-          {availability && notify && (
+          {notify && (
             <img
               src={notificationBadge}
               className={styles.badge}

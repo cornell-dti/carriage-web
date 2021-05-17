@@ -223,12 +223,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               phone={existingEmployee?.phone}
             />
             {selectedRole === 'admin' ? null : <StartDate />}
-            {
-              selectedRole === 'admin' ? null
-                : <WorkingHours
-                  existingAvailability={existingEmployee?.availability}
-                />
-            }
+            <WorkingHours existingAvailability={existingEmployee?.availability} hide={selectedRole === 'admin'}/>
             <RoleSelector
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}

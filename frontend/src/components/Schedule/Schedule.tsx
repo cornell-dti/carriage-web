@@ -53,12 +53,12 @@ const Schedule = () => {
 
   const { withDefaults } = useReq();
 
-  useEffect(() => {
+  const getRides = () => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        setEvents(
+        data && setEvents(
           data.map((ride: Ride) => ({
             id: ride.id,
             title: `${ride.startLocation.name} to ${ride.endLocation.name}
@@ -70,7 +70,12 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           })),
         );
       });
-  }, [scheduleDay, withDefaults]);
+  };
+
+  useEffect(() => {
+    getRides();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleDay]);
 
   useEffect(() => {
     setCalDrivers(
@@ -162,6 +167,31 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const closeModal = () => setIsOpen(false);
 
+  const cancelRide = (ride: Ride) => {
+    const rideId = ride.id;
+    const { recurring } = ride;
+    if (recurring) {
+      fetch(
+        `api/rides/${rideId}/edits`,
+        withDefaults({
+          method: 'PUT',
+          body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
+        }),
+      )
+        .then(() => getRides())
+        .then(closeModal);
+    } else {
+      fetch(
+        `/api/rides/${rideId}`,
+        withDefaults({
+          method: 'DELETE',
+        }),
+      )
+        .then(() => getRides())
+        .then(closeModal);
+    }
+  };
+
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
@@ -176,6 +206,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         isOpen={isOpen}
         close={closeModal}
         ride={currentRide}
+        cancel={cancelRide}
       />
       <div
         className={cn(styles.calendar_container, { [styles.long]: viewState })}
