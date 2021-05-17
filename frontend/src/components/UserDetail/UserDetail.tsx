@@ -67,7 +67,11 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
-            <img className={styles.editIcon} alt="edit" src={edit} />
+            {employee &&
+              <EmployeeModal existingEmployee={employee} />
+            } {!employee &&
+              <img className={styles.editIcon} alt="edit" src={edit} />
+            }
             <img className={styles.editIcon} alt="trash" src={detailTrash} />
           </div>
         </div>

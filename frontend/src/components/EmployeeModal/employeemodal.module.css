@@ -142,9 +142,6 @@
   float: right;
 }
 
-.edit {
-}
-
 .edit:hover {
   cursor: pointer;
 }

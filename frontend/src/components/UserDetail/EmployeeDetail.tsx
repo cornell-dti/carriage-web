@@ -42,7 +42,9 @@ const EmployeeStatistics = ({rideCount, hours} : EmployeeStatisticsProps) => {
             {icon === peopleStats ? 
               (<h2 className={styles.stat}>{stat}</h2>) 
               : 
-              (<h2 className={styles.stat}>{stat}<span className={styles.statsHrs}>hrs</span></h2> )
+              (<h2 className={styles.stat}>
+                {stat}
+              <span className={styles.statsHrs}>hrs</span></h2> )
             }
             </>
           } {stat < 0 &&
@@ -59,8 +61,16 @@ const EmployeeStatistics = ({rideCount, hours} : EmployeeStatisticsProps) => {
       <div className={styles.employeeStatistics}>
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>
-          <Statistic icon={peopleStats} stat={rideCount} description='rides' alt='people' />
-          <Statistic icon={wheelStats} stat={hours} description='driving' alt='people' />
+          <Statistic 
+            icon={peopleStats} 
+            stat={rideCount} 
+            description='rides' 
+            alt='people' />
+          <Statistic 
+            icon={wheelStats}
+            stat={hours}
+            description='driving' 
+            alt='people' />
         </div>
       </div>
     </div>
