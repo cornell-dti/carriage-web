@@ -76,3 +76,11 @@
 .dtown {
   background-color: rgba(255, 226, 157, 1)
 }
+
+.inactive {
+  background-color: rgba(255, 139, 157, 0.8);
+}
+
+.custom {
+  background-color: rgba(255, 152, 56, 1);
+}
