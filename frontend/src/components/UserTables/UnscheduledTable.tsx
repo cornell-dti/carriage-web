@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Driver, Ride } from '../../types/index';
+import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
+import { useEmployees } from '../../context/EmployeesContext';
 
-type TableProps = {
-  drivers: Driver[];
-};
-
-const Table = ({ drivers }: TableProps) => {
+const Table = () => {
   const { curDate } = useDate();
+  const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
 

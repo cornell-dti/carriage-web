@@ -14,20 +14,8 @@ import Collapsible from '../../components/Collapsible/Collapsible';
 import { Driver } from '../../types/index';
 
 const Home = () => {
-  const { drivers } = useEmployees();
   const { curDate } = useDate();
   const today = moment(curDate).format('YYYY-MM-DD');
-
-  const renderScheduledRides = (): JSX.Element[] => (
-    drivers.map((driver: Driver, index: number) => (
-      <ScheduledTable
-        key={index}
-        query="driver"
-        id={driver.id}
-        name={`${driver.firstName} ${driver.lastName}`}
-      />
-    ))
-  );
 
   return (
     <>
@@ -48,11 +36,11 @@ const Home = () => {
       <Schedule />
 
       <Collapsible title={'Unscheduled Rides'}>
-        <UnscheduledTable drivers={drivers} />
+        <UnscheduledTable />
       </Collapsible>
 
       <Collapsible title={'Scheduled Rides'}>
-        {renderScheduledRides()}
+        <ScheduledTable />
       </Collapsible>
     </>
   );
