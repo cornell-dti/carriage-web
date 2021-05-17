@@ -45,7 +45,7 @@ const RequestRideInfo = () => {
   return (
     <div>
       <Label htmlFor={"startDate"} className={styles.largeLabel}>Day</Label>
-      <div className={styles.alignedBox}>
+      <div className={styles.box}>
         <div className={styles.errorBox}>
           <Input
             id='startDate'
