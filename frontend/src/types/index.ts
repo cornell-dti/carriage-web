@@ -106,6 +106,6 @@ export type Ride = {
   recurring: boolean;
   recurringDays?: number[];
   endDate?: string;
-  deleted?: boolean;
+  deleted?: string[];
   edits?: string[];
 };

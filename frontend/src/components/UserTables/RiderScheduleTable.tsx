@@ -25,6 +25,7 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
     return 0;
   };
 
+  // removes rides whose startTime is past the current time
   const filterRides = (ride: Ride): boolean => {
     const rideDate = new Date(ride.startTime);
     if (isPast)
@@ -33,13 +34,73 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
       return rideDate >= curDate;
   };
 
+  // Source is from Helen's code on carriage-rider: 
+  // https://github.com/cornell-dti/carriage-rider/blob/master/lib/utils/RecurringRidesGenerator.dart
+  // Returns the number of days between [start] and the next day that falls on [weekday].
+  // The weekday numbering follows Flutter's convention where 1 to 7 are Monday to Sunday.
+  // If [start] falls on [weekday], returns 7.
+  const daysUntilWeekday = (start: Date, weekday: number): number => {
+    const startWeekday = start.getDay();
+    if (weekday < startWeekday) {
+      weekday += 7;
+    }
+    const days = weekday - startWeekday;
+    if (days == 0) {
+      return 7;
+    }
+    return days;
+  };
+
+  // returns a list of dummy recurring rides
+  const generateRecurringRides = (rides: Ride[]): Ride[] => {
+    let recurringRides: Ride[] = [];
+    rides.forEach(originalRide => {
+      const origEndDate = new Date(originalRide.endDate!);
+      // create dummy rides only for active recurring rides
+      if (originalRide.recurring || origEndDate >= curDate) {
+        const origStartTime = new Date(originalRide.startTime);
+        let rideStart = origStartTime;
+        const days = originalRide.recurringDays!;
+        let dayIndex = days.indexOf(rideStart.getDay());
+        while (rideStart <= origEndDate) {
+          // find the next occurrence
+          dayIndex = dayIndex == days.length - 1 ? 0 : dayIndex + 1;
+          const daysUntilNextOccurrence = daysUntilWeekday(rideStart, days[dayIndex]);
+          rideStart.setDate(rideStart.getDate() + daysUntilNextOccurrence);
+
+          // add to list if ride's start date is not in list of deleted dates
+          if (!originalRide.deleted?.includes(rideStart.toUTCString())) {
+            const rideInstance: Ride = {
+              id: originalRide.id,
+              type: 'unscheduled',
+              status: 'not_started',
+              startLocation: originalRide.startLocation,
+              endLocation: originalRide.endLocation,
+              startTime: rideStart.toUTCString(),
+              endTime: originalRide.endTime,
+              rider: originalRide.rider,
+              driver: originalRide.driver,
+              recurring: true,
+              recurringDays: originalRide.recurringDays,
+              endDate: originalRide.endDate
+            };
+            recurringRides.push(rideInstance);
+          };
+        };
+      };
+    });
+    return recurringRides;
+  };
+
   useEffect(() => {
-    // fetch(`/api/rides?type=unscheduled`, withDefaults())
     fetch(`/api/rides?rider=${riderId}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        rideMapToArray(getRideMap(data.filter(filterRides).sort(compRides)));
+        const allRides = generateRecurringRides(data).concat(data);
+        allRides.filter(filterRides).sort(compRides);
+        rideMapToArray(getRideMap(allRides));
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [withDefaults, curDate]);
 
   // returns date in the format "MM/DD/YYYY"
@@ -87,7 +148,7 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
     return weekdays[new Date(time).getDay()];
   };
 
-  const rideList = (): JSX.Element[] => (
+  const renderRides = (): JSX.Element[] => (
     rideMapArray.map(([date, rideArray]: [string, Ride[]], index: number) => (
       <>
         {rideArray.length > 0 &&
@@ -102,12 +163,6 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
         </>}
       </>
     ))
-  );
-
-  const renderRides = (): JSX.Element => (
-    <>
-      {rideMapArray ? rideList() : null}
-    </>
   );
 
   return (
