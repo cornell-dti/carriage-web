@@ -29,7 +29,7 @@ const ScheduledTable = () => {
     const today = moment(curDate).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => setRides(data));
+      .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
   return rides.length
@@ -37,7 +37,7 @@ const ScheduledTable = () => {
       <>
         {drivers.map(({ id, firstName, lastName }) => {
           const name = `${firstName} ${lastName}`;
-          const driverRides = rides.filter((r) => r.driver?.id === id).sort(compRides);
+          const driverRides = rides.filter((r) => r.driver?.id === id);
           return driverRides.length ? (
             <>
               <h1 className={styles.formHeader}>{name}</h1>
