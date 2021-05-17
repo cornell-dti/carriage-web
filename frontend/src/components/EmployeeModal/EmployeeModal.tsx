@@ -23,6 +23,7 @@ type EmployeeModalProps = {
     phone?: string;
     availability?: string[][];
     role?: string;
+    startDate?: string;
     photoLink?: string;
   }
 }
@@ -222,8 +223,12 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
-            {selectedRole === 'admin' ? null : <StartDate />}
-            <WorkingHours existingAvailability={existingEmployee?.availability} hide={selectedRole === 'admin'}/>
+            {
+              selectedRole === 'admin'
+                ? null
+                : <StartDate existingDate={existingEmployee?.startDate} />
+            }
+            <WorkingHours existingAvailability={existingEmployee?.availability} hide={selectedRole === 'admin'} />
             <RoleSelector
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
