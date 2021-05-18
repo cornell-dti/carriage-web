@@ -21,8 +21,8 @@ const RequestRideInfo = () => {
   const { errors } = formState;
   const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [repeatingRide, setRepeatingRide] = useState(false);
   const [custom, setCustom] = useState(false);
+  const watchRepeating = watch("recurring", false);
   const watchPickupCustom = watch("startLocation");
   const watchDropoffCustom = watch("endLocation");
   useEffect(() => {
@@ -67,17 +67,16 @@ const RequestRideInfo = () => {
           type="checkbox"
           id="recurring"
           name="recurring"
-          onChange={() => setRepeatingRide(!repeatingRide)}
           ref={register({ required: false })} />
       </div>
-      {repeatingRide ?
+      {watchRepeating ?
         <div>
             <div className={styles.box}>
               <Label className={styles.boldLabel} id = "repeats">Repeats</Label>
               <Input
                 name="whenRepeat"
                 id="daily"
-                ref={register({ required: repeatingRide })}
+                ref={register({ required: watchRepeating })}
                 type="radio"
                 value="daily"
                 onChange={() => setCustom(false)} />
@@ -85,14 +84,14 @@ const RequestRideInfo = () => {
               <input
                 name="whenRepeat"
                 id="weekly"
-                ref={register({ required: repeatingRide })}
+                ref={register({ required: watchRepeating })}
                 type="radio" value="weekly"
                 onChange={() => setCustom(false)} />
               <Label className={styles.label} htmlFor="weekly">Weekly</Label>
               <input
                 name="whenRepeat"
                 id="custom"
-                ref={register({ required: repeatingRide })}
+                ref={register({ required: watchRepeating })}
                 type="radio"
                 value="custom"
                 onChange={() => setCustom(true)} />
@@ -100,7 +99,7 @@ const RequestRideInfo = () => {
             {errors.whenRepeat && <p className={styles.error}>
               Please select a value</p>}
               </div>
-          {custom && repeatingRide ? <CustomRepeatingRides /> : null}
+          {custom && watchRepeating ? <CustomRepeatingRides /> : null}
           <Label className={styles.boldLabel} htmlFor="endDate">Ends</Label>
           <Input className={styles.input} type={'date'} name="endDate" id="endDate"
             ref=
@@ -189,7 +188,7 @@ const RequestRideInfo = () => {
                 required: true,
                 validate: (endLocation: string) => {
                   const startLoc = getValues("startLocation");
-                  return endLocation !== startLoc;
+                  return endLocation !== startLoc || (endLocation === "Other" && startLoc === "Other");
                 }
               })}>
               {locations.map(location => {
@@ -210,9 +209,9 @@ const RequestRideInfo = () => {
               ref={register({
                 required: true,
                 validate: (dropoffTime: any) => {
-                  const dropoffTi = moment(dropoffTime).toDate().getTime();
-                  const pickupTi = moment(getValues("pickupTime")).toDate().getTime();
-                  return dropoffTi < pickupTi;
+                  const dropoffTi = dropoffTime;
+                  const pickupTi = getValues("pickupTime");
+                  return dropoffTi > pickupTi;
                 }
               })} />
           {errors.dropoffTime && <p className={styles.error}>

@@ -36,7 +36,7 @@ const dayLabels: dayLabelType = {
       }
       return (
         <div className={styles.box}>
-        <Label id = {"repeatDays"}>Repeat every</Label>
+        <Label id = {"repeatDays"} className={styles.boldLabel}>Repeat every</Label>
       {Object.entries(dayLabels).map(([day, label]) => (
          <div> 
             <SRLabel id = {label[0]}>{day}</SRLabel>

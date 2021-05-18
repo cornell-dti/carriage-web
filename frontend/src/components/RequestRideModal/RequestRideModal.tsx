@@ -40,9 +40,15 @@ const RequestRideModal = () => {
       }, [withDefaults]);
       const onSubmit = async (formData: ObjectType) => {
         const { startDate, recurring, whenRepeat, days,  
-          startLocation, endLocation, pickupTime, dropoffTime, endDate } = formData;
+          startLocation, endLocation, pickupTime, dropoffTime, endDate, 
+          customPickup, pickupCity, pickupZip, customDropoff, 
+          dropoffCity, dropoffZip} = formData;
         const startTime = moment(`${startDate} ${pickupTime}`).toISOString();
         const endTime = moment(`${startDate} ${dropoffTime}`).toISOString();
+        const startLoc = startLocation !== "Other"? startLocation : 
+        `${customPickup},${pickupCity} NY,${pickupZip}`;
+        const endLoc = endLocation !== "Other" ? endLocation : 
+        `${customDropoff},${dropoffCity} NY,${dropoffZip}`;
         if(recurring){
          //Add a repeating ride
           let recurringDays:Number[] = [];
@@ -56,7 +62,8 @@ const RequestRideModal = () => {
               break; 
             }
             case "custom":{
-              days.forEach((day:string) =>  recurringDays.push(Number(day)));
+              console.log(days);
+              days.forEach((day:string[]) =>  recurringDays.push(Number(day[1])));
               break; 
             }
             default:{
@@ -66,8 +73,8 @@ const RequestRideModal = () => {
           }
           const repeatingRideData: ObjectType = {
             type: 'unscheduled',
-            startLocation,
-            endLocation, 
+            startLocation: startLoc,
+            endLocation: endLoc, 
             driver: undefined,
             rider, 
             startTime,
@@ -76,20 +83,21 @@ const RequestRideModal = () => {
             recurringDays, 
             endDate
           };
-          fetch(
-            '/api/rides',
-            withDefaults({
-              method: 'POST',
-              body: JSON.stringify(repeatingRideData),
-            }),
-          );
+          // fetch(
+          //   '/api/rides',
+          //   withDefaults({
+          //     method: 'POST',
+          //     body: JSON.stringify(repeatingRideData),
+          //   }),
+          // );
+          console.log(repeatingRideData);
         }
         else{
           //Not repeating
           const rideData: ObjectType = {
             type: 'unscheduled',
-            startLocation,
-            endLocation, 
+            startLocation: startLoc,
+            endLocation: endLoc, 
             driver: undefined,
             rider, 
             startTime,
