@@ -17,12 +17,14 @@ type RequestRideInfoProps = {
   endDate?: string;
 }
 const RequestRideInfo = () => {
-  const { register, formState, getValues } = useFormContext();
+  const { register, formState, getValues, watch } = useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
   const [repeatingRide, setRepeatingRide] = useState(false);
   const [custom, setCustom] = useState(false);
+  const watchPickupCustom = watch("startLocation");
+  const watchDropoffCustom = watch("endLocation");
   useEffect(() => {
     const getExistingLocations = async () => {
       const locationsData = await fetch('/api/locations?active=true', withDefaults())
@@ -38,6 +40,8 @@ const RequestRideInfo = () => {
         if (a.name > b.name) { return 1; }
         return 0;
       });
+      //Logic to prevent the other from being the default value
+      sortedLocations.push({id: "Other", name: "Other", address: "custom, do not use"});
       setLocations(sortedLocations);
     };
     getExistingLocations();
@@ -120,11 +124,13 @@ const RequestRideInfo = () => {
             <Label className={styles.label} id="pickupLocation">Location</Label>
             <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations"
               ref={register(
-                { required: true })}>
+                { required: true })}
+                >
               {locations.map(location => {
                 return (<option key={location.id}
                   value={location.id}>{location.name}</option>);
-              })}
+              })
+              }
             </select>
           {errors.startLocation && <p className={styles.error}>
             Please select a valid location</p>}
@@ -142,6 +148,37 @@ const RequestRideInfo = () => {
             Please choose a valid pickup time</p>}
         </div>
       </div>
+      {watchPickupCustom === "Other" ? 
+        <div className = {styles.box}>
+          <Label className={styles.boldLabel} id="customPickup">Enter Pickup Location</Label>
+          <Input className={cn(styles.input, styles.flexGrow)}
+            aria-labelledby="customPickup"
+            name="customPickup"
+            type = "text"
+            ref={register({
+              required: watchPickupCustom === "Other" })}/>
+          <Label className={styles.label} id="pickupCity">City</Label>
+          <Input className={styles.input}
+            aria-labelledby="customPickup pickupCity"
+            name="pickupCity"
+            type = "text"
+            defaultValue="Ithaca"
+            maxLength={32}
+            ref={register({
+              required: watchPickupCustom === "Other" })}/>
+            <Label className={styles.label} id="pickupZip">Zip Code</Label>
+            <Input className={styles.input}
+              aria-labelledby="customPickup pickupZip"
+              name="pickupZip"
+              type = "text"
+              defaultValue="14853"
+              pattern="[0-9]*"
+              maxLength={10}
+              ref={register({
+                required: watchDropoffCustom === "Other" })}/>
+
+          </div>
+      : null} 
       <Label className={styles.largeLabel} id="dropoffLabel">Dropoff</Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
@@ -161,7 +198,7 @@ const RequestRideInfo = () => {
               })}
             </select>
           {errors.endLocation && <p className={styles.error}>
-            Please select a valid pickup location</p>}
+            Please select a valid dropoff location</p>}
         </div>
         <div className={styles.errorBox}>
             <Label className={styles.label} id="dropoffTime">Time</Label>
@@ -181,7 +218,38 @@ const RequestRideInfo = () => {
           {errors.dropoffTime && <p className={styles.error}>
             Please choose a valid dropoff time</p>}
         </div>
-      </div>
+        </div>
+        {watchDropoffCustom === "Other" ? 
+        <div className = {styles.box}>
+          <Label className={styles.boldLabel} id="customDropoff">Enter Dropoff Location</Label>
+          <Input className={cn(styles.input, styles.flexGrow)}
+            aria-labelledby="customDropoff"
+            name="customDropoff"
+            type = "text"
+            ref={register({
+              required: watchDropoffCustom === "Other" })}/>
+          <Label className={styles.label} id="dropoffCity">City</Label>
+          <Input className={styles.input}
+            aria-labelledby="customDropoff dropoffCity"
+            name="dropoffCity"
+            type = "text"
+            defaultValue="Ithaca"
+            maxLength={32}
+            ref={register({
+              required: watchDropoffCustom === "Other" })}/>
+            <Label className={styles.label} id="dropoffZip">Zip Code</Label>
+            <Input className={styles.input}
+              aria-labelledby="customDropoff dropoffZip"
+              name="dropoffZip"
+              type = "text"
+              defaultValue="14853"
+              pattern="[0-9]*"
+              maxLength={10}
+              ref={register({
+                required: watchDropoffCustom === "Other" })}/>
+
+          </div>
+      : null} 
     </div>
   );
 };
