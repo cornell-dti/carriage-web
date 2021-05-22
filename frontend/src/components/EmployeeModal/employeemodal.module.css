@@ -3,7 +3,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-template-rows: 20%;
   grid-gap: 2.25rem;
-  width: 40rem;
+  width: 42rem;
   height: 8rem; 
 }
 
@@ -143,13 +143,13 @@
 }
 
 .edit {
-  position: absolute;
-  display: inline-block;
-  top: 2%;
-  right: 0;
-  width: 3.75rem;
+  width: 4rem;
+  height: auto;
 }
 
 .edit:hover {
   cursor: pointer;
+}
+.hidden{
+  display: none; 
 }

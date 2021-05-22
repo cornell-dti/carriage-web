@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -6,8 +7,9 @@ import {
   Redirect,
 } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Schedule from './Schedule';
+import Settings from './Settings';
 import DateContext from '../../context/date';
-import RiderHome from './RiderHome';
 
 const Dashboard = () => {
   const [curDate, setCurDate] = useState(new Date());
@@ -20,11 +22,11 @@ const Dashboard = () => {
           <Switch>
             <Route
               path="/schedule"
-              component={RiderHome}
+              component={Schedule}
             />
             <Route
               path="/settings"
-              component={() => null}
+              component={Settings}
             />
             <Route path="*">
               <Redirect to="/schedule" />

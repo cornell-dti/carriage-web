@@ -12,8 +12,8 @@ export const Label = ({ className, children, ...props }: LabelType) => (
   </label>
 );
 
-//This should only be used when you don't want a label to visually appear on screen
-//Source: https://webaim.org/techniques/css/invisiblecontent/#techniques
+// This should only be used when you don't want a label to visually appear on screen
+// Source: https://webaim.org/techniques/css/invisiblecontent/#techniques
 export const SRLabel = ({ className, children, ...props }: LabelType) => (
   <label {...props} className={cn(styles.srlabel, className)}>
     {children}
