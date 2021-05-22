@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, AvailabilityType, Admin } from '../../types';
+import { Employee, Admin } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
 
@@ -29,6 +29,7 @@ const EmployeeCard = ({
     availability,
     admin,
     photoLink,
+    startDate,
   },
 }: EmployeeCardProps) => {
   const netId = email.split('@')[0];
@@ -52,6 +53,7 @@ const EmployeeCard = ({
     availability: fmtAvailability,
     admin,
     photoLink,
+    startDate,
   };
 
   return (

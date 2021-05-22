@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'classnames';
 import styles from './userDetail.module.css';
 import { edit, detailTrash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
@@ -33,6 +34,7 @@ type EmployeeDetailProps = {
   availability?: string[][];
   admin?: boolean;
   photoLink?: string;
+  startDate?: string;
 };
 
 type UserDetailProps = {
@@ -43,6 +45,7 @@ type UserDetailProps = {
   employee?: EmployeeDetailProps;
   role?: string;
   photoLink?: string;
+  isRider?: boolean;
 };
 
 const UserDetail = ({
@@ -53,13 +56,16 @@ const UserDetail = ({
   employee,
   role,
   photoLink,
+  isRider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
-    <div className={styles.userDetail}>
-      {photoLink && photoLink !== ''
-        ? <img className={styles.profilePic} src={`http://${photoLink}`} alt='profile' />
-        : null}
+    <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
+      <div className={styles.imgContainer}>
+        {photoLink && photoLink !== ''
+          ? <img className={styles.profilePic} src={`http://${photoLink}`} alt="profile" />
+          : null}
+      </div>
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>
@@ -67,8 +73,24 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
-            <img className={styles.editIcon} alt="edit" src={edit} />
-            <img className={styles.editIcon} alt="trash" src={detailTrash} />
+            {
+              employee
+                ? <EmployeeModal
+                  existingEmployee={{
+                    id: employee.id,
+                    name: `${employee.firstName} ${employee.lastName}`,
+                    netId: employee.netId,
+                    email: `${employee.netId}@cornell.edu`,
+                    phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
+                    availability: employee.availability,
+                    role,
+                    photoLink: employee.photoLink,
+                    startDate: employee.startDate,
+                  }}
+                />
+                : <img className={styles.editIcon} alt="edit" src={edit} />
+            }
+            {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

@@ -34,14 +34,7 @@ const ExportPreview = () => {
       <p className={styles.date}>{moment(curDate).format('YYYY-MM-DD')}</p>
       <h1 className={styles.header}>Scheduled Rides</h1>
       <div id="exportTable">
-        {drivers.map((driver: Driver, index: number) => (
-          <ScheduledTable
-            key={index}
-            query='driver'
-            id={driver.id}
-            name={`${driver.firstName} ${driver.lastName}`}
-          />
-        ))}
+        <ScheduledTable />
       </div>
       <div className={styles.exportButtonContainer}>
         {/* <ExportButton onClick={downloadCSV} /> */}

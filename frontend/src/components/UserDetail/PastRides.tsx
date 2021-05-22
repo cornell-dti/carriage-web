@@ -40,12 +40,14 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
             const valueNameDate = isStudent ? date : name;
             const valueDateTime = isStudent ? `${startTime}${' - '}${endTime}` : date;
+            const valuePickup = { data: pickupLocation, tag: pickupTag };
+            const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
             const inputValues = [
               valueNameDate,
               valueDateTime,
-              pickupLocation,
-              dropoffLocation,
+              valuePickup,
+              valueDropoff,
               needs,
             ];
 

@@ -1,3 +1,4 @@
+import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import React from 'react';
 import RequestRideModal from '../../components/RequestRideModal/RequestRideModal';
 import Notification from '../../components/Notification/Notification';
@@ -10,6 +11,8 @@ const Schedule = () => (
         <RequestRideModal />
         </div>
     </div>
+    <NoRidesView />
     </main>
 );
+
 export default Schedule;

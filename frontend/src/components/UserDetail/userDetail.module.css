@@ -13,7 +13,6 @@
 }
 
 .userDetail {
-  align-items: top;
   margin-top: 6rem;
 }
 
@@ -96,6 +95,10 @@
   margin-top: 3%;
 }
 
+.rider {
+  margin: 0 2.5rem;
+}
+
 .userDetailHeader {
   font-size: 1.125rem;
 }
@@ -135,6 +138,7 @@
 .stat {
   font-size: 1.875rem;
   font-weight: bold;
+  margin: 0;
 }
 
 .statDescription {
@@ -149,4 +153,5 @@
 .statsHrs {
   font-size: 0.8rem;
   font-weight: 400;
+  margin-left: 0.25rem;
 }

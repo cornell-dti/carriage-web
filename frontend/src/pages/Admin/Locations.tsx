@@ -15,6 +15,11 @@ const Locations = () => {
       const locationsData = await fetch('/api/locations', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
+      locationsData.sort((a: Location, b: Location) => {
+        if (a.name < b.name) { return -1; }
+        if (a.name > b.name) { return 1; }
+        return 0;
+      });
       setLocations(locationsData);
     };
     getExistingLocations();

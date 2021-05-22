@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from './Schedule';
+import Settings from './Settings';
 import DateContext from '../../context/date';
 
 const Dashboard = () => {
@@ -25,7 +26,7 @@ const Dashboard = () => {
             />
             <Route
               path="/settings"
-              component={() => null}
+              component={Settings}
             />
             <Route path="*">
               <Redirect to="/schedule" />
