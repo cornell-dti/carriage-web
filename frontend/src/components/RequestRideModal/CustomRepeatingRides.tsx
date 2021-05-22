@@ -1,25 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import cn from 'classnames';
 import {useFormContext } from 'react-hook-form';
 import styles from './requestridemodal.module.css';
 import { Label, Input, SRLabel } from '../FormElements/FormElements';
-type dayLabelType = {
-    [day: string]: string[]
-}
-const dayLabels: dayLabelType = {
-    Mon: ['M', "1"],
-    Tue: ['T', "2"],
-    Wed: ['W', "3"],
-    Thu: ['T', "4"],
-    Fri: ['F', "5"],
-  };
 
   type WeekType = {
     [day: string]: boolean;
   };
 
+
   const CustomRepeatingRides = () => {
-    const { register, formState } = useFormContext();
+    const { register, formState, setValue } = useFormContext();
     const {errors} = formState;
     const [week, setWeek] = useState<WeekType>({
         Mon: false,
@@ -28,8 +19,15 @@ const dayLabels: dayLabelType = {
         Thu: false,
         Fri: false,
       });
+      const dayLabels = {
+        Mon: ['M', "1"],
+        Tue: ['T', "2"],
+        Wed: ['W', "3"],
+        Thu: ['Th', "4"],
+        Fri: ['F', "5"],
+      };
       const handleClick = (day: string) => {
-        setWeek((prev) => ({ ...prev, [day]: !week[day] }));
+        setWeek((prev) => ({ ...prev, [day]: !week[day] }));  
       };
       const dayClicked = () => {
         return week["Mon"] || week["Tue"] || week["Wed"] || week["Thu"] || week["Fri"];
@@ -38,16 +36,15 @@ const dayLabels: dayLabelType = {
         <div className={styles.box}>
         <Label id = {"repeatDays"} className={styles.boldLabel}>Repeat every</Label>
       {Object.entries(dayLabels).map(([day, label]) => (
-         <div> 
+         <div key = {day}> 
             <SRLabel id = {label[0]}>{day}</SRLabel>
             <button
             aria-labelledby={`${label[0]} repeatDays`}
-            key={day}
-            name={"days"}
+            name={day}
             type="button"
             ref={register({ required: true, 
             validate: () => {return dayClicked() }})}
-            value={label[1]}
+            value={ week[day] ? label[1] : -1}
             className={cn(
                 styles.day,
                 { [styles.daySelected]: week[day] },
@@ -58,7 +55,7 @@ const dayLabels: dayLabelType = {
             </button>
         </div>
       ))}
-       {errors.days && <p className={styles.error}>
+       {errors.Mon && <p className={styles.error}>
               Please select at least one day</p>}
     </div>
       );

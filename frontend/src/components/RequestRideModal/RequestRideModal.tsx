@@ -39,7 +39,7 @@ const RequestRideModal = () => {
           .then((data) => setRider(data));
       }, [withDefaults]);
       const onSubmit = async (formData: ObjectType) => {
-        const { startDate, recurring, whenRepeat, days,  
+        const { startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,  
           startLocation, endLocation, pickupTime, dropoffTime, endDate, 
           customPickup, pickupCity, pickupZip, customDropoff, 
           dropoffCity, dropoffZip} = formData;
@@ -62,8 +62,21 @@ const RequestRideModal = () => {
               break; 
             }
             case "custom":{
-              console.log(days);
-              days.forEach((day:string[]) =>  recurringDays.push(Number(day[1])));
+              if(Number(Mon) !== -1){
+                recurringDays.push(Number(Mon));
+              }
+              if(Number(Tue) !== -1){
+                recurringDays.push(Number(Tue));
+              }
+              if(Number(Wed) !== -1){
+                recurringDays.push(Number(Wed));
+              }
+              if(Number(Thu) !== -1){
+                recurringDays.push(Number(Thu));
+              }
+              if(Number(Fri) !== -1){
+                recurringDays.push(Number(Fri));
+              }
               break; 
             }
             default:{
@@ -83,14 +96,13 @@ const RequestRideModal = () => {
             recurringDays, 
             endDate
           };
-          // fetch(
-          //   '/api/rides',
-          //   withDefaults({
-          //     method: 'POST',
-          //     body: JSON.stringify(repeatingRideData),
-          //   }),
-          // );
-          console.log(repeatingRideData);
+          fetch(
+            '/api/rides',
+            withDefaults({
+              method: 'POST',
+              body: JSON.stringify(repeatingRideData),
+            }),
+          );
         }
         else{
           //Not repeating

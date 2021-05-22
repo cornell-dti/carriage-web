@@ -106,11 +106,8 @@ const RequestRideInfo = () => {
             {register({
               required: getValues("repeating"),
               validate: (endDate: any) => {
-                const startDate = moment(getValues(`startDate`)).toDate();
-                const valueEndDate = moment(endDate).toDate();
-                return startDate.getDay() < valueEndDate.getDay() &&
-                  startDate.getMonth() <= valueEndDate.getMonth() &&
-                  startDate.getFullYear() <= valueEndDate.getFullYear();
+                const startDate = getValues(`startDate`);
+                return startDate < endDate;
               },
             })} />
           {errors.endDate && <p className={styles.error}>
