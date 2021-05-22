@@ -9,11 +9,10 @@ const RiderHome = () => {
   return (
     <div>
       <Collapsible title={'Your Upcoming Rides'}>
-        <RiderScheduleTable riderId={id} isPast={false}/>
+        <RiderScheduleTable riderId={id} isPast={false} />
       </Collapsible>
-
       <Collapsible title={'Your Past Rides'}>
-        <RiderScheduleTable riderId={id} isPast={true}/>
+        <RiderScheduleTable riderId={id} isPast={true} />
       </Collapsible>
     </div >
   );

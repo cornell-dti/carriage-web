@@ -37,27 +37,26 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           const dropoffTag = ride.endLocation.tag;
 
           // returns date in the format "MM/DD/YYYY"
-          const formatDate = (date: string): string => {
-            return moment(date).format('MM/DD/YYYY');
-          };
+          const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
 
           const startDate = formatDate(ride.startTime);
-          const weekdays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+          const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
           const formatWeekdays = (recurringDays: number[]): string => {
-            let letters: string[] = [];
-            recurringDays.forEach(day => {
-              if (day === 4) // 'Th' if day is Thursday to distinguish from Tuesday
-                letters.push(weekdays[day].substring(0,2));
-              else 
+            const letters: string[] = [];
+            recurringDays.forEach((day) => {
+              if (day === 4) { // 'Th' if day is Thursday to distinguish from Tuesday
+                letters.push(weekdays[day].substring(0, 2));
+              } else {
                 letters.push(weekdays[day].charAt(0));
+              }
             });
             return letters.join(', ');
           };
 
           const isRecurring = ride.recurring;
-          const recurringDays = isRecurring ? 
-                        formatWeekdays(ride.recurringDays!) : 'Not repeating';
+          const recurringDays = isRecurring
+            ? formatWeekdays(ride.recurringDays!) : 'Not repeating';
           const endDate = isRecurring ? formatDate(ride.endDate!) : 'N/A';
           const recurringDateRange = isRecurring ? `${startDate}-${endDate}` : undefined;
 
@@ -70,12 +69,12 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           };
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-          const valueRepeat = { 
-            data: 
-            <p>
-              {recurringDays}
-              <span className={styles.bold}>  {recurringDateRange}</span>
-            </p>
+          const valueRepeat = {
+            data:
+              <p>
+                {recurringDays}
+                <span className={styles.bold}>  {recurringDateRange}</span>
+              </p>,
           };
 
           const editRide = () => {
@@ -102,7 +101,7 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
             valuePickup,
             valueDropoff,
             valueRepeat,
-            valueEditDelete
+            valueEditDelete,
           ];
 
           return (
