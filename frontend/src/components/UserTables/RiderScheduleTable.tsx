@@ -1,35 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Ride, ObjectType } from '../../types/index';
+import { Ride, Type, Status, ObjectType } from '../../types/index';
 import RiderRidesTable from './RiderRidesTable';
 import styles from './table.module.css';
-import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
 type RiderScheduleTableProp = {
-  riderId: string;
+  data: Ride[];
   isPast: boolean; // true if past rides, false if upcoming rides
 };
 
-const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
+const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   const { curDate } = useDate();
   const [rideMapArray, setRideMapArray] = useState<any[]>([]);
-  const { withDefaults } = useReq();
 
   // sort rides from newest to oldest
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
-    if (x < y) return 1;
-    if (x > y) return -1;
+    if (x < y) return isPast ? 1 : -1;
+    if (x > y) return isPast ? -1 : 1;
     return 0;
   };
 
   // removes rides whose startTime is past the current time
   const filterRides = (ride: Ride): boolean => {
-    const rideDate = new Date(ride.startTime);
-    if (isPast) return rideDate <= curDate;
-    return rideDate >= curDate;
+    if (isPast) return ride.type === Type.PAST;
+    return ride.type !== Type.PAST;
   };
 
   // Source is from Helen's code on carriage-rider:
@@ -71,8 +68,8 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
           if (!originalRide.deleted?.includes(rideStart.toUTCString())) {
             const rideInstance: Ride = {
               id: originalRide.id,
-              type: 'unscheduled',
-              status: 'not_started',
+              type: Type.UNSCHEDULED,
+              status: Status.NOT_STARTED,
               startLocation: originalRide.startLocation,
               endLocation: originalRide.endLocation,
               startTime: rideStart.toUTCString(),
@@ -80,6 +77,7 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
               rider: originalRide.rider,
               driver: originalRide.driver,
               recurring: true,
+              late: false,
               recurringDays: originalRide.recurringDays,
               endDate: originalRide.endDate,
             };
@@ -92,15 +90,11 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
   };
 
   useEffect(() => {
-    fetch(`/api/rides?rider=${riderId}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => {
-        const allRides = generateRecurringRides(data).concat(data);
-        allRides.filter(filterRides).sort(compRides);
-        rideMapToArray(getRideMap(allRides));
-      });
+    let allRides = generateRecurringRides(data).concat(data);
+    allRides = allRides.filter(filterRides).sort(compRides);
+    rideMapToArray(getRideMap(allRides));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data.length]);
 
   // returns date in the format "MM/DD/YYYY"
   const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
@@ -140,16 +134,15 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
 
   const getWeekday = (time: string): string => {
     const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    console.log('getWeekday!');
     return weekdays[new Date(time).getDay()];
   };
 
   return (
-    <>
-      {rideMapArray.map(([date, rideArray]) => (
-        <>
-          {rideArray.length > 0
-            && <>
+    <div className={styles.scheduleTable}>
+      <div className={styles.scheduleTableInner}>
+        {rideMapArray.map(([date, rideArray]) => (
+          rideArray.length > 0 && (
+            <>
               <h1 className={styles.formHeader}>
                 {date}
                 <span className={styles.gray}>
@@ -157,10 +150,11 @@ const RiderScheduleTable = ({ riderId, isPast }: RiderScheduleTableProp) => {
                 </span>
               </h1>
               <RiderRidesTable rides={rideArray} />
-            </>}
-        </>
-      ))}
-    </>
+            </>
+          )
+        ))}
+      </div>
+    </div >
   );
 };
 

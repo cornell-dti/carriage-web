@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
-import { trash } from '../../icons/other';
+import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
 
 type RiderRidesTableProps = {
@@ -40,16 +40,12 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
 
           const startDate = formatDate(ride.startTime);
-          const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const weekdays = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
           const formatWeekdays = (recurringDays: number[]): string => {
             const letters: string[] = [];
             recurringDays.forEach((day) => {
-              if (day === 4) { // 'Th' if day is Thursday to distinguish from Tuesday
-                letters.push(weekdays[day].substring(0, 2));
-              } else {
-                letters.push(weekdays[day].charAt(0));
-              }
+              letters.push(weekdays[day]);
             });
             return letters.join(', ');
           };
@@ -86,7 +82,9 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           );
 
           const deleteButton = (
-            <img className={styles.deleteIcon} src={trash} alt='delete ride' />
+            <button className={styles.deleteIcon} >
+              <img src={trashbig} alt='delete ride' />
+            </button>
           );
 
           const valueEditDelete = {

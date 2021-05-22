@@ -87,7 +87,7 @@
 }
 
 .gray {
-  color: #707070;
+  color: #616161;
 }
 
 .left {
@@ -138,4 +138,12 @@
   vertical-align: middle;
   padding: 0.5em;
   margin-left: 0.5em;
+}
+
+.scheduleTable {
+  overflow-y: auto;
+}
+
+.scheduleTableInner {
+  min-width: 875px;
 }

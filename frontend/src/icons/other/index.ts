@@ -11,3 +11,4 @@ export { default as logo } from './logo.svg';
 export { default as googleLogin } from './google-login.svg';
 export { default as detailTrash } from './detailTrash.svg';
 export { default as x } from './x.svg';
+export { default as trashbig } from './trashbig.svg';
