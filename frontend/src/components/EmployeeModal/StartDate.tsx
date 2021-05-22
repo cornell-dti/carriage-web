@@ -6,7 +6,11 @@ import { Label, Input } from '../FormElements/FormElements';
 
 import styles from './employeemodal.module.css';
 
-const StartDate = () => {
+type StartDateProps = {
+  existingDate?: string;
+}
+
+const StartDate = ({ existingDate }: StartDateProps) => {
   const { register } = useFormContext();
 
   return (
@@ -16,6 +20,7 @@ const StartDate = () => {
         id="startDate"
         type="date"
         name="startDate"
+        defaultValue={existingDate}
         ref={register({ required: true })}
       />
     </div>

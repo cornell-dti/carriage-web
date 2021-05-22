@@ -34,6 +34,7 @@ type EmployeeDetailProps = {
   availability?: string[][];
   admin?: boolean;
   photoLink?: string;
+  startDate?: string;
 };
 
 type UserDetailProps = {
@@ -84,6 +85,7 @@ const UserDetail = ({
                     availability: employee.availability,
                     role,
                     photoLink: employee.photoLink,
+                    startDate: employee.startDate,
                   }}
                 />
                 : <img className={styles.editIcon} alt="edit" src={edit} />

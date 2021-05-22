@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
-import { Ride } from '../models/ride';
+import { Ride, Status } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Drivers';
@@ -107,7 +107,9 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
     .where('endTime')
     .le(weekEnd)
     .where('driver')
-    .eq(id);
+    .eq(id)
+    .where('status')
+    .eq(Status.COMPLETED);
 
   const calculateHoursWorked = (driver: DriverType) => (
     Object.values(driver.availability).reduce((acc, curr) => {

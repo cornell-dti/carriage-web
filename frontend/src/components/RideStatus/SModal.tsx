@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import moment from 'moment';
-import cn from 'classnames';
+import Tag from '../Tag/Tag';
 import { Ride } from '../../types';
 import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
@@ -32,16 +32,16 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
   useOutsideAlerter(wrapperRef);
 
   return (
-    <div>
+    <>
       {isOpen && ride && (
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
             <div className={styles.modalOptions}>
               <button className={styles.cancel} onClick={() => cancel(ride)}>
-                <img src={trash} />
+                <img src={trash} alt="trash" />
               </button>
               <button className={styles.close} onClick={close}>
-                <img src={x} />
+                <img src={x} alt="close" />
               </button>
             </div>
             <h3 className={styles.title}>
@@ -55,17 +55,8 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
               <div className={styles.column}>
                 <p>{moment(new Date(ride.startTime)).format('h:mm a')}</p>
                 <div className={styles.location}>
-                  {ride.startLocation.tag && (
-                    <span
-                      className={cn(
-                        styles.tag,
-                        styles[ride.startLocation.tag || ''],
-                      )}
-                    >
-                      {ride.startLocation.tag}
-                    </span>
-                  )}
-                  <p>{ride.startLocation.name}</p>
+                  <Tag location='' tag={ride.startLocation.tag} />
+                  <p className={styles.locationName}>{ride.startLocation.name}</p>
                 </div>
               </div>
               <div className={styles.center}>
@@ -106,17 +97,8 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
               <div className={styles.column}>
                 <p>{moment(new Date(ride.endTime)).format('h:mm a')}</p>
                 <div className={styles.location}>
-                  {ride.endLocation.tag && (
-                    <span
-                      className={cn(
-                        styles.tag,
-                        styles[ride.endLocation.tag || ''],
-                      )}
-                    >
-                      {ride.endLocation.tag}
-                    </span>
-                  )}
-                  <p>{ride.endLocation.name}</p>
+                  <Tag location='' tag={ride.endLocation.tag} />
+                  <p className={styles.locationName}>{ride.endLocation.name}</p>
                 </div>
               </div>
             </div>
@@ -152,7 +134,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
