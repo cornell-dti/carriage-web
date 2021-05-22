@@ -57,3 +57,19 @@ export enum Tag {
 export type Location = LocationType;
 
 export type Ride = RideType;
+
+export enum Type {
+  ACTIVE = 'active',
+  PAST = 'past',
+  UNSCHEDULED = 'unscheduled',
+}
+
+export enum Status {
+  NOT_STARTED = 'not_started',
+  ON_THE_WAY = 'on_the_way',
+  ARRIVED = 'arrived',
+  PICKED_UP = 'picked_up',
+  COMPLETED = 'completed',
+  NO_SHOW = 'no_show',
+  CANCELLED = 'cancelled',
+}

@@ -87,7 +87,11 @@
 }
 
 .gray {
-  color: #707070;
+  color: #616161;
+}
+
+.left {
+  text-align: left;
 }
 
 .proflePic {
@@ -125,4 +129,21 @@
 
 .noShow {
   background-color: #ff8b9d;
+}
+
+.deleteIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  padding: 0.5em;
+  margin-left: 0.5em;
+}
+
+.scheduleTable {
+  overflow-y: auto;
+}
+
+.scheduleTableInner {
+  min-width: 875px;
 }
