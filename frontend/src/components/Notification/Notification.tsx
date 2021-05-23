@@ -28,7 +28,6 @@ const Notification = () => {
     navigator.serviceWorker.addEventListener('message', (event) => {
       const { body, time } = event.data;
       const parsed = JSON.parse(body);
-      console.log(parsed);
       const newMsg = {
         time: new Date(time),
         title: `Ride with ID ${truncate(parsed.ride.id, 8)}`,
@@ -42,25 +41,27 @@ const Notification = () => {
   });
 
   const mapMessages = (msgs: Message[]) => msgs.map(({ time, title, body }, i) => (
-    <div key={i} className={styles.body}>
-      <div className={styles.user}>
-        <div className={styles.avatar}>
-          <span className={styles.initials}>T</span>
+      <div key={i} className={styles.body}>
+        <div className={styles.user}>
+          <div className={styles.avatar}>
+            <span className={styles.initials}>T</span>
+          </div>
         </div>
+        <div className={styles.msg}>
+          <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
+          <p>
+            {title} - {body}
+          </p>
+        </div>
+        <div className={styles.link}>View</div>
       </div>
-      <div className={styles.msg}>
-        <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
-        <p>{title} - {body}</p>
-      </div>
-      <div className={styles.link}>View</div>
-    </div>
   ));
 
   return (
     <Popup
       trigger={
         <button className={styles.bell}>
-          <img src={notificationBell} alt='notification bell icon' />
+          <img src={notificationBell} alt="notification bell icon" />
           {notify && (
             <img
               src={notificationBadge}
@@ -79,16 +80,15 @@ const Notification = () => {
       contentStyle={{
         margin: '10px',
         width: '333px',
-      }}
-    >
+      }}>
       <div className={styles.content}>
-        {newMessages.length === 0
-          || <h6 className={cn(styles.heading, styles.divider)}>
-            You have {newMessages.length} new message{newMessages.length === 1 || 's'}
+        {newMessages.length === 0 || (
+          <h6 className={cn(styles.heading, styles.divider)}>
+            You have {newMessages.length} new message
+            {newMessages.length === 1 || 's'}
           </h6>
-        }
-        {newMessages.length === 0
-          || mapMessages(newMessages)}
+        )}
+        {newMessages.length === 0 || mapMessages(newMessages)}
         <h6 className={styles.heading}>Message History</h6>
         {mapMessages(messages)}
       </div>
