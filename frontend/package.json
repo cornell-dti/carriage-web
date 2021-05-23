@@ -13,6 +13,7 @@
     "@types/react-datepicker": "^3.1.5",
     "@types/react-dom": "^16.9.9",
     "@types/react-router-dom": "^5.1.7",
+    "addresser": "^1.1.19",
     "babel-eslint": "^10.1.0",
     "classnames": "^2.2.6",
     "jwt-decode": "^3.1.2",

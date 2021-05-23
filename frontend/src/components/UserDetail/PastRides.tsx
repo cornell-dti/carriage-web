@@ -1,7 +1,7 @@
 import React from 'react';
-import TableRow from '../TableComponents/TableRow';
+import { Row, Table } from '../TableComponents/TableComponents';
 import { Ride } from '../../types';
-import styles from '../UserTables/table.module.css';
+import styles from './userDetail.module.css';
 
 type pastRideProps = {
   isStudent: boolean,
@@ -9,66 +9,55 @@ type pastRideProps = {
 };
 
 const PastRides = ({ isStudent, rides }: pastRideProps) => {
-  function renderTableHeader() {
-    return (
-      <tr>
-        <th className={styles.tableHeader}>{isStudent ? 'Date' : 'Name'}</th>
-        <th className={styles.tableHeader}>{isStudent ? 'Time' : 'Date'}</th>
-        <th className={styles.tableHeader}>Pickup Location</th>
-        <th className={styles.tableHeader}>Dropoff Location</th>
-        <th className={styles.tableHeader}>Needs</th>
-      </tr>
-    );
-  }
-  function renderTableData() {
-    return rides.map((ride, index) => {
-      const date = new Date(ride.startTime).toLocaleDateString();
-      const startTime = new Date(ride.startTime)
-        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        .toLowerCase();
-      const endTime = new Date(ride.endTime)
-        .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        .toLowerCase();
-      const { rider } = ride;
-      const name = `${rider.firstName} ${rider.lastName}`;
-      const needs = (rider.accessibility || []).join(', ');
-      const pickupLocation = ride.startLocation.name;
-      const pickupTag = ride.startLocation.tag;
-      const dropoffLocation = ride.endLocation.name;
-      const dropoffTag = ride.endLocation.tag;
+  const colSizes = [1, 1, 1, 1, 1];
+  const headers = [isStudent ? 'Date' : 'Name', isStudent ? 'Time' : 'Date', 'Pickup Location', 'Dropoff Location', 'Needs'];
 
-      const valueNameDate = { data: isStudent ? date : name };
-      const valueDateTime = { data: isStudent ? `${startTime}${' - '}${endTime}` : date };
-      const valuePickup = { data: pickupLocation, tag: pickupTag };
-      const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-      const valueNeeds = { data: needs };
-
-      const inputValues = [
-        valueNameDate,
-        valueDateTime,
-        valuePickup,
-        valueDropoff,
-        valueNeeds,
-      ];
-
-      return (
-        <tr key={index}>
-          <TableRow values={inputValues} reduced={false} />
-        </tr>
-      );
-    });
-  }
   return (
-    <div>
-      <h1 className={styles.formHeader}>Past Rides</h1>
-      <div className={styles.tableContainer}>
-        <table cellSpacing="0" className={styles.table}>
-          <tbody>
-            {renderTableHeader()}
-            {renderTableData()}
-          </tbody>
-        </table>
-      </div>
+    <div className={styles.pastRidesContainer}>
+      <h3 className={styles.userDetailHeader}>Past Rides</h3>
+      {rides.length !== 0 ? (
+        <Table>
+          <Row
+            header
+            colSizes={colSizes}
+            data={headers.map((h) => ({ data: h }))}
+          />
+          {rides.map((ride, index) => {
+            const date = new Date(ride.startTime).toLocaleDateString();
+            const startTime = new Date(ride.startTime)
+              .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              .toLowerCase();
+            const endTime = new Date(ride.endTime)
+              .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              .toLowerCase();
+            const { rider } = ride;
+            const name = `${rider.firstName} ${rider.lastName}`;
+            const needs = (rider.accessibility || []).join(', ');
+            const pickupLocation = ride.startLocation.name;
+            const pickupTag = ride.startLocation.tag;
+            const dropoffLocation = ride.endLocation.name;
+            const dropoffTag = ride.endLocation.tag;
+
+            const valueNameDate = isStudent ? date : name;
+            const valueDateTime = isStudent ? `${startTime}${' - '}${endTime}` : date;
+            const valuePickup = { data: pickupLocation, tag: pickupTag };
+            const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+
+            const inputValues = [
+              valueNameDate,
+              valueDateTime,
+              valuePickup,
+              valueDropoff,
+              needs,
+            ];
+
+            return <Row data={inputValues}
+              colSizes={colSizes}
+              key={index} />;
+          })}
+        </Table>)
+        : (<p className={styles.noContentText}>No rides completed.</p>
+        )}
     </div>
   );
 };

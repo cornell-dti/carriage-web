@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Ride, Driver } from '../../types/index';
 import { useReq } from '../../context/req';
 import styles from './assigndrivermodal.module.css';
@@ -6,7 +6,7 @@ import styles from './assigndrivermodal.module.css';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  setDriver: (driverName: string) => void; 
+  setDriver: (driverName: string) => void;
   ride: Ride;
   allDrivers: Driver[];
 };
@@ -14,21 +14,22 @@ type AssignModalProps = {
 type DriverRowProps = {
   onclick: () => void;
   firstName: string;
-  imageURL: string;
+  imageURL?: string;
 };
 
-const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => {
-  return(
+const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
   <div className={styles.driverRow} onClick={onclick}>
-    <img className={styles.driverImage} src={imageURL} alt="Avatar"></img>
     <p className={styles.driverName}>{firstName}</p>
+    {imageURL
+      ? <img className={styles.driverImage} src={imageURL} alt="Avatar" />
+      : <span className={styles.driverImage} />}
   </div>
-)};
+);
 
 const AssignDriverModal = ({
   isOpen,
   close,
-  setDriver, 
+  setDriver,
   ride,
   allDrivers,
 }: AssignModalProps) => {
@@ -48,33 +49,34 @@ const AssignDriverModal = ({
       };
     }, [ref]);
   }
-const wrapperRef = useRef(null);
-const addDriver = (driver: Driver) => {
-  fetch(
-    `/api/rides/${ride.id}`,
-    withDefaults({
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ "driver": driver, 
-                              "type": "active"}),
-    }),
-  );
-  setDriver(driver.firstName); 
-  close(); 
-}
+  const wrapperRef = useRef(null);
+  const addDriver = (driver: Driver) => {
+    fetch(
+      `/api/rides/${ride.id}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          driver,
+          type: 'active',
+        }),
+      }),
+    );
+    setDriver(driver.firstName);
+    close();
+  };
   useOutsideAlerter(wrapperRef);
 
   return (
     <>
       {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
-          <h1 className={styles.titleText}>Available Drivers</h1>
           {allDrivers.map((driver, id) => (
             <DriverRow
-              onclick = {() => {addDriver(driver)}}
+              onclick={() => { addDriver(driver); }}
               key={id}
               firstName={driver.firstName}
-              imageURL="https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg"
+              imageURL={driver.photoLink ? `http://${driver.photoLink}` : undefined}
             />
           ))}
         </div>
