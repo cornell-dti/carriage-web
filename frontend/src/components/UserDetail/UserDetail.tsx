@@ -92,7 +92,7 @@ const UserDetail = ({
                     startDate: employee.startDate,
                   }}
                 />
-                : <RiderModal existingRider={rider} />
+                : <RiderModal existingRider={rider} isRiderWeb={isRider} />
             }
             {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>

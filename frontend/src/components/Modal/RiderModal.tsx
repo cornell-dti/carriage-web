@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
@@ -8,12 +8,15 @@ import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 import { edit } from '../../icons/other/index';
+import AuthContext from '../../context/auth';
 
 type RiderModalProps = {
   existingRider?: Rider;
+  isRiderWeb?: boolean;
 };
 
-const RiderModal = ({ existingRider }: RiderModalProps) => {
+const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
+  const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -49,10 +52,13 @@ const RiderModal = ({ existingRider }: RiderModalProps) => {
       ).then(() => {
         refreshRiders();
         setToast(true);
+        if (isRiderWeb) {
+          refreshUser();
+        }
       });
       setIsSubmitted(false);
     }
-  }, [existingRider, formData, isSubmitted, refreshRiders, withDefaults]);
+  }, [existingRider, formData, isRiderWeb, isSubmitted, refreshRiders, refreshUser, withDefaults]);
 
   return (
     <>
