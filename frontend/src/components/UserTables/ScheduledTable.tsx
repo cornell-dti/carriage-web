@@ -5,14 +5,15 @@ import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
+import { useEmployees } from '../../context/EmployeesContext';
 
 type ScheduledTableProp = {
-  driverId: string;
-  driverName: string;
+  query: string; // either 'rider' or 'driver'
 };
 
-const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
+const ScheduledTable = () => {
   const { curDate } = useDate();
+  const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
 
@@ -26,19 +27,26 @@ const ScheduledTable = ({ driverId, driverName }: ScheduledTableProp) => {
 
   useEffect(() => {
     const today = moment(curDate).format('YYYY-MM-DD');
-    fetch(`/api/rides?driver=${driverId}&date=${today}&type=scheduled`, withDefaults())
+    fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => {
-        setRides(data.sort(compRides));
-      });
-  }, [withDefaults, curDate, driverId]);
+      .then(({ data }) => setRides(data.sort(compRides)));
+  }, [withDefaults, curDate]);
 
-  return (
-    <>
-      <h1 className={styles.formHeader}>{driverName}</h1>
-      <RidesTable rides={rides} drivers={[]} hasAssignButton={false} />
-    </>
-  );
+  return rides.length
+    ? (
+      <>
+        {drivers.map(({ id, firstName, lastName }) => {
+          const name = `${firstName} ${lastName}`;
+          const driverRides = rides.filter((r) => r.driver?.id === id);
+          return driverRides.length ? (
+            <>
+              <h1 className={styles.formHeader}>{name}</h1>
+              <RidesTable rides={driverRides} drivers={[]} hasButtons={false} />
+            </>
+          ) : null;
+        })}
+      </>
+    ) : null;
 };
 
 export default ScheduledTable;

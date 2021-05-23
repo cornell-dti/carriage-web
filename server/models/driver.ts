@@ -22,6 +22,7 @@ export type DriverType = {
   availability: AvailabilityType,
   vehicle: VehicleType,
   phoneNumber: string,
+  startDate: string,
   email: string,
   photoLink?: string,
   admin: boolean,
@@ -61,11 +62,15 @@ const schema = new dynamoose.Schema({
     type: Object,
     schema: availabilitySchema,
   },
-  vehicle: Vehicle as any,
+  vehicle: Vehicle,
   phoneNumber: {
     type: String,
     required: true,
     validate: /^[0-9]{10}$/,
+  },
+  startDate: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,

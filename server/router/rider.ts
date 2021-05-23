@@ -6,10 +6,40 @@ import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
-import { Ride, RideType, Type } from '../models/ride';
+import { Ride, RideType, Type, Status } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Riders';
+
+router.get('/usage', validateUser('Admin'), (req, res) => {
+  type UsageData = {
+    noShows: number,
+    totalRides: number,
+  }
+  type Usage = {
+    [id: string]: UsageData
+  }
+  const usageObj: Usage = {};
+  const isPast = new Condition('type').eq(Type.PAST);
+  db.scan(res, Ride, isPast, (data: RideType[]) => {
+    data.forEach((ride) => {
+      const currID = ride.rider.id;
+      if (currID in usageObj) {
+        if (ride.status === Status.COMPLETED) {
+          usageObj[currID].totalRides += 1;
+        } else {
+          usageObj[currID].noShows += 1;
+        }
+      } else {
+        const dummy = ride.status === Status.COMPLETED
+          ? { noShows: 0, totalRides: 1 }
+          : { noShows: 1, totalRides: 0 };
+        usageObj[currID] = dummy;
+      }
+    });
+    res.send(usageObj);
+  });
+});
 
 // Get a rider by id in Riders table
 router.get('/:id', validateUser('User'), (req, res) => {
@@ -27,10 +57,10 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     } = rider;
     res.send({
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     });
   });
 });
@@ -66,8 +96,8 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
 router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, () => {
-    const now = moment().toISOString();
-    const end = moment().add(30, 'minutes').toISOString();
+    const now = moment.tz('America/New_York').toISOString();
+    const end = moment.tz('America/New_York').add(30, 'minutes').toISOString();
     const isRider = new Condition('rider').eq(id);
     const isActive = new Condition('type').eq(Type.ACTIVE);
     const isSoon = new Condition('startTime').between(now, end);
@@ -76,6 +106,20 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
     db.scan(res, Ride, condition, (data: RideType[]) => {
       data.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
       res.send(data[0] ?? {});
+    });
+  });
+});
+
+router.get('/:id/usage', validateUser('Admin'), (req, res) => {
+  const { params: { id } } = req;
+  let noShowCount: number;
+  let studentRides: number;
+  db.getById(res, Rider, id, tableName, () => {
+    const isRider = new Condition('rider').eq(id);
+    db.scan(res, Ride, isRider, (data: RideType[]) => {
+      noShowCount = data.filter((ride) => ride.status === Status.NO_SHOW).length;
+      studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
+      res.send({ studentRides, noShowCount });
     });
   });
 });

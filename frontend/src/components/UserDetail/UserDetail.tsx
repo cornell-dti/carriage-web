@@ -1,6 +1,8 @@
 import React from 'react';
+import cn from 'classnames';
 import styles from './userDetail.module.css';
-import { edit } from '../../icons/other/index';
+import { edit, detailTrash } from '../../icons/other/index';
+import EmployeeModal from '../EmployeeModal/EmployeeModal';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -23,12 +25,27 @@ export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   </div>
 );
 
+type EmployeeDetailProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  netId: string;
+  phone: string;
+  availability?: string[][];
+  admin?: boolean;
+  photoLink?: string;
+  startDate?: string;
+};
+
 type UserDetailProps = {
-  // profilePic: string;
   firstName: string;
   lastName: string;
   netId: string;
   children: JSX.Element | JSX.Element[];
+  employee?: EmployeeDetailProps;
+  role?: string;
+  photoLink?: string;
+  isRider?: boolean;
 };
 
 const UserDetail = ({
@@ -36,17 +53,46 @@ const UserDetail = ({
   lastName,
   netId,
   children,
+  employee,
+  role,
+  photoLink,
+  isRider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
-    <div className={styles.userDetail}>
+    <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       <div className={styles.imgContainer}>
-        {/* <img className={styles.profilePic} src={user.profilePic} /> */}
+        {photoLink && photoLink !== ''
+          ? <img className={styles.profilePic} src={`http://${photoLink}`} alt="profile" />
+          : null}
       </div>
       <div className={styles.basicInfoContainer}>
-        <p className={styles.name}>{fullName}</p>
-        <p className={styles.netId}>{netId}</p>
-        <img className={styles.edit} alt="edit" src={edit} />
+        <div className={styles.basicInfoTop}>
+          <div className={styles.nameInfoContainer}>
+            <p className={styles.name}>{fullName}</p>
+            <p className={styles.netId}>{netId}</p>
+          </div>
+          <div className={styles.userEditContainer}>
+            {
+              employee
+                ? <EmployeeModal
+                  existingEmployee={{
+                    id: employee.id,
+                    name: `${employee.firstName} ${employee.lastName}`,
+                    netId: employee.netId,
+                    email: `${employee.netId}@cornell.edu`,
+                    phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
+                    availability: employee.availability,
+                    role,
+                    photoLink: employee.photoLink,
+                    startDate: employee.startDate,
+                  }}
+                />
+                : <img className={styles.editIcon} alt="edit" src={edit} />
+            }
+            {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
+          </div>
+        </div>
         <div className={styles.contactInfoContainer}>{children}</div>
       </div>
     </div>

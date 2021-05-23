@@ -15,7 +15,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
     <div className={styles.collapsible}>
       <div className={styles.banner} onClick={() => setExpanded(!expanded)} >
         <p className={styles.title}>{title}</p>
-        <img className={styles.icon} src={icon} />
+        <img className={styles.icon} src={icon} alt={title} />
       </div>
       {expanded && <div className={styles.contentContainer}>{children}</div>}
     </div>

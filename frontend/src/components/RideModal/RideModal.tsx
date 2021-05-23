@@ -2,31 +2,62 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType } from '../../types/index';
+import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 
 
-const RideModal = () => {
-  const [formData, setFormData] = useState<ObjectType>({});
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+type RideModalProps = {
+  open?: boolean;
+  close?: () => void;
+  ride?: Ride;
+};
+
+const RideModal = ({
+  open,
+  close,
+  ride,
+}: RideModalProps) => {
+  const originalRideData = ride ? {
+    date: moment(ride.startTime).format('YYYY-MM-DD'),
+    pickupTime: moment(ride.startTime).format('kk:mm'),
+    dropoffTime: moment(ride.endTime).format('kk:mm'),
+    rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+    pickupLoc: ride.startLocation.id
+      ? ride.startLocation.name
+      : ride.startLocation.address,
+    dropoffLoc: ride.endLocation.id
+      ? ride.endLocation.name
+      : ride.endLocation.address,
+  } : {};
+  const [formData, setFormData] = useState<ObjectType>(originalRideData);
+  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { curDate } = useDate();
-
-  const openModal = () => {
-    setCurrentPage(0);
-    setIsOpen(true);
-  };
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
   const goPrevPage = () => setCurrentPage((p) => p - 1);
 
+  const openModal = () => {
+    setCurrentPage(0);
+    setIsOpen(true);
+    setToast(false);
+  };
+
   const closeModal = () => {
-    setFormData({});
+    if (close) {
+      setFormData(originalRideData);
+      close();
+    } else {
+      setFormData({});
+    }
+    setCurrentPage(0);
     setIsOpen(false);
   };
 
@@ -38,36 +69,81 @@ const RideModal = () => {
   const submitData = () => setIsSubmitted(true);
 
   useEffect(() => {
-    const isFormComplete = Object.keys(formData).length === 6;
-    if (isSubmitted && isFormComplete) {
+    if (isSubmitted) {
       const {
-        pickupTime, dropoffTime, driver, rider, startLocation, endLocation,
-      } = formData;
-      const date = curDate.toLocaleDateString();
-      const startTime = moment(`${date} ${pickupTime}`).toISOString();
-      const endTime = moment(`${date} ${dropoffTime}`).toISOString();
-      const isUnscheduled = driver === 'None';
-      const ride = {
-        type: isUnscheduled ? 'unscheduled' : 'active',
+        pickupTime,
+        dropoffTime,
+        driver,
+        rider,
         startLocation,
         endLocation,
-        driver: isUnscheduled ? undefined : driver,
-        rider,
+      } = formData;
+      const date = formData.date ? formData.date : curDate.toLocaleDateString();
+      const startTime = moment(`${date} ${pickupTime}`).toISOString();
+      const endTime = moment(`${date} ${dropoffTime}`).toISOString();
+      const rideData: ObjectType = {
         startTime,
-        requestedEndTime: endTime,
+        endTime,
+        driver,
+        rider,
+        startLocation,
+        endLocation,
       };
-      fetch('/api/rides', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(ride),
-      }));
+      if (ride) {
+        if (ride.type === 'active') {
+          rideData.type = 'unscheduled';
+        }
+        fetch(
+          `/api/rides/${ride.id}`,
+          withDefaults({
+            method: 'PUT',
+            body: JSON.stringify(rideData),
+          }),
+        );
+      } else {
+        fetch(
+          '/api/rides',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(formData),
+          }),
+        );
+      }
       setIsSubmitted(false);
       closeModal();
+      setToast(true);
     }
-  }, [curDate, formData, isSubmitted, withDefaults]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData, isSubmitted, ride, withDefaults]);
 
-  return (
+  // have to do a ternary operator on the entire modal
+  // because otherwise the pages would show up wrongly
+  return ride ? (
     <>
-      <Button onClick={openModal}>+ Add ride</Button>
+      {showingToast ? <Toast message="Ride edited." /> : null}
+      <Modal
+        paginate
+        title={['Edit a Ride', 'Edit a Ride']}
+        isOpen={open || isOpen}
+        currentPage={currentPage}
+        onClose={closeModal}
+      >
+        <RideTimesPage
+          formData={formData}
+          onSubmit={saveDataThen(goNextPage)}
+        />
+        <RiderInfoPage
+          formData={formData}
+          onBack={goPrevPage}
+          onSubmit={saveDataThen(submitData)}
+        />
+      </Modal>
+    </>
+  ) : (
+    <>
+      {showingToast ? <Toast message="Ride added." /> : null}
+      {/* only have a button if this modal is not controlled by a table */}
+      {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal
         paginate
         title={['Add a Ride', 'Available Drivers', 'Add a Ride']}
@@ -82,8 +158,10 @@ const RideModal = () => {
         <DriverPage
           formData={formData}
           onBack={goPrevPage}
-          onSubmit={saveDataThen(goNextPage)} />
+          onSubmit={saveDataThen(goNextPage)}
+        />
         <RiderInfoPage
+          formData={formData}
           onBack={goPrevPage}
           onSubmit={saveDataThen(submitData)}
         />

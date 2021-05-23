@@ -19,6 +19,7 @@ export enum Status {
   PICKED_UP = 'picked_up',
   COMPLETED = 'completed',
   NO_SHOW = 'no_show',
+  CANCELLED = 'cancelled',
 }
 
 export type RideLocation = {
@@ -36,14 +37,13 @@ export type RideType = {
   startLocation: RideLocation,
   endLocation: RideLocation,
   startTime: string,
-  requestedEndTime: string,
-  endTime?: string,
+  endTime: string,
   rider: RiderType,
   driver?: DriverType,
   recurring: boolean,
   recurringDays?: number[],
   endDate?: string
-  deleted?: boolean,
+  deleted?: string[],
   edits?: string[],
 };
 
@@ -100,17 +100,13 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  requestedEndTime: {
+  endTime: {
     type: String,
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  endTime: {
-    type: String,
-    validate: (time) => isISO8601(time as string),
-  },
-  rider: Rider as any,
-  driver: Driver as any,
+  rider: Rider,
+  driver: Driver,
   recurring: {
     type: Boolean,
     required: true,
@@ -120,7 +116,10 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [Number],
   },
-  deleted: Boolean,
+  deleted: {
+    type: Array,
+    schema: [String],
+  },
   edits: {
     type: Array,
     schema: [String],

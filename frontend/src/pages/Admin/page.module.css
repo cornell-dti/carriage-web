@@ -1,0 +1,25 @@
+.pageContainer {
+  margin: 0 2rem;
+}
+
+.header {
+  text-align: left;
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.pageTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.25rem 2.5rem;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.rightSection > div {
+  margin-left: 14px;
+}

@@ -32,10 +32,12 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
         ))}
       </div>
       <div className={styles.btnContainer}>
-        <Button outline type="button" onClick={onBack}>Back</Button>
+        <Button outline type="button" onClick={onBack}>
+          Back
+        </Button>
         <Button type="submit">Next</Button>
       </div>
-    </form >
+    </form>
   );
 };
 
