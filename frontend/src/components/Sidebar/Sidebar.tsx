@@ -25,6 +25,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const [profile, setProfile] = useState('');
   const authContext = useContext(AuthContext);
   const reqContext = useContext(ReqContext);
+  const localUserType = localStorage.getItem('userType');
+  const isAdmin = localUserType === 'Admin';
 
   useEffect(() => {
     const { id } = authContext;
@@ -69,8 +71,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
           ))}
         </div>
         <div className={styles.logout}>
-          <img alt="profile_picture" className={styles.profile}
-            src={profile === '' || !profile ? blank : `https://${profile}`} />
+          {isAdmin && <img alt="profile_picture" className={styles.profile}
+            src={profile === '' || !profile ? blank : `https://${profile}`} />}
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
