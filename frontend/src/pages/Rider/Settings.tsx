@@ -6,16 +6,7 @@ import { useReq } from '../../context/req';
 import pageStyles from '../Admin/page.module.css';
 import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
-
-type RiderProfile = {
-  email: string;
-  firstName: string;
-  joinDate: string;
-  lastName: string;
-  phoneNumber: string;
-  pronouns: string;
-  photoLink?: string;
-}
+import { Rider } from '../../types/index';
 
 const NotifPreferences = () => (
   <div className={styles.settings}>
@@ -42,11 +33,11 @@ const NotifPreferences = () => (
 const Settings = () => {
   const { id } = useContext(AuthContext);
   const { withDefaults } = useReq();
-  const [rider, setRider] = useState<RiderProfile>();
+  const [rider, setRider] = useState<Rider>();
   const netId = rider?.email.split('@')[0] || '';
 
   useEffect(() => {
-    fetch(`/api/riders/${id}/profile`, withDefaults())
+    fetch(`/api/riders/${id}`, withDefaults())
       .then((res) => res.json())
       .then((data) => setRider(data));
   }, [withDefaults, id]);
@@ -65,6 +56,7 @@ const Settings = () => {
         netId={netId}
         photoLink={rider?.photoLink}
         isRider={true}
+        rider={rider}
       >
         <UserContactInfo icon={phone} alt="Phone" text={rider?.phoneNumber || ''} />
         <UserContactInfo icon={mail} alt="Email" text={rider?.email || ''} />
