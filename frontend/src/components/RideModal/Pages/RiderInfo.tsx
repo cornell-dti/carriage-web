@@ -58,12 +58,16 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             placeholder="Name"
             className={styles.nameInput}
+            list="names"
             ref={register({
               required: true,
               validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
             })}
           />
           {errors.name && <p className={styles.error}>Rider not found</p>}
+          <datalist id="names">
+            {riders.map((r) => <option key={r.id}>{r.firstName} {r.lastName}</option>)}
+          </datalist>
         </div>
         <div className={styles.pickupLocation}>
           <Input
