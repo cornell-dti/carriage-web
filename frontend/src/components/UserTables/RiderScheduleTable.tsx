@@ -34,8 +34,8 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   // Returns the number of days between [start] and the next day that falls on [weekday].
   // The weekday numbering follows Flutter's convention where 1 to 7 are Monday to Sunday.
   // If [start] falls on [weekday], returns 7.
-  const daysUntilWeekday = (start: Date, weekday: number): number => {
-    const startWeekday = start.getDay();
+  const daysUntilWeekday = (start: moment.Moment, weekday: number): number => {
+    const startWeekday = start.day();
     let endWeekday = weekday;
     if (weekday < startWeekday) {
       endWeekday += 7;
@@ -50,29 +50,32 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
     rides.forEach((originalRide) => {
       let origEndDate;
       if (originalRide.recurring) {
-        origEndDate = new Date(originalRide.endDate!);
+        origEndDate = moment(originalRide.endDate!);
       }
       // create dummy rides only for active recurring rides
-      if (origEndDate && origEndDate >= curDate) {
-        const origStartTime = new Date(originalRide.startTime);
+      if (origEndDate && origEndDate >= moment(curDate)) {
+        const origStartTime = moment(originalRide.startTime);
         const rideStart = origStartTime;
         const days = originalRide.recurringDays!;
-        let dayIndex = days.indexOf(rideStart.getDay());
+        let dayIndex = days.indexOf(rideStart.day());
         while (rideStart <= origEndDate) {
           // find the next occurrence
           dayIndex = dayIndex === days.length - 1 ? 0 : dayIndex + 1;
           const daysUntilNextOccurrence = daysUntilWeekday(rideStart, days[dayIndex]);
-          rideStart.setDate(rideStart.getDate() + daysUntilNextOccurrence);
+          rideStart.date(rideStart.date() + daysUntilNextOccurrence);
 
           // add to list if ride's start date is not in list of deleted dates
-          if (!originalRide.deleted?.includes(rideStart.toUTCString())) {
+          if (
+            !originalRide.deleted?.includes(rideStart.format('YYYY-MM-DD'))
+            && rideStart.format('YYYY-MM-DD') <= origEndDate.format('YYYY-MM-DD')
+          ) {
             const rideInstance: Ride = {
               id: originalRide.id,
               type: Type.UNSCHEDULED,
               status: Status.NOT_STARTED,
               startLocation: originalRide.startLocation,
               endLocation: originalRide.endLocation,
-              startTime: rideStart.toUTCString(),
+              startTime: rideStart.toISOString(),
               endTime: originalRide.endTime,
               rider: originalRide.rider,
               driver: originalRide.driver,
@@ -94,7 +97,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
     allRides = allRides.filter(filterRides).sort(compRides);
     rideMapToArray(getRideMap(allRides));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.length]);
+  }, [data]);
 
   // returns date in the format "MM/DD/YYYY"
   const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
@@ -142,7 +145,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
       <div className={styles.scheduleTableInner}>
         {rideMapArray.map(([date, rideArray]) => (
           rideArray.length > 0 && (
-            <>
+            <React.Fragment key={date}>
               <h1 className={styles.formHeader}>
                 {date}
                 <span className={styles.gray}>
@@ -150,7 +153,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
                 </span>
               </h1>
               <RiderRidesTable rides={rideArray} />
-            </>
+            </React.Fragment>
           )
         ))}
       </div>
