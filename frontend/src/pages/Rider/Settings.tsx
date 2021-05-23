@@ -31,16 +31,9 @@ const NotifPreferences = () => (
 );
 
 const Settings = () => {
-  const { id } = useContext(AuthContext);
-  const { withDefaults } = useReq();
-  const [rider, setRider] = useState<Rider>();
-  const netId = rider?.email.split('@')[0] || '';
-
-  useEffect(() => {
-    fetch(`/api/riders/${id}`, withDefaults())
-      .then((res) => res.json())
-      .then((data) => setRider(data));
-  }, [withDefaults, id]);
+  const { user } = useContext(AuthContext);
+  console.log(user);
+  const netId = user?.email.split('@')[0] || '';
 
   return (
     <>
@@ -51,15 +44,15 @@ const Settings = () => {
         </div>
       </div>
       <UserDetail
-        firstName={rider?.firstName || ''}
-        lastName={rider?.lastName || ''}
+        firstName={user?.firstName || ''}
+        lastName={user?.lastName || ''}
         netId={netId}
-        photoLink={rider?.photoLink}
+        photoLink={user?.photoLink}
         isRider={true}
-        rider={rider}
+        rider={user as Rider}
       >
-        <UserContactInfo icon={phone} alt="Phone" text={rider?.phoneNumber || ''} />
-        <UserContactInfo icon={mail} alt="Email" text={rider?.email || ''} />
+        <UserContactInfo icon={phone} alt="Phone" text={user?.phoneNumber || ''} />
+        <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
       {/* <NotifPreferences /> */}
     </>

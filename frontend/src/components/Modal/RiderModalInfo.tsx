@@ -34,7 +34,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
     joinDate,
     endDate,
   }: ObjectType) => {
-    const email = `${netid}@cornell.edu`;
+    const email = netid ? `${netid}@cornell.edu` : undefined;
     const splitName = name.split(' ');
     const firstName = splitName[0];
     const lastName = splitName[1];

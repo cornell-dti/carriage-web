@@ -7,7 +7,7 @@ import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import { Ride } from '../../types/index';
 
 const Schedule = () => {
-  const [rides, setRides] = useState<Ride[]>();
+  const [rides, setRides] = useState<Ride[]>([]);
   const { id } = useContext(AuthContext);
   const { withDefaults } = useReq();
 
