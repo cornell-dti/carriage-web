@@ -146,7 +146,7 @@ const Table = ({ type }: TableProps) => {
         });
 
         return ({
-          icon: driver.photoLink ? driver.photoLink : '',
+          icon: driver.photoLink ? `http://${driver.photoLink}` : '',
           alt: `${driver.firstName} ${driver.lastName.substr(0, 1)}.`,
           stats: acc,
           description: `${driver.firstName} ${driver.lastName.substr(0, 1)}.`,
