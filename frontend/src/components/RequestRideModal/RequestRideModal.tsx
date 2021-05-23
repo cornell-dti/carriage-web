@@ -147,7 +147,7 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
         : <Button outline small onClick={openModal}>Edit</Button>}
       {showingToast ? <Toast message='Your ride has been requested' /> : null}
       <Modal
-        title={'Request a Ride'}
+        title={!ride ? 'Request a Ride' : 'Edit a Ride'}
         isOpen={isOpen}
         onClose={closeModal}
       >
@@ -156,7 +156,7 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
             <div className={styles.inputContainer}>
               <RequestRideInfo ride={ride} />
               <Button className={styles.submit} type='submit'>
-                Request a Ride
+                {!ride ? 'Request a Ride' : 'Edit a Ride'}
               </Button>
             </div>
           </form>
