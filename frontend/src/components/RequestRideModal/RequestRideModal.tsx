@@ -5,18 +5,11 @@ import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType, Rider } from '../../types/index';
+import { ObjectType } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 
-const daysToNumber = {
-  Mon: 1,
-  Tue: 2, 
-  Wed: 3,
-  Thu: 4, 
-  Fri: 5
-};
 const RequestRideModal = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [showingToast, setToast] = useState(false);
@@ -37,7 +30,7 @@ const RequestRideModal = () => {
         fetch(`/api/riders/${id}`, withDefaults())
           .then((res) => res.json())
           .then((data) => setRider(data));
-      }, [withDefaults]);
+      }, [id, withDefaults]);
       const onSubmit = async (formData: ObjectType) => {
         const { startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,  
           startLocation, endLocation, pickupTime, dropoffTime, endDate, 

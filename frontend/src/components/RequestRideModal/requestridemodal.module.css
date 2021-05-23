@@ -76,3 +76,10 @@
   .flexShrink{
     flex-shrink: 2; 
   }
+  
+  .whenRepeat:focus{
+    outline: 3px solid black; 
+  }
+  .recurring:focus{
+    outline: 3px solid black; 
+  }

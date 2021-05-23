@@ -64,6 +64,7 @@ const RequestRideInfo = () => {
         <Label className={styles.boldLabel} 
         htmlFor={"recurring"}>Repeating?</Label>
         <Input
+          className={styles.recurring}
           type="checkbox"
           id="recurring"
           name="recurring"
@@ -74,6 +75,7 @@ const RequestRideInfo = () => {
             <div className={styles.box}>
               <Label className={styles.boldLabel} id = "repeats">Repeats</Label>
               <Input
+                className={styles.whenRepeat}
                 name="whenRepeat"
                 id="daily"
                 ref={register({ required: watchRepeating })}
@@ -82,6 +84,7 @@ const RequestRideInfo = () => {
                 onChange={() => setCustom(false)} />
               <Label className={styles.label} htmlFor="daily">Daily</Label>
               <input
+                className={styles.whenRepeat}
                 name="whenRepeat"
                 id="weekly"
                 ref={register({ required: watchRepeating })}
@@ -89,6 +92,7 @@ const RequestRideInfo = () => {
                 onChange={() => setCustom(false)} />
               <Label className={styles.label} htmlFor="weekly">Weekly</Label>
               <input
+                className={styles.whenRepeat}
                 name="whenRepeat"
                 id="custom"
                 ref={register({ required: watchRepeating })}
