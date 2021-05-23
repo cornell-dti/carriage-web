@@ -6,8 +6,6 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
-import { useDate } from '../../context/date';
-
 
 type RideModalProps = {
   open?: boolean;
@@ -38,7 +36,6 @@ const RideModal = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
-  const { curDate } = useDate();
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -71,6 +68,7 @@ const RideModal = ({
   useEffect(() => {
     if (isSubmitted) {
       const {
+        date,
         pickupTime,
         dropoffTime,
         driver,
@@ -78,13 +76,14 @@ const RideModal = ({
         startLocation,
         endLocation,
       } = formData;
-      const date = formData.date ? formData.date : curDate.toLocaleDateString();
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
+      const hasDriver = Boolean(driver);
       const rideData: ObjectType = {
+        type: hasDriver ? 'active' : 'unscheduled',
         startTime,
         endTime,
-        driver,
+        driver: hasDriver ? driver : undefined,
         rider,
         startLocation,
         endLocation,
@@ -105,7 +104,7 @@ const RideModal = ({
           '/api/rides',
           withDefaults({
             method: 'POST',
-            body: JSON.stringify(formData),
+            body: JSON.stringify(rideData),
           }),
         );
       }

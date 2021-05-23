@@ -7,7 +7,7 @@ import { Label, Input, Button } from '../../FormElements/FormElements';
 import { useEmployees } from '../../../context/EmployeesContext';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit } = useForm({
     defaultValues: {
       driver: formData?.driver ?? '',
     },
@@ -18,15 +18,16 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
       <div className={cn(styles.inputContainer, styles.drivers)}>
         {drivers.map((d) => (
           <div className={styles.driver} key={d.id}>
-            <Label htmlFor="driver" className={styles.driverLabel}>
+            <Label htmlFor={d.firstName + d.lastName} className={styles.driverLabel}>
               {d.firstName}
             </Label>
             <Input
+              id={d.firstName + d.lastName}
               className={styles.driverRadio}
               name="driver"
               type="radio"
               value={d.id}
-              ref={register({ required: true })}
+              ref={register()}
             />
           </div>
         ))}
