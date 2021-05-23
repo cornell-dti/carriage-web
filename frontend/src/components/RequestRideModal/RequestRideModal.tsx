@@ -1,20 +1,32 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { ObjectType, Ride } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 
-const RequestRideModal = () => {
+type RequestRideModalProps = {
+  afterSubmit?: () => void;
+  ride?: Ride;
+}
+
+const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
-  const [rider, setRider] = useState(undefined);
-  const methods = useForm();
+  const defaultValues = {
+    startDate: moment(ride?.startTime).format('YYYY-MM-DD') ?? moment().format('YYYY-MM-DD'),
+    whenRepeat: ride?.recurring ? 'custom' : undefined,
+    endDate: ride?.endDate ?? '',
+    pickupTime: ride ? moment(ride.startTime).format('HH:mm') : '',
+    dropoffTime: ride ? moment(ride.endTime).format('HH:mm') : '',
+    recurring: ride?.recurring ?? false,
+  };
+  const methods = useForm({ defaultValues });
   const { withDefaults } = useReq();
   const { id } = useContext(AuthContext);
   const openModal = () => {
@@ -26,22 +38,23 @@ const RequestRideModal = () => {
     methods.clearErrors();
     setIsOpen(false);
   };
-  useEffect(() => {
-    fetch(`/api/riders/${id}`, withDefaults())
-      .then((res) => res.json())
-      .then((data) => setRider(data));
-  }, [id, withDefaults]);
+
   const onSubmit = async (formData: ObjectType) => {
-    const { startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,
+    const {
+      startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,
       startLocation, endLocation, pickupTime, dropoffTime, endDate,
       customPickup, pickupCity, pickupZip, customDropoff,
-      dropoffCity, dropoffZip } = formData;
+      dropoffCity, dropoffZip,
+    } = formData;
     const startTime = moment(`${startDate} ${pickupTime}`).toISOString();
     const endTime = moment(`${startDate} ${dropoffTime}`).toISOString();
-    const startLoc = startLocation !== 'Other' ? startLocation
-      : `${customPickup},${pickupCity} NY,${pickupZip}`;
-    const endLoc = endLocation !== 'Other' ? endLocation
-      : `${customDropoff},${dropoffCity} NY,${dropoffZip}`;
+    const startLoc = startLocation !== 'Other'
+      ? startLocation
+      : `${customPickup}, ${pickupCity} NY, ${pickupZip}`;
+    const endLoc = endLocation !== 'Other'
+      ? endLocation
+      : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
+    let rideData: ObjectType;
     if (recurring) {
       // Add a repeating ride
       let recurringDays: Number[] = [];
@@ -77,52 +90,61 @@ const RequestRideModal = () => {
           break;
         }
       }
-      const repeatingRideData: ObjectType = {
+      rideData = {
         type: 'unscheduled',
         startLocation: startLoc,
         endLocation: endLoc,
-        driver: undefined,
-        rider,
+        rider: id,
         startTime,
         endTime,
         recurring,
         recurringDays,
         endDate,
       };
-      fetch(
-        '/api/rides',
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify(repeatingRideData),
-        }),
-      );
     } else {
       // Not repeating
-      const rideData: ObjectType = {
+      rideData = {
         type: 'unscheduled',
         startLocation: startLoc,
         endLocation: endLoc,
-        driver: undefined,
-        rider,
+        rider: id,
         startTime,
         endTime,
       };
-      fetch(
-        '/api/rides',
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify(rideData),
-        }),
-      );
     }
-    closeModal();
-    setToast(true);
+    const afterReq = () => {
+      afterSubmit();
+      closeModal();
+      setToast(true);
+    };
+    if (!ride) {
+      fetch('/api/rides', withDefaults({
+        method: 'POST',
+        body: JSON.stringify(rideData),
+      })).then(afterReq);
+    } else if (ride.recurring) {
+      fetch(`/api/rides/${ride.id}/edits`, withDefaults({
+        method: 'PUT',
+        body: JSON.stringify({
+          deleteOnly: false,
+          origDate: startDate,
+          ...rideData,
+        }),
+      })).then(afterReq);
+    } else {
+      fetch(`/api/rides/${ride.id}`, withDefaults({
+        method: 'PUT',
+        body: JSON.stringify(rideData),
+      })).then(afterReq);
+    }
   };
 
 
   return (
     <>
-      <Button onClick={openModal}>+ Request a ride</Button>
+      {!ride
+        ? <Button onClick={openModal}>+ Request a ride</Button>
+        : <Button outline small onClick={openModal}>Edit</Button>}
       {showingToast ? <Toast message='Your ride has been requested' /> : null}
       <Modal
         title={'Request a Ride'}
@@ -132,10 +154,10 @@ const RequestRideModal = () => {
         <FormProvider {...methods} >
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className={styles.inputContainer}>
-              <RequestRideInfo />
+              <RequestRideInfo ride={ride} />
               <Button className={styles.submit} type='submit'>
                 Request a Ride
-            </Button>
+              </Button>
             </div>
           </form>
         </FormProvider>

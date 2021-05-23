@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
+import { Ride } from '../../types';
 import styles from './requestridemodal.module.css';
-import { Label, Input, SRLabel } from '../FormElements/FormElements';
+import { Label, SRLabel } from '../FormElements/FormElements';
 
 type WeekType = {
   [day: string]: boolean;
 };
 
+type CustomRepeatingRidesProps = {
+  ride?: Ride;
+}
 
-const CustomRepeatingRides = () => {
-  const { register, formState, setValue } = useFormContext();
+const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
+  const { register, formState } = useFormContext();
   const { errors } = formState;
   const [week, setWeek] = useState<WeekType>({
     Mon: false,
@@ -26,10 +30,23 @@ const CustomRepeatingRides = () => {
     Thu: ['Th', '4'],
     Fri: ['F', '5'],
   };
+
   const handleClick = (day: string) => {
     setWeek((prev) => ({ ...prev, [day]: !week[day] }));
   };
+
+  useEffect(() => {
+    if (ride && ride.recurring) {
+      const days = Object.keys(dayLabels);
+      ride.recurringDays!.forEach((day) => {
+        handleClick(days[day - 1]);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ride]);
+
   const dayClicked = () => week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
+
   return (
     <div className={styles.box}>
       <Label id={'repeatDays'} className={styles.boldLabel}>Repeat every</Label>

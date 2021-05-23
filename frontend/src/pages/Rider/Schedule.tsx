@@ -15,10 +15,14 @@ const Schedule = () => {
   const { id } = useContext(AuthContext);
   const { withDefaults } = useReq();
 
-  useEffect(() => {
+  const refreshRides = () => {
     fetch(`/api/rides?rider=${id}`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => setRides(data));
+      .then(({ data }) => setRides([...data]));
+  };
+
+  useEffect(() => {
+    refreshRides();
     fetch(`/api/riders/${id}`, withDefaults())
       .then((res) => res.json())
       .then((data) => setRider(data));
@@ -30,7 +34,7 @@ const Schedule = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Hi {rider ? rider.firstName : ''}</h1>
         <div className={styles.rightSection}>
-          <RequestRideModal />
+          <RequestRideModal afterSubmit={refreshRides} />
           <Notification />
         </div>
       </div>

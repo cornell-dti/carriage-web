@@ -1,42 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
-import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
+import addresser from 'addresser';
 import { useReq } from '../../context/req';
 import styles from './requestridemodal.module.css';
-import { Location } from '../../types';
+import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 
 type RequestRideInfoProps = {
-  startLocation?: Location;
-  endLocation?: Location;
-  startTime?: string;
-  endTime?: string;
-  recurringDays?: number[];
-  startDate?: string;
-  endDate?: string;
+  ride?: Ride;
 }
-const RequestRideInfo = () => {
-  const { register, formState, getValues, watch } = useFormContext();
+
+const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
+  const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [custom, setCustom] = useState(false);
-  const watchRepeating = watch('recurring', false);
+  const [custom, setCustom] = useState(ride?.recurring || false);
+  const watchRepeating = watch('recurring', ride?.recurring || false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
+
   useEffect(() => {
     const getExistingLocations = async () => {
       const locationsData = await fetch('/api/locations?active=true', withDefaults())
         .then((res) => res.json())
         .then((data) => data.data);
-      const sortedLocations = locationsData.map((location: any) => ({
-        id: location.id,
-        name: location.name,
-        address: location.address,
-        ...(location.tag && { tag: location.tag }),
-      })).sort((a: Location, b: Location) => {
+      const sortedLocations = locationsData.sort((a: Location, b: Location) => {
         if (a.name < b.name) { return -1; }
         if (a.name > b.name) { return 1; }
         return 0;
@@ -47,6 +38,33 @@ const RequestRideInfo = () => {
     };
     getExistingLocations();
   }, [withDefaults]);
+
+  useEffect(() => {
+    if (ride) {
+      const defaultStart = ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id;
+      const defaultEnd = ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id;
+      setValue('startLocation', defaultStart);
+      setValue('endLocation', defaultEnd);
+    }
+  }, [locations, ride, setValue]);
+
+  useEffect(() => {
+    if (ride) {
+      if (watchPickupCustom === 'Other') {
+        const pickup = addresser.parseAddress(ride!.startLocation.address);
+        setValue('customPickup', pickup.addressLine1);
+        setValue('pickupCity', pickup.placeName);
+        setValue('pickupZip', pickup.zipCode);
+      }
+      if (watchDropoffCustom === 'Other') {
+        const dropoff = addresser.parseAddress(ride!.endLocation.address);
+        setValue('customDropoff', dropoff.addressLine1);
+        setValue('dropoffCity', dropoff.placeName);
+        setValue('dropoffZip', dropoff.zipCode);
+      }
+    }
+  }, [watchPickupCustom, watchDropoffCustom, ride, setValue]);
+
   return (
     <div>
       <Label htmlFor={'startDate'} className={styles.largeLabel}>Day</Label>
@@ -89,7 +107,8 @@ const RequestRideInfo = () => {
               name="whenRepeat"
               id="weekly"
               ref={register({ required: watchRepeating })}
-              type="radio" value="weekly"
+              type="radio"
+              value="weekly"
               onChange={() => setCustom(false)} />
             <Label className={styles.label} htmlFor="weekly">Weekly</Label>
             <input
@@ -104,7 +123,7 @@ const RequestRideInfo = () => {
             {errors.whenRepeat && <p className={styles.error}>
               Please select a value</p>}
           </div>
-          {custom && watchRepeating ? <CustomRepeatingRides /> : null}
+          {custom && watchRepeating ? <CustomRepeatingRides ride={ride} /> : null}
           <Label className={styles.boldLabel} htmlFor="endDate">Ends</Label>
           <Input className={styles.input} type={'date'} name="endDate" id="endDate"
             ref=
@@ -124,9 +143,7 @@ const RequestRideInfo = () => {
 
           <Label className={styles.label} id="pickupLocation">Location</Label>
           <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations"
-            ref={register(
-              { required: true },
-            )}
+            ref={register({ required: true })}
           >
             {locations.map((location) => (<option key={location.id}
               value={location.id}>{location.name}</option>))
@@ -245,7 +262,7 @@ const RequestRideInfo = () => {
             aria-labelledby="customDropoff dropoffZip"
             name="dropoffZip"
             type="text"
-            defaultValue="14853"
+            defaultValue="14850"
             pattern="[0-9]*"
             maxLength={10}
             ref={register({
