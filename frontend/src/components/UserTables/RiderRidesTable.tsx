@@ -5,6 +5,7 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
+import RequestRideModal from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
@@ -39,7 +40,7 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           // returns date in the format "MM/DD/YYYY"
           const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
 
-          const startDate = formatDate(ride.startTime);
+          const startDate = formatDate(ride.endTime);
           const weekdays = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 
           const formatWeekdays = (recurringDays: number[]): string => {
@@ -73,12 +74,8 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
               </p>,
           };
 
-          const editRide = () => {
-            console.log('edit ride button pressed!');
-          };
-
           const editButton = (
-            <Button outline small onClick={() => editRide()}>Edit</Button>
+            <RequestRideModal ride={ride} />
           );
 
           const deleteButton = (
@@ -103,7 +100,7 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           ];
 
           return (
-            <Row data={unscheduledRideData} colSizes={colSizes} />
+            <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
           );
         })}
       </Table>
