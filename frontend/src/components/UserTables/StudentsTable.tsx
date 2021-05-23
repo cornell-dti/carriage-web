@@ -64,9 +64,7 @@ const StudentsTable = () => {
           email,
           address,
           phoneNumber,
-          joinDate,
           accessibility,
-          photoLink,
         } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
@@ -82,19 +80,9 @@ const StudentsTable = () => {
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
         const usageData = getUsageData(id);
-        const riderData = {
-          id,
-          firstName,
-          lastName,
-          netID: netId,
-          phone,
-          accessibility: disability,
-          address,
-          photoLink,
-        };
         const location = {
           pathname: `/riders/${r.id}`,
-          state: riderData,
+          state: r,
         };
         const goToDetail = () => {
           history.push(location);

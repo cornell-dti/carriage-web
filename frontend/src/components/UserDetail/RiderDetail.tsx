@@ -4,26 +4,16 @@ import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
-import { Ride } from '../../types';
+import { Ride, Rider } from '../../types';
 import styles from './userDetail.module.css';
 
-type RiderDetailProps = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  netID: string;
-  phone: string;
-  accessibility: string;
-  photoLink?: string;
-  address: string;
-}
-
 const RiderDetail = () => {
-  const location = useLocation<RiderDetailProps>();
+  const location = useLocation<Rider>();
   const { withDefaults } = useReq();
   const { id: riderId } = useParams<{ id: string }>();
   const [rider, setRider] = useState(location.state);
   const [rides, setRides] = useState<Ride[]>([]);
+  const netid = rider?.email.split('@')[0];
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -48,11 +38,12 @@ const RiderDetail = () => {
       <UserDetail
         firstName={rider.firstName}
         lastName={rider.lastName}
-        netId={rider.netID}
+        netId={netid}
         photoLink={rider.photoLink}
+        rider={rider}
       >
         <div className={styles.riderContactInfo}>
-          <UserContactInfo icon={phone} alt="" text={rider.phone} />
+          <UserContactInfo icon={phone} alt="" text={rider.phoneNumber} />
           <UserContactInfo icon={home} alt="" text={rider.address} />
         </div>
       </UserDetail>

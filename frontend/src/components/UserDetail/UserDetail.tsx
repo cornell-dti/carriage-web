@@ -1,8 +1,10 @@
 import React from 'react';
 import cn from 'classnames';
+import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { edit, detailTrash } from '../../icons/other/index';
+import { detailTrash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
+import { Rider } from '../../types/index';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -46,6 +48,7 @@ type UserDetailProps = {
   role?: string;
   photoLink?: string;
   isRider?: boolean;
+  rider?: Rider;
 };
 
 const UserDetail = ({
@@ -57,6 +60,7 @@ const UserDetail = ({
   role,
   photoLink,
   isRider,
+  rider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   return (
@@ -88,7 +92,7 @@ const UserDetail = ({
                     startDate: employee.startDate,
                   }}
                 />
-                : <img className={styles.editIcon} alt="edit" src={edit} />
+                : <RiderModal existingRider={rider} />
             }
             {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>
