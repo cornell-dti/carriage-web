@@ -78,7 +78,7 @@ const RideModal = ({
       } = formData;
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
-      const hasDriver = driver !== 'None';
+      const hasDriver = Boolean(driver) && driver !== 'None';
       const rideData: ObjectType = {
         type: hasDriver ? 'active' : 'unscheduled',
         startTime,
