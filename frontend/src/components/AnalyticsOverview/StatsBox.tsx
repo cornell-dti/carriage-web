@@ -11,7 +11,9 @@ export type StatsBoxProps = {
 const StatsBox = ({ icon, alt, stats, description }: StatsBoxProps) => (
   <div className={styles.statsbox}>
     <div className={styles.left}>
-      <img className={styles.icon} src={icon} alt={alt} />
+      {icon !== ''
+        ? <img className={styles.icon} src={icon} alt={alt} />
+        : <span className={styles.icon} />}
     </div>
     <div className={styles.right}>
       <p className={styles.stats}>{stats}</p>

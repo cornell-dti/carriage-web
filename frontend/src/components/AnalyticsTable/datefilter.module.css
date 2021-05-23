@@ -1,59 +1,35 @@
 .dateFilter{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 }
 .box{
-    display: flex; 
-    flex-direction: column;
-    margin: 0 1rem; 
+  display: flex; 
+  flex-direction: column;
+  margin: 0 1rem; 
 
 }
+
 .datePickerLabel{
-    font-weight: bold; 
-    font-size: 1.063rem;
-}
-.dropdown{
-    border-radius: 0.5em; 
-    min-width: 7.5 rem; 
-    padding: 0.425rem 1.125rem;
-    text-align: center;
-    font-size: 1.063rem;
+  font-weight: 600; 
+  font-size: 1.25rem;
 }
 
-.yearDropdown{
-    background-color: black;
-    color: white; 
-
+.input {
+  border-radius: 0.625rem; 
+  font-size: 1.25rem;
+  font-weight: 600; 
+  padding: 0.5rem 1rem;
+  border: 1px solid #000000;
 }
 
-.yearDropdown:focus{
-    background-color: white; 
-    color: black; 
-}
-
-.monthDropdown{
-    background-color: white; 
-    color: black;
+::-webkit-calendar-picker-indicator{
+  margin-left: -1rem;
 }
 
 .dateRangeContainer {
-    display: flex; 
-    align-items: center;
-}
-.datePicker1 {
-    padding: 0 1.125rem 0 0;
-}
-.datePicker2 {
-    padding: 0 1.125rem 0 1.125rem;
-}
-
-.dateCalendar {
-    border-radius: 0.5rem;
-}
-
-.calIcon {
-    margin-top: 0.2rem;
+  display: flex; 
+  align-items: center;
 }
