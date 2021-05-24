@@ -83,3 +83,13 @@ export function validateUser(authLevel: UserType) {
     });
   };
 }
+
+export const daysUntilWeekday = (start: moment.Moment, weekday: number): number => {
+  const startWeekday = start.day();
+  let endWeekday = weekday;
+  if (weekday < startWeekday) {
+    endWeekday += 7;
+  }
+  const days = endWeekday - startWeekday;
+  return days || 7;
+};

@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import moment from 'moment';
+import DeleteRideModal from '../Modal/DeleteRideModal';
 import Tag from '../Tag/Tag';
 import { Ride } from '../../types';
 import styles from './smodal.module.css';
@@ -9,11 +10,12 @@ import { trash, x } from '../../icons/other/index';
 type SModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Ride | undefined;
+  ride: Ride;
   cancel: (ride: Ride) => void;
 };
 
 const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
+  const [deleteOpen, setDeleteOpen] = useState(false);
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
@@ -33,11 +35,12 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
 
   return (
     <>
-      {isOpen && ride && (
+      <DeleteRideModal open={deleteOpen} ride={ride} onClose={() => setDeleteOpen(false)} />
+      {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
             <div className={styles.modalOptions}>
-              <button className={styles.cancel} onClick={() => cancel(ride)}>
+              <button className={styles.cancel} onClick={() => setDeleteOpen(true)}>
                 <img src={trash} alt="trash" />
               </button>
               <button className={styles.close} onClick={close}>

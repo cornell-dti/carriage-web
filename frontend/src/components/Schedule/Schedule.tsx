@@ -202,12 +202,14 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        close={closeModal}
-        ride={currentRide}
-        cancel={cancelRide}
-      />
+      {currentRide && (
+        <Modal
+          isOpen={isOpen}
+          close={closeModal}
+          ride={currentRide}
+          cancel={cancelRide}
+        />
+      )}
       <div
         className={cn(styles.calendar_container, { [styles.long]: viewState })}
       >

@@ -23,10 +23,12 @@ const RiderDetail = () => {
   };
 
   useEffect(() => {
-    if (riderId && !rider) {
-      fetch(`/api/riders/${riderId}`, withDefaults())
-        .then((res) => res.json())
-        .then((data) => setRider(data));
+    if (riderId) {
+      if (!rider) {
+        fetch(`/api/riders/${riderId}`, withDefaults())
+          .then((res) => res.json())
+          .then((data) => setRider(data));
+      }
       fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
         .then((res) => res.json())
         .then(({ data }) => setRides(data.sort(compRides)));

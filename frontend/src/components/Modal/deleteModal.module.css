@@ -1,0 +1,20 @@
+.modal {
+    width: 16rem;
+}
+.modalText {
+    font-size: 1.12rem;
+    text-align: center;
+}
+
+.buttonContainer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.redButton {
+    background-color: #EB0023;
+    border: 0.063rem solid #000000;
+    box-sizing: border-box;
+    border: none;
+}

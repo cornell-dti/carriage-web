@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
+import DeleteRideModal from '../Modal/DeleteRideModal';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
-import { Button } from '../FormElements/FormElements';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
 import RequestRideModal from '../RequestRideModal/RequestRideModal';
@@ -12,6 +12,7 @@ type RiderRidesTableProps = {
 }
 
 const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
+  const [deleteOpen, setDeleteOpen] = useState(-1);
   const colSizes = [1, 1, 1, 1, 1];
   const headers = ['Time', 'Pickup Location', 'Dropoff Location', 'This ride repeats...', ''];
 
@@ -79,10 +80,14 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           );
 
           const deleteButton = (
-            <button className={styles.deleteIcon} >
+            <button className={styles.deleteIcon} onClick={() => setDeleteOpen(index)}>
               <img src={trashbig} alt='delete ride' />
             </button>
           );
+
+          const onClose = () => {
+            setDeleteOpen(-1);
+          };
 
           const valueEditDelete = {
             data: <>
@@ -100,7 +105,10 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           ];
 
           return (
-            <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
+            <>
+              <DeleteRideModal open={deleteOpen === index} ride={ride} onClose={onClose} />
+              <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
+            </>
           );
         })}
       </Table>
