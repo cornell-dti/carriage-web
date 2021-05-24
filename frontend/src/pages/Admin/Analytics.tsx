@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useReq } from '../../context/req';
-import AnalyticsTable, { TableData } from '../../components/AnalyticsTable/AnalyticsTable';
+import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
-import { Driver } from '../../types';
+import { Driver, TableData } from '../../types';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import Notification from '../../components/Notification/Notification';
+
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
