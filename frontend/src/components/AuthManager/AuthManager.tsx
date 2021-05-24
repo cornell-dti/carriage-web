@@ -1,6 +1,12 @@
-import React, { useState, FunctionComponent } from 'react';
+import React, { useState, useEffect, FunctionComponent } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
-import { useHistory, useLocation, Redirect, Route, Switch } from 'react-router-dom';
+import {
+  useHistory,
+  useLocation,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -8,19 +14,31 @@ import AuthContext from '../../context/auth';
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
+import SubscribeWrapper from './SubscrbeWrapper';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
+import { Admin, Rider } from '../../types/index';
 
-export const AuthManager: FunctionComponent = ({ children }) => {
+export const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
   const [id, setId] = useState('');
+  const [initPath, setInitPath] = useState('');
+  const [user, setUser] = useState<Admin | Rider>();
+  // useState can take a function that returns the new state value, so need to
+  // supply a function that returns another function
+  const [refreshUser, setRefreshUser] = useState(() => () => { });
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
   const { signOut } = useGoogleLogout({ clientId });
+
+  useEffect(() => {
+    setInitPath(pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function logout() {
     signOut();
@@ -42,6 +60,22 @@ export const AuthManager: FunctionComponent = ({ children }) => {
         'Content-Type': 'application/json',
       },
     } as RequestInit;
+  }
+
+  function createRefresh(userId: string, userType: string, token: string) {
+    const fetchURL = userType === 'Admin'
+      ? `/api/admins/${userId}`
+      : `/api/riders/${userId}`;
+    return () => {
+      fetch(fetchURL, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setUser(data));
+    };
   }
 
   function generateOnSignIn(isAdmin: boolean) {
@@ -70,9 +104,14 @@ export const AuthManager: FunctionComponent = ({ children }) => {
           setId(decoded.id);
           localStorage.setItem('userType', decoded.userType);
           setJWT(serverJWT);
+          const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
+          refreshFunc();
+          setRefreshUser(() => refreshFunc);
           setSignedIn(true);
-          if (pathname === '/') {
+          if (initPath === '/') {
             history.push(isAdmin ? '/admin/home' : '/rider/home');
+          } else {
+            history.push(initPath);
           }
         } else {
           logout();
@@ -89,8 +128,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -114,8 +152,7 @@ export const AuthManager: FunctionComponent = ({ children }) => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}
-            >
+              disabled={renderProps.disabled}>
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -137,16 +174,18 @@ export const AuthManager: FunctionComponent = ({ children }) => {
   );
 
   const SiteContent = () => (
-    <AuthContext.Provider value={{ logout, id }}>
+    <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
       <ReqContext.Provider value={{ withDefaults }}>
-        <Switch>
-          <Route exact path="/" component={LoginPage} />
-          <PrivateRoute path="/admin" component={AdminRoutes} />
-          <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
+        <SubscribeWrapper userId={id}>
+          <Switch>
+            <Route exact path="/" component={LoginPage} />
+            <PrivateRoute path="/admin" component={AdminRoutes} />
+            <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+            <Route path="*">
+              <Redirect to="/" />
+            </Route>
+          </Switch>
+        </SubscribeWrapper>
       </ReqContext.Provider>
     </AuthContext.Provider>
   );

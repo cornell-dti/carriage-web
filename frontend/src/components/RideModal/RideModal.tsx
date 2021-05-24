@@ -78,10 +78,12 @@ const RideModal = ({
       } = formData;
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
+      const hasDriver = Boolean(driver) && driver !== 'None';
       const rideData: ObjectType = {
+        type: hasDriver ? 'active' : 'unscheduled',
         startTime,
         endTime,
-        driver,
+        driver: hasDriver ? driver : undefined,
         rider,
         startLocation,
         endLocation,
@@ -102,7 +104,7 @@ const RideModal = ({
           '/api/rides',
           withDefaults({
             method: 'POST',
-            body: JSON.stringify(formData),
+            body: JSON.stringify(rideData),
           }),
         );
       }

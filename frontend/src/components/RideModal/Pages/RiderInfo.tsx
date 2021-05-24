@@ -9,13 +9,14 @@ import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState, getValues } = useForm({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
       dropoffLoc: formData?.dropoffLoc ?? '',
     },
   });
+  const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { withDefaults } = useReq();
@@ -37,7 +38,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     }, {});
     setNameToId(nameToIdObj);
 
-    fetch('/api/locations', withDefaults())
+    fetch('/api/locations?active=true', withDefaults())
       .then((res) => res.json())
       .then(({ data }: { data: Location[] }) => {
         const locationToIdObj = data.reduce((acc: ObjectType, l) => {
@@ -57,11 +58,16 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             placeholder="Name"
             className={styles.nameInput}
+            list="names"
             ref={register({
               required: true,
               validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
             })}
           />
+          {errors.name && <p className={styles.error}>Rider not found</p>}
+          <datalist id="names">
+            {riders.map((r) => <option key={r.id}>{r.firstName} {r.lastName}</option>)}
+          </datalist>
         </div>
         <div className={styles.pickupLocation}>
           <Input
@@ -71,8 +77,9 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             list="locations"
             ref={register({ required: true })}
           />
+          {errors.pickupLoc && <p className={styles.error}>Please enter a location</p>}
           <datalist id="locations">
-            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
+            {locations.map((l) => <option key={l}>{l}</option>)}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
@@ -81,18 +88,30 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             placeholder="Dropoff Location"
             list="locations"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              validate: (dropoffLoc) => {
+                const pickupLoc = getValues('pickupLoc');
+                return pickupLoc !== dropoffLoc;
+              },
+            })}
           />
+          {errors.dropoffLoc?.type === 'required' && (
+            <p className={styles.error}>Please enter a location</p>
+          )}
+          {errors.dropoffLoc?.type === 'validate' && (
+            <p className={styles.error}>Locations cannot match</p>
+          )}
           <datalist id="locations">
-            {locations.map((l) => (l === 'Custom' ? null : <option key={l}>{l}</option>))}
+            {locations.map((l) => <option key={l}>{l}</option>)}
           </datalist>
         </div>
-      </div>
+      </div >
       <div className={styles.btnContainer}>
         <Button outline type="button" onClick={onBack}>Back</Button>
         <Button type="submit">{formData?.rider ? 'Edit a Ride' : 'Add a Ride'}</Button>
       </div>
-    </form>
+    </form >
   );
 };
 

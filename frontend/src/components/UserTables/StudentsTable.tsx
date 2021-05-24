@@ -57,7 +57,15 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { id, firstName, lastName, email, address, phoneNumber, accessibility } = r;
+        const {
+          id,
+          firstName,
+          lastName,
+          email,
+          address,
+          phoneNumber,
+          accessibility,
+        } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
@@ -72,17 +80,9 @@ const StudentsTable = () => {
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
         const usageData = getUsageData(id);
-        const riderData = {
-          id: r.id,
-          firstName,
-          lastName,
-          netID: netId,
-          phone,
-          accessibility: disability,
-        };
         const location = {
           pathname: `/riders/${r.id}`,
-          state: riderData,
+          state: r,
         };
         const goToDetail = () => {
           history.push(location);
