@@ -10,8 +10,7 @@ p {
   margin: 0;
 }
 
-input,
-button {
+input, button, select, option {
   font-family: 'Inter', Arial, sans-serif;
 }
 

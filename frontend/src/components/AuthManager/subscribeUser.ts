@@ -17,23 +17,37 @@ const convertedVapidKey = urlBase64ToUint8Array(
 
 type WithDefaultsType = (options?: RequestInit | undefined) => RequestInit;
 
-const sendSubscription = (sub: PushSubscription, withDefaults: WithDefaultsType) => {
+const sendSubscription = (
+  userType: string,
+  userId: string,
+  sub: PushSubscription,
+  withDefaults: WithDefaultsType,
+) => {
   const subscription = {
+    userType,
+    userId,
     platform: 'web',
     webSub: sub,
   };
-  fetch('/api/notification/subscribe', withDefaults({
-    method: 'POST',
-    body: JSON.stringify(subscription),
-  }));
+  fetch(
+    '/api/notification/subscribe',
+    withDefaults({
+      method: 'POST',
+      body: JSON.stringify(subscription),
+    }),
+  );
 };
 
-const subscribeUser = (withDefaults: WithDefaultsType) => {
+const subscribeUser = (
+  userType: string,
+  userId: string,
+  withDefaults: WithDefaultsType,
+) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
       .then((registration) => {
         if (!registration.pushManager) {
-          console.log('Push manager unavailable.');
+          // 'Push manager unavailable.'
           return;
         }
 
@@ -41,38 +55,40 @@ const subscribeUser = (withDefaults: WithDefaultsType) => {
           .getSubscription()
           .then((existedSubscription) => {
             if (existedSubscription === null) {
-              console.log('No subscription detected, make a request.');
+              // 'No subscription detected, make a request.'
               registration.pushManager
                 .subscribe({
                   applicationServerKey: convertedVapidKey,
                   userVisibleOnly: true,
                 })
                 .then((newSubscription) => {
-                  console.log('New subscription added.');
-                  sendSubscription(newSubscription, withDefaults);
+                  // 'New subscription added.'
+                  sendSubscription(
+                    userType,
+                    userId,
+                    newSubscription,
+                    withDefaults,
+                  );
                 })
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
-                    console.log('Permission was not granted.');
-                  } else {
-                    console.error(
-                      'An error ocurred during the subscription process.',
-                      e,
-                    );
+                    // 'Permission was not granted.'
                   }
                 });
             } else {
-              console.log('Existed subscription detected.');
-              // TODO TEMP for testing
-              sendSubscription(existedSubscription, withDefaults);
+              // 'Existed subscription detected.'
+              // sending anyway right now
+              sendSubscription(
+                userType,
+                userId,
+                existedSubscription,
+                withDefaults,
+              );
             }
           });
       })
       .catch((e) => {
-        console.error(
-          'An error ocurred during Service Worker registration.',
-          e,
-        );
+        // 'An error ocurred during Service Worker registration.'
       });
   }
 };

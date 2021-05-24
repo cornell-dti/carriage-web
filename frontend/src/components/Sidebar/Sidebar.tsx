@@ -25,6 +25,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const [profile, setProfile] = useState('');
   const authContext = useContext(AuthContext);
   const reqContext = useContext(ReqContext);
+  const localUserType = localStorage.getItem('userType');
+  const isAdmin = localUserType === 'Admin';
 
   useEffect(() => {
     const { id } = authContext;
@@ -51,24 +53,26 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
-        {menuItems.map(({ path, icon, caption }) => (
-          <div key={path} className={styles.sidebarLinks}>
-            <Link key={path} onClick={() => setSelected(path)}
-              className={styles.icon} to={path}>
-              <div className={
-                path === selected
-                  ? cn(styles.selected, styles.circle)
-                  : styles.circle
-              }>
-                <img alt={caption} src={icon} />
-              </div>
-              <div className={styles.caption}>{caption}</div>
-            </Link>
-          </div>
-        ))}
+        <div>
+          {menuItems.map(({ path, icon, caption }) => (
+            <div key={path} className={styles.sidebarLinks}>
+              <Link key={path} onClick={() => setSelected(path)}
+                className={styles.icon} to={path}>
+                <div className={
+                  path === selected
+                    ? cn(styles.selected, styles.circle)
+                    : styles.circle
+                }>
+                  <img alt={caption} src={icon} />
+                </div>
+                <div className={styles.caption}>{caption}</div>
+              </Link>
+            </div>
+          ))}
+        </div>
         <div className={styles.logout}>
-          <img alt="profile_picture" className={styles.profile}
-            src={profile === '' || !profile ? blank : `https://${profile}`} />
+          {isAdmin && <img alt="profile_picture" className={styles.profile}
+            src={profile === '' || !profile ? blank : `https://${profile}`} />}
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}

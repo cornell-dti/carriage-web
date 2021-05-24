@@ -3,16 +3,18 @@ import { Driver, Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
+import RideModal from '../RideModal/RideModal';
 import styles from './table.module.css';
 
 type RidesTableProps = {
   rides: Ride[];
   drivers: Driver[];
-  hasAssignButton: boolean;
+  hasButtons: boolean;
 }
 
-const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
-  const [openModal, setOpenModal] = useState(-1);
+const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
+  const [openAssignModal, setOpenAssignModal] = useState(-1);
+  const [openEditModal, setOpenEditModal] = useState(-1);
   const [driverSet, setDriverSet] = useState(['']);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
@@ -26,8 +28,8 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
       <Table>
         <Row
           header
-          colSizes={hasAssignButton ? unscheduledColSizes : scheduledColSizes}
-          data={hasAssignButton ? unscheduledHeaders : scheduledHeaders}
+          colSizes={hasButtons ? unscheduledColSizes : scheduledColSizes}
+          data={hasButtons ? unscheduledHeaders : scheduledHeaders}
         />
         {rides.map((ride, index) => {
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
@@ -64,17 +66,13 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
           };
 
           const assignButton = (
-            <Button className={styles.assignButton} onClick={() => setOpenModal(index)} small>
+            <Button className={styles.assignButton} onClick={() => setOpenAssignModal(index)} small>
               Assign
             </Button>
           );
 
-          const editRide = () => {
-            console.log('edit ride button pressed!');
-          };
-
           const editButton = (
-            <Button outline small onClick={() => editRide()}>Edit</Button>
+            <Button outline small onClick={() => setOpenEditModal(index)}>Edit</Button>
           );
 
           const valueEditAssign = {
@@ -117,16 +115,21 @@ const RidesTable = ({ rides, drivers, hasAssignButton }: RidesTableProps) => {
 
           return (
             <>
-              {hasAssignButton ? unscheduledRow() : scheduledRow()}
+              {hasButtons ? unscheduledRow() : scheduledRow()}
               <AssignDriverModal
-                isOpen={(openModal === index) && !hasDriver}
-                close={() => setOpenModal(-1)}
+                isOpen={(openAssignModal === index) && !hasDriver}
+                close={() => setOpenAssignModal(-1)}
                 setDriver={(driverName: string) => {
                   driverSet[index] = driverName;
                   setDriverSet([...driverSet])
                 }}
                 ride={rides[index]}
                 allDrivers={drivers}
+              />
+              <RideModal 
+                open={openEditModal === index}
+                close={() => setOpenEditModal(-1)}
+                ride={rides[index]}
               />
             </>
           );

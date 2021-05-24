@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import cn from 'classnames';
 import styles from './tabSwitcher.module.css';
-import Notification from '../Notification/Notification';
 import pageStyles from '../../pages/Admin/page.module.css';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
@@ -14,51 +13,37 @@ type TabProps = {
 export const Tab = ({ children }: TabProps) => <>{children}</>;
 
 type TabSwitcherProps = {
+  labels: string[];
   children: JSX.Element[];
+  renderRight: () => React.ReactNode;
 }
 
-const TabSwitcher = ({ children }: TabSwitcherProps) => {
-  const [tabLabels, setTabLabels] = useState<string[]>([]);
-  const [currentTab, setCurrentTab] = useState(children[0].props.label);
-  const [currentContent, setCurrentContent] = useState(children[0].props.children);
-
-  useEffect(() => {
-    const labels = children.map((child) => child.props.label);
-    setTabLabels(labels);
-  }, [children]);
-
-  const switchTab = (tab: string): void => {
-    setCurrentTab(tab);
-    children.forEach((child) => {
-      if (child.props.label === tab) {
-        setCurrentContent(child.props.children);
-      }
-    });
-  };
+const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
+  const [currentTab, setCurrentTab] = useState(0);
 
   return (
-    <div>
+    <>
       <div className={pageStyles.pageTitle}>
         <div>
           <div>
-            {tabLabels.map((tabLabel) => (
+            {labels.map((label, i) => (
               <h1
-                key={tabLabel}
-                className={cn(styles.tab, { [styles.current]: tabLabel === currentTab })}
-                onClick={() => switchTab(tabLabel)}
+                key={label}
+                className={cn(styles.tab, { [styles.current]: currentTab === i })}
+                onClick={() => setCurrentTab(i)}
               >
-                {tabLabel}
+                {label}
               </h1>
             ))}
           </div>
           <span className={styles.underline} />
         </div>
         <div className={styles.rightSection}>
-          <Notification />
+          {renderRight()}
         </div>
       </div>
-      <div className={pageStyles.pageContainer}>{currentContent}</div>
-    </div >
+      <div className={pageStyles.pageContainer}>{children[currentTab]}</div>
+    </>
   );
 };
 

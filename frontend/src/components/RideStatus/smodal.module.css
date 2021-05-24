@@ -24,17 +24,27 @@
   font-size: 12px;
 }
 
-.close {
-  cursor: pointer;
+.modalOptions {
   position:absolute;
   top:15px;
   right:15px;
+  display: inline;
+}
+
+.close, .cancel {
+  cursor: pointer;
   background: none;
   border: none;
   height:16px;
   width:16px;
 }
-.close:focus{
+
+.cancel {
+  padding-bottom: 0.1rem;
+  margin-right: 0.7rem;
+}
+
+.close:focus, .cancel:focus {
   outline: none;
 }
 
@@ -70,7 +80,7 @@
 }
 
 .footer {
-    width: 320px;
+  width: 320px;
 }
 
 .location {
@@ -79,26 +89,6 @@
   border-radius: 5px;
 }
 
-.tag {
-  border-radius: 5px;
-  padding: 0.313rem;
-}
-.ctown {
-  background-color: #d5f2ea;
-}
-
-.west {
-  background-color: #ffd8de;
-}
-
-.central {
-  background-color: #fce4ab;
-}
-
-.north {
-  background-color: #fcc999;
-}
-
-.dtown {
-  background-color: #b0d7f9;
+.locationName {
+  line-height: 1.6;
 }

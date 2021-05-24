@@ -1,14 +1,10 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { Admin, AdminType } from './admin';
-import { Driver, DriverType } from './driver';
-import { Rider, RiderType } from './rider';
 
 export enum UserType {
-  ADMIN = 'admin',
-  RIDER = 'rider',
-  DRIVER = 'driver',
-  USER = 'user'
+  ADMIN = 'Admin',
+  RIDER = 'Rider',
+  DRIVER = 'Driver'
 }
 
 export enum PlatformType {
@@ -21,16 +17,12 @@ export type SubscriptionType = {
   id: string; // endpoint + user type + platform type
   endpoint: string;
   userType: UserType;
+  userId: string;
   platform: PlatformType;
   timeAdded: string;
   keys?: {
     p256dh: string;
     auth: string;
-  };
-  user?: {
-    admin?: AdminType;
-    driver?: DriverType;
-    rider?: RiderType;
   };
   preferences: string[];
 };
@@ -50,6 +42,10 @@ const schema = new dynamoose.Schema({
     enum: Object.values(UserType),
     required: true,
   },
+  userId: {
+    type: String,
+    required: true,
+  },
   platform: {
     type: String,
     enum: Object.values(PlatformType),
@@ -67,16 +63,9 @@ const schema = new dynamoose.Schema({
       auth: String,
     },
   },
-  user: {
-    type: Object,
-    schema: {
-      admin: Admin,
-      driver: Driver,
-      rider: Rider,
-    },
-  },
   preferences: {
     type: Array,
+    required: true,
     schema: [String],
     default: [],
   },
