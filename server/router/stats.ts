@@ -12,7 +12,7 @@ import { Driver } from '../models/driver';
 const router = express.Router();
 const tableName = 'Stats';
 
-router.get('/download', validateUser('User'), (req, res) => {
+router.get('/download', validateUser('Admin'), (req, res) => {
   const { query: { from, to } } = req;
   let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
   const dates = [date];
@@ -27,7 +27,7 @@ router.get('/download', validateUser('User'), (req, res) => {
   statsFromDates(dates, res, true);
 });
 
-router.put('/', validateUser('User'), (req, res) => {
+router.put('/', validateUser('Admin'), (req, res) => {
   const { body: { dates } } = req;
 
   const numEdits = Object.keys(dates).length;
@@ -48,7 +48,7 @@ router.put('/', validateUser('User'), (req, res) => {
   });
 });
 
-router.get('/', validateUser('User'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   const { query: { from, to } } = req;
   const regexp = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
   const fromMatch = from ? (from as string).match(regexp) : false;

@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import cn from 'classnames';
 import moment from 'moment';
 import styles from './datefilter.module.css';
 
-const DateFilter = () => {
-  const currDate = new Date();
-  const [selectedYear, setSelectedYear] = useState(currDate.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(currDate.getMonth());
-  const [startDate, setStartDate] = useState(moment(currDate).format('YYYY-MM-DD'));
-  const [endDate, setEndDate] = useState(moment(currDate).format('YYYY-MM-DD'));
+type DateFilterProps = {
+  year: number;
+  month: number;
+  startDate: string;
+  endDate: string;
+  onChange: (unit: 'year' | 'month' | 'startDate' | 'endDate', value: any) => void;
+}
 
+const DateFilter = ({ year, month, startDate, endDate, onChange }: DateFilterProps) => {
   const months = [
     'January',
     'February',
@@ -38,12 +40,10 @@ const DateFilter = () => {
           id="year"
           name='year'
           className={cn(styles.input, styles.yearDropdown)}
-          defaultValue={selectedYear}
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
+          value={year}
+          onChange={(e) => onChange('year', Number(e.target.value))}
         >
-          {years.map((y, i) => <option key={y} value={i}>{y}</option>)}
+          {years.map((y) => <option key={y} value={y}>{y}</option>)}
         </select>
       </div>
       <div className={styles.box}>
@@ -52,10 +52,8 @@ const DateFilter = () => {
           id='month'
           name='month'
           className={styles.input}
-          defaultValue={selectedMonth}
-          onChange={(e) => {
-            console.log(e.target.value);
-          }}
+          value={month}
+          onChange={(e) => onChange('month', Number(e.target.value))}
         >
           {months.map((m, i) => <option key={m} value={i}>{m}</option>)}
         </select>
@@ -67,18 +65,26 @@ const DateFilter = () => {
             className={styles.input}
             type="date"
             onChange={(e) => {
-              console.log(e.target.value);
+              const newStart = e.target.value;
+              if (newStart > endDate) {
+                onChange('endDate', newStart);
+              }
+              onChange('startDate', newStart);
             }}
-            defaultValue={startDate}
+            value={startDate}
           />
           <span style={{ margin: '0 1rem' }}>-</span>
           <input
             className={styles.input}
             type="date"
             onChange={(e) => {
-              console.log(e.target.value);
+              const newEnd = e.target.value;
+              if (newEnd < startDate) {
+                onChange('startDate', newEnd);
+              }
+              onChange('endDate', newEnd);
             }}
-            defaultValue={endDate}
+            value={endDate}
           />
         </div>
       </div>
