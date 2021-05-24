@@ -6,7 +6,7 @@
   min-height: 340px;
   margin-left: -89px;
   transform:translateY(-50%);
-  z-index: 100000;
+  z-index: 1000;
 }
 
 .title {
