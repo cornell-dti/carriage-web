@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import cn from 'classnames';
 import { useReq } from '../../context/req';
@@ -19,8 +20,8 @@ const StudentsTable = () => {
   const { riders } = useRiders();
   const history = useHistory();
   const { withDefaults } = useReq();
-  const colSizes = [1, 0.75, 0.75, 1.25, 1];
-  const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
+  const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
+  const headers = ['Name / NetId', 'Number', 'Address', 'Date', 'Usage', 'Disability'];
   const [usage, setUsage] = useState<UsageType>({});
 
   useEffect(() => {
@@ -49,6 +50,9 @@ const StudentsTable = () => {
     const secondPart = number.slice(6);
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
+
+  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
+
   return (
     <Table>
       <Row
@@ -65,6 +69,8 @@ const StudentsTable = () => {
           address,
           phoneNumber,
           accessibility,
+          joinDate,
+          endDate
         } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
@@ -79,6 +85,7 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
+        const joinEndDate = formatDate(joinDate) + ' - ' + formatDate(endDate);
         const usageData = getUsageData(id);
         const location = {
           pathname: `/riders/${r.id}`,
@@ -87,7 +94,7 @@ const StudentsTable = () => {
         const goToDetail = () => {
           history.push(location);
         };
-        const data = [nameNetId, phone, shortAddress, usageData, disability];
+        const data = [nameNetId, phone, shortAddress, joinEndDate, usageData, disability];
         return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
       })}
     </Table>
