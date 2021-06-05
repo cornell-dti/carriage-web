@@ -5,6 +5,7 @@ import styles from './userDetail.module.css';
 import { detailTrash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { Rider } from '../../types/index';
+import { Button } from '../FormElements/FormElements';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -63,6 +64,9 @@ const UserDetail = ({
   rider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
+  const toggleActive = (): void => {
+    console.log('toggleActive called!');
+  }
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       <div className={styles.imgContainer}>
@@ -77,6 +81,7 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
+            {rider && <Button onClick={toggleActive}>Deactivate</Button>}
             {
               employee
                 ? <EmployeeModal
