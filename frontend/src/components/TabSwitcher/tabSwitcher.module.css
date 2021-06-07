@@ -5,12 +5,21 @@
   font-weight: bold;
   color: #848484;
   padding: 0 0.6rem 0.25rem 0.6rem;
+  background-color: #fff;
+  border:none; 
+  outline: none;
 }
 
 .tab:hover {
   cursor: pointer;
 }
+.tabHeading{
+  display:inline; 
+}
 
+.tab:focus{
+  border: 3px solid black; 
+}
 .current {
   color: black;
   border-bottom: solid black 4px;

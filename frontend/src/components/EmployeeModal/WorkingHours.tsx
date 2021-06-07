@@ -3,7 +3,7 @@ import cn from 'classnames';
 import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
-import { Input } from '../FormElements/FormElements';
+import { Input, SRLabel } from '../FormElements/FormElements';
 import { WeekProvider, useWeek } from './WeekContext';
 
 type AvailabilityInputProps = {
@@ -93,7 +93,9 @@ const AvailabilityInput = ({
   return (
     <div className={styles.availabilityInput}>
       <div className={styles.timeFlexbox}>
+        <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
         <Input
+          id={`${instance}.startTime`}
           name={`${instance}.startTime`}
           type='time'
           className={styles.timeInput}
@@ -107,7 +109,9 @@ const AvailabilityInput = ({
         </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
+      <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
       <Input
+        id={`${instance}.endTime`}
         name={`${instance}.endTime`}
         type='time'
         className={styles.timeInput}
@@ -220,9 +224,9 @@ const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
           ))
         )}
       </WeekProvider>
-      <p className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
+      <button type={'button'} className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
         + Add more
-      </p>
+      </button>
     </div>
   );
 };

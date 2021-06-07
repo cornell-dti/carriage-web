@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory} from 'react-router-dom';
 import cn from 'classnames';
 import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
@@ -17,8 +17,8 @@ type UsageType = {
 
 const StudentsTable = () => {
   const { riders } = useRiders();
-  const history = useHistory();
   const { withDefaults } = useReq();
+  const history = useHistory();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
   const [usage, setUsage] = useState<UsageType>({});
@@ -88,7 +88,11 @@ const StudentsTable = () => {
           history.push(location);
         };
         const data = [nameNetId, phone, shortAddress, usageData, disability];
-        return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
+        return (
+          <Link to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+            <Row data={data} colSizes={colSizes} />
+          </Link>
+        );
       })}
     </Table>
   );

@@ -202,7 +202,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     <>
       {
         existingEmployee
-          ? <img className={styles.edit} alt="edit" src={edit} onClick={openModal} />
+          ? <input type='image' className={styles.edit} alt="edit"
+            src={edit} onClick={openModal} />
           : <Button onClick={openModal}>+ Add an employee</Button>
       }
       {showingToast ? <Toast message='The employee has been added.' /> : null}

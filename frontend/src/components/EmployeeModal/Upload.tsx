@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 
@@ -9,7 +9,13 @@ type UploadProps = {
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const [imageURL, setImageURL] = useState(existingPhoto ? `http://${existingPhoto}` : '');
-
+  const inputRef = createRef<HTMLInputElement>();
+  /*This is for accessibility purposes only*/
+  const handleKeyboardPress = (e: React.KeyboardEvent) =>{
+    if( e.key === 'Enter' ){
+      inputRef.current && inputRef.current.click();
+    }
+  };
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const { files } = e.target;
@@ -26,18 +32,20 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   return (
     <div className={styles.uploadContainer}>
       {imageURL
-        ? <img className={styles.uploadImg} alt="uploaded profile" src={imageURL} />
+        ? <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
         : <img className={styles.uploadImg} alt="profile upload" src={uploadBox} />
       }
       <input
         id="driverPhotoInput"
         type="file"
         accept="image/png, image/jpeg"
+        ref={inputRef}
         style={{ display: 'none' }}
         onChange={(e) => previewImage(e)}
       />
       <label htmlFor="driverPhotoInput" className={styles.uploadText}>
-        Upload a picture
+        <span role="button" aria-controls="filename" tabIndex={0} onKeyPress={handleKeyboardPress}>
+          Upload a picture</span>
       </label>
     </div>
   );
