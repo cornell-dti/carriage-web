@@ -34,7 +34,7 @@ const Schedule = () => {
           <Notification />
         </div>
       </div>
-      {(rides && rides.length) && (
+      {(rides && rides.length > 0) && (
         <>
           <Collapsible title={'Your Upcoming Rides'}>
             <RiderScheduleTable data={rides} isPast={false} />
