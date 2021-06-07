@@ -10,7 +10,7 @@ import { createKeys, validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { UserType } from '../models/subscription';
-import { sendToUsers } from '../util/notification';
+import { notifyEdit } from '../util/notification';
 
 
 const router = express.Router();
@@ -172,33 +172,12 @@ router.put('/:id', validateUser('User'), (req, res) => {
   }
   db.update(res, Ride, { id }, body, tableName, (doc) => {
     const ride = JSON.parse(JSON.stringify(doc.toJSON()));
-    const riderId = ride.rider.id;
-    const driverId = ride.driver ? ride.driver.id : null;
-    const userId = res.locals.user.id;
     const { userType } = res.locals.user;
+    const userId = res.locals.user.id;
 
-    const info = JSON.stringify({
-      ride,
-      change: body,
-      changedBy: {
-        userType,
-        userId,
-      },
-    });
-
-    sendToUsers(info, UserType.ADMIN);
-
-    if (userType === UserType.ADMIN) {
-      ride.driver && sendToUsers(info, UserType.DRIVER, driverId);
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-    if (userType === UserType.RIDER && ride.driver) {
-      sendToUsers(info, UserType.DRIVER, driverId);
-    }
-    if (userType === UserType.DRIVER) {
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-    res.send(ride);
+    // send ride even if notification failed since it was actually updated
+    notifyEdit(ride, body, userType, userId)
+      .then(() => res.send(ride)).catch(() => res.send(ride));
   });
 });
 
@@ -234,7 +213,10 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
       .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
       .toISOString();
 
-    const handleEdit = (ride: RideType) => {
+    const handleEdit = (change: any) => (ride: RideType) => {
+      const { userType } = res.locals.user;
+      const userId = res.locals.user.id;
+
       // if deleteOnly = false, create a replace edit with the new fields
       if (!deleteOnly) {
         const replaceId = uuid();
@@ -276,20 +258,23 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            res.send(editRide);
+            notifyEdit(editRide, change, userType, userId)
+              .then(() => res.send(editRide)).catch(() => res.send(editRide));
+            // res.send(editRide);
           });
         });
       } else {
-        res.send(ride);
+        notifyEdit(ride, change, userType, userId)
+          .then(() => res.send(ride)).catch(() => res.send(ride));
       }
     };
 
     if (origDate > masterStartDate) {
       // add origDate to masterRide.deleted
       const addDeleteOperation = { $ADD: { deleted: [origDate] } };
-      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit);
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit(addDeleteOperation));
     } else if (origDate === masterStartDate) {
-      // move master repeating ride start and end to next occurance
+      // move master repeating ride start and end to next occurrence
       const momentStart = moment.tz(masterRide.startTime, 'America/New_York');
       const momentEnd = moment.tz(masterRide.endTime, 'America/New_York');
       const nextRideDays = masterRide.recurringDays!.reduce((acc, curr) => (
@@ -299,7 +284,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         startTime: momentStart.add(nextRideDays, 'day').toISOString(),
         endTime: momentEnd.add(nextRideDays, 'day').toISOString(),
       };
-      db.update(res, Ride, { id }, update, tableName, handleEdit);
+      db.update(res, Ride, { id }, update, tableName, handleEdit(update));
     } else {
       res.status(400).send({ err: 'Invalid operaton' });
     }

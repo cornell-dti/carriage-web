@@ -59,5 +59,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://carriage-web.herokuapp.com"
+  "proxy": "https://carriage-web.herokuapp.com",
+  "//": {
+    "local-backend": "http://localhost:3001",
+    "deployed-backend": "https://carriage-web.herokuapp.com" }
 }

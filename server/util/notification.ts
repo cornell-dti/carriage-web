@@ -8,6 +8,7 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
+import { RideType } from '../models/ride';
 
 AWS.config.update({ ...config, region: 'us-east-1' });
 const sns = new AWS.SNS();
@@ -99,20 +100,21 @@ export const deleteAll = () => new Promise((resolve, reject) => {
             if (err2 || !data2) {
               reject2();
             } else {
-              console.log('deleting', id);
               data2.delete().then(() => resolve2('good'));
             }
           });
         });
       });
-      Promise.allSettled(promises)
-        .then((results) => {
-          const status = results.map((el) => el.status);
-          const map = status.reduce((acc, el) => acc.set(el, (acc.get(el) || 0) + 1), new Map());
-          const passed = map.get('fulfilled') || 0;
-          const total = (map.get('rejected') || 0) + passed;
-          resolve(`${passed}/${total} passed`);
-        });
+      Promise.allSettled(promises).then((results) => {
+        const status = results.map((el) => el.status);
+        const map = status.reduce(
+          (acc, el) => acc.set(el, (acc.get(el) || 0) + 1),
+          new Map(),
+        );
+        const passed = map.get('fulfilled') || 0;
+        const total = (map.get('rejected') || 0) + passed;
+        resolve(`${passed}/${total} passed`);
+      });
     }
   });
 });
@@ -137,16 +139,49 @@ export const sendToUsers = (
         const sub = JSON.parse(JSON.stringify(doc.toJSON()));
         return sendMsg(sub, msg);
       });
-      Promise.allSettled(promises)
-        .then((results) => {
-          const status = results.map((el) => el.status);
-          const map = status.reduce((acc, el) => acc.set(el, (acc.get(el) || 0) + 1), new Map());
-          const passed = map.get('fulfilled') || 0;
-          const total = (map.get('rejected') || 0) + passed;
-          resolve(`${passed}/${total} passed`);
-        });
+      Promise.allSettled(promises).then((results) => {
+        const status = results.map((el) => el.status);
+        const map = status.reduce(
+          (acc, el) => acc.set(el, (acc.get(el) || 0) + 1),
+          new Map(),
+        );
+        const passed = map.get('fulfilled') || 0;
+        const total = (map.get('rejected') || 0) + passed;
+        resolve(`${passed}/${total} passed`);
+      });
     }
   });
+});
+
+export const notifyEdit = (
+  updatedRide: RideType,
+  change: any,
+  userType: UserType,
+  userId: string,
+) => new Promise((resolve, reject) => {
+  const riderId = updatedRide.rider.id;
+  const hasDriver = updatedRide.driver;
+  const driverId = hasDriver ? updatedRide.driver!.id : '';
+
+  const info = JSON.stringify({
+    ride: updatedRide,
+    change,
+    changedBy: { userType, userId },
+  });
+
+  // potential issue: does not notify old driver/student (if it's different)
+  sendToUsers(info, UserType.ADMIN).then(() => {
+    if (userType === UserType.ADMIN) {
+      hasDriver && sendToUsers(info, UserType.DRIVER, driverId);
+      sendToUsers(info, UserType.RIDER, riderId);
+    }
+    if (userType === UserType.RIDER && hasDriver) {
+      sendToUsers(info, UserType.DRIVER, driverId);
+    }
+    if (userType === UserType.DRIVER) {
+      sendToUsers(info, UserType.RIDER, riderId);
+    }
+  }).then(() => resolve(updatedRide)).catch(reject);
 });
 
 export const subscribe = (req: SubscriptionRequest) => new Promise((resolve, reject) => {
