@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -8,6 +9,8 @@ import {
 import { HashLink } from 'react-router-hash-link';
 import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Schedule from './Schedule';
+import Settings from './Settings';
 import DateContext from '../../context/date';
 
 const Routes = () => {
@@ -42,7 +45,21 @@ const RiderRoutes = () => {
   return (
     <DateContext.Provider value={defaultVal}>
       <Router basename="/rider">
-        <Routes />
+        <Sidebar type="rider">
+          <Switch>
+            <Route
+              path="/schedule"
+              component={Schedule}
+            />
+            <Route
+              path="/settings"
+              component={Settings}
+            />
+            <Route path="*">
+              <Redirect to="/schedule" />
+            </Route>
+          </Switch>
+        </Sidebar>
       </Router>
     </DateContext.Provider>
   );

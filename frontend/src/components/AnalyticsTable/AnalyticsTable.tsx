@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import cn from 'classnames';
 import { SRLabel } from '../FormElements/FormElements';
-import { ObjectType } from '../../types';
+import { ObjectType, TableData } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
-import table, { TableData } from './data';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
-
+import { useReq } from '../../context/req';
 
 type Cell = string | number;
 
@@ -69,13 +68,16 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
 
 type TableProps = {
   type: 'ride' | 'driver';
+  data: TableData[];
+  refreshTable: () => void;
 };
 
-const Table = ({ type }: TableProps) => {
+const Table = ({ type, data, refreshTable }: TableProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
+  const { withDefaults } = useReq();
   const { drivers } = useEmployees();
 
   const sharedCols = ['Date', 'Daily Total'];
@@ -92,14 +94,10 @@ const Table = ({ type }: TableProps) => {
   const driverNames: string[] = [];
   const driverShortNames: string[] = [];
 
-  drivers
-    .sort((a, b) => (
-      `${a.firstName} ${a.lastName}` < `${b.firstName} ${b.lastName}` ? -1 : 1
-    ))
-    .forEach((d) => {
-      driverNames.push(`${d.firstName} ${d.lastName}`);
-      driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
-    });
+  drivers.forEach((d) => {
+    driverNames.push(`${d.firstName} ${d.lastName}`);
+    driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
+  });
 
   const driverTableHeader = sharedCols.concat(driverShortNames);
 
@@ -113,48 +111,6 @@ const Table = ({ type }: TableProps) => {
     'dailyTotal',
   ];
   const dbDriverCols = [...driverNames, 'dailyTotal'];
-
-  const initRideData = (data: TableData[]) => {
-    const rideData: Cell[][] = [];
-    data
-      .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
-      .forEach((d) => {
-        const month = d.monthday.substring(0, 2);
-        const day = d.monthday.substring(2);
-        const date = `${month}/${day}/${d.year}`;
-        const dailyTotal = d.dayCount + d.nightCount;
-        const rideRow = [
-          date,
-          dailyTotal,
-          d.dayCount,
-          d.dayNoShows,
-          d.dayCancels,
-          d.nightCount,
-          d.nightNoShows,
-          d.nightCancels,
-        ];
-        rideData.push(rideRow);
-      });
-    setRideTableData(rideData);
-  };
-
-  const initDriverData = (data: TableData[]) => {
-    const driverData: Cell[][] = [];
-    data
-      .sort((a, b) => (a.year + a.monthday < b.year + b.monthday ? 1 : -1))
-      .forEach((d) => {
-        const month = d.monthday.substring(0, 2);
-        const day = d.monthday.substring(2);
-        const date = `${month}/${day}/${d.year}`;
-        const dailyTotal = Object.values(d.drivers).reduce((a, b) => a + b, 0);
-        const driverRow = [date, dailyTotal];
-        driverNames.forEach((driver) => {
-          driverRow.push(d.drivers[driver] || 0);
-        });
-        driverData.push(driverRow);
-      });
-    setDriverTableData(driverData);
-  };
 
   const handleEdit = (
     rowIndex: number,
@@ -197,20 +153,51 @@ const Table = ({ type }: TableProps) => {
   };
 
   const handleSubmit = () => {
+    fetch('/api/stats/', withDefaults({
+      method: 'PUT',
+      body: JSON.stringify(editData),
+    }))
+      .then(() => refreshTable())
+      .catch(console.error);
     setEditData({ dates: {} });
     setIsEditing(false);
   };
 
-  useEffect(() => console.log(editData), [editData]);
-
   useEffect(() => {
-    if (type === 'ride') {
-      initRideData(table.data);
-    } else {
-      initDriverData(table.data);
+    if (drivers && data) {
+      const rideData: Cell[][] = [];
+      const driverData: Cell[][] = [];
+      data
+        .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
+        .forEach((d) => {
+          const month = d.monthDay.substring(0, 2);
+          const day = d.monthDay.substring(2);
+          const date = `${month}/${day}/${d.year}`;
+          const dailyTotal = d.dayCount + d.nightCount;
+          if (type === 'ride') {
+            rideData.push([
+              date,
+              dailyTotal,
+              d.dayCount,
+              d.dayNoShow,
+              d.dayCancel,
+              d.nightCount,
+              d.nightNoShow,
+              d.nightCancel,
+            ]);
+          } else {
+            const driverRow = [date, dailyTotal];
+            driverNames.forEach((driver) => {
+              driverRow.push(d.drivers[driver] || 0);
+            });
+            driverData.push(driverRow);
+          }
+        });
+      setRideTableData(rideData);
+      setDriverTableData(driverData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type, drivers.length]);
+  }, [data, drivers, type]);
 
   return (
     <div className={styles.analyticsTable}>

@@ -41,11 +41,11 @@ const Modal = ({
   paginate = false,
   currentPage = 0,
   children,
-  onClose = () => { },
+  onClose,
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
-  const numPages = pages.length;
+  const numPages = paginate ? title.length : pages.length;
   const currentTitle = paginate ? title[currentPage] : title;
   useEffect(() => {
     if (isOpen) {
@@ -60,7 +60,7 @@ const Modal = ({
         && createPortal(
           <FocusTrap
             focusTrapOptions={{
-              onDeactivate: () => onClose(),
+              onDeactivate: () => {if(onClose) onClose()},
               returnFocusOnDeactivate: true,
             }}>
             <div className={styles.background}>
@@ -74,14 +74,12 @@ const Modal = ({
                 <div className={styles.page}>
                   {pages[currentPage]}
                 </div>
-                {paginate && (
-                  <PageIndicators pages={numPages} current={currentPage} />
-                )}
               </div>
             </div>
           </FocusTrap>,
           document.body,
-        )}
+        )
+      }
     </>
   );
 };

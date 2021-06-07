@@ -1,30 +1,34 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
-import Footer from '../../components/Footer/Footer';
+import { logo } from '../../icons/other';
 
-const Header = () => (
-  <header className={styles.header}>
-    <h1 className={styles.title}>Welcome to Carriage</h1>
-    <h2 className={styles.subtitle}>Helping People Do Something</h2>
-  </header>
-);
+type LandingPropType = {
+  students: ReactElement,
+  admins: ReactElement
+}
 
-const ReadMore = () => (
-  <a href="https://www.cornelldti.org" className={styles.readBtn}>
-    Read More
-  </a>
-);
-
-const Landing = () => (
-  <>
-    <div>
-      <div className={styles.home}>
-        <Header />
-        <ReadMore />
+const Landing = ({ students, admins }: LandingPropType) => (
+  <main id="main">
+    <div className={styles.home}>
+      <div className={styles.main}>
+        <div className={styles.left}>
+          <img
+            src={logo}
+            className={styles.badge}
+            alt="Carriage logo"
+          />
+          <div className={styles.title}>Carriage</div>
+        </div>
+        <div className={styles.right}>
+          <h1 className={styles.heading}>Login</h1>
+          <div className={styles.container}>
+            {students}
+            {admins}
+          </div>
+        </div>
       </div>
-      <Footer />
     </div>
-  </>
+  </main>
 );
 
 export default Landing;

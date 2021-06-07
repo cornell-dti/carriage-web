@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link} from 'react-router-dom';
+import { Link, useHistory} from 'react-router-dom';
 import cn from 'classnames';
 import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
@@ -18,6 +18,7 @@ type UsageType = {
 const StudentsTable = () => {
   const { riders } = useRiders();
   const { withDefaults } = useReq();
+  const history = useHistory();
   const colSizes = [1, 0.75, 0.75, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
   const [usage, setUsage] = useState<UsageType>({});
@@ -56,7 +57,15 @@ const StudentsTable = () => {
         data={headers.map((h) => ({ data: h }))}
       />
       {riders.map((r) => {
-        const { id, firstName, lastName, email, address, phoneNumber, accessibility } = r;
+        const {
+          id,
+          firstName,
+          lastName,
+          email,
+          address,
+          phoneNumber,
+          accessibility,
+        } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
           data:
@@ -71,18 +80,12 @@ const StudentsTable = () => {
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
         const usageData = getUsageData(id);
-        const riderData = {
-          firstName,
-          lastName,
-          netID: netId,
-          phone,
-          accessibility: disability,
-        };
         const location = {
-          pathname: '/riders/rider',
-          state: riderData,
-          search: `?name=${`${firstName}_${lastName}`}`,
-          hash: '#main',
+          pathname: `/riders/${r.id}`,
+          state: r,
+        };
+        const goToDetail = () => {
+          history.push(location);
         };
         const data = [nameNetId, phone, shortAddress, usageData, disability];
         return (

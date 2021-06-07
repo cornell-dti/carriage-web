@@ -10,12 +10,14 @@ type AvailabilityInputProps = {
   index: number;
   existingTimeRange?: string;
   existingDayArray?: string[];
+  hide: boolean;
 }
 
 const AvailabilityInput = ({
   index,
   existingTimeRange,
   existingDayArray,
+  hide
 }: AvailabilityInputProps) => {
   const {
     selectDay,
@@ -75,9 +77,9 @@ const AvailabilityInput = ({
     // Register day selector as custom form input. 
     //Not putting error message here since there is no default behavior to override
     register(`${instance}.days`, { 
-      required: true, 
-      validate: () => {return days.length > 0}});
-  }, [instance, register, days]);
+      required: !hide, 
+      validate: () => {return hide? true : days.length > 0}});
+  }, [instance, register, days, hide]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -98,7 +100,7 @@ const AvailabilityInput = ({
           type='time'
           className={styles.timeInput}
           defaultValue={existingTime?.[0]}
-          ref={register({ required: true})}
+          ref={register({ required: !hide})}
         />
         {errors.availability && errors.availability[index] && 
           errors.availability[index].startTime &&  
@@ -115,10 +117,10 @@ const AvailabilityInput = ({
         className={styles.timeInput}
         defaultValue={existingTime?.[1]}
         ref={register({
-          required: true,
+          required: !hide,
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
-            return startTime < endTime;
+            return hide? true : startTime < endTime;
           },
         })}
       />
@@ -155,9 +157,10 @@ const AvailabilityInput = ({
 
 type WorkingHoursProps = {
   existingAvailability?: string[][];
+  hide: boolean;
 }
 
-const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
+const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
   const [numAvailability, setNumAvailability] = useState(existingAvailability ? 0 : 1);
   const [availabilityArray, setAvailabilityArray] = useState<any[]>([]);
 
@@ -202,7 +205,7 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
   }, []);
 
   return (
-    <div className={styles.workingHours}>
+    <div className={cn(styles.workingHours, { [styles.hidden]: hide })}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       <WeekProvider>
         {existingAvailability ? (
@@ -212,11 +215,12 @@ const WorkingHours = ({ existingAvailability }: WorkingHoursProps) => {
               index={index}
               existingTimeRange={timeRange}
               existingDayArray={dayArray}
+              hide={hide}
             />
           ))
         ) : (
           [...new Array(numAvailability)].map((_, index) => (
-            <AvailabilityInput key={index} index={index} />
+            <AvailabilityInput key={index} index={index} hide={hide} />
           ))
         )}
       </WeekProvider>
