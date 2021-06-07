@@ -75,11 +75,26 @@ const sendMsg = (sub: SubscriptionType, msg: string) => {
         });
     });
   }
+  // mobile notification
+
+  const snsMsg = {
+    GCM: {
+      notification: {
+        body: msg,
+        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+      data: {
+        additional: msg,
+      },
+    },
+  };
 
   const snsParams = {
-    Message: msg,
+    Message: JSON.stringify(snsMsg),
     TargetArn: sub.endpoint,
+    MessageStructure: 'json',
   };
+
   return new Promise((resolve, reject) => {
     sns.publish(snsParams, (err, data) => {
       err ? reject(err) : resolve(data); // TODO if error remove? which errors?
@@ -170,18 +185,21 @@ export const notifyEdit = (
   });
 
   // potential issue: does not notify old driver/student (if it's different)
-  sendToUsers(info, UserType.ADMIN).then(() => {
-    if (userType === UserType.ADMIN) {
-      hasDriver && sendToUsers(info, UserType.DRIVER, driverId);
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-    if (userType === UserType.RIDER && hasDriver) {
-      sendToUsers(info, UserType.DRIVER, driverId);
-    }
-    if (userType === UserType.DRIVER) {
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-  }).then(() => resolve(updatedRide)).catch(reject);
+  sendToUsers(info, UserType.ADMIN)
+    .then(() => {
+      if (userType === UserType.ADMIN) {
+        hasDriver && sendToUsers(info, UserType.DRIVER, driverId);
+        sendToUsers(info, UserType.RIDER, riderId);
+      }
+      if (userType === UserType.RIDER && hasDriver) {
+        sendToUsers(info, UserType.DRIVER, driverId);
+      }
+      if (userType === UserType.DRIVER) {
+        sendToUsers(info, UserType.RIDER, riderId);
+      }
+    })
+    .then(() => resolve(updatedRide))
+    .catch(reject);
 });
 
 export const subscribe = (req: SubscriptionRequest) => new Promise((resolve, reject) => {
