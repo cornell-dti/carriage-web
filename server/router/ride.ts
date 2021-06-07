@@ -264,8 +264,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
           });
         });
       } else {
-        notifyEdit(ride, change, userType, userId)
-          .then(() => res.send(ride)).catch(() => res.send(ride));
+        res.send(ride);
       }
     };
 
@@ -301,7 +300,13 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     const deleteRide = () => {
       if (type === Type.ACTIVE) {
         const operation = { $SET: { status: Status.CANCELLED } };
-        db.update(res, Ride, { id }, operation, tableName);
+        db.update(res, Ride, { id }, operation, tableName, (doc) => {
+          const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
+          const { userType } = res.locals.user;
+          const userId = res.locals.user.id;
+          notifyEdit(deletedRide, operation, userType, userId)
+            .then(() => res.send(doc)).catch(() => res.send(doc));
+        });
       } else {
         Ride.delete(id)
           .then(() => res.send({ id }))
