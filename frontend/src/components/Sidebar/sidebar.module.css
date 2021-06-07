@@ -65,7 +65,7 @@
 .logout {
   cursor: pointer;
   position: absolute;
-  bottom: 1.75rem;
+  bottom: 0.5rem;
   width: 100%;
   text-align: center; 
   font-weight: 500;
