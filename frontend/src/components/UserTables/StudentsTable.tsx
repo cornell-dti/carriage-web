@@ -58,7 +58,7 @@ const StudentsTable = () => {
       <Row
         header
         colSizes={colSizes}
-        data={headers.map((h) => ({ data: h }))}
+        data={headers}
       />
       {riders.map((r) => {
         const {
@@ -70,7 +70,8 @@ const StudentsTable = () => {
           phoneNumber,
           accessibility,
           joinDate,
-          endDate
+          endDate,
+          active,
         } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
@@ -85,8 +86,9 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
-        const joinEndDate = formatDate(joinDate) + ' - ' + formatDate(endDate);
+        const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
         const usageData = getUsageData(id);
+        const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
         const location = {
           pathname: `/riders/${r.id}`,
           state: r,
@@ -95,7 +97,14 @@ const StudentsTable = () => {
           history.push(location);
         };
         const data = [nameNetId, phone, shortAddress, joinEndDate, usageData, disability];
-        return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
+        return (
+          <Row
+            data={data}
+            colSizes={colSizes}
+            onClick={goToDetail}
+            className={isStudentInvalid ? styles.invalid : undefined}
+          />
+        );
       })}
     </Table>
   );

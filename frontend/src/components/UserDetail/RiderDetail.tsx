@@ -49,8 +49,8 @@ const RiderDetail = () => {
         <div className={styles.riderContactInfo}>
           <UserContactInfo icon={phone} alt="" text={rider.phoneNumber} />
           <UserContactInfo icon={home} alt="" text={rider.address} />
-          <UserContactInfo icon={calendar} alt="" 
-            text={formatDate(rider.joinDate) + ' - ' + formatDate(rider.endDate)} 
+          <UserContactInfo icon={calendar} alt=""
+            text={`${formatDate(rider.joinDate)} - ${formatDate(rider.endDate)}`}
           />
         </div>
       </UserDetail>
