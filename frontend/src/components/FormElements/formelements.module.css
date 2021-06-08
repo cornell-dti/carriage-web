@@ -55,13 +55,19 @@
   color: white;
   border: none;
 }
-
+.primaryBtn:focus{
+  box-shadow: 0 0 0 3px #0075DB;
+}
 .secondaryBtn {
   background-color: white;
   border: 0.063rem solid #000000;
   box-sizing: border-box;
 }
-.srlabel {
+.secondaryBtn:focus{
+  box-shadow: 0 0 0 3px #0075DB;
+}
+
+.srlabel{
   border: 0;
   clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
   clip: rect(1px, 1px, 1px, 1px);
@@ -70,5 +76,24 @@
   overflow: hidden;
   padding: 0;
   position: absolute;
-  width: 1px;
+  width: 1px; 
+}
+::-webkit-input-placeholder {
+  color: #767676;
+  opacity: 1;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  color: #767676;
+  opacity: 1;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  color: #767676;
+  opacity: 1;
+}
+
+:-ms-input-placeholder {
+  color: #767676;
+  opacity: 1;
 }

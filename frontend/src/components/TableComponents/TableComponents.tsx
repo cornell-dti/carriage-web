@@ -22,10 +22,14 @@ export const Cell = ({ data, tag, smallTag }: CellProps) => {
       </div>
     );
   }
-  return (
+  return typeof data === 'object' ? (
     <div className={styles.cell}>
       {data}
     </div>
+  ) : (
+    <p className={styles.cell}>
+      {data}
+    </p>
   );
 };
 
@@ -70,9 +74,7 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
         className={cn(styles.rowGroup, className)}
         style={{
           gridTemplateColumns: formatColSizes(colSizes),
-          cursor: onClick ? 'pointer' : undefined,
         }}
-        onClick={onClick}
       >
         <div
           className={styles.nongroup}
@@ -103,7 +105,6 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
         cursor: onClick ? 'pointer' : undefined,
         width: '100%',
       }}
-      onClick={onClick}
     >
       {createCells(data)}
     </div>

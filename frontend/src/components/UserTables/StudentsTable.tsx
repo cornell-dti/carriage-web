@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import cn from 'classnames';
+import moment from 'moment';
 import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
@@ -17,8 +17,8 @@ type UsageType = {
 }
 
 const StudentsTable = () => {
-  const { riders } = useRiders();
   const history = useHistory();
+  const { riders } = useRiders();
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
   const headers = ['Name / NetId', 'Number', 'Address', 'Date', 'Usage', 'Disability'];
@@ -93,17 +93,15 @@ const StudentsTable = () => {
           pathname: `/riders/${r.id}`,
           state: r,
         };
-        const goToDetail = () => {
-          history.push(location);
-        };
         const data = [nameNetId, phone, shortAddress, joinEndDate, usageData, disability];
         return (
-          <Row
-            data={data}
-            colSizes={colSizes}
-            onClick={goToDetail}
-            className={isStudentInvalid ? styles.invalid : undefined}
-          />
+          <Link to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+            <Row
+              data={data}
+              colSizes={colSizes}
+              className={isStudentInvalid ? styles.invalid : undefined}
+            />
+          </Link>
         );
       })}
     </Table>

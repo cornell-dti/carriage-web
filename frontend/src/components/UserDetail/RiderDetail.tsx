@@ -38,7 +38,7 @@ const RiderDetail = () => {
   }, [rider, riderId, withDefaults]);
 
   return rider
-    ? <div className={styles.detailContainer}>
+    ? <main id = "main" className={styles.detailContainer}>
       <UserDetail
         firstName={rider.firstName}
         lastName={rider.lastName}
@@ -58,7 +58,7 @@ const RiderDetail = () => {
         isStudent={true}
         rides={rides}
       />
-    </div>
+    </main>
     : null;
 };
 

@@ -17,3 +17,17 @@ input, button, select, option {
 * {
   box-sizing: border-box;
 }
+
+a.skip-main {
+  left: -999em;
+  position: absolute;
+  padding: 0.25rem 0.5rem;
+  z-index: -999;
+}
+
+a.skip-main:focus, a.skip-main:active {
+  color: #fff;
+  background-color:#000;
+  left: 0;
+  z-index: 999;
+}
