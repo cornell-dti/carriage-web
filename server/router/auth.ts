@@ -50,12 +50,16 @@ function findUserAndSendToken(
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (data?.length) {
-      const { id } = data[0].toJSON();
+      const { id, active } = data[0].toJSON();
       const userPayload = {
         id,
         userType: getUserType(table),
       };
-      res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+      if (table === 'Riders' && !active) {
+        res.status(400).send({ err: 'User not active' });
+      } else {
+        res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+      }
     } else if (table === 'Admins') {
       // Check drivers table for admins
       Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {

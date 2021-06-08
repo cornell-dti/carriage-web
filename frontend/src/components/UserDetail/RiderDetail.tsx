@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { useLocation, useParams } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import { phone, home } from '../../icons/userInfo/index';
+import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride, Rider } from '../../types';
@@ -21,6 +22,7 @@ const RiderDetail = () => {
     if (x > y) return 1;
     return 0;
   };
+  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
 
   useEffect(() => {
     if (riderId) {
@@ -47,6 +49,9 @@ const RiderDetail = () => {
         <div className={styles.riderContactInfo}>
           <UserContactInfo icon={phone} alt="" text={rider.phoneNumber} />
           <UserContactInfo icon={home} alt="" text={rider.address} />
+          <UserContactInfo icon={calendar} alt=""
+            text={`${formatDate(rider.joinDate)} - ${formatDate(rider.endDate)}`}
+          />
         </div>
       </UserDetail>
       <PastRides
