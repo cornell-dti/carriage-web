@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import cn from 'classnames';
-import Toast from 'components/ConfirmationToast/ConfirmationToast';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
@@ -26,8 +26,8 @@ type UserContactInfo = {
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   <div className={styles.contactInfo}>
-    <img className={styles.contactIcon} src={icon} alt={""} />
-    <p className={styles.contactText} aria-describedby={"contact information"}>{text}</p>
+    <img className={styles.contactIcon} src={icon} alt={''} />
+    <p className={styles.contactText} aria-describedby={'contact information'}>{text}</p>
   </div>
 );
 
@@ -104,7 +104,9 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
-            {rider && <Button onClick={toggleActive}>{rider.active ? 'Deactivate' : 'Activate'}</Button>}
+            {rider && !isRider
+              ? <Button onClick={toggleActive}>{rider.active ? 'Deactivate' : 'Activate'}</Button>
+              : null}
             {
               employee
                 ? <EmployeeModal
@@ -122,8 +124,8 @@ const UserDetail = ({
                 />
                 : <RiderModal existingRider={rider} isRiderWeb={isRider} />
             }
-            {!isRider && <input type = "image" 
-              className={styles.editIcon} alt="trash" role = "button" src={detailTrash} />}
+            {!isRider && <input type="image"
+              className={styles.editIcon} alt="trash" role="button" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>
