@@ -63,29 +63,30 @@ const EmployeeCard = ({
         : `/drivers/${userInfo.id}`,
       state: userInfo,
     }}
-      style={{ textDecoration: 'none', color: 'inherit' }}>
+      style={{ textDecoration: 'none', color: 'inherit' }}
+      className={styles.link}>
       <Card
         firstName={firstName}
         lastName={lastName}
         netId={netId}
         photoLink={photoLink}
       >
-        <CardInfo icon={phone} alt="phone icon">
+        <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
         </CardInfo>
 
-        <CardInfo icon={clock} alt="clock icon">
+        <CardInfo icon={clock} alt="clock">
           <div>
             {fmtAvailability
               ? fmtAvailability.map(([day, timeRange]) => (
-                <p key={day}><b>{day}:</b> {timeRange}</p>
+                <p key={day}><span className={styles.dayText}>{day}:</span> {timeRange}</p>
               )) : <p>N/A</p>}
           </div>
         </CardInfo>
 
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
-          alt={isAdmin || isBoth ? 'admin icon' : 'wheel icon'}
+          alt={isAdmin || isBoth ? 'admin' : 'wheel'}
         >
           <p>{role()}</p>
         </CardInfo>

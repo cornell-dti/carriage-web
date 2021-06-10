@@ -147,3 +147,7 @@
 .scheduleTableInner {
   min-width: 875px;
 }
+
+.invalid {
+  border: #EB0023 1px solid;
+}

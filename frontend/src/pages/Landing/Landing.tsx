@@ -1,5 +1,6 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
+import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 
 type LandingPropType = {

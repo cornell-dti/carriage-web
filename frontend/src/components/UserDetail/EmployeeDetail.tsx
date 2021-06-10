@@ -159,7 +159,7 @@ const EmployeeDetail = () => {
     };
 
     return (
-      <div className={styles.detailContainer}>
+      <main id = "main" className={styles.detailContainer}>
         <UserDetail
           firstName={employee.firstName}
           lastName={employee.lastName}
@@ -168,16 +168,16 @@ const EmployeeDetail = () => {
           role={roleValue()}
           photoLink={employee.photoLink}
         >
-          <UserContactInfo icon={phone} alt="" text={employee.phone} />
-          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="" text={role()} />
-          <UserContactInfo icon={clock} alt="" text={avail === '' ? 'N/A' : avail} />
+          <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
+          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="role" text={role()} />
+          <UserContactInfo icon={clock} alt="availability" text={avail === '' ? 'N/A' : avail} />
         </UserDetail>
         <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
         <PastRides
           isStudent={false}
           rides={rides}
         />
-      </div>
+      </main>
     );
   }
   return null;

@@ -21,7 +21,7 @@ const Toast = ({ message }: toastProps) => {
     <>
       {visible && createPortal(
         <div className={styles.toast}>
-          <img alt="toast check icon" src={check} />
+          <img alt="toast check" src={check} />
           <p className={styles.toasttext}>{message}</p>
         </div>,
         document.body,

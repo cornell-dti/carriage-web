@@ -69,7 +69,10 @@
   border-radius: 50%;
   background-color: lightgray;
 }
-
+.btn:focus{
+  border-radius: 50%;
+  background-color: lightgray;
+}
 .btn:disabled {
   visibility: hidden;
 }

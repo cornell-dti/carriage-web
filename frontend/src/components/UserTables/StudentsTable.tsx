@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import cn from 'classnames';
+import moment from 'moment';
 import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
@@ -16,11 +17,11 @@ type UsageType = {
 }
 
 const StudentsTable = () => {
-  const { riders } = useRiders();
   const history = useHistory();
+  const { riders } = useRiders();
   const { withDefaults } = useReq();
-  const colSizes = [1, 0.75, 0.75, 1.25, 1];
-  const headers = ['Name / NetId', 'Number', 'Address', 'Usage', 'Disability'];
+  const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
+  const headers = ['Name / NetId', 'Number', 'Address', 'Date', 'Usage', 'Disability'];
   const [usage, setUsage] = useState<UsageType>({});
 
   useEffect(() => {
@@ -49,12 +50,15 @@ const StudentsTable = () => {
     const secondPart = number.slice(6);
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
+
+  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
+
   return (
     <Table>
       <Row
         header
         colSizes={colSizes}
-        data={headers.map((h) => ({ data: h }))}
+        data={headers}
       />
       {riders.map((r) => {
         const {
@@ -65,6 +69,9 @@ const StudentsTable = () => {
           address,
           phoneNumber,
           accessibility,
+          joinDate,
+          endDate,
+          active,
         } = r;
         const netId = email.split('@')[0];
         const nameNetId = {
@@ -79,16 +86,23 @@ const StudentsTable = () => {
         const disability = accessibility.join(', ');
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
+        const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
         const usageData = getUsageData(id);
+        const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
         const location = {
           pathname: `/riders/${r.id}`,
           state: r,
         };
-        const goToDetail = () => {
-          history.push(location);
-        };
-        const data = [nameNetId, phone, shortAddress, usageData, disability];
-        return <Row data={data} colSizes={colSizes} onClick={goToDetail} />;
+        const data = [nameNetId, phone, shortAddress, joinEndDate, usageData, disability];
+        return (
+          <Link to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+            <Row
+              data={data}
+              colSizes={colSizes}
+              className={isStudentInvalid ? styles.invalid : undefined}
+            />
+          </Link>
+        );
       })}
     </Table>
   );

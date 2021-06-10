@@ -17,33 +17,39 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
       <p className={styles.roleSelectorTitle}>Role</p>
       <div className={styles.radioOption}>
         <Input
-          name="driver"
+          className={styles.radioButton}
+          id="driver"
+          name="role"
           type="radio"
           value='driver'
           onChange={onChange}
-          checked={selectedRole === 'driver'}
+          defaultChecked={selectedRole === 'driver' || true}
         />
-        <Label className={styles.driverLabel}>Driver</Label>
+        <Label className={styles.driverLabel} htmlFor={'driver'}>Driver</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
-          name="admin"
+          className={styles.radioButton}
+          id="admin"
+          name="role"
           type="radio"
           value='admin'
           onChange={onChange}
-          checked={selectedRole === 'admin'}
+          defaultChecked={selectedRole === 'admin' || false}
         />
-        <Label className={styles.driverLabel}>Admin</Label>
+        <Label className={styles.driverLabel} htmlFor={'admin'}>Admin</Label>
       </div>
       <div className={styles.radioOption}>
         <Input
-          name="both"
+          className={styles.radioButton}
+          id="both"
+          name="role"
           type="radio"
           value='both'
           onChange={onChange}
-          checked={selectedRole === 'both'}
+          defaultChecked={selectedRole === 'both' || false}
         />
-        <Label className={styles.driverLabel}>Both</Label>
+        <Label className={styles.driverLabel} htmlFor={'both'}>Both</Label>
       </div>
     </div>
   );
