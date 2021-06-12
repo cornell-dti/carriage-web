@@ -59,3 +59,15 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+@media screen and (max-width: 768px){
+  .modal{
+    max-width: 100%; 
+    overflow-y: scroll; 
+  }
+  .page{
+    max-width: 100%; 
+    display: block; 
+    margin: 0; 
+  }
+}
