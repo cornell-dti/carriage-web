@@ -36,7 +36,7 @@ const Settings = () => {
   const netId = user?.email.split('@')[0] || '';
 
   return (
-    <>
+    <main id = "main">
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
         <div className={pageStyles.rightSection}>
@@ -55,7 +55,7 @@ const Settings = () => {
         <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
       {/* <NotifPreferences /> */}
-    </>
+    </main>
   );
 };
 export default Settings;
