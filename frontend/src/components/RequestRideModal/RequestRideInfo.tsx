@@ -10,9 +10,12 @@ import CustomRepeatingRides from './CustomRepeatingRides';
 
 type RequestRideInfoProps = {
   ride?: Ride;
+  showRepeatingCheckbox: boolean;
+  showRepeatingInfo: boolean;
 }
 
-const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
+const RequestRideInfo = ({ ride, showRepeatingCheckbox,
+  showRepeatingInfo }: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();
@@ -80,16 +83,16 @@ const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
           {errors.startDate && <p className={styles.error}>
             Please enter a valid start date</p>}
         </div>
-        <Label className={styles.boldLabel}
-          htmlFor={'recurring'}>Repeating?</Label>
-        <Input
+        {showRepeatingCheckbox && <Label className={styles.boldLabel}
+          htmlFor={'recurring'}>Repeating?</Label>}
+        {showRepeatingCheckbox && <Input
           className={styles.recurring}
           type="checkbox"
           id="recurring"
           name="recurring"
-          ref={register({ required: false })} />
+          ref={register({ required: false })} />}
       </div>
-      {watchRepeating
+      {showRepeatingInfo && watchRepeating
         ? <div>
           <div className={styles.box}>
             <Label className={styles.boldLabel} id="repeats">Repeats</Label>

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
+import EditTypeModal from '../Modal/EditTypeModal';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
@@ -10,14 +11,16 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 
-type RequestRideModalProps = {
+type CreateOrEditRideModalProps = {
   afterSubmit?: () => void;
   ride?: Ride;
 }
 
-const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalProps) => {
+const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRideModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [typeModalIsOpen, setTypeModalIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
+  const [editSingleRecurring, setEditSingleRecurring] = useState<null | boolean>(false);
   const defaultValues = {
     startDate: moment(ride?.startTime).format('YYYY-MM-DD') ?? moment().format('YYYY-MM-DD'),
     whenRepeat: ride?.recurring ? 'custom' : undefined,
@@ -29,14 +32,23 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
   const methods = useForm({ defaultValues });
   const { withDefaults } = useReq();
   const { id } = useContext(AuthContext);
+
   const openModal = () => {
     setIsOpen(true);
     setToast(false);
   };
 
+  const openTypeModal = () => {
+    setTypeModalIsOpen(true);
+  };
+
   const closeModal = () => {
     methods.clearErrors();
     setIsOpen(false);
+  };
+
+  const closeTypeModal = () => {
+    setTypeModalIsOpen(false);
   };
 
   const onSubmit = async (formData: ObjectType) => {
@@ -118,11 +130,13 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
       setToast(true);
     };
     if (!ride) {
+      // create ride
       fetch('/api/rides', withDefaults({
         method: 'POST',
         body: JSON.stringify(rideData),
       })).then(afterReq);
-    } else if (ride.recurring) {
+    } else if (editSingleRecurring) {
+      // edit single instance of recurring ride
       fetch(`/api/rides/${ride.id}/edits`, withDefaults({
         method: 'PUT',
         body: JSON.stringify({
@@ -132,6 +146,7 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
         }),
       })).then(afterReq);
     } else {
+      // edit regular ride or all recurring rides by editing parent ride
       fetch(`/api/rides/${ride.id}`, withDefaults({
         method: 'PUT',
         body: JSON.stringify(rideData),
@@ -144,25 +159,38 @@ const RequestRideModal = ({ afterSubmit = () => { }, ride }: RequestRideModalPro
     <>
       {!ride
         ? <Button onClick={openModal}>+ Request a ride</Button>
-        : <Button outline small onClick={openModal}>Edit</Button>}
+        : <Button outline small onClick={ride.recurring ? openTypeModal : openModal}>Edit</Button>}
       {showingToast ? <Toast message='Your ride has been requested' /> : null}
-      <Modal
-        title={!ride ? 'Request a Ride' : 'Edit a Ride'}
-        isOpen={isOpen}
-        onClose={closeModal}
-      >
-        <FormProvider {...methods} >
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <div className={styles.inputContainer}>
-              <RequestRideInfo ride={ride} />
-              <Button className={styles.submit} type='submit'>
-                {!ride ? 'Request a Ride' : 'Edit a Ride'}
-              </Button>
-            </div>
-          </form>
-        </FormProvider>
-      </Modal>
+      {ride && ride.recurring && <EditTypeModal
+        open={typeModalIsOpen}
+        onClose={closeTypeModal}
+        ride={ride}
+        onNext={(single) => {
+          setEditSingleRecurring(single);
+          closeTypeModal();
+          openModal();
+        }} // TODO
+      />}
+      {
+        <Modal
+          title={!ride ? 'Request a Ride' : 'Edit Ride'}
+          isOpen={isOpen}
+          onClose={closeModal}
+        >
+          <FormProvider {...methods} >
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <div className={styles.inputContainer}>
+                <RequestRideInfo ride={ride} showRepeatingCheckbox={!ride}
+                  showRepeatingInfo={!editSingleRecurring} />
+                <Button className={styles.submit} type='submit'>
+                  {!ride ? 'Request a Ride' : 'Edit Ride'}
+                </Button>
+              </div>
+            </form>
+          </FormProvider>
+        </Modal>
+      }
     </>
   );
 };
-export default RequestRideModal;
+export default CreateOrEditRideModal;

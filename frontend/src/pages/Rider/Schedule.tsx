@@ -5,7 +5,7 @@ import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
-import RequestRideModal from '../../components/RequestRideModal/RequestRideModal';
+import RideFlow from '../../components/RequestRideModal/RequestRideModal';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 
@@ -30,7 +30,7 @@ const Schedule = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Hi {user?.firstName ?? ''}</h1>
         <div className={styles.rightSection}>
-          <RequestRideModal afterSubmit={refreshRides} />
+          <RideFlow afterSubmit={refreshRides} />
           <Notification />
         </div>
       </div>

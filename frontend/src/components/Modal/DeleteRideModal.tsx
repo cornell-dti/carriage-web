@@ -4,16 +4,16 @@ import Modal from './Modal';
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
-import styles from './deleteModal.module.css';
+import styles from './editOrDeleteModals.module.css';
 
 type DeleteRideModalProps = {
   open: boolean,
   ride: Ride,
-  onClose: () => void;
+  onClose: () => void,
 }
 
 const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
-  const [cancelSingle, setCancelSingle] = useState(true);
+  const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
 
   const closeModal = () => {
@@ -21,7 +21,7 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
   };
 
   const confirmCancel = () => {
-    if (ride.recurring && cancelSingle) {
+    if (ride.recurring && single) {
       const startDate = moment(ride.startTime).format('YYYY-MM-DD');
       fetch(`/api/rides/${ride.id}/edits`, withDefaults({
         method: 'PUT',
@@ -38,17 +38,19 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
   };
 
   const changeSelection = (e: any) => {
-    if (e.target.value === 'single') setCancelSingle(true);
-    else setCancelSingle(false);
+    setSingle(e.target.value === 'single');
   };
 
   return (
-    <Modal title={!ride.recurring ? '' : 'Cancel Recurring Rides'} isOpen={open}>
+    <Modal
+      title={'Cancel Ride'}
+      isOpen={open}
+      onClose={onClose}
+    >
       {!ride.recurring ? (
         <div className={styles.modal}>
           <p className={styles.modalText}>Are you sure you want to cancel this ride?</p>
           <div className={styles.buttonContainer}>
-            <Button type="button" onClick={closeModal} outline={true}> Back </Button>
             <Button type="button" onClick={confirmCancel} className={styles.redButton}> OK </Button>
           </div>
         </div>
@@ -65,7 +67,6 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>
-            <Button type="button" onClick={closeModal} outline={true}> Back </Button>
             <Button type="submit" onClick={confirmCancel} className={styles.redButton}> OK </Button>
           </div>
         </>

@@ -5,7 +5,7 @@ import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
-import RequestRideModal from '../RequestRideModal/RequestRideModal';
+import RideFlow from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
@@ -76,7 +76,7 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           };
 
           const editButton = (
-            <RequestRideModal ride={ride} />
+            <RideFlow ride={ride} />
           );
 
           const deleteButton = (
@@ -106,7 +106,8 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
 
           return (
             <>
-              <DeleteRideModal open={deleteOpen === index} ride={ride} onClose={onClose} />
+              <DeleteRideModal open={deleteOpen === index} ride={ride}
+                onClose={onClose} />
               <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
             </>
           );
