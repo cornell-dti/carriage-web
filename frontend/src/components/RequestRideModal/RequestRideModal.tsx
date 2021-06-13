@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
-import EditTypeModal from '../Modal/EditTypeModal';
+import EditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
@@ -165,6 +165,7 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
         open={typeModalIsOpen}
         onClose={closeTypeModal}
         ride={ride}
+        deleting={false}
         onNext={(single) => {
           setEditSingleRecurring(single);
           closeTypeModal();
