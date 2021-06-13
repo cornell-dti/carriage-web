@@ -6,13 +6,16 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './editOrDeleteModals.module.css';
 
-type DeleteRideModalProps = {
+type DeleteOrEditTypeModalProps = {
   open: boolean,
   ride: Ride,
   onClose: () => void,
+  deleting: boolean,
+  onNext?: (single: boolean) => void;
 }
 
-const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
+const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
+  DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
 
@@ -41,13 +44,20 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
     setSingle(e.target.value === 'single');
   };
 
+  const onButtonClick = () => {
+    if (deleting) {
+      confirmCancel();
+    } else if (onNext) {
+      onNext(single);
+    }
+  };
   return (
     <Modal
-      title={'Cancel Ride'}
+      title={deleting ? 'Cancel Ride' : 'Edit Ride'}
       isOpen={open}
       onClose={onClose}
     >
-      {!ride.recurring ? (
+      {deleting && !ride.recurring ? (
         <div className={styles.modal}>
           <p className={styles.modalText}>Are you sure you want to cancel this ride?</p>
           <div className={styles.buttonContainer}>
@@ -67,7 +77,7 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>
-            <Button type="submit" onClick={confirmCancel} className={styles.redButton}> OK </Button>
+            <Button type="submit" onClick={onButtonClick} className={styles.redButton}> {deleting ? 'OK' : 'Next'} </Button>
           </div>
         </>
       )}
@@ -75,4 +85,4 @@ const DeleteRideModal = ({ open, ride, onClose }: DeleteRideModalProps) => {
   );
 };
 
-export default DeleteRideModal;
+export default DeleteOrEditTypeModal;
