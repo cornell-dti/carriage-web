@@ -4,7 +4,7 @@ import Modal from './Modal';
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
-import styles from './editOrDeleteModals.module.css';
+import styles from './deleteOrEditModal.module.css';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean,
@@ -77,7 +77,7 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>
-            <Button type="submit" onClick={onButtonClick} className={styles.redButton}> {deleting ? 'OK' : 'Next'} </Button>
+            <Button type="submit" onClick={onButtonClick} className={deleting ? styles.redButton : styles.blackButton}> {deleting ? 'OK' : 'Next'} </Button>
           </div>
         </>
       )}
