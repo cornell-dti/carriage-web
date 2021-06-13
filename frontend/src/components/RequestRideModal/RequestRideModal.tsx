@@ -160,7 +160,7 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
       {!ride
         ? <Button onClick={openModal}>+ Request a ride</Button>
         : <Button outline small onClick={ride.recurring ? openTypeModal : openModal}>Edit</Button>}
-      {showingToast ? <Toast message='Your ride has been requested' /> : null}
+      {showingToast ? <Toast message={`Your ride has been ${!ride ? 'created' : 'edited'}`} /> : null}
       {ride && ride.recurring && <EditTypeModal
         open={typeModalIsOpen}
         onClose={closeTypeModal}
