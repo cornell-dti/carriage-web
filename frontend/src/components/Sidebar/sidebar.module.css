@@ -112,14 +112,19 @@
   }
   .sidebar {
     height: 6rem; 
-    min-width: 100vh;
-    width: 100vh; 
+    min-width: 100%;
+    width: 100%; 
     min-height: 6rem; 
     flex-direction: row;
-    align-items: normal; 
+    justify-content: stretch;
   }
   .menuItems{
     display: flex; 
     flex-direction: row; 
+
+  }
+  .logout{
+    right: 0; 
+    left: 33%; 
   }
 }
