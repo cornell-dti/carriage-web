@@ -54,7 +54,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   return (
     <div className={styles.container}>
       <nav className={styles.sidebar}>
-        <div>
+        <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
               <Link key={path} onClick={() => setSelected(path)}
