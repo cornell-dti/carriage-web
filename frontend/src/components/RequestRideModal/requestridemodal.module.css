@@ -21,6 +21,10 @@
   font-size: 0.875rem; 
   margin: 0 0.5rem; 
 }
+.radioLabel{
+  font-size: 0.875rem; 
+  margin: 0 0.5rem; 
+}
 .boldLabel{
   font-weight: bold;
   font-size: 0.875rem; 
@@ -93,5 +97,14 @@
     }
     .box{
       display: block; 
+    }
+    .label{
+      display: block; 
+    }
+    .radioBox{
+      display: block; 
+    }
+    .whenRepeat{
+      display: inline-block; 
     }
   }

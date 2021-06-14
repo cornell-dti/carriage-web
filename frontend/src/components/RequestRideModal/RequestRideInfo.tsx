@@ -93,6 +93,7 @@ const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
         ? <div>
           <div className={styles.box}>
             <Label className={styles.boldLabel} id="repeats">Repeats</Label>
+            <div className = {styles.radioBox}>
             <Input
               className={styles.whenRepeat}
               name="whenRepeat"
@@ -102,6 +103,8 @@ const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
               value="daily"
               onChange={() => setCustom(false)} />
             <Label className={styles.label} htmlFor="daily">Daily</Label>
+            </div>
+            <div className = {styles.radioBox}>
             <input
               className={styles.whenRepeat}
               name="whenRepeat"
@@ -110,7 +113,9 @@ const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
               type="radio"
               value="weekly"
               onChange={() => setCustom(false)} />
-            <Label className={styles.label} htmlFor="weekly">Weekly</Label>
+            <Label className={styles.radioLabel} htmlFor="weekly">Weekly</Label>
+            </div>
+            <div className = {styles.radioBox}>
             <input
               className={styles.whenRepeat}
               name="whenRepeat"
@@ -120,6 +125,7 @@ const RequestRideInfo = ({ ride }: RequestRideInfoProps) => {
               value="custom"
               onChange={() => setCustom(true)} />
             <Label className={styles.label} htmlFor="custom">Custom</Label>
+            </div>
             {errors.whenRepeat && <p className={styles.error}>
               Please select a value</p>}
           </div>
