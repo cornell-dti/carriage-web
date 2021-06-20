@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
-import EditTypeModal from '../Modal/DeleteOrEditTypeModal';
+import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import AuthContext from '../../context/auth';
 import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
@@ -161,7 +161,7 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
         ? <Button onClick={openModal}>+ Request a ride</Button>
         : <Button outline small onClick={ride.recurring ? openTypeModal : openModal}>Edit</Button>}
       {showingToast ? <Toast message={`Your ride has been ${!ride ? 'created' : 'edited'}`} /> : null}
-      {ride && ride.recurring && <EditTypeModal
+      {ride && ride.recurring && <DeleteOrEditTypeModal
         open={typeModalIsOpen}
         onClose={closeTypeModal}
         ride={ride}

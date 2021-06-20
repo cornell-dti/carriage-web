@@ -21,6 +21,7 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
 
   const closeModal = () => {
     onClose();
+    setSingle(true);
   };
 
   const confirmCancel = () => {
@@ -49,13 +50,14 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
       confirmCancel();
     } else if (onNext) {
       onNext(single);
+      setSingle(true);
     }
   };
   return (
     <Modal
       title={deleting ? 'Cancel Ride' : 'Edit Ride'}
       isOpen={open}
-      onClose={onClose}
+      onClose={closeModal}
     >
       {deleting && !ride.recurring ? (
         <div className={styles.modal}>
@@ -68,12 +70,12 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
         <>
           <div>
             <Input type='radio' id='single' name='rideType' value='single'
-              onClick={(e) => changeSelection(e)} defaultChecked={true} />
+              onClick={(e) => changeSelection(e)} checked={single} />
             <Label htmlFor="single" className={styles.modalText}>This Ride Only</Label>
           </div>
           <div>
             <Input type='radio' id='recurring' name='rideType' value='recurring'
-              onClick={(e) => changeSelection(e)} />
+              onClick={(e) => changeSelection(e)} checked={!single} />
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>
