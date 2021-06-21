@@ -9,9 +9,10 @@ import CreateOrEditRideModal from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
+  isPast: boolean;
 }
 
-const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
+const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
   const colSizes = [1, 1, 1, 1, 1];
   const headers = ['Time', 'Pickup Location', 'Dropoff Location', 'This ride repeats...', ''];
@@ -90,10 +91,12 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           };
 
           const valueEditDelete = {
-            data: <>
-              {editButton}
-              {deleteButton}
-            </>,
+            data: !isPast ? (
+              <>
+                {editButton}
+                {deleteButton}
+              </>
+            ) : null,
           };
 
           const unscheduledRideData = [

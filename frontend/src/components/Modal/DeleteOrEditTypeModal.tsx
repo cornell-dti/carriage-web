@@ -14,8 +14,9 @@ type DeleteOrEditTypeModalProps = {
   onNext?: (single: boolean) => void;
 }
 
-const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
-  DeleteOrEditTypeModalProps) => {
+const DeleteOrEditTypeModal = (
+  { open, ride, onClose, deleting, onNext }: DeleteOrEditTypeModalProps,
+) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
 
@@ -63,7 +64,7 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
         <div className={styles.modal}>
           <p className={styles.modalText}>Are you sure you want to cancel this ride?</p>
           <div className={styles.buttonContainer}>
-            <Button type="button" onClick={confirmCancel} className={styles.redButton}> OK </Button>
+            <Button type="button" onClick={confirmCancel} className={styles.redButton}>OK</Button>
           </div>
         </div>
       ) : (
@@ -79,7 +80,13 @@ const DeleteOrEditTypeModal = ({ open, ride, onClose, deleting, onNext }:
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>
-            <Button type="submit" onClick={onButtonClick} className={deleting ? styles.redButton : styles.blackButton}> {deleting ? 'OK' : 'Next'} </Button>
+            <Button
+              type="submit"
+              onClick={onButtonClick}
+              className={deleting ? styles.redButton : styles.blackButton}
+            >
+              {deleting ? 'OK' : 'Next'}
+            </Button>
           </div>
         </>
       )}

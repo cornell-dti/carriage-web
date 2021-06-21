@@ -152,7 +152,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
                   - {getWeekday(rideArray[0].startTime)}
                 </span>
               </h1>
-              <RiderRidesTable rides={rideArray} />
+              <RiderRidesTable rides={rideArray} isPast={isPast} />
             </React.Fragment>
           )
         ))}

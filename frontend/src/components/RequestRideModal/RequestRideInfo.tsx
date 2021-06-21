@@ -199,7 +199,6 @@ const RequestRideInfo = ({ ride, showRepeatingCheckbox,
             ref={register({
               required: watchDropoffCustom === 'Other',
             })} />
-
         </div>
         : null}
       <Label className={styles.largeLabel} id="dropoffLabel">Dropoff</Label>
@@ -271,7 +270,6 @@ const RequestRideInfo = ({ ride, showRepeatingCheckbox,
             ref={register({
               required: watchDropoffCustom === 'Other',
             })} />
-
         </div>
         : null}
     </div>
