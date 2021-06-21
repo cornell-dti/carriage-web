@@ -60,12 +60,12 @@ const Notification = () => {
     <Popup
       trigger={
         <button className={styles.bell}>
-          <img src={notificationBell} alt='notification bell icon' />
+          <img src={notificationBell} alt='notification bell' />
           {notify && (
             <img
               src={notificationBadge}
               className={styles.badge}
-              alt="notification badge icon"
+              alt="notification badge"
             />
           )}
         </button>

@@ -22,10 +22,14 @@ export const Cell = ({ data, tag, smallTag }: CellProps) => {
       </div>
     );
   }
-  return (
+  return typeof data === 'object' ? (
     <div className={styles.cell}>
       {data}
     </div>
+  ) : (
+    <p className={styles.cell}>
+      {data}
+    </p>
   );
 };
 
@@ -36,6 +40,7 @@ type RowProps = {
   colSizes: number[];
   header?: boolean;
   groupStart?: number;
+  className?: string;
   onClick?: () => void;
 }
 
@@ -46,7 +51,7 @@ type RowProps = {
  * begin (see rides table for example). [onClick] is a callback that is called
  * when the row is clicked.
  */
-export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) => {
+export const Row = ({ data, colSizes, header, groupStart, className, onClick }: RowProps) => {
   const formatColSizes = (sizes: number[]) => (
     sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
   );
@@ -66,12 +71,10 @@ export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) =
     const groupCols = colSizes.slice(groupStart);
     return (
       <div
-        className={styles.rowGroup}
+        className={cn(styles.rowGroup, className)}
         style={{
           gridTemplateColumns: formatColSizes(colSizes),
-          cursor: onClick ? 'pointer' : undefined,
         }}
-        onClick={onClick}
       >
         <div
           className={styles.nongroup}
@@ -96,13 +99,12 @@ export const Row = ({ data, colSizes, header, groupStart, onClick }: RowProps) =
   }
   return (
     <div
-      className={cn({ [styles.row]: !header }, { [styles.header]: header })}
+      className={cn({ [styles.row]: !header }, { [styles.header]: header }, className)}
       style={{
         gridTemplateColumns: formatColSizes(colSizes),
         cursor: onClick ? 'pointer' : undefined,
         width: '100%',
       }}
-      onClick={onClick}
     >
       {createCells(data)}
     </div>

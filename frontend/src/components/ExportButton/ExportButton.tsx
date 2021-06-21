@@ -45,7 +45,7 @@ const ExportButton = ({toastMsg, endpoint, csvCols, filename}: clickHandler) => 
       <CSVLink
         data={downloadData}
         filename={filename}
-        className='hidden'
+        className={styles.hidden}
         ref={csvLink}
         target='_blank'
       />

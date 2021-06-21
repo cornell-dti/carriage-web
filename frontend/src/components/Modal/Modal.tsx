@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
 import styles from './modal.module.css';
 import { close } from '../../icons/other/index';
@@ -46,27 +47,36 @@ const Modal = ({
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
   const numPages = paginate ? title.length : pages.length;
   const currentTitle = paginate ? title[currentPage] : title;
-
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isOpen]);
   return (
     <>
       {isOpen
         && createPortal(
-          <div className={styles.background}>
-            <div className={styles.modal}>
-              <div className={styles.topContainer}>
-                <h1 className={styles.title}>{currentTitle}</h1>
-                {onClose && <button className={styles.closeBtn} onClick={onClose}>
-                  <img alt="close" src={close} />
-                </button>}
+          <FocusTrap
+            focusTrapOptions={{
+              onDeactivate: () => {if(onClose) onClose()},
+              returnFocusOnDeactivate: true,
+            }}>
+            <div className={styles.background}>
+              <div className={styles.modal}>
+                <div className={styles.topContainer}>
+                  <h1 className={styles.title}>{currentTitle}</h1>
+                  <button className={styles.closeBtn} id={'close'} onClick={onClose}>
+                    <img alt="close" src={close} />
+                  </button>
+                </div>
+                <div className={styles.page}>
+                  {pages[currentPage]}
+                </div>
               </div>
-              <div className={styles.page}>
-                {pages[currentPage]}
-              </div>
-              {paginate && (
-                <PageIndicators pages={numPages} current={currentPage} />
-              )}
             </div>
-          </div>,
+          </FocusTrap>,
           document.body,
         )
       }

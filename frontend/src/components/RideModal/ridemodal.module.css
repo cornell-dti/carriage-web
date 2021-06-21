@@ -61,6 +61,9 @@
 .driverRadio {
   margin: 0;
 }
+.driverRadio:focus{
+  outline: 3px solid black; 
+}
 
 .rider {
   display: grid;

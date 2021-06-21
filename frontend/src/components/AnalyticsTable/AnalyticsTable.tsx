@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
+import { SRLabel } from '../FormElements/FormElements';
 import { ObjectType, TableData } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import editIcon from './edit.svg';
@@ -46,13 +47,17 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
         >
           {isEditing && cellIndex >= 2 // excluding first two columns
             ? (
-              <input
-                type='number'
-                min={0}
-                className={styles.input}
-                defaultValue={d}
-                onInput={(e) => handleEdit(e, cellIndex)}
-              />
+              <div>
+                <SRLabel htmlFor={`${index}${cellIndex}`}>Total</SRLabel>
+                <input
+                  type='number'
+                  min={0}
+                  id={`${index}${cellIndex}`}
+                  className={styles.input}
+                  defaultValue={d}
+                  onInput={(e) => handleEdit(e, cellIndex)}
+                />
+              </div>
             ) : d
           }
         </td>
