@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import cn from 'classnames';
+import Toast from '../ConfirmationToast/ConfirmationToast';
+import { useReq } from '../../context/req';
+import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { edit, detailTrash } from '../../icons/other/index';
+import { detailTrash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
+import { Rider } from '../../types/index';
+import { Button } from '../FormElements/FormElements';
+import { useRiders } from '../../context/RidersContext';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -20,8 +26,8 @@ type UserContactInfo = {
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   <div className={styles.contactInfo}>
-    <img className={styles.contactIcon} src={icon} alt={alt} />
-    <p className={styles.contactText}>{text}</p>
+    <img className={styles.contactIcon} src={icon} alt={''} />
+    <p className={styles.contactText} aria-describedby={'contact information'}>{text}</p>
   </div>
 );
 
@@ -46,6 +52,7 @@ type UserDetailProps = {
   role?: string;
   photoLink?: string;
   isRider?: boolean;
+  rider?: Rider;
 };
 
 const UserDetail = ({
@@ -57,10 +64,34 @@ const UserDetail = ({
   role,
   photoLink,
   isRider,
+  rider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
+  const [isShowing, setIsShowing] = useState(false);
+  const { withDefaults } = useReq();
+  const { refreshRiders } = useRiders();
+
+  const toggleActive = (): void => {
+    if (rider) {
+      const { id, active } = rider;
+      fetch(`/api/riders/${id}`, withDefaults({
+        method: 'PUT',
+        body: JSON.stringify({
+          active: !active,
+        }),
+      }))
+        .then(() => {
+          setIsShowing(true);
+          refreshRiders();
+        });
+    }
+  };
+
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
+      {isShowing && rider
+        ? <Toast message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`} />
+        : null}
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== ''
           ? <img className={styles.profilePic} src={`http://${photoLink}`} alt="profile" />
@@ -69,10 +100,13 @@ const UserDetail = ({
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>
-            <p className={styles.name}>{fullName}</p>
+            <h1 className={styles.name}>{fullName}</h1>
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
+            {rider && !isRider
+              ? <Button onClick={toggleActive}>{rider.active ? 'Deactivate' : 'Activate'}</Button>
+              : null}
             {
               employee
                 ? <EmployeeModal
@@ -88,9 +122,10 @@ const UserDetail = ({
                     startDate: employee.startDate,
                   }}
                 />
-                : <img className={styles.editIcon} alt="edit" src={edit} />
+                : <RiderModal existingRider={rider} isRiderWeb={isRider} />
             }
-            {!isRider && <img className={styles.editIcon} alt="trash" src={detailTrash} />}
+            {!isRider && <input type="image"
+              className={styles.editIcon} alt="trash" role="button" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

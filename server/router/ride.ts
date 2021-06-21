@@ -4,13 +4,14 @@ import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Ride, Status, RideLocation, Type } from '../models/ride';
+import { Ride, Status, RideLocation, Type, RideType } from '../models/ride';
 import { Tag } from '../models/location';
-import { createKeys, validateUser } from '../util';
+import { createKeys, validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { UserType } from '../models/subscription';
 import { sendToUsers } from '../util/notification';
+
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -215,58 +216,92 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
     },
   } = req;
 
-  db.getById(res, Ride, id, tableName, (masterRide) => {
+  db.getById(res, Ride, id, tableName, (masterRide: RideType) => {
     const masterStartDate = moment
       .tz(masterRide.startTime, 'America/New_York')
       .format('YYYY-MM-DD');
-    if (origDate >= masterStartDate) {
-      const origStartTimeOnly = moment
-        .tz(masterRide.startTime, 'America/New_York')
-        .format('HH:mm:ss');
-      const origStartTime = moment
-        .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
-        .toISOString();
+    const origStartTimeOnly = moment
+      .tz(masterRide.startTime, 'America/New_York')
+      .format('HH:mm:ss');
+    const origStartTime = moment
+      .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
+      .toISOString();
 
-      const origEndTimeOnly = moment
-        .tz(masterRide.endTime, 'America/New_York')
-        .format('HH:mm:ss');
-      const origEndTime = moment
-        .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
-        .toISOString();
+    const origEndTimeOnly = moment
+      .tz(masterRide.endTime, 'America/New_York')
+      .format('HH:mm:ss');
+    const origEndTime = moment
+      .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
+      .toISOString();
 
+    const handleEdit = (ride: RideType) => {
+      // if deleteOnly = false, create a replace edit with the new fields
+      if (!deleteOnly) {
+        const replaceId = uuid();
+        let startLocationObj: RideLocation | undefined;
+        let endLocationObj: RideLocation | undefined;
+        if (startLocation && !validate(startLocation)) {
+          const name = startLocation.split(',')[0];
+          startLocationObj = {
+            name,
+            address: startLocation,
+            tag: Tag.CUSTOM,
+          };
+        }
+        if (endLocation && !validate(endLocation)) {
+          const name = endLocation.split(',')[0];
+          endLocationObj = {
+            name,
+            address: endLocation,
+            tag: Tag.CUSTOM,
+          };
+        }
+        const replaceRide = new Ride({
+          id: replaceId,
+          rider: masterRide.rider,
+          startLocation:
+            startLocationObj
+            || startLocation
+            || masterRide.startLocation.id
+            || masterRide.startLocation,
+          endLocation:
+            endLocationObj
+            || endLocation
+            || masterRide.endLocation.id
+            || masterRide.endLocation,
+          startTime: startTime || origStartTime,
+          endTime: endTime || origEndTime,
+        });
+        const addEditOperation = { $ADD: { edits: [replaceId] } };
+        // create replace edit and add replaceId to edits field
+        db.create(res, replaceRide, (editRide) => {
+          db.update(res, Ride, { id }, addEditOperation, tableName, () => {
+            res.send(editRide);
+          });
+        });
+      } else {
+        res.send(ride);
+      }
+    };
+
+    if (origDate > masterStartDate) {
       // add origDate to masterRide.deleted
       const addDeleteOperation = { $ADD: { deleted: [origDate] } };
-      db.update(res, Ride, { id }, addDeleteOperation, tableName, (ride) => {
-        // if deleteOnly = false, create a replace edit with the new fields
-        if (!deleteOnly) {
-          const replaceId = uuid();
-          const replaceRide = new Ride({
-            id: replaceId,
-            rider: masterRide.rider,
-            startLocation:
-              startLocation
-              || masterRide.startLocation.id
-              || masterRide.startLocation,
-            endLocation:
-              endLocation
-              || masterRide.endLocation.id
-              || masterRide.endLocation,
-            startTime: startTime || origStartTime,
-            endTime: endTime || origEndTime,
-          });
-          const addEditOperation = { $ADD: { edits: [replaceId] } };
-          // create replace edit and add replaceId to edits field
-          db.create(res, replaceRide, (editRide) => {
-            db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-              res.send(editRide);
-            });
-          });
-        } else {
-          res.send(ride);
-        }
-      });
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit);
+    } else if (origDate === masterStartDate) {
+      // move master repeating ride start and end to next occurance
+      const momentStart = moment.tz(masterRide.startTime, 'America/New_York');
+      const momentEnd = moment.tz(masterRide.endTime, 'America/New_York');
+      const nextRideDays = masterRide.recurringDays!.reduce((acc, curr) => (
+        Math.min(acc, daysUntilWeekday(momentStart, curr))
+      ), 8);
+      const update = {
+        startTime: momentStart.add(nextRideDays, 'day').toISOString(),
+        endTime: momentEnd.add(nextRideDays, 'day').toISOString(),
+      };
+      db.update(res, Ride, { id }, update, tableName, handleEdit);
     } else {
-      res.status(400).send({ err: 'Invalid date' });
+      res.status(400).send({ err: 'Invalid operaton' });
     }
   });
 });

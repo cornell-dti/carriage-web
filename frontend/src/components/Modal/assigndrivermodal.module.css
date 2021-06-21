@@ -7,9 +7,11 @@
 }
 
 .driverRow {
-  height: 3.063rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  padding: 0.25rem 1rem;
+  border-radius: 5px;
 }
 
 .driverRow:hover {
@@ -20,24 +22,25 @@
 .driverName {
   font-size: 1.063rem;
   color: #817e7e;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .driverImage {
-  margin: 0.438rem 0.875rem 0.375rem 1.688rem;
+  margin-left: 1rem;
   border-radius: 50%;
   width: 2.25rem;
   height: 2.25rem;
 }
 
 .modal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   position: absolute;
   margin-top: -2rem;
   right: 1.25rem;
-  padding-bottom: 1.875rem;
-  width: 15.875rem;
+  padding: 1rem;
   background-color: white;
   z-index: 1010;
-  box-shadow: 0 0.25rem 0.938rem 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.1);
   cursor: default;
 }

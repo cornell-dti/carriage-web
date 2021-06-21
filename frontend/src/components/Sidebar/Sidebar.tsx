@@ -7,6 +7,7 @@ import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import styles from './sidebar.module.css';
+import Footer from '../Footer/Footer';
 
 type SidebarProps = {
   type: 'admin' | 'rider'
@@ -25,6 +26,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const [profile, setProfile] = useState('');
   const authContext = useContext(AuthContext);
   const reqContext = useContext(ReqContext);
+  const localUserType = localStorage.getItem('userType');
+  const isAdmin = localUserType === 'Admin';
 
   useEffect(() => {
     const { id } = authContext;
@@ -50,7 +53,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.sidebar}>
+      <nav className={styles.sidebar}>
         <div>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
@@ -69,22 +72,24 @@ const Sidebar = ({ type, children }: SidebarProps) => {
           ))}
         </div>
         <div className={styles.logout}>
-          <img alt="profile_picture" className={styles.profile}
-            src={profile === '' || !profile ? blank : `https://${profile}`} />
+          {isAdmin && <img alt="profile_picture" className={styles.profile}
+            src={profile === '' || !profile ? blank : `https://${profile}`} />}
           <GoogleLogout
             onLogoutSuccess={authContext.logout}
             clientId={useClientId()}
             render={(renderProps) => (
-              <div
+              <button
                 onClick={renderProps.onClick}
+                className={styles.logoutLink}
               >
                 Log out
-              </div>
+              </button>
             )} />
         </div>
-      </div>
+      </nav>
       <div className={styles.content}>
         {children}
+        <Footer />
       </div>
     </div >
   );

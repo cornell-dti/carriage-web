@@ -73,3 +73,17 @@ export enum Status {
   NO_SHOW = 'no_show',
   CANCELLED = 'cancelled',
 }
+
+export type TableData = {
+  year: string;
+  monthDay: string;
+  dayCount: number;
+  dayNoShow: number;
+  dayCancel: number;
+  nightCount: number;
+  nightNoShow: number;
+  nightCancel: number;
+  drivers: {
+    [name: string]: number;
+  };
+};

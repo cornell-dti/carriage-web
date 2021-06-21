@@ -48,20 +48,15 @@
 
 .netId {
   font-size: 0.938em;
-  opacity: 0.5;
   margin-left: 3%;
   display: inline-block;
+  color: #707070;
 }
 
 .userEditContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.editIcon {
-  width: 4rem;
-  height: auto;
 }
 
 .contactInfoContainer, .riderContactInfo {

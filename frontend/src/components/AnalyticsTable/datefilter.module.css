@@ -1,0 +1,31 @@
+.dateFilter{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+.box{
+  display: flex; 
+  flex-direction: column;
+  margin: 0 1rem; 
+
+}
+
+.datePickerLabel{
+  font-weight: 600; 
+  font-size: 1.25rem;
+}
+
+.input {
+  border-radius: 0.625rem; 
+  font-size: 1.25rem;
+  font-weight: 600; 
+  padding: 0.5rem 1rem;
+  border: 1px solid #000000;
+}
+
+.dateRangeContainer {
+  display: flex; 
+  align-items: center;
+}

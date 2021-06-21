@@ -1,7 +1,12 @@
 .analyticsOverview {
   display: inline-block;
-  width: 90%;
-  margin-left: 5rem;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.overviewName {
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
 .title {
@@ -11,16 +16,17 @@
 
 .statsContainer {
   display: flex;
-  justify-content: space-evenly;
-  flex-flow: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   align-items: center;
   box-shadow: 0.25rem 0.25rem 1rem rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  width: 100%;
+  max-width: 100%;
 }
 
 .statsbox {
   flex-direction: row;
+  min-width: 25%;
   display: flex;
   flex-flow: row;
   align-items: center;
@@ -40,6 +46,7 @@
 .icon {
   border-radius: 100%;
   width: 2.5rem;
+  height: 2.5rem;
 }
 
 .stats {

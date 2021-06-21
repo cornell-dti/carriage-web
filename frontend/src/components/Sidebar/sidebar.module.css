@@ -63,15 +63,31 @@
 }
 
 .logout {
-  color: #0084F4;
   cursor: pointer;
-  text-align: center;
+  position: absolute;
+  bottom: 0.5rem;
+  width: 100%;
+  text-align: center; 
   font-weight: 500;
-  font-size: 17px;
   filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.12));
   margin-bottom: 1.25rem;
 }
 
+.logoutLink{
+  font-size: 1.063rem; 
+  text-decoration: none;
+  font-weight: 500;
+  color: #0075DB;
+  text-align: center;
+  display:block; 
+  margin:auto; 
+  background-color: Transparent;
+  border: none; 
+  outline: none; 
+}
+.logoutLink:focus{
+  outline: 3px solid #0075DB; 
+}
 .profile {
   width: 2.5rem;
   height: 2.5rem;

@@ -30,7 +30,7 @@ const Locations = () => {
   };
 
   return (
-    <div>
+    <main id = "main">
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Locations</h1>
         <div className={styles.rightSection}>
@@ -42,7 +42,7 @@ const Locations = () => {
         locations={locations}
         setLocations={setLocations}
       />
-    </div>
+    </main>
   );
 };
 

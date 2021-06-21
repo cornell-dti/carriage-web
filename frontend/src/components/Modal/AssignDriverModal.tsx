@@ -14,13 +14,15 @@ type AssignModalProps = {
 type DriverRowProps = {
   onclick: () => void;
   firstName: string;
-  imageURL: string;
+  imageURL?: string;
 };
 
 const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
   <div className={styles.driverRow} onClick={onclick}>
-    <img className={styles.driverImage} src={imageURL} alt="Avatar"></img>
     <p className={styles.driverName}>{firstName}</p>
+    {imageURL
+      ? <img className={styles.driverImage} src={imageURL} alt="Avatar" />
+      : <span className={styles.driverImage} />}
   </div>
 );
 
@@ -69,13 +71,12 @@ const AssignDriverModal = ({
     <>
       {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
-          <h1 className={styles.titleText}>Available Drivers</h1>
           {allDrivers.map((driver, id) => (
             <DriverRow
               onclick={() => { addDriver(driver); }}
               key={id}
               firstName={driver.firstName}
-              imageURL="https://www.biography.com/.image/t_share/MTE5NDg0MDYwNjkzMjY3OTgz/terry-crews-headshot-600x600jpg.jpg"
+              imageURL={driver.photoLink ? `http://${driver.photoLink}` : undefined}
             />
           ))}
         </div>

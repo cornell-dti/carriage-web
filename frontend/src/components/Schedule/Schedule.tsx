@@ -101,7 +101,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     );
   }, [drivers]);
 
-
   useEffect(() => {
     const newColorIdMap = new Map<string, string>();
     calDrivers.map((resource, idx) => {
@@ -165,7 +164,9 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   });
 
   const filterEvents = (allEvents: CalEvent[]) => {
-    const timeStart = viewMore ? moreTime[0].getHours() : lessTime[0].getHours();
+    const timeStart = viewMore
+      ? moreTime[0].getHours()
+      : lessTime[0].getHours();
     const timeEnd = timeStart + (viewMore ? 7 : 1);
     const filtered = allEvents.filter(({ start, end }) => {
       const s = start.getHours();
@@ -210,21 +211,27 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const disableHr = (start: boolean) => {
     if (start) {
-      return viewMore ? moreTime[0].getHours() === 0 : lessTime[0].getHours() === 0;
+      return viewMore
+        ? moreTime[0].getHours() === 0
+        : lessTime[0].getHours() === 0;
     }
-    return viewMore ? moreTime[0].getHours() === 16 : lessTime[0].getHours() === 22;
+    return viewMore
+      ? moreTime[0].getHours() === 16
+      : lessTime[0].getHours() === 22;
   };
 
   const handleChangeViewState = () => setViewMore(!viewMore);
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        close={closeModal}
-        ride={currentRide}
-        cancel={cancelRide}
-      />
+      {currentRide && (
+        <Modal
+          isOpen={isOpen}
+          close={closeModal}
+          ride={currentRide}
+          cancel={cancelRide}
+        />
+      )}
       <div
         className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
@@ -251,12 +258,26 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         </div>
         <div className={cn(styles.right, { [styles.long]: viewMore })}>
           <div>
-            <button className={styles.btn} onClick={goUp} disabled={disableHr(true)}>
-              <i className={styles.uparrow}></i>
+            <button
+              className={styles.btn}
+              onClick={goUp}
+              disabled={disableHr(true)}>
+              <span
+                className={styles.uparrow}
+                role="img"
+                aria-label={'up arrow'}
+              />
             </button>
-            <span className={styles.pad}></span>
-            <button className={styles.btn} onClick={goDown} disabled={disableHr(false)}>
-              <i className={styles.downarrow}></i>
+            <span className={styles.pad} />
+            <button
+              className={styles.btn}
+              onClick={goDown}
+              disabled={disableHr(false)}>
+              <span
+                className={styles.downarrow}
+                role="img"
+                aria-label={'down arrow'}
+              />
             </button>
           </div>
         </div>

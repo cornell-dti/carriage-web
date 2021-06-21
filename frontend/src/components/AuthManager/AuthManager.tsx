@@ -19,12 +19,17 @@ import SubscribeWrapper from './SubscrbeWrapper';
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
+import { Admin, Rider } from '../../types/index';
 
 export const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(false);
   const [jwt, setJWT] = useState('');
   const [id, setId] = useState('');
   const [initPath, setInitPath] = useState('');
+  const [user, setUser] = useState<Admin | Rider>();
+  // useState can take a function that returns the new state value, so need to
+  // supply a function that returns another function
+  const [refreshUser, setRefreshUser] = useState(() => () => { });
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -57,6 +62,22 @@ export const AuthManager = () => {
     } as RequestInit;
   }
 
+  function createRefresh(userId: string, userType: string, token: string) {
+    const fetchURL = userType === 'Admin'
+      ? `/api/admins/${userId}`
+      : `/api/riders/${userId}`;
+    return () => {
+      fetch(fetchURL, {
+        headers: {
+          authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setUser(data));
+    };
+  }
+
   function generateOnSignIn(isAdmin: boolean) {
     const userType = isAdmin ? 'Admin' : 'Rider';
     const table = `${userType}s`;
@@ -83,6 +104,9 @@ export const AuthManager = () => {
           setId(decoded.id);
           localStorage.setItem('userType', decoded.userType);
           setJWT(serverJWT);
+          const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
+          refreshFunc();
+          setRefreshUser(() => refreshFunc);
           setSignedIn(true);
           if (initPath === '/') {
             history.push(isAdmin ? '/admin/home' : '/rider/home');
@@ -150,7 +174,7 @@ export const AuthManager = () => {
   );
 
   const SiteContent = () => (
-    <AuthContext.Provider value={{ logout, id }}>
+    <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
       <ReqContext.Provider value={{ withDefaults }}>
         <SubscribeWrapper userId={id}>
           <Switch>

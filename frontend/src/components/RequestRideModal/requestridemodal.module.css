@@ -1,0 +1,85 @@
+.inputContainer{
+  max-width: 45rem;
+  max-height: 90%;
+}
+.input{
+  display: inline-block;
+  border-radius: 0.5rem;
+  border: 1px solid black; 
+  font-size: 0.9rem; 
+  max-width: 100%; 
+  margin:  0.5rem; 
+  min-width: 0; 
+}
+.largeLabel{
+  font-size: 1.25rem; 
+  font-weight: bold; 
+  display: block; 
+}
+.label{
+  font-size: 0.875rem; 
+  margin: 0 0.5rem; 
+}
+.boldLabel{
+  font-weight: bold;
+  font-size: 0.875rem; 
+}
+.box {
+    display: flex;
+  }
+.errorBox{
+  display: flex; 
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+.formHeading{
+  margin: 0; 
+  padding:0; 
+}
+.day {
+    border-radius: 40%;
+    height: 1rem;
+    width: 1rem;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    margin: 0 0.125rem;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .day:focus {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .daySelected {
+    background-color: black;
+    color: white;
+  }
+  
+  .daySelected:focus {
+    background-color: black; 
+  }
+  .submit{
+    float: right; 
+    margin-top: 0.25rem; 
+  }
+  .error {
+    color: #EB0023;
+    font-size: 0.66rem;
+    margin: 0.5rem; 
+  }
+  .flexGrow{
+    flex-grow: 2;
+  }
+  .flexShrink{
+    flex-shrink: 2; 
+  }
+  
+  .whenRepeat:focus{
+    outline: 3px solid black; 
+  }
+  .recurring:focus{
+    outline: 3px solid black; 
+  }

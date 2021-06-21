@@ -29,6 +29,7 @@ export type RiderType = {
   address: string
   favoriteLocations: string[]
   photoLink?: string
+  active: boolean
 };
 
 const schema = new dynamoose.Schema({
@@ -98,6 +99,11 @@ const schema = new dynamoose.Schema({
     default: [],
   },
   photoLink: String,
+  active: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
 });
 
 export const Rider = dynamoose.model('Riders', schema, { create: false });
