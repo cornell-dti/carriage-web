@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
@@ -40,7 +40,9 @@ const HR2 = 7200000;
 const HR8 = 28800000;
 
 const Schedule = () => {
+  const componentMounted = useRef(true);
   const localizer = momentLocalizer(moment);
+  const DnDCalendar = withDragAndDrop<any, any>(Calendar);
   const { withDefaults } = useReq();
 
   const scheduleDay = useDate().curDate;
@@ -67,30 +69,31 @@ const Schedule = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
 
-  const getRides = () => {
+  const getRides = useCallback(() => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        data
-          && setEvents(
-            data.map((ride: Ride) => ({
-              id: ride.id,
-              title: `${ride.startLocation.name} to ${ride.endLocation.name}
+        data && componentMounted.current && setEvents(
+          data.map((ride: Ride) => ({
+            id: ride.id,
+            title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-              start: new Date(ride.startTime.toString()),
-              end: new Date(ride.endTime.toString()),
-              resourceId: ride.driver!.id,
-              ride,
-            })),
-          );
+            start: new Date(ride.startTime.toString()),
+            end: new Date(ride.endTime.toString()),
+            resourceId: ride.driver!.id,
+            ride,
+          })),
+        );
       });
-  };
+  }, [componentMounted, scheduleDay, withDefaults]);
 
   useEffect(() => {
     getRides();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheduleDay, withDefaults]);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [getRides]);
 
   useEffect(() => {
     setCalDrivers(
@@ -204,6 +207,27 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     }
   };
 
+  const updateRides = (rideId: string, updatedDriver: Driver) => {
+    fetch(
+      `/api/rides/${rideId}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driver: updatedDriver }),
+      }),
+    );
+  };
+
+  const onEventDrop = ({ start, end, event, resourceId }: any) => {
+    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
+
+    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
+    if (updatedDriver !== undefined) {
+      updateRides(event.id, updatedDriver);
+    }
+    setEvents(nextEvents);
+  };
+
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
@@ -235,7 +259,9 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       <div
         className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
-          <Calendar
+          <DnDCalendar
+            resizable={false}
+            onEventDrop={onEventDrop}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             toolbar={false}

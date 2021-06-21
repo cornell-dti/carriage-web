@@ -157,8 +157,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
       method: 'PUT',
       body: JSON.stringify(editData),
     }))
-      .then(() => refreshTable())
-      .catch(console.error);
+      .then(() => refreshTable());
     setEditData({ dates: {} });
     setIsEditing(false);
   };
@@ -196,8 +195,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
       setRideTableData(rideData);
       setDriverTableData(driverData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, drivers, type]);
+  }, [data, driverNames, drivers, type]);
 
   return (
     <div className={styles.analyticsTable}>

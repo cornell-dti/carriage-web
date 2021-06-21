@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useCallback, useEffect, useReducer, useState } from 'react';
 import moment from 'moment';
 import { useReq } from '../../context/req';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
@@ -76,16 +76,15 @@ const Analytics = () => {
     dispatch({ type: unit, value });
   };
 
-  const refreshTable = () => {
+  const refreshTable = useCallback(() => {
     fetch(`/api/stats/?from=${state.from}&to=${state.to}`, withDefaults())
       .then((res) => res.json())
       .then((data) => setData([...data]));
-  };
+  }, [state.from, state.to, withDefaults]);
 
   useEffect(() => {
     refreshTable();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.from, state.to]);
+  }, [refreshTable, state.from, state.to]);
 
   const generateCols = () => {
     const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';

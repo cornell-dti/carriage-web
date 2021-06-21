@@ -125,7 +125,7 @@ const UserDetail = ({
                 : <RiderModal existingRider={rider} isRiderWeb={isRider} />
             }
             {!isRider && <input type="image"
-              className={styles.editIcon} alt="trash" role="button" src={detailTrash} />}
+              className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

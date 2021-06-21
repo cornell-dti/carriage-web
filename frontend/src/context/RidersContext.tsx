@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import { Rider } from '../types';
 import { useReq } from './req';
 
@@ -19,9 +19,10 @@ type RidersProviderProps = {
 };
 
 export const RidersProvider = ({ children }: RidersProviderProps) => {
+  const componentMounted = useRef(true);
   const [riders, setRiders] = useState<Array<Rider>>([]);
   const { withDefaults } = useReq();
-  const refreshRiders = async () => {
+  const refreshRiders = useCallback(async () => {
     const ridersData: Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
@@ -30,13 +31,16 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
       const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
       return aFull < bFull ? -1 : 1;
     });
-    ridersData && setRiders([...ridersData]);
-  };
-  // Initialize the data
+    ridersData && componentMounted.current && setRiders(ridersData);
+  }, [withDefaults]);
+
   React.useEffect(() => {
     refreshRiders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [refreshRiders]);
 
   return (
     <RidersContext.Provider

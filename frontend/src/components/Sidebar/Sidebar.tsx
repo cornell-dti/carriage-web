@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
@@ -21,6 +21,7 @@ type MenuItem = {
 }
 
 const Sidebar = ({ type, children }: SidebarProps) => {
+  const componentMounted = useRef(true);
   const { pathname } = useLocation();
   const [selected, setSelected] = useState(pathname);
   const [profile, setProfile] = useState('');
@@ -33,7 +34,11 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     const { id } = authContext;
     fetch(`/api/admins/${id}`, reqContext.withDefaults())
       .then((res) => res.json())
-      .then((data) => setProfile(data.photoLink));
+      .then((data) => componentMounted.current && setProfile(data.photoLink));
+
+    return () => {
+      componentMounted.current = false;
+    };
   }, [authContext, authContext.id, reqContext]);
 
   const adminMenu: MenuItem[] = [
@@ -50,6 +55,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   ];
 
   const menuItems = type === 'admin' ? adminMenu : riderMenu;
+
+  const clientId = useClientId();
 
   return (
     <div className={styles.container}>
@@ -74,9 +81,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.logout}>
           {isAdmin && <img alt="profile_picture" className={styles.profile}
             src={profile === '' || !profile ? blank : `https://${profile}`} />}
-          <GoogleLogout
+          {profile !== '' && <GoogleLogout
             onLogoutSuccess={authContext.logout}
-            clientId={useClientId()}
+            clientId={clientId}
             render={(renderProps) => (
               <button
                 onClick={renderProps.onClick}
@@ -84,7 +91,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
               >
                 Log out
               </button>
-            )} />
+            )}
+            />}
         </div>
       </nav>
       <div className={styles.content}>

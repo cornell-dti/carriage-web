@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { Ride } from '../../types';
 import { useReq } from '../../context/req';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
@@ -10,20 +10,24 @@ import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 
 const Schedule = () => {
+  const componentMounted = useRef(true);
   const [rides, setRides] = useState<Ride[]>();
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
 
-  const refreshRides = () => {
+  const refreshRides = useCallback(() => {
     fetch(`/api/rides?rider=${id}`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => setRides([...data]));
-  };
+      .then(({ data }) => componentMounted.current && setRides([...data]));
+  }, [id, withDefaults]);
 
   useEffect(() => {
     refreshRides();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [refreshRides]);
 
   return (
     <main id="main">

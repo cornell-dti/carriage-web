@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { Admin, Driver } from '../types';
 import { useReq } from './req';
 
@@ -23,11 +23,12 @@ type EmployeesProviderProps = {
 };
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
+  const componentMounted = useRef(true);
   const [drivers, setDrivers] = useState<Array<Driver>>([]);
   const [admins, setAdmins] = useState<Array<Admin>>([]);
   const { withDefaults } = useReq();
 
-  const refreshDrivers = async () => {
+  const refreshDrivers = useCallback(async () => {
     const driversData: Array<Driver> = await fetch(
       '/api/drivers',
       withDefaults(),
@@ -39,10 +40,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
       return aFull < bFull ? -1 : 1;
     });
-    driversData && setDrivers([...driversData]);
-  };
+    driversData && componentMounted.current && setDrivers(driversData);
+  }, [withDefaults]);
 
-  const refreshAdmins = async () => {
+  const refreshAdmins = useCallback(async () => {
     const adminsData: Array<Admin> = await fetch('/api/admins', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
@@ -51,15 +52,18 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
       return aFull < bFull ? -1 : 1;
     });
-    adminsData && setAdmins([...adminsData]);
-  };
+    adminsData && componentMounted.current && setAdmins(adminsData);
+  }, [withDefaults]);
 
   // Initialize the data
   React.useEffect(() => {
     refreshDrivers();
     refreshAdmins();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [refreshAdmins, refreshDrivers]);
 
   return (
     <EmployeesContext.Provider
