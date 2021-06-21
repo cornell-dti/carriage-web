@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
@@ -7,11 +7,9 @@ import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
-import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
-import { Driver } from '../../types/index';
 
 const Home = () => {
   const { curDate } = useDate();
