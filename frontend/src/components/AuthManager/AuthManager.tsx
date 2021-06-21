@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FunctionComponent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleLogin, useGoogleLogout } from 'react-google-login';
 import {
   useHistory,
