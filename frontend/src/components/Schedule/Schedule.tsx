@@ -99,7 +99,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     setCalDrivers(
       drivers.map((driver: any) => ({
         resourceId: driver.id,
-        resourceTitle: `${driver.firstName} ${driver.lastName}`,
+        resourceTitle: driver.firstName.toUpperCase(),
       })),
     );
   }, [drivers]);
@@ -274,7 +274,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             min={viewMore ? moreTime[0] : lessTime[0]}
             max={viewMore ? moreTime[1] : lessTime[1]}
             date={scheduleDay}
-            onNavigate={() => {}}
+            onNavigate={() => { }}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"

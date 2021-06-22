@@ -28,13 +28,11 @@
 .rbc-time-view-resources .rbc-time-gutter,
 .rbc-time-view-resources .rbc-time-header-gutter {
   width: 3.75rem;
-  background-color: #fdfdfd;
   border: none;
 }
 
 .rbc-time-view {
   border: none;
-  background-color: #fdfdfd;
 }
 
 .rbc-time-view .rbc-allday-cell {
@@ -54,5 +52,9 @@
 }
 
 .rbc-today {
-  background-color: #fdfdfd;
+  background-color: white;
+}
+
+.rbc-header {
+  font-weight: 400;
 }
