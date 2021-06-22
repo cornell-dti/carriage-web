@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import cn from 'classnames';
 import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
@@ -50,13 +50,13 @@ const AvailabilityInput = ({
     }
   };
 
-  const prefillDays = useCallback(() => {
+  const prefillDays = () => {
     existingDayArray?.forEach((day) => {
       selectDay(day, index);
     });
-  }, [existingDayArray, index, selectDay]);
+  };
 
-  const prefillTimeRange = useCallback(() => {
+  const prefillTimeRange = () => {
     if (existingTimeRange) {
       // extract start and end times
       let [startTime, endTime] = existingTimeRange.split('-');
@@ -64,21 +64,23 @@ const AvailabilityInput = ({
       endTime = formatTime(endTime);
       setExisingTime([startTime, endTime]);
     }
-  }, [existingTimeRange]);
+  };
 
   useEffect(() => {
     // Prefill days and time range once
     prefillDays();
     prefillTimeRange();
-  }, [prefillDays, prefillTimeRange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // Register day selector as custom form input.
     // Not putting error message here since there is no default behavior to override
     register(`${instance}.days`, {
       required: !hide,
-      validate: () => (hide ? true : days.length > 0) });
-  }, [instance, register, days, hide]);
+      validate: () => (hide ? true : days.length > 0),
+    });
+  }, [days.length, hide, instance, register]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -105,29 +107,29 @@ const AvailabilityInput = ({
           && errors.availability[index].startTime
           && <p className={styles.error}>Please enter a valid start time</p>
         }
-        </div>
+      </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
-      <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
-      <Input
-        id={`${instance}.endTime`}
-        name={`${instance}.endTime`}
-        type='time'
-        className={styles.timeInput}
-        defaultValue={existingTime?.[1]}
-        ref={register({
-          required: !hide,
-          validate: (endTime) => {
-            const startTime = getValues(`${instance}.startTime`);
-            return hide ? true : startTime < endTime;
-          },
-        })}
-      />
+        <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
+        <Input
+          id={`${instance}.endTime`}
+          name={`${instance}.endTime`}
+          type='time'
+          className={styles.timeInput}
+          defaultValue={existingTime?.[1]}
+          ref={register({
+            required: !hide,
+            validate: (endTime) => {
+              const startTime = getValues(`${instance}.startTime`);
+              return hide ? true : startTime < endTime;
+            },
+          })}
+        />
         {errors.availability && errors.availability[index]
           && errors.availability[index].endTime
           && <p className={styles.error}>Please enter a valid end time</p>
         }
-        </div>
+      </div>
       <p className={styles.repeatText}>Repeat on</p>
       <div className={styles.timeFlexbox}>
         <div className={styles.daysBox}>
@@ -146,9 +148,9 @@ const AvailabilityInput = ({
           ))}
         </div>
         {errors.availability && errors.availability[index]
-            && errors.availability[index].days
-            && <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
-          }
+          && errors.availability[index].days
+          && <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
+        }
       </div>
     </div>
   );
