@@ -7,15 +7,17 @@ import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
+import {RideModalType} from './RequestRideModal';
 
 type RequestRideInfoProps = {
   ride?: Ride;
   showRepeatingCheckbox: boolean;
   showRepeatingInfo: boolean;
+  modalType: RideModalType;
 }
 
-const RequestRideInfo = ({ ride, showRepeatingCheckbox,
-  showRepeatingInfo }: RequestRideInfoProps) => {
+const RequestRideInfo = ({ ride, showRepeatingCheckbox, 
+  showRepeatingInfo, modalType }: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();
@@ -70,8 +72,9 @@ const RequestRideInfo = ({ ride, showRepeatingCheckbox,
 
   return (
     <div>
-      <Label htmlFor={'startDate'} className={styles.largeLabel}>Day</Label>
+      {((modalType === 'CREATE' && watchRepeating) || modalType === 'EDIT_REGULAR' || modalType === 'EDIT_SINGLE_RECURRING') && <Label htmlFor={'startDate'} className={styles.largeLabel}>Date</Label>}
       <div className={styles.box}>
+        {(modalType === 'EDIT_ALL_RECURRING') && <Label className={styles.boldLabel} htmlFor="startDate">Starts</Label>}
         <div className={styles.errorBox}>
           <Input
             id='startDate'
@@ -143,7 +146,6 @@ const RequestRideInfo = ({ ride, showRepeatingCheckbox,
       <Label className={styles.largeLabel} id="pickupLabel">Pickup</Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
-
           <Label className={styles.label} id="pickupLocation">Location</Label>
           <select className={styles.input} name="startLocation" aria-labelledby="pickupLabel pickupLocations"
             ref={register({ required: true })}

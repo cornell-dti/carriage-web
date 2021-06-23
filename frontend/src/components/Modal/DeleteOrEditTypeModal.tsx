@@ -71,12 +71,12 @@ const DeleteOrEditTypeModal = (
         <>
           <div>
             <Input type='radio' id='single' name='rideType' value='single'
-              onClick={(e) => changeSelection(e)} checked={single} />
+              onClick={(e) => changeSelection(e)} defaultChecked={true} />
             <Label htmlFor="single" className={styles.modalText}>This Ride Only</Label>
           </div>
           <div>
             <Input type='radio' id='recurring' name='rideType' value='recurring'
-              onClick={(e) => changeSelection(e)} checked={!single} />
+              onClick={(e) => changeSelection(e)} />
             <Label htmlFor="recurring" className={styles.modalText}>All Recurring Rides</Label>
           </div>
           <div className={styles.buttonContainer}>

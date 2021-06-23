@@ -16,19 +16,40 @@ type CreateOrEditRideModalProps = {
   ride?: Ride;
 }
 
+type RideModalType = 'CREATE' | 'EDIT_REGULAR' | 'EDIT_SINGLE_RECURRING' | 'EDIT_ALL_RECURRING';
+
 const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRideModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [typeModalIsOpen, setTypeModalIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
-  const [editSingleRecurring, setEditSingleRecurring] = useState<null | boolean>(false);
+  const [modalType, setModalType] = useState<RideModalType>(!ride ? 'CREATE' : (!ride.recurring ? 'EDIT_REGULAR' : 'EDIT_SINGLE_RECURRING'));
+  
+  const defaultStartDate = () => {
+    if (ride) {
+      if (modalType === 'EDIT_REGULAR' || modalType === 'EDIT_SINGLE_RECURRING') {
+        console.log('default date for edit regular/single');
+        return moment(ride.startTime).format('YYYY-MM-DD');
+      }
+      else if (modalType === 'EDIT_ALL_RECURRING') {
+        console.log('default date for edit all', ride.parentRide?.startTime);
+        return moment(ride.parentRide?.startTime).format('YYYY-MM-DD');
+      }
+    }
+    console.log('default date today');
+    return moment().format('YYYY-MM-DD');
+  }
+  
   const defaultValues = {
-    startDate: moment(ride?.startTime).format('YYYY-MM-DD') ?? moment().format('YYYY-MM-DD'),
+    startDate: defaultStartDate(),
     whenRepeat: ride?.recurring ? 'custom' : undefined,
     endDate: ride?.endDate ?? '',
     pickupTime: ride ? moment(ride.startTime).format('HH:mm') : '',
     dropoffTime: ride ? moment(ride.endTime).format('HH:mm') : '',
     recurring: ride?.recurring ?? false,
   };
+
+  console.log('defaultValues', defaultValues);
+
   const methods = useForm({ defaultValues });
   const { withDefaults } = useReq();
   const { id } = useContext(AuthContext);
@@ -103,7 +124,6 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
         }
       }
       rideData = {
-        type: 'unscheduled',
         startLocation: startLoc,
         endLocation: endLoc,
         rider: id,
@@ -116,7 +136,6 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
     } else {
       // Not repeating
       rideData = {
-        type: 'unscheduled',
         startLocation: startLoc,
         endLocation: endLoc,
         rider: id,
@@ -131,22 +150,33 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
     };
     if (!ride) {
       // create ride
+      rideData.type = 'unscheduled';
       fetch('/api/rides', withDefaults({
         method: 'POST',
         body: JSON.stringify(rideData),
       })).then(afterReq);
-    } else if (editSingleRecurring) {
+    } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
+      rideData.type = 'unscheduled';
       fetch(`/api/rides/${ride.id}/edits`, withDefaults({
         method: 'PUT',
         body: JSON.stringify({
           deleteOnly: false,
-          origDate: startDate,
+          origDate: moment(ride.startTime).format('YYYY-MM-DD'),
           ...rideData,
         }),
       })).then(afterReq);
     } else {
+      console.log('edit regular or all');
+      console.log(rideData);
       // edit regular ride or all recurring rides by editing parent ride
+      if (!ride.parentRide) {
+        rideData.type = 'unscheduled';
+      }
+      else if (ride.parentRide && ride.parentRide.type !== 'past') {
+        rideData.type = 'unscheduled';
+        rideData.startTime = startDate;
+      }
       fetch(`/api/rides/${ride.id}`, withDefaults({
         method: 'PUT',
         body: JSON.stringify(rideData),
@@ -167,10 +197,10 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
         ride={ride}
         deleting={false}
         onNext={(single) => {
-          setEditSingleRecurring(single);
+          setModalType(single ? 'EDIT_SINGLE_RECURRING' : 'EDIT_ALL_RECURRING');
           closeTypeModal();
           openModal();
-        }} // TODO
+        }}
       />}
       {
         <Modal
@@ -182,7 +212,7 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
             <form onSubmit={methods.handleSubmit(onSubmit)}>
               <div className={styles.inputContainer}>
                 <RequestRideInfo ride={ride} showRepeatingCheckbox={!ride}
-                  showRepeatingInfo={!editSingleRecurring} />
+                  showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'} modalType={modalType} />
                 <Button className={styles.submit} type='submit'>
                   {!ride ? 'Request a Ride' : 'Edit Ride'}
                 </Button>
@@ -195,3 +225,4 @@ const CreateOrEditRideModal = ({ afterSubmit = () => { }, ride }: CreateOrEditRi
   );
 };
 export default CreateOrEditRideModal;
+export type {RideModalType};

@@ -71,6 +71,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
           ) {
             const rideInstance: Ride = {
               id: originalRide.id,
+              parentRide: originalRide,
               type: Type.UNSCHEDULED,
               status: Status.NOT_STARTED,
               startLocation: originalRide.startLocation,
