@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import { SRLabel } from '../FormElements/FormElements';
 import { ObjectType, TableData } from '../../types';
