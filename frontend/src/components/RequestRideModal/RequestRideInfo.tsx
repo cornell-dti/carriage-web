@@ -7,7 +7,7 @@ import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
-import {RideModalType} from './RequestRideModal';
+import { RideModalType } from './types';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -16,8 +16,12 @@ type RequestRideInfoProps = {
   modalType: RideModalType;
 }
 
-const RequestRideInfo = ({ ride, showRepeatingCheckbox, 
-  showRepeatingInfo, modalType }: RequestRideInfoProps) => {
+const RequestRideInfo = ({
+  ride,
+  showRepeatingCheckbox,
+  showRepeatingInfo,
+  modalType,
+}: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();

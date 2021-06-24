@@ -5,7 +5,7 @@ import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
-import CreateOrEditRideModal from '../RequestRideModal/RequestRideModal';
+import RequestRideModal from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
@@ -77,7 +77,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           };
 
           const editButton = (
-            <CreateOrEditRideModal ride={ride} />
+            <RequestRideModal ride={ride} />
           );
 
           const deleteButton = (
