@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
+import moment from 'moment';
 import { useReq } from '../../context/req';
 import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';
@@ -30,6 +31,8 @@ const RequestRideInfo = ({
   const watchRepeating = watch('recurring', ride?.recurring || false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
+  const shouldDisableStartDate = (ride?.parentRide && ride?.parentRide.type !== 'unscheduled')
+    || (ride && ride.type !== 'unscheduled');
 
   useEffect(() => {
     const getExistingLocations = async () => {
@@ -81,6 +84,7 @@ const RequestRideInfo = ({
     }
   }, [watchPickupCustom, watchDropoffCustom, ride, setValue]);
 
+
   return (
     <div>
       {((modalType === 'CREATE' && watchRepeating)
@@ -102,6 +106,7 @@ const RequestRideInfo = ({
             id="startDate"
             name="startDate"
             type="date"
+            disabled={shouldDisableStartDate}
             className={cn(styles.input)}
             ref={register({ required: true })}
           />

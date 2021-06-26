@@ -55,6 +55,11 @@ const CreateOrEditRideModal = ({
     onClose();
   };
 
+  // Removes null fields from object
+  const cleanData = (data: ObjectType) => (
+    Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== null))
+  );
+
   const handleSubmit = async (formData: ObjectType) => {
     const {
       startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,
@@ -71,7 +76,7 @@ const CreateOrEditRideModal = ({
       ? endLocation
       : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
     let rideData: ObjectType;
-    if (recurring) {
+    if (recurring || whenRepeat) {
       // Add a repeating ride
       let recurringDays: Number[] = [];
       switch (whenRepeat) {
@@ -127,6 +132,8 @@ const CreateOrEditRideModal = ({
       };
     }
 
+    rideData = cleanData(rideData);
+
     const afterSubmit = () => {
       onSubmit();
       closeModal();
@@ -151,8 +158,6 @@ const CreateOrEditRideModal = ({
         }),
       })).then(afterSubmit);
     } else {
-      console.log('edit regular or all');
-      console.log(rideData);
       // edit regular ride or all recurring rides by editing parent ride
       if (!ride.parentRide) {
         rideData.type = 'unscheduled';
