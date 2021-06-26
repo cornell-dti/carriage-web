@@ -63,11 +63,18 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
           dayIndex = dayIndex === days.length - 1 ? 0 : dayIndex + 1;
           const daysUntilNextOccurrence = daysUntilWeekday(rideStart, days[dayIndex]);
           rideStart.date(rideStart.date() + daysUntilNextOccurrence);
+          const now = moment();
+          const rideGenerationTime = moment().hour(10).minute(5);
+          const tomorrow = moment().add(1, 'day').startOf('day');
+          const rideHasOccurred = now.isAfter(rideStart);
+          const rideHasBeenGenerated = now.isAfter(rideGenerationTime) && rideStart.isSame(tomorrow, 'day');
+          const shouldRideDisplay = !(rideHasOccurred || rideHasBeenGenerated);
 
           // add to list if ride's start date is not in list of deleted dates
           if (
             !originalRide.deleted?.includes(rideStart.format('YYYY-MM-DD'))
-            && rideStart.format('YYYY-MM-DD') <= origEndDate.format('YYYY-MM-DD')
+            && rideStart.isSameOrBefore(origEndDate, 'day')
+            && shouldRideDisplay
           ) {
             const rideInstance: Ride = {
               id: originalRide.id,
