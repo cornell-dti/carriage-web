@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { useReq } from '../../context/req';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
@@ -18,9 +18,9 @@ const Analytics = () => {
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
-  const onSelectDates = (startDate: string, endDate: string) => {
-    setStartDate(startDate);
-    setEndDate(endDate);
+  const onSelectDates = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
   };
 
   const refreshTable = () => {

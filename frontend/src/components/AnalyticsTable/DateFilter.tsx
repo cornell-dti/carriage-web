@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
-import moment from 'moment';
 
 type DateFilterProps = {
   initStartDate: string;
@@ -9,7 +9,7 @@ type DateFilterProps = {
   onSubmit: (startDate: string, endDate: string) => void;
 }
 
-const DateFilter = ({ initStartDate, initEndDate, onSubmit: onSubmit }: DateFilterProps) => {
+const DateFilter = ({ initStartDate, initEndDate, onSubmit }: DateFilterProps) => {
   const [startDate, setStartDate] = useState(initStartDate);
   const [endDate, setEndDate] = useState(initEndDate);
   const [error, setError] = useState('');
@@ -29,8 +29,7 @@ const DateFilter = ({ initStartDate, initEndDate, onSubmit: onSubmit }: DateFilt
               setStartDate(newStart);
               if (newStart > endDate) {
                 setError('Start date must be before or on end date');
-              }
-              else {
+              } else {
                 setError('');
               }
             }}
@@ -46,8 +45,7 @@ const DateFilter = ({ initStartDate, initEndDate, onSubmit: onSubmit }: DateFilt
               setEndDate(newEnd);
               if (newEnd < startDate) {
                 setError('End date must be after or on start date');
-              }
-              else {
+              } else {
                 setError('');
               }
             }}

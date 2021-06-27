@@ -4,7 +4,7 @@ import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './exportButton.module.css';
-import Toast from '../../components/ConfirmationToast/ConfirmationToast';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 
 type clickHandler = {
   toastMsg: string,
@@ -13,7 +13,7 @@ type clickHandler = {
   filename: string
 }
 
-const ExportButton = ({toastMsg, endpoint, csvCols, filename}: clickHandler) => {
+const ExportButton = ({ toastMsg, endpoint, csvCols, filename }: clickHandler) => {
   const { withDefaults } = useReq();
   const [downloadData, setDownloadData] = useState<string>('');
   const [showingToast, setToast] = useState(false);
