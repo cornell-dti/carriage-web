@@ -10,46 +10,22 @@ import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 
-type DateState = {
-  from: string;
-  to: string;
-}
-
-export type Action = {
-  type: 'startDate' | 'endDate';
-  value: string;
-}
-
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
   const { withDefaults } = useReq();
   const { drivers } = useEmployees();
   const today = moment();
+  const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
+  const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
-  const initState: DateState = {
-    from: today.format('YYYY-MM-DD'),
-    to: today.format('YYYY-MM-DD'),
-  };
-
-  const reducer = (oldState: DateState, action: Action): DateState => {
-    switch (action.type) {
-      case 'startDate':
-        return { ...oldState, from: action.value, };
-      case 'endDate':
-        return { ...oldState, to: action.value, };
-      default:
-        return oldState;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, initState);
-
-  const onChange = (unit: 'startDate' | 'endDate', value: any) => {
-    dispatch({ type: unit, value });
+  const onSelectDates = (startDate: string, endDate: string) => {
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
 
   const refreshTable = () => {
-    fetch(`/api/stats/?from=${state.from}&to=${state.to}`, withDefaults())
+    console.log('refresh');
+    fetch(`/api/stats/?from=${startDate}&to=${endDate}`, withDefaults())
       .then((res) => res.json())
       .then((data) => setData([...data]));
   };
@@ -57,7 +33,7 @@ const Analytics = () => {
   useEffect(() => {
     refreshTable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.from, state.to]);
+  }, [startDate, endDate]);
 
   const generateCols = () => {
     const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
@@ -70,18 +46,18 @@ const Analytics = () => {
   const renderRight = () => (
     <>
       <ExportButton
-        toastMsg={`${state.from} to ${state.to} data has been downloaded.`}
-        endpoint={`/api/stats/download?from=${state.from}&to=${state.to}`}
+        toastMsg={`${startDate} to ${endDate} data has been downloaded.`}
+        endpoint={`/api/stats/download?from=${startDate}&to=${endDate}`}
         csvCols={generateCols()}
-        filename={`${state.from}_${state.to}_analytics.csv`}
+        filename={`${startDate}_${endDate}_analytics.csv`}
       />
       <Notification />
     </>
   );
 
   const getLabel = () => {
-    const from = moment(state.from);
-    const to = moment(state.to);
+    const from = moment(startDate);
+    const to = moment(endDate);
     if (from.year() !== to.year()) {
       return `${from.format('MMM D YYYY')} - ${to.format('MMM D YYYY')}`;
     }
@@ -92,18 +68,18 @@ const Analytics = () => {
     <TabSwitcher labels={['Ride Data', 'Driver Data']} renderRight={renderRight}>
       <>
         <DateFilter
-          startDate={state.from}
-          endDate={state.to}
-          onChange={onChange}
+          initStartDate={startDate}
+          initEndDate={endDate}
+          onSubmit={onSelectDates}
         />
         <AnalyticsOverview type="ride" data={analyticsData} label={getLabel()} />
         <AnalyticsTable type="ride" data={analyticsData} refreshTable={refreshTable} />
       </>
       <>
         <DateFilter
-          startDate={state.from}
-          endDate={state.to}
-          onChange={onChange}
+          initStartDate={startDate}
+          initEndDate={endDate}
+          onSubmit={onSelectDates}
         />
         <AnalyticsOverview type="driver" data={analyticsData} label={getLabel()} />
         <AnalyticsTable type="driver" data={analyticsData} refreshTable={refreshTable} />

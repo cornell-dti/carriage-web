@@ -25,7 +25,21 @@
   border: 1px solid #000000;
 }
 
+.submitButton {
+  background-color: #000;
+  color: #fff;
+  border-radius: 0.625rem; 
+  font-size: 1.25rem;
+  padding: 0.5rem 1rem;
+  margin-left: 1rem;
+}
+
 .dateRangeContainer {
   display: flex; 
   align-items: center;
+}
+
+.error {
+  color: #EB0023;
+  font-size: 0.75rem;
 }
