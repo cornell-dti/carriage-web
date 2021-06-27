@@ -45,6 +45,7 @@ export type RideType = {
   endDate?: string
   deleted?: string[],
   edits?: string[],
+  parentRide?: RideType
 };
 
 const locationSchema = {

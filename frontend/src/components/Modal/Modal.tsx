@@ -51,7 +51,7 @@ const Modal = ({
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'initial';
     }
   }, [isOpen]);
   return (
@@ -60,7 +60,7 @@ const Modal = ({
         && createPortal(
           <FocusTrap
             focusTrapOptions={{
-              onDeactivate: () => {if(onClose) onClose()},
+              onDeactivate: onClose,
               returnFocusOnDeactivate: true,
             }}>
             <div className={styles.background}>
