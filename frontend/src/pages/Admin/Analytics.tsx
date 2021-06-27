@@ -11,19 +11,11 @@ import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 
 type DateState = {
-  year: number;
-  month: number;
-  startDate: string;
-  endDate: string;
   from: string;
   to: string;
-  range: 'month' | 'date'
 }
 
 export type Action = {
-  type: 'year' | 'month';
-  value: number;
-} | {
   type: 'startDate' | 'endDate';
   value: string;
 }
@@ -35,36 +27,16 @@ const Analytics = () => {
   const today = moment();
 
   const initState: DateState = {
-    year: today.year(),
-    month: today.month(),
-    startDate: today.format('YYYY-MM-DD'),
-    endDate: today.format('YYYY-MM-DD'),
     from: today.format('YYYY-MM-DD'),
     to: today.format('YYYY-MM-DD'),
-    range: 'date',
-  };
-
-  const getDateRange = (year: number, month: number) => {
-    const date = moment().year(year).month(month);
-    const from = date.startOf('month').format('YYYY-MM-DD');
-    const to = date.endOf('month').format('YYYY-MM-DD');
-    return [from, to];
   };
 
   const reducer = (oldState: DateState, action: Action): DateState => {
     switch (action.type) {
-      case 'year': {
-        const [from, to] = getDateRange(action.value, oldState.month);
-        return { ...oldState, year: action.value, from, to, range: 'month' };
-      }
-      case 'month': {
-        const [from, to] = getDateRange(oldState.year, action.value);
-        return { ...oldState, month: action.value, from, to, range: 'month' };
-      }
       case 'startDate':
-        return { ...oldState, startDate: action.value, from: action.value, range: 'date' };
+        return { ...oldState, from: action.value, };
       case 'endDate':
-        return { ...oldState, endDate: action.value, to: action.value, range: 'date' };
+        return { ...oldState, to: action.value, };
       default:
         return oldState;
     }
@@ -72,7 +44,7 @@ const Analytics = () => {
 
   const [state, dispatch] = useReducer(reducer, initState);
 
-  const onChange = (unit: 'year' | 'month' | 'startDate' | 'endDate', value: any) => {
+  const onChange = (unit: 'startDate' | 'endDate', value: any) => {
     dispatch({ type: unit, value });
   };
 
@@ -110,23 +82,18 @@ const Analytics = () => {
   const getLabel = () => {
     const from = moment(state.from);
     const to = moment(state.to);
-    if (state.range === 'date') {
-      if (from.year() !== to.year()) {
-        return `${from.format('MMM D YYYY')} - ${to.format('MMM D YYYY')}`;
-      }
-      return `${from.format('MMM D')} - ${to.format('MMM D')}`;
+    if (from.year() !== to.year()) {
+      return `${from.format('MMM D YYYY')} - ${to.format('MMM D YYYY')}`;
     }
-    return moment(state.from).format('MMMM');
+    return `${from.format('MMM D')} - ${to.format('MMM D')}`;
   };
 
   return (
     <TabSwitcher labels={['Ride Data', 'Driver Data']} renderRight={renderRight}>
       <>
         <DateFilter
-          year={state.year}
-          month={state.month}
-          startDate={state.startDate}
-          endDate={state.endDate}
+          startDate={state.from}
+          endDate={state.to}
           onChange={onChange}
         />
         <AnalyticsOverview type="ride" data={analyticsData} label={getLabel()} />
@@ -134,10 +101,8 @@ const Analytics = () => {
       </>
       <>
         <DateFilter
-          year={state.year}
-          month={state.month}
-          startDate={state.startDate}
-          endDate={state.endDate}
+          startDate={state.from}
+          endDate={state.to}
           onChange={onChange}
         />
         <AnalyticsOverview type="driver" data={analyticsData} label={getLabel()} />
