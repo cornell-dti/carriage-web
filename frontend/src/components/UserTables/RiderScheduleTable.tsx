@@ -15,19 +15,19 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   const [rideMapArray, setRideMapArray] = useState<any[]>([]);
 
   // sort rides from newest to oldest
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = useCallback((a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return isPast ? 1 : -1;
     if (x > y) return isPast ? -1 : 1;
     return 0;
-  };
+  }, [isPast]);
 
   // removes rides whose startTime is past the current time
-  const filterRides = (ride: Ride): boolean => {
+  const filterRides = useCallback((ride: Ride): boolean => {
     if (isPast) return ride.type === Type.PAST;
     return ride.type !== Type.PAST;
-  };
+  }, [isPast]);
 
   // Source is from Helen's code on carriage-rider:
   // https://github.com/cornell-dti/carriage-rider/blob/master/lib/utils/RecurringRidesGenerator.dart

@@ -95,7 +95,7 @@ const StudentsTable = () => {
         };
         const data = [nameNetId, phone, shortAddress, joinEndDate, usageData, disability];
         return (
-          <Link to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
+          <Link key={id} to={location} style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}>
             <Row
               data={data}
               colSizes={colSizes}

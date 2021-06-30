@@ -56,12 +56,12 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
     sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
   );
 
-  const createCells = (row: Row) => row.map((cell) => {
+  const createCells = (row: Row) => row.map((cell, idx) => {
     if (typeof cell === 'string') {
-      return <Cell data={cell} />;
+      return <Cell key={idx} data={cell} />;
     }
     const { data: cData, tag, smallTag } = cell;
-    return <Cell data={cData} tag={tag} smallTag={smallTag} />;
+    return <Cell key={idx} data={cData} tag={tag} smallTag={smallTag} />;
   });
 
   if (!header && groupStart) {

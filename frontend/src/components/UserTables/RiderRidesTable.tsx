@@ -108,11 +108,11 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           ];
 
           return (
-            <>
+            <span key={ride.id}>
               <DeleteOrEditTypeModal open={deleteOpen === index} ride={ride}
                 onClose={onClose} deleting={true} />
-              <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
-            </>
+              <Row data={unscheduledRideData} colSizes={colSizes} />
+            </span>
           );
         })}
       </Table>

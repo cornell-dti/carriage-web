@@ -215,25 +215,25 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
           <thead>
             <tr className={styles.row}>
               {type === 'ride'
-                ? rideTableHeader.map((title, i) => {
+                ? rideTableHeader.map((title, idx) => {
                   let color;
-                  if (i >= 2 && i <= 4) {
+                  if (idx >= 2 && idx <= 4) {
                     color = '#F2911D';
                   }
-                  if (i >= 5 && i <= 7) {
+                  if (idx >= 5 && idx <= 7) {
                     color = '#1594F2';
                   }
                   return (
-                    <th
-                      className={cn(styles.cell, { [styles.sticky]: i < 2 })}
+                    <th key={idx}
+                      className={cn(styles.cell, { [styles.sticky]: idx < 2 })}
                       style={{ color }}
                     >
                       {title}
                     </th>
                   );
                 })
-                : driverTableHeader.map((title, i) => (
-                  <th className={cn(styles.cell, { [styles.sticky]: i < 2 })}>
+                : driverTableHeader.map((title, idx) => (
+                  <th key={idx} className={cn(styles.cell, { [styles.sticky]: idx < 2 })}>
                     {title}
                   </th>
                 ))}

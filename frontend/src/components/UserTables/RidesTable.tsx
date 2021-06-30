@@ -121,12 +121,12 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
                 close={() => setOpenAssignModal(-1)}
                 setDriver={(driverName: string) => {
                   driverSet[index] = driverName;
-                  setDriverSet([...driverSet])
+                  setDriverSet([...driverSet]);
                 }}
                 ride={rides[index]}
                 allDrivers={drivers}
               />
-              <RideModal 
+              <RideModal
                 open={openEditModal === index}
                 close={() => setOpenEditModal(-1)}
                 ride={rides[index]}

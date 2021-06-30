@@ -26,12 +26,11 @@ const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
       <div className={pageStyles.pageTitle}>
         <div>
           <div>
-            {labels.map((label, i) => (
-              <h1 className={styles.tabHeading}>
+            {labels.map((label, idx) => (
+              <h1 key={label} className={styles.tabHeading}>
               <button
-                key={label}
-                className={cn(styles.tab, { [styles.current]: currentTab === i })}
-                onClick={() => setCurrentTab(i)}
+                className={cn(styles.tab, { [styles.current]: currentTab === idx })}
+                onClick={() => setCurrentTab(idx)}
               >
                 {label}
               </button>
