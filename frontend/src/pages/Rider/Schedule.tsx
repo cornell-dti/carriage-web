@@ -34,7 +34,7 @@ const Schedule = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Hi {user?.firstName ?? ''}</h1>
         <div className={styles.rightSection}>
-          <RequestRideModal afterSubmit={refreshRides} />
+          <RequestRideModal onSubmit={refreshRides} />
           <Notification />
         </div>
       </div>

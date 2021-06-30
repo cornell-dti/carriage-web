@@ -121,7 +121,7 @@ const RideModal = ({
       {showingToast ? <Toast message="Ride edited." /> : null}
       <Modal
         paginate
-        title={['Edit a Ride', 'Edit a Ride']}
+        title={['Edit Ride', 'Edit Ride']}
         isOpen={open || isOpen}
         currentPage={currentPage}
         onClose={closeModal}

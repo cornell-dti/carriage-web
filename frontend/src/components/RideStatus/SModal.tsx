@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import moment from 'moment';
-import DeleteRideModal from '../Modal/DeleteRideModal';
+import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import Tag from '../Tag/Tag';
 import { Ride } from '../../types';
 import styles from './smodal.module.css';
@@ -35,7 +35,8 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
 
   return (
     <>
-      <DeleteRideModal open={deleteOpen} ride={ride} onClose={() => setDeleteOpen(false)} />
+      <DeleteOrEditTypeModal open={deleteOpen} ride={ride} deleting={true}
+        onClose={() => setDeleteOpen(false)} />
       {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
