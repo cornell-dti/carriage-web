@@ -121,5 +121,7 @@
   .label{
     font-weight: bold; 
   }
-
+  .lastRow {
+    display: block;
+  }
 }

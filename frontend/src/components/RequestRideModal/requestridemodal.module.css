@@ -97,6 +97,9 @@
   .box{
     display: block; 
   }
+  .label{
+    display: inline-block; 
+  }
   .radioBox{
     display: block; 
   }
