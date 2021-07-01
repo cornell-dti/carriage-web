@@ -46,65 +46,61 @@
   padding:0; 
 }
 .day {
-    border-radius: 40%;
-    height: 1rem;
-    width: 1rem;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    outline: none;
-    margin: 0 0.125rem;
-    background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 40%;
+  height: 1rem;
+  width: 1rem;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  margin: 0 0.125rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.day:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.daySelected {
+  background-color: black;
+  color: white;
+}
+
+.daySelected:focus {
+  background-color: black; 
+}
+.submit{
+  float: right; 
+  margin-top: 0.25rem; 
+}
+.error {
+  color: #EB0023;
+  font-size: 0.66rem;
+  margin: 0.5rem; 
+}
+.flexGrow{
+  flex-grow: 2;
+}
+.flexShrink{
+  flex-shrink: 2; 
+}
+
+.whenRepeat:focus{
+  outline: 3px solid black; 
+}
+.recurring:focus{
+  outline: 3px solid black; 
+}
+
+
+@media screen and (max-width: 768px){
+  .box{
+    display: block; 
   }
-  
-  .day:focus {
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+  .radioBox{
+    display: block; 
   }
-  
-  .daySelected {
-    background-color: black;
-    color: white;
+  .whenRepeat{
+    display: inline-block; 
   }
-  
-  .daySelected:focus {
-    background-color: black; 
-  }
-  .submit{
-    float: right; 
-    margin-top: 0.25rem; 
-  }
-  .error {
-    color: #EB0023;
-    font-size: 0.66rem;
-    margin: 0.5rem; 
-  }
-  .flexGrow{
-    flex-grow: 2;
-  }
-  .flexShrink{
-    flex-shrink: 2; 
-  }
-  
-  .whenRepeat:focus{
-    outline: 3px solid black; 
-  }
-  .recurring:focus{
-    outline: 3px solid black; 
-  }
-  @media screen and (max-width: 768px){
-    .inputContainer{
-      overflow-y: scroll; 
-    }
-    .box{
-      display: block; 
-    }
-    .label{
-      display: block; 
-    }
-    .radioBox{
-      display: block; 
-    }
-    .whenRepeat{
-      display: inline-block; 
-    }
-  }
+}
