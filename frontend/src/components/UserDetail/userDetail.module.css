@@ -9,7 +9,7 @@
   border-radius: 0.5rem;
   background-color: white;
   box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
-  padding: 2% 3.5%;
+  padding: 1.875rem 3rem;
 }
 
 .userDetail {
@@ -36,10 +36,6 @@
   justify-content: space-between;
 }
 
-.nameInfoContainer {
-  width: 50%;
-}
-
 .name {
   font-size: 1.56em;
   display: inline-block;
@@ -48,7 +44,7 @@
 
 .netId {
   font-size: 0.938em;
-  margin-left: 3%;
+  margin-left: 0.625rem;
   display: inline-block;
   color: #707070;
 }
@@ -71,7 +67,7 @@
   display: flex;
   flex-direction: row;
   width: fit-content;
-  margin-right: 5%;
+  margin-right: 4.5rem;
 }
 
 .contactIcon {
@@ -149,4 +145,25 @@
   font-size: 0.8rem;
   font-weight: 400;
   margin-left: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .userDetail {
+    flex-direction: column;
+    position: relative;
+  }
+
+  .basicInfoContainer {
+    margin: 0;
+  }
+
+  .userEditContainer {
+    position: absolute;
+    top: 1.125rem;
+    right: 3rem;
+  }
+
+  .rider {
+    margin: 0 0.5rem;
+  }
 }

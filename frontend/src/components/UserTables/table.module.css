@@ -151,3 +151,9 @@
 .invalid {
   border: #EB0023 1px solid;
 }
+
+@media screen and (max-width: 700px) {
+  .scheduleTableInner {
+    min-width: initial;
+  }
+}

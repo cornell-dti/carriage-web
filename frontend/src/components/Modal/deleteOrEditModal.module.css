@@ -17,4 +17,13 @@
     border: 0.063rem solid #000000;
     box-sizing: border-box;
     border: none;
+    margin: auto;
+}
+
+.blackButton {
+    background-color: #000000;
+    border: 0.063rem solid #000000;
+    box-sizing: border-box;
+    border: none;
+    margin: auto;
 }

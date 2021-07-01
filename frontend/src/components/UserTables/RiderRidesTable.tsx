@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import DeleteRideModal from '../Modal/DeleteRideModal';
+import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
@@ -9,9 +9,10 @@ import RequestRideModal from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
+  isPast: boolean;
 }
 
-const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
+const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
   const colSizes = [1, 1, 1, 1, 1];
   const headers = ['Time', 'Pickup Location', 'Dropoff Location', 'This ride repeats...', ''];
@@ -90,10 +91,12 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
           };
 
           const valueEditDelete = {
-            data: <>
-              {editButton}
-              {deleteButton}
-            </>,
+            data: !isPast ? (
+              <>
+                {editButton}
+                {deleteButton}
+              </>
+            ) : null,
           };
 
           const unscheduledRideData = [
@@ -106,7 +109,8 @@ const RiderRidesTable = ({ rides }: RiderRidesTableProps) => {
 
           return (
             <>
-              <DeleteRideModal open={deleteOpen === index} ride={ride} onClose={onClose} />
+              <DeleteOrEditTypeModal open={deleteOpen === index} ride={ride}
+                onClose={onClose} deleting={true} />
               <Row key={ride.id} data={unscheduledRideData} colSizes={colSizes} />
             </>
           );

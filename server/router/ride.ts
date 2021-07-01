@@ -3,14 +3,14 @@ import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
+import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
 import { Ride, Status, RideLocation, Type, RideType } from '../models/ride';
 import { Tag } from '../models/location';
-import { createKeys, validateUser, daysUntilWeekday } from '../util';
+import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
-import { UserType } from '../models/subscription';
-import { sendToUsers } from '../util/notification';
+import { notifyEdit } from '../util/notification';
 
 
 const router = express.Router();
@@ -172,33 +172,12 @@ router.put('/:id', validateUser('User'), (req, res) => {
   }
   db.update(res, Ride, { id }, body, tableName, (doc) => {
     const ride = JSON.parse(JSON.stringify(doc.toJSON()));
-    const riderId = ride.rider.id;
-    const driverId = ride.driver ? ride.driver.id : null;
-    const userId = res.locals.user.id;
     const { userType } = res.locals.user;
+    const userId = res.locals.user.id;
 
-    const info = JSON.stringify({
-      ride,
-      change: body,
-      changedBy: {
-        userType,
-        userId,
-      },
-    });
-
-    sendToUsers(info, UserType.ADMIN);
-
-    if (userType === UserType.ADMIN) {
-      ride.driver && sendToUsers(info, UserType.DRIVER, driverId);
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-    if (userType === UserType.RIDER && ride.driver) {
-      sendToUsers(info, UserType.DRIVER, driverId);
-    }
-    if (userType === UserType.DRIVER) {
-      sendToUsers(info, UserType.RIDER, riderId);
-    }
-    res.send(ride);
+    // send ride even if notification failed since it was actually updated
+    notifyEdit(ride, body, userType, userId)
+      .then(() => res.send(ride)).catch(() => res.send(ride));
   });
 });
 
@@ -234,7 +213,10 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
       .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
       .toISOString();
 
-    const handleEdit = (ride: RideType) => {
+    const handleEdit = (change: any) => (ride: RideType) => {
+      const { userType } = res.locals.user;
+      const userId = res.locals.user.id;
+
       // if deleteOnly = false, create a replace edit with the new fields
       if (!deleteOnly) {
         const replaceId = uuid();
@@ -276,7 +258,9 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            res.send(editRide);
+            notifyEdit(editRide, change, userType, userId)
+              .then(() => res.send(editRide)).catch(() => res.send(editRide));
+            // res.send(editRide);
           });
         });
       } else {
@@ -287,19 +271,30 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
     if (origDate > masterStartDate) {
       // add origDate to masterRide.deleted
       const addDeleteOperation = { $ADD: { deleted: [origDate] } };
-      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit);
+      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit(addDeleteOperation));
     } else if (origDate === masterStartDate) {
-      // move master repeating ride start and end to next occurance
+      // move master repeating ride start and end to next occurrence
       const momentStart = moment.tz(masterRide.startTime, 'America/New_York');
       const momentEnd = moment.tz(masterRide.endTime, 'America/New_York');
       const nextRideDays = masterRide.recurringDays!.reduce((acc, curr) => (
         Math.min(acc, daysUntilWeekday(momentStart, curr))
       ), 8);
-      const update = {
-        startTime: momentStart.add(nextRideDays, 'day').toISOString(),
-        endTime: momentEnd.add(nextRideDays, 'day').toISOString(),
-      };
-      db.update(res, Ride, { id }, update, tableName, handleEdit);
+      const newStartTime = momentStart.add(nextRideDays, 'day');
+      const newEndTime = momentEnd.add(nextRideDays, 'day');
+      if (newStartTime.isAfter(moment(masterRide.endDate), 'day')) {
+        // Shouldn't happen, but just in case
+        db.deleteById(res, Ride, { id }, tableName);
+      } else {
+        const update: ObjectType = {
+          startTime: newStartTime.toISOString(),
+          endTime: newEndTime.toISOString(),
+        };
+        if (newStartTime.isSame(moment(masterRide.endDate), 'day')) {
+          update.recurring = false;
+          update.$REMOVE = ['recurringDays', 'deleted', 'edits', 'endDate'];
+        }
+        db.update(res, Ride, { id }, update, tableName, handleEdit(update));
+      }
     } else {
       res.status(400).send({ err: 'Invalid operaton' });
     }
@@ -312,24 +307,26 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     params: { id },
   } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
-    const { recurring, edits, type } = ride;
-    const deleteRide = () => {
-      if (type === Type.ACTIVE) {
-        const operation = { $SET: { status: Status.CANCELLED } };
-        db.update(res, Ride, { id }, operation, tableName);
-      } else {
-        Ride.delete(id)
-          .then(() => res.send({ id }))
-          .catch((err) => res.status(500).send({ err: err.message }));
-      }
-    };
-    if (recurring && edits.length) {
-      const ids = createKeys('id', edits);
-      Ride.batchDelete(ids)
-        .then(deleteRide)
-        .catch((err) => res.status(500).send({ err: err.message }));
+    const { recurring, type } = ride;
+    if (type === Type.ACTIVE) {
+      const operation = { $SET: { status: Status.CANCELLED } };
+      db.update(res, Ride, { id }, operation, tableName, (doc) => {
+        const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
+        const { userType } = res.locals.user;
+        const userId = res.locals.user.id;
+        notifyEdit(deletedRide, operation, userType, userId)
+          .then(() => res.send(doc)).catch(() => res.send(doc));
+      });
+    } else if (type === Type.PAST && recurring) {
+      const operation = {
+        recurring: false,
+        $REMOVE: ['recurringDays', 'deleted', 'edits', 'endDate'],
+      };
+      db.update(res, Ride, { id }, operation, tableName);
     } else {
-      deleteRide();
+      Ride.delete(id)
+        .then(() => res.send({ id }))
+        .catch((err) => res.status(500).send({ err: err.message }));
     }
   });
 });
