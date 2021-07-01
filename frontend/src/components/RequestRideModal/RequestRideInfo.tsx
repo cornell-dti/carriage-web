@@ -135,42 +135,48 @@ const RequestRideInfo = ({
             <Label className={styles.boldLabel} id="repeats">
               Repeats
             </Label>
-            <Input
-              className={styles.whenRepeat}
-              name="whenRepeat"
-              id="daily"
-              ref={register({ required: watchRepeating })}
-              type="radio"
-              value="daily"
-              onChange={() => setCustom(false)}
-            />
-            <Label className={styles.label} htmlFor="daily">
-              Daily
-            </Label>
-            <input
-              className={styles.whenRepeat}
-              name="whenRepeat"
-              id="weekly"
-              ref={register({ required: watchRepeating })}
-              type="radio"
-              value="weekly"
-              onChange={() => setCustom(false)}
-            />
-            <Label className={styles.label} htmlFor="weekly">
-              Weekly
-            </Label>
-            <input
-              className={styles.whenRepeat}
-              name="whenRepeat"
-              id="custom"
-              ref={register({ required: watchRepeating })}
-              type="radio"
-              value="custom"
-              onChange={() => setCustom(true)}
-            />
-            <Label className={styles.label} htmlFor="custom">
-              Custom
-            </Label>
+            <div className={styles.radioBox}>
+              <Input
+                className={styles.whenRepeat}
+                name="whenRepeat"
+                id="daily"
+                ref={register({ required: watchRepeating })}
+                type="radio"
+                value="daily"
+                onChange={() => setCustom(false)}
+              />
+              <Label className={styles.label} htmlFor="daily">
+                Daily
+              </Label>
+            </div>
+            <div className={styles.radioBox}>
+              <input
+                className={styles.whenRepeat}
+                name="whenRepeat"
+                id="weekly"
+                ref={register({ required: watchRepeating })}
+                type="radio"
+                value="weekly"
+                onChange={() => setCustom(false)}
+              />
+              <Label className={styles.label} htmlFor="weekly">
+                Weekly
+              </Label>
+            </div>
+            <div className={styles.radioBox}>
+              <input
+                className={styles.whenRepeat}
+                name="whenRepeat"
+                id="custom"
+                ref={register({ required: watchRepeating })}
+                type="radio"
+                value="custom"
+                onChange={() => setCustom(true)}
+              />
+              <Label className={styles.label} htmlFor="custom">
+                Custom
+              </Label>
+            </div>
             {errors.whenRepeat && (
               <p className={styles.error}>Please select a value</p>
             )}

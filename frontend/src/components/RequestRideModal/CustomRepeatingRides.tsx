@@ -48,7 +48,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
   const dayClicked = () => week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
 
   return (
-    <div className={styles.box}>
+    <div className={styles.dayBox}>
       <Label id={'repeatDays'} className={styles.boldLabel}>Repeat every</Label>
       {Object.entries(dayLabels).map(([day, label]) => (
         <div key={day}>

@@ -3,7 +3,7 @@
 }
 
 .input {
-  border: none;
+  border: 1px solid black;
   outline: none;
   border-radius: 0.25rem;
 }
