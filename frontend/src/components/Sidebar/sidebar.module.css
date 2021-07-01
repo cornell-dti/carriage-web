@@ -1,5 +1,7 @@
 .sidebarLinks {
   text-decoration: none;
+  text-align: center;
+  margin-bottom: 1.75rem;
 }
 
 .container {
@@ -21,11 +23,11 @@
   justify-content: space-between;
   flex-direction: column;
   z-index: 100; 
+  padding: 1.75rem 0;
 }
 
 .icon {
   cursor: pointer;
-  margin: 1.75rem 1.625rem;
   text-decoration: none;
   display: flex;
   flex-direction: column;
@@ -60,24 +62,20 @@
 
 .caption {
   color: black;
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
 .logout {
-  cursor: pointer;
-  position: absolute;
-  bottom: 0.5rem;
-  width: 100%;
   text-align: center; 
-  font-weight: 500;
   filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.12));
-  margin-bottom: 1.25rem;
 }
 
 .logoutLink{
-  font-size: 1.063rem; 
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
   text-decoration: none;
-  font-weight: 500;
   color: #0075DB;
   text-align: center;
   display:block; 
@@ -116,15 +114,25 @@
     width: 100%; 
     min-height: 6rem; 
     flex-direction: row;
-    justify-content: stretch;
+    padding: 0 1.75rem;
   }
   .menuItems{
     display: flex; 
     flex-direction: row; 
-
   }
-  .logout{
-    right: 0; 
-    left: 33%; 
+  .sidebarLinks {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 0;
+    margin-right: 1.75rem;
+  }
+  .logout {
+    display: flex;
+    width: initial;
+    margin: 0;
+  }
+  .icon {
+    margin: 0
   }
 }
