@@ -41,10 +41,12 @@ const Routes = () => {
 const RiderRoutes = () => {
   const [curDate, setCurDate] = useState(new Date());
   const defaultVal = { curDate, setCurDate };
-
+  const skipRef = useSkipMain();
   return (
     <DateContext.Provider value={defaultVal}>
       <Router basename="/rider">
+        <div tabIndex={-1} ref={skipRef}></div>
+        <HashLink className='skip-main' to='#main'>Skip to main content</HashLink>
         <Sidebar type="rider">
           <Switch>
             <Route

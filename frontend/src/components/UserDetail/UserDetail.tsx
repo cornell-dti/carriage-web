@@ -26,8 +26,8 @@ type UserContactInfo = {
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   <div className={styles.contactInfo}>
-    <img className={styles.contactIcon} src={icon} alt={''} />
-    <p className={styles.contactText} aria-describedby={'contact information'}>{text}</p>
+    <img className={styles.contactIcon} src={icon} alt={alt} />
+    <p className={styles.contactText}>{text}</p>
   </div>
 );
 
