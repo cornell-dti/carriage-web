@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 import { useReq } from '../../context/req';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
@@ -18,22 +18,17 @@ const Analytics = () => {
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
-  const onSelectDates = (start: string, end: string) => {
-    setStartDate(start);
-    setEndDate(end);
-  };
-
-  const refreshTable = () => {
-    console.log('refresh');
-    fetch(`/api/stats/?from=${startDate}&to=${endDate}`, withDefaults())
+  const refreshTable = (start = startDate, end = endDate) => {
+    fetch(`/api/stats/?from=${start}&to=${end}`, withDefaults())
       .then((res) => res.json())
       .then((data) => setData([...data]));
   };
 
-  useEffect(() => {
-    refreshTable();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate]);
+  const onSelectDates = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
+    refreshTable(start, end);
+  };
 
   const generateCols = () => {
     const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
