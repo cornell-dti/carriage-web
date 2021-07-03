@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -6,6 +5,8 @@ import {
   Switch,
   Redirect,
 } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
+import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from './Schedule';
 import Settings from './Settings';
