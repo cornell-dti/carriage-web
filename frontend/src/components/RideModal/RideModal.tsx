@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
@@ -47,7 +47,7 @@ const RideModal = ({
     setToast(false);
   };
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     if (close) {
       setFormData(originalRideData);
       close();
@@ -56,7 +56,7 @@ const RideModal = ({
     }
     setCurrentPage(0);
     setIsOpen(false);
-  };
+  }, [close, originalRideData]);
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -112,8 +112,7 @@ const RideModal = ({
       closeModal();
       setToast(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData, isSubmitted, ride, withDefaults]);
+  }, [closeModal, formData, isSubmitted, ride, withDefaults]);
 
   // have to do a ternary operator on the entire modal
   // because otherwise the pages would show up wrongly

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -13,6 +12,7 @@ import Schedule from './Schedule';
 import Settings from './Settings';
 import DateContext from '../../context/date';
 
+// Must be separate component, or else skip ref doesn't work.
 const Routes = () => {
   const skipRef = useSkipMain();
   return (
@@ -23,11 +23,11 @@ const Routes = () => {
         <Switch>
           <Route
             path="/schedule"
-            component={() => null}
+            component={Schedule}
           />
           <Route
             path="/settings"
-            component={() => null}
+            component={Settings}
           />
           <Route path="*">
             <Redirect to="/schedule" />
@@ -41,27 +41,11 @@ const Routes = () => {
 const RiderRoutes = () => {
   const [curDate, setCurDate] = useState(new Date());
   const defaultVal = { curDate, setCurDate };
-  const skipRef = useSkipMain();
+
   return (
     <DateContext.Provider value={defaultVal}>
       <Router basename="/rider">
-        <div tabIndex={-1} ref={skipRef}></div>
-        <HashLink className='skip-main' to='#main'>Skip to main content</HashLink>
-        <Sidebar type="rider">
-          <Switch>
-            <Route
-              path="/schedule"
-              component={Schedule}
-            />
-            <Route
-              path="/settings"
-              component={Settings}
-            />
-            <Route path="*">
-              <Redirect to="/schedule" />
-            </Route>
-          </Switch>
-        </Sidebar>
+        <Routes />
       </Router>
     </DateContext.Provider>
   );

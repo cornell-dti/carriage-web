@@ -42,6 +42,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
     >
       {data.map((d, cellIndex) => (
         <td
+          key={cellIndex}
           className={styles.cell}
           style={{ borderRadius: getBorderRadius(cellIndex, data.length) }}
         >
@@ -77,6 +78,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
+  const [driverNames, setDriverNames] = useState<string[]>([]);
   const { withDefaults } = useReq();
   const { drivers } = useEmployees();
 
@@ -91,15 +93,17 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     'Night Cancels',
   ]);
 
-  const driverNames: string[] = [];
-  const driverShortNames: string[] = [];
+  useEffect(() => {
+    if (drivers && !driverNames.length) {
+      setDriverNames(drivers.map((d) => `${d.firstName} ${d.lastName}`));
+    }
+  }, [driverNames, drivers]);
 
-  drivers.forEach((d) => {
-    driverNames.push(`${d.firstName} ${d.lastName}`);
-    driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
-  });
 
-  const driverTableHeader = sharedCols.concat(driverShortNames);
+  const driverTableHeader = sharedCols.concat(driverNames.map((name) => {
+    const [first, last] = name.split(' ');
+    return `${first} ${last.charAt(0)}.`;
+  }));
 
   const dbRideCols = [
     'dayCount',
@@ -157,8 +161,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
       method: 'PUT',
       body: JSON.stringify(editData),
     }))
-      .then(() => refreshTable())
-      .catch(console.error);
+      .then(() => refreshTable());
     setEditData({ dates: {} });
     setIsEditing(false);
   };
@@ -196,8 +199,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
       setRideTableData(rideData);
       setDriverTableData(driverData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, drivers, type]);
+  }, [data, driverNames, drivers, type]);
 
   return (
     <div className={styles.analyticsTable}>
@@ -217,25 +219,25 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
           <thead>
             <tr className={styles.row}>
               {type === 'ride'
-                ? rideTableHeader.map((title, i) => {
+                ? rideTableHeader.map((title, idx) => {
                   let color;
-                  if (i >= 2 && i <= 4) {
+                  if (idx >= 2 && idx <= 4) {
                     color = '#F2911D';
                   }
-                  if (i >= 5 && i <= 7) {
+                  if (idx >= 5 && idx <= 7) {
                     color = '#1594F2';
                   }
                   return (
-                    <th
-                      className={cn(styles.cell, { [styles.sticky]: i < 2 })}
+                    <th key={idx}
+                      className={cn(styles.cell, { [styles.sticky]: idx < 2 })}
                       style={{ color }}
                     >
                       {title}
                     </th>
                   );
                 })
-                : driverTableHeader.map((title, i) => (
-                  <th className={cn(styles.cell, { [styles.sticky]: i < 2 })}>
+                : driverTableHeader.map((title, idx) => (
+                  <th key={idx} className={cn(styles.cell, { [styles.sticky]: idx < 2 })}>
                     {title}
                   </th>
                 ))}
@@ -245,6 +247,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
             {type === 'ride'
               ? rideTableData?.map((row, i) => (
                 <Row
+                  key={i}
                   data={row}
                   isEditing={isEditing}
                   index={i}
@@ -253,6 +256,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
               ))
               : driverTableData?.map((row, i) => (
                 <Row
+                  key={i}
                   data={row}
                   isEditing={isEditing}
                   index={i}

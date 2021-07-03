@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import { Ride } from '../../types';
@@ -31,9 +31,9 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
     Fri: ['F', '5'],
   };
 
-  const handleClick = (day: string) => {
+  const handleClick = useCallback((day: string) => {
     setWeek((prev) => ({ ...prev, [day]: !week[day] }));
-  };
+  }, [week]);
 
   useEffect(() => {
     if (ride && ride.recurring) {
@@ -42,8 +42,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
         handleClick(days[day - 1]);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ride]);
+  }, [dayLabels, handleClick, ride]);
 
   const dayClicked = () => week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
 

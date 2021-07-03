@@ -32,10 +32,6 @@
   height: 50rem;
 }
 
-.pad {
-  padding: 2.5rem;
-}
-
 .uparrow {
   border: solid black;
   border-width: 0 0.19rem 0.19rem 0;
@@ -60,8 +56,8 @@
   background-color: rgba(255, 255, 255, 0);
   display: block;
   margin: auto;
-  width: 1.56rem;
-  height: 1.56rem;
+  width: 2.25rem;
+  height: 2.25rem;
   outline: none;
 }
 

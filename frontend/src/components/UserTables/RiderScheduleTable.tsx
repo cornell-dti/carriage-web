@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { Ride, Type, Status, ObjectType } from '../../types/index';
 import RiderRidesTable from './RiderRidesTable';
@@ -15,19 +15,19 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   const [rideMapArray, setRideMapArray] = useState<any[]>([]);
 
   // sort rides from newest to oldest
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = useCallback((a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return isPast ? 1 : -1;
     if (x > y) return isPast ? -1 : 1;
     return 0;
-  };
+  }, [isPast]);
 
   // removes rides whose startTime is past the current time
-  const filterRides = (ride: Ride): boolean => {
+  const filterRides = useCallback((ride: Ride): boolean => {
     if (isPast) return ride.type === Type.PAST;
     return ride.type !== Type.PAST;
-  };
+  }, [isPast]);
 
   // Source is from Helen's code on carriage-rider:
   // https://github.com/cornell-dti/carriage-rider/blob/master/lib/utils/RecurringRidesGenerator.dart
@@ -45,7 +45,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   };
 
   // returns a list of dummy recurring rides
-  const generateRecurringRides = (rides: Ride[]): Ride[] => {
+  const generateRecurringRides = useCallback((rides: Ride[]): Ride[] => {
     const recurringRides: Ride[] = [];
     rides.forEach((originalRide) => {
       let origEndDate;
@@ -98,20 +98,10 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
       }
     });
     return recurringRides;
-  };
-
-  useEffect(() => {
-    let allRides = generateRecurringRides(data).concat(data);
-    allRides = allRides.filter(filterRides).sort(compRides);
-    rideMapToArray(getRideMap(allRides));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-  // returns date in the format "MM/DD/YYYY"
-  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
+  }, [curDate]);
 
   // returns a map with date as keys and a list of rides as values
-  const getRideMap = (rides: Ride[]): ObjectType => {
+  const getRideMap = useCallback((rides: Ride[]): ObjectType => {
     const rideMap: ObjectType = {};
     rides.forEach((ride) => {
       const rideDate = formatDate(ride.startTime);
@@ -124,7 +114,16 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
       }
     });
     return rideMap;
-  };
+  }, []);
+
+  useEffect(() => {
+    let allRides = generateRecurringRides(data).concat(data);
+    allRides = allRides.filter(filterRides).sort(compRides);
+    rideMapToArray(getRideMap(allRides));
+  }, [compRides, data, filterRides, generateRecurringRides, getRideMap]);
+
+  // returns date in the format "MM/DD/YYYY"
+  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
 
   // transforms the rides map into an array
   const rideMapToArray = (rideMap: ObjectType) => {

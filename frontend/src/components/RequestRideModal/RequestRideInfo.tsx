@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
-import moment from 'moment';
 import { useReq } from '../../context/req';
 import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';

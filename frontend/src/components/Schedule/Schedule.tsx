@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
@@ -12,20 +12,21 @@ import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
 
-const colorMap = {
-  red: ['FFA26B', 'FFC7A6'],
-  blue: ['0084F4', '66B5F8'],
-  yellow: ['FFCF5C', 'FFE29D'],
-  green: ['00C48C', '7DDFC3'],
-  black: ['1A051D', 'FBE4E8'],
-};
+const colorMap = new Map<string, string[]>([
+  ['red', ['FFA26B', 'FFC7A6']],
+  ['blue', ['0084F4', '66B5F8']],
+  ['yellow', ['FFCF5C', 'FFE29D']],
+  ['green', ['00C48C', '7DDFC3']],
+  ['black', ['1A051D', 'FBE4E8']],
+]);
+const colorIds = ['red', 'blue', 'yellow', 'green', 'black'];
 
 type CalEvent = {
   id: number;
   title: string;
   start: Date;
   end: Date;
-  resourceId: number;
+  resourceId: string;
   ride: Ride;
 };
 
@@ -33,32 +34,47 @@ type CalendarDriver = {
   resourceId: string;
   resourceTitle: string;
 };
-const Schedule = () => {
-  const localizer = momentLocalizer(moment);
 
+const HR1 = 3600000;
+const HR2 = 7200000;
+const HR8 = 28800000;
+
+const Schedule = () => {
+  const componentMounted = useRef(true);
+  const localizer = momentLocalizer(moment);
   const DnDCalendar = withDragAndDrop<any, any>(Calendar);
+  const { withDefaults } = useReq();
 
   const scheduleDay = useDate().curDate;
   scheduleDay.setHours(0, 0, 0, 0);
   const defaultStart = scheduleDay;
   defaultStart.setHours(8, 0, 0, 0);
-  const defaultEnd = new Date(scheduleDay.getTime() + 28699999);
 
-  const [curStart, setCurStart] = useState(defaultStart);
+  const [lessTime, setLessTime] = useState([
+    defaultStart,
+    new Date(defaultStart.getTime() + HR2 - 1),
+  ]);
+  const [moreTime, setMoreTime] = useState([
+    defaultStart,
+    new Date(defaultStart.getTime() + HR8 - 1),
+  ]);
+
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
   const { drivers } = useEmployees();
-  const [viewState, setviewState] = useState(false);
+  const [viewMore, setViewMore] = useState(false);
   const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
+  const [colorIdMap, setColorIdMap] = useState(new Map<string, string>());
 
-  const { withDefaults } = useReq();
+  const [isOpen, setIsOpen] = useState(false);
+  const closeModal = () => setIsOpen(false);
 
-  const getRides = () => {
+  const getRides = useCallback(() => {
     const today = moment(scheduleDay).format('YYYY-MM-DD');
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        data && setEvents(
+        data && componentMounted.current && setEvents(
           data.map((ride: Ride) => ({
             id: ride.id,
             title: `${ride.startLocation.name} to ${ride.endLocation.name}
@@ -70,61 +86,69 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           })),
         );
       });
-  };
+  }, [componentMounted, scheduleDay, withDefaults]);
 
   useEffect(() => {
     getRides();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheduleDay]);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [getRides]);
 
   useEffect(() => {
     setCalDrivers(
       drivers.map((driver: any) => ({
         resourceId: driver.id,
-        resourceTitle: `${driver.firstName} ${driver.lastName}`,
+        resourceTitle: driver.firstName.toUpperCase(),
       })),
     );
   }, [drivers]);
 
-  const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(
-      `/api/rides/${rideId}`,
-      withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driver: updatedDriver }),
-      }),
-    );
-  };
+  useEffect(() => {
+    const newColorIdMap = new Map<string, string>();
+    calDrivers.map((resource, idx) => {
+      const pos = idx % colorIds.length;
+      newColorIdMap.set(resource.resourceId, colorIds[pos]);
+      return true;
+    });
+    setColorIdMap(newColorIdMap);
+  }, [calDrivers]);
 
   const goUp = () => {
-    if (curStart.getHours() > 0) {
-      setCurStart(new Date(curStart.getTime() - 7200000));
-    }
-  };
-  const goDown = () => {
-    if (curStart.getHours() < 22) {
-      setCurStart(new Date(curStart.getTime() + 7200000));
+    if (viewMore) {
+      if (moreTime[0].getHours() > 0) {
+        setMoreTime([
+          new Date(moreTime[0].getTime() - HR1),
+          new Date(moreTime[1].getTime() - HR1),
+        ]);
+      }
+    } else if (lessTime[0].getHours() > 0) {
+      setLessTime([
+        new Date(lessTime[0].getTime() - HR2),
+        new Date(lessTime[1].getTime() - HR2),
+      ]);
     }
   };
 
-  const getColor = (id: number) => {
-    switch (id % 10) {
-      case 0:
-        return 'red';
-      case 1:
-        return 'blue';
-      case 2:
-        return 'green';
-      case 3:
-        return 'yellow';
-      default:
-        return 'black';
+  const goDown = () => {
+    if (viewMore) {
+      if (moreTime[0].getHours() < 16) {
+        setMoreTime([
+          new Date(moreTime[0].getTime() + HR1),
+          new Date(moreTime[1].getTime() + HR1),
+        ]);
+      }
+    } else if (lessTime[0].getHours() < 22) {
+      setLessTime([
+        new Date(lessTime[0].getTime() + HR2),
+        new Date(lessTime[1].getTime() + HR2),
+      ]);
     }
   };
 
   const eventStyle = (event: CalEvent) => {
-    const color = colorMap[getColor(event.id)];
+    const colorName = colorIdMap.get(event.resourceId) || 'black';
+    const color = colorMap.get(colorName) || ['1A051D', 'FBE4E8'];
     return {
       style: {
         borderLeft: `0.2rem solid #${color[0]}`,
@@ -143,29 +167,20 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
   });
 
   const filterEvents = (allEvents: CalEvent[]) => {
-    const c = curStart.getHours();
-    const ff = allEvents.filter(({ start, end }) => {
+    const timeStart = viewMore
+      ? moreTime[0].getHours()
+      : lessTime[0].getHours();
+    const timeEnd = timeStart + (viewMore ? 7 : 1);
+    const filtered = allEvents.filter(({ start, end }) => {
       const s = start.getHours();
       const e = end.getHours();
-      const outOfBounds = s < c && c + 1 < e;
-      return s === c || s === c + 1 || e === c || e === c || outOfBounds;
+      const startsInBounds = s >= timeStart && s <= timeEnd;
+      const endsInBounds = e >= timeStart && e <= timeEnd;
+      const partlyInBounds = s < timeStart && timeEnd < e;
+      return startsInBounds || endsInBounds || partlyInBounds;
     });
-    return ff;
+    return filtered;
   };
-
-  const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
-
-    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
-    if (updatedDriver !== undefined) {
-      updateRides(event.id, updatedDriver);
-    }
-    setEvents(nextEvents);
-  };
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const closeModal = () => setIsOpen(false);
 
   const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
@@ -192,13 +207,44 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     }
   };
 
+  const updateRides = (rideId: string, updatedDriver: Driver) => {
+    fetch(
+      `/api/rides/${rideId}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ driver: updatedDriver }),
+      }),
+    );
+  };
+
+  const onEventDrop = ({ start, end, event, resourceId }: any) => {
+    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
+
+    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
+    if (updatedDriver !== undefined) {
+      updateRides(event.id, updatedDriver);
+    }
+    setEvents(nextEvents);
+  };
+
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
   };
 
-  const okHr = (hr: number) => viewState || hr === curStart.getHours();
+  const disableHr = (start: boolean) => {
+    if (start) {
+      return viewMore
+        ? moreTime[0].getHours() === 0
+        : lessTime[0].getHours() === 0;
+    }
+    return viewMore
+      ? moreTime[0].getHours() === 16
+      : lessTime[0].getHours() === 22;
+  };
 
+  const handleChangeViewState = () => setViewMore(!viewMore);
 
   return (
     <>
@@ -211,26 +257,22 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         />
       )}
       <div
-        className={cn(styles.calendar_container, { [styles.long]: viewState })}
-      >
-        <div className={cn(styles.left, { [styles.long]: viewState })}>
+        className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
+        <div className={cn(styles.left, { [styles.long]: viewMore })}>
           <DnDCalendar
             resizable={false}
+            onEventDrop={onEventDrop}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             toolbar={false}
             step={5}
             timeslots={12}
             showMultiDayTimes={true}
-            events={viewState ? events : filterEvents(events)}
+            events={filterEvents(events)}
             defaultView="day"
-            onEventDrop={onEventDrop}
-            selectable
             onSelectEvent={onSelectEvent}
-            min={viewState ? defaultStart : curStart}
-            max={
-              viewState ? defaultEnd : new Date(curStart.getTime() + 7199999)
-            }
+            min={viewMore ? moreTime[0] : lessTime[0]}
+            max={viewMore ? moreTime[1] : lessTime[1]}
             date={scheduleDay}
             onNavigate={() => { }}
             resources={calDrivers}
@@ -240,23 +282,34 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={cn(styles.right, { [styles.long]: viewState })}>
+        <div className={cn(styles.right, { [styles.long]: viewMore })}>
           <div>
-            <button className={styles.btn} onClick={goUp} disabled={okHr(0)}>
-              <span className={styles.uparrow} role="img" aria-label={'up arrow'}></span>
+            <button
+              className={styles.btn}
+              onClick={goUp}
+              disabled={disableHr(true)}>
+              <span
+                className={styles.uparrow}
+                role="img"
+                aria-label={'up arrow'}
+              />
             </button>
-            <span className={styles.pad}></span>
-            <button className={styles.btn} onClick={goDown} disabled={okHr(22)}>
-              <span className={styles.downarrow} role="img" aria-label={'down arrow'}></span>
+            <span className={styles.pad} />
+            <button
+              className={styles.btn}
+              onClick={goDown}
+              disabled={disableHr(false)}>
+              <span
+                className={styles.downarrow}
+                role="img"
+                aria-label={'down arrow'}
+              />
             </button>
           </div>
         </div>
       </div>
-      <button
-        className={styles.view_state}
-        onClick={() => setviewState(!viewState)}
-      >
-        view {viewState ? 'less' : 'more'}
+      <button className={styles.view_state} onClick={handleChangeViewState}>
+        view {viewMore ? 'less' : 'more'}
       </button>
     </>
   );

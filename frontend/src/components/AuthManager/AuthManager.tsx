@@ -37,8 +37,7 @@ export const AuthManager = () => {
 
   useEffect(() => {
     setInitPath(pathname);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   function logout() {
     signOut();
@@ -139,8 +138,6 @@ export const AuthManager = () => {
             </button>
           )}
           onSuccess={generateOnSignIn(false)}
-          // eslint-disable-next-line no-console
-          onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"
           isSignedIn
@@ -163,8 +160,6 @@ export const AuthManager = () => {
             </button>
           )}
           onSuccess={generateOnSignIn(true)}
-          // eslint-disable-next-line no-console
-          onFailure={console.error}
           clientId={clientId}
           cookiePolicy="single_host_origin"
           isSignedIn
