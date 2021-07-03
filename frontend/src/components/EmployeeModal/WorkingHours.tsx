@@ -80,7 +80,7 @@ const AvailabilityInput = ({
       required: !hide,
       validate: () => (hide ? true : days.length > 0),
     });
-  }, [days.length, hide, instance, register]);
+  }, [instance, register, days, hide]);
 
   useEffect(() => {
     // When selected days changes, update days value
@@ -152,7 +152,7 @@ const AvailabilityInput = ({
           && <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
         }
       </div>
-    </div>
+    </div >
   );
 };
 

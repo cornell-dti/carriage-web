@@ -1,12 +1,12 @@
 import { AvailabilityType } from '../types';
 
 const formatTime = (time: string) => {
-    const hours = Number(time.split(':')[0]);
-    // set fmtHours to 12 if hours is multiple of 12
-    const fmtHours = hours % 12 || 12;
-    return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
-  };
-  
+  const hours = Number(time.split(':')[0]);
+  // set fmtHours to 12 if hours is multiple of 12
+  const fmtHours = hours % 12 || 12;
+  return `${fmtHours}${hours < 12 ? 'am' : 'pm'}`;
+};
+
 const formatAvailability = (availability?: AvailabilityType) => {
   if (!availability) return null;
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
