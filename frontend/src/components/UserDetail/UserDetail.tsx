@@ -26,8 +26,8 @@ type UserContactInfo = {
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   <div className={styles.contactInfo}>
-    <img className={styles.contactIcon} src={icon} alt={''} />
-    <p className={styles.contactText} aria-describedby={'contact information'}>{text}</p>
+    <img className={styles.contactIcon} src={icon} alt={alt} />
+    <p className={styles.contactText}>{text}</p>
   </div>
 );
 
@@ -124,8 +124,7 @@ const UserDetail = ({
                 />
                 : <RiderModal existingRider={rider} isRiderWeb={isRider} />
             }
-            {!isRider && <input type="image"
-              className={styles.editIcon} alt="trash" src={detailTrash} />}
+            {!isRider && <input type="image" className={styles.editIcon} alt="trash" src={detailTrash} />}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

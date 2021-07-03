@@ -64,7 +64,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label htmlFor='name'>Name: </Label>
+          <Label className={styles.label} htmlFor='name'>Name: </Label>
           <Input
             id='name'
             name="name"
@@ -75,7 +75,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           {errors.name && <p className={styles.error}>Please enter a name</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label htmlFor='netid'>NetID: </Label>
+          <Label className={styles.label} htmlFor='netid'>NetID: </Label>
           <Input
             id="netid"
             name="netid"
@@ -87,7 +87,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label htmlFor='phoneNumber'>Phone Number: </Label>
+          <Label className={styles.label} htmlFor='phoneNumber'>Phone Number: </Label>
           <Input
             id="phoneNumber"
             name="phoneNumber"
@@ -100,7 +100,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label htmlFor='needs'>Needs: </Label>
+          <Label className={styles.label} htmlFor='needs'>Needs: </Label>
           <Input
             id="needs"
             name="needs"
@@ -127,7 +127,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label htmlFor='address'>Address: </Label>
+          <Label className={styles.label} htmlFor='address'>Address: </Label>
           <Input
             id="address"
             name="address"
@@ -145,7 +145,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           <p>Duration</p>
           <div className={styles.lastRow}>
             <div>
-              <Label htmlFor='joinDate'>Join Date: </Label>
+              <Label className={styles.label} htmlFor='joinDate'>Join Date: </Label>
               <Input
                 id='joinDate'
                 type="date"
@@ -160,7 +160,7 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
             </div>
             <p className={styles.to}>to</p>
             <div>
-              <Label htmlFor='endDate'>End Date: </Label>
+              <Label className={styles.label} htmlFor='endDate'>End Date: </Label>
               <Input
                 id='endDate'
                 type="date"
