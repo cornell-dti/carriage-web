@@ -94,19 +94,14 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
 
   useEffect(() => {
     if (drivers && !driverNames.length) {
-      const acc: string[] = [];
-      drivers.forEach((d) => {
-        acc.push(`${d.firstName} ${d.lastName}`);
-      });
-      setDriverNames(acc);
+      setDriverNames(drivers.map((d) => `${d.firstName} ${d.lastName}`));
     }
   }, [driverNames, drivers]);
 
 
   const driverTableHeader = sharedCols.concat(driverNames.map((name) => {
-    const nameArr = name.split(' ');
-    nameArr[1] = `${nameArr[1].charAt(0)}.`;
-    return nameArr.join(' ');
+    const [first, last] = name.split(' ');
+    return `${first} ${last.charAt(0)}.`;
   }));
 
   const dbRideCols = [
