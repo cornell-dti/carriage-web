@@ -1,8 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import UserDetail, { UserContactInfo } from '../../components/UserDetail/UserDetail';
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
-import { useReq } from '../../context/req';
 import pageStyles from '../Admin/page.module.css';
 import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
@@ -32,11 +31,10 @@ const NotifPreferences = () => (
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
-  console.log(user);
   const netId = user?.email.split('@')[0] || '';
 
   return (
-    <main id = "main">
+    <main id="main">
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
         <div className={pageStyles.rightSection}>
