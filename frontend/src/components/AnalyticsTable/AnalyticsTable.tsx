@@ -77,6 +77,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
+  const [driverNames, setDriverNames] = useState<string[]>([]);
   const { withDefaults } = useReq();
   const { drivers } = useEmployees();
 
@@ -91,15 +92,22 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     'Night Cancels',
   ]);
 
-  const driverNames: string[] = [];
-  const driverShortNames: string[] = [];
+  useEffect(() => {
+    if (drivers && !driverNames.length) {
+      const acc: string[] = [];
+      drivers.forEach((d) => {
+        acc.push(`${d.firstName} ${d.lastName}`);
+      });
+      setDriverNames(acc);
+    }
+  }, [driverNames, drivers]);
 
-  drivers.forEach((d) => {
-    driverNames.push(`${d.firstName} ${d.lastName}`);
-    driverShortNames.push(`${d.firstName} ${d.lastName.substring(0, 1)}.`);
-  });
 
-  const driverTableHeader = sharedCols.concat(driverShortNames);
+  const driverTableHeader = sharedCols.concat(driverNames.map((name) => {
+    const nameArr = name.split(' ');
+    nameArr[1] = `${nameArr[1].charAt(0)}.`;
+    return nameArr.join(' ');
+  }));
 
   const dbRideCols = [
     'dayCount',

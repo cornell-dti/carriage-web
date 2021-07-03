@@ -71,7 +71,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                     ? cn(styles.selected, styles.circle)
                     : styles.circle
                 }>
-                  <img alt={""} src={icon} />
+                  <img alt={''} src={icon} />
                 </div>
               </Link>
               <p className={styles.caption}>{caption}</p>
@@ -92,7 +92,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                 Log out
               </button>
             )}
-            />}
+          />}
         </div>
       </nav>
       <div className={styles.content}>
