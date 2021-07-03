@@ -94,3 +94,7 @@
   border-width: 0 0 1px;
   margin-bottom: 40px;
 }
+
+.footer {
+  max-width: 400px;
+}

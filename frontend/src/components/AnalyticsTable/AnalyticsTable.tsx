@@ -42,6 +42,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
     >
       {data.map((d, cellIndex) => (
         <td
+          key={cellIndex}
           className={styles.cell}
           style={{ borderRadius: getBorderRadius(cellIndex, data.length) }}
         >
@@ -246,6 +247,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
             {type === 'ride'
               ? rideTableData?.map((row, i) => (
                 <Row
+                  key={i}
                   data={row}
                   isEditing={isEditing}
                   index={i}
@@ -254,6 +256,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
               ))
               : driverTableData?.map((row, i) => (
                 <Row
+                  key={i}
                   data={row}
                   isEditing={isEditing}
                   index={i}

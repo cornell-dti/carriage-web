@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
 import styles from './modal.module.css';

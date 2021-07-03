@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import moment from 'moment';
 import { useReq } from '../../context/req';
@@ -17,7 +17,6 @@ type UsageType = {
 }
 
 const StudentsTable = () => {
-  const history = useHistory();
   const { riders } = useRiders();
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
