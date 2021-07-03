@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
 import { TableData } from '../../types';
 import StatsBox, { StatsBoxProps } from './StatsBox';
 import { cancel, dayRide, nightRide, noShow } from '../../icons/analytics/index';

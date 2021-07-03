@@ -11,8 +11,8 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
   const [expanded, setExpanded] = useState(false);
   const icon = expanded ? down : up;
 
-  const handleKeywordKeyPress = (e: React.KeyboardEvent) =>{
-    if( e.key === 'Enter' ){
+  const handleKeywordKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
       setExpanded(!expanded);
     }
   };
@@ -20,8 +20,8 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
     <div className={styles.collapsible}>
       <div className={styles.banner} onClick={() => setExpanded(!expanded)} >
         <h2 className={styles.title}>{title}</h2>
-        <img className={styles.icon} src={icon} role={"button"}
-          alt={"see more"} tabIndex={0} onKeyPress={handleKeywordKeyPress} />
+        <img className={styles.icon} src={icon} role={'button'}
+          alt={'see more'} tabIndex={0} onKeyPress={handleKeywordKeyPress} />
       </div>
       {expanded && <div className={styles.contentContainer}>{children}</div>}
     </div>

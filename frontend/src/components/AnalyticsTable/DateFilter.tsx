@@ -1,75 +1,37 @@
-import React from 'react';
-import cn from 'classnames';
+import React, { useState } from 'react';
 import moment from 'moment';
 import styles from './datefilter.module.css';
+import { Button } from '../FormElements/FormElements';
 
 type DateFilterProps = {
-  year: number;
-  month: number;
-  startDate: string;
-  endDate: string;
-  onChange: (unit: 'year' | 'month' | 'startDate' | 'endDate', value: any) => void;
+  initStartDate: string;
+  initEndDate: string;
+  onSubmit: (startDate: string, endDate: string) => void;
 }
 
-const DateFilter = ({ year, month, startDate, endDate, onChange }: DateFilterProps) => {
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  const years = [];
-  for (let i = 2020; i <= moment().year(); i += 1) {
-    years.push(i);
-  }
+const DateFilter = ({ initStartDate, initEndDate, onSubmit }: DateFilterProps) => {
+  const [startDate, setStartDate] = useState(initStartDate);
+  const [endDate, setEndDate] = useState(initEndDate);
+  const [error, setError] = useState('');
+  const today = moment().format('YYYY-MM-DD');
 
   return (
     <div className={styles.dateFilter}>
-      <div className={styles.box}>
-        <label className={styles.datePickerLabel} htmlFor='year'>Year</label>
-        <select
-          id="year"
-          name='year'
-          className={cn(styles.input, styles.yearDropdown)}
-          value={year}
-          onChange={(e) => onChange('year', Number(e.target.value))}
-        >
-          {years.map((y) => <option key={y} value={y}>{y}</option>)}
-        </select>
-      </div>
-      <div className={styles.box}>
-        <label className={styles.datePickerLabel} htmlFor='month'>Month</label>
-        <select
-          id='month'
-          name='month'
-          className={styles.input}
-          value={month}
-          onChange={(e) => onChange('month', Number(e.target.value))}
-        >
-          {months.map((m, i) => <option key={m} value={i}>{m}</option>)}
-        </select>
-      </div>
       <div className={styles.box}>
         <label className={styles.datePickerLabel}>Date Range</label>
         <div className={styles.dateRangeContainer}>
           <input
             className={styles.input}
             type="date"
+            max={today}
             onChange={(e) => {
               const newStart = e.target.value;
+              setStartDate(newStart);
               if (newStart > endDate) {
-                onChange('endDate', newStart);
+                setError('Start date must be before or on end date');
+              } else {
+                setError('');
               }
-              onChange('startDate', newStart);
             }}
             value={startDate}
           />
@@ -77,16 +39,27 @@ const DateFilter = ({ year, month, startDate, endDate, onChange }: DateFilterPro
           <input
             className={styles.input}
             type="date"
+            max={today}
             onChange={(e) => {
               const newEnd = e.target.value;
+              setEndDate(newEnd);
               if (newEnd < startDate) {
-                onChange('startDate', newEnd);
+                setError('End date must be after or on start date');
+              } else {
+                setError('');
               }
-              onChange('endDate', newEnd);
             }}
             value={endDate}
           />
+          <Button onClick={() => {
+            if (error === '') {
+              onSubmit(startDate, endDate);
+            }
+          }} outline={true} className={styles.submitButton}>
+            Apply Dates
+          </Button>
         </div>
+        <div className={styles.error}>{error}</div>
       </div>
     </div>
   );

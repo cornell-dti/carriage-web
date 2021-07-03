@@ -10,9 +10,9 @@ type UploadProps = {
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const [imageURL, setImageURL] = useState(existingPhoto ? `http://${existingPhoto}` : '');
   const inputRef = createRef<HTMLInputElement>();
-  /*This is for accessibility purposes only*/
-  const handleKeyboardPress = (e: React.KeyboardEvent) =>{
-    if( e.key === 'Enter' ){
+  /* This is for accessibility purposes only */
+  const handleKeyboardPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
       inputRef.current && inputRef.current.click();
     }
   };

@@ -17,7 +17,7 @@ const AvailabilityInput = ({
   index,
   existingTimeRange,
   existingDayArray,
-  hide
+  hide,
 }: AvailabilityInputProps) => {
   const {
     selectDay,
@@ -74,11 +74,11 @@ const AvailabilityInput = ({
   }, []);
 
   useEffect(() => {
-    // Register day selector as custom form input. 
-    //Not putting error message here since there is no default behavior to override
-    register(`${instance}.days`, { 
-      required: !hide, 
-      validate: () => {return hide? true : days.length > 0}});
+    // Register day selector as custom form input.
+    // Not putting error message here since there is no default behavior to override
+    register(`${instance}.days`, {
+      required: !hide,
+      validate: () => (hide ? true : days.length > 0) });
   }, [instance, register, days, hide]);
 
   useEffect(() => {
@@ -100,12 +100,12 @@ const AvailabilityInput = ({
           type='time'
           className={styles.timeInput}
           defaultValue={existingTime?.[0]}
-          ref={register({ required: !hide})}
+          ref={register({ required: !hide })}
         />
-        {errors.availability && errors.availability[index] && 
-          errors.availability[index].startTime &&  
-          <p className={styles.error}>Please enter a valid start time</p>
-        }  
+        {errors.availability && errors.availability[index]
+          && errors.availability[index].startTime
+          && <p className={styles.error}>Please enter a valid start time</p>
+        }
         </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
@@ -120,14 +120,14 @@ const AvailabilityInput = ({
           required: !hide,
           validate: (endTime) => {
             const startTime = getValues(`${instance}.startTime`);
-            return hide? true : startTime < endTime;
+            return hide ? true : startTime < endTime;
           },
         })}
       />
-        {errors.availability && errors.availability[index] && 
-          errors.availability[index].endTime &&
-          <p className={styles.error}>Please enter a valid end time</p> 
-        }    
+        {errors.availability && errors.availability[index]
+          && errors.availability[index].endTime
+          && <p className={styles.error}>Please enter a valid end time</p>
+        }
         </div>
       <p className={styles.repeatText}>Repeat on</p>
       <div className={styles.timeFlexbox}>
@@ -146,10 +146,10 @@ const AvailabilityInput = ({
             />
           ))}
         </div>
-        {errors.availability && errors.availability[index] && 
-            errors.availability[index].days &&  
-            <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
-          }    
+        {errors.availability && errors.availability[index]
+            && errors.availability[index].days
+            && <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
+          }
       </div>
     </div>
   );
