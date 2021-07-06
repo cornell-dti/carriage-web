@@ -60,7 +60,7 @@
   display: inline-block;
 }
 
-@media screen and (max-height: 768px){
+@media screen and (max-height: 600px){
   .modal{
     max-width: 100%; 
     max-height: 100%; 

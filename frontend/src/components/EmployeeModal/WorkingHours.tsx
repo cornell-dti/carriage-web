@@ -3,7 +3,7 @@ import cn from 'classnames';
 import moment from 'moment';
 import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
-import { Input, SRLabel } from '../FormElements/FormElements';
+import { Input, Label } from '../FormElements/FormElements';
 import { WeekProvider, useWeek } from './WeekContext';
 
 type AvailabilityInputProps = {
@@ -94,7 +94,7 @@ const AvailabilityInput = ({
   return (
     <div className={styles.availabilityInput}>
       <div className={styles.timeFlexbox}>
-        <SRLabel htmlFor={`${instance}.startTime`}>Start Time</SRLabel>
+        <Label htmlFor={`${instance}.startTime`}>Start Time</Label>
         <Input
           id={`${instance}.startTime`}
           name={`${instance}.startTime`}
@@ -110,7 +110,7 @@ const AvailabilityInput = ({
       </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
-        <SRLabel htmlFor={`${instance}.endTime`}>End Time</SRLabel>
+        <Label htmlFor={`${instance}.endTime`}>End Time</Label>
         <Input
           id={`${instance}.endTime`}
           name={`${instance}.endTime`}

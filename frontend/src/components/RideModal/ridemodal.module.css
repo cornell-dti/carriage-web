@@ -24,7 +24,7 @@
 .rideTime {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 1rem;
+  grid-gap: 1rem;
 }
 
 .date {
@@ -81,4 +81,8 @@
 .nameInput {
   font-size: 1.5rem;
   width: 100%;
+}
+
+.label {
+  display: block;
 }

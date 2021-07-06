@@ -31,7 +31,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
               required: true,
               validate: (date) => {
                 const fmtDate = moment(date).format('YYYY-MM-DD');
-                const fmtCurr = moment().format('YYYY-MM-DD');
+                const fmtCurr = moment(curDate).format('YYYY-MM-DD');
                 return fmtDate >= fmtCurr;
               },
             })}
@@ -53,7 +53,7 @@ const RideTimesPage = ({ formData, onSubmit }: ModalPageProps) => {
               required: true,
               validate: (pickupTime) => {
                 const date = getValues('date');
-                return moment().isBefore(moment(`${date} ${pickupTime}`));
+                return moment(curDate).isBefore(moment(`${date} ${pickupTime}`));
               },
             })}
           />
