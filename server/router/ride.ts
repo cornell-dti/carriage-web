@@ -26,7 +26,10 @@ router.get('/download', (req, res) => {
     .toISOString();
   const condition = new Condition()
     .where('startTime')
-    .between(dateStart, dateEnd);
+    .between(dateStart, dateEnd)
+    .where('status')
+    .not()
+    .eq(Status.CANCELLED);
 
   const callback = (value: any) => {
     const dataToExport = value
@@ -59,7 +62,13 @@ router.get('/repeating', validateUser('User'), (req, res) => {
     query: { rider },
   } = req;
   const now = moment.tz('America/New_York').format('YYYY-MM-DD');
-  let condition = new Condition('recurring').eq(true).where('endDate').ge(now);
+  let condition = new Condition('recurring')
+    .eq(true)
+    .where('endDate')
+    .ge(now)
+    .where('status')
+    .not()
+    .eq(Status.CANCELLED);
   if (rider) {
     condition = condition.where('rider').eq(rider);
   }

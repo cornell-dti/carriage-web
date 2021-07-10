@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, SRLabel } from '../../FormElements/FormElements';
+import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
@@ -53,12 +53,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
-          <SRLabel htmlFor={'name'}>Name</SRLabel>
+          <Label htmlFor={'name'}>Name</Label>
           <Input
             id="name"
             name="name"
             type="text"
-            placeholder="Name"
             className={styles.nameInput}
             list="names"
             ref={register({
@@ -72,12 +71,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.pickupLocation}>
-          <SRLabel htmlFor={'pickupLoc'}>Pickup Location</SRLabel>
+          <Label htmlFor={'pickupLoc'} className={styles.label}>Pickup Location</Label>
           <Input
             id="pickupLoc"
             name="pickupLoc"
             type="text"
-            placeholder="Pickup Location"
             list="locations"
             ref={register({ required: true })}
           />
@@ -87,12 +85,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          <SRLabel htmlFor={'dropoffLoc'}>Dropoff Location</SRLabel>
+          <Label htmlFor={'dropoffLoc'} className={styles.label}>Dropoff Location</Label>
           <Input
             id="dropoffLoc"
             name="dropoffLoc"
             type="text"
-            placeholder="Dropoff Location"
             list="locations"
             ref={register({
               required: true,

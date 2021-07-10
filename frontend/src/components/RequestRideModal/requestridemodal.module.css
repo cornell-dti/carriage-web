@@ -1,7 +1,5 @@
 .inputContainer{
   max-width: 45rem;
-  /* max-height: 90%; */
-  overflow: scroll; 
 }
 .input{
   display: inline-block;

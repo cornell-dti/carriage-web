@@ -127,6 +127,7 @@ const RideModal = ({
         onClose={closeModal}
       >
         <RideTimesPage
+          isEditing
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />

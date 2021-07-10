@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { Ride } from '../../types/index';
+import { Ride, Type } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
@@ -14,8 +14,8 @@ type RiderRidesTableProps = {
 
 const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  const colSizes = [1, 1, 1, 1, 1];
-  const headers = ['Time', 'Pickup Location', 'Dropoff Location', 'This ride repeats...', ''];
+  const colSizes = [1, 1, 1, 1, 1, 1];
+  const headers = ['Time', 'Pickup Location', 'Dropoff Location', 'This ride repeats...', 'Status', ''];
 
   return (
     <>
@@ -76,9 +76,19 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
               </p>,
           };
 
-          const editButton = (
-            <RequestRideModal ride={ride} />
-          );
+          let valueStatus;
+          switch (ride.type) {
+            case Type.UNSCHEDULED:
+              valueStatus = 'Requested';
+              break;
+            case Type.ACTIVE:
+              valueStatus = 'Confirmed';
+              break;
+            default:
+              valueStatus = 'Past';
+          }
+
+          const editButton = <RequestRideModal ride={ride} />;
 
           const deleteButton = (
             <button className={styles.deleteIcon} onClick={() => setDeleteOpen(index)}>
@@ -90,11 +100,15 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             setDeleteOpen(-1);
           };
 
+          const isOneHourBeforeRideStart = moment().isBefore(
+            moment(ride.startTime).subtract(1, 'hour'),
+          );
+
           const valueEditDelete = {
             data: !isPast ? (
               <>
-                {editButton}
-                {deleteButton}
+                {ride.type === Type.UNSCHEDULED && editButton}
+                {isOneHourBeforeRideStart && deleteButton}
               </>
             ) : null,
           };
@@ -104,6 +118,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             valuePickup,
             valueDropoff,
             valueRepeat,
+            valueStatus,
             valueEditDelete,
           ];
 

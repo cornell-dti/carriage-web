@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
+import moment from 'moment';
 import { useReq } from '../../context/req';
 import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';
@@ -32,6 +33,14 @@ const RequestRideInfo = ({
   const watchDropoffCustom = watch('endLocation');
   const shouldDisableStartDate = (ride?.parentRide && ride?.parentRide.type !== 'unscheduled')
     || (ride && ride.type !== 'unscheduled');
+
+  const isTimeValid = (startDate: string, pickupTime: string) => {
+    const now = moment();
+    const today10AM = now.clone().hour(10).minute(0);
+    const selectedTime = moment(`${startDate} ${pickupTime}`);
+    const bufferDays = now.isAfter(today10AM) ? 2 : 1;
+    return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
+  };
 
   useEffect(() => {
     const getExistingLocations = async () => {
@@ -107,7 +116,13 @@ const RequestRideInfo = ({
             type="date"
             disabled={shouldDisableStartDate}
             className={cn(styles.input)}
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              validate: (startDate) => {
+                const pickupTime = getValues('pickupTime');
+                return pickupTime ? isTimeValid(startDate, pickupTime) : true;
+              },
+            })}
           />
           {errors.startDate && (
             <p className={styles.error}>Please enter a valid start date</p>
@@ -237,7 +252,13 @@ const RequestRideInfo = ({
             name="pickupTime"
             className={styles.input}
             aria-labelledby="pickupLabel pickupTime"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              validate: (pickupTime) => {
+                const startDate = getValues('startDate');
+                return startDate ? isTimeValid(startDate, pickupTime) : true;
+              },
+            })}
           />
           {errors.pickupTime && (
             <p className={styles.error}>Please choose a valid pickup time</p>
