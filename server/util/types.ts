@@ -5,3 +5,10 @@ export type JWTPayload = {
   userType: UserType;
   iat: string;
 }
+
+export enum Change {
+  LATE = 'late',
+  SCHEDULED = 'scheduled',
+  EDITED = 'edited',
+  REPEATING_EDITED = 'repeating_edited',
+}
