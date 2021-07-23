@@ -74,28 +74,34 @@ const UserDetail = ({
   const toggleActive = (): void => {
     if (rider) {
       const { id, active } = rider;
-      fetch(`/api/riders/${id}`, withDefaults({
-        method: 'PUT',
-        body: JSON.stringify({
-          active: !active,
-        }),
-      }))
-        .then(() => {
-          setIsShowing(true);
-          refreshRiders();
-        });
+      fetch(
+        `/api/riders/${id}`,
+        withDefaults({
+          method: 'PUT',
+          body: JSON.stringify({ active: !active }),
+        })
+      ).then(() => {
+        setIsShowing(true);
+        refreshRiders();
+      });
     }
   };
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
-      {isShowing && rider
-        ? <Toast message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`} />
-        : null}
+      {isShowing && rider ? (
+        <Toast
+          message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
+        />
+      ) : null}
       <div className={styles.imgContainer}>
-        {photoLink && photoLink !== ''
-          ? <img className={styles.profilePic} src={`http://${photoLink}`} alt="profile" />
-          : null}
+        {photoLink && photoLink !== '' ? (
+          <img
+            className={styles.profilePic}
+            src={`http://${photoLink}`}
+            alt="profile"
+          />
+        ) : null}
       </div>
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
@@ -104,27 +110,36 @@ const UserDetail = ({
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
-            {rider && !isRider
-              ? <Button onClick={toggleActive}>{rider.active ? 'Deactivate' : 'Activate'}</Button>
-              : null}
-            {
-              employee
-                ? <EmployeeModal
-                  existingEmployee={{
-                    id: employee.id,
-                    name: `${employee.firstName} ${employee.lastName}`,
-                    netId: employee.netId,
-                    email: `${employee.netId}@cornell.edu`,
-                    phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
-                    availability: employee.availability,
-                    role,
-                    photoLink: employee.photoLink,
-                    startDate: employee.startDate,
-                  }}
-                />
-                : <RiderModal existingRider={rider} isRiderWeb={isRider} />
-            }
-            {!isRider && <input type="image" className={styles.editIcon} alt="trash" src={detailTrash} />}
+            {rider && !isRider ? (
+              <Button onClick={toggleActive}>
+                {rider.active ? 'Deactivate' : 'Activate'}
+              </Button>
+            ) : null}
+            {employee ? (
+              <EmployeeModal
+                existingEmployee={{
+                  id: employee.id,
+                  name: `${employee.firstName} ${employee.lastName}`,
+                  netId: employee.netId,
+                  email: `${employee.netId}@cornell.edu`,
+                  phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
+                  availability: employee.availability,
+                  role,
+                  photoLink: employee.photoLink,
+                  startDate: employee.startDate,
+                }}
+              />
+            ) : (
+              <RiderModal existingRider={rider} isRiderWeb={isRider} />
+            )}
+            {!isRider && (
+              <input
+                type="image"
+                className={styles.editIcon}
+                alt="trash"
+                src={detailTrash}
+              />
+            )}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

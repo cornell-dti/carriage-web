@@ -6,19 +6,19 @@
   color: #848484;
   padding: 0 0.6rem 0.25rem 0.6rem;
   background-color: #fff;
-  border:none; 
+  border: none;
   outline: none;
 }
 
 .tab:hover {
   cursor: pointer;
 }
-.tabHeading{
-  display:inline; 
+.tabHeading {
+  display: inline;
 }
 
-.tab:focus{
-  border: 3px solid black; 
+.tab:focus {
+  border: 3px solid black;
 }
 .current {
   color: black;

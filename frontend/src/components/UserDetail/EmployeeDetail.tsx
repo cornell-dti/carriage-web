@@ -23,33 +23,34 @@ type EmployeeDetailProps = {
 type EmployeeStatisticsProps = {
   rideCount: number;
   hours: number;
-}
+};
 
 type StatisticProps = {
   icon: string;
   stat: number;
   alt: string;
   description: string;
-}
+};
 
 const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
   const Statistic = ({ icon, stat, description, alt }: StatisticProps) => (
     <div className={styles.statistic}>
       <img src={icon} className={styles.statIcon} alt={alt} />
       <div className={styles.statDescription}>
-        {stat >= 0
-          ? <>
-            {icon === peopleStats
-              ? (<h2 className={styles.stat}>{stat}</h2>)
-              : (
-                <h2 className={styles.stat}>
-                  {stat}<span className={styles.statsHrs}>hrs</span>
-                </h2>
-              )
-            }
+        {stat >= 0 ? (
+          <>
+            {icon === peopleStats ? (
+              <h2 className={styles.stat}>{stat}</h2>
+            ) : (
+              <h2 className={styles.stat}>
+                {stat}
+                <span className={styles.statsHrs}>hrs</span>
+              </h2>
+            )}
           </>
-          : <p className={styles.stat}>N/A</p>
-        }
+        ) : (
+          <p className={styles.stat}>N/A</p>
+        )}
         <p>{description}</p>
       </div>
     </div>
@@ -64,19 +65,20 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
           <Statistic
             icon={peopleStats}
             stat={rideCount}
-            description='rides'
-            alt='people' />
+            description="rides"
+            alt="people"
+          />
           <Statistic
             icon={wheelStats}
             stat={hours}
-            description='driving'
-            alt='people' />
+            description="driving"
+            alt="people"
+          />
         </div>
       </div>
     </div>
   );
 };
-
 
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
@@ -139,9 +141,8 @@ const EmployeeDetail = () => {
   if (employee) {
     const isAdmin = !employee.availability;
     const isBoth = !isAdmin && employee.admin; // admin and driver
-    const availToString = (acc: string, [day, timeRange]: string[]) => (
-      `${acc + day}: ${timeRange} • `
-    );
+    const availToString = (acc: string, [day, timeRange]: string[]) =>
+      `${acc + day}: ${timeRange} • `;
     const parsedAvail = employee.availability
       ? employee.availability.reduce(availToString, '')
       : '';
@@ -159,7 +160,7 @@ const EmployeeDetail = () => {
     };
 
     return (
-      <main id = "main" className={styles.detailContainer}>
+      <main id="main" className={styles.detailContainer}>
         <UserDetail
           firstName={employee.firstName}
           lastName={employee.lastName}
@@ -169,14 +170,19 @@ const EmployeeDetail = () => {
           photoLink={employee.photoLink}
         >
           <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
-          <UserContactInfo icon={isAdmin || isBoth ? user : wheel} alt="role" text={role()} />
-          <UserContactInfo icon={clock} alt="availability" text={avail === '' ? 'N/A' : avail} />
+          <UserContactInfo
+            icon={isAdmin || isBoth ? user : wheel}
+            alt="role"
+            text={role()}
+          />
+          <UserContactInfo
+            icon={clock}
+            alt="availability"
+            text={avail === '' ? 'N/A' : avail}
+          />
         </UserDetail>
         <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-        <PastRides
-          isStudent={false}
-          rides={rides}
-        />
+        <PastRides isStudent={false} rides={rides} />
       </main>
     );
   }

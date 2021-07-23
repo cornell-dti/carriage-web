@@ -4,15 +4,15 @@ import { Admin, Rider } from '../types/index';
 type AuthState = {
   logout: () => void;
   id: string;
-  user?: Admin | Rider,
+  user?: Admin | Rider;
   refreshUser: () => void;
-}
+};
 
 const AuthContext = createContext({
-  logout: () => { },
+  logout: () => {},
   id: '',
   user: {},
-  refreshUser: () => { },
+  refreshUser: () => {},
 } as AuthState);
 
 export default AuthContext;

@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TableData } from '../../types';
 import StatsBox, { StatsBoxProps } from './StatsBox';
-import { cancel, dayRide, nightRide, noShow } from '../../icons/analytics/index';
+import {
+  cancel,
+  dayRide,
+  nightRide,
+  noShow,
+} from '../../icons/analytics/index';
 import styles from './AnalyticsOverview.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 
@@ -32,27 +37,32 @@ const AnalyticsOverview = ({ type, data, label }: AnalyticsOverviewProps) => {
         overview.cancel += stat.dayCancel + stat.nightNoShow;
       });
 
-      newStats = [{
-        icon: dayRide,
-        alt: 'day',
-        stats: overview.dayRide,
-        description: 'day rides',
-      }, {
-        icon: nightRide,
-        alt: 'night',
-        stats: overview.nightRide,
-        description: 'night rides',
-      }, {
-        icon: noShow,
-        alt: 'no show',
-        stats: overview.noShow,
-        description: 'no shows',
-      }, {
-        icon: cancel,
-        alt: 'cancel',
-        stats: overview.cancel,
-        description: 'cancels',
-      }];
+      newStats = [
+        {
+          icon: dayRide,
+          alt: 'day',
+          stats: overview.dayRide,
+          description: 'day rides',
+        },
+        {
+          icon: nightRide,
+          alt: 'night',
+          stats: overview.nightRide,
+          description: 'night rides',
+        },
+        {
+          icon: noShow,
+          alt: 'no show',
+          stats: overview.noShow,
+          description: 'no shows',
+        },
+        {
+          icon: cancel,
+          alt: 'cancel',
+          stats: overview.cancel,
+          description: 'cancels',
+        },
+      ];
     } else {
       newStats = drivers.map((driver) => {
         const driverStat = data.reduce((acc, curr) => {

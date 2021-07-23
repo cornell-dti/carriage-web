@@ -5,7 +5,7 @@ import { Label, Input } from '../FormElements/FormElements';
 type Props = {
   selectedRole: string;
   setSelectedRole: Dispatch<SetStateAction<string>>;
-}
+};
 
 const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -21,11 +21,13 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           id="driver"
           name="role"
           type="radio"
-          value='driver'
+          value="driver"
           onChange={onChange}
           defaultChecked={selectedRole === 'driver' || true}
         />
-        <Label className={styles.driverLabel} htmlFor={'driver'}>Driver</Label>
+        <Label className={styles.driverLabel} htmlFor={'driver'}>
+          Driver
+        </Label>
       </div>
       <div className={styles.radioOption}>
         <Input
@@ -33,11 +35,13 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           id="admin"
           name="role"
           type="radio"
-          value='admin'
+          value="admin"
           onChange={onChange}
           defaultChecked={selectedRole === 'admin' || false}
         />
-        <Label className={styles.driverLabel} htmlFor={'admin'}>Admin</Label>
+        <Label className={styles.driverLabel} htmlFor={'admin'}>
+          Admin
+        </Label>
       </div>
       <div className={styles.radioOption}>
         <Input
@@ -45,11 +49,13 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           id="both"
           name="role"
           type="radio"
-          value='both'
+          value="both"
           onChange={onChange}
           defaultChecked={selectedRole === 'both' || false}
         />
-        <Label className={styles.driverLabel} htmlFor={'both'}>Both</Label>
+        <Label className={styles.driverLabel} htmlFor={'both'}>
+          Both
+        </Label>
       </div>
     </div>
   );

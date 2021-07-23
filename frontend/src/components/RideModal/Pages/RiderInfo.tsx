@@ -62,16 +62,23 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             list="names"
             ref={register({
               required: true,
-              validate: (name: string) => nameToId[name.toLowerCase()] !== undefined,
+              validate: (name: string) =>
+                nameToId[name.toLowerCase()] !== undefined,
             })}
           />
           {errors.name && <p className={styles.error}>Rider not found</p>}
           <datalist id="names">
-            {riders.map((r) => <option key={r.id}>{r.firstName} {r.lastName}</option>)}
+            {riders.map((r) => (
+              <option key={r.id}>
+                {r.firstName} {r.lastName}
+              </option>
+            ))}
           </datalist>
         </div>
         <div className={styles.pickupLocation}>
-          <Label htmlFor={'pickupLoc'} className={styles.label}>Pickup Location</Label>
+          <Label htmlFor={'pickupLoc'} className={styles.label}>
+            Pickup Location
+          </Label>
           <Input
             id="pickupLoc"
             name="pickupLoc"
@@ -79,13 +86,19 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             list="locations"
             ref={register({ required: true })}
           />
-          {errors.pickupLoc && <p className={styles.error}>Please enter a location</p>}
+          {errors.pickupLoc && (
+            <p className={styles.error}>Please enter a location</p>
+          )}
           <datalist id="locations">
-            {locations.map((l) => <option key={l}>{l}</option>)}
+            {locations.map((l) => (
+              <option key={l}>{l}</option>
+            ))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          <Label htmlFor={'dropoffLoc'} className={styles.label}>Dropoff Location</Label>
+          <Label htmlFor={'dropoffLoc'} className={styles.label}>
+            Dropoff Location
+          </Label>
           <Input
             id="dropoffLoc"
             name="dropoffLoc"
@@ -106,15 +119,21 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             <p className={styles.error}>Locations cannot match</p>
           )}
           <datalist id="locations">
-            {locations.map((l) => <option key={l}>{l}</option>)}
+            {locations.map((l) => (
+              <option key={l}>{l}</option>
+            ))}
           </datalist>
         </div>
-      </div >
-      <div className={styles.btnContainer}>
-        <Button outline type="button" onClick={onBack}>Back</Button>
-        <Button type="submit">{formData?.rider ? 'Edit Ride' : 'Add a Ride'}</Button>
       </div>
-    </form >
+      <div className={styles.btnContainer}>
+        <Button outline type="button" onClick={onBack}>
+          Back
+        </Button>
+        <Button type="submit">
+          {formData?.rider ? 'Edit Ride' : 'Add a Ride'}
+        </Button>
+      </div>
+    </form>
   );
 };
 

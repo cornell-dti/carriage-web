@@ -5,7 +5,7 @@
   width: 370px;
   min-height: 340px;
   margin-left: -89px;
-  transform:translateY(-50%);
+  transform: translateY(-50%);
   z-index: 1000;
 }
 
@@ -15,7 +15,7 @@
   font-size: 16px;
 }
 
-.body{
+.body {
   position: relative;
   padding: 25px;
   background-color: white;
@@ -25,18 +25,19 @@
 }
 
 .modalOptions {
-  position:absolute;
-  top:15px;
-  right:15px;
+  position: absolute;
+  top: 15px;
+  right: 15px;
   display: inline;
 }
 
-.close, .cancel {
+.close,
+.cancel {
   cursor: pointer;
   background: none;
   border: none;
-  height:16px;
-  width:16px;
+  height: 16px;
+  width: 16px;
 }
 
 .cancel {
@@ -44,7 +45,8 @@
   margin-right: 0.7rem;
 }
 
-.close:focus, .cancel:focus {
+.close:focus,
+.cancel:focus {
   outline: none;
 }
 

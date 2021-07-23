@@ -1,9 +1,9 @@
 import dynamoose from 'dynamoose';
 
 export type VehicleType = {
-  id: string,
-  name: string,
-  capacity: number,
+  id: string;
+  name: string;
+  capacity: number;
 };
 
 const schema = new dynamoose.Schema({

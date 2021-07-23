@@ -18,17 +18,13 @@ const Routes = () => {
   return (
     <>
       <div tabIndex={-1} ref={skipRef}></div>
-      <HashLink className='skip-main' to='#main'>Skip to main content</HashLink>
+      <HashLink className="skip-main" to="#main">
+        Skip to main content
+      </HashLink>
       <Sidebar type="rider">
         <Switch>
-          <Route
-            path="/schedule"
-            component={Schedule}
-          />
-          <Route
-            path="/settings"
-            component={Settings}
-          />
+          <Route path="/schedule" component={Schedule} />
+          <Route path="/settings" component={Settings} />
           <Route path="*">
             <Redirect to="/schedule" />
           </Route>

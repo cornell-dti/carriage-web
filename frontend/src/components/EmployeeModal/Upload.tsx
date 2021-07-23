@@ -5,10 +5,12 @@ import styles from './employeemodal.module.css';
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   existingPhoto?: string;
-}
+};
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
-  const [imageURL, setImageURL] = useState(existingPhoto ? `http://${existingPhoto}` : '');
+  const [imageURL, setImageURL] = useState(
+    existingPhoto ? `http://${existingPhoto}` : ''
+  );
   const inputRef = createRef<HTMLInputElement>();
   /* This is for accessibility purposes only */
   const handleKeyboardPress = (e: React.KeyboardEvent) => {
@@ -31,10 +33,15 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
 
   return (
     <div className={styles.uploadContainer}>
-      {imageURL
-        ? <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
-        : <img className={styles.uploadImg} alt="profile upload" src={uploadBox} />
-      }
+      {imageURL ? (
+        <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
+      ) : (
+        <img
+          className={styles.uploadImg}
+          alt="profile upload"
+          src={uploadBox}
+        />
+      )}
       <input
         id="driverPhotoInput"
         type="file"
@@ -44,8 +51,14 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         onChange={(e) => previewImage(e)}
       />
       <label htmlFor="driverPhotoInput" className={styles.uploadText}>
-        <span role="button" aria-controls="filename" tabIndex={0} onKeyPress={handleKeyboardPress}>
-          Upload a picture</span>
+        <span
+          role="button"
+          aria-controls="filename"
+          tabIndex={0}
+          onKeyPress={handleKeyboardPress}
+        >
+          Upload a picture
+        </span>
       </label>
     </div>
   );

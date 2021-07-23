@@ -56,30 +56,32 @@ const Modal = ({
   }, [isOpen]);
   return (
     <>
-      {isOpen
-        && createPortal(
+      {isOpen &&
+        createPortal(
           <FocusTrap
             focusTrapOptions={{
               onDeactivate: onClose,
               returnFocusOnDeactivate: true,
-            }}>
+            }}
+          >
             <div className={styles.background}>
               <div className={styles.modal}>
                 <div className={styles.topContainer}>
                   <h1 className={styles.title}>{currentTitle}</h1>
-                  <button className={styles.closeBtn} id={'close'} onClick={onClose}>
+                  <button
+                    className={styles.closeBtn}
+                    id={'close'}
+                    onClick={onClose}
+                  >
                     <img alt="close" src={close} />
                   </button>
                 </div>
-                <div className={styles.page}>
-                  {pages[currentPage]}
-                </div>
+                <div className={styles.page}>{pages[currentPage]}</div>
               </div>
             </div>
           </FocusTrap>,
-          document.body,
-        )
-      }
+          document.body
+        )}
     </>
   );
 };

@@ -2,9 +2,10 @@ import React from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
 
-type LabelType = (
-  React.DetailedHTMLProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>
-);
+type LabelType = React.DetailedHTMLProps<
+  React.LabelHTMLAttributes<HTMLLabelElement>,
+  HTMLLabelElement
+>;
 
 export const Label = ({ className, children, ...props }: LabelType) => (
   <label {...props} className={cn(styles.label, className)}>
@@ -20,9 +21,10 @@ export const SRLabel = ({ className, children, ...props }: LabelType) => (
   </label>
 );
 
-type InputType = (
-  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
-);
+type InputType = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>;
 
 // eslint-disable-next-line react/display-name
 export const Input = React.forwardRef<HTMLInputElement, InputType>(
@@ -34,7 +36,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputType>(
       type={type}
       ref={ref}
     />
-  ),
+  )
 );
 
 type ButtonProps = {
@@ -52,7 +54,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
       // eslint-disable-next-line react/prop-types
-      className, type, name, small = false, outline = false, onClick, children,
+      className,
+      type,
+      name,
+      small = false,
+      outline = false,
+      onClick,
+      children,
     } = props;
     const btnClass = !outline ? styles.primaryBtn : styles.secondaryBtn;
     const sizeClass = !small ? styles.lgBtn : styles.smBtn;
@@ -67,5 +75,5 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  },
+  }
 );

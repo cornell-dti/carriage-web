@@ -7,21 +7,24 @@ import { useEmployees } from '../../../context/EmployeesContext';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const { register, handleSubmit, formState } = useForm({
-    defaultValues: {
-      driver: formData?.driver ?? '',
-    },
+    defaultValues: { driver: formData?.driver ?? '' },
   });
   const { errors } = formState;
   const { drivers } = useEmployees();
-  type DriverOption = { id: string, firstName: string, lastName: string }
-  const driverOptions: DriverOption[] = [{ id: 'None', firstName: 'None', lastName: '' }].concat(drivers);
+  type DriverOption = { id: string; firstName: string; lastName: string };
+  const driverOptions: DriverOption[] = [
+    { id: 'None', firstName: 'None', lastName: '' },
+  ].concat(drivers);
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.inputContainer}>
         <div className={styles.drivers}>
           {driverOptions.map((d) => (
             <div className={styles.driver} key={d.id}>
-              <Label htmlFor={d.firstName + d.lastName} className={styles.driverLabel}>
+              <Label
+                htmlFor={d.firstName + d.lastName}
+                className={styles.driverLabel}
+              >
                 {d.firstName}
               </Label>
               <Input
@@ -36,7 +39,9 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
           ))}
         </div>
         {errors.driver?.type === 'required' && (
-          <p className={styles.error} style={{ textAlign: 'center' }}>Please select a driver</p>
+          <p className={styles.error} style={{ textAlign: 'center' }}>
+            Please select a driver
+          </p>
         )}
       </div>
       <div className={styles.btnContainer}>

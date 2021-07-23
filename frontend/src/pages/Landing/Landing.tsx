@@ -9,11 +9,11 @@ type LandingPropType = {
 };
 
 const Landing = ({ students, admins }: LandingPropType) => (
-  <main id='main'>
+  <main id="main">
     <div className={styles.home}>
       <div className={styles.main}>
         <div className={styles.left}>
-          <img src={logo} className={styles.badge} alt='Carriage logo' />
+          <img src={logo} className={styles.badge} alt="Carriage logo" />
           <span className={styles.title}>Carriage</span>
         </div>
         <div className={styles.right}>

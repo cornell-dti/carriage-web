@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 type WindowSize = {
   width?: number;
   height?: number;
-}
+};
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState<WindowSize>({});

@@ -14,7 +14,12 @@ type RowProps = {
   data: Cell[];
   index: number;
   isEditing: boolean;
-  onEdit: (rowIndex: number, cellIndex: number, date: string, value: number) => void;
+  onEdit: (
+    rowIndex: number,
+    cellIndex: number,
+    date: string,
+    value: number
+  ) => void;
 };
 
 const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
@@ -30,7 +35,10 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
     return borderRadius;
   };
 
-  const handleEdit = (e: React.FormEvent<HTMLInputElement>, cellIndex: number) => {
+  const handleEdit = (
+    e: React.FormEvent<HTMLInputElement>,
+    cellIndex: number
+  ) => {
     const { value } = e.currentTarget;
     onEdit(index, cellIndex, data[0] as string, Number(value));
   };
@@ -46,21 +54,21 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
           className={styles.cell}
           style={{ borderRadius: getBorderRadius(cellIndex, data.length) }}
         >
-          {isEditing && cellIndex >= 2 // excluding first two columns
-            ? (
-              <div>
-                <SRLabel htmlFor={`${index}${cellIndex}`}>Total</SRLabel>
-                <input
-                  type='number'
-                  min={0}
-                  id={`${index}${cellIndex}`}
-                  className={styles.input}
-                  defaultValue={d}
-                  onInput={(e) => handleEdit(e, cellIndex)}
-                />
-              </div>
-            ) : d
-          }
+          {isEditing && cellIndex >= 2 ? ( // excluding first two columns
+            <div>
+              <SRLabel htmlFor={`${index}${cellIndex}`}>Total</SRLabel>
+              <input
+                type="number"
+                min={0}
+                id={`${index}${cellIndex}`}
+                className={styles.input}
+                defaultValue={d}
+                onInput={(e) => handleEdit(e, cellIndex)}
+              />
+            </div>
+          ) : (
+            d
+          )}
         </td>
       ))}
     </tr>
@@ -99,11 +107,12 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     }
   }, [driverNames, drivers]);
 
-
-  const driverTableHeader = sharedCols.concat(driverNames.map((name) => {
-    const [first, last] = name.split(' ');
-    return `${first} ${last.charAt(0)}.`;
-  }));
+  const driverTableHeader = sharedCols.concat(
+    driverNames.map((name) => {
+      const [first, last] = name.split(' ');
+      return `${first} ${last.charAt(0)}.`;
+    })
+  );
 
   const dbRideCols = [
     'dayCount',
@@ -120,7 +129,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     rowIndex: number,
     cellIndex: number,
     date: string,
-    value: number,
+    value: number
   ) => {
     const cols = type === 'ride' ? dbRideCols : dbDriverCols;
     setEditData((prev) => {
@@ -129,17 +138,15 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
       const offset = 2;
       const index = cellIndex - offset;
       if (type === 'driver') {
-        if (dateEdit === undefined) {
+        if (dateEdit === undefined && driverTableData) {
           // need to populate all drivers
-          const driverRow = driverTableData![rowIndex].slice(offset);
+          const driverRow = driverTableData[rowIndex].slice(offset);
           const driversEdit: ObjectType = {};
           driverNames.forEach((name, i) => {
             driversEdit[name] = driverRow[i];
           });
           driversEdit[cols[index]] = value;
-          newVal.dates[date] = {
-            drivers: driversEdit,
-          };
+          newVal.dates[date] = { drivers: driversEdit };
         } else {
           newVal.dates[date].drivers = {
             ...dateEdit.drivers,
@@ -157,11 +164,13 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   };
 
   const handleSubmit = () => {
-    fetch('/api/stats/', withDefaults({
-      method: 'PUT',
-      body: JSON.stringify(editData),
-    }))
-      .then(() => refreshTable());
+    fetch(
+      '/api/stats/',
+      withDefaults({
+        method: 'PUT',
+        body: JSON.stringify(editData),
+      })
+    ).then(() => refreshTable());
     setEditData({ dates: {} });
     setIsEditing(false);
   };
@@ -220,53 +229,59 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
             <tr className={styles.row}>
               {type === 'ride'
                 ? rideTableHeader.map((title, idx) => {
-                  let color;
-                  if (idx >= 2 && idx <= 4) {
-                    color = '#F2911D';
-                  }
-                  if (idx >= 5 && idx <= 7) {
-                    color = '#1594F2';
-                  }
-                  return (
-                    <th key={idx}
+                    let color;
+                    if (idx >= 2 && idx <= 4) {
+                      color = '#F2911D';
+                    }
+                    if (idx >= 5 && idx <= 7) {
+                      color = '#1594F2';
+                    }
+                    return (
+                      <th
+                        key={idx}
+                        className={cn(styles.cell, {
+                          [styles.sticky]: idx < 2,
+                        })}
+                        style={{ color }}
+                      >
+                        {title}
+                      </th>
+                    );
+                  })
+                : driverTableHeader.map((title, idx) => (
+                    <th
+                      key={idx}
                       className={cn(styles.cell, { [styles.sticky]: idx < 2 })}
-                      style={{ color }}
                     >
                       {title}
                     </th>
-                  );
-                })
-                : driverTableHeader.map((title, idx) => (
-                  <th key={idx} className={cn(styles.cell, { [styles.sticky]: idx < 2 })}>
-                    {title}
-                  </th>
-                ))}
+                  ))}
             </tr>
           </thead>
           <tbody>
             {type === 'ride'
               ? rideTableData?.map((row, i) => (
-                <Row
-                  key={i}
-                  data={row}
-                  isEditing={isEditing}
-                  index={i}
-                  onEdit={handleEdit}
-                />
-              ))
+                  <Row
+                    key={i}
+                    data={row}
+                    isEditing={isEditing}
+                    index={i}
+                    onEdit={handleEdit}
+                  />
+                ))
               : driverTableData?.map((row, i) => (
-                <Row
-                  key={i}
-                  data={row}
-                  isEditing={isEditing}
-                  index={i}
-                  onEdit={handleEdit}
-                />
-              ))}
+                  <Row
+                    key={i}
+                    data={row}
+                    isEditing={isEditing}
+                    index={i}
+                    onEdit={handleEdit}
+                  />
+                ))}
           </tbody>
         </table>
       </div>
-    </div >
+    </div>
   );
 };
 

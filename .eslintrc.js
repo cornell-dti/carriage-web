@@ -9,10 +9,10 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'airbnb-base',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+    'prettier',
   ],
   globals: {
     Atomics: 'readonly',
@@ -20,7 +20,6 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    // project: ['./*/tsconfig.json'],
     ecmaVersion: 6,
     sourceType: 'module',
   },
@@ -37,7 +36,17 @@ module.exports = {
       },
     ],
     'linebreak-style': 'off',
-    'object-curly-newline': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'react/prop-types': 'off',
+    'react/no-unescaped-entities': 'off',
+  },
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

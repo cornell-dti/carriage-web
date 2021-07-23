@@ -7,9 +7,13 @@ type DateFilterProps = {
   initStartDate: string;
   initEndDate: string;
   onSubmit: (startDate: string, endDate: string) => void;
-}
+};
 
-const DateFilter = ({ initStartDate, initEndDate, onSubmit }: DateFilterProps) => {
+const DateFilter = ({
+  initStartDate,
+  initEndDate,
+  onSubmit,
+}: DateFilterProps) => {
   const [startDate, setStartDate] = useState(initStartDate);
   const [endDate, setEndDate] = useState(initEndDate);
   const [error, setError] = useState('');
@@ -51,11 +55,15 @@ const DateFilter = ({ initStartDate, initEndDate, onSubmit }: DateFilterProps) =
             }}
             value={endDate}
           />
-          <Button onClick={() => {
-            if (error === '') {
-              onSubmit(startDate, endDate);
-            }
-          }} outline={true} className={styles.submitButton}>
+          <Button
+            onClick={() => {
+              if (error === '') {
+                onSubmit(startDate, endDate);
+              }
+            }}
+            outline={true}
+            className={styles.submitButton}
+          >
             Apply Dates
           </Button>
         </div>

@@ -16,18 +16,21 @@ type CreateOrEditRideModalProps = {
   onSubmit?: () => void;
   onClose?: () => void;
   ride?: Ride;
-}
+};
 
 const CreateOrEditRideModal = ({
   isOpen,
   modalType,
-  onSubmit = () => { },
-  onClose = () => { },
+  onSubmit = () => {},
+  onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
   const defaultStartDate = () => {
     if (ride) {
-      if (modalType === 'EDIT_REGULAR' || modalType === 'EDIT_SINGLE_RECURRING') {
+      if (
+        modalType === 'EDIT_REGULAR' ||
+        modalType === 'EDIT_SINGLE_RECURRING'
+      ) {
         return moment(ride.startTime).format('YYYY-MM-DD');
       }
       if (modalType === 'EDIT_ALL_RECURRING') {
@@ -56,29 +59,45 @@ const CreateOrEditRideModal = ({
   };
 
   // Removes null fields from object
-  const cleanData = (data: ObjectType) => (
-    Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== null))
-  );
+  const cleanData = (data: ObjectType) =>
+    Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== null));
 
   const handleSubmit = async (formData: ObjectType) => {
     const {
-      startDate, recurring, whenRepeat, Mon, Tue, Wed, Thu, Fri,
-      startLocation, endLocation, pickupTime, dropoffTime, endDate,
-      customPickup, pickupCity, pickupZip, customDropoff,
-      dropoffCity, dropoffZip,
+      startDate,
+      recurring,
+      whenRepeat,
+      Mon,
+      Tue,
+      Wed,
+      Thu,
+      Fri,
+      startLocation,
+      endLocation,
+      pickupTime,
+      dropoffTime,
+      endDate,
+      customPickup,
+      pickupCity,
+      pickupZip,
+      customDropoff,
+      dropoffCity,
+      dropoffZip,
     } = formData;
     const startTime = moment(`${startDate} ${pickupTime}`).toISOString();
     const endTime = moment(`${startDate} ${dropoffTime}`).toISOString();
-    const startLoc = startLocation !== 'Other'
-      ? startLocation
-      : `${customPickup}, ${pickupCity} NY, ${pickupZip}`;
-    const endLoc = endLocation !== 'Other'
-      ? endLocation
-      : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
+    const startLoc =
+      startLocation !== 'Other'
+        ? startLocation
+        : `${customPickup}, ${pickupCity} NY, ${pickupZip}`;
+    const endLoc =
+      endLocation !== 'Other'
+        ? endLocation
+        : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
     let rideData: ObjectType;
     if (recurring || whenRepeat) {
       // Add a repeating ride
-      let recurringDays: Number[] = [];
+      let recurringDays: number[] = [];
       switch (whenRepeat) {
         case 'daily': {
           recurringDays = [1, 2, 3, 4, 5];
@@ -142,21 +161,27 @@ const CreateOrEditRideModal = ({
     if (!ride) {
       // create ride
       rideData.type = 'unscheduled';
-      fetch('/api/rides', withDefaults({
-        method: 'POST',
-        body: JSON.stringify(rideData),
-      })).then(afterSubmit);
+      fetch(
+        '/api/rides',
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify(rideData),
+        })
+      ).then(afterSubmit);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
       rideData.type = 'unscheduled';
-      fetch(`/api/rides/${ride.id}/edits`, withDefaults({
-        method: 'PUT',
-        body: JSON.stringify({
-          deleteOnly: false,
-          origDate: moment(ride.startTime).format('YYYY-MM-DD'),
-          ...rideData,
-        }),
-      })).then(afterSubmit);
+      fetch(
+        `/api/rides/${ride.id}/edits`,
+        withDefaults({
+          method: 'PUT',
+          body: JSON.stringify({
+            deleteOnly: false,
+            origDate: moment(ride.startTime).format('YYYY-MM-DD'),
+            ...rideData,
+          }),
+        })
+      ).then(afterSubmit);
     } else {
       // edit regular ride or all recurring rides by editing parent ride
       if (!ride.parentRide) {
@@ -165,13 +190,15 @@ const CreateOrEditRideModal = ({
         rideData.type = 'unscheduled';
         rideData.startTime = startDate;
       }
-      fetch(`/api/rides/${ride.id}`, withDefaults({
-        method: 'PUT',
-        body: JSON.stringify(rideData),
-      })).then(afterSubmit);
+      fetch(
+        `/api/rides/${ride.id}`,
+        withDefaults({
+          method: 'PUT',
+          body: JSON.stringify(rideData),
+        })
+      ).then(afterSubmit);
     }
   };
-
 
   return (
     <Modal
@@ -179,7 +206,7 @@ const CreateOrEditRideModal = ({
       isOpen={isOpen}
       onClose={closeModal}
     >
-      <FormProvider {...methods} >
+      <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleSubmit)}>
           <div className={styles.inputContainer}>
             <RequestRideInfo
@@ -188,7 +215,7 @@ const CreateOrEditRideModal = ({
               showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
               modalType={modalType}
             />
-            <Button className={styles.submit} type='submit'>
+            <Button className={styles.submit} type="submit">
               {!ride ? 'Request a Ride' : 'Edit Ride'}
             </Button>
           </div>

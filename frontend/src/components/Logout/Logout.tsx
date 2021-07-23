@@ -7,9 +7,7 @@ const Logout: FunctionComponent = () => {
   const clientId = useClientId();
   const { logout } = useContext(AuthContext);
 
-  return (
-    <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />
-  );
+  return <GoogleLogout onLogoutSuccess={logout} clientId={clientId} />;
 };
 
 export default Logout;

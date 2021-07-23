@@ -32,21 +32,20 @@ const ScheduledTable = () => {
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
-  return rides.length
-    ? (
-      <>
-        {drivers.map(({ id, firstName, lastName }) => {
-          const name = `${firstName} ${lastName}`;
-          const driverRides = rides.filter((r) => r.driver?.id === id);
-          return driverRides.length ? (
-            <>
-              <h1 className={styles.formHeader}>{name}</h1>
-              <RidesTable rides={driverRides} drivers={[]} hasButtons={false} />
-            </>
-          ) : null;
-        })}
-      </>
-    ) : null;
+  return rides.length ? (
+    <>
+      {drivers.map(({ id, firstName, lastName }) => {
+        const name = `${firstName} ${lastName}`;
+        const driverRides = rides.filter((r) => r.driver?.id === id);
+        return driverRides.length ? (
+          <>
+            <h1 className={styles.formHeader}>{name}</h1>
+            <RidesTable rides={driverRides} drivers={[]} hasButtons={false} />
+          </>
+        ) : null;
+      })}
+    </>
+  ) : null;
 };
 
 export default ScheduledTable;

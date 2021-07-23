@@ -35,13 +35,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
 
   return (
     <>
-      <DeleteOrEditTypeModal open={deleteOpen} ride={ride} deleting={true}
-        onClose={() => setDeleteOpen(false)} />
+      <DeleteOrEditTypeModal
+        open={deleteOpen}
+        ride={ride}
+        deleting={true}
+        onClose={() => setDeleteOpen(false)}
+      />
       {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
           <div className={styles.body}>
             <div className={styles.modalOptions}>
-              <button className={styles.cancel} onClick={() => setDeleteOpen(true)}>
+              <button
+                className={styles.cancel}
+                onClick={() => setDeleteOpen(true)}
+              >
                 <img src={trash} alt="trash" />
               </button>
               <button className={styles.close} onClick={close}>
@@ -59,8 +66,10 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
               <div className={styles.column}>
                 <p>{moment(new Date(ride.startTime)).format('h:mm a')}</p>
                 <div className={styles.location}>
-                  <Tag location='' tag={ride.startLocation.tag} />
-                  <p className={styles.locationName}>{ride.startLocation.name}</p>
+                  <Tag location="" tag={ride.startLocation.tag} />
+                  <p className={styles.locationName}>
+                    {ride.startLocation.name}
+                  </p>
                 </div>
               </div>
               <div className={styles.center}>
@@ -101,7 +110,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
               <div className={styles.column}>
                 <p>{moment(new Date(ride.endTime)).format('h:mm a')}</p>
                 <div className={styles.location}>
-                  <Tag location='' tag={ride.endLocation.tag} />
+                  <Tag location="" tag={ride.endLocation.tag} />
                   <p className={styles.locationName}>{ride.endLocation.name}</p>
                 </div>
               </div>
@@ -128,7 +137,6 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                   </svg>
                 </div>
                 <div>
-
                   {ride.rider.accessibility
                     ? ride.rider.accessibility.join(', ')
                     : 'No accessibility needs'}

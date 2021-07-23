@@ -4,7 +4,7 @@
 self.addEventListener('install', (event) => event.waitUntil(self.skipWaiting()));
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', () => {
   // navigates to client
   self.clients.matchAll().then((clis) => {
     const client = clis.find((c) => c.visibilityState === 'visible');
@@ -52,12 +52,12 @@ self.addEventListener('push', (event) => {
         );
       } else {
         // Send a message to the page to update the UI
-        for (const client of c) {
+        c.forEach((client) => {
           client.postMessage({
             body: data.body,
             time: new Date().toString(),
           });
-        }
+        });
       }
     });
   } else {

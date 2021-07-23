@@ -9,10 +9,10 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 type RequestRideModalProps = {
   onSubmit?: () => void;
   ride?: Ride;
-}
+};
 
 const RequestRideModal = ({
-  onSubmit = () => { },
+  onSubmit = () => {},
   ride,
 }: RequestRideModalProps) => {
   const [modalType, setModalType] = useState<RideModalType>();
@@ -51,18 +51,26 @@ const RequestRideModal = ({
 
   return (
     <>
-      {showingToast ? <Toast message={`Your ride has been ${!ride ? 'created' : 'edited'}`} /> : null}
-      {!ride
-        ? <Button onClick={() => openCreateOrEditModal('CREATE')}>+ Request a ride</Button>
-        : (
-          <Button
-            outline
-            small
-            onClick={ride.recurring ? openTypeModal : () => openCreateOrEditModal('EDIT_REGULAR')}
-          >
-            Edit
-          </Button>
-        )}
+      {showingToast ? (
+        <Toast message={`Your ride has been ${!ride ? 'created' : 'edited'}`} />
+      ) : null}
+      {!ride ? (
+        <Button onClick={() => openCreateOrEditModal('CREATE')}>
+          + Request a ride
+        </Button>
+      ) : (
+        <Button
+          outline
+          small
+          onClick={
+            ride.recurring
+              ? openTypeModal
+              : () => openCreateOrEditModal('EDIT_REGULAR')
+          }
+        >
+          Edit
+        </Button>
+      )}
       {ride && ride.recurring && (
         <DeleteOrEditTypeModal
           open={typeModalIsOpen}
@@ -71,7 +79,9 @@ const RequestRideModal = ({
           deleting={false}
           onNext={(single) => {
             closeTypeModal();
-            openCreateOrEditModal(single ? 'EDIT_SINGLE_RECURRING' : 'EDIT_ALL_RECURRING');
+            openCreateOrEditModal(
+              single ? 'EDIT_SINGLE_RECURRING' : 'EDIT_ALL_RECURRING'
+            );
           }}
         />
       )}

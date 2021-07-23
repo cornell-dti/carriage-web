@@ -22,13 +22,13 @@ function conflict(request, node, driver) {
   return Object.keys(node).some((key) => {
     const ride = node[key];
     return (
-      ride.driverID === driver.ID
-      && (new Date(request.startTime) < new Date(driver.startTime)
-      || new Date(request.endTime) > new Date(driver.endTime)
-      || (new Date(request.startTime) > new Date(ride.startTime)
-      && new Date(request.startTime) < new Date(ride.endTime))
-      || (new Date(request.endTime) > new Date(ride.startTime)
-      && new Date(request.endTime) < new Date(ride.endTime)))
+      ride.driverID === driver.ID &&
+      (new Date(request.startTime) < new Date(driver.startTime) ||
+        new Date(request.endTime) > new Date(driver.endTime) ||
+        (new Date(request.startTime) > new Date(ride.startTime) &&
+          new Date(request.startTime) < new Date(ride.endTime)) ||
+        (new Date(request.endTime) > new Date(ride.startTime) &&
+          new Date(request.endTime) < new Date(ride.endTime)))
     );
   });
 }

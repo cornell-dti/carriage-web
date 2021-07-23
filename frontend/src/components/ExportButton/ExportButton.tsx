@@ -7,17 +7,24 @@ import styles from './exportButton.module.css';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 
 type clickHandler = {
-  toastMsg: string,
-  endpoint: string,
-  csvCols: string,
-  filename: string
-}
+  toastMsg: string;
+  endpoint: string;
+  csvCols: string;
+  filename: string;
+};
 
-const ExportButton = ({ toastMsg, endpoint, csvCols, filename }: clickHandler) => {
+const ExportButton = ({
+  toastMsg,
+  endpoint,
+  csvCols,
+  filename,
+}: clickHandler) => {
   const { withDefaults } = useReq();
   const [downloadData, setDownloadData] = useState<string>('');
   const [showingToast, setToast] = useState(false);
-  const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+  const csvLink = useRef<
+    CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
+  >(null);
 
   const downloadCSV = () => {
     setToast(false);
@@ -39,7 +46,11 @@ const ExportButton = ({ toastMsg, endpoint, csvCols, filename }: clickHandler) =
   return (
     <>
       {showingToast ? <Toast message={toastMsg} /> : null}
-      <Button onClick={() => downloadCSV()} outline={true} className={styles.exportButton}>
+      <Button
+        onClick={() => downloadCSV()}
+        outline={true}
+        className={styles.exportButton}
+      >
         <img src={download} alt="capacity icon" /> Export
       </Button>
       <CSVLink
@@ -47,7 +58,7 @@ const ExportButton = ({ toastMsg, endpoint, csvCols, filename }: clickHandler) =
         filename={filename}
         className={styles.hidden}
         ref={csvLink}
-        target='_blank'
+        target="_blank"
       />
     </>
   );

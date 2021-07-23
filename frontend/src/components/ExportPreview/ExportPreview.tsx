@@ -14,7 +14,9 @@ const ExportPreview = () => {
   const [downloadData, setDownloadData] = useState<string>('');
   const { withDefaults } = useReq();
   const { curDate } = useDate();
-  const csvLink = useRef<CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }>(null);
+  const csvLink = useRef<
+    CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
+  >(null);
 
   const today = moment(curDate).format('YYYY-MM-DD');
 
@@ -41,9 +43,9 @@ const ExportPreview = () => {
         <CSVLink
           data={downloadData}
           filename={`scheduledRides_${today}.csv`}
-          className='hidden'
+          className="hidden"
           ref={csvLink}
-          target='_blank'
+          target="_blank"
         />
       </div>
     </>

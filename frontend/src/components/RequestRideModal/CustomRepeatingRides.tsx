@@ -11,7 +11,7 @@ type WeekType = {
 
 type CustomRepeatingRidesProps = {
   ride?: Ride;
-}
+};
 
 const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
   const { register, formState } = useFormContext();
@@ -31,9 +31,12 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
     Fri: ['F', '5'],
   };
 
-  const handleClick = useCallback((day: string) => {
-    setWeek((prev) => ({ ...prev, [day]: !week[day] }));
-  }, [week]);
+  const handleClick = useCallback(
+    (day: string) => {
+      setWeek((prev) => ({ ...prev, [day]: !week[day] }));
+    },
+    [week]
+  );
 
   useEffect(() => {
     if (ride && ride.recurring) {
@@ -44,11 +47,14 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
     }
   }, [dayLabels, handleClick, ride]);
 
-  const dayClicked = () => week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
+  const dayClicked = () =>
+    week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
 
   return (
     <div className={styles.dayBox}>
-      <Label id={'repeatDays'} className={styles.boldLabel}>Repeat every</Label>
+      <Label id={'repeatDays'} className={styles.boldLabel}>
+        Repeat every
+      </Label>
       {Object.entries(dayLabels).map(([day, label]) => (
         <div key={day}>
           <SRLabel id={label[0]}>{day}</SRLabel>
@@ -61,18 +67,16 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
               validate: () => dayClicked(),
             })}
             value={week[day] ? label[1] : -1}
-            className={cn(
-              styles.day,
-              { [styles.daySelected]: week[day] },
-            )}
+            className={cn(styles.day, { [styles.daySelected]: week[day] })}
             onClick={() => handleClick(day)}
           >
             {label[0]}
           </button>
         </div>
       ))}
-      {errors.Mon && <p className={styles.error}>
-        Please select at least one day</p>}
+      {errors.Mon && (
+        <p className={styles.error}>Please select at least one day</p>
+      )}
     </div>
   );
 };

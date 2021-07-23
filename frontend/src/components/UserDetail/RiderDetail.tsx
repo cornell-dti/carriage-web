@@ -22,7 +22,8 @@ const RiderDetail = () => {
     if (x > y) return 1;
     return 0;
   };
-  const formatDate = (date: string): string => moment(date).format('MM/DD/YYYY');
+  const formatDate = (date: string): string =>
+    moment(date).format('MM/DD/YYYY');
 
   useEffect(() => {
     if (riderId) {
@@ -37,8 +38,8 @@ const RiderDetail = () => {
     }
   }, [rider, riderId, withDefaults]);
 
-  return rider
-    ? <main id = "main" className={styles.detailContainer}>
+  return rider ? (
+    <main id="main" className={styles.detailContainer}>
       <UserDetail
         firstName={rider.firstName}
         lastName={rider.lastName}
@@ -47,19 +48,24 @@ const RiderDetail = () => {
         rider={rider}
       >
         <div className={styles.riderContactInfo}>
-          <UserContactInfo icon={phone} alt="phone number" text={rider.phoneNumber} />
+          <UserContactInfo
+            icon={phone}
+            alt="phone number"
+            text={rider.phoneNumber}
+          />
           <UserContactInfo icon={home} alt="address" text={rider.address} />
-          <UserContactInfo icon={calendar} alt="active dates"
-            text={`${formatDate(rider.joinDate)} - ${formatDate(rider.endDate)}`}
+          <UserContactInfo
+            icon={calendar}
+            alt="active dates"
+            text={`${formatDate(rider.joinDate)} - ${formatDate(
+              rider.endDate
+            )}`}
           />
         </div>
       </UserDetail>
-      <PastRides
-        isStudent={true}
-        rides={rides}
-      />
+      <PastRides isStudent={true} rides={rides} />
     </main>
-    : null;
+  ) : null;
 };
 
 export default RiderDetail;

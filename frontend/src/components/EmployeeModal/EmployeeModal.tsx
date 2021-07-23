@@ -25,15 +25,15 @@ type EmployeeModalProps = {
     role?: string;
     startDate?: string;
     photoLink?: string;
-  }
-}
+  };
+};
 
 type AdminData = {
   firstName: any;
   lastName: any;
   email: any;
   phoneNumber: any;
-}
+};
 
 type DriverData = {
   firstName: any;
@@ -42,12 +42,12 @@ type DriverData = {
   phoneNumber: any;
   availability: ObjectType;
   admin: boolean;
-}
+};
 
 const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
-    existingEmployee?.role ? existingEmployee?.role : 'driver',
+    existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
   const [showingToast, setToast] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
@@ -82,7 +82,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     employeeId: string,
     table: string,
     refresh: () => Promise<void>,
-    isCreate: boolean, // show toast if new employee is created
+    isCreate: boolean // show toast if new employee is created
   ) => {
     const photo = {
       id: employeeId,
@@ -90,35 +90,46 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       fileBuffer: imageBase64,
     };
     // Upload image
-    await fetch('/api/upload', withDefaults({
-      method: 'POST',
-      body: JSON.stringify(photo),
-    })).then(() => {
-      refresh();
-      setToast(isCreate);
-    }).catch((err) => console.log(err));
+    await fetch(
+      '/api/upload',
+      withDefaults({
+        method: 'POST',
+        body: JSON.stringify(photo),
+      })
+    )
+      .then(() => {
+        refresh();
+        setToast(isCreate);
+      })
+      .catch((err) => console.log(err));
   };
 
   const createNewEmployee = async (
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string,
+    table: string
   ) => {
     if (imageBase64 === '') {
       // If no image has been uploaded, create new employee
-      fetch(endpoint, withDefaults({
-        method: 'POST',
-        body: JSON.stringify(employeeData),
-      })).then(() => {
+      fetch(
+        endpoint,
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify(employeeData),
+        })
+      ).then(() => {
         refresh();
         setToast(true);
       });
     } else {
-      const createdEmployee = await fetch(endpoint, withDefaults({
-        method: 'POST',
-        body: JSON.stringify(employeeData),
-      })).then((res) => res.json());
+      const createdEmployee = await fetch(
+        endpoint,
+        withDefaults({
+          method: 'POST',
+          body: JSON.stringify(employeeData),
+        })
+      ).then((res) => res.json());
 
       uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
     }
@@ -128,13 +139,16 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string,
+    table: string
   ) => {
-    const updatedEmployee = await fetch(`${endpoint}/${existingEmployee!.id}`, withDefaults({
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(employeeData),
-    })).then((res) => res.json());
+    const updatedEmployee = await fetch(
+      `${endpoint}/${existingEmployee!.id}`,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(employeeData),
+      })
+    ).then((res) => res.json());
 
     uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
   };
@@ -151,9 +165,19 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         phoneNumber,
       };
       if (existingEmployee) {
-        updateExistingEmployee(admin, '/api/admins', () => refreshAdmins(), 'Admins');
+        updateExistingEmployee(
+          admin,
+          '/api/admins',
+          () => refreshAdmins(),
+          'Admins'
+        );
       } else {
-        createNewEmployee(admin, '/api/admins', () => refreshAdmins(), 'Admins');
+        createNewEmployee(
+          admin,
+          '/api/admins',
+          () => refreshAdmins(),
+          'Admins'
+        );
       }
     } else {
       const driver = {
@@ -166,9 +190,19 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         admin: selectedRole === 'both',
       };
       if (existingEmployee) {
-        updateExistingEmployee(driver, '/api/drivers', () => refreshDrivers(), 'Drivers');
+        updateExistingEmployee(
+          driver,
+          '/api/drivers',
+          () => refreshDrivers(),
+          'Drivers'
+        );
       } else {
-        createNewEmployee(driver, '/api/drivers', () => refreshDrivers(), 'Drivers');
+        createNewEmployee(
+          driver,
+          '/api/drivers',
+          () => refreshDrivers(),
+          'Drivers'
+        );
       }
     }
     closeModal();
@@ -200,23 +234,24 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   return (
     <>
-      {
-        existingEmployee
-          ? <input type='image' className={styles.edit} alt="edit"
-            src={edit} onClick={openModal} />
-          : <Button onClick={openModal}>+ Add an employee</Button>
-      }
-      {showingToast ? <Toast message='The employee has been added.' /> : null}
-      <Modal
-        title={modalTitle}
-        isOpen={isOpen}
-        onClose={closeModal}
-      >
+      {existingEmployee ? (
+        <input
+          type="image"
+          className={styles.edit}
+          alt="edit"
+          src={edit}
+          onClick={openModal}
+        />
+      ) : (
+        <Button onClick={openModal}>+ Add an employee</Button>
+      )}
+      {showingToast ? <Toast message="The employee has been added." /> : null}
+      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
-        <FormProvider {...methods} >
+        <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo
               name={existingEmployee?.name}
@@ -224,17 +259,18 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
-            {
-              selectedRole === 'admin'
-                ? null
-                : <StartDate existingDate={existingEmployee?.startDate} />
-            }
-            <WorkingHours existingAvailability={existingEmployee?.availability} hide={selectedRole === 'admin'} />
+            {selectedRole === 'admin' ? null : (
+              <StartDate existingDate={existingEmployee?.startDate} />
+            )}
+            <WorkingHours
+              existingAvailability={existingEmployee?.availability}
+              hide={selectedRole === 'admin'}
+            />
             <RoleSelector
               selectedRole={selectedRole}
               setSelectedRole={setSelectedRole}
             />
-            <Button className={styles.submit} type='submit'>
+            <Button className={styles.submit} type="submit">
               {submitButtonText}
             </Button>
           </form>

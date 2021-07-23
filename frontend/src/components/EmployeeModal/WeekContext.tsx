@@ -56,9 +56,11 @@ export const WeekProvider = ({ children }: WeekProviderProps) => {
 
   const isDayOpen = (day: string) => week[day] === -1;
 
-  const isDaySelectedByInstance = (day: string, index: number) => week[day] === index;
+  const isDaySelectedByInstance = (day: string, index: number) =>
+    week[day] === index;
 
-  const getSelectedDays = (index: number) => Object.keys(week).filter((day) => week[day] === index);
+  const getSelectedDays = (index: number) =>
+    Object.keys(week).filter((day) => week[day] === index);
 
   return (
     <WeekContext.Provider

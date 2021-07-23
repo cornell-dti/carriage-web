@@ -3,29 +3,29 @@ import isEmail from 'validator/lib/isEmail';
 import { Vehicle, VehicleType } from './vehicle';
 
 type Availability = {
-  startTime: string,
-  endTime: string,
-}
+  startTime: string;
+  endTime: string;
+};
 
 type AvailabilityType = {
-  Mon?: Availability,
-  Tue?: Availability,
-  Wed?: Availability,
-  Thu?: Availability,
-  Fri?: Availability,
-}
+  Mon?: Availability;
+  Tue?: Availability;
+  Wed?: Availability;
+  Thu?: Availability;
+  Fri?: Availability;
+};
 
 export type DriverType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  availability: AvailabilityType,
-  vehicle: VehicleType,
-  phoneNumber: string,
-  startDate: string,
-  email: string,
-  photoLink?: string,
-  admin: boolean,
+  id: string;
+  firstName: string;
+  lastName: string;
+  availability: AvailabilityType;
+  vehicle: VehicleType;
+  phoneNumber: string;
+  startDate: string;
+  email: string;
+  photoLink?: string;
+  admin: boolean;
 };
 
 const availability = {

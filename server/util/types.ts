@@ -4,4 +4,4 @@ export type JWTPayload = {
   id: string;
   userType: UserType;
   iat: string;
-}
+};

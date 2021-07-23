@@ -3,7 +3,7 @@ import subscribeUser from './subscribeUser';
 import { useReq } from '../../context/req';
 
 interface Props {
-  userId: string
+  userId: string;
 }
 
 const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {
@@ -17,7 +17,9 @@ const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {
   useEffect(checkNotificationAvailability);
 
   useEffect(() => {
-    userType && availability && subscribeUser(userType, userId, withDefaults);
+    if (userType && availability) {
+      subscribeUser(userType, userId, withDefaults);
+    }
   }, [availability, userId, userType, withDefaults]);
 
   return <>{children}</>;

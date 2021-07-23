@@ -3,12 +3,11 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import { Label, Input } from '../FormElements/FormElements';
 
-
 import styles from './employeemodal.module.css';
 
 type StartDateProps = {
   existingDate?: string;
-}
+};
 
 const StartDate = ({ existingDate }: StartDateProps) => {
   const { register } = useFormContext();

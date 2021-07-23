@@ -27,9 +27,9 @@ const Table = () => {
       .then(({ data }) => setRides(data.sort(compRides)));
   }, [withDefaults, curDate]);
 
-  return rides.length
-    ? <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
-    : null;
+  return rides.length ? (
+    <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
+  ) : null;
 };
 
 export default Table;

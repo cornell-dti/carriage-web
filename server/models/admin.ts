@@ -2,12 +2,12 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 
 export type AdminType = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  phoneNumber: string,
-  email: string,
-  photoLink?: string,
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  photoLink?: string;
 };
 
 const schema = new dynamoose.Schema({

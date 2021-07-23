@@ -7,13 +7,15 @@ import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 
 const currentDate = new Date();
-const isToday = (date: Date) => date.getDate() === currentDate.getDate()
-  && date.getMonth() === currentDate.getMonth()
-  && date.getFullYear() === currentDate.getFullYear();
+const isToday = (date: Date) =>
+  date.getDate() === currentDate.getDate() &&
+  date.getMonth() === currentDate.getMonth() &&
+  date.getFullYear() === currentDate.getFullYear();
 
-const isTomorrow = (date: Date) => date.getDate() === currentDate.getDate() + 1
-  && date.getMonth() === currentDate.getMonth()
-  && date.getFullYear() === currentDate.getFullYear();
+const isTomorrow = (date: Date) =>
+  date.getDate() === currentDate.getDate() + 1 &&
+  date.getMonth() === currentDate.getMonth() &&
+  date.getFullYear() === currentDate.getFullYear();
 
 const Icon = () => (
   <svg
@@ -86,11 +88,7 @@ const MiniCal = () => {
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
         customInput={<CustomInput />}
-        highlightDates={[
-          {
-            'custom--today': [new Date()],
-          },
-        ]}
+        highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
           date,
           changeYear,
@@ -103,9 +101,7 @@ const MiniCal = () => {
           <div>
             <div className={styles.justify}>
               <button
-                className={cn(styles.btn2, {
-                  [styles.active]: isToday(date),
-                })}
+                className={cn(styles.btn2, { [styles.active]: isToday(date) })}
                 onClick={() => {
                   updateDate(new Date());
                   pseudoScroll();

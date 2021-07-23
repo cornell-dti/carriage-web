@@ -10,7 +10,9 @@ const tableName = 'Locations';
 
 // Get a location by id in Locations table
 router.get('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Location, id, tableName);
 });
 
@@ -32,9 +34,7 @@ router.get('/', validateUser('User'), (req, res) => {
           .not()
           .eq(Tag.CUSTOM);
       } else {
-        condition = condition
-          .where('tag')
-          .eq(Tag.INACTIVE);
+        condition = condition.where('tag').eq(Tag.INACTIVE);
       }
     }
     db.scan(res, Location, condition);
@@ -53,13 +53,18 @@ router.post('/', validateUser('Admin'), (req, res) => {
 
 // Update an existing location
 router.put('/:id', validateUser('Admin'), (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   db.update(res, Location, { id }, body, tableName);
 });
 
 // Delete an existing location
 router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Location, id, tableName);
 });
 

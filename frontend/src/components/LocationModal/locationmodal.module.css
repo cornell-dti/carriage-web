@@ -1,4 +1,5 @@
-.inputContainer > input, .inputContainer > p {
+.inputContainer > input,
+.inputContainer > p {
   display: block;
   margin-bottom: 0.5rem;
 }
@@ -8,12 +9,12 @@
 }
 
 .errorMsg {
-  color: #EB0023;
+  color: #eb0023;
   font-size: 0.8rem;
 }
 
 .styledSelect {
-  padding: .2rem;
+  padding: 0.2rem;
 }
 
 .submit {

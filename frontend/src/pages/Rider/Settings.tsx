@@ -1,5 +1,7 @@
 import React, { useContext } from 'react';
-import UserDetail, { UserContactInfo } from '../../components/UserDetail/UserDetail';
+import UserDetail, {
+  UserContactInfo,
+} from '../../components/UserDetail/UserDetail';
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
@@ -12,17 +14,27 @@ const NotifPreferences = () => (
     <div>
       <h3>Notifications</h3>
       <div>
-        <label className={styles.checkbox}><input type="checkbox" value="confirm" /> Ride request confirmed</label>
-        <label className={styles.checkbox}><input type="checkbox" value="cancel" /> Ride info cancelled/edited</label>
+        <label className={styles.checkbox}>
+          <input type="checkbox" value="confirm" /> Ride request confirmed
+        </label>
+        <label className={styles.checkbox}>
+          <input type="checkbox" value="cancel" /> Ride info cancelled/edited
+        </label>
       </div>
       <hr className={styles.divider} />
     </div>
     <div>
       <h3>Email Preferences</h3>
       <div>
-        <label className={styles.checkbox}><input type="checkbox" value="confirm" /> Ride confirmation</label>
-        <label className={styles.checkbox}><input type="checkbox" value="edit" /> Ride information edited</label>
-        <label className={styles.checkbox}><input type="checkbox" value="cancel" /> Ride Ride cancelled</label>
+        <label className={styles.checkbox}>
+          <input type="checkbox" value="confirm" /> Ride confirmation
+        </label>
+        <label className={styles.checkbox}>
+          <input type="checkbox" value="edit" /> Ride information edited
+        </label>
+        <label className={styles.checkbox}>
+          <input type="checkbox" value="cancel" /> Ride Ride cancelled
+        </label>
       </div>
       <hr className={styles.divider} />
     </div>
@@ -49,7 +61,11 @@ const Settings = () => {
         isRider={true}
         rider={user as Rider}
       >
-        <UserContactInfo icon={phone} alt="Phone" text={user?.phoneNumber || ''} />
+        <UserContactInfo
+          icon={phone}
+          alt="Phone"
+          text={user?.phoneNumber || ''}
+        />
         <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
       {/* <NotifPreferences /> */}

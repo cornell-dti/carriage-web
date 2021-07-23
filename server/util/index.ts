@@ -15,9 +15,21 @@ export function isAddress(address: string) {
     return false;
   }
   const {
-    streetNumber, streetName, streetSuffix, placeName, stateName, zipCode,
+    streetNumber,
+    streetName,
+    streetSuffix,
+    placeName,
+    stateName,
+    zipCode,
   } = parsedAddr;
-  return Boolean(streetNumber && streetName && streetSuffix && placeName && stateName && zipCode);
+  return Boolean(
+    streetNumber &&
+      streetName &&
+      streetSuffix &&
+      placeName &&
+      stateName &&
+      zipCode
+  );
 }
 
 export function formatAddress(address: string): string {
@@ -34,7 +46,7 @@ export function formatAddress(address: string): string {
 function validateToken(
   req: Request,
   res: Response,
-  callback: (payload?: JWTPayload) => void,
+  callback: (payload?: JWTPayload) => void
 ) {
   const { authorization } = req.headers;
   if (authorization) {
@@ -44,7 +56,7 @@ function validateToken(
         if (err) {
           res.status(500).send({ err: err.message });
         } else {
-          callback(payload as JWTPayload);
+          callback(payload as unknown as JWTPayload);
         }
       });
     } else {
@@ -75,7 +87,9 @@ export function validateUser(authLevel: UserType) {
           res.locals.user = payload;
           next();
         } else {
-          res.status(400).send({ err: 'User does not have sufficient permissions' });
+          res
+            .status(400)
+            .send({ err: 'User does not have sufficient permissions' });
         }
       } else {
         res.status(400).send({ err: 'Invalid token' });
@@ -84,7 +98,10 @@ export function validateUser(authLevel: UserType) {
   };
 }
 
-export const daysUntilWeekday = (start: moment.Moment, weekday: number): number => {
+export const daysUntilWeekday = (
+  start: moment.Moment,
+  weekday: number
+): number => {
   const startWeekday = start.day();
   let endWeekday = weekday;
   if (weekday < startWeekday) {

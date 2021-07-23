@@ -29,15 +29,22 @@ const Card = ({
   children,
   photoLink,
 }: CardProps) => {
-  const fullName = firstName.length + lastName.length > 16
-    ? `${firstName} ${lastName[0]}.`
-    : `${firstName} ${lastName}`;
+  const fullName =
+    firstName.length + lastName.length > 16
+      ? `${firstName} ${lastName[0]}.`
+      : `${firstName} ${lastName}`;
 
   return (
     <div className={styles.card}>
-      {photoLink && photoLink !== ''
-        ? <img className={styles.image} alt="uploaded profile" src={`http://${photoLink}`} />
-        : <div className={styles.image}> </div>}
+      {photoLink && photoLink !== '' ? (
+        <img
+          className={styles.image}
+          alt="uploaded profile"
+          src={`http://${photoLink}`}
+        />
+      ) : (
+        <div className={styles.image}> </div>
+      )}
       <div className={styles.contentContainer}>
         <div className={styles.titleContainer}>
           <h2 className={styles.name}>{fullName}</h2>
