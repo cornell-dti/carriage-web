@@ -1,13 +1,45 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
+import moment from 'moment';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
+import { Ride, RideType, Type, Status } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Riders';
+
+router.get('/usage', validateUser('Admin'), (req, res) => {
+  type UsageData = {
+    noShows: number,
+    totalRides: number,
+  }
+  type Usage = {
+    [id: string]: UsageData
+  }
+  const usageObj: Usage = {};
+  const isPast = new Condition('type').eq(Type.PAST);
+  db.scan(res, Ride, isPast, (data: RideType[]) => {
+    data.forEach((ride) => {
+      const currID = ride.rider.id;
+      if (currID in usageObj) {
+        if (ride.status === Status.COMPLETED) {
+          usageObj[currID].totalRides += 1;
+        } else {
+          usageObj[currID].noShows += 1;
+        }
+      } else {
+        const dummy = ride.status === Status.COMPLETED
+          ? { noShows: 0, totalRides: 1 }
+          : { noShows: 1, totalRides: 0 };
+        usageObj[currID] = dummy;
+      }
+    });
+    res.send(usageObj);
+  });
+});
 
 // Get a rider by id in Riders table
 router.get('/:id', validateUser('User'), (req, res) => {
@@ -16,7 +48,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all riders
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Rider, tableName);
 });
 
@@ -25,10 +57,10 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
   const { params: { id } } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
-      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     } = rider;
     res.send({
-      email, firstName, lastName, phoneNumber, pronouns, joinDate,
+      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
     });
   });
 });
@@ -60,13 +92,44 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
   });
 });
 
+// Get current/soonest ride (within next 30 min) of rider, if exists
+router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
+  const { params: { id } } = req;
+  db.getById(res, Rider, id, tableName, () => {
+    const now = moment.tz('America/New_York').toISOString();
+    const end = moment.tz('America/New_York').add(30, 'minutes').toISOString();
+    const isRider = new Condition('rider').eq(id);
+    const isActive = new Condition('type').eq(Type.ACTIVE);
+    const isSoon = new Condition('startTime').between(now, end);
+    const isNow = new Condition('startTime').le(now).where('endTime').ge(now);
+    const condition = isRider.group(isActive.group(isSoon.or().group(isNow)));
+    db.scan(res, Ride, condition, (data: RideType[]) => {
+      data.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
+      res.send(data[0] ?? {});
+    });
+  });
+});
+
+router.get('/:id/usage', validateUser('Admin'), (req, res) => {
+  const { params: { id } } = req;
+  let noShowCount: number;
+  let studentRides: number;
+  db.getById(res, Rider, id, tableName, () => {
+    const isRider = new Condition('rider').eq(id);
+    db.scan(res, Ride, isRider, (data: RideType[]) => {
+      noShowCount = data.filter((ride) => ride.status === Status.NO_SHOW).length;
+      studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
+      res.send({ studentRides, noShowCount });
+    });
+  });
+});
+
 // Create a rider in Riders table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const rider = new Rider({
     ...body,
     id: uuid(),
-    favoriteLocations: [],
   });
   db.create(res, rider);
 });
@@ -94,7 +157,7 @@ router.post('/:id/favorites', validateUser('Rider'), (req, res) => {
 });
 
 // Delete an existing rider
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Rider, id, tableName);
 });

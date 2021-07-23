@@ -3,110 +3,196 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
-import { ObjectType } from '../../types/index';
+import { ObjectType, Accessibility, Rider } from '../../types/index';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
-  formData?: ObjectType;
-}
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setFormData: React.Dispatch<React.SetStateAction<ObjectType>>;
+  rider?: Rider;
+};
 
-const RiderModalInfo = ({ onSubmit }: ModalFormProps) => {
-  const { register, errors, handleSubmit } = useForm();
-  const beforeSubmit = ({ name, netid, email, phoneNumber, needs,
-    address, start, end }: ObjectType) => {
-    const startDate = new Date(`${start}`).toISOString();
-    const endDate = new Date(`${end}`).toISOString();
+const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormProps) => {
+  const { register, formState, handleSubmit, getValues } = useForm({
+    defaultValues: {
+      name: rider ? `${rider.firstName} ${rider.lastName}` : '',
+      netid: rider?.email.split('@')[0] ?? '',
+      phoneNumber: rider?.phoneNumber ?? '',
+      needs: rider?.accessibility.join(','), // if no needs, default is undefined
+      address: rider?.address ?? '',
+      joinDate: rider?.joinDate ?? '',
+      endDate: rider?.endDate ?? '',
+    },
+  });
+  const { errors } = formState;
+  const beforeSubmit = ({
+    name,
+    netid,
+    phoneNumber,
+    needs,
+    address,
+    joinDate,
+    endDate,
+  }: ObjectType) => {
+    const email = netid ? `${netid}@cornell.edu` : undefined;
     const splitName = name.split(' ');
     const firstName = splitName[0];
     const lastName = splitName[1];
-    const accessibilityNeeds = needs.split(',');
+    const accessibility = needs.split(',').map((n: string) => n.trim());
     onSubmit({
-      id: netid,
       firstName,
       lastName,
       email,
       phoneNumber,
-      accessibilityNeeds,
+      accessibility,
       address,
-      startDate,
+      joinDate,
       endDate,
     });
   };
+
+  const cancel = () => {
+    setFormData({});
+    setIsOpen(false);
+  };
+
+  const localUserType = localStorage.getItem('userType');
+  const isEditing = rider !== undefined;
+  const isStudentEditing = isEditing && localUserType === 'Rider';
+
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={cn(styles.gridR1, styles.gridC1)}>
+        <div className={cn(styles.gridR1, styles.gridCSmall1)}>
+          <Label className={styles.label} htmlFor='name'>Name: </Label>
           <Input
+            id='name'
             name="name"
             type="text"
-            placeholder="Name"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
+            className={styles.firstRow}
           />
-          {errors.email && 'enter a valid name'}
+          {errors.name && <p className={styles.error}>Please enter a name</p>}
         </div>
-        <div className={cn(styles.gridR1, styles.gridC2)}>
+        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
+          <Label className={styles.label} htmlFor='netid'>NetID: </Label>
           <Input
+            id="netid"
             name="netid"
             type="text"
-            placeholder="NetID"
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+            disabled={isStudentEditing}
+            className={styles.firstRow}
           />
-          {errors.email && 'enter a valid netid'}
+          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
-        <div className={cn(styles.gridR2, styles.gridC1)}>
+        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
+          <Label className={styles.label} htmlFor='phoneNumber'>Phone Number: </Label>
           <Input
-            name="email"
-            type="text"
-            placeholder="Email"
-            ref={register({ required: true, pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ })}
-          />
-          {errors.email && 'enter a valid email'}
-        </div>
-        <div className={cn(styles.gridR2, styles.gridC2)}>
-          <Input
+            id="phoneNumber"
             name="phoneNumber"
             type="text"
-            placeholder="Phone Number"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+            className={styles.firstRow}
           />
-          {errors.phoneNumber && 'enter a valid phone number'}
+          {errors.phoneNumber && (
+            <p className={styles.error}>Please enter a phone number</p>
+          )}
         </div>
-        <div className={cn(styles.gridR3, styles.gridC1)}>
+        <div className={cn(styles.gridR2, styles.gridCBig1)}>
+          <Label className={styles.label} htmlFor='needs'>Needs: </Label>
           <Input
+            id="needs"
             name="needs"
             type="text"
-            placeholder="Needs"
-            ref={register({ required: true })}
+            ref={register({
+              validate: (needs) => {
+                if (needs === '') {
+                  return true;
+                }
+                const needsArr = needs.split(',').map((n: string) => n.trim());
+                const isValidNeed = (
+                  acc: boolean,
+                  val: Accessibility,
+                ) => acc && Object.values(Accessibility).includes(val);
+                return needsArr.reduce(isValidNeed, true);
+              },
+            })}
           />
-          {errors.email && 'enter some needs'}
+          {errors.needs?.type === 'validate' && (
+            <p className={styles.error}>
+              Invalid needs. You can enter 'Assistant', 'Crutches', or
+              'Wheelchair'
+            </p>
+          )}
         </div>
-        <div className={cn(styles.gridR3, styles.gridC2)}>
+        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+          <Label className={styles.label} htmlFor='address'>Address: </Label>
           <Input
+            id="address"
             name="address"
             type="text"
-            placeholder="Address"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+            })}
           />
-          {errors.email && 'enter an address'}
+          {errors.address && (
+            <p className={styles.error}>Please enter an address</p>
+          )}
         </div>
-        <div className={cn(styles.gridR4, styles.gridC1)}>
-          <Label htmlFor="start">Start Date:</Label>
-          <Input
-            type="date"
-            name="start"
-            ref={register({ required: true })}
-          />
-        </div>
-        <div className={cn(styles.gridR4, styles.gridC2)}>
-          <Label htmlFor="end">End Date:</Label>
-          <Input
-            type="date"
-            name="end"
-            ref={register({ required: true })}
-          />
+        <div className={cn(styles.gridR3, styles.gridCAll)}>
+          <p>Duration</p>
+          <div className={styles.lastRow}>
+            <div>
+              <Label className={styles.label} htmlFor='joinDate'>Join Date: </Label>
+              <Input
+                id='joinDate'
+                type="date"
+                name="joinDate"
+                ref={register({ required: true })}
+                disabled={isStudentEditing}
+                className={styles.riderDate}
+              />
+              {errors.joinDate && (
+                <p className={styles.error}>Please enter a join date</p>
+              )}
+            </div>
+            <p className={styles.to}>to</p>
+            <div>
+              <Label className={styles.label} htmlFor='endDate'>End Date: </Label>
+              <Input
+                id='endDate'
+                type="date"
+                name="endDate"
+                ref={register({
+                  required: true,
+                  validate: (endDate) => {
+                    const joinDate = getValues('joinDate');
+                    return joinDate < endDate;
+                  },
+                })}
+                disabled={isStudentEditing}
+                className={styles.riderDate}
+              />
+              {errors.endDate?.type === 'required' && (
+                <p className={styles.error}>Please enter an end date</p>
+              )}
+              {errors.endDate?.type === 'validate' && (
+                <p className={styles.error}>Invalid end time</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-      <Button type="submit">Add a Rider</Button>
+      <div className={styles.buttonContainer}>
+        <Button type="button" className={styles.cancel} outline={true} onClick={() => cancel()}>
+          Cancel
+        </Button>
+        <Button type="submit" className={styles.submit}>
+          {isEditing ? 'Edit a Student' : 'Add a Student'}
+        </Button>
+      </div>
     </form>
   );
 };

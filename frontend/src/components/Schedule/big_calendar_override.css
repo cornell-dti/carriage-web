@@ -5,7 +5,7 @@
 
 /* columns seperating drivers */
 .rbc-time-content > * + * > * {
-  border-left: 1px solid rgba(0, 0, 0, 15%);
+  border-left: 0.063rem solid rgba(0, 0, 0, 15%);
 }
 
 /* rows seperating timeslots */
@@ -15,26 +15,24 @@
 
 /* other seperating timeslots */
 /* .rbc-day-slot .rbc-time-slot {
-  border-top: 1px solid rgba(0, 0, 0, 15%); 
+  border-top: 0.063rem solid rgba(0, 0, 0, 15%); 
 } */
 
 /* line below drivers */
 .rbc-time-header-content > .rbc-row.rbc-row-resource {
-  /* border-bottom: 1px solid rgba(0, 0, 0, 15%); */
+  /* border-bottom: 0.063rem solid rgba(0, 0, 0, 15%); */
   border: none;
 }
 
 /* vertical line by time slot */
 .rbc-time-view-resources .rbc-time-gutter,
 .rbc-time-view-resources .rbc-time-header-gutter {
-  width: 60px;
-  background-color: #fdfdfd;
+  width: 3.75rem;
   border: none;
 }
 
 .rbc-time-view {
   border: none;
-  background-color: #fdfdfd;
 }
 
 .rbc-time-view .rbc-allday-cell {
@@ -44,11 +42,19 @@
 /* driver names */
 .rbc-time-view .rbc-row div:nth-child(1) {
   border-bottom: none;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 1.875rem;
+  padding-bottom: 1.875rem;
 }
 
 /* line between driver names */
 .rbc-time-view-resources .rbc-time-header-content {
   border: none;
+}
+
+.rbc-today {
+  background-color: white;
+}
+
+.rbc-header {
+  font-weight: 400;
 }

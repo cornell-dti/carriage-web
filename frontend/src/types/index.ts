@@ -1,21 +1,17 @@
-export type AccessibilityNeeds = {
-  hasCrutches: boolean;
-  needsAssistant: boolean;
-  needsWheelchair: boolean;
-};
+import { RiderType } from '../../../server/models/rider';
+import { DriverType } from '../../../server/models/driver';
+import { RideType } from '../../../server/models/ride';
+import { AdminType } from '../../../server/models/admin';
+import { LocationType } from '../../../server/models/location';
+import { VehicleType } from '../../../server/models/vehicle';
 
-export type Rider = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  accessibilityNeeds: Array<string>;
-  description: string;
-  joinDate: string;
-  pronouns: string;
-  address: string;
-};
+export type Rider = RiderType;
+
+export enum Accessibility {
+  ASSISTANT = 'Assistant',
+  CRUTCHES = 'Crutches',
+  WHEELCHAIR = 'Wheelchair',
+}
 
 export type Availability = {
   startTime: string;
@@ -26,67 +22,68 @@ export type AvailabilityType = {
   [day: string]: Availability;
 };
 
-export type Driver = {
+export type Driver = DriverType;
+
+export type Admin = AdminType;
+
+export type Employee = {
   id: string;
   firstName: string;
   lastName: string;
-  availability: AvailabilityType;
-  vehicle: Vehicle;
   phoneNumber: string;
   email: string;
-  phone: string;
+  availability?: AvailabilityType;
+  admin?: boolean;
+  photoLink?: string;
+  startDate?: string;
 };
 
 export type ObjectType = {
   [x: string]: any;
 }
 
-export type Vehicle = {
-  id: string;
-  name: string;
-  capacity: string;
-  wheelchairAccessible: boolean;
-};
+export type Vehicle = VehicleType;
 
 export enum Tag {
-  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  CTOWN = 'ctown', // college town
-  DTOWN = 'dtown', // downtown
+  WEST = 'west',
+  CTOWN = 'ctown',
+  DTOWN = 'dtown',
+  INACTIVE = 'inactive',
+  CUSTOM = 'custom'
 }
 
-export type Location = {
-  id: string;
-  name: string;
-  address: string;
-  tag?: Tag;
-};
+export type Location = LocationType;
 
-export type TableValue = {
-  data: string | null;
-  tag?: string;
-  buttonHandler?: () => void;
-  ButtonModal?: () => JSX.Element;
-};
+export type Ride = RideType;
 
-export type Dispatcher = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  accessLevel: string;
+export enum Type {
+  ACTIVE = 'active',
+  PAST = 'past',
+  UNSCHEDULED = 'unscheduled',
 }
-export type Ride = {
-  id: string;
-  type: string;
-  status: string;
-  late?: boolean;
-  startLocation: Location;
-  endLocation: Location;
-  startTime: string;
-  endTime: string;
-  rider: Rider;
-  driver?: Driver;
+
+export enum Status {
+  NOT_STARTED = 'not_started',
+  ON_THE_WAY = 'on_the_way',
+  ARRIVED = 'arrived',
+  PICKED_UP = 'picked_up',
+  COMPLETED = 'completed',
+  NO_SHOW = 'no_show',
+  CANCELLED = 'cancelled',
+}
+
+export type TableData = {
+  year: string;
+  monthDay: string;
+  dayCount: number;
+  dayNoShow: number;
+  dayCancel: number;
+  nightCount: number;
+  nightNoShow: number;
+  nightCancel: number;
+  drivers: {
+    [name: string]: number;
+  };
 };

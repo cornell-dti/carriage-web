@@ -1,39 +1,41 @@
 .card {
   display: inline-block;
-  width: 275px;
+  width: 17.2rem;
   background-color: white;
-  border-radius: 8px;
-  margin: 0 25px 25px;
+  border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0px 4px 35px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
 }
 
 .image {
   background-color: #dddddd;
-  height: 150px;
+  object-fit: cover;
+  width: 100%;
+  height: 9.38rem;
 }
 
 .contentContainer {
-  padding: 19px 16px 29px;
+  padding: 1.2rem 1rem 1.81rem;
 }
 
 .titleContainer {
-  margin-left: -16px;
-  padding: 4px 0px 4px 13px;
-  border-left: 3px solid black;
+  margin-left: -1rem;
+  padding: 0.25rem 0 0.25rem 0.81rem;
+  border-left: 0.19rem solid black;
 }
 
 .name {
   display: inline-block;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
+  margin: 0;
 }
 
 .netId {
   display: inline-block;
-  font-size: 15px;
+  font-size: 0.938rem;
   opacity: 0.5;
-  margin-left: 5px;
+  margin-left: 0.313rem;
 }
 
 .infoContainer {
@@ -42,11 +44,11 @@
 }
 
 .icon {
-  width: 16px;
-  margin-right: 16px;
+  width: 1rem;
+  margin-right: 1rem;
 }
 
 .infoContainer p {
-  font-size: 15px;
+  font-size: 0.938rem;
   opacity: 0.7;
 }

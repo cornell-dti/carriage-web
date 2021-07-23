@@ -1,0 +1,163 @@
+.inputContainer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-gap: 0.5rem;
+  width: 42rem;
+  margin-bottom: 1rem;
+}
+
+.input {
+  max-width:100%; 
+  font-size: 1.5rem;
+  padding: 0.25rem 0; 
+}
+
+.col1 {
+  grid-column: 1;
+}
+
+.col2 {
+  grid-column: 2;
+}
+
+.uploadContainer {
+  position: absolute;
+  right: 0;
+  text-align: center;
+}
+
+.uploadImg {
+  display: block;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  height: 5.875rem;
+  width: 5.875rem;
+}
+
+.uploadText {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #0075DB;
+  cursor: pointer;
+}
+
+.uploadText:hover {
+  text-decoration: underline;
+}
+
+.workingHours {
+  margin-bottom: 1rem;
+}
+
+.workingHoursTitle {
+  margin-bottom: 0.875rem;
+}
+
+.roleSelector {
+  margin-bottom: 1rem;
+}
+
+.roleSelectorTitle {
+  margin-bottom: 0.4rem;
+}
+
+.radioOption {
+  display: inline-block;
+  margin-right: 0.4rem;
+}
+
+.radioButton:focus{
+  outline: 2px solid black; 
+}
+
+.addAvailabilityInput {
+  display: inline-block;
+  color: #0075DB;
+  font-size: 0.75rem;
+  cursor: pointer;
+  background-color: white;
+  border: none; 
+  outline: none; 
+}
+
+.addAvailabilityInput:hover {
+  text-decoration: underline;
+}
+.addAvailabilityInput:focus{
+  outline: 3px solid #0075DB; 
+}
+
+.availabilityInput {
+  display: flex;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.timeInput {
+  font-size: initial;
+  padding: 0.375rem 0.625rem;
+  margin-top:0.5rem;
+  width: 7.792rem; 
+}
+
+.toText {
+  font-size: 0.875rem;
+  margin: 0 0.875rem;
+}
+
+.repeatText {
+  font-size: 1.063rem;
+  margin: 0 1.25rem;
+}
+
+.day {
+  border-radius: 40%;
+  height: 1.25rem;
+  width: 1.25rem;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  margin: 0 0.125rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.day:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.daySelected {
+  background-color: black;
+  color: white;
+}
+
+.daySelected:focus {
+  background-color: black; 
+}
+.error {
+  color: #EB0023;
+  font-size: 0.75rem;
+}
+.dayError{
+  margin: 0 0.25rem; 
+}
+.timeFlexbox{
+  display:flex;
+  flex-direction:column;
+  max-height:5rem;
+}
+.submit {
+  float: right;
+}
+
+.edit {
+  width: 4rem;
+  height: auto;
+}
+
+.edit:hover {
+  cursor: pointer;
+}
+.hidden{
+  display: none; 
+}

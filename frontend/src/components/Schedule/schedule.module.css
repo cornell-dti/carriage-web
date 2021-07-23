@@ -1,55 +1,51 @@
 .heading {
-  margin-top: 30px;
-  margin-bottom: 5px;
-  margin-left: 32px;
+  margin-top: 1.875rem;
+  margin-bottom: 0.313rem;
+  margin-left: 2rem;
 }
 
 .calendar_container {
-  padding-left: 32px;
+  padding-left: 2rem;
   display: flex;
   width: 100%;
   flex-direction: row;
-  height: 350px;
+  height: 21.875rem;
 }
 
 .left {
-  width: calc(100% - 50px);
-  height: 350px;
+  width: calc(100% - 3.125rem);
+  height: 21.875rem;
 }
 
 .right {
-  width: 50px;
+  width: 3.125rem;
   display: flex;
-  height: 350px;
+  height: 21.875rem;
   z-index: 100;
   position: absolute;
-  left: calc(100% - 50px);
+  left: calc(100% - 3.125rem);
   justify-content: center;
   align-items: center;
 }
 
 .long {
-  height: 800px;
-}
-
-.pad {
-  padding: 40px;
+  height: 50rem;
 }
 
 .uparrow {
   border: solid black;
-  border-width: 0 3px 3px 0;
+  border-width: 0 0.19rem 0.19rem 0;
   display: inline-block;
-  padding: 3px;
+  padding: 0.19rem;
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
 }
 
 .downarrow {
   border: solid black;
-  border-width: 0 3px 3px 0;
+  border-width: 0 0.19rem 0.19rem 0;
   display: inline-block;
-  padding: 3px;
+  padding: 0.19rem;
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
 }
@@ -60,8 +56,8 @@
   background-color: rgba(255, 255, 255, 0);
   display: block;
   margin: auto;
-  width: 25px;
-  height: 25px;
+  width: 2.25rem;
+  height: 2.25rem;
   outline: none;
 }
 
@@ -69,14 +65,17 @@
   border-radius: 50%;
   background-color: lightgray;
 }
-
+.btn:focus{
+  border-radius: 50%;
+  background-color: lightgray;
+}
 .btn:disabled {
   visibility: hidden;
 }
 
 .view_state {
-  padding: 5px;
-  margin-right: 50px;
+  padding: 0.313rem;
+  margin-right: 3.125rem;
   border: none;
   background-color: white;
   float: right;

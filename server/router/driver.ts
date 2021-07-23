@@ -1,9 +1,12 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import moment from 'moment';
+import { Condition } from 'dynamoose';
+import { Document } from 'dynamoose/dist/Document';
+import moment from 'moment-timezone';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
+import { Ride, Status } from '../models/ride';
 
 const router = express.Router();
 const tableName = 'Drivers';
@@ -15,7 +18,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
 });
 
 // Get all drivers
-router.get('/', validateUser('Dispatcher'), (req, res) => {
+router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Driver, tableName);
 });
 
@@ -37,18 +40,22 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 router.get('/:id/:startTime/:endTime', (req, res) => {
   const { params: { id, startTime, endTime } } = req;
 
-  const reqStart = moment(startTime);
-  const reqEnd = moment(endTime);
+  const reqStart = moment.tz(startTime, 'America/New_York');
+  const reqEnd = moment.tz(endTime, 'America/New_York');
 
   if (reqStart.date() !== reqEnd.date()) {
-    res.send({ err: { message: 'startTime and endTime dates must be equal' } });
+    res.status(400).send({ err: 'startTime and endTime dates must be equal' });
   }
 
   const reqStartTime = reqStart.format('HH:mm');
   const reqEndTime = reqEnd.format('HH:mm');
 
-  const reqStartDay = moment(startTime).day();
-  const reqEndDay = moment(endTime).day();
+  if (reqStartTime > reqEndTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
+
+  const reqStartDay = moment.tz(startTime, 'America/New_York').day();
+  const reqEndDay = moment.tz(endTime, 'America/New_York').day();
 
   let available = false;
 
@@ -63,7 +70,9 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
       return null;
     })();
 
-    const availStartTime = moment(availStart, 'HH:mm').format('HH:mm');
+    const availStartTime = moment
+      .tz(availStart as string, 'HH:mm', 'America/New_York')
+      .format('HH:mm');
 
     if (availStart != null && availStartTime <= reqStartTime) {
       const availEnd = (() => {
@@ -75,18 +84,50 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         return null;
       })();
 
-      const availEndTime = moment(availEnd, 'HH:mm').format('HH:mm');
+      const availEndTime = moment
+        .tz(availEnd as string, 'HH:mm', 'America/New_York')
+        .format('HH:mm');
 
       if (availEnd != null && availEndTime >= reqEndTime) {
         available = true;
       }
     }
-    res.send(available);
+    res.status(200).send(available);
+  });
+});
+
+// Get a driver's weekly stats
+router.get('/:id/stats', validateUser('Admin'), (req, res) => {
+  const { params: { id } } = req;
+  const week = moment().subtract(1, 'week');
+  const weekStart = week.startOf('week').toISOString();
+  const weekEnd = week.endOf('week').toISOString();
+  const condition = new Condition('startTime')
+    .ge(weekStart)
+    .where('endTime')
+    .le(weekEnd)
+    .where('driver')
+    .eq(id)
+    .where('status')
+    .eq(Status.COMPLETED);
+
+  const calculateHoursWorked = (driver: DriverType) => (
+    Object.values(driver.availability).reduce((acc, curr) => {
+      const { startTime, endTime } = curr!;
+      const hours = moment.duration(endTime).subtract(moment.duration(startTime)).asHours();
+      return acc + hours;
+    }, 0)
+  );
+
+  db.getById(res, Driver, id, tableName, (driver) => {
+    db.scan(res, Ride, condition, (data: Document[]) => {
+      res.send({ rides: data.length, workingHours: calculateHoursWorked(driver) });
+    });
   });
 });
 
 // Put a driver in Drivers table
-router.post('/', validateUser('Dispatcher'), (req, res) => {
+router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
     ...body,
@@ -102,7 +143,7 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
 });
 
 // Delete an existing driver
-router.delete('/:id', validateUser('Dispatcher'), (req, res) => {
+router.delete('/:id', validateUser('Admin'), (req, res) => {
   const { params: { id } } = req;
   db.deleteById(res, Driver, id, tableName);
 });

@@ -1,0 +1,86 @@
+.table {
+  padding: 0 2rem 1rem;
+}
+
+.header {
+  display: grid;
+  font-weight: bold;
+  padding: 1rem 0.75rem;
+}
+
+.row {
+  display: grid;
+  margin: 1.25rem 0;
+  padding: 1rem 0.75rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0px 4px 32px rgba(0, 0, 0, 0.06);
+}
+
+.rowGroup {
+  display: grid;
+  margin: 1.25rem 0;
+  padding: 0 0.75rem;
+}
+
+.group {
+  display: grid;
+  padding: 1rem 0;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0px 4px 32px rgba(0, 0, 0, 0.06);
+}
+
+.nongroup {
+  display: grid;
+  padding: 1rem 0;
+}
+
+.cell {
+  text-align: center;
+  word-break: break-word;
+  padding: 0 0.75rem;
+}
+
+.tag {
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.smallTag {
+  margin-right: 0.5rem;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ctown {
+  background-color: rgba(125, 223, 195, 0.6);
+}
+
+.west {
+  background-color: rgba(187, 107, 217, 0.6);
+}
+
+.central {
+  background-color: rgba(102, 181, 248, 1);
+}
+
+.north {
+  background-color: rgba(255, 139, 157, 1);
+}
+
+.dtown {
+  background-color: rgba(255, 226, 157, 1)
+}
+
+.inactive {
+  background-color: rgba(255, 139, 157, 0.8);
+}
+
+.custom {
+  background-color: rgba(255, 152, 56, 1);
+}

@@ -1,20 +1,25 @@
 import dynamoose from 'dynamoose';
 
 export type VehicleType = {
-  id: string;
-  name: string;
-  capacity: number;
-  wheelchairAccessible: boolean;
+  id: string,
+  name: string,
+  capacity: number,
 };
 
 const schema = new dynamoose.Schema({
   id: {
     type: String,
+    required: true,
     hashKey: true,
   },
-  name: String,
-  capacity: Number,
-  wheelchairAccessible: Boolean,
+  name: {
+    type: String,
+    required: true,
+  },
+  capacity: {
+    type: Number,
+    required: true,
+  },
 });
 
 export const Vehicle = dynamoose.model('Vehicles', schema, { create: false });

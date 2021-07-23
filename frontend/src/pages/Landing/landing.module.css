@@ -1,38 +1,100 @@
 .home {
-  background-image: url("./showcase.jpg");
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(./campus.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size: cover;
-  background-size: center;
   height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 1.25rem;
+}
+.main {
+  border: 1px solid black;
+  border-radius: 16px;
+  max-width: 850px;
+  min-height: 550px;
+  display: flex;
+  flex-grow: 1;
+}
+
+.left {
+  border-radius: 16px 0 0 16px;
+  background: #191919;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 600;
+  color: white;
+  margin-top: 16px;
+}
+
+.right {
+  border-radius: 0 16px 16px 0;
+  background: white;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 0 20px;
+  padding: 8px;
 }
 
-.title, .subtitle {
-  margin: 0
+@media (max-width: 400px) {
+  .container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 550px) {
+  .main {
+    flex-direction: column;
+  }
+  .left {
+    border-radius: 16px 16px 0 0;
+  }
+  .right {
+    border-radius: 0 0 16px 16px;
+  }
+}
+
+@media (max-height: 600px) {
+  .main {
+    min-height: 0px;
+  }
+}
+
+.heading {
+  width: 100%;
+  font-size: 32;
+  font-weight: bold;
+}
+
+.input {
+  width: 100%;
+  outline: 0;
+  background: none;
+  border-width: 0 0 1px;
+  margin-bottom: 40px;
 }
 
 .footer {
-  padding: 1rem;
-  background: black;
-  color: white;
-  text-align: center;
-}
-
-.readBtn {
-  font-size: 1.1em;
-  text-decoration: none;
-  color: black;
-  border: black 1px solid;
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-.readBtn:hover {
-  background: black;
-  color: white;
+  max-width: 400px;
 }

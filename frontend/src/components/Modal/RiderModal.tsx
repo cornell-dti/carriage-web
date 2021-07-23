@@ -1,32 +1,28 @@
-import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
+import { useRiders } from '../../context/RidersContext';
+import { edit } from '../../icons/other/index';
+import AuthContext from '../../context/auth';
 
 type RiderModalProps = {
-  riders: Array<Rider>;
-  setRiders: Dispatch<SetStateAction<Rider[]>>;
-}
+  existingRider?: Rider;
+  isRiderWeb?: boolean;
+};
 
-const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
-  const [formData, setFormData] = useState({
-    id: '',
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    email: '',
-    accessibilityNeeds: [],
-    description: '',
-    joinDate: '',
-    pronouns: '',
-    address: '',
-  });
+const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
+  const { refreshUser } = useContext(AuthContext);
+  const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
+  const { refreshRiders } = useRiders();
 
   const openModal = () => {
     setIsOpen(true);
@@ -40,46 +36,60 @@ const RiderModal = ({ riders, setRiders }: RiderModalProps) => {
   };
 
   const submitData = () => {
+    setToast(false);
     setIsSubmitted(true);
     closeModal();
   };
 
   useEffect(() => {
     if (isSubmitted) {
+      fetch(
+        `/api/riders/${!existingRider ? '' : existingRider.id}`,
+        withDefaults({
+          method: !existingRider ? 'POST' : 'PUT',
+          body: JSON.stringify(formData),
+        }),
+      ).then(() => {
+        refreshRiders();
+        setToast(true);
+        if (isRiderWeb) {
+          refreshUser();
+        }
+      });
       setIsSubmitted(false);
-      const newRider = {
-        id: formData.id,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phoneNumber: formData.phoneNumber,
-        email: formData.email,
-        accessibilityNeeds: formData.accessibilityNeeds,
-        description: '',
-        joinDate: '',
-        pronouns: '',
-        address: formData.address,
-      };
-      const addRider = async () => {
-        await fetch('/api/riders', withDefaults({
-          method: 'POST',
-          body: JSON.stringify(newRider),
-        }));
-      };
-      addRider();
-      setRiders([...riders, newRider]);
     }
-  }, [formData, isSubmitted, riders, setRiders, withDefaults]);
+  }, [existingRider, formData, isRiderWeb, isSubmitted, refreshRiders, refreshUser, withDefaults]);
 
   return (
     <>
-      <Button className={styles.addRiderButton} onClick={openModal}>+ Add Rider</Button>
+      {showingToast
+        ? <Toast
+          message={!existingRider
+            ? 'The student has been added.'
+            : 'The student has been edited.'}
+        />
+        : null}
+      {!existingRider ? (
+        <Button className={styles.addRiderButton} onClick={openModal}>
+          + Add Student
+        </Button>
+      ) : (
+        <button className={styles.editRiderButton} onClick={openModal}>
+          <img className={styles.editIcon} alt="edit" src={edit} />
+        </button>
+      )}
       <Modal
-        title={['Add a Rider']}
+        title={!existingRider ? 'Add a Student' : 'Edit a Student'}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}
       >
-        <RiderModalInfo onSubmit={saveDataThen(submitData)} />
+        <RiderModalInfo
+          onSubmit={saveDataThen(submitData)}
+          setIsOpen={setIsOpen}
+          setFormData={setFormData}
+          rider={existingRider}
+        />
       </Modal>
     </>
   );

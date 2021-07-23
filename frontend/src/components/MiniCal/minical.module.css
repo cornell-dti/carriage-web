@@ -1,0 +1,72 @@
+.root {
+  display: flex;
+  align-items: center;
+}
+
+.customInput {
+  width: 200px;
+  background-color: black;
+  color: white;
+  margin-top: 0px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 33px;
+}
+
+.customInput:focus{
+  outline: 3px solid #0084F4; 
+}
+
+.svg {
+  height: 12px;
+}
+
+.justify {
+  margin-bottom: 5px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  margin: 0px 12px;
+}
+
+.btn2 {
+  cursor: pointer;
+  background-color: white;
+  color: black;
+  margin: 10px;
+  border-radius: 12px;
+  border: none;
+  width: 85px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.month {
+  width: 160px;
+  line-height: 45px;
+  font-size: 20px;
+}
+
+.active {
+  background-color: #00c48c;
+  color: black;
+}
+
+.primary {
+  color: #00c48c;
+}
+
+.space {
+  width: 0.5em;
+}

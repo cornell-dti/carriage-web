@@ -1,4 +1,5 @@
 import dynamoose from 'dynamoose';
+import { formatAddress, isAddress } from '../util';
 
 export enum Tag {
   WEST = 'west',
@@ -14,16 +15,34 @@ export type LocationType = {
   id: string;
   name: string;
   address: string;
-  tag?: Tag;
+  tag: Tag;
+  info?: string;
 };
 
 const schema = new dynamoose.Schema({
-  id: String,
-  name: String,
-  address: String,
+  id: {
+    type: String,
+    required: true,
+    hashKey: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+    set: (address) => formatAddress(address as string),
+    validate: (address) => isAddress(address as string),
+  },
   tag: {
     type: String,
+    required: true,
     enum: Object.values(Tag),
+  },
+  info: {
+    type: String,
+    required: true,
   },
 });
 
