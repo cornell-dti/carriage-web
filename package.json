@@ -25,7 +25,7 @@
     "build:server": "cd server && npm run tsc",
     "install:frontend": "cd frontend && npm install",
     "install:server": "cd server && npm install",
-    "postinstall": "npm run install:frontend && npm run install:server && npm run prepare",
+    "postinstall": "npm run install:frontend && npm run install:server",
     "quiet-lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix --quiet",
     "lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
