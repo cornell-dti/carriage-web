@@ -14,8 +14,14 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^7.0.1",
+    "lint-staged": "^11.1.0",
     "prettier": "^2.3.2",
     "typescript": "^4.3.5"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "npx eslint --cache --fix",
+    "*.{ts,js,tsx,jsx,css}": "npx prettier --write"
   },
   "scripts": {
     "heroku-postbuild": "npm run build:frontend && npm run build:server",
@@ -25,13 +31,14 @@
     "build:server": "cd server && npm run tsc",
     "install:frontend": "cd frontend && npm install",
     "install:server": "cd server && npm install",
-    "postinstall": "npm run install:frontend && npm run install:server",
-    "quiet-lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix --quiet",
-    "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
-    "format": "npx prettier --write '**/*.{ts,js,tsx,jsx,css,json}'",
-    "format:check": "npx prettier --check '**/*.{ts,js,tsx,jsx,css,json}'",
+    "postinstall": "npm run install:frontend && npm run install:server && npm run prepare",
+    "quiet-lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix --quiet",
+    "lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
+    "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
+    "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
