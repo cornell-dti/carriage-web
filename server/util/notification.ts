@@ -76,24 +76,11 @@ const sendMsg = (sub: SubscriptionType, msg: string) => {
         });
     });
   }
-  // mobile notification
 
-  const snsMsg = {
-    GCM: {
-      notification: {
-        body: msg,
-        click_action: 'FLUTTER_NOTIFICATION_CLICK',
-      },
-      data: {
-        additional: msg,
-      },
-    },
-  };
 
   const snsParams = {
-    Message: JSON.stringify(snsMsg),
+    Message: msg,
     TargetArn: sub.endpoint,
-    MessageStructure: 'json',
   };
 
   return new Promise((resolve, reject) => {
