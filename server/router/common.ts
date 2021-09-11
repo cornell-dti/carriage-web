@@ -6,11 +6,11 @@ import { Condition } from 'dynamoose/dist/Condition';
 export function getById(
   res: Response,
   model: ModelType<Document>,
-  id: string | ObjectType,
+  id: string | ObjectType | undefined,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
-  model.get(id, (err, data) => {
+  model.get(id || '', (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
@@ -28,7 +28,7 @@ export function batchGet(
   model: ModelType<Document>,
   keys: ObjectType[],
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   if (!keys.length) {
     res.send({ data: [] });
@@ -50,7 +50,7 @@ export function getAll(
   res: Response,
   model: ModelType<Document>,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.scan().exec((err, data) => {
     if (err) {
@@ -68,7 +68,7 @@ export function getAll(
 export function create(
   res: Response,
   document: Document,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   document.save((err, data) => {
     if (err) {
@@ -89,7 +89,7 @@ export function update(
   key: ObjectType,
   operation: ObjectType,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model.update(key, operation, (err, data) => {
     if (err) {
@@ -111,28 +111,33 @@ export function conditionalUpdate(
   operation: ObjectType,
   condition: Condition,
   table: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
-  model.update(key, operation, { condition, return: 'document' }, (err, data) => {
-    if (err) {
-      res.status(err.statusCode || 500).send({ err: err.message });
-    } else if (!data) {
-      res.status(400).send({ err: `id not found in ${table}` });
-    } else if (callback) {
-      data.populate().then((doc) => callback(doc));
-    } else {
-      data.populate().then((doc) => res.status(200).send(doc));
+  model.update(
+    key,
+    operation,
+    { condition, return: 'document' },
+    (err, data) => {
+      if (err) {
+        res.status(err.statusCode || 500).send({ err: err.message });
+      } else if (!data) {
+        res.status(400).send({ err: `id not found in ${table}` });
+      } else if (callback) {
+        data.populate().then((doc) => callback(doc));
+      } else {
+        data.populate().then((doc) => res.status(200).send(doc));
+      }
     }
-  });
+  );
 }
 
 export function deleteById(
   res: Response,
   model: ModelType<Document>,
-  id: string | ObjectType,
-  table: string,
+  id: string | ObjectType | undefined,
+  table: string
 ) {
-  model.get(id, (err, data) => {
+  model.get(id || '', (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
@@ -148,7 +153,7 @@ export function query(
   model: ModelType<Document>,
   condition: Condition,
   index: string,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
   model
     .query(condition)
@@ -159,7 +164,9 @@ export function query(
       } else if (callback) {
         data.populate().then((doc: Document) => callback(doc));
       } else {
-        data.populate().then((doc: Document) => res.status(200).send({ data: doc }));
+        data
+          .populate()
+          .then((doc: Document) => res.status(200).send({ data: doc }));
       }
     });
 }
@@ -168,19 +175,17 @@ export function scan(
   res: Response,
   model: ModelType<Document>,
   condition: Condition,
-  callback?: (value: any) => void,
+  callback?: (value: any) => void
 ) {
-  model
-    .scan(condition)
-    .exec((err, data) => {
-      if (err) {
-        res.status(err.statusCode || 500).send({ err: err.message });
-      } else if (!data) {
-        res.status(400).send({ err: 'error when scanning table' });
-      } else if (callback) {
-        data.populate().then((doc) => callback(doc));
-      } else {
-        data.populate().then((doc) => res.status(200).send({ data: doc }));
-      }
-    });
+  model.scan(condition).exec((err, data) => {
+    if (err) {
+      res.status(err.statusCode || 500).send({ err: err.message });
+    } else if (!data) {
+      res.status(400).send({ err: 'error when scanning table' });
+    } else if (callback) {
+      data.populate().then((doc) => callback(doc));
+    } else {
+      data.populate().then((doc) => res.status(200).send({ data: doc }));
+    }
+  });
 }

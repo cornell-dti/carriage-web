@@ -15,8 +15,8 @@
   height: 33px;
 }
 
-.customInput:focus{
-  outline: 3px solid #0084F4; 
+.customInput:focus {
+  outline: 3px solid #0084f4;
 }
 
 .svg {

@@ -11,7 +11,7 @@ type AvailabilityInputProps = {
   existingTimeRange?: string;
   existingDayArray?: string[];
   hide: boolean;
-}
+};
 
 const AvailabilityInput = ({
   index,
@@ -89,7 +89,8 @@ const AvailabilityInput = ({
 
   // formats a time string to be suitable to pass into defaultValue
   // of the Input component
-  const formatTime = (time: string): string => moment(time, 'ha').format('HH:mm');
+  const formatTime = (time: string): string =>
+    moment(time, 'ha').format('HH:mm');
 
   return (
     <div className={styles.availabilityInput}>
@@ -98,15 +99,16 @@ const AvailabilityInput = ({
         <Input
           id={`${instance}.startTime`}
           name={`${instance}.startTime`}
-          type='time'
+          type="time"
           className={styles.timeInput}
           defaultValue={existingTime?.[0]}
           ref={register({ required: !hide })}
         />
-        {errors.availability && errors.availability[index]
-          && errors.availability[index].startTime
-          && <p className={styles.error}>Please enter a valid start time</p>
-        }
+        {errors.availability &&
+          errors.availability[index] &&
+          errors.availability[index].startTime && (
+            <p className={styles.error}>Please enter a valid start time</p>
+          )}
       </div>
       <p className={styles.toText}>to</p>
       <div className={styles.timeFlexbox}>
@@ -114,7 +116,7 @@ const AvailabilityInput = ({
         <Input
           id={`${instance}.endTime`}
           name={`${instance}.endTime`}
-          type='time'
+          type="time"
           className={styles.timeInput}
           defaultValue={existingTime?.[1]}
           ref={register({
@@ -125,10 +127,11 @@ const AvailabilityInput = ({
             },
           })}
         />
-        {errors.availability && errors.availability[index]
-          && errors.availability[index].endTime
-          && <p className={styles.error}>Please enter a valid end time</p>
-        }
+        {errors.availability &&
+          errors.availability[index] &&
+          errors.availability[index].endTime && (
+            <p className={styles.error}>Please enter a valid end time</p>
+          )}
       </div>
       <p className={styles.repeatText}>Repeat on</p>
       <div className={styles.timeFlexbox}>
@@ -139,30 +142,34 @@ const AvailabilityInput = ({
               name={`${instance}.days`}
               type="button"
               value={label}
-              className={cn(
-                styles.day,
-                { [styles.daySelected]: isDaySelectedByInstance(day, index) },
-              )}
+              className={cn(styles.day, {
+                [styles.daySelected]: isDaySelectedByInstance(day, index),
+              })}
               onClick={() => handleClick(day)}
             />
           ))}
         </div>
-        {errors.availability && errors.availability[index]
-          && errors.availability[index].days
-          && <p className={cn(styles.error, styles.dayError)}>Please select at least one day</p>
-        }
+        {errors.availability &&
+          errors.availability[index] &&
+          errors.availability[index].days && (
+            <p className={cn(styles.error, styles.dayError)}>
+              Please select at least one day
+            </p>
+          )}
       </div>
-    </div >
+    </div>
   );
 };
 
 type WorkingHoursProps = {
   existingAvailability?: string[][];
   hide: boolean;
-}
+};
 
 const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
-  const [numAvailability, setNumAvailability] = useState(existingAvailability ? 0 : 1);
+  const [numAvailability, setNumAvailability] = useState(
+    existingAvailability ? 0 : 1
+  );
   const [availabilityArray, setAvailabilityArray] = useState<any[]>([]);
 
   const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
@@ -173,10 +180,12 @@ const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
     existingAvailability?.forEach((availability) => {
       const [day, timeRange] = availability;
       const dayArray: string[] | undefined = availabilityMap.get(timeRange);
-      if (dayArray) { // push day onto dayArray
+      if (dayArray) {
+        // push day onto dayArray
         dayArray.push(day);
         availabilityMap.set(timeRange, dayArray);
-      } else { // create new array
+      } else {
+        // create new array
         availabilityMap.set(timeRange, [day]);
       }
     });
@@ -196,7 +205,9 @@ const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
       }
       setAvailabilityArray(newAvailabilityArray);
     } else {
-      console.log('Error: Sizes of time and day arrays are not equal. This error should be impossible.');
+      console.log(
+        'Error: Sizes of time and day arrays are not equal. This error should be impossible.'
+      );
     }
   };
 
@@ -208,23 +219,25 @@ const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
     <div className={cn(styles.workingHours, { [styles.hidden]: hide })}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       <WeekProvider>
-        {existingAvailability ? (
-          availabilityArray.map(([timeRange, dayArray], index) => (
-            <AvailabilityInput
-              key={index}
-              index={index}
-              existingTimeRange={timeRange}
-              existingDayArray={dayArray}
-              hide={hide}
-            />
-          ))
-        ) : (
-          [...new Array(numAvailability)].map((_, index) => (
-            <AvailabilityInput key={index} index={index} hide={hide} />
-          ))
-        )}
+        {existingAvailability
+          ? availabilityArray.map(([timeRange, dayArray], index) => (
+              <AvailabilityInput
+                key={index}
+                index={index}
+                existingTimeRange={timeRange}
+                existingDayArray={dayArray}
+                hide={hide}
+              />
+            ))
+          : [...new Array(numAvailability)].map((_, index) => (
+              <AvailabilityInput key={index} index={index} hide={hide} />
+            ))}
       </WeekProvider>
-      <button type={'button'} className={styles.addAvailabilityInput} onClick={addAvailabilityInput}>
+      <button
+        type={'button'}
+        className={styles.addAvailabilityInput}
+        onClick={addAvailabilityInput}
+      >
         + Add more
       </button>
     </div>

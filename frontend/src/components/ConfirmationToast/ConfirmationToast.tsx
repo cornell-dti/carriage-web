@@ -5,7 +5,7 @@ import styles from './confirmationtoast.module.css';
 
 type toastProps = {
   message: string;
-}
+};
 
 const Toast = ({ message }: toastProps) => {
   const [visible, setVisible] = useState(true);
@@ -19,13 +19,14 @@ const Toast = ({ message }: toastProps) => {
 
   return (
     <>
-      {visible && createPortal(
-        <div className={styles.toast}>
-          <img alt="toast check" src={check} />
-          <p className={styles.toasttext}>{message}</p>
-        </div>,
-        document.body,
-      )}
+      {visible &&
+        createPortal(
+          <div className={styles.toast}>
+            <img alt="toast check" src={check} />
+            <p className={styles.toasttext}>{message}</p>
+          </div>,
+          document.body
+        )}
     </>
   );
 };

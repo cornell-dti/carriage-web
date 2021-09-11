@@ -5,7 +5,11 @@ interface PrivateRouteProps extends RouteProps {
   forRider?: boolean;
 }
 
-const PrivateRoute = ({ forRider = false, component: Component, ...rest }: PrivateRouteProps) => {
+const PrivateRoute = ({
+  forRider = false,
+  component: Component,
+  ...rest
+}: PrivateRouteProps) => {
   if (!Component) return null;
   const redirectPath = forRider ? '' : '';
   return (
@@ -14,12 +18,14 @@ const PrivateRoute = ({ forRider = false, component: Component, ...rest }: Priva
       render={(props) => {
         const localUserType = localStorage.getItem('userType');
         if (localUserType) {
-          return (forRider === (localUserType === 'Rider'))
-            ? <Component {...props} /> : <Redirect to={{ pathname: redirectPath }} />;
+          return forRider === (localUserType === 'Rider') ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to={{ pathname: redirectPath }} />
+          );
         }
         return <Redirect to={{ pathname: '/' }} />;
-      }
-      }
+      }}
     />
   );
 };

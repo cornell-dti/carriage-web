@@ -16,8 +16,12 @@ const Locations = () => {
         .then((res) => res.json())
         .then((data) => data.data);
       locationsData.sort((a: Location, b: Location) => {
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
         return 0;
       });
       setLocations(locationsData);
@@ -30,7 +34,7 @@ const Locations = () => {
   };
 
   return (
-    <main id = "main">
+    <main id="main">
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Locations</h1>
         <div className={styles.rightSection}>
@@ -38,10 +42,7 @@ const Locations = () => {
           <Notification />
         </div>
       </div>
-      <LocationsTable
-        locations={locations}
-        setLocations={setLocations}
-      />
+      <LocationsTable locations={locations} setLocations={setLocations} />
     </main>
   );
 };

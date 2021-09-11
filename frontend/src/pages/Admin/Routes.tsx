@@ -26,7 +26,9 @@ const Routes = () => {
   return (
     <>
       <div tabIndex={-1} ref={skipRef}></div>
-      <HashLink className='skip-main' to='#main'>Skip to main content</HashLink>
+      <HashLink className="skip-main" to="#main">
+        Skip to main content
+      </HashLink>
       <Sidebar type="admin">
         <Switch>
           <Route
@@ -39,8 +41,8 @@ const Routes = () => {
             )}
           />
           <Route path="/employees" component={Employees} />
-          <Route path='/admins/:id' component={EmployeeDetail} />
-          <Route path='/drivers/:id' component={EmployeeDetail} />
+          <Route path="/admins/:id" component={EmployeeDetail} />
+          <Route path="/drivers/:id" component={EmployeeDetail} />
           <Route
             path="/riders"
             render={({ match: { url } }) => (
@@ -74,8 +76,7 @@ const AdminRoutes = () => {
           </Router>
         </RidersProvider>
       </EmployeesProvider>
-    </DateContext.Provider >
-
+    </DateContext.Provider>
   );
 };
 

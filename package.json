@@ -1,47 +1,48 @@
 {
-    "name": "carriage-web",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "dependencies": {
-        "@types/jquery": "^3.3.33",
-        "babel-eslint": "^10.1.0",
-        "eslint": "^6.8.0",
-        "eslint-config-airbnb-base": "^14.0.0",
-        "eslint-config-react-app": "^5.2.0",
-        "eslint-plugin-flowtype": "^3.13.0",
-        "eslint-plugin-import": "^2.20.1",
-        "eslint-plugin-jsx-a11y": "^6.2.3",
-        "eslint-plugin-promise": "^4.2.1",
-        "eslint-plugin-react": "^7.18.3",
-        "express": "^4.17.1",
-        "google-auth-library": "^6.0.0",
-        "react-google-login": "^5.1.3",
-        "typescript": "^4.0.3"
-    },
-    "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^2.18.0",
-        "@typescript-eslint/parser": "^2.18.0",
-        "eslint-plugin-react-hooks": "^1.7.0"
-    },
-    "scripts": {
-        "heroku-postbuild": "npm run build:frontend && npm run build:server",
-        "build:frontend": "cd frontend && npm run build && cd ..",
-        "build:server": "cd server && npm run tsc && cd ..",
-        "install:frontend": "cd frontend && npm install && cd ..",
-        "install:server": "cd server && npm install && cd ..",
-        "postinstall": "npm run install:frontend && npm run install:server",
-        "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/cornell-dti/carriage-web.git"
-    },
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/cornell-dti/carriage-web/issues"
-    },
-    "homepage": "https://github.com/cornell-dti/carriage-web#readme"
+  "name": "carriage-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^4.4.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.31.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.2"
+  },
+  "scripts": {
+    "heroku-postbuild": "npm run build:frontend && npm run build:server",
+    "start:frontend": "cd frontend && npm run start",
+    "start:server": "cd server && npm run start",
+    "build:frontend": "cd frontend && npm run build",
+    "build:server": "cd server && npm run tsc",
+    "install:frontend": "cd frontend && npm install",
+    "install:server": "cd server && npm install",
+    "postinstall": "npm run install:frontend && npm run install:server",
+    "quiet-lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix --quiet",
+    "lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
+    "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
+    "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
+    "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cornell-dti/carriage-web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cornell-dti/carriage-web/issues"
+  },
+  "homepage": "https://github.com/cornell-dti/carriage-web#readme"
 }

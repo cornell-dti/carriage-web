@@ -20,9 +20,11 @@ type DriverRowProps = {
 const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
   <div className={styles.driverRow} onClick={onclick}>
     <p className={styles.driverName}>{firstName}</p>
-    {imageURL
-      ? <img className={styles.driverImage} src={imageURL} alt="Avatar" />
-      : <span className={styles.driverImage} />}
+    {imageURL ? (
+      <img className={styles.driverImage} src={imageURL} alt="Avatar" />
+    ) : (
+      <span className={styles.driverImage} />
+    )}
   </div>
 );
 
@@ -60,7 +62,7 @@ const AssignDriverModal = ({
           driver,
           type: 'active',
         }),
-      }),
+      })
     );
     setDriver(driver.firstName);
     close();
@@ -73,10 +75,14 @@ const AssignDriverModal = ({
         <div className={styles.modal} ref={wrapperRef}>
           {allDrivers.map((driver, id) => (
             <DriverRow
-              onclick={() => { addDriver(driver); }}
+              onclick={() => {
+                addDriver(driver);
+              }}
               key={id}
               firstName={driver.firstName}
-              imageURL={driver.photoLink ? `http://${driver.photoLink}` : undefined}
+              imageURL={
+                driver.photoLink ? `http://${driver.photoLink}` : undefined
+              }
             />
           ))}
         </div>

@@ -8,7 +8,7 @@ type CellProps = {
   data: React.ReactNode;
   tag?: string;
   smallTag?: boolean;
-}
+};
 
 /**
  * Cell component for tables. [data] are the contents of the cell. [tag] is the
@@ -24,13 +24,9 @@ export const Cell = ({ data, tag, smallTag }: CellProps) => {
     );
   }
   return typeof data === 'object' ? (
-    <div className={styles.cell}>
-      {data}
-    </div>
+    <div className={styles.cell}>{data}</div>
   ) : (
-    <p className={styles.cell}>
-      {data}
-    </p>
+    <p className={styles.cell}>{data}</p>
   );
 };
 
@@ -43,7 +39,7 @@ type RowProps = {
   groupStart?: number;
   className?: string;
   onClick?: () => void;
-}
+};
 
 /**
  * Row component for tables. [data] are the cell data within this row. [colSizes]
@@ -52,23 +48,31 @@ type RowProps = {
  * begin (see rides table for example). [onClick] is a callback that is called
  * when the row is clicked.
  */
-export const Row = ({ data, colSizes, header, groupStart, className, onClick }: RowProps) => {
+export const Row = ({
+  data,
+  colSizes,
+  header,
+  groupStart,
+  className,
+  onClick,
+}: RowProps) => {
   const { width } = useWindowSize();
   const isMobile = Boolean(width && width < 700);
 
-  const formatColSizes = (sizes: number[]) => (
-    sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim()
-  );
+  const formatColSizes = (sizes: number[]) =>
+    sizes.reduce((acc, curr) => `${acc} ${curr}fr`, '').trim();
 
-  const formatRowSizes = (sizes: number[]) => formatColSizes(sizes.map(() => 1));
+  const formatRowSizes = (sizes: number[]) =>
+    formatColSizes(sizes.map(() => 1));
 
-  const createCells = (row: Row) => row.map((cell, idx) => {
-    if (typeof cell === 'string') {
-      return <Cell key={idx} data={cell} />;
-    }
-    const { data: cData, tag, smallTag } = cell;
-    return <Cell key={idx} data={cData} tag={tag} smallTag={smallTag} />;
-  });
+  const createCells = (row: Row) =>
+    row.map((cell, idx) => {
+      if (typeof cell === 'string') {
+        return <Cell key={idx} data={cell} />;
+      }
+      const { data: cData, tag, smallTag } = cell;
+      return <Cell key={idx} data={cData} tag={tag} smallTag={smallTag} />;
+    });
 
   if (!header && groupStart) {
     const nonGroup = data.slice(0, groupStart);
@@ -78,33 +82,41 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
     return (
       <div
         className={cn(styles.rowGroup, className)}
-        style={!isMobile ? {
-          gridTemplateColumns: formatColSizes(colSizes),
-        } : {
-          gridTemplateRows: formatRowSizes(colSizes),
-        }}
+        style={
+          !isMobile
+            ? { gridTemplateColumns: formatColSizes(colSizes) }
+            : { gridTemplateRows: formatRowSizes(colSizes) }
+        }
       >
         <div
           className={styles.nongroup}
-          style={!isMobile ? {
-            gridTemplateColumns: formatColSizes(nonGroupCols),
-            gridColumn: `1 / ${groupStart + 1}`,
-          } : {
-            gridTemplateRows: formatRowSizes(nonGroupCols),
-            gridRow: `1 / ${groupStart + 1}`,
-          }}
+          style={
+            !isMobile
+              ? {
+                  gridTemplateColumns: formatColSizes(nonGroupCols),
+                  gridColumn: `1 / ${groupStart + 1}`,
+                }
+              : {
+                  gridTemplateRows: formatRowSizes(nonGroupCols),
+                  gridRow: `1 / ${groupStart + 1}`,
+                }
+          }
         >
           {createCells(nonGroup)}
         </div>
         <div
           className={styles.group}
-          style={!isMobile ? {
-            gridTemplateColumns: formatColSizes(groupCols),
-            gridColumn: `${groupStart + 1} / -1`,
-          } : {
-            gridTemplateRows: formatRowSizes(groupCols),
-            gridRow: `${groupStart + 1} / -1`,
-          }}
+          style={
+            !isMobile
+              ? {
+                  gridTemplateColumns: formatColSizes(groupCols),
+                  gridColumn: `${groupStart + 1} / -1`,
+                }
+              : {
+                  gridTemplateRows: formatRowSizes(groupCols),
+                  gridRow: `${groupStart + 1} / -1`,
+                }
+          }
         >
           {createCells(group)}
         </div>
@@ -113,15 +125,23 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
   }
   return (
     <div
-      className={cn({ [styles.row]: !header }, { [styles.header]: header }, className)}
-      style={!isMobile ? {
-        gridTemplateColumns: formatColSizes(colSizes),
-        cursor: onClick ? 'pointer' : undefined,
-        width: '100%',
-      } : {
-        gridTemplateRows: formatRowSizes(colSizes),
-        cursor: onClick ? 'pointer' : undefined,
-      }}
+      className={cn(
+        { [styles.row]: !header },
+        { [styles.header]: header },
+        className
+      )}
+      style={
+        !isMobile
+          ? {
+              gridTemplateColumns: formatColSizes(colSizes),
+              cursor: onClick ? 'pointer' : undefined,
+              width: '100%',
+            }
+          : {
+              gridTemplateRows: formatRowSizes(colSizes),
+              cursor: onClick ? 'pointer' : undefined,
+            }
+      }
     >
       {createCells(data)}
     </div>
@@ -130,10 +150,8 @@ export const Row = ({ data, colSizes, header, groupStart, className, onClick }: 
 
 type TableProps = {
   children: React.ReactNode;
-}
+};
 
 export const Table = ({ children }: TableProps) => (
-  <div className={styles.table}>
-    {children}
-  </div>
+  <div className={styles.table}>{children}</div>
 );

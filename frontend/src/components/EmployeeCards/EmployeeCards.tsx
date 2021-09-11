@@ -15,9 +15,9 @@ const formatPhone = (phoneNumber: string) => {
 };
 
 type EmployeeCardProps = {
-  id: string,
-  employee: Employee
-}
+  id: string;
+  employee: Employee;
+};
 
 const EmployeeCard = ({
   id,
@@ -57,14 +57,16 @@ const EmployeeCard = ({
   };
 
   return (
-    <Link to={{
-      pathname: isAdmin
-        ? `/admins/${userInfo.id}`
-        : `/drivers/${userInfo.id}`,
-      state: userInfo,
-    }}
+    <Link
+      to={{
+        pathname: isAdmin
+          ? `/admins/${userInfo.id}`
+          : `/drivers/${userInfo.id}`,
+        state: userInfo,
+      }}
       style={{ textDecoration: 'none', color: 'inherit' }}
-      className={styles.link}>
+      className={styles.link}
+    >
       <Card
         firstName={firstName}
         lastName={lastName}
@@ -77,10 +79,15 @@ const EmployeeCard = ({
 
         <CardInfo icon={clock} alt="clock">
           <div>
-            {fmtAvailability
-              ? fmtAvailability.map(([day, timeRange]) => (
-                <p key={day}><span className={styles.dayText}>{day}:</span> {timeRange}</p>
-              )) : <p>N/A</p>}
+            {fmtAvailability ? (
+              fmtAvailability.map(([day, timeRange]) => (
+                <p key={day}>
+                  <span className={styles.dayText}>{day}:</span> {timeRange}
+                </p>
+              ))
+            ) : (
+              <p>N/A</p>
+            )}
           </div>
         </CardInfo>
 
@@ -100,20 +107,21 @@ const EmployeeCards = () => {
 
   const allDrivers = [...admins, ...drivers];
   allDrivers.sort((a: Admin, b: Admin) => {
-    if (a.firstName < b.firstName) { return -1; }
-    if (a.firstName > b.firstName) { return 1; }
+    if (a.firstName < b.firstName) {
+      return -1;
+    }
+    if (a.firstName > b.firstName) {
+      return 1;
+    }
     return 0;
   });
 
   return (
     <div className={styles.cardsContainer}>
-      {allDrivers && allDrivers.map((driver) => (
-        <EmployeeCard
-          key={driver.id}
-          id={driver.id}
-          employee={driver}
-        />
-      ))}
+      {allDrivers &&
+        allDrivers.map((driver) => (
+          <EmployeeCard key={driver.id} id={driver.id} employee={driver} />
+        ))}
     </div>
   );
 };

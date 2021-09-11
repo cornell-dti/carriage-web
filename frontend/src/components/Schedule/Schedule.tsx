@@ -74,17 +74,19 @@ const Schedule = () => {
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        data && componentMounted.current && setEvents(
-          data.map((ride: Ride) => ({
-            id: ride.id,
-            title: `${ride.startLocation.name} to ${ride.endLocation.name}
+        if (data && componentMounted.current) {
+          setEvents(
+            data.map((ride: Ride) => ({
+              id: ride.id,
+              title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-            start: new Date(ride.startTime.toString()),
-            end: new Date(ride.endTime.toString()),
-            resourceId: ride.driver!.id,
-            ride,
-          })),
-        );
+              start: new Date(ride.startTime.toString()),
+              end: new Date(ride.endTime.toString()),
+              resourceId: ride.driver!.id,
+              ride,
+            }))
+          );
+        }
       });
   }, [componentMounted, scheduleDay, withDefaults]);
 
@@ -100,7 +102,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       drivers.map((driver: any) => ({
         resourceId: driver.id,
         resourceTitle: driver.firstName.toUpperCase(),
-      })),
+      }))
     );
   }, [drivers]);
 
@@ -191,17 +193,12 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         withDefaults({
           method: 'PUT',
           body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
-        }),
+        })
       )
         .then(() => getRides())
         .then(closeModal);
     } else {
-      fetch(
-        `/api/rides/${rideId}`,
-        withDefaults({
-          method: 'DELETE',
-        }),
-      )
+      fetch(`/api/rides/${rideId}`, withDefaults({ method: 'DELETE' }))
         .then(() => getRides())
         .then(closeModal);
     }
@@ -214,12 +211,14 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driver: updatedDriver }),
-      }),
+      })
     );
   };
 
-  const onEventDrop = ({ start, end, event, resourceId }: any) => {
-    const nextEvents = events.map((old) => (old.id === event.id ? { ...old, resourceId } : old));
+  const onEventDrop = ({ event, resourceId }: any) => {
+    const nextEvents = events.map((old) =>
+      old.id === event.id ? { ...old, resourceId } : old
+    );
 
     const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
     if (updatedDriver !== undefined) {
@@ -257,7 +256,8 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         />
       )}
       <div
-        className={cn(styles.calendar_container, { [styles.long]: viewMore })}>
+        className={cn(styles.calendar_container, { [styles.long]: viewMore })}
+      >
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
           <DnDCalendar
             resizable={false}
@@ -274,7 +274,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             min={viewMore ? moreTime[0] : lessTime[0]}
             max={viewMore ? moreTime[1] : lessTime[1]}
             date={scheduleDay}
-            onNavigate={() => { }}
+            onNavigate={() => {}}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
@@ -287,7 +287,8 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             <button
               className={styles.btn}
               onClick={goUp}
-              disabled={disableHr(true)}>
+              disabled={disableHr(true)}
+            >
               <span
                 className={styles.uparrow}
                 role="img"
@@ -298,7 +299,8 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             <button
               className={styles.btn}
               onClick={goDown}
-              disabled={disableHr(false)}>
+              disabled={disableHr(false)}
+            >
               <span
                 className={styles.downarrow}
                 role="img"

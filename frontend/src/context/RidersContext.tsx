@@ -3,8 +3,8 @@ import { Rider } from '../types';
 import { useReq } from './req';
 
 type ridersState = {
-  riders: Array<Rider>,
-  refreshRiders: () => Promise<void>
+  riders: Array<Rider>;
+  refreshRiders: () => Promise<void>;
 };
 
 const initialState: ridersState = {
@@ -26,11 +26,12 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
     const ridersData: Array<Rider> = await fetch('/api/riders', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
-    ridersData && ridersData.sort((a: Rider, b: Rider) => {
-      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-      return aFull < bFull ? -1 : 1;
-    });
+    ridersData &&
+      ridersData.sort((a: Rider, b: Rider) => {
+        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+        return aFull < bFull ? -1 : 1;
+      });
     ridersData && componentMounted.current && setRiders(ridersData);
   }, [withDefaults]);
 

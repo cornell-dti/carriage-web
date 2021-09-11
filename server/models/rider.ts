@@ -2,7 +2,6 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
 
-
 export enum Accessibility {
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
@@ -11,25 +10,25 @@ export enum Accessibility {
 
 export enum Organization {
   REDRUNNER = 'RedRunner',
-  CULIFT = 'CULift'
+  CULIFT = 'CULift',
 }
 
 export type RiderType = {
-  id: string
-  firstName: string
-  lastName: string
-  phoneNumber: string
-  email: string
-  accessibility: Accessibility[]
-  organization?: Organization
-  description?: string
-  joinDate: string
-  endDate: string
-  pronouns?: string
-  address: string
-  favoriteLocations: string[]
-  photoLink?: string
-  active: boolean
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
+  accessibility: Accessibility[];
+  organization?: Organization;
+  description?: string;
+  joinDate: string;
+  endDate: string;
+  pronouns?: string;
+  address: string;
+  favoriteLocations: string[];
+  photoLink?: string;
+  active: boolean;
 };
 
 const schema = new dynamoose.Schema({

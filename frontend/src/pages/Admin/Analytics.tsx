@@ -31,10 +31,13 @@ const Analytics = () => {
   };
 
   const generateCols = () => {
-    const cols = 'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
-    const finalCols = drivers.reduce((acc: string, curr: Driver) => (
-      `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`
-    ), cols);
+    const cols =
+      'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
+    const finalCols = drivers.reduce(
+      (acc: string, curr: Driver) =>
+        `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`,
+      cols
+    );
     return finalCols;
   };
 
@@ -60,15 +63,26 @@ const Analytics = () => {
   };
 
   return (
-    <TabSwitcher labels={['Ride Data', 'Driver Data']} renderRight={renderRight}>
+    <TabSwitcher
+      labels={['Ride Data', 'Driver Data']}
+      renderRight={renderRight}
+    >
       <>
         <DateFilter
           initStartDate={startDate}
           initEndDate={endDate}
           onSubmit={onSelectDates}
         />
-        <AnalyticsOverview type="ride" data={analyticsData} label={getLabel()} />
-        <AnalyticsTable type="ride" data={analyticsData} refreshTable={refreshTable} />
+        <AnalyticsOverview
+          type="ride"
+          data={analyticsData}
+          label={getLabel()}
+        />
+        <AnalyticsTable
+          type="ride"
+          data={analyticsData}
+          refreshTable={refreshTable}
+        />
       </>
       <>
         <DateFilter
@@ -76,8 +90,16 @@ const Analytics = () => {
           initEndDate={endDate}
           onSubmit={onSelectDates}
         />
-        <AnalyticsOverview type="driver" data={analyticsData} label={getLabel()} />
-        <AnalyticsTable type="driver" data={analyticsData} refreshTable={refreshTable} />
+        <AnalyticsOverview
+          type="driver"
+          data={analyticsData}
+          label={getLabel()}
+        />
+        <AnalyticsTable
+          type="driver"
+          data={analyticsData}
+          refreshTable={refreshTable}
+        />
       </>
     </TabSwitcher>
   );

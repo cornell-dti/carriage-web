@@ -4,7 +4,7 @@ export type JWTPayload = {
   id: string;
   userType: UserType;
   iat: string;
-}
+};
 
 export enum Change {
   LATE = 'late',

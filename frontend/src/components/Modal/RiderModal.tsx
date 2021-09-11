@@ -48,7 +48,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         withDefaults({
           method: !existingRider ? 'POST' : 'PUT',
           body: JSON.stringify(formData),
-        }),
+        })
       ).then(() => {
         refreshRiders();
         setToast(true);
@@ -58,17 +58,27 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
       });
       setIsSubmitted(false);
     }
-  }, [existingRider, formData, isRiderWeb, isSubmitted, refreshRiders, refreshUser, withDefaults]);
+  }, [
+    existingRider,
+    formData,
+    isRiderWeb,
+    isSubmitted,
+    refreshRiders,
+    refreshUser,
+    withDefaults,
+  ]);
 
   return (
     <>
-      {showingToast
-        ? <Toast
-          message={!existingRider
-            ? 'The student has been added.'
-            : 'The student has been edited.'}
+      {showingToast ? (
+        <Toast
+          message={
+            !existingRider
+              ? 'The student has been added.'
+              : 'The student has been edited.'
+          }
         />
-        : null}
+      ) : null}
       {!existingRider ? (
         <Button className={styles.addRiderButton} onClick={openModal}>
           + Add Student

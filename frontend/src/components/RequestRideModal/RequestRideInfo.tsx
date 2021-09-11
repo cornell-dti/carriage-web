@@ -31,8 +31,9 @@ const RequestRideInfo = ({
   const watchRepeating = watch('recurring', ride?.recurring || false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
-  const shouldDisableStartDate = (ride?.parentRide && ride?.parentRide.type !== 'unscheduled')
-    || (ride && ride.type !== 'unscheduled');
+  const shouldDisableStartDate =
+    (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
+    (ride && ride.type !== 'unscheduled');
 
   const isTimeValid = (startDate: string, pickupTime: string) => {
     const now = moment();
@@ -46,13 +47,17 @@ const RequestRideInfo = ({
     const getExistingLocations = async () => {
       const locationsData = await fetch(
         '/api/locations?active=true',
-        withDefaults(),
+        withDefaults()
       )
         .then((res) => res.json())
         .then((data) => data.data);
       const sortedLocations = locationsData.sort((a: Location, b: Location) => {
-        if (a.name < b.name) { return -1; }
-        if (a.name > b.name) { return 1; }
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
         return 0;
       });
       // Logic to prevent the other from being the default value
@@ -68,8 +73,10 @@ const RequestRideInfo = ({
 
   useEffect(() => {
     if (ride) {
-      const defaultStart = ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id;
-      const defaultEnd = ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id;
+      const defaultStart =
+        ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id;
+      const defaultEnd =
+        ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id;
       setValue('startLocation', defaultStart);
       setValue('endLocation', defaultEnd);
     }
@@ -92,17 +99,15 @@ const RequestRideInfo = ({
     }
   }, [watchPickupCustom, watchDropoffCustom, ride, setValue]);
 
-
   return (
     <div>
-      {((modalType === 'CREATE' && watchRepeating)
-        || modalType === 'EDIT_REGULAR'
-        || modalType === 'EDIT_SINGLE_RECURRING')
-        && (
-          <Label htmlFor={'startDate'} className={styles.largeLabel}>
-            Date
-          </Label>
-        )}
+      {((modalType === 'CREATE' && watchRepeating) ||
+        modalType === 'EDIT_REGULAR' ||
+        modalType === 'EDIT_SINGLE_RECURRING') && (
+        <Label htmlFor={'startDate'} className={styles.largeLabel}>
+          Date
+        </Label>
+      )}
       <div className={styles.box}>
         {modalType === 'EDIT_ALL_RECURRING' && (
           <Label className={styles.boldLabel} htmlFor="startDate">
@@ -275,9 +280,7 @@ const RequestRideInfo = ({
             aria-labelledby="customPickup"
             name="customPickup"
             type="text"
-            ref={register({
-              required: watchPickupCustom === 'Other',
-            })}
+            ref={register({ required: watchPickupCustom === 'Other' })}
           />
           <Label className={styles.label} id="pickupCity">
             City
@@ -289,9 +292,7 @@ const RequestRideInfo = ({
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            ref={register({
-              required: watchPickupCustom === 'Other',
-            })}
+            ref={register({ required: watchPickupCustom === 'Other' })}
           />
           <Label className={styles.label} id="pickupZip">
             Zip Code
@@ -304,9 +305,7 @@ const RequestRideInfo = ({
             defaultValue="14853"
             pattern="[0-9]*"
             maxLength={10}
-            ref={register({
-              required: watchDropoffCustom === 'Other',
-            })}
+            ref={register({ required: watchDropoffCustom === 'Other' })}
           />
         </div>
       ) : null}
@@ -327,8 +326,8 @@ const RequestRideInfo = ({
               validate: (endLocation: string) => {
                 const startLoc = getValues('startLocation');
                 return (
-                  endLocation !== startLoc
-                  || (endLocation === 'Other' && startLoc === 'Other')
+                  endLocation !== startLoc ||
+                  (endLocation === 'Other' && startLoc === 'Other')
                 );
               },
             })}
@@ -378,9 +377,7 @@ const RequestRideInfo = ({
             aria-labelledby="customDropoff"
             name="customDropoff"
             type="text"
-            ref={register({
-              required: watchDropoffCustom === 'Other',
-            })}
+            ref={register({ required: watchDropoffCustom === 'Other' })}
           />
           <Label className={styles.label} id="dropoffCity">
             City
@@ -392,9 +389,7 @@ const RequestRideInfo = ({
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            ref={register({
-              required: watchDropoffCustom === 'Other',
-            })}
+            ref={register({ required: watchDropoffCustom === 'Other' })}
           />
           <Label className={styles.label} id="dropoffZip">
             Zip Code
@@ -407,9 +402,7 @@ const RequestRideInfo = ({
             defaultValue="14850"
             pattern="[0-9]*"
             maxLength={10}
-            ref={register({
-              required: watchDropoffCustom === 'Other',
-            })}
+            ref={register({ required: watchDropoffCustom === 'Other' })}
           />
         </div>
       ) : null}

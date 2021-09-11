@@ -1,5 +1,5 @@
 .pageContainer {
-    margin: 0 2rem;
+  margin: 0 2rem;
 }
 
 .header {
@@ -24,10 +24,9 @@
   margin-left: 14px;
 }
 
-@media screen and (max-width: 768px){
+@media screen and (max-width: 768px) {
   .header {
     font-size: 1.5rem;
-
   }
   .pageTitle {
     padding: 1rem 1.5rem;

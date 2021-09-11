@@ -16,7 +16,7 @@ const Home = () => {
   const today = moment(curDate).format('YYYY-MM-DD');
 
   return (
-    <main id = "main">
+    <main id="main">
       <div className={styles.pageTitle}>
         <MiniCal />
         <div className={styles.rightSection}>
@@ -39,7 +39,7 @@ const Home = () => {
       <Collapsible title={'Scheduled Rides'}>
         <ScheduledTable />
       </Collapsible>
-    </main >
+    </main>
   );
 };
 

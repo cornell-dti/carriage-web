@@ -9,10 +9,10 @@ import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 
 type LocationModalProps = {
-  existingLocation?: Location
-  onAddLocation?: (newLocation: Location) => void
-  onEditLocation?: (editedLocation: Location) => void
-}
+  existingLocation?: Location;
+  onAddLocation?: (newLocation: Location) => void;
+  onEditLocation?: (editedLocation: Location) => void;
+};
 
 const isAddress = (address: string) => {
   let parsedAddr;
@@ -26,15 +26,33 @@ const isAddress = (address: string) => {
     return 'Invalid address';
   }
   const {
-    streetNumber, streetName, streetSuffix, placeName, stateName, zipCode,
+    streetNumber,
+    streetName,
+    streetSuffix,
+    placeName,
+    stateName,
+    zipCode,
   } = parsedAddr;
-  if (!(streetNumber && streetName && streetSuffix && placeName && stateName && zipCode)) {
+  if (
+    !(
+      streetNumber &&
+      streetName &&
+      streetSuffix &&
+      placeName &&
+      stateName &&
+      zipCode
+    )
+  ) {
     return 'Invalid address';
   }
   return true;
 };
 
-const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: LocationModalProps) => {
+const LocationModal = ({
+  existingLocation,
+  onAddLocation,
+  onEditLocation,
+}: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { register, handleSubmit, errors } = useForm();
@@ -55,14 +73,15 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
     const url = existingLocation
       ? `/api/locations/${existingLocation!.id}`
       : '/api/locations';
-    const method = existingLocation
-      ? 'PUT'
-      : 'POST';
+    const method = existingLocation ? 'PUT' : 'POST';
 
-    const newLocation = await fetch(url, withDefaults({
-      method,
-      body: JSON.stringify(data),
-    })).then((res) => res.json());
+    const newLocation = await fetch(
+      url,
+      withDefaults({
+        method,
+        body: JSON.stringify(data),
+      })
+    ).then((res) => res.json());
 
     if (!existingLocation && onAddLocation) {
       onAddLocation(newLocation);
@@ -76,65 +95,77 @@ const LocationModal = ({ existingLocation, onAddLocation, onEditLocation }: Loca
 
   return (
     <>
-      {existingLocation
-        ? <Button onClick={openModal} outline small>Edit</Button>
-        : <Button onClick={openModal}>+ Add a location</Button>
-      }
-      {showingToast
-        ? <Toast message={existingLocation ? 'Location has been updated.' : 'Location has been added.'} />
-        : null
-      }
-      <Modal
-        title={modalTitle}
-        isOpen={isOpen}
-        onClose={closeModal}
-      >
+      {existingLocation ? (
+        <Button onClick={openModal} outline small>
+          Edit
+        </Button>
+      ) : (
+        <Button onClick={openModal}>+ Add a location</Button>
+      )}
+      {showingToast ? (
+        <Toast
+          message={
+            existingLocation
+              ? 'Location has been updated.'
+              : 'Location has been added.'
+          }
+        />
+      ) : null}
+      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.inputContainer}>
-            <Label htmlFor='name'>Name</Label>
+            <Label htmlFor="name">Name</Label>
             <Input
-              name='name'
-              type='text'
-              id='name'
+              name="name"
+              type="text"
+              id="name"
               defaultValue={existingLocation?.name}
               className={styles.input}
               ref={register({ required: true })}
             />
             {name && <p className={styles.errorMsg}>Please enter a name</p>}
-            <Label htmlFor='address'>Address</Label>
+            <Label htmlFor="address">Address</Label>
             <Input
-              name='address'
-              type='text'
-              id='address'
+              name="address"
+              type="text"
+              id="address"
               defaultValue={existingLocation?.address}
               className={styles.input}
               ref={register({ required: true, validate: isAddress })}
             />
             {address && <p className={styles.errorMsg}>{address.message}</p>}
-            <Label htmlFor='info'>Pickup/Dropoff Info</Label>
+            <Label htmlFor="info">Pickup/Dropoff Info</Label>
             <Input
-              name='info'
-              type='text'
-              id='info'
+              name="info"
+              type="text"
+              id="info"
               defaultValue={existingLocation?.info}
               className={styles.input}
               ref={register({ required: true })}
             />
-            {info && <p className={styles.errorMsg}>Please enter pickup/dropoff info</p>}
-            <Label htmlFor='tag'>Tag</Label>
+            {info && (
+              <p className={styles.errorMsg}>
+                Please enter pickup/dropoff info
+              </p>
+            )}
+            <Label htmlFor="tag">Tag</Label>
             <select
-              name='tag'
-              id='tag'
+              name="tag"
+              id="tag"
               defaultValue={existingLocation?.tag}
               ref={register({ required: true })}
               className={styles.styledSelect}
             >
-              {Object.values(Tag).map((value) => (
-                value === 'custom' ? null : <option key={value} value={value}>{value}</option>
-              ))}
+              {Object.values(Tag).map((value) =>
+                value === 'custom' ? null : (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                )
+              )}
             </select>
             <div>
-              <Button className={styles.submit} type='submit'>
+              <Button className={styles.submit} type="submit">
                 {submitButtonText}
               </Button>
             </div>

@@ -12,7 +12,7 @@ const urlBase64ToUint8Array = (base64String: string) => {
 };
 
 const convertedVapidKey = urlBase64ToUint8Array(
-  process.env.REACT_APP_PUBLIC_VAPID_KEY!,
+  process.env.REACT_APP_PUBLIC_VAPID_KEY!
 );
 
 type WithDefaultsType = (options?: RequestInit | undefined) => RequestInit;
@@ -21,7 +21,7 @@ const sendSubscription = (
   userType: string,
   userId: string,
   sub: PushSubscription,
-  withDefaults: WithDefaultsType,
+  withDefaults: WithDefaultsType
 ) => {
   const subscription = {
     userType,
@@ -34,14 +34,14 @@ const sendSubscription = (
     withDefaults({
       method: 'POST',
       body: JSON.stringify(subscription),
-    }),
+    })
   );
 };
 
 const subscribeUser = (
   userType: string,
   userId: string,
-  withDefaults: WithDefaultsType,
+  withDefaults: WithDefaultsType
 ) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
@@ -67,7 +67,7 @@ const subscribeUser = (
                     userType,
                     userId,
                     newSubscription,
-                    withDefaults,
+                    withDefaults
                   );
                 })
                 .catch((e) => {
@@ -82,7 +82,7 @@ const subscribeUser = (
                 userType,
                 userId,
                 existedSubscription,
-                withDefaults,
+                withDefaults
               );
             }
           });

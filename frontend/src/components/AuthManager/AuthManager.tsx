@@ -29,7 +29,7 @@ export const AuthManager = () => {
   const [user, setUser] = useState<Admin | Rider>();
   // useState can take a function that returns the new state value, so need to
   // supply a function that returns another function
-  const [refreshUser, setRefreshUser] = useState(() => () => { });
+  const [refreshUser, setRefreshUser] = useState(() => () => {});
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
@@ -62,9 +62,8 @@ export const AuthManager = () => {
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
-    const fetchURL = userType === 'Admin'
-      ? `/api/admins/${userId}`
-      : `/api/riders/${userId}`;
+    const fetchURL =
+      userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
     return () => {
       fetch(fetchURL, {
         headers: {
@@ -93,7 +92,7 @@ export const AuthManager = () => {
               table,
               clientId,
             }),
-          }),
+          })
         )
           .then((res) => res.json())
           .then((json) => json.jwt);
@@ -127,7 +126,8 @@ export const AuthManager = () => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}>
+              disabled={renderProps.disabled}
+            >
               <img
                 src={googleLogin}
                 className={styles.icon}
@@ -149,7 +149,8 @@ export const AuthManager = () => {
             <button
               onClick={renderProps.onClick}
               className={styles.btn}
-              disabled={renderProps.disabled}>
+              disabled={renderProps.disabled}
+            >
               <img
                 src={googleLogin}
                 className={styles.icon}

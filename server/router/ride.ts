@@ -13,7 +13,6 @@ import { RiderType } from '../models/rider';
 import { notifyEdit } from '../util/notification';
 import { Change } from '../util/types';
 
-
 const router = express.Router();
 const tableName = 'Rides';
 
@@ -38,7 +37,8 @@ router.get('/download', (req, res) => {
       .map((doc: any) => {
         const start = moment.tz(doc.startTime, 'America/New_York');
         const end = moment.tz(doc.endTime, 'America/New_York');
-        const fullName = (user: RiderType | DriverType) => `${user.firstName} ${user.lastName.substring(0, 1)}.`;
+        const fullName = (user: RiderType | DriverType) =>
+          `${user.firstName} ${user.lastName.substring(0, 1)}.`;
         return {
           Name: fullName(doc.rider),
           'Pick Up': start.format('h:mm A'),
@@ -103,8 +103,13 @@ router.get('/', validateUser('User'), (req, res) => {
     condition = condition.where('driver').eq(driver);
   }
   if (date) {
-    const dateStart = moment.tz(date as string, 'America/New_York').toISOString();
-    const dateEnd = moment.tz(date as string, 'America/New_York').endOf('day').toISOString();
+    const dateStart = moment
+      .tz(date as string, 'America/New_York')
+      .toISOString();
+    const dateEnd = moment
+      .tz(date as string, 'America/New_York')
+      .endOf('day')
+      .toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
   }
   db.scan(res, Ride, condition);
@@ -113,7 +118,8 @@ router.get('/', validateUser('User'), (req, res) => {
 // Put a ride in Rides table
 router.post('/', validateUser('User'), (req, res) => {
   const { body } = req;
-  const { startLocation, endLocation, recurring, recurringDays, endDate } = body;
+  const { startLocation, endLocation, recurring, recurringDays, endDate } =
+    body;
 
   let startLocationObj: RideLocation | undefined;
   let endLocationObj: RideLocation | undefined;
@@ -187,7 +193,8 @@ router.put('/:id', validateUser('User'), (req, res) => {
 
     // send ride even if notification failed since it was actually updated
     notifyEdit(ride, body, userType, userId)
-      .then(() => res.send(ride)).catch(() => res.send(ride));
+      .then(() => res.send(ride))
+      .catch(() => res.send(ride));
   });
 });
 
@@ -252,15 +259,15 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
           id: replaceId,
           rider: masterRide.rider,
           startLocation:
-            startLocationObj
-            || startLocation
-            || masterRide.startLocation.id
-            || masterRide.startLocation,
+            startLocationObj ||
+            startLocation ||
+            masterRide.startLocation.id ||
+            masterRide.startLocation,
           endLocation:
-            endLocationObj
-            || endLocation
-            || masterRide.endLocation.id
-            || masterRide.endLocation,
+            endLocationObj ||
+            endLocation ||
+            masterRide.endLocation.id ||
+            masterRide.endLocation,
           startTime: startTime || origStartTime,
           endTime: endTime || origEndTime,
         });
@@ -268,8 +275,15 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            notifyEdit(editRide, change, userType, userId, Change.REPEATING_EDITED)
-              .then(() => res.send(editRide)).catch(() => res.send(editRide));
+            notifyEdit(
+              editRide,
+              change,
+              userType,
+              userId,
+              Change.REPEATING_EDITED
+            )
+              .then(() => res.send(editRide))
+              .catch(() => res.send(editRide));
             // res.send(editRide);
           });
         });
@@ -281,14 +295,22 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
     if (origDate > masterStartDate) {
       // add origDate to masterRide.deleted
       const addDeleteOperation = { $ADD: { deleted: [origDate] } };
-      db.update(res, Ride, { id }, addDeleteOperation, tableName, handleEdit(addDeleteOperation));
+      db.update(
+        res,
+        Ride,
+        { id },
+        addDeleteOperation,
+        tableName,
+        handleEdit(addDeleteOperation)
+      );
     } else if (origDate === masterStartDate) {
       // move master repeating ride start and end to next occurrence
       const momentStart = moment.tz(masterRide.startTime, 'America/New_York');
       const momentEnd = moment.tz(masterRide.endTime, 'America/New_York');
-      const nextRideDays = masterRide.recurringDays!.reduce((acc, curr) => (
-        Math.min(acc, daysUntilWeekday(momentStart, curr))
-      ), 8);
+      const nextRideDays = masterRide.recurringDays!.reduce(
+        (acc, curr) => Math.min(acc, daysUntilWeekday(momentStart, curr)),
+        8
+      );
       const newStartTime = momentStart.add(nextRideDays, 'day');
       const newEndTime = momentEnd.add(nextRideDays, 'day');
       if (newStartTime.isAfter(moment(masterRide.endDate), 'day')) {
@@ -325,7 +347,8 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         const { userType } = res.locals.user;
         const userId = res.locals.user.id;
         notifyEdit(deletedRide, operation, userType, userId)
-          .then(() => res.send(doc)).catch(() => res.send(doc));
+          .then(() => res.send(doc))
+          .catch(() => res.send(doc));
       });
     } else if (type === Type.PAST && recurring) {
       const operation = {

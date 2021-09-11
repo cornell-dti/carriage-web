@@ -12,7 +12,12 @@ type ModalFormProps = {
   rider?: Rider;
 };
 
-const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormProps) => {
+const RiderModalInfo = ({
+  onSubmit,
+  setIsOpen,
+  setFormData,
+  rider,
+}: ModalFormProps) => {
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
       name: rider ? `${rider.firstName} ${rider.lastName}` : '',
@@ -64,9 +69,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor='name'>Name: </Label>
+          <Label className={styles.label} htmlFor="name">
+            Name:{' '}
+          </Label>
           <Input
-            id='name'
+            id="name"
             name="name"
             type="text"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
@@ -75,7 +82,9 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           {errors.name && <p className={styles.error}>Please enter a name</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor='netid'>NetID: </Label>
+          <Label className={styles.label} htmlFor="netid">
+            NetID:{' '}
+          </Label>
           <Input
             id="netid"
             name="netid"
@@ -87,7 +96,9 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor='phoneNumber'>Phone Number: </Label>
+          <Label className={styles.label} htmlFor="phoneNumber">
+            Phone Number:{' '}
+          </Label>
           <Input
             id="phoneNumber"
             name="phoneNumber"
@@ -100,7 +111,9 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor='needs'>Needs: </Label>
+          <Label className={styles.label} htmlFor="needs">
+            Needs:{' '}
+          </Label>
           <Input
             id="needs"
             name="needs"
@@ -111,10 +124,8 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
                   return true;
                 }
                 const needsArr = needs.split(',').map((n: string) => n.trim());
-                const isValidNeed = (
-                  acc: boolean,
-                  val: Accessibility,
-                ) => acc && Object.values(Accessibility).includes(val);
+                const isValidNeed = (acc: boolean, val: Accessibility) =>
+                  acc && Object.values(Accessibility).includes(val);
                 return needsArr.reduce(isValidNeed, true);
               },
             })}
@@ -127,7 +138,9 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor='address'>Address: </Label>
+          <Label className={styles.label} htmlFor="address">
+            Address:{' '}
+          </Label>
           <Input
             id="address"
             name="address"
@@ -145,9 +158,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
           <p>Duration</p>
           <div className={styles.lastRow}>
             <div>
-              <Label className={styles.label} htmlFor='joinDate'>Join Date: </Label>
+              <Label className={styles.label} htmlFor="joinDate">
+                Join Date:{' '}
+              </Label>
               <Input
-                id='joinDate'
+                id="joinDate"
                 type="date"
                 name="joinDate"
                 ref={register({ required: true })}
@@ -160,9 +175,11 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
             </div>
             <p className={styles.to}>to</p>
             <div>
-              <Label className={styles.label} htmlFor='endDate'>End Date: </Label>
+              <Label className={styles.label} htmlFor="endDate">
+                End Date:{' '}
+              </Label>
               <Input
-                id='endDate'
+                id="endDate"
                 type="date"
                 name="endDate"
                 ref={register({
@@ -186,7 +203,12 @@ const RiderModalInfo = ({ onSubmit, setIsOpen, setFormData, rider }: ModalFormPr
         </div>
       </div>
       <div className={styles.buttonContainer}>
-        <Button type="button" className={styles.cancel} outline={true} onClick={() => cancel()}>
+        <Button
+          type="button"
+          className={styles.cancel}
+          outline={true}
+          onClick={() => cancel()}
+        >
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>

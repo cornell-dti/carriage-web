@@ -4,13 +4,19 @@ import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 
 type pastRideProps = {
-  isStudent: boolean,
-  rides: Ride[]
+  isStudent: boolean;
+  rides: Ride[];
 };
 
 const PastRides = ({ isStudent, rides }: pastRideProps) => {
   const colSizes = [1, 1, 1, 1, 1];
-  const headers = [isStudent ? 'Date' : 'Name', isStudent ? 'Time' : 'Date', 'Pickup Location', 'Dropoff Location', 'Needs'];
+  const headers = [
+    isStudent ? 'Date' : 'Name',
+    isStudent ? 'Time' : 'Date',
+    'Pickup Location',
+    'Dropoff Location',
+    'Needs',
+  ];
 
   return (
     <div className={styles.pastRidesContainer}>
@@ -39,7 +45,9 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
             const dropoffTag = ride.endLocation.tag;
 
             const valueNameDate = isStudent ? date : name;
-            const valueDateTime = isStudent ? `${startTime}${' - '}${endTime}` : date;
+            const valueDateTime = isStudent
+              ? `${startTime}${' - '}${endTime}`
+              : date;
             const valuePickup = { data: pickupLocation, tag: pickupTag };
             const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
@@ -51,13 +59,12 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
               needs,
             ];
 
-            return <Row data={inputValues}
-              colSizes={colSizes}
-              key={index} />;
+            return <Row data={inputValues} colSizes={colSizes} key={index} />;
           })}
-        </Table>)
-        : (<p className={styles.noContentText}>No rides completed.</p>
-        )}
+        </Table>
+      ) : (
+        <p className={styles.noContentText}>No rides completed.</p>
+      )}
     </div>
   );
 };

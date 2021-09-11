@@ -7,9 +7,13 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 
-type RideTimesProps = ModalPageProps & { isEditing?: boolean }
+type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
-const RideTimesPage = ({ isEditing = false, formData, onSubmit }: RideTimesProps) => {
+const RideTimesPage = ({
+  isEditing = false,
+  formData,
+  onSubmit,
+}: RideTimesProps) => {
   const { curDate } = useDate();
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
@@ -93,7 +97,7 @@ const RideTimesPage = ({ isEditing = false, formData, onSubmit }: RideTimesProps
         </div>
       </div>
       <Button type="submit">Next</Button>
-    </form >
+    </form>
   );
 };
 

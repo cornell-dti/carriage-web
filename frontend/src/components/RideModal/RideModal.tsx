@@ -13,23 +13,21 @@ type RideModalProps = {
   ride?: Ride;
 };
 
-const RideModal = ({
-  open,
-  close,
-  ride,
-}: RideModalProps) => {
-  const originalRideData = ride ? {
-    date: moment(ride.startTime).format('YYYY-MM-DD'),
-    pickupTime: moment(ride.startTime).format('kk:mm'),
-    dropoffTime: moment(ride.endTime).format('kk:mm'),
-    rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
-    pickupLoc: ride.startLocation.id
-      ? ride.startLocation.name
-      : ride.startLocation.address,
-    dropoffLoc: ride.endLocation.id
-      ? ride.endLocation.name
-      : ride.endLocation.address,
-  } : {};
+const RideModal = ({ open, close, ride }: RideModalProps) => {
+  const originalRideData = ride
+    ? {
+        date: moment(ride.startTime).format('YYYY-MM-DD'),
+        pickupTime: moment(ride.startTime).format('kk:mm'),
+        dropoffTime: moment(ride.endTime).format('kk:mm'),
+        rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+        pickupLoc: ride.startLocation.id
+          ? ride.startLocation.name
+          : ride.startLocation.address,
+        dropoffLoc: ride.endLocation.id
+          ? ride.endLocation.name
+          : ride.endLocation.address,
+      }
+    : {};
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
@@ -97,7 +95,7 @@ const RideModal = ({
           withDefaults({
             method: 'PUT',
             body: JSON.stringify(rideData),
-          }),
+          })
         );
       } else {
         fetch(
@@ -105,7 +103,7 @@ const RideModal = ({
           withDefaults({
             method: 'POST',
             body: JSON.stringify(rideData),
-          }),
+          })
         );
       }
       setIsSubmitted(false);

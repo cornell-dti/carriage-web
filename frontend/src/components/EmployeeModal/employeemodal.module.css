@@ -7,9 +7,9 @@
 }
 
 .input {
-  max-width:100%; 
+  max-width: 100%;
   font-size: 1.5rem;
-  padding: 0.25rem 0; 
+  padding: 0.25rem 0;
 }
 
 .col1 {
@@ -37,7 +37,7 @@
 .uploadText {
   margin: 0;
   font-size: 0.75rem;
-  color: #0075DB;
+  color: #0075db;
   cursor: pointer;
 }
 
@@ -66,25 +66,25 @@
   margin-right: 0.4rem;
 }
 
-.radioButton:focus{
-  outline: 2px solid black; 
+.radioButton:focus {
+  outline: 2px solid black;
 }
 
 .addAvailabilityInput {
   display: inline-block;
-  color: #0075DB;
+  color: #0075db;
   font-size: 0.75rem;
   cursor: pointer;
   background-color: white;
-  border: none; 
-  outline: none; 
+  border: none;
+  outline: none;
 }
 
 .addAvailabilityInput:hover {
   text-decoration: underline;
 }
-.addAvailabilityInput:focus{
-  outline: 3px solid #0075DB; 
+.addAvailabilityInput:focus {
+  outline: 3px solid #0075db;
 }
 
 .availabilityInput {
@@ -96,8 +96,8 @@
 .timeInput {
   font-size: initial;
   padding: 0.375rem 0.625rem;
-  margin-top:0.5rem;
-  width: 7.792rem; 
+  margin-top: 0.5rem;
+  width: 7.792rem;
 }
 
 .toText {
@@ -132,19 +132,19 @@
 }
 
 .daySelected:focus {
-  background-color: black; 
+  background-color: black;
 }
 .error {
-  color: #EB0023;
+  color: #eb0023;
   font-size: 0.75rem;
 }
-.dayError{
-  margin: 0 0.25rem; 
+.dayError {
+  margin: 0 0.25rem;
 }
-.timeFlexbox{
-  display:flex;
-  flex-direction:column;
-  max-height:5rem;
+.timeFlexbox {
+  display: flex;
+  flex-direction: column;
+  max-height: 5rem;
 }
 .submit {
   float: right;
@@ -158,6 +158,6 @@
 .edit:hover {
   cursor: pointer;
 }
-.hidden{
-  display: none; 
+.hidden {
+  display: none;
 }

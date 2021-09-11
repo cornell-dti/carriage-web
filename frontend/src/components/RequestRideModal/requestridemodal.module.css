@@ -1,47 +1,47 @@
-.inputContainer{
+.inputContainer {
   max-width: 45rem;
 }
-.input{
+.input {
   display: inline-block;
   border-radius: 0.5rem;
-  border: 1px solid black; 
-  font-size: 0.9rem; 
-  max-width: 100%; 
-  margin:  0.5rem; 
-  min-width: 0; 
+  border: 1px solid black;
+  font-size: 0.9rem;
+  max-width: 100%;
+  margin: 0.5rem;
+  min-width: 0;
 }
-.largeLabel{
-  font-size: 1.25rem; 
-  font-weight: bold; 
-  display: block; 
-}
-.label{
-  font-size: 0.875rem; 
-  margin: 0 0.5rem; 
-}
-.radioLabel{
-  font-size: 0.875rem; 
-  margin: 0 0.5rem; 
-}
-.boldLabel{
+.largeLabel {
+  font-size: 1.25rem;
   font-weight: bold;
-  font-size: 0.875rem; 
+  display: block;
+}
+.label {
+  font-size: 0.875rem;
+  margin: 0 0.5rem;
+}
+.radioLabel {
+  font-size: 0.875rem;
+  margin: 0 0.5rem;
+}
+.boldLabel {
+  font-weight: bold;
+  font-size: 0.875rem;
 }
 .box {
-    display: flex;
-  }
-.dayBox {
-    display: flex;
+  display: flex;
 }
-.errorBox{
-  display: flex; 
+.dayBox {
+  display: flex;
+}
+.errorBox {
+  display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: stretch;
 }
-.formHeading{
-  margin: 0; 
-  padding:0; 
+.formHeading {
+  margin: 0;
+  padding: 0;
 }
 .day {
   border-radius: 40%;
@@ -65,43 +65,42 @@
 }
 
 .daySelected:focus {
-  background-color: black; 
+  background-color: black;
 }
-.submit{
-  float: right; 
-  margin-top: 0.25rem; 
+.submit {
+  float: right;
+  margin-top: 0.25rem;
 }
 .error {
-  color: #EB0023;
+  color: #eb0023;
   font-size: 0.66rem;
-  margin: 0.5rem; 
+  margin: 0.5rem;
 }
-.flexGrow{
+.flexGrow {
   flex-grow: 2;
 }
-.flexShrink{
-  flex-shrink: 2; 
+.flexShrink {
+  flex-shrink: 2;
 }
 
-.whenRepeat:focus{
-  outline: 3px solid black; 
+.whenRepeat:focus {
+  outline: 3px solid black;
 }
-.recurring:focus{
-  outline: 3px solid black; 
+.recurring:focus {
+  outline: 3px solid black;
 }
 
-
-@media screen and (max-width: 768px){
-  .box{
-    display: block; 
+@media screen and (max-width: 768px) {
+  .box {
+    display: block;
   }
-  .label{
-    display: inline-block; 
+  .label {
+    display: inline-block;
   }
-  .radioBox{
-    display: block; 
+  .radioBox {
+    display: block;
   }
-  .whenRepeat{
-    display: inline-block; 
+  .whenRepeat {
+    display: inline-block;
   }
 }

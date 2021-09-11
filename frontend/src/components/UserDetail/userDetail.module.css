@@ -3,7 +3,8 @@
   margin: auto;
 }
 
-.userDetail, .employeeStatistics {
+.userDetail,
+.employeeStatistics {
   display: flex;
   flex-direction: row;
   border-radius: 0.5rem;
@@ -22,7 +23,7 @@
   object-fit: cover;
 }
 
-.basicInfoContainer { 
+.basicInfoContainer {
   justify-self: left;
   margin-left: 3rem;
   width: 100%;
@@ -55,7 +56,8 @@
   align-items: center;
 }
 
-.contactInfoContainer, .riderContactInfo {
+.contactInfoContainer,
+.riderContactInfo {
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -94,7 +96,8 @@
   font-size: 1.125rem;
 }
 
-.statisticsContainer, .pastRidesContainer {
+.statisticsContainer,
+.pastRidesContainer {
   margin-top: 5rem;
 }
 

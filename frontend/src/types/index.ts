@@ -40,7 +40,7 @@ export type Employee = {
 
 export type ObjectType = {
   [x: string]: any;
-}
+};
 
 export type Vehicle = VehicleType;
 
@@ -51,7 +51,7 @@ export enum Tag {
   CTOWN = 'ctown',
   DTOWN = 'dtown',
   INACTIVE = 'inactive',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 export type Location = LocationType;

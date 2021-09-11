@@ -31,15 +31,16 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const refreshDrivers = useCallback(async () => {
     const driversData: Array<Driver> = await fetch(
       '/api/drivers',
-      withDefaults(),
+      withDefaults()
     )
       .then((res) => res.json())
       .then((data) => data.data);
-    driversData && driversData.sort((a: Driver, b: Driver) => {
-      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-      return aFull < bFull ? -1 : 1;
-    });
+    driversData &&
+      driversData.sort((a: Driver, b: Driver) => {
+        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+        return aFull < bFull ? -1 : 1;
+      });
     driversData && componentMounted.current && setDrivers(driversData);
   }, [withDefaults]);
 
@@ -47,11 +48,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     const adminsData: Array<Admin> = await fetch('/api/admins', withDefaults())
       .then((res) => res.json())
       .then((data) => data.data);
-    adminsData && adminsData.sort((a: Admin, b: Admin) => {
-      const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-      const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-      return aFull < bFull ? -1 : 1;
-    });
+    adminsData &&
+      adminsData.sort((a: Admin, b: Admin) => {
+        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+        return aFull < bFull ? -1 : 1;
+      });
     adminsData && componentMounted.current && setAdmins(adminsData);
   }, [withDefaults]);
 

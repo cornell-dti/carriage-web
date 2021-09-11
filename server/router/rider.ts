@@ -13,12 +13,12 @@ const tableName = 'Riders';
 
 router.get('/usage', validateUser('Admin'), (req, res) => {
   type UsageData = {
-    noShows: number,
-    totalRides: number,
-  }
+    noShows: number;
+    totalRides: number;
+  };
   type Usage = {
-    [id: string]: UsageData
-  }
+    [id: string]: UsageData;
+  };
   const usageObj: Usage = {};
   const isPast = new Condition('type').eq(Type.PAST);
   db.scan(res, Ride, isPast, (data: RideType[]) => {
@@ -31,9 +31,10 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
           usageObj[currID].noShows += 1;
         }
       } else {
-        const dummy = ride.status === Status.COMPLETED
-          ? { noShows: 0, totalRides: 1 }
-          : { noShows: 1, totalRides: 0 };
+        const dummy =
+          ride.status === Status.COMPLETED
+            ? { noShows: 0, totalRides: 1 }
+            : { noShows: 1, totalRides: 0 };
         usageObj[currID] = dummy;
       }
     });
@@ -43,7 +44,9 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
 
 // Get a rider by id in Riders table
 router.get('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName);
 });
 
@@ -54,20 +57,36 @@ router.get('/', validateUser('Admin'), (req, res) => {
 
 // Get profile information for a rider
 router.get('/:id/profile', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const {
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
+      email,
+      firstName,
+      lastName,
+      phoneNumber,
+      pronouns,
+      joinDate,
+      endDate,
     } = rider;
     res.send({
-      email, firstName, lastName, phoneNumber, pronouns, joinDate, endDate,
+      email,
+      firstName,
+      lastName,
+      phoneNumber,
+      pronouns,
+      joinDate,
+      endDate,
     });
   });
 });
 
 // Get accessibility information for a rider
 router.get('/:id/accessibility', validateUser('User'), async (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, accessibility } = rider;
     res.send({ description, accessibility });
@@ -76,7 +95,9 @@ router.get('/:id/accessibility', validateUser('User'), async (req, res) => {
 
 // Get organization information for a rider
 router.get('/:id/organization', validateUser('User'), async (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
     const { description, organization } = rider;
     res.send({ description, organization });
@@ -85,7 +106,9 @@ router.get('/:id/organization', validateUser('User'), async (req, res) => {
 
 // Get all favorite locations for a rider
 router.get('/:id/favorites', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName, ({ favoriteLocations }: RiderType) => {
     const keys = createKeys('id', favoriteLocations);
     db.batchGet(res, Location, keys, 'Locations');
@@ -94,7 +117,9 @@ router.get('/:id/favorites', validateUser('User'), (req, res) => {
 
 // Get current/soonest ride (within next 30 min) of rider, if exists
 router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Rider, id, tableName, () => {
     const now = moment.tz('America/New_York').toISOString();
     const end = moment.tz('America/New_York').add(30, 'minutes').toISOString();
@@ -111,14 +136,20 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
 });
 
 router.get('/:id/usage', validateUser('Admin'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   let noShowCount: number;
   let studentRides: number;
   db.getById(res, Rider, id, tableName, () => {
     const isRider = new Condition('rider').eq(id);
     db.scan(res, Ride, isRider, (data: RideType[]) => {
-      noShowCount = data.filter((ride) => ride.status === Status.NO_SHOW).length;
-      studentRides = data.filter((ride) => ride.status === Status.COMPLETED).length;
+      noShowCount = data.filter(
+        (ride) => ride.status === Status.NO_SHOW
+      ).length;
+      studentRides = data.filter(
+        (ride) => ride.status === Status.COMPLETED
+      ).length;
       res.send({ studentRides, noShowCount });
     });
   });
@@ -136,29 +167,43 @@ router.post('/', validateUser('Admin'), (req, res) => {
 
 // Update a rider in Riders table
 router.put('/:id', validateUser('Rider'), (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   db.update(res, Rider, { id }, body, tableName);
 });
 
 // Add a location to favorites
 router.post('/:id/favorites', validateUser('Rider'), (req, res) => {
-  const { params: { id }, body: { id: locId } } = req;
+  const {
+    params: { id },
+    body: { id: locId },
+  } = req;
   // check if location exists in table
   db.getById(res, Location, locId, 'Locations', () => {
     const operation = { $ADD: { favoriteLocations: [locId] } };
     const condition = new Condition('favoriteLocations').not().contains(locId);
     db.conditionalUpdate(
-      res, Rider, { id }, operation, condition, tableName, ({ favoriteLocations }: RiderType) => {
+      res,
+      Rider,
+      { id },
+      operation,
+      condition,
+      tableName,
+      ({ favoriteLocations }: RiderType) => {
         const keys = createKeys('id', favoriteLocations);
         db.batchGet(res, Location, keys, 'Locations');
-      },
+      }
     );
   });
 });
 
 // Delete an existing rider
 router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Rider, id, tableName);
 });
 

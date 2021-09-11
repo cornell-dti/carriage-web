@@ -23,29 +23,29 @@ export enum Status {
 }
 
 export type RideLocation = {
-  id?: string,
+  id?: string;
   name: string;
   address: string;
   tag: Tag;
 };
 
 export type RideType = {
-  id: string,
-  type: Type,
-  status: Status,
-  late: boolean,
-  startLocation: RideLocation,
-  endLocation: RideLocation,
-  startTime: string,
-  endTime: string,
-  rider: RiderType,
-  driver?: DriverType,
-  recurring: boolean,
-  recurringDays?: number[],
-  endDate?: string
-  deleted?: string[],
-  edits?: string[],
-  parentRide?: RideType
+  id: string;
+  type: Type;
+  status: Status;
+  late: boolean;
+  startLocation: RideLocation;
+  endLocation: RideLocation;
+  startTime: string;
+  endTime: string;
+  rider: RiderType;
+  driver?: DriverType;
+  recurring: boolean;
+  recurringDays?: number[];
+  endDate?: string;
+  deleted?: string[];
+  edits?: string[];
+  parentRide?: RideType;
 };
 
 const locationSchema = {

@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from 'react';
 import { Ride } from '../../types';
 import { useReq } from '../../context/req';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
@@ -38,7 +44,7 @@ const Schedule = () => {
           <Notification />
         </div>
       </div>
-      {(rides && rides.length > 0) && (
+      {rides && rides.length > 0 && (
         <>
           <Collapsible title={'Your Upcoming Rides'}>
             <RiderScheduleTable data={rides} isPast={false} />
@@ -48,7 +54,7 @@ const Schedule = () => {
           </Collapsible>
         </>
       )}
-      {(rides && !rides.length) && <NoRidesView />}
+      {rides && !rides.length && <NoRidesView />}
     </main>
   );
 };

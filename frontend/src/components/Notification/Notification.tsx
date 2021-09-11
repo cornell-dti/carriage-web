@@ -40,7 +40,8 @@ const Notification = () => {
     });
   });
 
-  const mapMessages = (msgs: Message[]) => msgs.map(({ time, title, body }, i) => (
+  const mapMessages = (msgs: Message[]) =>
+    msgs.map(({ time, title, body }, i) => (
       <div key={i} className={styles.body}>
         <div className={styles.user}>
           <div className={styles.avatar}>
@@ -55,13 +56,13 @@ const Notification = () => {
         </div>
         <div className={styles.link}>View</div>
       </div>
-  ));
+    ));
 
   return (
     <Popup
       trigger={
         <button className={styles.bell}>
-          <img src={notificationBell} alt='notification bell' />
+          <img src={notificationBell} alt="notification bell" />
           {notify && (
             <img
               src={notificationBadge}
@@ -80,7 +81,8 @@ const Notification = () => {
       contentStyle={{
         margin: '10px',
         width: '333px',
-      }}>
+      }}
+    >
       <div className={styles.content}>
         {newMessages.length === 0 || (
           <h6 className={cn(styles.heading, styles.divider)}>

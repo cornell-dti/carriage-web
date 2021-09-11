@@ -6,7 +6,7 @@ type TagProps = {
   reduced?: boolean;
   location: React.ReactNode;
   tag: string;
-}
+};
 
 const Tag = ({ reduced, location, tag }: TagProps) => {
   const tagStyle = tag.toLowerCase();
@@ -14,7 +14,9 @@ const Tag = ({ reduced, location, tag }: TagProps) => {
     <p>
       {reduced && <span className={cn(styles.reducedTag, styles[tagStyle])} />}
       {location}{' '}
-      {!reduced && <span className={cn(styles.tag, styles[tagStyle])}>{tag}</span>}
+      {!reduced && (
+        <span className={cn(styles.tag, styles[tagStyle])}>{tag}</span>
+      )}
     </p>
   );
 };

@@ -10,7 +10,10 @@ p {
   margin: 0;
 }
 
-input, button, select, option {
+input,
+button,
+select,
+option {
   font-family: 'Inter', Arial, sans-serif;
 }
 
@@ -25,9 +28,10 @@ a.skip-main {
   z-index: -999;
 }
 
-a.skip-main:focus, a.skip-main:active {
+a.skip-main:focus,
+a.skip-main:active {
   color: #fff;
-  background-color:#000;
+  background-color: #000;
   left: 0;
   z-index: 999;
 }

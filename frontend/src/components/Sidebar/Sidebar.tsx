@@ -2,7 +2,15 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { GoogleLogout } from 'react-google-login';
-import { home, drivers, riders, locations, analytics, settings, blank } from '../../icons/sidebar/index';
+import {
+  home,
+  drivers,
+  riders,
+  locations,
+  analytics,
+  settings,
+  blank,
+} from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
@@ -10,15 +18,15 @@ import styles from './sidebar.module.css';
 import Footer from '../Footer/Footer';
 
 type SidebarProps = {
-  type: 'admin' | 'rider'
-  children: React.ReactNode
-}
+  type: 'admin' | 'rider';
+  children: React.ReactNode;
+};
 
 type MenuItem = {
-  icon: string,
-  caption: string,
-  path: string
-}
+  icon: string;
+  caption: string;
+  path: string;
+};
 
 const Sidebar = ({ type, children }: SidebarProps) => {
   const componentMounted = useRef(true);
@@ -64,13 +72,19 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <Link key={path} onClick={() => setSelected(path)}
-                className={styles.icon} to={path}>
-                <div className={
-                  path === selected
-                    ? cn(styles.selected, styles.circle)
-                    : styles.circle
-                }>
+              <Link
+                key={path}
+                onClick={() => setSelected(path)}
+                className={styles.icon}
+                to={path}
+              >
+                <div
+                  className={
+                    path === selected
+                      ? cn(styles.selected, styles.circle)
+                      : styles.circle
+                  }
+                >
                   <img alt={''} src={icon} />
                 </div>
               </Link>
@@ -79,27 +93,34 @@ const Sidebar = ({ type, children }: SidebarProps) => {
           ))}
         </div>
         <div className={styles.logout}>
-          {isAdmin && <img alt="profile_picture" className={styles.profile}
-            src={profile === '' || !profile ? blank : `https://${profile}`} />}
-          {profile !== '' && <GoogleLogout
-            onLogoutSuccess={authContext.logout}
-            clientId={clientId}
-            render={(renderProps) => (
-              <button
-                onClick={renderProps.onClick}
-                className={styles.logoutLink}
-              >
-                Log out
-              </button>
-            )}
-          />}
+          {isAdmin && (
+            <img
+              alt="profile_picture"
+              className={styles.profile}
+              src={profile === '' || !profile ? blank : `https://${profile}`}
+            />
+          )}
+          {profile !== '' && (
+            <GoogleLogout
+              onLogoutSuccess={authContext.logout}
+              clientId={clientId}
+              render={(renderProps) => (
+                <button
+                  onClick={renderProps.onClick}
+                  className={styles.logoutLink}
+                >
+                  Log out
+                </button>
+              )}
+            />
+          )}
         </div>
       </nav>
       <div className={styles.content}>
         {children}
         <Footer />
       </div>
-    </div >
+    </div>
   );
 };
 

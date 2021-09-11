@@ -13,7 +13,9 @@ const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
 router.get('/:id', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Driver, id, tableName);
 });
 
@@ -24,13 +26,19 @@ router.get('/', validateUser('Admin'), (req, res) => {
 
 // Get profile information for a driver
 router.get('/:id/profile', validateUser('User'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.getById(res, Driver, id, tableName, (driver: DriverType) => {
-    const {
-      email, firstName, lastName, phoneNumber, availability, vehicle,
-    } = driver;
+    const { email, firstName, lastName, phoneNumber, availability, vehicle } =
+      driver;
     res.send({
-      email, firstName, lastName, phoneNumber, availability, vehicle,
+      email,
+      firstName,
+      lastName,
+      phoneNumber,
+      availability,
+      vehicle,
     });
   });
 });
@@ -38,7 +46,9 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 // Get whether a driver is available at a given time
 // startTime and endTime must be in the format YYYY-MM-DDTHH:MM
 router.get('/:id/:startTime/:endTime', (req, res) => {
-  const { params: { id, startTime, endTime } } = req;
+  const {
+    params: { id, startTime, endTime },
+  } = req;
 
   const reqStart = moment.tz(startTime, 'America/New_York');
   const reqEnd = moment.tz(endTime, 'America/New_York');
@@ -98,7 +108,9 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
 
 // Get a driver's weekly stats
 router.get('/:id/stats', validateUser('Admin'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   const week = moment().subtract(1, 'week');
   const weekStart = week.startOf('week').toISOString();
   const weekEnd = week.endOf('week').toISOString();
@@ -111,17 +123,22 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
     .where('status')
     .eq(Status.COMPLETED);
 
-  const calculateHoursWorked = (driver: DriverType) => (
+  const calculateHoursWorked = (driver: DriverType) =>
     Object.values(driver.availability).reduce((acc, curr) => {
       const { startTime, endTime } = curr!;
-      const hours = moment.duration(endTime).subtract(moment.duration(startTime)).asHours();
+      const hours = moment
+        .duration(endTime)
+        .subtract(moment.duration(startTime))
+        .asHours();
       return acc + hours;
-    }, 0)
-  );
+    }, 0);
 
   db.getById(res, Driver, id, tableName, (driver) => {
     db.scan(res, Ride, condition, (data: Document[]) => {
-      res.send({ rides: data.length, workingHours: calculateHoursWorked(driver) });
+      res.send({
+        rides: data.length,
+        workingHours: calculateHoursWorked(driver),
+      });
     });
   });
 });
@@ -138,13 +155,18 @@ router.post('/', validateUser('Admin'), (req, res) => {
 
 // Update an existing driver
 router.put('/:id', validateUser('Driver'), (req, res) => {
-  const { params: { id }, body } = req;
+  const {
+    params: { id },
+    body,
+  } = req;
   db.update(res, Driver, { id }, body, tableName);
 });
 
 // Delete an existing driver
 router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const { params: { id } } = req;
+  const {
+    params: { id },
+  } = req;
   db.deleteById(res, Driver, id, tableName);
 });
 

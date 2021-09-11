@@ -14,7 +14,9 @@ const s3bucket = new AWS.S3();
 // Uploads base64-encoded fileBuffer to S3 in the folder {tableName}
 // Sets the user's DB photoLink field to the url of the uploaded image, if not set
 router.post('/', validateUser('User'), (req, res) => {
-  const { body: { id, tableName, fileBuffer } } = req;
+  const {
+    body: { id, tableName, fileBuffer },
+  } = req;
   const validTables = ['Riders', 'Drivers', 'Admins'];
 
   if (validTables.includes(tableName)) {

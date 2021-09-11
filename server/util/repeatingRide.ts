@@ -5,7 +5,7 @@ import schedule from 'node-schedule';
 import { Ride, RideType } from '../models/ride';
 
 export default function initSchedule() {
-// run function at 10:05:00am every day
+  // run function at 10:05:00am every day
   schedule.scheduleJob('0 5 10 * * *', () => {
     createRepeatingRides();
   });
@@ -31,15 +31,18 @@ function createRepeatingRides() {
 
   Ride.scan(condition).exec((_, data) => {
     data?.forEach((masterRide) => {
-      const {
-        rider, startLocation, endLocation, startTime, endTime,
-      } = masterRide.toJSON() as RideType;
+      const { rider, startLocation, endLocation, startTime, endTime } =
+        masterRide.toJSON() as RideType;
 
       const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
-      const newStartTime = moment(`${tomorrowDateOnly}T${newStartTimeOnly}`).toISOString();
+      const newStartTime = moment(
+        `${tomorrowDateOnly}T${newStartTimeOnly}`
+      ).toISOString();
 
       const newEndTimeOnly = moment(endTime).format('HH:mm:ss');
-      const newEndTime = moment(`${tomorrowDateOnly}T${newEndTimeOnly}`).toISOString();
+      const newEndTime = moment(
+        `${tomorrowDateOnly}T${newEndTimeOnly}`
+      ).toISOString();
 
       const ride = new Ride({
         id: uuid(),

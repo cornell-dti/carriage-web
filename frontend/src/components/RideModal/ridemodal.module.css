@@ -5,7 +5,7 @@
 }
 
 .error {
-  color: #EB0023;
+  color: #eb0023;
   font-size: 0.8rem;
 }
 
@@ -61,8 +61,8 @@
 .driverRadio {
   margin: 0;
 }
-.driverRadio:focus{
-  outline: 3px solid black; 
+.driverRadio:focus {
+  outline: 3px solid black;
 }
 
 .rider {

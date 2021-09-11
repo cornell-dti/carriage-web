@@ -4,7 +4,7 @@
 }
 
 .divider {
-  border: 0.1px solid #EBEBEB;
+  border: 0.1px solid #ebebeb;
   width: 50%;
   margin-left: 0;
   margin-bottom: 30px;
@@ -14,5 +14,5 @@
   display: block;
   margin-bottom: 5px;
   cursor: pointer;
-  color: #14142B;
+  color: #14142b;
 }

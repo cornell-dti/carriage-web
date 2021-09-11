@@ -44,7 +44,7 @@ function findUserAndSendToken(
   res: express.Response,
   model: ModelType<Document>,
   table: string,
-  email: string,
+  email: string
 ) {
   model.scan({ email: { eq: email } }).exec((err, data) => {
     if (err) {
@@ -58,7 +58,9 @@ function findUserAndSendToken(
       if (table === 'Riders' && !active) {
         res.status(400).send({ err: 'User not active' });
       } else {
-        res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+        res
+          .status(200)
+          .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
       }
     } else if (table === 'Admins') {
       // Check drivers table for admins
@@ -72,7 +74,9 @@ function findUserAndSendToken(
               id,
               userType: getUserType(table),
             };
-            res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+            res
+              .status(200)
+              .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
             res.status(400).send({ err: 'User not found' });
           }

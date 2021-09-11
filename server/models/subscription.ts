@@ -4,13 +4,13 @@ import isISO8601 from 'validator/lib/isISO8601';
 export enum UserType {
   ADMIN = 'Admin',
   RIDER = 'Rider',
-  DRIVER = 'Driver'
+  DRIVER = 'Driver',
 }
 
 export enum PlatformType {
   WEB = 'web',
   ANDROID = 'android',
-  IOS = 'ios'
+  IOS = 'ios',
 }
 
 export type SubscriptionType = {
