@@ -8,7 +8,8 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
-import { RideType } from '../models/ride';
+import { RideType, Status, Type } from '../models/ride';
+import { Change } from './types';
 
 AWS.config.update({ ...config, region: 'us-east-1' });
 const sns = new AWS.SNS();
@@ -76,22 +77,10 @@ const sendMsg = (sub: SubscriptionType, msg: string) => {
         });
     });
   }
-  // mobile notification
-
-  const snsMsg = {
-    GCM: {
-      notification: {
-        body: msg,
-        click_action: 'FLUTTER_NOTIFICATION_CLICK',
-      },
-      data: { additional: msg },
-    },
-  };
 
   const snsParams = {
-    Message: JSON.stringify(snsMsg),
+    Message: msg,
     TargetArn: sub.endpoint,
-    MessageStructure: 'json',
   };
 
   return new Promise((resolve, reject) => {
@@ -169,20 +158,36 @@ export const sendToUsers = (
     });
   });
 
+const getChangeType = (change: Partial<RideType>): Change | Status => {
+  const { status, late, type, driver } = change;
+  if (status) {
+    return status;
+  }
+  if (late) {
+    return Change.LATE;
+  }
+  if (type === Type.ACTIVE && driver) {
+    return Change.SCHEDULED;
+  }
+  return Change.EDITED;
+};
+
 export const notifyEdit = (
   updatedRide: RideType,
-  change: any,
+  body: Partial<RideType>,
   userType: UserType,
-  userId: string
+  userId: string,
+  change?: Change
 ) =>
   new Promise((resolve, reject) => {
     const riderId = updatedRide.rider.id;
     const hasDriver = updatedRide.driver;
     const driverId = hasDriver ? updatedRide.driver!.id : '';
+    const changeType = change || getChangeType(body);
 
     const info = JSON.stringify({
       ride: updatedRide,
-      change,
+      changeType,
       changedBy: { userType, userId },
     });
 

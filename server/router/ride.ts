@@ -11,6 +11,7 @@ import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { notifyEdit } from '../util/notification';
+import { Change } from '../util/types';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -274,7 +275,13 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            notifyEdit(editRide, change, userType, userId)
+            notifyEdit(
+              editRide,
+              change,
+              userType,
+              userId,
+              Change.REPEATING_EDITED
+            )
               .then(() => res.send(editRide))
               .catch(() => res.send(editRide));
             // res.send(editRide);
@@ -334,7 +341,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
   db.getById(res, Ride, id, tableName, (ride) => {
     const { recurring, type } = ride;
     if (type === Type.ACTIVE) {
-      const operation = { $SET: { status: Status.CANCELLED } };
+      const operation = { status: Status.CANCELLED };
       db.update(res, Ride, { id }, operation, tableName, (doc) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
