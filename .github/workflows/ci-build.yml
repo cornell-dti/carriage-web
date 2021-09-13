@@ -1,0 +1,18 @@
+name: CI Build
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Install Dependencies
+        run: npm install --production
+      - name: Build Frontend
+        run: CI='' npm run build:frontend
+      - name: Build Server
+        run: CI='' npm run build:server
