@@ -18,3 +18,7 @@ jobs:
         run: npm run format:check
       - name: Run Type Check
         run: npm run type-check
+      - name: Build Frontend
+        run: npm run build:frontend
+      - name: Build Server
+        run: npm run build:server
