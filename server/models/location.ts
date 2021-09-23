@@ -32,8 +32,6 @@ const schema = new dynamoose.Schema({
   address: {
     type: String,
     required: true,
-    set: (address) => formatAddress(address as string),
-    validate: (address) => isAddress(address as string),
   },
   tag: {
     type: String,

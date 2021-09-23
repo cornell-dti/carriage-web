@@ -131,7 +131,7 @@ const LocationModal = ({
               id="address"
               defaultValue={existingLocation?.address}
               className={styles.input}
-              ref={register({ required: true, validate: isAddress })}
+              ref={register({ required: true })}
             />
             {address && <p className={styles.errorMsg}>{address.message}</p>}
             <Label htmlFor="info">Pickup/Dropoff Info</Label>
