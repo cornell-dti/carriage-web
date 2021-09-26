@@ -12,7 +12,13 @@ type EmployeeInfoProps = {
   phone?: string;
 };
 
-const EmployeeInfo = ({ firstName, lastName, netId, email, phone }: EmployeeInfoProps) => {
+const EmployeeInfo = ({
+  firstName,
+  lastName,
+  netId,
+  email,
+  phone,
+}: EmployeeInfoProps) => {
   const { register, formState } = useFormContext();
   const { errors } = formState;
   return (
@@ -27,7 +33,7 @@ const EmployeeInfo = ({ firstName, lastName, netId, email, phone }: EmployeeInfo
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
-        {(errors.firstName) && (
+        {errors.firstName && (
           <p className={styles.error}>Please enter a valid name</p>
         )}
         <Label htmlFor={'netid'}>NetID</Label>
@@ -44,7 +50,7 @@ const EmployeeInfo = ({ firstName, lastName, netId, email, phone }: EmployeeInfo
         )}
       </div>
       <div className={styles.col2}>
-      <Label htmlFor={'lastName'}>Last Name</Label>
+        <Label htmlFor={'lastName'}>Last Name</Label>
         <Input
           id="lastName"
           name="lastName"
@@ -53,7 +59,7 @@ const EmployeeInfo = ({ firstName, lastName, netId, email, phone }: EmployeeInfo
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
-        {(errors.lastName) && (
+        {errors.lastName && (
           <p className={styles.error}>Please enter a valid name</p>
         )}
       </div>
