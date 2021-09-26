@@ -155,7 +155,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, email, phoneNumber, startDate, availability } = data;
+    const { firstName, lastName, email, phoneNumber, startDate, availability } =
+      data;
 
     if (selectedRole === 'admin') {
       const admin = {
