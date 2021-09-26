@@ -20,7 +20,8 @@ const RiderModalInfo = ({
 }: ModalFormProps) => {
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
-      name: rider ? `${rider.firstName} ${rider.lastName}` : '',
+      firstName: rider?.firstName ?? '',
+      lastName: rider?.lastName ?? '',
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
       needs: rider?.accessibility.join(','), // if no needs, default is undefined
@@ -31,7 +32,8 @@ const RiderModalInfo = ({
   });
   const { errors } = formState;
   const beforeSubmit = ({
-    name,
+    firstName,
+    lastName,
     netid,
     phoneNumber,
     needs,
@@ -40,9 +42,6 @@ const RiderModalInfo = ({
     endDate,
   }: ObjectType) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
-    const splitName = name.split(' ');
-    const firstName = splitName[0];
-    const lastName = splitName[1];
     const accessibility = needs.split(',').map((n: string) => n.trim());
     onSubmit({
       firstName,
@@ -69,17 +68,28 @@ const RiderModalInfo = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="name">
-            Name:{' '}
+          <Label className={styles.label} htmlFor="firstName">
+            First Name:{' '}
           </Label>
           <Input
-            id="name"
-            name="name"
+            id="firstName"
+            name="firstName"
             type="text"
             ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
             className={styles.firstRow}
           />
-          {errors.name && <p className={styles.error}>Please enter a name</p>}
+          {errors.firstName && <p className={styles.error}>Please enter a name</p>}
+          <Label className={styles.label} htmlFor="lastName">
+            Last Name:{' '}
+          </Label>
+          <Input
+            id="lastName"
+            name="lastName"
+            type="text"
+            ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
+            className={styles.firstRow}
+          />
+          {errors.lastName && <p className={styles.error}>Please enter a name</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="netid">
