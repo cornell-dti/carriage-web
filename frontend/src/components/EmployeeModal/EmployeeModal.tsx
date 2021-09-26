@@ -17,7 +17,8 @@ import { edit } from '../../icons/other/index';
 type EmployeeModalProps = {
   existingEmployee?: {
     id?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     netId?: string;
     email?: string;
     phone?: string;
@@ -254,7 +255,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo
-              name={existingEmployee?.name}
+              firstName={existingEmployee?.firstName}
+              lastName={existingEmployee?.lastName}
               netId={existingEmployee?.netId}
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
