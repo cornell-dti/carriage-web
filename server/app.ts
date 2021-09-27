@@ -16,7 +16,15 @@ import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
 import notification from './router/notification';
 
-const port = process.env.PORT || 3001;
+const port = Number(process.env.PORT) || 3001;
+
+/**
+ * Only necessary when testing local backend on a physical mobile device.
+ * Find your hostname: https://www.whatismybrowser.com/detect/what-is-my-local-ip-address
+ * Then add USE_HOSTNAME (true/false) and HOSTNAME to your server env file.
+ */
+const useHostname = Boolean(process.env.USE_HOSTNAME);
+const hostname = (useHostname && process.env.HOSTNAME) || '';
 
 dynamoose.aws.sdk.config.update(config);
 
@@ -48,4 +56,4 @@ app.get('*', (req, res) => {
 
 initSchedule();
 
-app.listen(port, () => console.log('Listening at port', port));
+app.listen(port, hostname, () => console.log('Listening at port', port));
