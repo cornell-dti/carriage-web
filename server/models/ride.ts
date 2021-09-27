@@ -61,8 +61,6 @@ const locationSchema = {
     name: String,
     address: {
       type: String,
-      set: (address: any) => formatAddress(address as string),
-      validate: (address: any) => isAddress(address as string),
     },
     tag: {
       type: String,
