@@ -1,3 +1,5 @@
+import { Status } from '../models/ride';
+
 export type UserType = 'User' | 'Rider' | 'Driver' | 'Admin';
 
 export type JWTPayload = {
@@ -12,3 +14,5 @@ export enum Change {
   EDITED = 'edited',
   REPEATING_EDITED = 'repeating_edited',
 }
+
+export type NotificationEvent = Change | Status;

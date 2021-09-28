@@ -189,10 +189,9 @@ router.put('/:id', validateUser('User'), (req, res) => {
   db.update(res, Ride, { id }, body, tableName, (doc) => {
     const ride = JSON.parse(JSON.stringify(doc.toJSON()));
     const { userType } = res.locals.user;
-    const userId = res.locals.user.id;
 
     // send ride even if notification failed since it was actually updated
-    notifyEdit(ride, body, userType, userId)
+    notifyEdit(ride, body, userType)
       .then(() => res.send(ride))
       .catch(() => res.send(ride));
   });
@@ -232,7 +231,6 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 
     const handleEdit = (change: any) => (ride: RideType) => {
       const { userType } = res.locals.user;
-      const userId = res.locals.user.id;
 
       // if deleteOnly = false, create a replace edit with the new fields
       if (!deleteOnly) {
@@ -275,13 +273,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            notifyEdit(
-              editRide,
-              change,
-              userType,
-              userId,
-              Change.REPEATING_EDITED
-            )
+            notifyEdit(editRide, change, userType, Change.REPEATING_EDITED)
               .then(() => res.send(editRide))
               .catch(() => res.send(editRide));
             // res.send(editRide);
@@ -346,7 +338,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
         const userId = res.locals.user.id;
-        notifyEdit(deletedRide, operation, userType, userId)
+        notifyEdit(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
       });
