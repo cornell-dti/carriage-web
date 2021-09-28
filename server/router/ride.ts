@@ -10,7 +10,7 @@ import { Tag } from '../models/location';
 import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
-import { notifyEdit } from '../util/notification';
+import { notify } from '../util/notification';
 import { Change } from '../util/types';
 
 const router = express.Router();
@@ -153,7 +153,15 @@ router.post('/', validateUser('User'), (req, res) => {
       edits: recurring ? [] : undefined,
       deleted: recurring ? [] : undefined,
     });
-    db.create(res, ride);
+    db.create(res, ride, (doc) => {
+      const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+      const { userType } = res.locals.user;
+
+      // send ride even if notification failed since it was actually updated
+      notify(ride, body, userType, Change.CREATED)
+        .then(() => res.send(ride))
+        .catch(() => res.send(ride));
+    });
   }
 });
 
@@ -191,7 +199,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
     const { userType } = res.locals.user;
 
     // send ride even if notification failed since it was actually updated
-    notifyEdit(ride, body, userType)
+    notify(ride, body, userType)
       .then(() => res.send(ride))
       .catch(() => res.send(ride));
   });
@@ -273,7 +281,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            notifyEdit(editRide, change, userType, Change.REPEATING_EDITED)
+            notify(editRide, change, userType, Change.REPEATING_EDITED)
               .then(() => res.send(editRide))
               .catch(() => res.send(editRide));
             // res.send(editRide);
@@ -338,7 +346,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
         const userId = res.locals.user.id;
-        notifyEdit(deletedRide, operation, userType)
+        notify(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
       });

@@ -8,10 +8,10 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
-import { RideType, Status, Type } from '../models/ride';
+import { RideType, Type } from '../models/ride';
 import { Change, NotificationEvent } from './types';
-import { getNotificationMessage } from './notificationMsg.';
-import { Driver } from '../models/driver';
+import { getMessage } from './notificationMsg.';
+import { getReceivers } from './notificationReceivers';
 
 AWS.config.update({ ...config, region: 'us-east-1' });
 const sns = new AWS.SNS();
@@ -174,14 +174,7 @@ const getNotificationEvent = (body: Partial<RideType>): NotificationEvent => {
   return Change.EDITED;
 };
 
-const getReceivers = (
-  sender: UserType,
-  notifEvent: NotificationEvent
-): UserType[] => {
-  return [];
-};
-
-export const notifyEdit = (
+export const notify = (
   updatedRide: RideType,
   body: Partial<RideType>,
   sender: UserType,
@@ -189,15 +182,16 @@ export const notifyEdit = (
 ) =>
   new Promise((resolve, reject) => {
     const riderId = updatedRide.rider.id;
-    const hasDriver = updatedRide.driver;
+    const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
     const notifEvent = change || getNotificationEvent(body);
-    const receivers = getReceivers(sender, notifEvent);
+    const receivers = getReceivers(sender, notifEvent, hasDriver);
 
-    const getNotif = (receiver: UserType) =>
+    const getNotifInfo = (receiver: UserType) =>
       JSON.stringify({
         ride: updatedRide,
-        message: getNotificationMessage(sender, receiver, notifEvent, body),
+        event: notifEvent,
+        message: getMessage(sender, receiver, notifEvent, body),
       });
 
     Promise.all(
@@ -208,32 +202,12 @@ export const notifyEdit = (
         } else if (receiver === UserType.RIDER) {
           userId = riderId;
         }
-        const notifInfo = getNotif(receiver);
-        console.log(notifInfo);
+        const notifInfo = getNotifInfo(receiver);
         return sendToUsers(notifInfo, receiver, userId);
       })
     )
       .then(() => resolve(updatedRide))
       .catch(reject);
-
-    // potential issue: does not notify old driver/student (if it's different)
-    // sendToUsers(adminNotif, UserType.ADMIN)
-    //   .then(() => {
-    //     if (sendingUser === UserType.ADMIN) {
-    //       if (hasDriver) {
-    //         sendToUsers(driverNotif, UserType.DRIVER, driverId);
-    //       }
-    //       sendToUsers(riderNotif, UserType.RIDER, riderId);
-    //     }
-    //     if (sendingUser === UserType.RIDER && hasDriver) {
-    //       sendToUsers(driverNotif, UserType.DRIVER, driverId);
-    //     }
-    //     if (sendingUser === UserType.DRIVER) {
-    //       sendToUsers(riderNotif, UserType.RIDER, riderId);
-    //     }
-    //   })
-    //   .then(() => resolve(updatedRide))
-    //   .catch(reject);
   });
 
 export const subscribe = (req: SubscriptionRequest) =>
