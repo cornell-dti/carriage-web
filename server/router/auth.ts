@@ -96,7 +96,6 @@ router.post('/', (req, res) => {
       const payload = authRes.getPayload();
       const model = getModel(table);
       const email = payload?.email;
-      console.log(authRes);
       if (payload?.aud === clientId && model && email) {
         findUserAndSendToken(res, model, table, email);
       } else if (payload?.aud !== clientId) {
@@ -110,7 +109,6 @@ router.post('/', (req, res) => {
       }
     })
     .catch((err) => {
-      console.log(err);
       res.status(err.statusCode || 500).send({ err: err.message });
     });
 });
