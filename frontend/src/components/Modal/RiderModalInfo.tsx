@@ -75,7 +75,7 @@ const RiderModalInfo = ({
             id="firstName"
             name="firstName"
             type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
+            ref={register({ required: true })}
             className={styles.firstRow}
           />
           {errors.firstName && <p className={styles.error}>Please enter a name</p>}
@@ -86,7 +86,7 @@ const RiderModalInfo = ({
             id="lastName"
             name="lastName"
             type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+\s[a-zA-Z]+/ })}
+            ref={register({ required: true })}
             className={styles.firstRow}
           />
           {errors.lastName && <p className={styles.error}>Please enter a name</p>}
