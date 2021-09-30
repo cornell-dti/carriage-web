@@ -78,7 +78,9 @@ const RiderModalInfo = ({
             ref={register({ required: true })}
             className={styles.firstRow}
           />
-          {errors.firstName && <p className={styles.error}>Please enter a name</p>}
+          {errors.firstName && (
+            <p className={styles.error}>Please enter a name</p>
+          )}
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
           </Label>
@@ -89,7 +91,9 @@ const RiderModalInfo = ({
             ref={register({ required: true })}
             className={styles.firstRow}
           />
-          {errors.lastName && <p className={styles.error}>Please enter a name</p>}
+          {errors.lastName && (
+            <p className={styles.error}>Please enter a name</p>
+          )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="netid">
