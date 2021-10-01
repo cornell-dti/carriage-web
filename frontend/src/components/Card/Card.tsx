@@ -40,7 +40,7 @@ const Card = ({
         <img
           className={styles.image}
           alt="uploaded profile"
-          src={`http://${photoLink}`}
+          src={`https://${photoLink}`}
         />
       ) : (
         <div className={styles.image}> </div>
