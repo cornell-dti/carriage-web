@@ -23,6 +23,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 * Zack Ashen - Software Developer
 * Simran Puri - Software Developer
 * Justin Kang - Software Developer
+* Michael Torku - Software Developer
 
 **Past Contributors**
 * Sam Steinberg - Product Manager
