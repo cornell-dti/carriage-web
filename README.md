@@ -16,7 +16,9 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 * Matthew Guo - Technical Project Manager
 * Aaron Kang - Software Developer
 * Zack Ashen - Software Developer
-
+* Tucker Stanley - Software Developer
+* Justin Kang - Software Developer
+* Michael Torku - Software Developer
 
 **Past Contributors**
 * Sam Steinberg - Product Manager
