@@ -81,7 +81,7 @@ const AssignDriverModal = ({
               key={id}
               firstName={driver.firstName}
               imageURL={
-                driver.photoLink ? `http://${driver.photoLink}` : undefined
+                driver.photoLink ? `https://${driver.photoLink}` : undefined
               }
             />
           ))}
