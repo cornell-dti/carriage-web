@@ -119,7 +119,8 @@ const UserDetail = ({
               <EmployeeModal
                 existingEmployee={{
                   id: employee.id,
-                  name: `${employee.firstName} ${employee.lastName}`,
+                  firstName: employee.firstName,
+                  lastName: employee.lastName,
                   netId: employee.netId,
                   email: `${employee.netId}@cornell.edu`,
                   phone: employee.phone.replaceAll('-', ''), // remove dashes'-'

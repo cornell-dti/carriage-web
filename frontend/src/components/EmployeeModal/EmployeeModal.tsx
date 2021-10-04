@@ -17,7 +17,8 @@ import { edit } from '../../icons/other/index';
 type EmployeeModalProps = {
   existingEmployee?: {
     id?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
     netId?: string;
     email?: string;
     phone?: string;
@@ -154,8 +155,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { name, email, phoneNumber, startDate, availability } = data;
-    const [firstName, lastName] = name.split(' ');
+    const { firstName, lastName, email, phoneNumber, startDate, availability } =
+      data;
 
     if (selectedRole === 'admin') {
       const admin = {
@@ -254,7 +255,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <EmployeeInfo
-              name={existingEmployee?.name}
+              firstName={existingEmployee?.firstName}
+              lastName={existingEmployee?.lastName}
               netId={existingEmployee?.netId}
               email={existingEmployee?.email}
               phone={existingEmployee?.phone}
