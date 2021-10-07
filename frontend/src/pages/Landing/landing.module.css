@@ -30,6 +30,16 @@
   justify-content: center;
   align-items: center;
   padding: 16px;
+  position: relative;
+}
+
+.dti {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 21px;
 }
 
 .dti_logo {
@@ -37,6 +47,14 @@
   height: 23px;
   left: 16px;
   top: 15px;
+  margin-right: 7px;
+}
+
+.dti_desc {
+  width: 125px;
+  height: 26px;
+  left: 46px;
+  top: 14px;
 }
 
 .container {

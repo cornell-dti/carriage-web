@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
-import { logo, dti_logo } from '../../icons/other';
+import { logo, dti_logo, dti_desc } from '../../icons/other';
 
 type LandingPropType = {
   students: ReactElement;
@@ -15,7 +15,10 @@ const Landing = ({ students, admins }: LandingPropType) => (
         <div className={styles.left}>
           <img src={logo} className={styles.badge} alt="Carriage logo" />
           <span className={styles.title}>Carriage</span>
-          <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
+          <div className={styles.dti}>
+            <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
+            <img src={dti_desc} className={styles.dti_desc} alt="DTI logo" />
+          </div>
         </div>
         <div className={styles.right}>
           <h1 className={styles.heading}>Login</h1>
