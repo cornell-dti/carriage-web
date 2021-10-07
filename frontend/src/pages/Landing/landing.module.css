@@ -32,6 +32,13 @@
   padding: 16px;
 }
 
+.dti_logo {
+  width: 23px;
+  height: 23px;
+  left: 16px;
+  top: 15px;
+}
+
 .container {
   display: flex;
   justify-content: center;
