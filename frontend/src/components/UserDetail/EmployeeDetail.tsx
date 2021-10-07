@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import { phone, clock, wheel, user } from '../../icons/userInfo/index';
+import {
+  phone,
+  clock,
+  wheel,
+  user,
+  calender_dark,
+} from '../../icons/userInfo/index';
 import { useReq } from '../../context/req';
 import PastRides from './PastRides';
 import styles from './userDetail.module.css';
@@ -18,6 +24,7 @@ type EmployeeDetailProps = {
   availability?: string[][];
   admin?: boolean;
   photoLink?: string;
+  startDate: string; 
 };
 
 type EmployeeStatisticsProps = {
@@ -180,6 +187,7 @@ const EmployeeDetail = () => {
             alt="availability"
             text={avail === '' ? 'N/A' : avail}
           />
+          <UserContactInfo icon={calender_dark} alt="join date" text={employee.date} />
         </UserDetail>
         <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
         <PastRides isStudent={false} rides={rides} />
