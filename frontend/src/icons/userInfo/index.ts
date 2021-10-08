@@ -6,3 +6,4 @@ export { default as user } from './user.svg';
 export { default as mail } from './mail.svg';
 export { default as home } from './home.svg';
 export { default as calendar } from './calendar.svg';
+export { default as calender_dark } from './calender_dark.svg'
