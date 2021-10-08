@@ -8,13 +8,9 @@ const format_date = (
 ) => {
   const fmt = format ? format : 'YYYY-MM-DD';
   if (date == undefined) {
-    try {
-      return moment().format(fmt);
-    } catch {}
+    return moment().format(fmt);
   } else if (default_format == undefined) {
-    try {
-      return moment(date).format(fmt);
-    } catch {}
+    return moment(date).format(fmt);
   }
   return moment(date, default_format).format(fmt);
 };
