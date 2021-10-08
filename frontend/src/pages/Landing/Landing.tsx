@@ -17,23 +17,21 @@ const Landing = ({ students, admins }: LandingPropType) => (
           <span className={styles.title}>Carriage</span>
         </div>
         <div className={styles.right}>
-          <h1 className={styles.heading}>Login</h1>
           <div className={styles.spacing_container}>
+            <h1 className={styles.heading}>Login</h1>
             <div className={styles.container}>
               {students}
               {admins}
             </div>
-            <div className={styles.dti_container}>
-              <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
-              <img src={dti_desc} className={styles.dti_desc} alt="DTI desc" />
-            </div>
           </div>
-          <div className={styles.footer}>
+          <div className={styles.dti_container}>
+            <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
+            <img src={dti_desc} className={styles.dti_desc} alt="DTI desc" />
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </main >
 );
 
 export default Landing;
