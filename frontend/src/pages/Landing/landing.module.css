@@ -30,15 +30,20 @@
   justify-content: center;
   align-items: center;
   padding: 16px;
-  position: relative;
 }
 
-.dti {
+.spacing_container{
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.dti_container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  position: absolute;
   bottom: 21px;
 }
 
@@ -80,6 +85,7 @@
   align-items: center;
   text-align: center;
   padding: 8px;
+  position: relative; 
 }
 
 @media (max-width: 400px) {

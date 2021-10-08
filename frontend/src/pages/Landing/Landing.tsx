@@ -15,19 +15,20 @@ const Landing = ({ students, admins }: LandingPropType) => (
         <div className={styles.left}>
           <img src={logo} className={styles.badge} alt="Carriage logo" />
           <span className={styles.title}>Carriage</span>
-          <div className={styles.dti}>
-            <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
-            <img src={dti_desc} className={styles.dti_desc} alt="DTI logo" />
-          </div>
         </div>
         <div className={styles.right}>
           <h1 className={styles.heading}>Login</h1>
-          <div className={styles.container}>
-            {students}
-            {admins}
+          <div className={styles.spacing_container}>
+            <div className={styles.container}>
+              {students}
+              {admins}
+            </div>
+            <div className={styles.dti_container}>
+              <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
+              <img src={dti_desc} className={styles.dti_desc} alt="DTI desc" />
+            </div>
           </div>
           <div className={styles.footer}>
-            <Footer />
           </div>
         </div>
       </div>
