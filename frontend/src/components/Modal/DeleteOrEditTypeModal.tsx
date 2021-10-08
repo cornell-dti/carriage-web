@@ -5,6 +5,7 @@ import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
+import format_date from '../../util/index';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -31,7 +32,7 @@ const DeleteOrEditTypeModal = ({
 
   const confirmCancel = () => {
     if (ride.recurring && single) {
-      const startDate = moment(ride.startTime).format('YYYY-MM-DD');
+      const startDate = format_date(ride.startTime);
       fetch(
         `/api/rides/${ride.id}/edits`,
         withDefaults({

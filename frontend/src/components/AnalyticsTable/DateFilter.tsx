@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
+import format_date from '../../util/index';
 
 type DateFilterProps = {
   initStartDate: string;
@@ -17,7 +18,7 @@ const DateFilter = ({
   const [startDate, setStartDate] = useState(initStartDate);
   const [endDate, setEndDate] = useState(initEndDate);
   const [error, setError] = useState('');
-  const today = moment().format('YYYY-MM-DD');
+  const today = format_date();
 
   return (
     <div className={styles.dateFilter}>
