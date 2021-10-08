@@ -37,6 +37,7 @@
   flex-direction: column; 
   justify-content: center; 
   align-items: center; 
+  flex: 1; 
 }
 
 .dti_container {
@@ -44,7 +45,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  bottom: 21px;
+  padding: 1rem; 
 }
 
 .dti_logo {
