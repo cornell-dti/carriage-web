@@ -8,7 +8,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
-import format_date from '../../util/index';
+import format_date from '../../util';
 
 const ExportPreview = () => {
   const { drivers } = useEmployees();
@@ -19,7 +19,7 @@ const ExportPreview = () => {
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
   >(null);
 
-  const today = moment(curDate).format('YYYY-MM-DD');
+  const today = format_date(curDate);
 
   const downloadCSV = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())

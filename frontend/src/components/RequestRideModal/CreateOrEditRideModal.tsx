@@ -178,7 +178,7 @@ const CreateOrEditRideModal = ({
           method: 'PUT',
           body: JSON.stringify({
             deleteOnly: false,
-            origDate: moment(ride.startTime).format('YYYY-MM-DD'),
+            origDate: format_date(ride.startTime),
             ...rideData,
           }),
         })

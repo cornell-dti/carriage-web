@@ -3,7 +3,7 @@ import React from 'react'
 
 
 
-let format_date = (date?: string, default_format?:string, format?:string) => {
+let format_date = (date?: string | Date, default_format?:string, format?:string) => {
   var fmt = (format? format: "YYYY-MM-DD")
   if (date == undefined){
     try{
