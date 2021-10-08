@@ -32,12 +32,12 @@
   padding: 16px;
 }
 
-.spacing_container{
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: center; 
-  flex: 1; 
+.spacing_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
 .dti_container {
@@ -45,7 +45,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 1rem; 
+  padding: 1rem;
 }
 
 .dti_logo {
@@ -86,7 +86,7 @@
   align-items: center;
   text-align: center;
   padding: 8px;
-  position: relative; 
+  position: relative;
 }
 
 @media (max-width: 400px) {

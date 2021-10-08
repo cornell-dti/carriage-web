@@ -31,7 +31,7 @@ const Landing = ({ students, admins }: LandingPropType) => (
         </div>
       </div>
     </div>
-  </main >
+  </main>
 );
 
 export default Landing;
