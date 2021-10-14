@@ -171,7 +171,11 @@ router.put('/:id', validateUser('Rider'), (req, res) => {
     params: { id },
     body,
   } = req;
-  db.update(res, Rider, { id }, body, tableName);
+  if (id === res.locals.user.id) {
+    db.update(res, Rider, { id }, body, tableName);
+  } else {
+    res.status(400).send({ err: 'User ID does not match request ID' });
+  }
 });
 
 // Add a location to favorites

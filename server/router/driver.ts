@@ -159,7 +159,11 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
     params: { id },
     body,
   } = req;
-  db.update(res, Driver, { id }, body, tableName);
+  if (id === res.locals.user.id) {
+    db.update(res, Driver, { id }, body, tableName);
+  } else {
+    res.status(400).send({ err: 'User ID does not match request ID' });
+  }
 });
 
 // Delete an existing driver
