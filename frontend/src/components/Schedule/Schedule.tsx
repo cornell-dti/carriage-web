@@ -74,7 +74,7 @@ const Schedule = () => {
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        if (data && componentMounted.current) {
+        if (data && !componentMounted.current) {
           setEvents(
             data.map((ride: Ride) => ({
               id: ride.id,
@@ -275,6 +275,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             max={viewMore ? moreTime[1] : lessTime[1]}
             date={scheduleDay}
             onNavigate={() => {}}
+            scrollToTime={moreTime[1]}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
@@ -282,7 +283,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={cn(styles.right, { [styles.long]: viewMore })}>
+        {/* <div className={cn(styles.right, { [styles.long]: viewMore })}>
           <div>
             <button
               className={styles.btn}
@@ -308,7 +309,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
               />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <button className={styles.view_state} onClick={handleChangeViewState}>
         view {viewMore ? 'less' : 'more'}
