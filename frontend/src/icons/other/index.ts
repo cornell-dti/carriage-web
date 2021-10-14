@@ -12,3 +12,5 @@ export { default as googleLogin } from './google-login.svg';
 export { default as detailTrash } from './detailTrash.svg';
 export { default as x } from './x.svg';
 export { default as trashbig } from './trashbig.svg';
+export { default as dti_logo } from './dti_logo.svg';
+export { default as dti_desc } from './dti_desc.svg';
