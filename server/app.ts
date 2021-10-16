@@ -15,6 +15,7 @@ import auth from './router/auth';
 import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
 import notification from './router/notification';
+import initDynamoose from './util/dynamoose';
 
 const port = Number(process.env.PORT) || 3001;
 
@@ -26,7 +27,7 @@ const port = Number(process.env.PORT) || 3001;
 const useHostname = Boolean(process.env.USE_HOSTNAME);
 const hostname = (useHostname && process.env.HOSTNAME) || '';
 
-dynamoose.aws.sdk.config.update(config);
+initDynamoose();
 
 const app = express();
 app.use(cors());
