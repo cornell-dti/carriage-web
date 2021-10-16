@@ -58,7 +58,9 @@ app.get('*', (req, res) => {
 initSchedule();
 
 if (useHostname) {
-  app.listen(port, hostname, () => console.log('Listening at port', port));
+  app.listen(port, hostname, () =>
+    console.log(`Listening at http://${hostname}:${port}`)
+  );
 } else {
-  app.listen(port, () => console.log('Listening at port', port));
+  app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 }
