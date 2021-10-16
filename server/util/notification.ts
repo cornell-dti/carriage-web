@@ -216,7 +216,7 @@ export const notify = (
         } else if (receiver === UserType.RIDER) {
           userId = riderId;
         }
-        const title = 'Test Title';
+        const title = 'Carriage'; // placeholder
         const body = getMessage(sender, receiver, notifEvent, updatedRide);
         return sendToUsers(title, body, receiver, userId);
       })
