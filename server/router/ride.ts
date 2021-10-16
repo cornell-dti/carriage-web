@@ -345,7 +345,6 @@ router.delete('/:id', validateUser('User'), (req, res) => {
       db.update(res, Ride, { id }, operation, tableName, (doc) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
-        const userId = res.locals.user.id;
         notify(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
