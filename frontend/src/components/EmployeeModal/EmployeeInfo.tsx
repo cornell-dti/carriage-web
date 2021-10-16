@@ -5,32 +5,37 @@ import styles from './employeemodal.module.css';
 import { Input, Label } from '../FormElements/FormElements';
 
 type EmployeeInfoProps = {
-  name?: string;
+  firstName?: string;
+  lastName?: string;
   netId?: string;
   email?: string;
   phone?: string;
 };
 
-const EmployeeInfo = ({ name, netId, email, phone }: EmployeeInfoProps) => {
+const EmployeeInfo = ({
+  firstName,
+  lastName,
+  netId,
+  email,
+  phone,
+}: EmployeeInfoProps) => {
   const { register, formState } = useFormContext();
   const { errors } = formState;
   return (
     <div className={styles.inputContainer}>
       <div className={styles.col1}>
-        <Label htmlFor={'name'}>Name</Label>
+        <Label htmlFor={'firstName'}>First Name</Label>
         <Input
-          id="name"
-          name="name"
+          id="firstName"
+          name="firstName"
           type="text"
-          defaultValue={name}
+          defaultValue={firstName}
           className={cn(styles.input)}
           ref={register({ required: true })}
         />
-        {errors.name && (
+        {errors.firstName && (
           <p className={styles.error}>Please enter a valid name</p>
         )}
-      </div>
-      <div className={styles.col2}>
         <Label htmlFor={'netid'}>NetID</Label>
         <Input
           name="netid"
@@ -42,6 +47,20 @@ const EmployeeInfo = ({ name, netId, email, phone }: EmployeeInfoProps) => {
         />
         {errors.netid && (
           <p className={styles.error}>Please enter a valid NetID</p>
+        )}
+      </div>
+      <div className={styles.col2}>
+        <Label htmlFor={'lastName'}>Last Name</Label>
+        <Input
+          id="lastName"
+          name="lastName"
+          type="text"
+          defaultValue={lastName}
+          className={cn(styles.input)}
+          ref={register({ required: true })}
+        />
+        {errors.lastName && (
+          <p className={styles.error}>Please enter a valid name</p>
         )}
       </div>
       <div className={styles.col1}>

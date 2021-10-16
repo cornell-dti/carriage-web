@@ -98,7 +98,7 @@ const UserDetail = ({
         {photoLink && photoLink !== '' ? (
           <img
             className={styles.profilePic}
-            src={`http://${photoLink}`}
+            src={`https://${photoLink}`}
             alt="profile"
           />
         ) : null}
@@ -119,7 +119,8 @@ const UserDetail = ({
               <EmployeeModal
                 existingEmployee={{
                   id: employee.id,
-                  name: `${employee.firstName} ${employee.lastName}`,
+                  firstName: employee.firstName,
+                  lastName: employee.lastName,
                   netId: employee.netId,
                   email: `${employee.netId}@cornell.edu`,
                   phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
@@ -132,14 +133,14 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
-            {!isRider && (
+            {/* {!isRider && (
               <input
                 type="image"
                 className={styles.editIcon}
                 alt="trash"
                 src={detailTrash}
               />
-            )}
+            )} */}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

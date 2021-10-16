@@ -74,7 +74,7 @@ const Schedule = () => {
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {
-        if (data && componentMounted.current) {
+        if (data && !componentMounted.current) {
           setEvents(
             data.map((ride: Ride) => ({
               id: ride.id,
