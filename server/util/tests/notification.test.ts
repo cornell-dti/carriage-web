@@ -1,13 +1,11 @@
 import { RideType, Status, Type } from '../../models/ride';
 import { Change } from '../types';
-import { getNotificationEvent, notify } from '../notification';
-import { getMessage } from '../notificationMsg';
 import { UserType } from '../../models/subscription';
-import { getReceivers } from '../notificationReceivers';
 import { Tag } from '../../models/location';
 import { DriverType } from '../../models/driver';
 import { RiderType } from '../../models/rider';
 import initDynamoose from '../dynamoose';
+import { notify } from '../notification';
 
 initDynamoose();
 
@@ -77,34 +75,10 @@ const scheduledRide: RideType = {
   driver: driver1,
 };
 
-const generateNotification = (
-  sender: UserType,
-  oldRide: RideType,
-  body: Partial<RideType>,
-  change?: Change
-) => {
-  const notifEvent = change || getNotificationEvent(body);
-  const hasDriver = Boolean(body.driver || oldRide.driver);
-  const receivers = getReceivers(sender, notifEvent, hasDriver);
-
-  return receivers.map((receiver) => ({
-    rideId: oldRide.id,
-    event: notifEvent,
-    message: getMessage(sender, receiver, notifEvent, oldRide),
-    sender,
-    receiver,
-  }));
-};
-
 // Surpress warnings
 // process.on('unhandledRejection', () => {});
 
 // Test what notifications are sent
-// console.log(
-//   generateNotification(UserType.ADMIN, scheduledRide, {
-//     status: Status.ARRIVED,
-//   })
-// );
 notify(
   unscheduledRide,
   { endTime: '2021-09-28T15:00:00.000Z' },
