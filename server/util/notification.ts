@@ -105,8 +105,6 @@ const sendMsg = (sub: SubscriptionType, title: string, body: string) => {
 
   return new Promise((resolve, reject) => {
     sns.publish(snsParams, (err, data) => {
-      console.log(err);
-      console.log(data);
       err ? reject(err) : resolve(data); // TODO if error remove? which errors?
     });
   });

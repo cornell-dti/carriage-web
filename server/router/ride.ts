@@ -7,7 +7,7 @@ import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
 import { Ride, Status, RideLocation, Type, RideType } from '../models/ride';
 import { Tag } from '../models/location';
-import { validateUser, daysUntilWeekday } from '../util';
+import { validateUser, daysUntilWeekday, getRideLocation } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { notify } from '../util/notification';
@@ -153,10 +153,12 @@ router.post('/', validateUser('User'), (req, res) => {
       edits: recurring ? [] : undefined,
       deleted: recurring ? [] : undefined,
     });
-    db.create(res, ride, (doc) => {
-      const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+    db.create(res, ride, async (doc) => {
+      const ride = doc.toJSON() as RideType;
       const { userType } = res.locals.user;
-
+      ride.startLocation = await getRideLocation(ride.startLocation);
+      ride.endLocation = await getRideLocation(ride.endLocation);
+      console.log(ride);
       // send ride even if notification failed since it was actually updated
       notify(ride, body, userType, Change.CREATED)
         .then(() => res.send(ride))
@@ -194,10 +196,12 @@ router.put('/:id', validateUser('User'), (req, res) => {
       tag: Tag.CUSTOM,
     };
   }
-  db.update(res, Ride, { id }, body, tableName, (doc) => {
+  db.update(res, Ride, { id }, body, tableName, async (doc) => {
     const ride = JSON.parse(JSON.stringify(doc.toJSON()));
     const { userType } = res.locals.user;
-
+    ride.startLocation = await getRideLocation(ride.startLocation);
+    ride.endLocation = await getRideLocation(ride.endLocation);
+    console.log(ride);
     // send ride even if notification failed since it was actually updated
     notify(ride, body, userType)
       .then(() => res.send(ride))
