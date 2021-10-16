@@ -158,7 +158,6 @@ router.post('/', validateUser('User'), (req, res) => {
       const { userType } = res.locals.user;
       ride.startLocation = await getRideLocation(ride.startLocation);
       ride.endLocation = await getRideLocation(ride.endLocation);
-      console.log(ride);
       // send ride even if notification failed since it was actually updated
       notify(ride, body, userType, Change.CREATED)
         .then(() => res.send(ride))
@@ -201,7 +200,6 @@ router.put('/:id', validateUser('User'), (req, res) => {
     const { userType } = res.locals.user;
     ride.startLocation = await getRideLocation(ride.startLocation);
     ride.endLocation = await getRideLocation(ride.endLocation);
-    console.log(ride);
     // send ride even if notification failed since it was actually updated
     notify(ride, body, userType)
       .then(() => res.send(ride))
