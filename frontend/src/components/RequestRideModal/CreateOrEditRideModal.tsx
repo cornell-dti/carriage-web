@@ -9,7 +9,7 @@ import { ObjectType, Ride } from '../../types/index';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
-import format_date from '../../util/index'
+import format_date from '../../util/index';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;

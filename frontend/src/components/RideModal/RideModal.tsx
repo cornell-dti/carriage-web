@@ -6,7 +6,7 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
-import format_date from '../../util/index'
+import format_date from '../../util/index';
 
 type RideModalProps = {
   open?: boolean;

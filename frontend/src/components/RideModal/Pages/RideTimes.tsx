@@ -6,7 +6,7 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
-import format_date from '../../../util/index'
+import format_date from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
