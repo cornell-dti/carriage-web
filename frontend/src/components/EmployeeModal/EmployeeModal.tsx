@@ -142,6 +142,18 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     refresh: () => Promise<void>,
     table: string
   ) => {
+   fetch(
+      endpoint,
+      withDefaults({
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(employeeData),
+      })
+    ).then(() => {
+      refresh();
+      setToast(true);
+    });
+
     const updatedEmployee = await fetch(
       `${endpoint}/${existingEmployee!.id}`,
       withDefaults({
@@ -157,7 +169,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const onSubmit = async (data: ObjectType) => {
     const { firstName, lastName, email, phoneNumber, startDate, availability } =
       data;
-
+    console.log(existingEmployee)
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
@@ -246,7 +258,15 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       ) : (
         <Button onClick={openModal}>+ Add an employee</Button>
       )}
-      {showingToast ? <Toast message="The employee has been added." /> : null}
+      
+      {showingToast ? 
+          (existingEmployee ? 
+              <Toast message="The employee has been edited." /> : 
+              <Toast message="The employee has been added." />  
+          ) : null}      
+ 
+
+
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}
