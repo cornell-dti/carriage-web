@@ -232,19 +232,10 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     setCurrentRide(event.ride);
   };
 
-  const disableHr = (start: boolean) => {
-    if (start) {
-      return viewMore
-        ? moreTime[0].getHours() === 0
-        : lessTime[0].getHours() === 0;
-    }
-    return viewMore
-      ? moreTime[0].getHours() === 16
-      : lessTime[0].getHours() === 22;
-  };
-
   const handleChangeViewState = () => setViewMore(!viewMore);
 
+  moreTime[0].setHours(7);
+  moreTime[1].setHours(23);
   return (
     <>
       {currentRide && (
@@ -271,10 +262,11 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             events={filterEvents(events)}
             defaultView="day"
             onSelectEvent={onSelectEvent}
-            min={viewMore ? moreTime[0] : lessTime[0]}
-            max={viewMore ? moreTime[1] : lessTime[1]}
+            min={moreTime[0]}
+            max={moreTime[1]}
             date={scheduleDay}
             onNavigate={() => {}}
+            scrollToTime={moreTime[1]}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
@@ -282,7 +274,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             slotPropGetter={slotStyle}
           />
         </div>
-        <div className={cn(styles.right, { [styles.long]: viewMore })}>
+        {/* <div className={cn(styles.right, { [styles.long]: viewMore })}>
           <div>
             <button
               className={styles.btn}
@@ -308,7 +300,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
               />
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <button className={styles.view_state} onClick={handleChangeViewState}>
         view {viewMore ? 'less' : 'more'}
