@@ -187,15 +187,13 @@ const EmployeeDetail = () => {
             alt="availability"
             text={avail === '' ? 'N/A' : avail}
           />
-          {employee.startDate ? (
+          {employee.startDate &&
             <UserContactInfo
               icon={calender_dark}
               alt="join date"
               text={employee.startDate}
             />
-          ) : (
-            <div></div>
-          )}
+          }
         </UserDetail>
         <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
         <PastRides isStudent={false} rides={rides} />
