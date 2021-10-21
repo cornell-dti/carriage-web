@@ -232,17 +232,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     setCurrentRide(event.ride);
   };
 
-  // const disableHr = (start: boolean) => {
-  //   if (start) {
-  //     return viewMore
-  //       ? moreTime[0].getHours() === 0
-  //       : lessTime[0].getHours() === 0;
-  //   }
-  //   return viewMore
-  //     ? moreTime[0].getHours() === 16
-  //     : lessTime[0].getHours() === 22;
-  // };
-
   const handleChangeViewState = () => setViewMore(!viewMore);
 
   moreTime[0].setHours(7);
