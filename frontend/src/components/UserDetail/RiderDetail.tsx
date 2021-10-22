@@ -7,12 +7,14 @@ import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride, Rider } from '../../types';
 import styles from './userDetail.module.css';
+import { useRiders } from '../../context/RidersContext';
 
 const RiderDetail = () => {
   const location = useLocation<Rider>();
   const { withDefaults } = useReq();
   const { id: riderId } = useParams<{ id: string }>();
-  const [rider, setRider] = useState(location.state);
+  const { riders } = useRiders();
+  const [rider, setRider] = useState(riders.find(rider => rider.id === riderId));
   const [rides, setRides] = useState<Ride[]>([]);
   const netid = rider?.email.split('@')[0];
   const compRides = (a: Ride, b: Ride) => {
@@ -36,14 +38,15 @@ const RiderDetail = () => {
         .then((res) => res.json())
         .then(({ data }) => setRides(data.sort(compRides)));
     }
-  }, [rider, riderId, withDefaults]);
+    setRider(riders.find(rider => rider.id === riderId))
+  }, [rider, riders, riderId, withDefaults]);
 
   return rider ? (
     <main id="main" className={styles.detailContainer}>
       <UserDetail
         firstName={rider.firstName}
         lastName={rider.lastName}
-        netId={netid}
+        netId={netid!}
         photoLink={rider.photoLink}
         rider={rider}
       >
