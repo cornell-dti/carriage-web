@@ -47,7 +47,7 @@ type UserDetailProps = {
   firstName: string;
   lastName: string;
   netId: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
   employee?: EmployeeDetailProps;
   role?: string;
   photoLink?: string;
