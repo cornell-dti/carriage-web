@@ -14,7 +14,9 @@ const RiderDetail = () => {
   const { withDefaults } = useReq();
   const { id: riderId } = useParams<{ id: string }>();
   const { riders } = useRiders();
-  const [rider, setRider] = useState(riders.find(rider => rider.id === riderId));
+  const [rider, setRider] = useState(
+    riders.find((rider) => rider.id === riderId)
+  );
   const [rides, setRides] = useState<Ride[]>([]);
   const netid = rider?.email.split('@')[0];
   const compRides = (a: Ride, b: Ride) => {
@@ -38,7 +40,7 @@ const RiderDetail = () => {
         .then((res) => res.json())
         .then(({ data }) => setRides(data.sort(compRides)));
     }
-    setRider(riders.find(rider => rider.id === riderId))
+    setRider(riders.find((rider) => rider.id === riderId));
   }, [rider, riders, riderId, withDefaults]);
 
   return rider ? (

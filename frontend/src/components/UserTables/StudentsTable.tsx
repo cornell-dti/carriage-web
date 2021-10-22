@@ -94,7 +94,7 @@ const StudentsTable = () => {
         const usageData = getUsageData(id);
         const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
         const location = {
-          pathname: `/riders/${r.id}`
+          pathname: `/riders/${r.id}`,
         };
         const data = [
           nameNetId,
