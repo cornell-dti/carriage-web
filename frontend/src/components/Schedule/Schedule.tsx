@@ -18,7 +18,7 @@ const colorMap = new Map<string, string[]>([
   ['blue', ['0084F4', '66B5F8']],
   ['yellow', ['FFCF5C', 'FFE29D']],
   ['green', ['00C48C', '7DDFC3']],
-  ['black', ['1A051D', 'FBE4E8']]
+  ['black', ['1A051D', 'FBE4E8']],
 ]);
 const colorIds = ['red', 'blue', 'yellow', 'green', 'black'];
 
@@ -53,11 +53,11 @@ const Schedule = () => {
 
   const [lessTime, setLessTime] = useState([
     defaultStart,
-    new Date(defaultStart.getTime() + HR2 - 1)
+    new Date(defaultStart.getTime() + HR2 - 1),
   ]);
   const [moreTime, setMoreTime] = useState([
     defaultStart,
-    new Date(defaultStart.getTime() + HR8 - 1)
+    new Date(defaultStart.getTime() + HR8 - 1),
   ]);
 
   const [events, setEvents] = useState<CalEvent[]>([]);
@@ -84,7 +84,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
               start: new Date(ride.startTime.toString()),
               end: new Date(ride.endTime.toString()),
               resourceId: ride.driver!.id,
-              ride
+              ride,
             }))
           );
         }
@@ -102,7 +102,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     setCalDrivers(
       drivers.map((driver: any) => ({
         resourceId: driver.id,
-        resourceTitle: driver.firstName.toUpperCase()
+        resourceTitle: driver.firstName.toUpperCase(),
       }))
     );
   }, [drivers]);
@@ -122,13 +122,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       if (moreTime[0].getHours() > 0) {
         setMoreTime([
           new Date(moreTime[0].getTime() - HR1),
-          new Date(moreTime[1].getTime() - HR1)
+          new Date(moreTime[1].getTime() - HR1),
         ]);
       }
     } else if (lessTime[0].getHours() > 0) {
       setLessTime([
         new Date(lessTime[0].getTime() - HR2),
-        new Date(lessTime[1].getTime() - HR2)
+        new Date(lessTime[1].getTime() - HR2),
       ]);
     }
   };
@@ -138,13 +138,13 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       if (moreTime[0].getHours() < 16) {
         setMoreTime([
           new Date(moreTime[0].getTime() + HR1),
-          new Date(moreTime[1].getTime() + HR1)
+          new Date(moreTime[1].getTime() + HR1),
         ]);
       }
     } else if (lessTime[0].getHours() < 22) {
       setLessTime([
         new Date(lessTime[0].getTime() + HR2),
-        new Date(lessTime[1].getTime() + HR2)
+        new Date(lessTime[1].getTime() + HR2),
       ]);
     }
   };
@@ -157,16 +157,16 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         borderLeft: `0.2rem solid #${color[0]}`,
         backgroundColor: `#${color[1]}`,
         borderRadius: 0,
-        color: 'black'
-      }
+        color: 'black',
+      },
     };
   };
 
   const slotStyle = (d: Date) => ({
     style: {
       borderTop:
-        d.getMinutes() !== 0 ? 'none' : '0.05rem solid rgba(0, 0, 0, 15%)'
-    }
+        d.getMinutes() !== 0 ? 'none' : '0.05rem solid rgba(0, 0, 0, 15%)',
+    },
   });
 
   const filterEvents = (allEvents: CalEvent[]) => {
@@ -193,7 +193,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         `api/rides/${rideId}/edits`,
         withDefaults({
           method: 'PUT',
-          body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay })
+          body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
         })
       )
         .then(() => getRides())
@@ -211,7 +211,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       withDefaults({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driver: updatedDriver })
+        body: JSON.stringify({ driver: updatedDriver }),
       })
     );
   };

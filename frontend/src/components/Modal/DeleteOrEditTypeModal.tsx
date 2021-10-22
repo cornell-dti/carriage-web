@@ -20,7 +20,7 @@ const DeleteOrEditTypeModal = ({
   ride,
   onClose,
   deleting,
-  onNext
+  onNext,
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
@@ -39,8 +39,8 @@ const DeleteOrEditTypeModal = ({
           method: 'PUT',
           body: JSON.stringify({
             deleteOnly: true,
-            origDate: startDate
-          })
+            origDate: startDate,
+          }),
         })
       ).then(() => closeModal());
     } else {

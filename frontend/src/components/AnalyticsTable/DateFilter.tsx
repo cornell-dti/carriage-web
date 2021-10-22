@@ -13,7 +13,7 @@ type DateFilterProps = {
 const DateFilter = ({
   initStartDate,
   initEndDate,
-  onSubmit
+  onSubmit,
 }: DateFilterProps) => {
   const [startDate, setStartDate] = useState(initStartDate);
   const [endDate, setEndDate] = useState(initEndDate);
