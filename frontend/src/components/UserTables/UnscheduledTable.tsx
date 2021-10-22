@@ -5,7 +5,7 @@ import RidesTable from './RidesTable';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import { useEmployees } from '../../context/EmployeesContext';
-import format_date from '../../util/index';
+import { format_date } from '../../util/index';
 
 const Table = () => {
   const { curDate } = useDate();

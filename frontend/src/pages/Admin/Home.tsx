@@ -10,7 +10,7 @@ import styles from './page.module.css';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
-import format_date from '../../util/index';
+import { format_date } from '../../util/index';
 
 const Home = () => {
   const { curDate } = useDate();

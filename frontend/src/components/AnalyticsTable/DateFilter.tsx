@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
-import format_date from '../../util/index';
+import { format_date } from '../../util/index';
 
 type DateFilterProps = {
   initStartDate: string;
@@ -13,7 +13,7 @@ type DateFilterProps = {
 const DateFilter = ({
   initStartDate,
   initEndDate,
-  onSubmit,
+  onSubmit
 }: DateFilterProps) => {
   const [startDate, setStartDate] = useState(initStartDate);
   const [endDate, setEndDate] = useState(initEndDate);

@@ -8,7 +8,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
-import format_date from '../../util';
+import { format_date } from '../../util';
 
 const ExportPreview = () => {
   const { drivers } = useEmployees();

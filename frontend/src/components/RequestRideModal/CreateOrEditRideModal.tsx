@@ -9,7 +9,7 @@ import { ObjectType, Ride } from '../../types/index';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
-import format_date from '../../util/index';
+import { format_date } from '../../util/index';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -24,7 +24,7 @@ const CreateOrEditRideModal = ({
   modalType,
   onSubmit = () => {},
   onClose = () => {},
-  ride,
+  ride
 }: CreateOrEditRideModalProps) => {
   const defaultStartDate = () => {
     if (ride) {
@@ -47,7 +47,7 @@ const CreateOrEditRideModal = ({
     endDate: ride?.endDate ?? '',
     pickupTime: ride ? moment(ride.startTime).format('HH:mm') : '',
     dropoffTime: ride ? moment(ride.endTime).format('HH:mm') : '',
-    recurring: ride?.recurring ?? false,
+    recurring: ride?.recurring ?? false
   };
 
   const methods = useForm({ defaultValues });
@@ -83,7 +83,7 @@ const CreateOrEditRideModal = ({
       pickupZip,
       customDropoff,
       dropoffCity,
-      dropoffZip,
+      dropoffZip
     } = formData;
     const startTime = moment(`${startDate} ${pickupTime}`).toISOString();
     const endTime = moment(`${startDate} ${dropoffTime}`).toISOString();
@@ -139,7 +139,7 @@ const CreateOrEditRideModal = ({
         endTime,
         recurring,
         recurringDays,
-        endDate,
+        endDate
       };
     } else {
       // Not repeating
@@ -148,7 +148,7 @@ const CreateOrEditRideModal = ({
         endLocation: endLoc,
         rider: id,
         startTime,
-        endTime,
+        endTime
       };
     }
 
@@ -166,7 +166,7 @@ const CreateOrEditRideModal = ({
         '/api/rides',
         withDefaults({
           method: 'POST',
-          body: JSON.stringify(rideData),
+          body: JSON.stringify(rideData)
         })
       ).then(afterSubmit);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
@@ -179,8 +179,8 @@ const CreateOrEditRideModal = ({
           body: JSON.stringify({
             deleteOnly: false,
             origDate: format_date(ride.startTime),
-            ...rideData,
-          }),
+            ...rideData
+          })
         })
       ).then(afterSubmit);
     } else {
@@ -195,7 +195,7 @@ const CreateOrEditRideModal = ({
         `/api/rides/${ride.id}`,
         withDefaults({
           method: 'PUT',
-          body: JSON.stringify(rideData),
+          body: JSON.stringify(rideData)
         })
       ).then(afterSubmit);
     }

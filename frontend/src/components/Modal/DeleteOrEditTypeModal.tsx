@@ -5,7 +5,7 @@ import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
-import format_date from '../../util/index';
+import { format_date } from '../../util/index';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -20,7 +20,7 @@ const DeleteOrEditTypeModal = ({
   ride,
   onClose,
   deleting,
-  onNext,
+  onNext
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
@@ -39,8 +39,8 @@ const DeleteOrEditTypeModal = ({
           method: 'PUT',
           body: JSON.stringify({
             deleteOnly: true,
-            origDate: startDate,
-          }),
+            origDate: startDate
+          })
         })
       ).then(() => closeModal());
     } else {

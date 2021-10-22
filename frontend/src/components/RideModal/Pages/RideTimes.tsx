@@ -6,22 +6,22 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
-import format_date from '../../../util/index';
+import { format_date } from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
 const RideTimesPage = ({
   isEditing = false,
   formData,
-  onSubmit,
+  onSubmit
 }: RideTimesProps) => {
   const { curDate } = useDate();
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
       date: formData?.date ?? format_date(curDate),
       pickupTime: formData?.pickupTime ?? '',
-      dropoffTime: formData?.dropoffTime ?? '',
-    },
+      dropoffTime: formData?.dropoffTime ?? ''
+    }
   });
   const { errors } = formState;
 
@@ -40,7 +40,7 @@ const RideTimesPage = ({
                 const fmtDate = format_date(date);
                 const fmtCurr = format_date(curDate);
                 return fmtDate >= fmtCurr;
-              },
+              }
             })}
           />
           {errors.date?.type === 'required' && (
@@ -65,7 +65,7 @@ const RideTimesPage = ({
                   return now.isBefore(moment(`${date} ${pickupTime}`));
                 }
                 return true;
-              },
+              }
             })}
           />
           {errors.pickupTime?.type === 'required' && (
@@ -86,7 +86,7 @@ const RideTimesPage = ({
               validate: (dropoffTime) => {
                 const pickupTime = getValues('pickupTime');
                 return pickupTime < dropoffTime;
-              },
+              }
             })}
           />
           {errors.dropoffTime?.type === 'required' && (
