@@ -7,6 +7,7 @@ import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
 import { validateUser } from '../util';
 import { Ride, Status } from '../models/ride';
+import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Drivers';
@@ -159,7 +160,7 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
     params: { id },
     body,
   } = req;
-  if (id === res.locals.user.id) {
+  if (res.locals.userType == UserType.ADMIN || id === res.locals.user.id) {
     db.update(res, Driver, { id }, body, tableName);
   } else {
     res.status(400).send({ err: 'User ID does not match request ID' });

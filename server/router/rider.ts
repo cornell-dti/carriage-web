@@ -7,6 +7,7 @@ import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { Ride, RideType, Type, Status } from '../models/ride';
+import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Riders';
@@ -171,7 +172,7 @@ router.put('/:id', validateUser('Rider'), (req, res) => {
     params: { id },
     body,
   } = req;
-  if (id === res.locals.user.id) {
+  if (res.locals.userType == UserType.ADMIN || id === res.locals.user.id) {
     db.update(res, Rider, { id }, body, tableName);
   } else {
     res.status(400).send({ err: 'User ID does not match request ID' });
