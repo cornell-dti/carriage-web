@@ -50,7 +50,12 @@ const addSub = (sub: SubscriptionType) =>
     });
   });
 
-const sendMsg = (sub: SubscriptionType, title: string, body: string) => {
+const sendMsg = (
+  sub: SubscriptionType,
+  title: string,
+  body: string,
+  notifEvent: NotificationEvent
+) => {
   if (sub.platform === PlatformType.WEB) {
     const webSub = {
       endpoint: sub.endpoint!,
@@ -83,6 +88,9 @@ const sendMsg = (sub: SubscriptionType, title: string, body: string) => {
   const payload = JSON.stringify({
     default: 'Default message.',
     GCM: JSON.stringify({
+      data: {
+        notifEvent,
+      },
       notification: {
         title,
         body,
@@ -146,6 +154,7 @@ export const deleteAll = () =>
 export const sendToUsers = (
   title: string,
   body: string,
+  notifEvent: NotificationEvent,
   receiver?: UserType,
   userId?: string
 ) =>
@@ -163,7 +172,7 @@ export const sendToUsers = (
       } else {
         const promises = data.map((doc) => {
           const sub = JSON.parse(JSON.stringify(doc.toJSON()));
-          return sendMsg(sub, title, body);
+          return sendMsg(sub, title, body, notifEvent);
         });
         Promise.allSettled(promises).then((results) => {
           const status = results.map((el) => el.status);
@@ -218,7 +227,7 @@ export const notify = (
         }
         const title = 'Carriage'; // placeholder
         const body = getMessage(sender, receiver, notifEvent, updatedRide);
-        return sendToUsers(title, body, receiver, userId);
+        return sendToUsers(title, body, notifEvent, receiver, userId);
       })
     )
       .then(() => resolve(updatedRide))
