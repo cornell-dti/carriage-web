@@ -160,7 +160,10 @@ router.put('/:id', validateUser('Driver'), (req, res) => {
     params: { id },
     body,
   } = req;
-  if (res.locals.userType == UserType.ADMIN || id === res.locals.user.id) {
+  if (
+    res.locals.user.userType === UserType.ADMIN ||
+    id === res.locals.user.id
+  ) {
     db.update(res, Driver, { id }, body, tableName);
   } else {
     res.status(400).send({ err: 'User ID does not match request ID' });
