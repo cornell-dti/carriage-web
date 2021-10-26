@@ -4,7 +4,7 @@ import { ValueType } from 'dynamoose/dist/Schema';
 import { Location, Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
-import { formatAddress, isAddress } from '../util';
+import { formatAddress, getRideLocation, isAddress } from '../util';
 
 export enum Type {
   ACTIVE = 'active',
@@ -51,12 +51,7 @@ export type RideType = {
 const locationSchema = {
   type: [String, Object],
   required: true,
-  get: (value: ValueType) => {
-    if (typeof value === 'string') {
-      return Location.get(value) as any;
-    }
-    return value;
-  },
+  get: getRideLocation,
   schema: {
     name: String,
     address: {
