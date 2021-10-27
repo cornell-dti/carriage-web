@@ -94,6 +94,9 @@
 }
 
 .content {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
   width: calc(100% - 6rem);
   height: 100%;
   min-height: 100vh;
