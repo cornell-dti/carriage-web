@@ -216,11 +216,9 @@ router.put('/:id', validateUser('User'), (req, res) => {
           .catch(() => res.send(ride));
       });
     } else {
-      res
-        .status(400)
-        .send({
-          err: 'User ID does not match request ID and user is not an admin.',
-        });
+      res.status(400).send({
+        err: 'User ID does not match request ID and user is not an admin.',
+      });
     }
   });
 });
