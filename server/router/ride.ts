@@ -7,10 +7,10 @@ import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
 import { Ride, Status, RideLocation, Type, RideType } from '../models/ride';
 import { Tag } from '../models/location';
-import { validateUser, daysUntilWeekday } from '../util';
+import { validateUser, daysUntilWeekday, getRideLocation } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
-import { notifyEdit } from '../util/notification';
+import { notify } from '../util/notification';
 import { Change } from '../util/types';
 
 const router = express.Router();
@@ -153,7 +153,16 @@ router.post('/', validateUser('User'), (req, res) => {
       edits: recurring ? [] : undefined,
       deleted: recurring ? [] : undefined,
     });
-    db.create(res, ride);
+    db.create(res, ride, async (doc) => {
+      const ride = doc.toJSON() as RideType;
+      const { userType } = res.locals.user;
+      ride.startLocation = await getRideLocation(ride.startLocation);
+      ride.endLocation = await getRideLocation(ride.endLocation);
+      // send ride even if notification failed since it was actually updated
+      notify(ride, body, userType, Change.CREATED)
+        .then(() => res.send(ride))
+        .catch(() => res.send(ride));
+    });
   }
 });
 
@@ -186,13 +195,13 @@ router.put('/:id', validateUser('User'), (req, res) => {
       tag: Tag.CUSTOM,
     };
   }
-  db.update(res, Ride, { id }, body, tableName, (doc) => {
+  db.update(res, Ride, { id }, body, tableName, async (doc) => {
     const ride = JSON.parse(JSON.stringify(doc.toJSON()));
     const { userType } = res.locals.user;
-    const userId = res.locals.user.id;
-
+    ride.startLocation = await getRideLocation(ride.startLocation);
+    ride.endLocation = await getRideLocation(ride.endLocation);
     // send ride even if notification failed since it was actually updated
-    notifyEdit(ride, body, userType, userId)
+    notify(ride, body, userType)
       .then(() => res.send(ride))
       .catch(() => res.send(ride));
   });
@@ -232,7 +241,6 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 
     const handleEdit = (change: any) => (ride: RideType) => {
       const { userType } = res.locals.user;
-      const userId = res.locals.user.id;
 
       // if deleteOnly = false, create a replace edit with the new fields
       if (!deleteOnly) {
@@ -275,13 +283,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         // create replace edit and add replaceId to edits field
         db.create(res, replaceRide, (editRide) => {
           db.update(res, Ride, { id }, addEditOperation, tableName, () => {
-            notifyEdit(
-              editRide,
-              change,
-              userType,
-              userId,
-              Change.REPEATING_EDITED
-            )
+            notify(editRide, change, userType, Change.REPEATING_EDITED)
               .then(() => res.send(editRide))
               .catch(() => res.send(editRide));
             // res.send(editRide);
@@ -345,8 +347,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
       db.update(res, Ride, { id }, operation, tableName, (doc) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
-        const userId = res.locals.user.id;
-        notifyEdit(deletedRide, operation, userType, userId)
+        notify(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
       });

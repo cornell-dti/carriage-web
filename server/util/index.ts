@@ -2,6 +2,9 @@ import { parseAddress } from 'addresser';
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { UserType, JWTPayload } from './types';
+import moment from 'moment-timezone';
+import { ValueType } from 'dynamoose/dist/Schema';
+import { Location } from '../models/location';
 
 export function createKeys(property: string, values: string[]) {
   return values.map((v) => ({ [property]: v }));
@@ -109,4 +112,17 @@ export const daysUntilWeekday = (
   }
   const days = endWeekday - startWeekday;
   return days || 7;
+};
+
+export const timeToMDY = (time: string) =>
+  moment.tz(time, 'America/New_York').format('l');
+
+export const timeTo12Hr = (time: string) =>
+  moment.tz(time, 'America/New_York').format('LT');
+
+export const getRideLocation = (value: ValueType) => {
+  if (typeof value === 'string') {
+    return Location.get(value) as any;
+  }
+  return value;
 };
