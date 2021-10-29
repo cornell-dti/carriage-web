@@ -10,7 +10,6 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 
 const RiderDetail = () => {
-  const location = useLocation<Rider>();
   const { withDefaults } = useReq();
   const { id: riderId } = useParams<{ id: string }>();
   const { riders } = useRiders();
