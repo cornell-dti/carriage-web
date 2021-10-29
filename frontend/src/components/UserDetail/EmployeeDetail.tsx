@@ -14,6 +14,7 @@ import PastRides from './PastRides';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
+import { useEmployees } from '../../context/EmployeesContext';
 
 type EmployeeDetailProps = {
   id: string;
@@ -89,10 +90,14 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
-  const [employee, setEmployee] = useState(location.state);
+  const { id: employeeId } = useParams<{ id: string }>();
+  const { drivers, admins } = useEmployees();
+  const [employee, setEmployee] = useState(
+    drivers.find((driver) => driver.id === employeeId) ||
+      admins.find((admin) => admin.id === employeeId)
+  );
   const pathArr = location.pathname.split('/');
   const userType = pathArr[1];
-  const { id: employeeId } = useParams<{ id: string }>();
 
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
