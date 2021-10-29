@@ -15,6 +15,8 @@ import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
+import { AdminType } from '../../../../server/models/admin';
+import { DriverType } from '../../../../server/models/driver';
 
 type EmployeeDetailProps = {
   id: string;
@@ -91,11 +93,23 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 const EmployeeDetail = () => {
   const location = useLocation<EmployeeDetailProps>();
   const { id: employeeId } = useParams<{ id: string }>();
+  const toEmployees = (drivers: DriverType[], admins: AdminType[]): EmployeeDetailProps[] => {
+    return [...drivers.map(driver => {
+      return ({
+        id: driver.id,
+        firstName: driver.firstName,
+        lastName: driver.lastName,
+        availability: Object.keys(driver.availability).forEach(key => {driver.availability[key].startTime, driver.availability[key].endTime, key }),
+        netId: driver.email.split('@')[0],
+        phone: driver.phoneNumber,
+        admin: false,
+        photoLink: driver.photoLink,
+        startDate: driver.startDate
+      })
+    })]
+  }
   const { drivers, admins } = useEmployees();
-  const [employee, setEmployee] = useState(
-    drivers.find((driver) => driver.id === employeeId) ||
-      admins.find((admin) => admin.id === employeeId)
-  );
+  const [employee, setEmployee] = useState(toEmployees(drivers, admins).find(employee => employee.id === employeeId));
   const pathArr = location.pathname.split('/');
   const userType = pathArr[1];
 
@@ -148,7 +162,9 @@ const EmployeeDetail = () => {
           setWorkingHours(Math.floor(data.workingHours));
         }
       });
-  }, [employeeId, employee, withDefaults, userType]);
+
+    setEmployee(toEmployees(drivers, admins).find(employee => employee.id === employeeId));
+  }, [employeeId, useEmployees, withDefaults, userType]);
 
   if (employee) {
     const isAdmin = !employee.availability;
