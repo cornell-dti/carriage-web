@@ -11,6 +11,7 @@ import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
+import { format_date } from '../../util/index';
 
 const colorMap = new Map<string, string[]>([
   ['red', ['FFA26B', 'FFC7A6']],
@@ -70,7 +71,7 @@ const Schedule = () => {
   const closeModal = () => setIsOpen(false);
 
   const getRides = useCallback(() => {
-    const today = moment(scheduleDay).format('YYYY-MM-DD');
+    const today = format_date(scheduleDay);
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => {

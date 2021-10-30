@@ -6,6 +6,7 @@ import styles from './table.module.css';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import { useEmployees } from '../../context/EmployeesContext';
+import { format_date } from '../../util/index';
 
 type ScheduledTableProp = {
   query: string; // either 'rider' or 'driver'
@@ -26,7 +27,7 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    const today = moment(curDate).format('YYYY-MM-DD');
+    const today = format_date(curDate);
     fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
