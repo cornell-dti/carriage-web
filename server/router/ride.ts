@@ -12,6 +12,7 @@ import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { notify } from '../util/notification';
 import { Change } from '../util/types';
+import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -195,15 +196,30 @@ router.put('/:id', validateUser('User'), (req, res) => {
       tag: Tag.CUSTOM,
     };
   }
-  db.update(res, Ride, { id }, body, tableName, async (doc) => {
-    const ride = JSON.parse(JSON.stringify(doc.toJSON()));
-    const { userType } = res.locals.user;
-    ride.startLocation = await getRideLocation(ride.startLocation);
-    ride.endLocation = await getRideLocation(ride.endLocation);
-    // send ride even if notification failed since it was actually updated
-    notify(ride, body, userType)
-      .then(() => res.send(ride))
-      .catch(() => res.send(ride));
+
+  //Check if id matches or user is admin
+  db.getById(res, Ride, id, tableName, (ride: RideType) => {
+    const { rider, driver } = ride;
+    if (
+      res.locals.user.userType === UserType.ADMIN ||
+      res.locals.user.id == rider.id ||
+      (driver && res.locals.user.id === driver.id)
+    ) {
+      db.update(res, Ride, { id }, body, tableName, async (doc) => {
+        const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+        const { userType } = res.locals.user;
+        ride.startLocation = await getRideLocation(ride.startLocation);
+        ride.endLocation = await getRideLocation(ride.endLocation);
+        // send ride even if notification failed since it was actually updated
+        notify(ride, body, userType)
+          .then(() => res.send(ride))
+          .catch(() => res.send(ride));
+      });
+    } else {
+      res.status(400).send({
+        err: 'User ID does not match request ID and user is not an admin.',
+      });
+    }
   });
 });
 
