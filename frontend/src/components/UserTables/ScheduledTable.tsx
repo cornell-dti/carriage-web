@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
 import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import styles from './table.module.css';
-import { useReq } from '../../context/req';
-import { useDate } from '../../context/date';
 import { useEmployees } from '../../context/EmployeesContext';
-import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 type ScheduledTableProp = {
   query: string; // either 'rider' or 'driver'
 };
 
 const ScheduledTable = () => {
-  const { curDate } = useDate();
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
-  const { withDefaults } = useReq();
+  const { activeRides } = useRides();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -27,11 +23,8 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    const today = format_date(curDate);
-    fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, curDate]);
+    setRides(activeRides.sort(compRides));
+  }, [activeRides]);
 
   return rides.length ? (
     <>
