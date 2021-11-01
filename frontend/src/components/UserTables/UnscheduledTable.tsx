@@ -5,13 +5,12 @@ import RidesTable from './RidesTable';
 import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import { useEmployees } from '../../context/EmployeesContext';
-import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 const Table = () => {
-  const { curDate } = useDate();
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
-  const { withDefaults } = useReq();
+  const { unscheduledRides } = useRides();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -22,11 +21,8 @@ const Table = () => {
   };
 
   useEffect(() => {
-    const today = format_date(curDate);
-    fetch(`/api/rides?type=unscheduled&date=${today}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => setRides(data.sort(compRides)));
-  }, [withDefaults, curDate]);
+    setRides(unscheduledRides.sort(compRides));
+  }, [unscheduledRides]);
 
   return rides.length ? (
     <RidesTable rides={rides} drivers={drivers} hasButtons={true} />
