@@ -43,7 +43,6 @@ const Schedule = () => {
   const { activeRides, refreshRides } = useRides();
 
   const scheduleDay = useDate().curDate;
-  console.log(scheduleDay);
   const minTime = new Date(scheduleDay);
   minTime.setHours(7, 0, 0, 0);
   const maxTime = new Date(scheduleDay);
@@ -60,8 +59,6 @@ const Schedule = () => {
   const closeModal = () => setIsOpen(false);
 
   const getRides = () => {
-    console.log('rides got');
-    console.log(activeRides);
     setEvents(
       activeRides.map((ride: Ride) => ({
         id: ride.id,
@@ -74,10 +71,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       }))
     );
   };
-
-  useEffect(() => {
-    console.log('events', events);
-  }, [events]);
 
   useEffect(() => {
     getRides();
