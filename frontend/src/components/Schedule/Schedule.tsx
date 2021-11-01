@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
@@ -11,7 +11,7 @@ import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
-import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 const colorMap = new Map<string, string[]>([
   ['red', ['FFA26B', 'FFC7A6']],
@@ -23,7 +23,7 @@ const colorMap = new Map<string, string[]>([
 const colorIds = ['red', 'blue', 'yellow', 'green', 'black'];
 
 type CalEvent = {
-  id: number;
+  id: string;
   title: string;
   start: Date;
   end: Date;
@@ -36,29 +36,18 @@ type CalendarDriver = {
   resourceTitle: string;
 };
 
-const HR1 = 3600000;
-const HR2 = 7200000;
-const HR8 = 28800000;
-
 const Schedule = () => {
-  const componentMounted = useRef(true);
   const localizer = momentLocalizer(moment);
   const DnDCalendar = withDragAndDrop<any, any>(Calendar);
   const { withDefaults } = useReq();
+  const { activeRides, refreshRides } = useRides();
 
   const scheduleDay = useDate().curDate;
-  scheduleDay.setHours(0, 0, 0, 0);
-  const defaultStart = scheduleDay;
-  defaultStart.setHours(8, 0, 0, 0);
-
-  const [lessTime, setLessTime] = useState([
-    defaultStart,
-    new Date(defaultStart.getTime() + HR2 - 1),
-  ]);
-  const [moreTime, setMoreTime] = useState([
-    defaultStart,
-    new Date(defaultStart.getTime() + HR8 - 1),
-  ]);
+  console.log(scheduleDay);
+  const minTime = new Date(scheduleDay);
+  minTime.setHours(7, 0, 0, 0);
+  const maxTime = new Date(scheduleDay);
+  maxTime.setHours(23, 0, 0, 0);
 
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
@@ -70,33 +59,29 @@ const Schedule = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
 
-  const getRides = useCallback(() => {
-    const today = format_date(scheduleDay);
-    fetch(`/api/rides?date=${today}&scheduled=true`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => {
-        if (data && !componentMounted.current) {
-          setEvents(
-            data.map((ride: Ride) => ({
-              id: ride.id,
-              title: `${ride.startLocation.name} to ${ride.endLocation.name}
+  const getRides = () => {
+    console.log('rides got');
+    console.log(activeRides);
+    setEvents(
+      activeRides.map((ride: Ride) => ({
+        id: ride.id,
+        title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-              start: new Date(ride.startTime.toString()),
-              end: new Date(ride.endTime.toString()),
-              resourceId: ride.driver!.id,
-              ride,
-            }))
-          );
-        }
-      });
-  }, [componentMounted, scheduleDay, withDefaults]);
+        start: new Date(ride.startTime.toString()),
+        end: new Date(ride.endTime.toString()),
+        resourceId: ride.driver!.id,
+        ride,
+      }))
+    );
+  };
+
+  useEffect(() => {
+    console.log('events', events);
+  }, [events]);
 
   useEffect(() => {
     getRides();
-    return () => {
-      componentMounted.current = false;
-    };
-  }, [getRides]);
+  }, [activeRides]);
 
   useEffect(() => {
     setCalDrivers(
@@ -116,38 +101,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     });
     setColorIdMap(newColorIdMap);
   }, [calDrivers]);
-
-  const goUp = () => {
-    if (viewMore) {
-      if (moreTime[0].getHours() > 0) {
-        setMoreTime([
-          new Date(moreTime[0].getTime() - HR1),
-          new Date(moreTime[1].getTime() - HR1),
-        ]);
-      }
-    } else if (lessTime[0].getHours() > 0) {
-      setLessTime([
-        new Date(lessTime[0].getTime() - HR2),
-        new Date(lessTime[1].getTime() - HR2),
-      ]);
-    }
-  };
-
-  const goDown = () => {
-    if (viewMore) {
-      if (moreTime[0].getHours() < 16) {
-        setMoreTime([
-          new Date(moreTime[0].getTime() + HR1),
-          new Date(moreTime[1].getTime() + HR1),
-        ]);
-      }
-    } else if (lessTime[0].getHours() < 22) {
-      setLessTime([
-        new Date(lessTime[0].getTime() + HR2),
-        new Date(lessTime[1].getTime() + HR2),
-      ]);
-    }
-  };
 
   const eventStyle = (event: CalEvent) => {
     const colorName = colorIdMap.get(event.resourceId) || 'black';
@@ -169,22 +122,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     },
   });
 
-  const filterEvents = (allEvents: CalEvent[]) => {
-    const timeStart = viewMore
-      ? moreTime[0].getHours()
-      : lessTime[0].getHours();
-    const timeEnd = timeStart + (viewMore ? 7 : 1);
-    const filtered = allEvents.filter(({ start, end }) => {
-      const s = start.getHours();
-      const e = end.getHours();
-      const startsInBounds = s >= timeStart && s <= timeEnd;
-      const endsInBounds = e >= timeStart && e <= timeEnd;
-      const partlyInBounds = s < timeStart && timeEnd < e;
-      return startsInBounds || endsInBounds || partlyInBounds;
-    });
-    return filtered;
-  };
-
   const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
     const { recurring } = ride;
@@ -196,11 +133,11 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
           body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
         })
       )
-        .then(() => getRides())
+        .then(refreshRides)
         .then(closeModal);
     } else {
       fetch(`/api/rides/${rideId}`, withDefaults({ method: 'DELETE' }))
-        .then(() => getRides())
+        .then(refreshRides)
         .then(closeModal);
     }
   };
@@ -213,7 +150,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ driver: updatedDriver }),
       })
-    );
+    ).then(refreshRides);
   };
 
   const onEventDrop = ({ event, resourceId }: any) => {
@@ -235,8 +172,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const handleChangeViewState = () => setViewMore(!viewMore);
 
-  moreTime[0].setHours(7);
-  moreTime[1].setHours(23);
   return (
     <>
       {currentRide && (
@@ -252,7 +187,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
       >
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
           <DnDCalendar
-            resizable={false}
+            resizable={true}
             onEventDrop={onEventDrop}
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
@@ -260,14 +195,12 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             step={5}
             timeslots={12}
             showMultiDayTimes={true}
-            events={filterEvents(events)}
+            events={events}
             defaultView="day"
             onSelectEvent={onSelectEvent}
-            min={moreTime[0]}
-            max={moreTime[1]}
+            min={minTime}
+            max={maxTime}
             date={scheduleDay}
-            onNavigate={() => {}}
-            scrollToTime={moreTime[1]}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"
@@ -275,33 +208,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             slotPropGetter={slotStyle}
           />
         </div>
-        {/* <div className={cn(styles.right, { [styles.long]: viewMore })}>
-          <div>
-            <button
-              className={styles.btn}
-              onClick={goUp}
-              disabled={disableHr(true)}
-            >
-              <span
-                className={styles.uparrow}
-                role="img"
-                aria-label={'up arrow'}
-              />
-            </button>
-            <span className={styles.pad} />
-            <button
-              className={styles.btn}
-              onClick={goDown}
-              disabled={disableHr(false)}
-            >
-              <span
-                className={styles.downarrow}
-                role="img"
-                aria-label={'down arrow'}
-              />
-            </button>
-          </div>
-        </div> */}
       </div>
       <button className={styles.view_state} onClick={handleChangeViewState}>
         view {viewMore ? 'less' : 'more'}
