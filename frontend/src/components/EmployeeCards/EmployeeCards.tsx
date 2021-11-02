@@ -62,7 +62,6 @@ const EmployeeCard = ({
         pathname: isAdmin
           ? `/admins/${userInfo.id}`
           : `/drivers/${userInfo.id}`,
-        state: userInfo,
       }}
       style={{ textDecoration: 'none', color: 'inherit' }}
       className={styles.link}
