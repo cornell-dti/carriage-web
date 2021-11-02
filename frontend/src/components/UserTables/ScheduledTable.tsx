@@ -12,7 +12,7 @@ type ScheduledTableProp = {
 const ScheduledTable = () => {
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
-  const { activeRides } = useRides();
+  const { scheduledRides } = useRides();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -23,8 +23,8 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    setRides(activeRides.sort(compRides));
-  }, [activeRides]);
+    setRides(scheduledRides.sort(compRides));
+  }, [scheduledRides]);
 
   return rides.length ? (
     <>
@@ -34,7 +34,7 @@ const ScheduledTable = () => {
         return driverRides.length ? (
           <>
             <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} drivers={[]} hasButtons={false} />
+            <RidesTable rides={driverRides} hasButtons={false} />
           </>
         ) : null;
       })}
