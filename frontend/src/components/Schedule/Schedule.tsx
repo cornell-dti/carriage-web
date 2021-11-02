@@ -38,9 +38,8 @@ type CalendarDriver = {
 
 const Schedule = () => {
   const localizer = momentLocalizer(moment);
-  const DnDCalendar = withDragAndDrop<any, any>(Calendar);
   const { withDefaults } = useReq();
-  const { activeRides, refreshRides } = useRides();
+  const { scheduledRides, refreshRides } = useRides();
 
   const scheduleDay = useDate().curDate;
   const minTime = new Date(scheduleDay);
@@ -60,7 +59,7 @@ const Schedule = () => {
 
   const getRides = () => {
     setEvents(
-      activeRides.map((ride: Ride) => ({
+      scheduledRides.map((ride: Ride) => ({
         id: ride.id,
         title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
@@ -74,7 +73,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   useEffect(() => {
     getRides();
-  }, [activeRides]);
+  }, [scheduledRides]);
 
   useEffect(() => {
     setCalDrivers(
@@ -179,9 +178,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
         className={cn(styles.calendar_container, { [styles.long]: viewMore })}
       >
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
-          <DnDCalendar
-            resizable={true}
-            onEventDrop={onEventDrop}
+          <Calendar
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             toolbar={false}
