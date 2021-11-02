@@ -6,15 +6,13 @@ import { format_date } from '../util/index';
 
 type ridesState = {
   unscheduledRides: Ride[];
-  activeRides: Ride[];
-  pastRides: Ride[];
+  scheduledRides: Ride[];
   refreshRides: () => Promise<void>;
 };
 
 const initialState: ridesState = {
   unscheduledRides: [],
-  activeRides: [],
-  pastRides: [],
+  scheduledRides: [],
   refreshRides: async () => {},
 };
 
@@ -27,15 +25,10 @@ type RidesProviderProps = {
 
 export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [unscheduledRides, setUnscheduledRides] = useState<Ride[]>([]);
-  const [activeRides, setActiveRides] = useState<Ride[]>([]);
-  const [pastRides, setPastRides] = useState<Ride[]>([]);
+  const [scheduledRides, setScheduledRides] = useState<Ride[]>([]);
   const { withDefaults } = useReq();
   const { curDate } = useDate();
   const date = format_date(curDate);
-
-  const filterRides = (rides: Ride[], rideType: Type) => {
-    return rides.filter((ride) => ride.type === rideType);
-  };
 
   const refreshRides = useCallback(async () => {
     const ridesData: Ride[] = await fetch(
@@ -45,9 +38,12 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       .then((res) => res.json())
       .then((data) => data.data);
     if (ridesData) {
-      setUnscheduledRides(filterRides(ridesData, Type.UNSCHEDULED));
-      setActiveRides(filterRides(ridesData, Type.ACTIVE));
-      setPastRides(filterRides(ridesData, Type.PAST));
+      setUnscheduledRides(
+        ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
+      );
+      setScheduledRides(
+        ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
+      );
     }
   }, [withDefaults, date]);
 
@@ -59,8 +55,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     <RidesContext.Provider
       value={{
         unscheduledRides,
-        activeRides,
-        pastRides,
+        scheduledRides,
         refreshRides,
       }}
     >
