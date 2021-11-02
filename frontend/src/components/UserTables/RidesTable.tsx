@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Driver, Ride } from '../../types/index';
+import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
 import styles from './table.module.css';
+import { useEmployees } from '../../context/EmployeesContext';
 
 type RidesTableProps = {
   rides: Ride[];
-  drivers: Driver[];
   hasButtons: boolean;
 };
 
-const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
+const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
+  const { drivers } = useEmployees();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
   const [openEditModal, setOpenEditModal] = useState(-1);
-  const [driverSet, setDriverSet] = useState(['']);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -68,8 +68,6 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
           });
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-          const hasDriver =
-            driverSet[index] !== undefined && driverSet[index].length > 0;
 
           const startEndTime = {
             data: (
@@ -80,13 +78,13 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
             ),
           };
 
-          const assignButton = (
+          const assignButton = (text: string) => (
             <Button
               className={styles.assignButton}
               onClick={() => setOpenAssignModal(index)}
               small
             >
-              Assign
+              {text}
             </Button>
           );
 
@@ -100,12 +98,19 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
             data: (
               <>
                 {editButton}
-                {assignButton}
+                {assignButton('Assign')}
               </>
             ),
           };
 
-          const valueEdit = { data: editButton };
+          const valueEditReassign = {
+            data: (
+              <>
+                {editButton}
+                {assignButton('Reassign')}
+              </>
+            ),
+          };
 
           const scheduledRideData = [
             startEndTime,
@@ -113,7 +118,7 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
             valueDropoff,
             needs,
             riderName,
-            valueEdit,
+            valueEditReassign,
           ];
 
           const unscheduledRideData = [
@@ -142,12 +147,8 @@ const RidesTable = ({ rides, drivers, hasButtons }: RidesTableProps) => {
             <>
               {hasButtons ? unscheduledRow() : scheduledRow()}
               <AssignDriverModal
-                isOpen={openAssignModal === index && !hasDriver}
+                isOpen={openAssignModal === index}
                 close={() => setOpenAssignModal(-1)}
-                setDriver={(driverName: string) => {
-                  driverSet[index] = driverName;
-                  setDriverSet([...driverSet]);
-                }}
                 ride={rides[index]}
                 allDrivers={drivers}
               />

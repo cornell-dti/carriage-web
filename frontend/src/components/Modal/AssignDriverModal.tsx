@@ -7,7 +7,6 @@ import { useRides } from '../../context/RidesContext';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  setDriver: (driverName: string) => void;
   ride: Ride;
   allDrivers: Driver[];
 };
@@ -32,7 +31,6 @@ const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
 const AssignDriverModal = ({
   isOpen,
   close,
-  setDriver,
   ride,
   allDrivers,
 }: AssignModalProps) => {
@@ -66,7 +64,6 @@ const AssignDriverModal = ({
         }),
       })
     ).then(() => refreshRides());
-    setDriver(driver.firstName);
     close();
   };
   useOutsideAlerter(wrapperRef);
