@@ -7,6 +7,7 @@ import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 type RideModalProps = {
   open?: boolean;
@@ -35,6 +36,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
+  const { refreshRides } = useRides();
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -97,7 +99,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             method: 'PUT',
             body: JSON.stringify(rideData),
           })
-        );
+        ).then(refreshRides);
       } else {
         fetch(
           '/api/rides',
@@ -105,7 +107,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             method: 'POST',
             body: JSON.stringify(rideData),
           })
-        );
+        ).then(refreshRides);
       }
       setIsSubmitted(false);
       closeModal();
