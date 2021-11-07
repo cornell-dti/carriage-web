@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import Modal from './Modal';
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
@@ -20,7 +19,7 @@ const DeleteOrEditTypeModal = ({
   ride,
   onClose,
   deleting,
-  onNext,
+  onNext
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
@@ -39,8 +38,8 @@ const DeleteOrEditTypeModal = ({
           method: 'PUT',
           body: JSON.stringify({
             deleteOnly: true,
-            origDate: startDate,
-          }),
+            origDate: startDate
+          })
         })
       ).then(() => closeModal());
     } else {

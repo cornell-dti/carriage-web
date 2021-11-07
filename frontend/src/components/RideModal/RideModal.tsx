@@ -14,7 +14,6 @@ type RideModalProps = {
   ride?: Ride;
 };
 
-const WeekendRideError = () => Error("Rides Can't be scheduled on Weekends");
 const RideModal = ({ open, close, ride }: RideModalProps) => {
   const originalRideData = ride
     ? {
@@ -27,7 +26,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           : ride.startLocation.address,
         dropoffLoc: ride.endLocation.id
           ? ride.endLocation.name
-          : ride.endLocation.address,
+          : ride.endLocation.address
       }
     : {};
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
@@ -74,7 +73,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         driver,
         rider,
         startLocation,
-        endLocation,
+        endLocation
       } = formData;
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
@@ -86,7 +85,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         driver: hasDriver ? driver : undefined,
         rider,
         startLocation,
-        endLocation,
+        endLocation
       };
       if (ride) {
         if (ride.type === 'active') {
@@ -96,7 +95,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           `/api/rides/${ride.id}`,
           withDefaults({
             method: 'PUT',
-            body: JSON.stringify(rideData),
+            body: JSON.stringify(rideData)
           })
         );
       } else {
@@ -104,7 +103,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           '/api/rides',
           withDefaults({
             method: 'POST',
-            body: JSON.stringify(rideData),
+            body: JSON.stringify(rideData)
           })
         );
       }
