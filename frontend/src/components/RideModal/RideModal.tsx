@@ -14,6 +14,7 @@ type RideModalProps = {
   ride?: Ride;
 };
 
+const WeekendRideError = () => Error("Rides Can't be scheduled on Weekends");
 const RideModal = ({ open, close, ride }: RideModalProps) => {
   const originalRideData = ride
     ? {
@@ -58,12 +59,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   }, [close, originalRideData]);
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
-    if (moment(data.date).day() == 0 || moment(data.date).day() == 6) {
-      alert("Rides can't be scheduled on weekends");
-    } else {
-      setFormData((prev) => ({ ...prev, ...data }));
-      next();
-    }
+    setFormData((prev) => ({ ...prev, ...data }));
+    next();
   };
 
   const submitData = () => setIsSubmitted(true);

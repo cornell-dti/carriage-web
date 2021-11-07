@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import moment from 'moment';
 import { CSVLink } from 'react-csv';
 import ScheduledTable from '../UserTables/ScheduledTable';
 import { Driver } from '../../types/index';
