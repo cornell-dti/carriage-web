@@ -40,7 +40,7 @@ const RideTimesPage = ({
                 const fmtDate = format_date(date);
                 const fmtCurr = format_date(curDate);
                 const notWeekend =
-                  moment(date).day() != 0 && moment(date).day() != 6;
+                  moment(date).day() !== 0 && moment(date).day() !== 6;
                 return fmtDate >= fmtCurr && notWeekend;
               },
             })}
@@ -49,9 +49,7 @@ const RideTimesPage = ({
             <p className={styles.error}>Please enter a date</p>
           )}
           {errors.date?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid date (No rides during weekends)
-            </p>
+            <p className={styles.error}>Invalid date</p>
           )}
         </div>
         <div className={styles.pickupTime}>

@@ -125,7 +125,12 @@ const RequestRideInfo = ({
               required: true,
               validate: (startDate) => {
                 const pickupTime = getValues('pickupTime');
-                return pickupTime ? isTimeValid(startDate, pickupTime) : true;
+                const notWeekend =
+                  moment(startDate).day() !== 0 &&
+                  moment(startDate).day() !== 6;
+                return pickupTime
+                  ? isTimeValid(startDate, pickupTime) && notWeekend
+                  : notWeekend;
               },
             })}
           />
@@ -215,7 +220,9 @@ const RequestRideInfo = ({
               required: getValues('repeating'),
               validate: (endDate: any) => {
                 const startDate = getValues('startDate');
-                return startDate < endDate;
+                const notWeekend =
+                  moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
+                return startDate < endDate && notWeekend;
               },
             })}
           />
