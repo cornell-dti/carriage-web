@@ -135,7 +135,9 @@ const RequestRideInfo = ({
             })}
           />
           {errors.startDate && (
-            <p className={styles.error}>Please enter a valid start date</p>
+            <p className={styles.error}>
+              Please enter a valid start date (No rides on weekends)
+            </p>
           )}
         </div>
         {showRepeatingCheckbox && (
@@ -227,7 +229,9 @@ const RequestRideInfo = ({
             })}
           />
           {errors.endDate && (
-            <p className={styles.error}>Please select a valid end date</p>
+            <p className={styles.error}>
+              Please select a valid end date (No rides on weekends)
+            </p>
           )}
         </div>
       ) : null}
