@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
 import { format_date } from '../../util/index';

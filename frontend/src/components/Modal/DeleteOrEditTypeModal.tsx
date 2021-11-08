@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import Modal from './Modal';
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';

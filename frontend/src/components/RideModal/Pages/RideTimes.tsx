@@ -39,7 +39,9 @@ const RideTimesPage = ({
               validate: (date) => {
                 const fmtDate = format_date(date);
                 const fmtCurr = format_date(curDate);
-                return fmtDate >= fmtCurr;
+                const notWeekend =
+                  moment(date).day() !== 0 && moment(date).day() !== 6;
+                return fmtDate >= fmtCurr && notWeekend;
               },
             })}
           />
