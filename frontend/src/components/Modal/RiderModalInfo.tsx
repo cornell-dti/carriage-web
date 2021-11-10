@@ -24,7 +24,7 @@ const RiderModalInfo = ({
       lastName: rider?.lastName ?? '',
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility.join(','), // if no needs, default is undefined
+      needs: rider?.accessibility ?? '', // if no needs, default is undefined
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
@@ -41,8 +41,9 @@ const RiderModalInfo = ({
     joinDate,
     endDate,
   }: ObjectType) => {
+    console.log(needs);
     const email = netid ? `${netid}@cornell.edu` : undefined;
-    const accessibility = needs.split(',').map((n: string) => n.trim());
+    const accessibility = needs;
     onSubmit({
       firstName,
       lastName,
@@ -128,10 +129,28 @@ const RiderModalInfo = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <Input
+          <select name="needs" ref={register({ required: true })}>
+            {[
+              'Crutches',
+              'Personal Assistance',
+              'Wheel Chair',
+              'Motorized Scooter',
+              'Knee Scooter',
+              'Low Vision/Blind',
+              'Service Animals',
+              'Other:',
+            ].map((value, index) => {
+              return (
+                <option key={index} value={value}>
+                  {value}
+                </option>
+              );
+            })}
+          </select>
+          {/* <Input
             id="needs"
             name="needs"
-            type="text"
+            type="select"
             ref={register({
               validate: (needs) => {
                 if (needs === '') {
@@ -143,7 +162,7 @@ const RiderModalInfo = ({
                 return needsArr.reduce(isValidNeed, true);
               },
             })}
-          />
+          /> */}
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or
