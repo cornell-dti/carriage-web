@@ -149,7 +149,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(employeeData),
       })
-    ).then((res) => res.json());
+    ).then((res) => {
+      refresh();
+      setToast(true);
+      return res.json();
+    });
 
     uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
   };
@@ -157,7 +161,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const onSubmit = async (data: ObjectType) => {
     const { firstName, lastName, email, netid , phoneNumber, startDate, availability } =
       data;
-
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
@@ -246,7 +249,15 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       ) : (
         <Button onClick={openModal}>+ Add an employee</Button>
       )}
-      {showingToast ? <Toast message="The employee has been added." /> : null}
+
+      {showingToast ? (
+        existingEmployee ? (
+          <Toast message="The employee has been edited." />
+        ) : (
+          <Toast message="The employee has been added." />
+        )
+      ) : null}
+
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}

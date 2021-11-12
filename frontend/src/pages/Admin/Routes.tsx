@@ -19,6 +19,7 @@ import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
 import { EmployeesProvider } from '../../context/EmployeesContext';
 import { RidersProvider } from '../../context/RidersContext';
+import { RidesProvider } from '../../context/RidesContext';
 
 // Must be separate component, or else skip ref doesn't work.
 const Routes = () => {
@@ -71,9 +72,11 @@ const AdminRoutes = () => {
     <DateContext.Provider value={defaultVal}>
       <EmployeesProvider>
         <RidersProvider>
-          <Router basename="/admin">
-            <Routes />
-          </Router>
+          <RidesProvider>
+            <Router basename="/admin">
+              <Routes />
+            </Router>
+          </RidesProvider>
         </RidersProvider>
       </EmployeesProvider>
     </DateContext.Provider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import {
@@ -14,6 +14,9 @@ import PastRides from './PastRides';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
+import { useEmployees } from '../../context/EmployeesContext';
+import { AdminType } from '../../../../server/models/admin';
+import { DriverType } from '../../../../server/models/driver';
 
 type EmployeeDetailProps = {
   id: string;
@@ -87,12 +90,57 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
   );
 };
 
+//Convert DriverType to EmployeeType
+const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
+  return drivers.map((driver) => ({
+    id: driver.id,
+    firstName: driver.firstName,
+    lastName: driver.lastName,
+    availability: formatAvailability(driver.availability)!,
+    netId: driver.email.split('@')[0],
+    phone: driver.phoneNumber,
+    admin: driver.admin,
+    photoLink: driver.photoLink,
+    startDate: driver.startDate,
+  }));
+};
+
+//Convert AdminType to EmployeeType
+const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
+  return admins.map((admin) => ({
+    id: admin.id,
+    firstName: admin.firstName,
+    lastName: admin.lastName,
+    netId: admin.email.split('@')[0],
+    phone: admin.phoneNumber,
+    admin: true,
+    photoLink: admin.photoLink,
+  }));
+};
+
+const findEmployee = (
+  drivers: DriverType[],
+  admins: AdminType[],
+  employeeId: string
+): EmployeeDetailProps => {
+  const employee = DriverToEmployees(drivers).find(
+    (employee) => employee.id === employeeId
+  );
+  if (!employee)
+    return AdminToEmployees(admins).find(
+      (employee) => employee.id === employeeId
+    )!;
+  return employee;
+};
+
 const EmployeeDetail = () => {
-  const location = useLocation<EmployeeDetailProps>();
-  const [employee, setEmployee] = useState(location.state);
+  const { id: employeeId } = useParams<{ id: string }>();
+  const { drivers, admins } = useEmployees();
+  const [employee, setEmployee] = useState(
+    findEmployee(drivers, admins, employeeId)
+  );
   const pathArr = location.pathname.split('/');
   const userType = pathArr[1];
-  const { id: employeeId } = useParams<{ id: string }>();
 
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
@@ -143,7 +191,8 @@ const EmployeeDetail = () => {
           setWorkingHours(Math.floor(data.workingHours));
         }
       });
-  }, [employeeId, employee, withDefaults, userType]);
+    setEmployee(findEmployee(drivers, admins, employeeId));
+  }, [admins, drivers, employeeId, withDefaults, userType]);
 
   if (employee) {
     const isAdmin = !employee.availability;

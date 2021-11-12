@@ -95,7 +95,6 @@ const StudentsTable = () => {
         const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
         const location = {
           pathname: `/riders/${r.id}`,
-          state: r,
         };
         const data = [
           nameNetId,

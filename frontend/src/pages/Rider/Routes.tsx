@@ -11,6 +11,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Schedule from './Schedule';
 import Settings from './Settings';
 import DateContext from '../../context/date';
+import { RidesProvider } from '../../context/RidesContext';
 
 // Must be separate component, or else skip ref doesn't work.
 const Routes = () => {
@@ -40,9 +41,11 @@ const RiderRoutes = () => {
 
   return (
     <DateContext.Provider value={defaultVal}>
-      <Router basename="/rider">
-        <Routes />
-      </Router>
+      <RidesProvider>
+        <Router basename="/rider">
+          <Routes />
+        </Router>
+      </RidesProvider>
     </DateContext.Provider>
   );
 };

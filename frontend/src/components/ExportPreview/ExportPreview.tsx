@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import moment from 'moment';
 import { CSVLink } from 'react-csv';
 import ScheduledTable from '../UserTables/ScheduledTable';
 import { Driver } from '../../types/index';
@@ -8,6 +7,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
+import { format_date } from '../../util';
 
 const ExportPreview = () => {
   const { drivers } = useEmployees();
@@ -18,7 +18,7 @@ const ExportPreview = () => {
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
   >(null);
 
-  const today = moment(curDate).format('YYYY-MM-DD');
+  const today = format_date(curDate);
 
   const downloadCSV = () => {
     fetch(`/api/rides/download?date=${today}`, withDefaults())
@@ -33,7 +33,7 @@ const ExportPreview = () => {
 
   return (
     <>
-      <p className={styles.date}>{moment(curDate).format('YYYY-MM-DD')}</p>
+      <p className={styles.date}>{format_date(curDate)}</p>
       <h1 className={styles.header}>Scheduled Rides</h1>
       <div id="exportTable">
         <ScheduledTable />
