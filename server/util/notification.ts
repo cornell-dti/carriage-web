@@ -90,6 +90,8 @@ const sendMsg = (
   const payload = JSON.stringify({
     default: 'Default message.',
     GCM: JSON.stringify({
+      priority: 'high',
+      content_available: true,
       data: {
         id: uuid(),
         notifEvent,
@@ -205,6 +207,9 @@ export const getNotificationEvent = (
   }
   if (type === Type.ACTIVE && driver) {
     return Change.SCHEDULED;
+  }
+  if (driver) {
+    return Change.REASSIGN_DRIVER;
   }
   return Change.EDITED;
 };
