@@ -43,6 +43,15 @@ const RequestRideInfo = ({
     return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
   };
 
+  /** checkBounds(startDate, time) returns if the selected time
+   *  is within the bounds of valid times given by CULift
+   */
+  const checkBounds = (startDate: string, time: moment.Moment) => {
+    const earliest = moment(`${startDate} 7:30`);
+    const latest = moment(`${startDate} 22:00`);
+    return earliest.isSameOrBefore(time) && latest.isSameOrAfter(time);
+  };
+
   useEffect(() => {
     const getExistingLocations = async () => {
       const locationsData = await fetch(
@@ -270,9 +279,15 @@ const RequestRideInfo = ({
             aria-labelledby="pickupLabel pickupTime"
             ref={register({
               required: true,
-              validate: (pickupTime) => {
+              validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
-                return startDate ? isTimeValid(startDate, pickupTime) : true;
+                const pickup = errors.pickupTime
+                  ? moment(`${startDate} ${errors.pickupTime.ref.value}`)
+                  : moment(`${startDate} ${pickupTime}`);
+                return startDate
+                  ? isTimeValid(startDate, pickupTime) &&
+                      checkBounds(startDate, pickup)
+                  : true;
               },
             })}
           />
@@ -366,10 +381,15 @@ const RequestRideInfo = ({
             aria-labelledby="dropoffLabel dropoffTime"
             ref={register({
               required: true,
-              validate: (dropoffTime: any) => {
-                const dropoffTi = dropoffTime;
+              validate: (dropoffTime: string) => {
                 const pickupTi = getValues('pickupTime');
-                return dropoffTi > pickupTi;
+                const startDate = getValues('startDate');
+                const dropOff = errors.dropoffTime
+                  ? moment(`${startDate} ${errors.dropoffTime.ref.value}`)
+                  : moment(`${startDate} ${dropoffTime}`);
+                return (
+                  dropoffTime > pickupTi && checkBounds(startDate, dropOff)
+                );
               },
             })}
           />
