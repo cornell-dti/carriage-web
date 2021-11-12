@@ -31,7 +31,7 @@ type EmployeeModalProps = {
 
 type AdminData = {
   firstName: any;
-  lastName: any;
+  lastName: any;  
   email: any;
   phoneNumber: any;
 };
@@ -155,14 +155,14 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, email, phoneNumber, startDate, availability } =
+    const { firstName, lastName, email, netid , phoneNumber, startDate, availability } =
       data;
 
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
         lastName,
-        email,
+        email: netid + "@cornell.edu" ,
         phoneNumber,
       };
       if (existingEmployee) {
@@ -184,7 +184,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       const driver = {
         firstName,
         lastName,
-        email,
+        email: netid + "@cornell.edu",
         phoneNumber,
         startDate,
         availability: parseAvailability(availability),
@@ -257,8 +257,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
             <EmployeeInfo
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
-              netId={existingEmployee?.netId}
-              email={existingEmployee?.email}
+              netId={existingEmployee?.netId}              
               phone={existingEmployee?.phone}
             />
             {selectedRole === 'admin' ? null : (
