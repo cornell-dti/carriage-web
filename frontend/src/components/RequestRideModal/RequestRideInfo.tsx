@@ -18,8 +18,8 @@ type RequestRideInfoProps = {
 };
 
 /** checkBounds(startDate, time) returns if the selected time
-   *  is within the bounds of valid times given by CULift
-   */
+ *  is within the bounds of valid times given by CULift
+ */
 export const checkBounds = (startDate: string, time: moment.Moment) => {
   const earliest = moment(`${startDate} 7:30`);
   const latest = moment(`${startDate} 22:00`);
