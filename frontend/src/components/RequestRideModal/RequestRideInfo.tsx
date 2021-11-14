@@ -17,6 +17,23 @@ type RequestRideInfoProps = {
   modalType: RideModalType;
 };
 
+/** checkBounds(startDate, time) returns if the selected time
+   *  is within the bounds of valid times given by CULift
+   */
+export const checkBounds = (startDate: string, time: moment.Moment) => {
+  const earliest = moment(`${startDate} 7:30`);
+  const latest = moment(`${startDate} 22:00`);
+  return earliest.isSameOrBefore(time) && latest.isSameOrAfter(time);
+};
+
+export const isTimeValid = (startDate: string, pickupTime: string) => {
+  const now = moment();
+  const today10AM = now.clone().hour(10).minute(0);
+  const selectedTime = moment(`${startDate} ${pickupTime}`);
+  const bufferDays = now.isAfter(today10AM) ? 2 : 1;
+  return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
+};
+
 const RequestRideInfo = ({
   ride,
   showRepeatingCheckbox,
@@ -34,23 +51,6 @@ const RequestRideInfo = ({
   const shouldDisableStartDate =
     (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
     (ride && ride.type !== 'unscheduled');
-
-  const isTimeValid = (startDate: string, pickupTime: string) => {
-    const now = moment();
-    const today10AM = now.clone().hour(10).minute(0);
-    const selectedTime = moment(`${startDate} ${pickupTime}`);
-    const bufferDays = now.isAfter(today10AM) ? 2 : 1;
-    return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
-  };
-
-  /** checkBounds(startDate, time) returns if the selected time
-   *  is within the bounds of valid times given by CULift
-   */
-  const checkBounds = (startDate: string, time: moment.Moment) => {
-    const earliest = moment(`${startDate} 7:30`);
-    const latest = moment(`${startDate} 22:00`);
-    return earliest.isSameOrBefore(time) && latest.isSameOrAfter(time);
-  };
 
   useEffect(() => {
     const getExistingLocations = async () => {
@@ -281,9 +281,7 @@ const RequestRideInfo = ({
               required: true,
               validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
-                const pickup = errors.pickupTime
-                  ? moment(`${startDate} ${errors.pickupTime.ref.value}`)
-                  : moment(`${startDate} ${pickupTime}`);
+                const pickup = moment(`${startDate} ${pickupTime}`);
                 return startDate
                   ? isTimeValid(startDate, pickupTime) &&
                       checkBounds(startDate, pickup)
@@ -384,9 +382,7 @@ const RequestRideInfo = ({
               validate: (dropoffTime: string) => {
                 const pickupTi = getValues('pickupTime');
                 const startDate = getValues('startDate');
-                const dropOff = errors.dropoffTime
-                  ? moment(`${startDate} ${errors.dropoffTime.ref.value}`)
-                  : moment(`${startDate} ${dropoffTime}`);
+                const dropOff = moment(`${startDate} ${dropoffTime}`);
                 return (
                   dropoffTime > pickupTi && checkBounds(startDate, dropOff)
                 );
