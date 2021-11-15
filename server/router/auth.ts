@@ -12,7 +12,7 @@ const router = express.Router();
 
 const audience = [
   // driver ios
-  '241748771473-e85o2d6heucd28loiq5aacese38ln4l4.apps.googleusercontent.com',
+  '241748771473-a4q5skhr0is8r994o7ie9scrnm5ua760.apps.googleusercontent.com',
   // web + android
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
   // rider ios
