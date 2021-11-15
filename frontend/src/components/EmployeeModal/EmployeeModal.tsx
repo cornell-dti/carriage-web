@@ -154,20 +154,14 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       setToast(true);
       return res.json();
     });
-
-    uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    if (imageBase64 !== '') {
+      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    }
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const {
-      firstName,
-      lastName,
-      email,
-      netid,
-      phoneNumber,
-      startDate,
-      availability,
-    } = data;
+    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
+      data;
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
