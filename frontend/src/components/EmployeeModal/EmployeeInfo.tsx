@@ -63,8 +63,7 @@ const EmployeeInfo = ({
           <p className={styles.error}>Please enter a valid NetID</p>
         )}
       </div>
-      
-      
+
       <div className={styles.col2}>
         <Label htmlFor={'phoneNumber'}>Phone Number</Label>
         <Input
