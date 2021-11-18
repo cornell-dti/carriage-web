@@ -9,7 +9,7 @@ import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
-import {checkBounds, isTimeValid} from '../../util/index';
+import { checkBounds, isTimeValid } from '../../util/index';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -17,8 +17,6 @@ type RequestRideInfoProps = {
   showRepeatingInfo: boolean;
   modalType: RideModalType;
 };
-
-
 
 const RequestRideInfo = ({
   ride,
