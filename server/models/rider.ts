@@ -10,7 +10,7 @@ export enum Accessibility {
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
   SERVICE_ANIMALS = 'Service Animals',
-  OTHER = 'Other'
+  OTHER = 'Other',
 }
 
 export enum Organization {
