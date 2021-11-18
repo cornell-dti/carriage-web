@@ -6,11 +6,7 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
-import { format_date } from '../../../util/index';
-import {
-  checkBounds,
-  isTimeValid,
-} from '../../RequestRideModal/RequestRideInfo';
+import { format_date, checkBounds, isTimeValid } from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
@@ -65,15 +61,9 @@ const RideTimesPage = ({
             ref={register({
               required: true,
               validate: (pickupTime) => {
-                // const now = moment();
                 const date = getValues('date');
                 const pickup = moment(`${date} ${pickupTime}`);
-                // if (!isEditing || moment(curDate).isSame(now, 'day')) {
-                //   return now.isBefore(moment(`${date} ${pickupTime}`));
-                // }
-                return (
-                  isTimeValid(date, pickupTime) && checkBounds(date, pickup)
-                );
+                return checkBounds(date, pickup);
               },
             })}
           />

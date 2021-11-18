@@ -9,6 +9,7 @@ import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
+import {checkBounds, isTimeValid} from '../../util/index';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -17,22 +18,7 @@ type RequestRideInfoProps = {
   modalType: RideModalType;
 };
 
-/** checkBounds(startDate, time) returns if the selected time
- *  is within the bounds of valid times given by CULift
- */
-export const checkBounds = (startDate: string, time: moment.Moment) => {
-  const earliest = moment(`${startDate} 7:30`);
-  const latest = moment(`${startDate} 22:00`);
-  return earliest.isSameOrBefore(time) && latest.isSameOrAfter(time);
-};
 
-export const isTimeValid = (startDate: string, pickupTime: string) => {
-  const now = moment();
-  const today10AM = now.clone().hour(10).minute(0);
-  const selectedTime = moment(`${startDate} ${pickupTime}`);
-  const bufferDays = now.isAfter(today10AM) ? 2 : 1;
-  return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
-};
 
 const RequestRideInfo = ({
   ride,
