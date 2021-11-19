@@ -154,18 +154,19 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       setToast(true);
       return res.json();
     });
-
-    uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    if (imageBase64 !== '') {
+      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    }
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, email, phoneNumber, startDate, availability } =
+    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
         lastName,
-        email,
+        email: netid + '@cornell.edu',
         phoneNumber,
       };
       if (existingEmployee) {
@@ -187,7 +188,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       const driver = {
         firstName,
         lastName,
-        email,
+        email: netid + '@cornell.edu',
         phoneNumber,
         startDate,
         availability: parseAvailability(availability),
@@ -269,7 +270,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
               netId={existingEmployee?.netId}
-              email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
             {selectedRole === 'admin' ? null : (
