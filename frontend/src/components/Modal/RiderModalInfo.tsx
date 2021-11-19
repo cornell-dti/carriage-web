@@ -41,7 +41,6 @@ const RiderModalInfo = ({
     joinDate,
     endDate,
   }: ObjectType) => {
-    console.log(needs);
     const email = netid ? `${netid}@cornell.edu` : undefined;
     const accessibility = needs;
     onSubmit({
@@ -130,16 +129,7 @@ const RiderModalInfo = ({
             Needs:{' '}
           </Label>
           <select name="needs" ref={register({ required: true })}>
-            {[
-              'Crutches',
-              'Personal Assistance',
-              'Wheel Chair',
-              'Motorized Scooter',
-              'Knee Scooter',
-              'Low Vision/Blind',
-              'Service Animals',
-              'Other:',
-            ].map((value, index) => {
+            {Object.values(Accessibility).map((value, index) => {
               return (
                 <option key={index} value={value}>
                   {value}
