@@ -122,8 +122,8 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
     params: { id },
   } = req;
   db.getById(res, Rider, id, tableName, () => {
-    const now = moment.tz('America/New_York').toISOString();
-    const end = moment.tz('America/New_York').add(30, 'minutes').toISOString();
+    const now = moment.tz().toISOString();
+    const end = moment.tz().add(30, 'minutes').toISOString();
     const isRider = new Condition('rider').eq(id);
     const isActive = new Condition('type').eq(Type.ACTIVE);
     const isSoon = new Condition('startTime').between(now, end);

@@ -16,6 +16,7 @@ import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
 import notification from './router/notification';
 import initDynamoose from './util/dynamoose';
+import moment from "moment-timezone"
 
 const port = Number(process.env.PORT) || 3001;
 
@@ -54,6 +55,9 @@ app.use(express.static(path.join(__dirname, frontendBuild)));
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, frontendBuild, 'index.html'));
 });
+
+// Set default timezone for moment
+moment.tz.setDefault("America/New_York");
 
 initSchedule();
 

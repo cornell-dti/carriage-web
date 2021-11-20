@@ -115,10 +115,10 @@ export const daysUntilWeekday = (
 };
 
 export const timeToMDY = (time: string) =>
-  moment.tz(time, 'America/New_York').format('l');
+  moment.tz(time).format('l');
 
 export const timeTo12Hr = (time: string) =>
-  moment.tz(time, 'America/New_York').format('LT');
+  moment.tz(time).format('LT');
 
 export const getRideLocation = (value: ValueType) => {
   if (typeof value === 'string') {

@@ -19,10 +19,10 @@ const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
   const dateStart = moment
-    .tz(req.query.date as string, 'America/New_York')
+    .tz(req.query.date as string)
     .toISOString();
   const dateEnd = moment
-    .tz(req.query.date as string, 'America/New_York')
+    .tz(req.query.date as string)
     .endOf('day')
     .toISOString();
   const condition = new Condition()
@@ -36,8 +36,8 @@ router.get('/download', (req, res) => {
     const dataToExport = value
       .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
       .map((doc: any) => {
-        const start = moment.tz(doc.startTime, 'America/New_York');
-        const end = moment.tz(doc.endTime, 'America/New_York');
+        const start = moment.tz(doc.startTime);
+        const end = moment.tz(doc.endTime);
         const fullName = (user: RiderType | DriverType) =>
           `${user.firstName} ${user.lastName.substring(0, 1)}.`;
         return {
@@ -63,7 +63,7 @@ router.get('/repeating', validateUser('User'), (req, res) => {
   const {
     query: { rider },
   } = req;
-  const now = moment.tz('America/New_York').format('YYYY-MM-DD');
+  const now = moment.tz().format('YYYY-MM-DD');
   let condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
@@ -105,10 +105,10 @@ router.get('/', validateUser('User'), (req, res) => {
   }
   if (date) {
     const dateStart = moment
-      .tz(date as string, 'America/New_York')
+      .tz(date as string)
       .toISOString();
     const dateEnd = moment
-      .tz(date as string, 'America/New_York')
+      .tz(date as string)
       .endOf('day')
       .toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
@@ -239,20 +239,20 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
 
   db.getById(res, Ride, id, tableName, (masterRide: RideType) => {
     const masterStartDate = moment
-      .tz(masterRide.startTime, 'America/New_York')
+      .tz(masterRide.startTime)
       .format('YYYY-MM-DD');
     const origStartTimeOnly = moment
-      .tz(masterRide.startTime, 'America/New_York')
+      .tz(masterRide.startTime)
       .format('HH:mm:ss');
     const origStartTime = moment
-      .tz(`${origDate}T${origStartTimeOnly}`, 'America/New_York')
+      .tz(`${origDate}T${origStartTimeOnly}`)
       .toISOString();
 
     const origEndTimeOnly = moment
-      .tz(masterRide.endTime, 'America/New_York')
+      .tz(masterRide.endTime)
       .format('HH:mm:ss');
     const origEndTime = moment
-      .tz(`${origDate}T${origEndTimeOnly}`, 'America/New_York')
+      .tz(`${origDate}T${origEndTimeOnly}`)
       .toISOString();
 
     const handleEdit = (change: any) => (ride: RideType) => {
@@ -323,8 +323,8 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
       );
     } else if (origDate === masterStartDate) {
       // move master repeating ride start and end to next occurrence
-      const momentStart = moment.tz(masterRide.startTime, 'America/New_York');
-      const momentEnd = moment.tz(masterRide.endTime, 'America/New_York');
+      const momentStart = moment.tz(masterRide.startTime);
+      const momentEnd = moment.tz(masterRide.endTime);
       const nextRideDays = masterRide.recurringDays!.reduce(
         (acc, curr) => Math.min(acc, daysUntilWeekday(momentStart, curr)),
         8
