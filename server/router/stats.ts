@@ -16,7 +16,7 @@ router.get('/download', validateUser('Admin'), (req, res) => {
   const {
     query: { from, to },
   } = req;
-  let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+  let date = moment.tz(from as string).format('YYYY-MM-DD');
   const dates = [date];
   if (to) {
     date = moment
@@ -74,7 +74,7 @@ router.get('/', validateUser('Admin'), (req, res) => {
   const toMatch = to ? (to as string).match(regexp) : true;
 
   if (fromMatch && toMatch) {
-    let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+    let date = moment.tz(from as string).format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
       date = moment
