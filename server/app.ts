@@ -3,6 +3,11 @@ import express from 'express';
 import dynamoose from 'dynamoose';
 import path from 'path';
 import cors from 'cors';
+
+// Set default timezone for moment
+import moment from 'moment-timezone';
+moment.tz.setDefault("America/New_York");
+
 import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
