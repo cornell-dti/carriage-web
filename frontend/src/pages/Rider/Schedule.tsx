@@ -14,26 +14,21 @@ import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import RequestRideModal from '../../components/RequestRideModal/RequestRideModal';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
+import { useRides } from '../../../src/context/RidesContext';
 
 const Schedule = () => {
   const componentMounted = useRef(true);
   const [rides, setRides] = useState<Ride[]>();
+  const { upcomingRides, pastRides, refreshRides } = useRides();
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
 
-  const refreshRides = useCallback(() => {
-    fetch(`/api/rides?rider=${id}`, withDefaults())
-      .then((res) => res.json())
-      .then(({ data }) => componentMounted.current && setRides([...data]));
-  }, [id, withDefaults]);
-
   useEffect(() => {
-    refreshRides();
-
+    setRides([...upcomingRides, ...pastRides]);
     return () => {
       componentMounted.current = false;
     };
-  }, [refreshRides]);
+  }, [upcomingRides, pastRides, refreshRides]);
 
   return (
     <main id="main">
