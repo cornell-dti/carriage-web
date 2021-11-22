@@ -6,7 +6,7 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
-import { format_date } from '../../../util/index';
+import { format_date, checkBounds, isTimeValid } from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
@@ -61,12 +61,9 @@ const RideTimesPage = ({
             ref={register({
               required: true,
               validate: (pickupTime) => {
-                const now = moment();
-                if (!isEditing || moment(curDate).isSame(now, 'day')) {
-                  const date = getValues('date');
-                  return now.isBefore(moment(`${date} ${pickupTime}`));
-                }
-                return true;
+                const date = getValues('date');
+                const pickup = moment(`${date} ${pickupTime}`);
+                return checkBounds(date, pickup);
               },
             })}
           />
@@ -87,7 +84,9 @@ const RideTimesPage = ({
               required: true,
               validate: (dropoffTime) => {
                 const pickupTime = getValues('pickupTime');
-                return pickupTime < dropoffTime;
+                const date = getValues('date');
+                const dropoff = moment(`${date} ${dropoffTime}`);
+                return pickupTime < dropoffTime && checkBounds(date, dropoff);
               },
             })}
           />
