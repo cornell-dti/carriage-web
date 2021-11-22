@@ -13,6 +13,7 @@ import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { edit } from '../../icons/other/index';
+import { useToast } from '../../context/toastContext';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -46,11 +47,12 @@ type DriverData = {
 };
 
 const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
+  const {showToast} = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
-  const [showingToast, setToast] = useState(false);
+  // const [showingToast, setToast] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
@@ -61,7 +63,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   const openModal = () => {
     setIsOpen(true);
-    setToast(false);
+    // setToast(false);
   };
 
   const closeModal = () => {
@@ -100,7 +102,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     )
       .then(() => {
         refresh();
-        setToast(isCreate);
+        isCreate ? showToast("Showing Toast") : null;
+        // setToast(isCreate);
       })
       .catch((err) => console.log(err));
   };
@@ -121,7 +124,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         })
       ).then(() => {
         refresh();
-        setToast(true);
+        // setToast(true);
+        showToast("Hello");
       });
     } else {
       const createdEmployee = await fetch(
@@ -151,7 +155,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       })
     ).then((res) => {
       refresh();
-      setToast(true);
+      // setToast(true);
+      showToast("Hello2");
       return res.json();
     });
 
@@ -250,13 +255,13 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         <Button onClick={openModal}>+ Add an employee</Button>
       )}
 
-      {showingToast ? (
+      {/* {showingToast ? (
         existingEmployee ? (
           <Toast message="The employee has been edited." />
         ) : (
           <Toast message="The employee has been added." />
         )
-      ) : null}
+      ) : null} */}
 
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
