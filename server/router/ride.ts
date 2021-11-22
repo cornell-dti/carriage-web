@@ -18,11 +18,8 @@ const router = express.Router();
 const tableName = 'Rides';
 
 router.get('/download', (req, res) => {
-  const dateStart = moment
-    (req.query.date as string)
-    .toISOString();
-  const dateEnd = moment
-    (req.query.date as string)
+  const dateStart = moment(req.query.date as string).toISOString();
+  const dateEnd = moment(req.query.date as string)
     .endOf('day')
     .toISOString();
   const condition = new Condition()
@@ -104,11 +101,8 @@ router.get('/', validateUser('User'), (req, res) => {
     condition = condition.where('driver').eq(driver);
   }
   if (date) {
-    const dateStart = moment
-      (date as string)
-      .toISOString();
-    const dateEnd = moment
-      (date as string)
+    const dateStart = moment(date as string).toISOString();
+    const dateEnd = moment(date as string)
       .endOf('day')
       .toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
@@ -238,22 +232,14 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
   } = req;
 
   db.getById(res, Ride, id, tableName, (masterRide: RideType) => {
-    const masterStartDate = moment
-      (masterRide.startTime)
-      .format('YYYY-MM-DD');
-    const origStartTimeOnly = moment
-      (masterRide.startTime)
-      .format('HH:mm:ss');
-    const origStartTime = moment
-      (`${origDate}T${origStartTimeOnly}`)
-      .toISOString();
+    const masterStartDate = moment(masterRide.startTime).format('YYYY-MM-DD');
+    const origStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');
+    const origStartTime = moment(
+      `${origDate}T${origStartTimeOnly}`
+    ).toISOString();
 
-    const origEndTimeOnly = moment
-      (masterRide.endTime)
-      .format('HH:mm:ss');
-    const origEndTime = moment
-      (`${origDate}T${origEndTimeOnly}`)
-      .toISOString();
+    const origEndTimeOnly = moment(masterRide.endTime).format('HH:mm:ss');
+    const origEndTime = moment(`${origDate}T${origEndTimeOnly}`).toISOString();
 
     const handleEdit = (change: any) => (ride: RideType) => {
       const { userType } = res.locals.user;

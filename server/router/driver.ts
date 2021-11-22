@@ -81,9 +81,9 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
       return null;
     })();
 
-    const availStartTime = moment
-      (availStart as string, 'HH:mm')
-      .format('HH:mm');
+    const availStartTime = moment(availStart as string, 'HH:mm').format(
+      'HH:mm'
+    );
 
     if (availStart != null && availStartTime <= reqStartTime) {
       const availEnd = (() => {
@@ -95,9 +95,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         return null;
       })();
 
-      const availEndTime = moment
-        (availEnd as string, 'HH:mm')
-        .format('HH:mm');
+      const availEndTime = moment(availEnd as string, 'HH:mm').format('HH:mm');
 
       if (availEnd != null && availEndTime >= reqEndTime) {
         available = true;

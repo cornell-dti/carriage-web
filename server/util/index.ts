@@ -114,11 +114,9 @@ export const daysUntilWeekday = (
   return days || 7;
 };
 
-export const timeToMDY = (time: string) =>
-  moment(time).format('l');
+export const timeToMDY = (time: string) => moment(time).format('l');
 
-export const timeTo12Hr = (time: string) =>
-  moment(time).format('LT');
+export const timeTo12Hr = (time: string) => moment(time).format('LT');
 
 export const getRideLocation = (value: ValueType) => {
   if (typeof value === 'string') {

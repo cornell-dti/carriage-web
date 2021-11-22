@@ -19,16 +19,10 @@ router.get('/download', validateUser('Admin'), (req, res) => {
   let date = moment(from as string).format('YYYY-MM-DD');
   const dates = [date];
   if (to) {
-    date = moment
-      (date)
-      .add(1, 'days')
-      .format('YYYY-MM-DD');
+    date = moment(date).add(1, 'days').format('YYYY-MM-DD');
     while (date <= to) {
       dates.push(date);
-      date = moment
-        (date)
-        .add(1, 'days')
-        .format('YYYY-MM-DD');
+      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
     }
   }
 
@@ -45,12 +39,8 @@ router.put('/', validateUser('Admin'), (req, res) => {
   const statsAcc: StatsType[] = [];
 
   Object.keys(dates).forEach((date: string) => {
-    const year = moment
-      (date as string, 'MM/DD/YYYY')
-      .format('YYYY');
-    const monthDay = moment
-      (date as string, 'MM/DD/YYYY')
-      .format('MMDD');
+    const year = moment(date as string, 'MM/DD/YYYY').format('YYYY');
+    const monthDay = moment(date as string, 'MM/DD/YYYY').format('MMDD');
     const operation = { $SET: dates[date] };
     const key = { year, monthDay };
 
@@ -77,16 +67,10 @@ router.get('/', validateUser('Admin'), (req, res) => {
     let date = moment(from as string).format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
-      date = moment
-        (date)
-        .add(1, 'days')
-        .format('YYYY-MM-DD');
+      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       while (date <= to) {
         dates.push(date);
-        date = moment
-          (date)
-          .add(1, 'days')
-          .format('YYYY-MM-DD');
+        date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       }
     }
     statsFromDates(dates, res, false);
@@ -99,24 +83,16 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
 
   dates.forEach((currDate) => {
-    const year = moment
-      (currDate, 'YYYY-MM-DD')
-      .format('YYYY');
-    const monthDay = moment
-      (currDate, 'YYYY-MM-DD')
-      .format('MMDD');
+    const year = moment(currDate, 'YYYY-MM-DD').format('YYYY');
+    const monthDay = moment(currDate, 'YYYY-MM-DD').format('MMDD');
 
     const dateMoment = moment(currDate);
     // day = 12am to 5:00pm
     const dayStart = dateMoment.toISOString();
     const dayEnd = dateMoment.add(17, 'hours').toISOString();
     // night = 5:01pm to 11:59:59pm
-    const nightStart = moment
-      (dayEnd)
-      .add(1, 'seconds')
-      .toISOString();
-    const nightEnd = moment
-      (currDate as string)
+    const nightStart = moment(dayEnd).add(1, 'seconds').toISOString();
+    const nightEnd = moment(currDate as string)
       .endOf('day')
       .toISOString();
 
