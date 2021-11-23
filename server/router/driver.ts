@@ -51,8 +51,8 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
     params: { id, startTime, endTime },
   } = req;
 
-  const reqStart = moment.tz(startTime, 'America/New_York');
-  const reqEnd = moment.tz(endTime, 'America/New_York');
+  const reqStart = moment(startTime);
+  const reqEnd = moment(endTime);
 
   if (reqStart.date() !== reqEnd.date()) {
     res.status(400).send({ err: 'startTime and endTime dates must be equal' });
@@ -65,8 +65,8 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
     res.status(400).send({ err: 'startTime must precede endTime' });
   }
 
-  const reqStartDay = moment.tz(startTime, 'America/New_York').day();
-  const reqEndDay = moment.tz(endTime, 'America/New_York').day();
+  const reqStartDay = moment(startTime).day();
+  const reqEndDay = moment(endTime).day();
 
   let available = false;
 
@@ -81,9 +81,9 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
       return null;
     })();
 
-    const availStartTime = moment
-      .tz(availStart as string, 'HH:mm', 'America/New_York')
-      .format('HH:mm');
+    const availStartTime = moment(availStart as string, 'HH:mm').format(
+      'HH:mm'
+    );
 
     if (availStart != null && availStartTime <= reqStartTime) {
       const availEnd = (() => {
@@ -95,9 +95,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         return null;
       })();
 
-      const availEndTime = moment
-        .tz(availEnd as string, 'HH:mm', 'America/New_York')
-        .format('HH:mm');
+      const availEndTime = moment(availEnd as string, 'HH:mm').format('HH:mm');
 
       if (availEnd != null && availEndTime >= reqEndTime) {
         available = true;
