@@ -47,7 +47,7 @@ type DriverData = {
 };
 
 const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
-  const {showToast} = useToast();
+  const { showToast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
@@ -102,7 +102,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     )
       .then(() => {
         refresh();
-        isCreate ? showToast("Showing Toast") : null;
+        isCreate ? showToast('Showing Toast') : null;
         // setToast(isCreate);
       })
       .catch((err) => console.log(err));
@@ -125,7 +125,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       ).then(() => {
         refresh();
         // setToast(true);
-        showToast("Hello");
+        showToast('Hello');
       });
     } else {
       const createdEmployee = await fetch(
@@ -156,7 +156,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     ).then((res) => {
       refresh();
       // setToast(true);
-      showToast("Hello2");
+      showToast('Hello2');
       return res.json();
     });
     if (imageBase64 !== '') {
