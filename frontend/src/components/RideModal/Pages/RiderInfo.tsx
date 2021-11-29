@@ -7,6 +7,7 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
+import { useLocations } from 'context/LocationsContext';
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const { register, handleSubmit, formState, getValues } = useForm({
@@ -19,8 +20,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
-  const { withDefaults } = useReq();
-  const locations = Object.keys(locationToId).sort();
+  const locations = useLocations().locations;
   const { riders } = useRiders();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
@@ -38,16 +38,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     }, {});
     setNameToId(nameToIdObj);
 
-    fetch('/api/locations?active=true', withDefaults())
-      .then((res) => res.json())
-      .then(({ data }: { data: Location[] }) => {
-        const locationToIdObj = data.reduce((acc: ObjectType, l) => {
-          acc[l.name] = l.id;
-          return acc;
-        }, {});
-        setLocationToId(locationToIdObj);
-      });
-  }, [withDefaults, riders]);
+    setLocationToId(locations.map((l) => l.id));
+  });
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
@@ -91,7 +83,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l}>{l}</option>
+              <option key={l.id}>{l.id}</option>
             ))}
           </datalist>
         </div>
@@ -120,7 +112,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l}>{l}</option>
+              <option key={l.id}>{l.id}</option>
             ))}
           </datalist>
         </div>
