@@ -3,6 +3,11 @@ import express from 'express';
 import dynamoose from 'dynamoose';
 import path from 'path';
 import cors from 'cors';
+
+// Set default timezone for moment
+import moment from 'moment-timezone';
+moment.tz.setDefault('America/New_York');
+
 import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
@@ -15,6 +20,7 @@ import auth from './router/auth';
 import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
 import notification from './router/notification';
+import initDynamoose from './util/dynamoose';
 
 const port = Number(process.env.PORT) || 3001;
 
@@ -26,7 +32,7 @@ const port = Number(process.env.PORT) || 3001;
 const useHostname = process.env.USE_HOSTNAME === 'true';
 const hostname = (useHostname && process.env.HOSTNAME) || '';
 
-dynamoose.aws.sdk.config.update(config);
+initDynamoose();
 
 const app = express();
 app.use(cors());
@@ -57,7 +63,9 @@ app.get('*', (req, res) => {
 initSchedule();
 
 if (useHostname) {
-  app.listen(port, hostname, () => console.log('Listening at port', port));
+  app.listen(port, hostname, () =>
+    console.log(`Listening at http://${hostname}:${port}`)
+  );
 } else {
-  app.listen(port, () => console.log('Listening at port', port));
+  app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
 }

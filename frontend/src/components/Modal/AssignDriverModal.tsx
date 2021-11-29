@@ -2,11 +2,11 @@ import React, { useRef, useEffect } from 'react';
 import { Ride, Driver } from '../../types/index';
 import { useReq } from '../../context/req';
 import styles from './assigndrivermodal.module.css';
+import { useRides } from '../../context/RidesContext';
 
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  setDriver: (driverName: string) => void;
   ride: Ride;
   allDrivers: Driver[];
 };
@@ -31,11 +31,11 @@ const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
 const AssignDriverModal = ({
   isOpen,
   close,
-  setDriver,
   ride,
   allDrivers,
 }: AssignModalProps) => {
   const { withDefaults } = useReq();
+  const { refreshRides } = useRides();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
@@ -63,8 +63,7 @@ const AssignDriverModal = ({
           type: 'active',
         }),
       })
-    );
-    setDriver(driver.firstName);
+    ).then(() => refreshRides());
     close();
   };
   useOutsideAlerter(wrapperRef);

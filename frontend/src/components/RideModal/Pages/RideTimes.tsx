@@ -6,6 +6,7 @@ import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
+import { format_date, checkBounds, isTimeValid } from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
@@ -24,7 +25,7 @@ const RideTimesPage = ({
   const { curDate } = useDate();
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
-      date: formData?.date ?? moment(curDate).format('YYYY-MM-DD'),
+      date: formData?.date ?? format_date(curDate),
       pickupTime: formData?.pickupTime ?? '',
       dropoffTime: formData?.dropoffTime ?? '',
       repeatingRideType: formData?.repeatingRideType ?? RepeatingRide.DoesNotRepeat
@@ -44,9 +45,11 @@ const RideTimesPage = ({
             ref={register({
               required: true,
               validate: (date) => {
-                const fmtDate = moment(date).format('YYYY-MM-DD');
-                const fmtCurr = moment(curDate).format('YYYY-MM-DD');
-                return fmtDate >= fmtCurr;
+                const fmtDate = format_date(date);
+                const fmtCurr = format_date(curDate);
+                const notWeekend =
+                  moment(date).day() !== 0 && moment(date).day() !== 6;
+                return fmtDate >= fmtCurr && notWeekend;
               },
             })}
           />
@@ -77,12 +80,9 @@ const RideTimesPage = ({
             ref={register({
               required: true,
               validate: (pickupTime) => {
-                const now = moment();
-                if (!isEditing || moment(curDate).isSame(now, 'day')) {
-                  const date = getValues('date');
-                  return now.isBefore(moment(`${date} ${pickupTime}`));
-                }
-                return true;
+                const date = getValues('date');
+                const pickup = moment(`${date} ${pickupTime}`);
+                return checkBounds(date, pickup);
               },
             })}
           />
@@ -103,7 +103,9 @@ const RideTimesPage = ({
               required: true,
               validate: (dropoffTime) => {
                 const pickupTime = getValues('pickupTime');
-                return pickupTime < dropoffTime;
+                const date = getValues('date');
+                const dropoff = moment(`${date} ${dropoffTime}`);
+                return pickupTime < dropoffTime && checkBounds(date, dropoff);
               },
             })}
           />

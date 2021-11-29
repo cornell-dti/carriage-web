@@ -9,6 +9,7 @@ import { ObjectType, Ride } from '../../types/index';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
+import { format_date } from '../../util/index';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -31,13 +32,13 @@ const CreateOrEditRideModal = ({
         modalType === 'EDIT_REGULAR' ||
         modalType === 'EDIT_SINGLE_RECURRING'
       ) {
-        return moment(ride.startTime).format('YYYY-MM-DD');
+        return format_date(ride.startTime);
       }
       if (modalType === 'EDIT_ALL_RECURRING') {
-        return moment(ride.parentRide?.startTime).format('YYYY-MM-DD');
+        return format_date(ride.parentRide?.startTime);
       }
     }
-    return moment().format('YYYY-MM-DD');
+    return format_date();
   };
 
   const defaultValues = {
@@ -177,7 +178,7 @@ const CreateOrEditRideModal = ({
           method: 'PUT',
           body: JSON.stringify({
             deleteOnly: false,
-            origDate: moment(ride.startTime).format('YYYY-MM-DD'),
+            origDate: format_date(ride.startTime),
             ...rideData,
           }),
         })

@@ -9,6 +9,7 @@ import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
+import { checkBounds, isTimeValid } from '../../util/index';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -34,14 +35,6 @@ const RequestRideInfo = ({
   const shouldDisableStartDate =
     (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
     (ride && ride.type !== 'unscheduled');
-
-  const isTimeValid = (startDate: string, pickupTime: string) => {
-    const now = moment();
-    const today10AM = now.clone().hour(10).minute(0);
-    const selectedTime = moment(`${startDate} ${pickupTime}`);
-    const bufferDays = now.isAfter(today10AM) ? 2 : 1;
-    return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
-  };
 
   useEffect(() => {
     const getExistingLocations = async () => {
@@ -125,12 +118,19 @@ const RequestRideInfo = ({
               required: true,
               validate: (startDate) => {
                 const pickupTime = getValues('pickupTime');
-                return pickupTime ? isTimeValid(startDate, pickupTime) : true;
+                const notWeekend =
+                  moment(startDate).day() !== 0 &&
+                  moment(startDate).day() !== 6;
+                return pickupTime
+                  ? isTimeValid(startDate, pickupTime) && notWeekend
+                  : notWeekend;
               },
             })}
           />
           {errors.startDate && (
-            <p className={styles.error}>Please enter a valid start date</p>
+            <p className={styles.error}>
+              Please enter a valid start date (No rides on weekends)
+            </p>
           )}
         </div>
         {showRepeatingCheckbox && (
@@ -215,12 +215,16 @@ const RequestRideInfo = ({
               required: getValues('repeating'),
               validate: (endDate: any) => {
                 const startDate = getValues('startDate');
-                return startDate < endDate;
+                const notWeekend =
+                  moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
+                return startDate < endDate && notWeekend;
               },
             })}
           />
           {errors.endDate && (
-            <p className={styles.error}>Please select a valid end date</p>
+            <p className={styles.error}>
+              Please select a valid end date (No rides on weekends)
+            </p>
           )}
         </div>
       ) : null}
@@ -259,9 +263,13 @@ const RequestRideInfo = ({
             aria-labelledby="pickupLabel pickupTime"
             ref={register({
               required: true,
-              validate: (pickupTime) => {
+              validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
-                return startDate ? isTimeValid(startDate, pickupTime) : true;
+                const pickup = moment(`${startDate} ${pickupTime}`);
+                return startDate
+                  ? isTimeValid(startDate, pickupTime) &&
+                      checkBounds(startDate, pickup)
+                  : true;
               },
             })}
           />
@@ -355,10 +363,13 @@ const RequestRideInfo = ({
             aria-labelledby="dropoffLabel dropoffTime"
             ref={register({
               required: true,
-              validate: (dropoffTime: any) => {
-                const dropoffTi = dropoffTime;
+              validate: (dropoffTime: string) => {
                 const pickupTi = getValues('pickupTime');
-                return dropoffTi > pickupTi;
+                const startDate = getValues('startDate');
+                const dropOff = moment(`${startDate} ${dropoffTime}`);
+                return (
+                  dropoffTime > pickupTi && checkBounds(startDate, dropOff)
+                );
               },
             })}
           />

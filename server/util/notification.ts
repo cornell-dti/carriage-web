@@ -8,8 +8,10 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
-import { RideType, Status, Type } from '../models/ride';
-import { Change } from './types';
+import { RideType, Type } from '../models/ride';
+import { Change, NotificationEvent } from './types';
+import { getMessage } from './notificationMsg';
+import { getReceivers } from './notificationReceivers';
 
 AWS.config.update({ ...config, region: 'us-east-1' });
 const sns = new AWS.SNS();
@@ -48,15 +50,20 @@ const addSub = (sub: SubscriptionType) =>
     });
   });
 
-const sendMsg = (sub: SubscriptionType, msg: string) => {
+const sendMsg = (
+  sub: SubscriptionType,
+  title: string,
+  body: string,
+  notifEvent: NotificationEvent
+) => {
   if (sub.platform === PlatformType.WEB) {
     const webSub = {
       endpoint: sub.endpoint!,
       keys: sub.keys!,
     };
     const payload = {
-      title: 'payload message',
-      body: msg,
+      title,
+      body,
     };
     return new Promise((resolve, reject) => {
       webpush
@@ -78,8 +85,29 @@ const sendMsg = (sub: SubscriptionType, msg: string) => {
     });
   }
 
-  const snsParams = {
-    Message: msg,
+  const payload = JSON.stringify({
+    default: 'Default message.',
+    GCM: JSON.stringify({
+      data: {
+        notifEvent,
+      },
+      notification: {
+        title,
+        body,
+      },
+    }),
+    APNS: JSON.stringify({
+      payload: {
+        aps: {
+          sound: 'default',
+        },
+      },
+    }),
+  });
+
+  const snsParams: AWS.SNS.PublishInput = {
+    Message: payload,
+    MessageStructure: 'json',
     TargetArn: sub.endpoint,
   };
 
@@ -124,14 +152,16 @@ export const deleteAll = () =>
   });
 
 export const sendToUsers = (
-  msg: string,
-  userType?: UserType,
+  title: string,
+  body: string,
+  notifEvent: NotificationEvent,
+  receiver?: UserType,
   userId?: string
 ) =>
   new Promise((resolve, reject) => {
     let condition = new Condition();
-    if (userType) {
-      condition = condition.where('userType').eq(userType);
+    if (receiver) {
+      condition = condition.where('userType').eq(receiver);
     }
     if (userId) {
       condition = condition.where('userId').eq(userId);
@@ -142,7 +172,7 @@ export const sendToUsers = (
       } else {
         const promises = data.map((doc) => {
           const sub = JSON.parse(JSON.stringify(doc.toJSON()));
-          return sendMsg(sub, msg);
+          return sendMsg(sub, title, body, notifEvent);
         });
         Promise.allSettled(promises).then((results) => {
           const status = results.map((el) => el.status);
@@ -158,8 +188,10 @@ export const sendToUsers = (
     });
   });
 
-const getChangeType = (change: Partial<RideType>): Change | Status => {
-  const { status, late, type, driver } = change;
+export const getNotificationEvent = (
+  body: Partial<RideType>
+): NotificationEvent => {
+  const { status, late, type, driver } = body;
   if (status) {
     return status;
   }
@@ -172,39 +204,32 @@ const getChangeType = (change: Partial<RideType>): Change | Status => {
   return Change.EDITED;
 };
 
-export const notifyEdit = (
+export const notify = (
   updatedRide: RideType,
   body: Partial<RideType>,
-  userType: UserType,
-  userId: string,
+  sender: UserType,
   change?: Change
 ) =>
   new Promise((resolve, reject) => {
     const riderId = updatedRide.rider.id;
-    const hasDriver = updatedRide.driver;
+    const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
-    const changeType = change || getChangeType(body);
+    const notifEvent = change || getNotificationEvent(body);
+    const receivers = getReceivers(sender, notifEvent, hasDriver);
 
-    const info = JSON.stringify({
-      ride: updatedRide,
-      changeType,
-      changedBy: { userType, userId },
-    });
-
-    // potential issue: does not notify old driver/student (if it's different)
-    sendToUsers(info, UserType.ADMIN)
-      .then(() => {
-        if (userType === UserType.ADMIN) {
-          hasDriver && sendToUsers(info, UserType.DRIVER, driverId);
-          sendToUsers(info, UserType.RIDER, riderId);
+    Promise.all(
+      receivers.map((receiver) => {
+        let userId;
+        if (receiver === UserType.DRIVER) {
+          userId = driverId;
+        } else if (receiver === UserType.RIDER) {
+          userId = riderId;
         }
-        if (userType === UserType.RIDER && hasDriver) {
-          sendToUsers(info, UserType.DRIVER, driverId);
-        }
-        if (userType === UserType.DRIVER) {
-          sendToUsers(info, UserType.RIDER, riderId);
-        }
+        const title = 'Carriage'; // placeholder
+        const body = getMessage(sender, receiver, notifEvent, updatedRide);
+        return sendToUsers(title, body, notifEvent, receiver, userId);
       })
+    )
       .then(() => resolve(updatedRide))
       .catch(reject);
   });

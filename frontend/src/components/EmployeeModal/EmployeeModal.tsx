@@ -149,20 +149,24 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(employeeData),
       })
-    ).then((res) => res.json());
-
-    uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    ).then((res) => {
+      refresh();
+      setToast(true);
+      return res.json();
+    });
+    if (imageBase64 !== '') {
+      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    }
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, email, phoneNumber, startDate, availability } =
+    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
-
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
         lastName,
-        email,
+        email: netid + '@cornell.edu',
         phoneNumber,
       };
       if (existingEmployee) {
@@ -184,7 +188,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       const driver = {
         firstName,
         lastName,
-        email,
+        email: netid + '@cornell.edu',
         phoneNumber,
         startDate,
         availability: parseAvailability(availability),
@@ -246,7 +250,15 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       ) : (
         <Button onClick={openModal}>+ Add an employee</Button>
       )}
-      {showingToast ? <Toast message="The employee has been added." /> : null}
+
+      {showingToast ? (
+        existingEmployee ? (
+          <Toast message="The employee has been edited." />
+        ) : (
+          <Toast message="The employee has been added." />
+        )
+      ) : null}
+
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}
@@ -258,7 +270,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
               netId={existingEmployee?.netId}
-              email={existingEmployee?.email}
               phone={existingEmployee?.phone}
             />
             {selectedRole === 'admin' ? null : (

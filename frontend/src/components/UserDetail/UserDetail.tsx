@@ -47,7 +47,7 @@ type UserDetailProps = {
   firstName: string;
   lastName: string;
   netId: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.ReactNode;
   employee?: EmployeeDetailProps;
   role?: string;
   photoLink?: string;
@@ -133,14 +133,6 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
-            {/* {!isRider && (
-              <input
-                type="image"
-                className={styles.editIcon}
-                alt="trash"
-                src={detailTrash}
-              />
-            )} */}
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

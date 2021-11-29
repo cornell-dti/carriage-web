@@ -10,6 +10,7 @@
 
 /* rows seperating timeslots */
 .rbc-timeslot-group {
+  min-height: 80px;
   border-bottom: none;
 }
 

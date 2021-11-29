@@ -35,3 +35,7 @@ a.skip-main:active {
   left: 0;
   z-index: 999;
 }
+
+#main {
+  flex: 1;
+}
