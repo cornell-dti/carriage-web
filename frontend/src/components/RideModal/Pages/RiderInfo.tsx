@@ -7,7 +7,7 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
-import { useLocations } from 'context/LocationsContext';
+import { useLocations } from '../../../context/LocationsContext';
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const { register, handleSubmit, formState, getValues } = useForm({

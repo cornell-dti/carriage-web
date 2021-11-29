@@ -19,7 +19,7 @@ import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
 import { EmployeesProvider } from '../../context/EmployeesContext';
 import { RidersProvider } from '../../context/RidersContext';
-import { LocationsProvider } from 'context/LocationsContext';
+import { LocationsProvider } from '../../context/LocationsContext';
 import { RidesProvider } from '../../context/RidesContext';
 
 // Must be separate component, or else skip ref doesn't work.
