@@ -137,22 +137,6 @@ const RiderModalInfo = ({
               );
             })}
           </select>
-          {/* <Input
-            id="needs"
-            name="needs"
-            type="select"
-            ref={register({
-              validate: (needs) => {
-                if (needs === '') {
-                  return true;
-                }
-                const needsArr = needs.split(',').map((n: string) => n.trim());
-                const isValidNeed = (acc: boolean, val: Accessibility) =>
-                  acc && Object.values(Accessibility).includes(val);
-                return needsArr.reduce(isValidNeed, true);
-              },
-            })}
-          /> */}
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or
