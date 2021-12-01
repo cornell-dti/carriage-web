@@ -3,6 +3,7 @@ import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
 
 export enum Accessibility {
+  NONE = '',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
