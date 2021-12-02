@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { GoogleLogout } from 'react-google-login';
+import { GoogleLogout, useGoogleLogout } from 'react-google-login';
 import {
   home,
   drivers,
@@ -35,6 +35,12 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const [profile, setProfile] = useState('');
   const authContext = useContext(AuthContext);
   const reqContext = useContext(ReqContext);
+  const clientId = useClientId();
+  const { signOut } = useGoogleLogout({
+    clientId,
+    onLogoutSuccess: authContext.logout,
+  });
+
   const localUserType = localStorage.getItem('userType');
   const isAdmin = localUserType === 'Admin';
 
@@ -63,8 +69,6 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   ];
 
   const menuItems = type === 'admin' ? adminMenu : riderMenu;
-
-  const clientId = useClientId();
 
   return (
     <div className={styles.container}>
@@ -101,18 +105,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             />
           )}
           {profile !== '' && (
-            <GoogleLogout
-              onLogoutSuccess={authContext.logout}
-              clientId={clientId}
-              render={(renderProps) => (
-                <button
-                  onClick={renderProps.onClick}
-                  className={styles.logoutLink}
-                >
-                  Log out
-                </button>
-              )}
-            />
+            <button onClick={signOut} className={styles.logoutLink}>
+              Log out
+            </button>
           )}
         </div>
       </nav>
