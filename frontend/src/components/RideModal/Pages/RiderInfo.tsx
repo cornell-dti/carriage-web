@@ -14,13 +14,13 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
-      dropoffLoc: formData?.dropoffLoc ?? '',
-    },
+      dropoffLoc: formData?.dropoffLoc ?? ''
+    }
   });
   const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
-  const locations = useLocations().locations;
+  const { locations } = useLocations();
   const { riders } = useRiders();
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
@@ -38,7 +38,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     }, {});
     setNameToId(nameToIdObj);
 
-    setLocationToId(locations.map((l) => l.id));
+    const locationToIdObj = locations.reduce((acc: ObjectType, l) => {
+      acc[l.name] = l.id;
+      return acc;
+    }, {});
+    setLocationToId(locationToIdObj);
   });
 
   return (
@@ -55,7 +59,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ref={register({
               required: true,
               validate: (name: string) =>
-                nameToId[name.toLowerCase()] !== undefined,
+                nameToId[name.toLowerCase()] !== undefined
             })}
           />
           {errors.name && <p className={styles.error}>Rider not found</p>}
@@ -83,7 +87,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l.id}>{l.id}</option>
+              <option key={l.name}>{l.name}</option>
             ))}
           </datalist>
         </div>
@@ -101,7 +105,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
               validate: (dropoffLoc) => {
                 const pickupLoc = getValues('pickupLoc');
                 return pickupLoc !== dropoffLoc;
-              },
+              }
             })}
           />
           {errors.dropoffLoc?.type === 'required' && (
@@ -112,7 +116,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l.id}>{l.id}</option>
+              <option key={l.name}>{l.name}</option>
             ))}
           </datalist>
         </div>

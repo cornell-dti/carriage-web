@@ -9,7 +9,7 @@ type locationsState = {
 
 const initialState: locationsState = {
   locations: [],
-  refreshLocations: async () => undefined,
+  refreshLocations: async () => undefined
 };
 
 const LocationsContext = React.createContext(initialState);
@@ -30,10 +30,11 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
     )
       .then((res) => res.json())
       .then((data) => data.data);
-    locationsData &&
+    if (locationsData) {
       locationsData.sort((a: Location, b: Location) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
+    }
 
     locationsData && componentMounted.current && setLocations(locationsData);
   }, [withDefaults]);

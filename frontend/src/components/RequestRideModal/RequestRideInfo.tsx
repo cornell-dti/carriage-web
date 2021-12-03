@@ -10,6 +10,7 @@ import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
 import { checkBounds, isTimeValid } from '../../util/index';
+import { useLocations } from '../../context/LocationsContext';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -22,7 +23,7 @@ const RequestRideInfo = ({
   ride,
   showRepeatingCheckbox,
   showRepeatingInfo,
-  modalType,
+  modalType
 }: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
@@ -37,31 +38,7 @@ const RequestRideInfo = ({
     (ride && ride.type !== 'unscheduled');
 
   useEffect(() => {
-    const getExistingLocations = async () => {
-      const locationsData = await fetch(
-        '/api/locations?active=true',
-        withDefaults()
-      )
-        .then((res) => res.json())
-        .then((data) => data.data);
-      const sortedLocations = locationsData.sort((a: Location, b: Location) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-      // Logic to prevent the other from being the default value
-      sortedLocations.push({
-        id: 'Other',
-        name: 'Other',
-        address: 'custom, do not use',
-      });
-      setLocations(sortedLocations);
-    };
-    getExistingLocations();
+    setLocations(useLocations().locations);
   }, [withDefaults]);
 
   useEffect(() => {
@@ -124,7 +101,7 @@ const RequestRideInfo = ({
                 return pickupTime
                   ? isTimeValid(startDate, pickupTime) && notWeekend
                   : notWeekend;
-              },
+              }
             })}
           />
           {errors.startDate && (
@@ -218,7 +195,7 @@ const RequestRideInfo = ({
                 const notWeekend =
                   moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
                 return startDate < endDate && notWeekend;
-              },
+              }
             })}
           />
           {errors.endDate && (
@@ -270,7 +247,7 @@ const RequestRideInfo = ({
                   ? isTimeValid(startDate, pickupTime) &&
                       checkBounds(startDate, pickup)
                   : true;
-              },
+              }
             })}
           />
           {errors.pickupTime && (
@@ -337,7 +314,7 @@ const RequestRideInfo = ({
                   endLocation !== startLoc ||
                   (endLocation === 'Other' && startLoc === 'Other')
                 );
-              },
+              }
             })}
           >
             {locations.map((location) => (
@@ -370,7 +347,7 @@ const RequestRideInfo = ({
                 return (
                   dropoffTime > pickupTi && checkBounds(startDate, dropOff)
                 );
-              },
+              }
             })}
           />
           {errors.dropoffTime && (
