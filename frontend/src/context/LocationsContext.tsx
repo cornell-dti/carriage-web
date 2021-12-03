@@ -9,7 +9,7 @@ type locationsState = {
 
 const initialState: locationsState = {
   locations: [],
-  refreshLocations: async () => undefined
+  refreshLocations: async () => undefined,
 };
 
 const LocationsContext = React.createContext(initialState);

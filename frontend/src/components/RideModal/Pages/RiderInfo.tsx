@@ -14,8 +14,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
-      dropoffLoc: formData?.dropoffLoc ?? ''
-    }
+      dropoffLoc: formData?.dropoffLoc ?? '',
+    },
   });
   const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
@@ -59,7 +59,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ref={register({
               required: true,
               validate: (name: string) =>
-                nameToId[name.toLowerCase()] !== undefined
+                nameToId[name.toLowerCase()] !== undefined,
             })}
           />
           {errors.name && <p className={styles.error}>Rider not found</p>}
@@ -105,7 +105,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
               validate: (dropoffLoc) => {
                 const pickupLoc = getValues('pickupLoc');
                 return pickupLoc !== dropoffLoc;
-              }
+              },
             })}
           />
           {errors.dropoffLoc?.type === 'required' && (

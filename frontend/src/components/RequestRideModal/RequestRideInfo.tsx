@@ -23,7 +23,7 @@ const RequestRideInfo = ({
   ride,
   showRepeatingCheckbox,
   showRepeatingInfo,
-  modalType
+  modalType,
 }: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
@@ -101,7 +101,7 @@ const RequestRideInfo = ({
                 return pickupTime
                   ? isTimeValid(startDate, pickupTime) && notWeekend
                   : notWeekend;
-              }
+              },
             })}
           />
           {errors.startDate && (
@@ -195,7 +195,7 @@ const RequestRideInfo = ({
                 const notWeekend =
                   moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
                 return startDate < endDate && notWeekend;
-              }
+              },
             })}
           />
           {errors.endDate && (
@@ -247,7 +247,7 @@ const RequestRideInfo = ({
                   ? isTimeValid(startDate, pickupTime) &&
                       checkBounds(startDate, pickup)
                   : true;
-              }
+              },
             })}
           />
           {errors.pickupTime && (
@@ -314,7 +314,7 @@ const RequestRideInfo = ({
                   endLocation !== startLoc ||
                   (endLocation === 'Other' && startLoc === 'Other')
                 );
-              }
+              },
             })}
           >
             {locations.map((location) => (
@@ -347,7 +347,7 @@ const RequestRideInfo = ({
                 return (
                   dropoffTime > pickupTi && checkBounds(startDate, dropOff)
                 );
-              }
+              },
             })}
           />
           {errors.dropoffTime && (
