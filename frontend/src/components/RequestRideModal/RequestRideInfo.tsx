@@ -36,10 +36,11 @@ const RequestRideInfo = ({
   const shouldDisableStartDate =
     (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
     (ride && ride.type !== 'unscheduled');
+  const loc = useLocations().locations;
 
   useEffect(() => {
-    setLocations(useLocations().locations);
-  }, [withDefaults]);
+    setLocations(loc);
+  }, [loc]);
 
   useEffect(() => {
     if (ride) {

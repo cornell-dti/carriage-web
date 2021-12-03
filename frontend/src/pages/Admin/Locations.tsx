@@ -9,11 +9,11 @@ import { useLocations } from '../../context/LocationsContext';
 
 const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);
-  const { withDefaults } = useReq();
+  const loc = useLocations().locations;
 
   useEffect(() => {
-    setLocations(useLocations().locations);
-  }, [withDefaults]);
+    setLocations(loc);
+  }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
     setLocations([...locations, newLocation]);
