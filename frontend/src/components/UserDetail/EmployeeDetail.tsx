@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
+import { Link } from 'react-router-dom';
 import {
   phone,
   clock,
@@ -216,36 +217,48 @@ const EmployeeDetail = () => {
     };
 
     return (
-      <main id="main" className={styles.detailContainer}>
-        <UserDetail
-          firstName={employee.firstName}
-          lastName={employee.lastName}
-          netId={employee.netId}
-          employee={employee}
-          role={roleValue()}
-          photoLink={employee.photoLink}
-        >
-          <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
-          <UserContactInfo
-            icon={isAdmin || isBoth ? user : wheel}
-            alt="role"
-            text={role()}
-          />
-          <UserContactInfo
-            icon={clock}
-            alt="availability"
-            text={avail === '' ? 'N/A' : avail}
-          />
-          {employee.startDate && (
+      <main id="main">
+        <div className={styles.pageDivTitle}>
+          <Link
+            to={{
+              pathname: '/employees'
+            }}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+            className={styles.header}
+            >Employees
+          </Link>
+        </div>
+        <div className={styles.detailContainer}>
+          <UserDetail
+            firstName={employee.firstName}
+            lastName={employee.lastName}
+            netId={employee.netId}
+            employee={employee}
+            role={roleValue()}
+            photoLink={employee.photoLink}
+          >
+            <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
             <UserContactInfo
-              icon={calender_dark}
-              alt="join date"
-              text={employee.startDate}
+              icon={isAdmin || isBoth ? user : wheel}
+              alt="role"
+              text={role()}
             />
-          )}
-        </UserDetail>
-        <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-        <PastRides isStudent={false} rides={rides} />
+            <UserContactInfo
+              icon={clock}
+              alt="availability"
+              text={avail === '' ? 'N/A' : avail}
+            />
+            {employee.startDate && (
+              <UserContactInfo
+                icon={calender_dark}
+                alt="join date"
+                text={employee.startDate}
+              />
+            )}
+          </UserDetail>
+          <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
+          <PastRides isStudent={false} rides={rides} />
+        </div>
       </main>
     );
   }
