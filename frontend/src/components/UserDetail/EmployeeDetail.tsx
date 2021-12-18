@@ -221,11 +221,12 @@ const EmployeeDetail = () => {
         <div className={styles.pageDivTitle}>
           <Link
             to={{
-              pathname: '/employees'
+              pathname: '/employees',
             }}
             style={{ textDecoration: 'none', color: 'inherit' }}
             className={styles.header}
-            >Employees
+          >
+            Employees
           </Link>
         </div>
         <div className={styles.detailContainer}>

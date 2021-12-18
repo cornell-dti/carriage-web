@@ -48,11 +48,12 @@ const RiderDetail = () => {
       <div className={styles.pageDivTitle}>
         <Link
           to={{
-            pathname: '/riders'
+            pathname: '/riders',
           }}
           style={{ textDecoration: 'none', color: 'inherit' }}
           className={styles.header}
-          >Students
+        >
+          Students
         </Link>
       </div>
       <div className={styles.detailContainer}>
