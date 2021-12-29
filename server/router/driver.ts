@@ -1,5 +1,5 @@
 import express from 'express';
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid, validate } from 'uuid';
 import { Condition } from 'dynamoose';
 import { Document } from 'dynamoose/dist/Document';
 import moment from 'moment-timezone';
@@ -42,6 +42,14 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
       vehicle,
     });
   });
+});
+
+// Get all available drivers at a given time
+router.get('/available', validateUser('Admin'), (req, res) => {
+  const {date, startTime, endTime} = req.query;
+  const reqStart = moment(date as string + " " + startTime as string);
+  const reqEnd = moment(date as string + " " + endTime as string);
+  
 });
 
 // Get whether a driver is available at a given time
