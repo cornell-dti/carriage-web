@@ -46,10 +46,18 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 
 // Get all available drivers at a given time
 router.get('/available', validateUser('Admin'), (req, res) => {
-  const {date, startTime, endTime} = req.query;
-  const reqStart = moment(date as string + " " + startTime as string);
-  const reqEnd = moment(date as string + " " + endTime as string);
-  
+  const { date, reqStartTime, reqEndTime } = req.query;
+  const startTime = moment(reqStartTime as string, 'HH:mm');
+  const endTime = moment(reqEndTime as string, 'HH:mm');
+  const day = moment(date as string).day()
+
+  if (startTime > endTime) {
+    res.status(400).send({ err: 'startTime must precede endTime'})
+  }
+
+  const available = {};
+
+  res.status(200).send(available);
 });
 
 // Get whether a driver is available at a given time
