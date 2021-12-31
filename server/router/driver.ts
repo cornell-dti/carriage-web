@@ -49,15 +49,37 @@ router.get('/available', validateUser('Admin'), (req, res) => {
   const { date, reqStartTime, reqEndTime } = req.query;
   const startTime = moment(reqStartTime as string, 'HH:mm');
   const endTime = moment(reqEndTime as string, 'HH:mm');
-  const day = moment(date as string).day()
 
-  if (startTime > endTime) {
-    res.status(400).send({ err: 'startTime must precede endTime'})
+  function getDay() {
+    switch (moment(date as string).day()) {
+      case 0:
+        return 'Sun';
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+    }
   }
 
-  const available = {};
+  if (startTime > endTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
 
-  res.status(200).send(available);
+  const condition = new Condition()
+    .where(`availability.${getDay()}.startTime`)
+    .le(startTime)
+    .where(`availability.${getDay()}.endTime`)
+    .ge(endTime);
+
+  db.scan(res, Driver, condition);
 });
 
 // Get whether a driver is available at a given time
