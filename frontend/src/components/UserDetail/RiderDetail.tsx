@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
-import { Link } from 'react-router-dom';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
 import { Ride, Rider } from '../../types';

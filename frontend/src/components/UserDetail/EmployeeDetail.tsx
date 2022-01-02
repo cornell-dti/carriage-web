@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import { Link } from 'react-router-dom';
 import {
   phone,
   clock,
