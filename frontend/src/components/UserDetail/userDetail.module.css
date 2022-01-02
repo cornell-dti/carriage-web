@@ -24,9 +24,17 @@
 }
 
 .header {
-  text-align: left;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
   font-size: 1.75rem;
-  margin: 0;
+  margin-bottom: 0;
+  margin-left: -28px;
+}
+
+.chevronLeft {
+  margin-right: 4px;
 }
 
 .profilePic {

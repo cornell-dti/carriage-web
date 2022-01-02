@@ -17,6 +17,7 @@ import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/models/admin';
 import { DriverType } from '../../../../server/models/driver';
+import { chevronLeft } from '../../icons/other';
 
 type EmployeeDetailProps = {
   id: string;
@@ -133,6 +134,22 @@ const findEmployee = (
   return employee;
 };
 
+const Header = () => {
+  return (
+    <div className={styles.pageDivTitle}>
+      <Link
+        to={{
+          pathname: '/employees',
+        }}
+        className={styles.header}
+      >
+        <img className={styles.chevronLeft} src={chevronLeft} />
+        Employees
+      </Link>
+    </div>
+  );
+};
+
 const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
   const { drivers, admins } = useEmployees();
@@ -217,17 +234,7 @@ const EmployeeDetail = () => {
 
     return (
       <main id="main">
-        <div className={styles.pageDivTitle}>
-          <Link
-            to={{
-              pathname: '/employees',
-            }}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            className={styles.header}
-          >
-            Employees
-          </Link>
-        </div>
+        <Header />
         <div className={styles.detailContainer}>
           <UserDetail
             firstName={employee.firstName}

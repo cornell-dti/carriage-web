@@ -1,13 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { useLocation, useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
-import { Ride, Rider } from '../../types';
+import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
+import { chevronLeft } from '../../icons/other';
+
+const Header = () => {
+  return (
+    <div className={styles.pageDivTitle}>
+      <Link
+        to={{
+          pathname: '/riders',
+        }}
+        className={styles.header}
+      >
+        <img className={styles.chevronLeft} src={chevronLeft} />
+        Students
+      </Link>
+    </div>
+  );
+};
 
 const RiderDetail = () => {
   const { withDefaults } = useReq();
@@ -44,17 +61,7 @@ const RiderDetail = () => {
 
   return rider ? (
     <main id="main">
-      <div className={styles.pageDivTitle}>
-        <Link
-          to={{
-            pathname: '/riders',
-          }}
-          style={{ textDecoration: 'none', color: 'inherit' }}
-          className={styles.header}
-        >
-          Students
-        </Link>
-      </div>
+      <Header />
       <div className={styles.detailContainer}>
         <UserDetail
           firstName={rider.firstName}
