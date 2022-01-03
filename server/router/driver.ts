@@ -12,40 +12,13 @@ import { UserType } from '../models/subscription';
 const router = express.Router();
 const tableName = 'Drivers';
 
-// Get a driver by id in Drivers table
-router.get('/:id', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Driver, id, tableName);
-});
-
 // Get all drivers
 router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Driver, tableName);
 });
 
-// Get profile information for a driver
-router.get('/:id/profile', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Driver, id, tableName, (driver: DriverType) => {
-    const { email, firstName, lastName, phoneNumber, availability, vehicle } =
-      driver;
-    res.send({
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      availability,
-      vehicle,
-    });
-  });
-});
-
 // Get all available drivers at a specific date and time
-router.get('/test/available', validateUser('Admin'), (req, res) => {
+router.get('/available', validateUser('User'), (req, res) => {
   const { date, startTime: reqStartTime, endTime: reqEndTime } = req.query;
   const reqDay = moment(date as string).day();
 
@@ -75,12 +48,40 @@ router.get('/test/available', validateUser('Admin'), (req, res) => {
       if (availStart === undefined || availEnd === undefined) {
         return false;
       }
-      console.log(availEnd)
-      console.log(reqEndTime)
-      return availEnd >= (reqEndTime as string) && availStart <= (reqStartTime as string);
+      return (
+        availEnd >= (reqEndTime as string) &&
+        availStart <= (reqStartTime as string)
+      );
     });
 
     res.send(drivers);
+  });
+});
+
+// Get a driver by id in Drivers table
+router.get('/:id', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  db.getById(res, Driver, id, tableName);
+});
+
+// Get profile information for a driver
+router.get('/:id/profile', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  db.getById(res, Driver, id, tableName, (driver: DriverType) => {
+    const { email, firstName, lastName, phoneNumber, availability, vehicle } =
+      driver;
+    res.send({
+      email,
+      firstName,
+      lastName,
+      phoneNumber,
+      availability,
+      vehicle,
+    });
   });
 });
 
