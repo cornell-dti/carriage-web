@@ -14,6 +14,7 @@ const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
 router.get('/:id', validateUser('User'), (req, res) => {
+    console.log("triggered wrong")
   const {
     params: { id },
   } = req;
@@ -45,7 +46,8 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 });
 
 // Get all available drivers at a given time
-router.get('/available', validateUser('Admin'), (req, res) => {
+router.get('/test/available', validateUser('Admin'), (req, res) => {
+  console.log("triggered")
   const { date, reqStartTime, reqEndTime } = req.query;
   const startTime = moment(reqStartTime as string, 'HH:mm');
   const endTime = moment(reqEndTime as string, 'HH:mm');
@@ -73,12 +75,13 @@ router.get('/available', validateUser('Admin'), (req, res) => {
     res.status(400).send({ err: 'startTime must precede endTime' });
   }
 
-  const condition = new Condition()
+  const condition = new Condition(`availability.${getDay()}`).exists()
     .where(`availability.${getDay()}.startTime`)
-    .le(startTime)
+    .le(reqStartTime).and()
     .where(`availability.${getDay()}.endTime`)
-    .ge(endTime);
+    .ge(reqEndTime);
 
+  console.log(`availability.${getDay()}`)
   db.scan(res, Driver, condition);
 });
 
