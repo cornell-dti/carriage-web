@@ -14,7 +14,6 @@ const tableName = 'Drivers';
 
 // Get a driver by id in Drivers table
 router.get('/:id', validateUser('User'), (req, res) => {
-    console.log("triggered wrong")
   const {
     params: { id },
   } = req;
@@ -45,44 +44,44 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
   });
 });
 
-// Get all available drivers at a given time
+// Get all available drivers at a specific date and time
 router.get('/test/available', validateUser('Admin'), (req, res) => {
-  console.log("triggered")
-  const { date, reqStartTime, reqEndTime } = req.query;
-  const startTime = moment(reqStartTime as string, 'HH:mm');
-  const endTime = moment(reqEndTime as string, 'HH:mm');
+  const { date, startTime: reqStartTime, endTime: reqEndTime } = req.query;
+  const reqDay = moment(date as string).day();
 
-  function getDay() {
-    switch (moment(date as string).day()) {
-      case 0:
-        return 'Sun';
-      case 1:
-        return 'Mon';
-      case 2:
-        return 'Tue';
-      case 3:
-        return 'Wed';
-      case 4:
-        return 'Thu';
-      case 5:
-        return 'Fri';
-      case 6:
-        return 'Sat';
-    }
-  }
-
-  if (startTime > endTime) {
+  if ((reqStartTime as string) >= (reqEndTime as string)) {
     res.status(400).send({ err: 'startTime must precede endTime' });
   }
 
-  const condition = new Condition(`availability.${getDay()}`).exists()
-    .where(`availability.${getDay()}.startTime`)
-    .le(reqStartTime).and()
-    .where(`availability.${getDay()}.endTime`)
-    .ge(reqEndTime);
+  db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
+    const drivers = doc.filter((driver) => {
+      const availStart = (() => {
+        if (reqDay === 2) return driver.availability.Tue?.startTime;
+        if (reqDay === 1) return driver.availability.Mon?.startTime;
+        if (reqDay === 3) return driver.availability.Wed?.startTime;
+        if (reqDay === 4) return driver.availability.Thu?.startTime;
+        if (reqDay === 5) return driver.availability.Fri?.startTime;
+        return undefined;
+      })();
+      const availEnd = (() => {
+        if (reqDay === 1) return driver.availability.Mon?.endTime;
+        if (reqDay === 2) return driver.availability.Tue?.endTime;
+        if (reqDay === 3) return driver.availability.Wed?.endTime;
+        if (reqDay === 4) return driver.availability.Thu?.endTime;
+        if (reqDay === 5) return driver.availability.Fri?.endTime;
+        return undefined;
+      })();
 
-  console.log(`availability.${getDay()}`)
-  db.scan(res, Driver, condition);
+      if (availStart === undefined || availEnd === undefined) {
+        return false;
+      }
+      console.log(availEnd)
+      console.log(reqEndTime)
+      return availEnd >= (reqEndTime as string) && availStart <= (reqStartTime as string);
+    });
+
+    res.send(drivers);
+  });
 });
 
 // Get whether a driver is available at a given time
@@ -122,9 +121,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
       return null;
     })();
 
-    const availStartTime = moment(availStart as string, 'HH:mm').format(
-      'HH:mm'
-    );
+    const availStartTime = moment(availStart as string).format('HH:mm');
 
     if (availStart != null && availStartTime <= reqStartTime) {
       const availEnd = (() => {
@@ -136,7 +133,7 @@ router.get('/:id/:startTime/:endTime', (req, res) => {
         return null;
       })();
 
-      const availEndTime = moment(availEnd as string, 'HH:mm').format('HH:mm');
+      const availEndTime = moment(availEnd as string).format('HH:mm');
 
       if (availEnd != null && availEndTime >= reqEndTime) {
         available = true;
