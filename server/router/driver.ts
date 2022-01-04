@@ -1,5 +1,5 @@
 import express from 'express';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
 import { Document } from 'dynamoose/dist/Document';
 import moment from 'moment-timezone';
@@ -20,7 +20,14 @@ router.get('/', validateUser('Admin'), (req, res) => {
 // Get all available drivers at a specific date and time
 router.get('/available', validateUser('User'), (req, res) => {
   const { date, startTime: reqStartTime, endTime: reqEndTime } = req.query;
-  const reqDay = moment(date as string).day();
+  const numToDay = {
+    1: 'Mon',
+    2: 'Tue',
+    3: 'Web',
+    4: 'Thu',
+    5: 'Fri',
+  };
+  const reqDate = (numToDay as any)[moment(date as string).day()];
 
   if ((reqStartTime as string) >= (reqEndTime as string)) {
     res.status(400).send({ err: 'startTime must precede endTime' });
@@ -28,33 +35,24 @@ router.get('/available', validateUser('User'), (req, res) => {
 
   db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
     const drivers = doc.filter((driver) => {
-      const availStart = (() => {
-        if (reqDay === 2) return driver.availability.Tue?.startTime;
-        if (reqDay === 1) return driver.availability.Mon?.startTime;
-        if (reqDay === 3) return driver.availability.Wed?.startTime;
-        if (reqDay === 4) return driver.availability.Thu?.startTime;
-        if (reqDay === 5) return driver.availability.Fri?.startTime;
-        return undefined;
-      })();
-      const availEnd = (() => {
-        if (reqDay === 1) return driver.availability.Mon?.endTime;
-        if (reqDay === 2) return driver.availability.Tue?.endTime;
-        if (reqDay === 3) return driver.availability.Wed?.endTime;
-        if (reqDay === 4) return driver.availability.Thu?.endTime;
-        if (reqDay === 5) return driver.availability.Fri?.endTime;
-        return undefined;
-      })();
+      const availStart = !reqDate
+        ? reqDate
+        : (driver.availability as any)[reqDate]?.startTime;
+      const availEnd = !reqDate
+        ? reqDate
+        : (driver.availability as any)[reqDate]?.endTime;
 
       if (availStart === undefined || availEnd === undefined) {
         return false;
       }
+
       return (
         availEnd >= (reqEndTime as string) &&
         availStart <= (reqStartTime as string)
       );
     });
 
-    res.send(drivers);
+    res.send({ data: drivers });
   });
 });
 
@@ -82,65 +80,6 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
       availability,
       vehicle,
     });
-  });
-});
-
-// Get whether a driver is available at a given time
-// startTime and endTime must be in the format YYYY-MM-DDTHH:MM
-router.get('/:id/:startTime/:endTime', (req, res) => {
-  const {
-    params: { id, startTime, endTime },
-  } = req;
-
-  const reqStart = moment(startTime);
-  const reqEnd = moment(endTime);
-
-  if (reqStart.date() !== reqEnd.date()) {
-    res.status(400).send({ err: 'startTime and endTime dates must be equal' });
-  }
-
-  const reqStartTime = reqStart.format('HH:mm');
-  const reqEndTime = reqEnd.format('HH:mm');
-
-  if (reqStartTime > reqEndTime) {
-    res.status(400).send({ err: 'startTime must precede endTime' });
-  }
-
-  const reqStartDay = moment(startTime).day();
-  const reqEndDay = moment(endTime).day();
-
-  let available = false;
-
-  db.getById(res, Driver, id, tableName, (driver) => {
-    const { availability } = driver as DriverType;
-    const availStart = (() => {
-      if (reqStartDay === 1) return availability.Mon?.startTime;
-      if (reqStartDay === 2) return availability.Tue?.startTime;
-      if (reqStartDay === 3) return availability.Wed?.startTime;
-      if (reqStartDay === 4) return availability.Thu?.startTime;
-      if (reqStartDay === 5) return availability.Fri?.startTime;
-      return null;
-    })();
-
-    const availStartTime = moment(availStart as string).format('HH:mm');
-
-    if (availStart != null && availStartTime <= reqStartTime) {
-      const availEnd = (() => {
-        if (reqEndDay === 1) return availability.Mon?.endTime;
-        if (reqEndDay === 2) return availability.Tue?.endTime;
-        if (reqEndDay === 3) return availability.Wed?.endTime;
-        if (reqEndDay === 4) return availability.Thu?.endTime;
-        if (reqEndDay === 5) return availability.Fri?.endTime;
-        return null;
-      })();
-
-      const availEndTime = moment(availEnd as string).format('HH:mm');
-
-      if (availEnd != null && availEndTime >= reqEndTime) {
-        available = true;
-      }
-    }
-    res.status(200).send(available);
   });
 });
 
