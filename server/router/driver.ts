@@ -46,10 +46,7 @@ router.get('/available', validateUser('User'), (req, res) => {
         return false;
       }
 
-      return (
-        availEnd >= reqEndTime &&
-        availStart <= reqStartTime
-      );
+      return availEnd >= reqEndTime && availStart <= reqStartTime;
     });
 
     res.send({ data: drivers });
