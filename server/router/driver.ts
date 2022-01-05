@@ -33,7 +33,7 @@ router.get('/available', validateUser('User'), (req, res) => {
   ];
   const reqDate = numToDay[moment(date as string).day()];
 
-  if ((reqStartTime as string) >= (reqEndTime as string)) {
+  if (reqStartTime >= reqEndTime) {
     res.status(400).send({ err: 'startTime must precede endTime' });
   }
 
@@ -47,8 +47,8 @@ router.get('/available', validateUser('User'), (req, res) => {
       }
 
       return (
-        availEnd >= (reqEndTime as string) &&
-        availStart <= (reqStartTime as string)
+        availEnd >= reqEndTime &&
+        availStart <= reqStartTime
       );
     });
 
