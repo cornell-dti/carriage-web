@@ -10,7 +10,7 @@ import { format_date, checkBounds, isTimeValid } from '../../../util/index';
 
 type RideTimesProps = ModalPageProps & { isEditing?: boolean };
 
-enum RepeatingRide {
+enum RepeatValues {
   DoesNotRepeat = 'Does Not Repeat',
   Daily = 'Daily',
   Weekly = 'Weekly',
@@ -28,8 +28,7 @@ const RideTimesPage = ({
       date: formData?.date ?? format_date(curDate),
       pickupTime: formData?.pickupTime ?? '',
       dropoffTime: formData?.dropoffTime ?? '',
-      repeatingRideType:
-        formData?.repeatingRideType ?? RepeatingRide.DoesNotRepeat,
+      repeats: formData?.repeats ?? RepeatValues.DoesNotRepeat,
     },
   });
   const { errors } = formState;
@@ -63,8 +62,19 @@ const RideTimesPage = ({
         </div>
         <div className={styles.repeats}>
           <Label htmlFor="repeats">Repeats:</Label>
-          <Input id="repeats" type="Select" name="repeatingRideType" />
-          {errors.repeatingRideType?.type === 'required' && (
+          <select
+            id="repeats"
+            name="repeats"
+            ref={register({ required: true })}
+            className={styles.select}
+          >
+            {Object.values(RepeatValues).map((repeatValue) => (
+              <option key={repeatValue} value={repeatValue}>
+                {repeatValue}
+              </option>
+            ))}
+          </select>
+          {errors.repeats?.type === 'required' && (
             <p className={styles.error}>Please enter a time</p>
           )}
         </div>
