@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import { Document } from 'dynamoose/dist/Document';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Driver, DriverType } from '../models/driver';
+import { Driver, DriverType, AvailabilityType } from '../models/driver';
 import { validateUser } from '../util';
 import { Ride, Status } from '../models/ride';
 import { UserType } from '../models/subscription';
@@ -19,15 +19,19 @@ router.get('/', validateUser('Admin'), (req, res) => {
 
 // Get all available drivers at a specific date and time
 router.get('/available', validateUser('User'), (req, res) => {
-  const { date, startTime: reqStartTime, endTime: reqEndTime } = req.query;
-  const numToDay = {
-    1: 'Mon',
-    2: 'Tue',
-    3: 'Web',
-    4: 'Thu',
-    5: 'Fri',
-  };
-  const reqDate = (numToDay as any)[moment(date as string).day()];
+  const { date, startTime, endTime } = req.query;
+  const reqStartTime = startTime as string;
+  const reqEndTime = endTime as string;
+  const numToDay: (keyof AvailabilityType | undefined)[] = [
+    undefined,
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    undefined,
+  ];
+  const reqDate = numToDay[moment(date as string).day()];
 
   if ((reqStartTime as string) >= (reqEndTime as string)) {
     res.status(400).send({ err: 'startTime must precede endTime' });
@@ -35,12 +39,8 @@ router.get('/available', validateUser('User'), (req, res) => {
 
   db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
     const drivers = doc.filter((driver) => {
-      const availStart = !reqDate
-        ? reqDate
-        : (driver.availability as any)[reqDate]?.startTime;
-      const availEnd = !reqDate
-        ? reqDate
-        : (driver.availability as any)[reqDate]?.endTime;
+      const availStart = reqDate && driver.availability[reqDate]?.startTime;
+      const availEnd = reqDate && driver.availability[reqDate]?.endTime;
 
       if (availStart === undefined || availEnd === undefined) {
         return false;
