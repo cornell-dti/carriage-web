@@ -13,7 +13,7 @@ type AvailabilityInputProps = {
   hide: boolean;
 };
 
-const AvailabilityInput = ({
+export const AvailabilityInput = ({
   index,
   existingTimeRange,
   existingDayArray,
@@ -29,13 +29,11 @@ const AvailabilityInput = ({
   const { register, setValue, getValues, formState } = useFormContext();
   const { errors } = formState;
   const dayLabels = {
-    Sun: 'S',
     Mon: 'M',
     Tue: 'T',
     Wed: 'W',
     Thu: 'T',
     Fri: 'F',
-    Sat: 'S',
   };
   const [existingTime, setExisingTime] = useState<string[]>();
   // All data for this AvailabilityInput instance will be saved in the form's
