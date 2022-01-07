@@ -47,6 +47,27 @@
   background-color: #eae9e9;
 }
 
+.day {
+  border-radius: 40%;
+  height: 1.25rem;
+  width: 1.25rem;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  margin: 0 0.125rem;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.day:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
+}
+
+.daySelected {
+  background-color: black;
+  color: white;
+}
+
 .drivers {
   display: flex;
   flex-wrap: wrap;

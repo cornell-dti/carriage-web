@@ -13,7 +13,7 @@ type AvailabilityInputProps = {
   hide: boolean;
 };
 
-export const AvailabilityInput = ({
+const AvailabilityInput = ({
   index,
   existingTimeRange,
   existingDayArray,

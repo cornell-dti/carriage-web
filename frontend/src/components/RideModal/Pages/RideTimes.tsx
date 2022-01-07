@@ -7,6 +7,55 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
+import { ObjectType } from '../../../types';
+
+// VERY TEMPORARY IMPLEMENTATION
+// We use this "day selector" component a few times throughout the codebase,
+// each with their own unique implementation. Making a reusable component for
+// this is essential and needed, but would require a lot of refactoring.
+// So for now this will do, but should be replaced ASAP.
+const DaySelector = () => {
+  const [selected, setSelected] = useState<ObjectType>({});
+  const { register } = useFormContext();
+  const dayLabels = {
+    Mon: 'M',
+    Tue: 'T',
+    Wed: 'W',
+    Thu: 'T',
+    Fri: 'F',
+  };
+
+  const isSelected = (day: string) => selected[day] !== undefined;
+
+  const handleClick = (day: string) => {
+    setSelected((prev) => {
+      if (isSelected(day)) {
+        return { ...prev, [day]: undefined };
+      }
+      return { ...prev, [day]: 1 };
+    });
+  };
+
+  return (
+    <>
+      {Object.entries(dayLabels).map(([day, label]) => (
+        <button
+          key={day}
+          name={`days.${day}`}
+          value={isSelected(day) ? 1 : undefined}
+          type="button"
+          className={cn(styles.day, {
+            [styles.daySelected]: isSelected(day),
+          })}
+          onClick={() => handleClick(day)}
+          ref={register()}
+        >
+          {label}
+        </button>
+      ))}
+    </>
+  );
+};
 
 enum RepeatValues {
   DoesNotRepeat = 'Does Not Repeat',
@@ -20,12 +69,34 @@ type RepeatSectionProps = {
 };
 
 const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
-  const { register } = useFormContext();
+  const { register, getValues } = useFormContext();
   return (
-    <div className={styles.colSpan}>
-      <p>Hello</p>
-      {repeatValue === RepeatValues.Custom && <p>Custom</p>}
-    </div>
+    <>
+      {repeatValue === RepeatValues.Custom && (
+        <div className={styles.colSpan}>
+          <Label htmlFor="repeatsOn">Repeats on:</Label>
+          <DaySelector />
+        </div>
+      )}
+      <div className={styles.colSpan}>
+        <Label htmlFor="endDate">End date:</Label>
+        <Input
+          id="endDate"
+          type="date"
+          name="endDate"
+          ref={register({
+            required: true,
+            validate: (endDate) => {
+              const fmtEnd = format_date(endDate);
+              const fmtStart = format_date(getValues('date'));
+              const notWeekend =
+                moment(fmtEnd).day() !== 0 && moment(fmtEnd).day() !== 6;
+              return fmtEnd > fmtStart && notWeekend;
+            },
+          })}
+        />
+      </div>
+    </>
   );
 };
 
@@ -58,7 +129,7 @@ const RideTimesPage = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
-            <Label htmlFor="date">Date:</Label>
+            <Label htmlFor="date">Day:</Label>
             <Input
               id="date"
               type="date"
