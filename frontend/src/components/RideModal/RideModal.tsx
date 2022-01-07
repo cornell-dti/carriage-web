@@ -128,7 +128,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         onClose={closeModal}
       >
         <RideTimesPage
-          isEditing
+          defaultRepeating={ride.recurring}
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />
