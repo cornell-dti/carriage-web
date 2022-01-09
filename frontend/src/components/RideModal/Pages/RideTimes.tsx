@@ -16,7 +16,7 @@ import { ObjectType } from '../../../types';
 // So for now this will do, but should be replaced ASAP.
 const DaySelector = () => {
   const [selected, setSelected] = useState<ObjectType>({});
-  const { register } = useFormContext();
+  const { register, getValues } = useFormContext();
   const dayLabels = {
     Mon: 'M',
     Tue: 'T',
@@ -27,7 +27,16 @@ const DaySelector = () => {
 
   const isSelected = (day: string) => selected[day] !== undefined;
 
-  const handleClick = (day: string) => {
+  const validate = () =>
+    Boolean(
+      selected.Mon ||
+        selected.Tue ||
+        selected.Wed ||
+        selected.Thu ||
+        selected.Fri
+    );
+
+  const toggle = (day: string) => {
     setSelected((prev) => {
       if (isSelected(day)) {
         return { ...prev, [day]: undefined };
@@ -35,6 +44,15 @@ const DaySelector = () => {
       return { ...prev, [day]: 1 };
     });
   };
+
+  useEffect(() => {
+    Object.keys(dayLabels).forEach((day) => {
+      const savedValue = getValues(`days.${day}`);
+      if (savedValue === '1') {
+        toggle(day);
+      }
+    });
+  }, []);
 
   return (
     <>
@@ -47,8 +65,8 @@ const DaySelector = () => {
           className={cn(styles.day, {
             [styles.daySelected]: isSelected(day),
           })}
-          onClick={() => handleClick(day)}
-          ref={register()}
+          onClick={() => toggle(day)}
+          ref={register({ validate })}
         >
           {label}
         </button>
@@ -115,6 +133,8 @@ const RideTimesPage = ({
       pickupTime: formData?.pickupTime ?? '',
       dropoffTime: formData?.dropoffTime ?? '',
       repeats: formData?.repeats ?? RepeatValues.DoesNotRepeat,
+      endDate: formData?.endDate ?? '',
+      days: formData?.days ?? {},
     },
   });
   const { errors, handleSubmit, register, getValues, watch } = methods;

@@ -60,6 +60,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   }, [close, originalRideData]);
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
+    console.log(data);
     setFormData((prev) => ({ ...prev, ...data }));
     next();
   };
