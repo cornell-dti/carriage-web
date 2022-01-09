@@ -3,9 +3,15 @@ import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
 
 export enum Accessibility {
+  NONE = '',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
+  MOTOR_SCOOTER = 'Motorized Scooter',
+  KNEE_SCOOTER = 'Knee Scooter',
+  LOW_VISION = 'Low Vision/Blind',
+  SERVICE_ANIMALS = 'Service Animals',
+  OTHER = 'Other',
 }
 
 export enum Organization {

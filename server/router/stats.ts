@@ -16,19 +16,13 @@ router.get('/download', validateUser('Admin'), (req, res) => {
   const {
     query: { from, to },
   } = req;
-  let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+  let date = moment(from as string).format('YYYY-MM-DD');
   const dates = [date];
   if (to) {
-    date = moment
-      .tz(date, 'America/New_York')
-      .add(1, 'days')
-      .format('YYYY-MM-DD');
+    date = moment(date).add(1, 'days').format('YYYY-MM-DD');
     while (date <= to) {
       dates.push(date);
-      date = moment
-        .tz(date, 'America/New_York')
-        .add(1, 'days')
-        .format('YYYY-MM-DD');
+      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
     }
   }
 
@@ -45,12 +39,8 @@ router.put('/', validateUser('Admin'), (req, res) => {
   const statsAcc: StatsType[] = [];
 
   Object.keys(dates).forEach((date: string) => {
-    const year = moment
-      .tz(date as string, 'MM/DD/YYYY', 'America/New_York')
-      .format('YYYY');
-    const monthDay = moment
-      .tz(date as string, 'MM/DD/YYYY', 'America/New_York')
-      .format('MMDD');
+    const year = moment(date as string, 'MM/DD/YYYY').format('YYYY');
+    const monthDay = moment(date as string, 'MM/DD/YYYY').format('MMDD');
     const operation = { $SET: dates[date] };
     const key = { year, monthDay };
 
@@ -74,19 +64,13 @@ router.get('/', validateUser('Admin'), (req, res) => {
   const toMatch = to ? (to as string).match(regexp) : true;
 
   if (fromMatch && toMatch) {
-    let date = moment.tz(from, 'America/New_York').format('YYYY-MM-DD');
+    let date = moment(from as string).format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
-      date = moment
-        .tz(date, 'America/New_York')
-        .add(1, 'days')
-        .format('YYYY-MM-DD');
+      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       while (date <= to) {
         dates.push(date);
-        date = moment
-          .tz(date, 'America/New_York')
-          .add(1, 'days')
-          .format('YYYY-MM-DD');
+        date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       }
     }
     statsFromDates(dates, res, false);
@@ -99,24 +83,16 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
 
   dates.forEach((currDate) => {
-    const year = moment
-      .tz(currDate, 'YYYY-MM-DD', 'America/New_York')
-      .format('YYYY');
-    const monthDay = moment
-      .tz(currDate, 'YYYY-MM-DD', 'America/New_York')
-      .format('MMDD');
+    const year = moment(currDate, 'YYYY-MM-DD').format('YYYY');
+    const monthDay = moment(currDate, 'YYYY-MM-DD').format('MMDD');
 
-    const dateMoment = moment.tz(currDate, 'America/New_York');
+    const dateMoment = moment(currDate);
     // day = 12am to 5:00pm
     const dayStart = dateMoment.toISOString();
     const dayEnd = dateMoment.add(17, 'hours').toISOString();
     // night = 5:01pm to 11:59:59pm
-    const nightStart = moment
-      .tz(dayEnd, 'America/New_York')
-      .add(1, 'seconds')
-      .toISOString();
-    const nightEnd = moment
-      .tz(currDate as string, 'America/New_York')
+    const nightStart = moment(dayEnd).add(1, 'seconds').toISOString();
+    const nightEnd = moment(currDate as string)
       .endOf('day')
       .toISOString();
 
