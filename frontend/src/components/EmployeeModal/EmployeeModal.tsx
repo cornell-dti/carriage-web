@@ -52,7 +52,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
-  // const [showingToast, setToast] = useState(false);
   const [imageBase64, setImageBase64] = useState('');
   const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
@@ -102,8 +101,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     )
       .then(() => {
         refresh();
-        isCreate ? showToast('Showing Toast') : null;
-        // setToast(isCreate);
       })
       .catch((err) => console.log(err));
   };
@@ -165,8 +162,14 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
-      data;
+    const {
+      firstName,
+      lastName,
+      netid,
+      phoneNumber,
+      startDate,
+      availability,
+    } = data;
     if (selectedRole === 'admin') {
       const admin = {
         firstName,
@@ -255,14 +258,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       ) : (
         <Button onClick={openModal}>+ Add an employee</Button>
       )}
-
-      {/* {showingToast ? (
-        existingEmployee ? (
-          <Toast message="The employee has been edited." />
-        ) : (
-          <Toast message="The employee has been added." />
-        )
-      ) : null} */}
 
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload

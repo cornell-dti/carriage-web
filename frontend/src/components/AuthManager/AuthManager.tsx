@@ -16,6 +16,7 @@ import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
@@ -23,7 +24,6 @@ import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { useToast } from '../../context/toastContext';
 
-import { check } from '../../icons/other/index';
 import { createPortal } from 'react-dom';
 
 export const AuthManager = () => {
@@ -179,15 +179,6 @@ export const AuthManager = () => {
 
     return (
       <>
-        {visible &&
-          createPortal(
-            <div>
-              <img alt="toast check" src={check} />
-              <p>{message}</p>
-            </div>,
-            document.body
-          )}
-
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
           <ReqContext.Provider value={{ withDefaults }}>
             <SubscribeWrapper userId={id}>
@@ -198,6 +189,8 @@ export const AuthManager = () => {
                 <Route path="*">
                   <Redirect to="/" />
                 </Route>
+                {visible &&
+                  createPortal(<Toast message={message} />, document.body)}
               </Switch>
             </SubscribeWrapper>
           </ReqContext.Provider>
