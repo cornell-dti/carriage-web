@@ -16,8 +16,20 @@ type RideModalProps = {
 };
 
 const RideModal = ({ open, close, ride }: RideModalProps) => {
-  const originalRideData = ride
-    ? {
+  const originalRideData = getRideData();
+  const [formData, setFormData] = useState<ObjectType>(originalRideData);
+  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showingToast, setToast] = useState(false);
+  const { withDefaults } = useReq();
+  const { refreshRides } = useRides();
+
+  // using function instead of const so the function can be hoisted and
+  // not get in the way of the state and hooks
+  function getRideData() {
+    if (ride) {
+      let rideData: ObjectType = {
         date: format_date(ride.startTime),
         pickupTime: moment(ride.startTime).format('kk:mm'),
         dropoffTime: moment(ride.endTime).format('kk:mm'),
@@ -28,15 +40,38 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         dropoffLoc: ride.endLocation.id
           ? ride.endLocation.name
           : ride.endLocation.address,
+      };
+      if (ride.recurring) {
+        let repeats;
+        let days;
+        const startDay = moment(ride.startTime).weekday();
+
+        if (ride.recurringDays!.length === 5) {
+          repeats = RepeatValues.Daily;
+        } else if (
+          ride.recurringDays!.length === 1 &&
+          ride.recurringDays![0] === startDay
+        ) {
+          repeats = RepeatValues.Weekly;
+        } else {
+          repeats = RepeatValues.Custom;
+          const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+          days = ride.recurringDays!.reduce((prev, curr) => {
+            return { ...prev, [numToDay[curr]]: '1' };
+          }, {} as ObjectType);
+        }
+
+        rideData = {
+          ...rideData,
+          repeats,
+          days,
+          endDate: format_date(ride.endDate),
+        };
       }
-    : {};
-  const [formData, setFormData] = useState<ObjectType>(originalRideData);
-  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showingToast, setToast] = useState(false);
-  const { withDefaults } = useReq();
-  const { refreshRides } = useRides();
+      return rideData;
+    }
+    return {};
+  }
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -60,7 +95,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   }, [close, originalRideData]);
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
-    console.log(data);
     setFormData((prev) => ({ ...prev, ...data }));
     next();
   };
@@ -121,8 +155,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         endLocation,
       };
 
-      const isRepeating = repeats !== RepeatValues.DoesNotRepeat;
-      if (isRepeating) {
+      if (repeats !== RepeatValues.DoesNotRepeat) {
         rideData = {
           ...rideData,
           recurring: true,
@@ -132,26 +165,28 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
       }
 
       console.log(rideData);
-      // if (ride) {
-      //   if (ride.type === 'active') {
-      //     rideData.type = 'unscheduled';
-      //   }
-      //   fetch(
-      //     `/api/rides/${ride.id}`,
-      //     withDefaults({
-      //       method: 'PUT',
-      //       body: JSON.stringify(rideData),
-      //     })
-      //   ).then(refreshRides);
-      // } else {
-      //   fetch(
-      //     '/api/rides',
-      //     withDefaults({
-      //       method: 'POST',
-      //       body: JSON.stringify(rideData),
-      //     })
-      //   ).then(refreshRides);
-      // }
+
+      if (ride) {
+        if (ride.type === 'active') {
+          rideData.type = 'unscheduled';
+        }
+        fetch(
+          `/api/rides/${ride.id}`,
+          withDefaults({
+            method: 'PUT',
+            body: JSON.stringify(rideData),
+          })
+        ).then(refreshRides);
+      } else {
+        fetch(
+          '/api/rides',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify(rideData),
+          })
+        ).then(refreshRides);
+      }
+
       setIsSubmitted(false);
       closeModal();
       setToast(true);
