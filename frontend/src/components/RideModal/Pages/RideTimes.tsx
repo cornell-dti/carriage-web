@@ -7,7 +7,7 @@ import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
-import { ObjectType } from '../../../types';
+import { ObjectType, RepeatValues } from '../../../types';
 
 // VERY TEMPORARY IMPLEMENTATION
 // We use this "day selector" component a few times throughout the codebase,
@@ -74,13 +74,6 @@ const DaySelector = () => {
     </>
   );
 };
-
-enum RepeatValues {
-  DoesNotRepeat = 'Does Not Repeat',
-  Daily = 'Daily',
-  Weekly = 'Weekly',
-  Custom = 'Custom',
-}
 
 type RepeatSectionProps = {
   repeatValue: RepeatValues;

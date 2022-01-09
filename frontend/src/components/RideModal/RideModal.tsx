@@ -4,7 +4,7 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType, Ride } from '../../types/index';
+import { ObjectType, RepeatValues, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
@@ -67,21 +67,51 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
 
   const submitData = () => setIsSubmitted(true);
 
+  const getRecurringDays = (
+    date: string,
+    repeats: RepeatValues,
+    days: ObjectType
+  ) => {
+    switch (repeats) {
+      case RepeatValues.Daily:
+        return [1, 2, 3, 4, 5];
+      case RepeatValues.Weekly:
+        return [moment(date).weekday()];
+      default: {
+        const dayToNum: ObjectType = {
+          Mon: 1,
+          Tue: 2,
+          Wed: 3,
+          Thu: 4,
+          Fri: 5,
+        };
+        return Object.keys(days)
+          .filter((day) => days[day] !== '')
+          .map((day) => dayToNum[day]);
+      }
+    }
+  };
+
   useEffect(() => {
     if (isSubmitted) {
       const {
         date,
         pickupTime,
         dropoffTime,
+        repeats,
+        endDate,
+        days,
         driver,
         rider,
         startLocation,
         endLocation,
       } = formData;
+
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
       const hasDriver = Boolean(driver) && driver !== 'None';
-      const rideData: ObjectType = {
+
+      let rideData: ObjectType = {
         type: hasDriver ? 'active' : 'unscheduled',
         startTime,
         endTime,
@@ -90,26 +120,38 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         startLocation,
         endLocation,
       };
-      if (ride) {
-        if (ride.type === 'active') {
-          rideData.type = 'unscheduled';
-        }
-        fetch(
-          `/api/rides/${ride.id}`,
-          withDefaults({
-            method: 'PUT',
-            body: JSON.stringify(rideData),
-          })
-        ).then(refreshRides);
-      } else {
-        fetch(
-          '/api/rides',
-          withDefaults({
-            method: 'POST',
-            body: JSON.stringify(rideData),
-          })
-        ).then(refreshRides);
+
+      const isRepeating = repeats !== RepeatValues.DoesNotRepeat;
+      if (isRepeating) {
+        rideData = {
+          ...rideData,
+          recurring: true,
+          recurringDays: getRecurringDays(date, repeats, days),
+          endDate: format_date(endDate),
+        };
       }
+
+      console.log(rideData);
+      // if (ride) {
+      //   if (ride.type === 'active') {
+      //     rideData.type = 'unscheduled';
+      //   }
+      //   fetch(
+      //     `/api/rides/${ride.id}`,
+      //     withDefaults({
+      //       method: 'PUT',
+      //       body: JSON.stringify(rideData),
+      //     })
+      //   ).then(refreshRides);
+      // } else {
+      //   fetch(
+      //     '/api/rides',
+      //     withDefaults({
+      //       method: 'POST',
+      //       body: JSON.stringify(rideData),
+      //     })
+      //   ).then(refreshRides);
+      // }
       setIsSubmitted(false);
       closeModal();
       setToast(true);
