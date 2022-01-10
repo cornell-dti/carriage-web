@@ -179,6 +179,7 @@ export const AuthManager = () => {
 
     return (
       <>
+        {visible && createPortal(<Toast message={message} />, document.body)}
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
           <ReqContext.Provider value={{ withDefaults }}>
             <SubscribeWrapper userId={id}>
@@ -189,8 +190,6 @@ export const AuthManager = () => {
                 <Route path="*">
                   <Redirect to="/" />
                 </Route>
-                {visible &&
-                  createPortal(<Toast message={message} />, document.body)}
               </Switch>
             </SubscribeWrapper>
           </ReqContext.Provider>
