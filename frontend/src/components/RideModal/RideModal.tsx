@@ -13,9 +13,10 @@ type RideModalProps = {
   open?: boolean;
   close?: () => void;
   ride?: Ride;
+  editSingle?: boolean;
 };
 
-const RideModal = ({ open, close, ride }: RideModalProps) => {
+const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   const originalRideData = getRideData();
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
@@ -167,17 +168,35 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
       console.log(rideData);
 
       if (ride) {
+        // scheduled ride
         if (ride.type === 'active') {
           rideData.type = 'unscheduled';
         }
-        fetch(
-          `/api/rides/${ride.id}`,
-          withDefaults({
-            method: 'PUT',
-            body: JSON.stringify(rideData),
-          })
-        ).then(refreshRides);
+        if (editSingle) {
+          // edit single instance of repeating ride
+          fetch(
+            `/api/rides/${ride.id}/edits`,
+            withDefaults({
+              method: 'PUT',
+              body: JSON.stringify({
+                deleteOnly: false,
+                origDate: format_date(ride.startTime),
+                ...rideData,
+              }),
+            })
+          ).then(refreshRides);
+        } else {
+          // edit ride or all instances of repeating ride
+          fetch(
+            `/api/rides/${ride.id}`,
+            withDefaults({
+              method: 'PUT',
+              body: JSON.stringify(rideData),
+            })
+          ).then(refreshRides);
+        }
       } else {
+        // unscheduled ride
         fetch(
           '/api/rides',
           withDefaults({

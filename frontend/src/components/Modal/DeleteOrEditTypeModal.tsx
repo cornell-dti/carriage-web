@@ -63,7 +63,7 @@ const DeleteOrEditTypeModal = ({
   };
   return (
     <Modal
-      title={deleting ? 'Cancel Ride' : 'Edit Ride'}
+      title={deleting ? 'Cancel Ride' : 'Edit Repeating Ride'}
       isOpen={open}
       onClose={closeModal}
     >
@@ -106,7 +106,7 @@ const DeleteOrEditTypeModal = ({
               onClick={(e) => changeSelection(e)}
             />
             <Label htmlFor="recurring" className={styles.modalText}>
-              All Recurring Rides
+              All Repeating Rides
             </Label>
           </div>
           <div className={styles.buttonContainer}>
