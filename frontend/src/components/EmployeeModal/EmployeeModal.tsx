@@ -8,7 +8,6 @@ import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
-import Toast from '../ConfirmationToast/ConfirmationToast';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -62,7 +61,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   const openModal = () => {
     setIsOpen(true);
-    // setToast(false);
   };
 
   const closeModal = () => {
@@ -121,8 +119,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         })
       ).then(() => {
         refresh();
-        // setToast(true);
-        showToast('Hello');
+        showToast('The employee has been added.');
       });
     } else {
       const createdEmployee = await fetch(
@@ -152,8 +149,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       })
     ).then((res) => {
       refresh();
-      // setToast(true);
-      showToast('Hello2');
+      showToast('The employee has been edited.');
       return res.json();
     });
     if (imageBase64 !== '') {
