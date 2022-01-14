@@ -18,8 +18,9 @@ router.post('/', validateUser('User'), (req, res) => {
     body: { id, tableName, fileBuffer },
   } = req;
   const validTables = ['Riders', 'Drivers', 'Admins'];
-
-  if (validTables.includes(tableName)) {
+  if (fileBuffer === '') {
+    res.status(400).send({ err: 'Invalid file name: empty string' });
+  } else if (validTables.includes(tableName)) {
     const objectKey = `${tableName}/${id}`;
 
     const params = {
