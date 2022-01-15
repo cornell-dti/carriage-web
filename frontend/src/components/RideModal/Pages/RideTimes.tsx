@@ -16,7 +16,8 @@ import { ObjectType, RepeatValues } from '../../../types';
 // So for now this will do, but should be replaced ASAP.
 const DaySelector = () => {
   const [selected, setSelected] = useState<ObjectType>({});
-  const { register, getValues } = useFormContext();
+  const { register, getValues, formState } = useFormContext();
+  const { errors } = formState;
   const dayLabels = {
     Mon: 'M',
     Tue: 'T',
@@ -71,6 +72,9 @@ const DaySelector = () => {
           {label}
         </button>
       ))}
+      {errors.days?.Mon?.type === 'validate' && (
+        <p className={styles.error}>Please select a day</p>
+      )}
     </>
   );
 };
@@ -80,7 +84,8 @@ type RepeatSectionProps = {
 };
 
 const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
-  const { register, getValues } = useFormContext();
+  const { register, getValues, formState } = useFormContext();
+  const { errors } = formState;
   return (
     <>
       {repeatValue === RepeatValues.Custom && (
@@ -106,6 +111,12 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
             },
           })}
         />
+        {errors.endDate?.type === 'required' && (
+          <p className={styles.error}>Please enter an end date</p>
+        )}
+        {errors.endDate?.type === 'validate' && (
+          <p className={styles.error}>Invalid date</p>
+        )}
       </div>
     </>
   );
