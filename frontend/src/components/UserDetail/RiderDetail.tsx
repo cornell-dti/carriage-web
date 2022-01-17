@@ -76,7 +76,11 @@ const RiderDetail = () => {
               alt="phone number"
               text={rider.phoneNumber}
             />
-            <UserContactInfo icon={home} alt="address" text={rider.address} />
+            <UserContactInfo 
+              icon={home} 
+              alt="address" 
+              text={rider.address} 
+            />
             <UserContactInfo
               icon={calendar}
               alt="active dates"

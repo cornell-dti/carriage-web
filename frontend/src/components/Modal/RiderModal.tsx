@@ -7,7 +7,7 @@ import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
-import { edit } from '../../icons/other/index';
+import { edit, trash, trashbig } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 
 type RiderModalProps = {
@@ -19,6 +19,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
+  const [deleteStudent, setDeleteStudent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
@@ -26,6 +27,10 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   const openModal = () => {
     setIsOpen(true);
+  };
+
+  const studentDelete = () => {
+    setDeleteStudent(true);
   };
 
   const closeModal = () => setIsOpen(false);
@@ -40,7 +45,12 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
     setIsSubmitted(true);
     closeModal();
   };
-
+  useEffect(() => {
+    if(deleteStudent) {
+      fetch(`/api/riders/${!existingRider ? '' : existingRider.id}`, withDefaults({ method: 'DELETE' }))
+      console.log("removed")
+    }
+  },[deleteStudent])
   useEffect(() => {
     if (isSubmitted) {
       fetch(
@@ -84,9 +94,14 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
           + Add Student
         </Button>
       ) : (
+        <div className={styles.twoButtonDiv}>
         <button className={styles.editRiderButton} onClick={openModal}>
           <img className={styles.editIcon} alt="edit" src={edit} />
         </button>
+        <button className={styles.deleteStudentButton} onClick={studentDelete}>
+          <img className={styles.trashIcon} alt="trash" src={trashbig} />
+        </button>
+        </div>
       )}
       <Modal
         title={!existingRider ? 'Add a Student' : 'Edit a Student'}
