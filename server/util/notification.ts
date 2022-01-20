@@ -96,6 +96,7 @@ const sendMsg = (
         id: uuid(),
         notifEvent,
         ride,
+        sentTime: new Date().toISOString(),
       },
       notification: {
         title,
