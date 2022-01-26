@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
-import {
-  Link,
-  Redirect, Route, Switch, useHistory,
-} from 'react-router-dom';
+import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
@@ -30,7 +27,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   const { refreshRiders } = useRiders();
   const history = useHistory();
 
-
   const openModal = () => {
     setIsOpen(true);
   };
@@ -52,18 +48,19 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
     closeModal();
   };
   useEffect(() => {
-    if(deleteStudent) {
-      fetch(`/api/riders/${!existingRider ? '' : existingRider.id}`, 
-      withDefaults({ 
-        method: 'DELETE' 
-      })
+    if (deleteStudent) {
+      fetch(
+        `/api/riders/${!existingRider ? '' : existingRider.id}`,
+        withDefaults({
+          method: 'DELETE',
+        })
       ).then(() => {
         setToast(true);
         refreshRiders;
         history.push('/riders');
       });
     }
-  },[deleteStudent])
+  }, [deleteStudent]);
   useEffect(() => {
     if (isSubmitted) {
       fetch(
@@ -108,16 +105,19 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         </Button>
       ) : (
         <div className={styles.twoButtonDiv}>
-        <button className={styles.editRiderButton} onClick={openModal}>
-          <img className={styles.editIcon} alt="edit" src={edit} />
-        </button>
-        <Switch>
-          <Route path = "/riders">
-            <button className={styles.deleteStudentButton} onClick={studentDelete}>
-              <img className={styles.trashIcon} alt="trash" src={trashbig} />
-            </button>
-          </Route>
-        </Switch>
+          <button className={styles.editRiderButton} onClick={openModal}>
+            <img className={styles.editIcon} alt="edit" src={edit} />
+          </button>
+          <Switch>
+            <Route path="/riders">
+              <button
+                className={styles.deleteStudentButton}
+                onClick={studentDelete}
+              >
+                <img className={styles.trashIcon} alt="trash" src={trashbig} />
+              </button>
+            </Route>
+          </Switch>
         </div>
       )}
       <Modal
