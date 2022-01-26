@@ -1,5 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
+import {
+  Link,
+  Redirect, Route, Switch, useHistory,
+} from 'react-router-dom';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import Toast from '../ConfirmationToast/ConfirmationToast';
@@ -24,6 +28,8 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const history = useHistory();
+
 
   const openModal = () => {
     setIsOpen(true);
@@ -47,8 +53,15 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   };
   useEffect(() => {
     if(deleteStudent) {
-      fetch(`/api/riders/${!existingRider ? '' : existingRider.id}`, withDefaults({ method: 'DELETE' }))
-      console.log("removed")
+      fetch(`/api/riders/${!existingRider ? '' : existingRider.id}`, 
+      withDefaults({ 
+        method: 'DELETE' 
+      })
+      ).then(() => {
+        setToast(true);
+        refreshRiders;
+        history.push('/riders');
+      });
     }
   },[deleteStudent])
   useEffect(() => {
@@ -98,9 +111,13 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         <button className={styles.editRiderButton} onClick={openModal}>
           <img className={styles.editIcon} alt="edit" src={edit} />
         </button>
-        <button className={styles.deleteStudentButton} onClick={studentDelete}>
-          <img className={styles.trashIcon} alt="trash" src={trashbig} />
-        </button>
+        <Switch>
+          <Route path = "/riders">
+            <button className={styles.deleteStudentButton} onClick={studentDelete}>
+              <img className={styles.trashIcon} alt="trash" src={trashbig} />
+            </button>
+          </Route>
+        </Switch>
         </div>
       )}
       <Modal
