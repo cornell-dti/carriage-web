@@ -15,26 +15,24 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
     },
   });
   const { errors } = formState;
-  const { drivers } = useEmployees();
+  // const { drivers } = useEmployees();
+
   const { date, startTime, endTime } = getValues();
   type DriverOption = { id: string; firstName: string; lastName: string };
-
-  if (!startTime || !endTime || !date) {
-    const availableDrivers = undefined;
-  } else {
-    const availableDrivers = fetch(`/api/drivers/available/${date}/${startTime}/${endTime}`)
+  let availableDrivers: DriverOption[] = [];
+  if (startTime && endTime && date) {
+    fetch(`/api/drivers/available/${date}/${startTime}/${endTime}`)
       .then((res) => res.json())
-      .then((data) => data.data);
+      .then((data) => {
+        availableDrivers = data;
+      });
   }
 
-  const driverOptions: DriverOption[] = [
-    { id: 'None', firstName: 'None', lastName: '' },
-  ].concat(drivers);
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.inputContainer}>
         <div className={styles.drivers}>
-          {driverOptions.map((d) => (
+          {availableDrivers.map((d) => (
             <div className={styles.driver} key={d.id}>
               <Label
                 htmlFor={d.firstName + d.lastName}
