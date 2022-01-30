@@ -1,32 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
-import { useEmployees } from '../../../context/EmployeesContext';
+import { useReq } from '../../../context/req';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
-  const { register, handleSubmit, formState, getValues } = useForm({
+  const { register, handleSubmit, formState } = useForm({
     defaultValues: {
       driver: formData?.driver ?? '',
-      date: formData?.date ?? '',
-      startTime: formData?.startTime ?? '',
-      endTime: formData?.endTime ?? '',
     },
   });
   const { errors } = formState;
-  // const { drivers } = useEmployees();
+  const { withDefaults } = useReq();
 
-  const { date, startTime, endTime } = getValues();
+  const { date, pickupTime: startTime, dropoffTime: endTime } = formData!;
   type DriverOption = { id: string; firstName: string; lastName: string };
-  let availableDrivers: DriverOption[] = [];
-  if (startTime && endTime && date) {
-    fetch(`/api/drivers/available/${date}/${startTime}/${endTime}`)
-      .then((res) => res.json())
-      .then((data) => {
-        availableDrivers = data;
-      });
+  const [availableDrivers, setAvailableDrivers] = useState<DriverOption[]>([]);
+
+  const getAvailableDrivers = async (
+    date: string | undefined,
+    startTime: string | undefined,
+    endTime: string | undefined
+  ) => {
+    if (startTime && endTime && date) {
+      await fetch(
+        `/api/drivers/available?date=${date}&startTime=${startTime}&endTime=${endTime}`,
+        withDefaults()
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setAvailableDrivers(data.data);
+        });
+    }
   }
+
+  useEffect(() => {
+    getAvailableDrivers(date, startTime, endTime);
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
