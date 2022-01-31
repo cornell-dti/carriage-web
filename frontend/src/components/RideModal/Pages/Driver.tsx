@@ -13,11 +13,14 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   });
   const { errors } = formState;
   const { withDefaults } = useReq();
-  const [refreshed, setRefreshed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [hasDrivers, setHasDrivers] = useState(false);
 
   const { date, pickupTime: startTime, dropoffTime: endTime } = formData!;
   type DriverOption = { id: string; firstName: string; lastName: string };
-  const [availableDrivers, setAvailableDrivers] = useState<DriverOption[]>([]);
+  const [availableDrivers, setAvailableDrivers] = useState<DriverOption[]>([
+    { id: 'None', firstName: 'None', lastName: '' },
+  ]);
 
   useEffect(() => {
     if (startTime && endTime && date) {
@@ -28,7 +31,8 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
         .then((res) => res.json())
         .then((data) => {
           setAvailableDrivers(data.data);
-          setRefreshed(true);
+          setLoaded(true);
+          setHasDrivers(data.data.length >= 1);
         });
     }
   });
@@ -37,8 +41,8 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.inputContainer}>
         <div className={styles.drivers}>
-          {refreshed ? (
-            availableDrivers.length ? (
+          {loaded ? (
+            hasDrivers ? (
               availableDrivers.map((d) => (
                 <div className={styles.driver} key={d.id}>
                   <Label
@@ -61,7 +65,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
               <p>None</p>
             )
           ) : (
-            <p>Loading</p>
+            <p>Loading...</p>
           )}
         </div>
         {errors.driver?.type === 'required' && (
