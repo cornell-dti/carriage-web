@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { detailTrash } from '../../icons/other/index';
+import { edit, detailTrash, red_trash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
+import { Route, Switch, useHistory } from 'react-router-dom';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -70,6 +71,8 @@ const UserDetail = ({
   const [isShowing, setIsShowing] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const [deleteStudent, setDeleteStudent] = useState(false);
+  const history = useHistory();
 
   const toggleActive = (): void => {
     if (rider) {
@@ -85,6 +88,19 @@ const UserDetail = ({
         refreshRiders();
       });
     }
+  };
+  const studentDelete = () => {
+    fetch(
+      `/api/riders/${!rider ? '' : rider.id}`,
+      withDefaults({
+        method: 'DELETE',
+      })
+    )
+      .then(refreshRiders)
+      .then(() => {
+        //setToast(true);
+        history.push('/riders');
+      });
   };
 
   return (
@@ -133,6 +149,13 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
+              <Switch>
+                <Route path="/riders">
+                  <button className = {styles.back_div}onClick={studentDelete}>
+                    <img className={styles.trashIcon} alt="trash" src={red_trash} />
+                  </button>
+                </Route>
+              </Switch>
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

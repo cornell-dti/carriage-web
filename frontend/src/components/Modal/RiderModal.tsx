@@ -104,21 +104,9 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
           + Add Student
         </Button>
       ) : (
-        <div className={styles.twoButtonDiv}>
-          <button className={styles.editRiderButton} onClick={openModal}>
-            <img className={styles.editIcon} alt="edit" src={edit} />
-          </button>
-          <Switch>
-            <Route path="/riders">
-              <button
-                className={styles.deleteStudentButton}
-                onClick={studentDelete}
-              >
-                <img className={styles.trashIcon} alt="trash" src={trashbig} />
-              </button>
-            </Route>
-          </Switch>
-        </div>
+        <button className={styles.editRiderButton} onClick={openModal}>
+          <img className={styles.editIcon} alt="edit" src={edit} />
+        </button>
       )}
       <Modal
         title={!existingRider ? 'Add a Student' : 'Edit a Student'}
