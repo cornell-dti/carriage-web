@@ -28,9 +28,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
         .then((res) => res.json())
         .then((data) => {
           setAvailableDrivers(
-            [{ id: 'None', firstName: 'None', lastName: 'None' }].concat(
-              data.data
-            )
+            [{ id: 'None', firstName: 'None', lastName: 'None' }, ...data.data]
           );
           setLoaded(true);
         });
