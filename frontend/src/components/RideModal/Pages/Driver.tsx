@@ -1,42 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
-import { useEmployees } from '../../../context/EmployeesContext';
+import { useReq } from '../../../context/req';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const { register, handleSubmit, formState } = useForm({
-    defaultValues: { driver: formData?.driver ?? '' },
+    defaultValues: {
+      driver: formData?.driver ?? '',
+    },
   });
   const { errors } = formState;
-  const { drivers } = useEmployees();
+  const { withDefaults } = useReq();
+  const [loaded, setLoaded] = useState(false);
+
+  const { date, pickupTime: startTime, dropoffTime: endTime } = formData!;
   type DriverOption = { id: string; firstName: string; lastName: string };
-  const driverOptions: DriverOption[] = [
-    { id: 'None', firstName: 'None', lastName: '' },
-  ].concat(drivers);
+  const [availableDrivers, setAvailableDrivers] = useState<DriverOption[]>([]);
+
+  useEffect(() => {
+    if (startTime && endTime && date) {
+      fetch(
+        `/api/drivers/available?date=${date}&startTime=${startTime}&endTime=${endTime}`,
+        withDefaults()
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          setAvailableDrivers([
+            { id: 'None', firstName: 'None', lastName: 'None' },
+            ...data.data,
+          ]);
+          setLoaded(true);
+        });
+    }
+  }, [startTime, endTime, date]);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.inputContainer}>
         <div className={styles.drivers}>
-          {driverOptions.map((d) => (
-            <div className={styles.driver} key={d.id}>
-              <Label
-                htmlFor={d.firstName + d.lastName}
-                className={styles.driverLabel}
-              >
-                {d.firstName}
-              </Label>
-              <Input
-                id={d.firstName + d.lastName}
-                className={styles.driverRadio}
-                name="driver"
-                type="radio"
-                value={d.id}
-                ref={register({ required: true })}
-              />
-            </div>
-          ))}
+          {loaded ? (
+            availableDrivers.map((d) => (
+              <div className={styles.driver} key={d.id}>
+                <Label
+                  htmlFor={d.firstName + d.lastName}
+                  className={styles.driverLabel}
+                >
+                  {d.firstName}
+                </Label>
+                <Input
+                  id={d.firstName + d.lastName}
+                  className={styles.driverRadio}
+                  name="driver"
+                  type="radio"
+                  value={d.id}
+                  ref={register({ required: true })}
+                />
+              </div>
+            ))
+          ) : (
+            <p>Loading...</p>
+          )}
         </div>
         {errors.driver?.type === 'required' && (
           <p className={styles.error} style={{ textAlign: 'center' }}>
