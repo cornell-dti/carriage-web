@@ -34,7 +34,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
           setLoaded(true);
         });
     }
-  });
+  }, [startTime, endTime, date]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
