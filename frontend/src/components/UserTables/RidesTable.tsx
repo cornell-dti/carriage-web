@@ -16,6 +16,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
   const [openEditModal, setOpenEditModal] = useState(-1);
+  const [reassign, setReassign] = useState(false);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -78,13 +79,16 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             ),
           };
 
-          const assignButton = (text: string) => (
+          const assignButton = (shouldReassign: boolean) => (
             <Button
               className={styles.assignButton}
-              onClick={() => setOpenAssignModal(index)}
+              onClick={() => {
+                setOpenAssignModal(index);
+                setReassign(shouldReassign);
+              }}
               small
             >
-              {text}
+              {shouldReassign ? 'Reassign' : 'Assign'}
             </Button>
           );
 
@@ -98,7 +102,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             data: (
               <>
                 {editButton}
-                {assignButton('Assign')}
+                {assignButton(false)}
               </>
             ),
           };
@@ -107,7 +111,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             data: (
               <>
                 {editButton}
-                {assignButton('Reassign')}
+                {assignButton(true)}
               </>
             ),
           };
@@ -151,6 +155,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 close={() => setOpenAssignModal(-1)}
                 ride={rides[index]}
                 allDrivers={drivers}
+                reassign={reassign}
               />
               <RideModal
                 open={openEditModal === index}
