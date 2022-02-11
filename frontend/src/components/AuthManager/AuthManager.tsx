@@ -11,15 +11,20 @@ import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
+
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
+import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
+import { useToast } from '../../context/toastContext';
+
+import { createPortal } from 'react-dom';
 
 export const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(false);
@@ -169,22 +174,29 @@ export const AuthManager = () => {
     />
   );
 
-  const SiteContent = () => (
-    <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-      <ReqContext.Provider value={{ withDefaults }}>
-        <SubscribeWrapper userId={id}>
-          <Switch>
-            <Route exact path="/" component={LoginPage} />
-            <PrivateRoute path="/admin" component={AdminRoutes} />
-            <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-            <Route path="*">
-              <Redirect to="/" />
-            </Route>
-          </Switch>
-        </SubscribeWrapper>
-      </ReqContext.Provider>
-    </AuthContext.Provider>
-  );
+  const SiteContent = () => {
+    const { visible, message } = useToast();
+
+    return (
+      <>
+        {visible && createPortal(<Toast message={message} />, document.body)}
+        <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
+          <ReqContext.Provider value={{ withDefaults }}>
+            <SubscribeWrapper userId={id}>
+              <Switch>
+                <Route exact path="/" component={LoginPage} />
+                <PrivateRoute path="/admin" component={AdminRoutes} />
+                <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+                <Route path="*">
+                  <Redirect to="/" />
+                </Route>
+              </Switch>
+            </SubscribeWrapper>
+          </ReqContext.Provider>
+        </AuthContext.Provider>
+      </>
+    );
+  };
 
   const AuthBarrier = () => (
     <Switch>

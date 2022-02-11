@@ -9,6 +9,9 @@
 }
 
 .pageTitle {
+  text-align: left;
+  font-size: 1.75rem;
+  margin: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;

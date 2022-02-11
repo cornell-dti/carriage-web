@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
 

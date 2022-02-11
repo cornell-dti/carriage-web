@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import {
@@ -17,6 +17,7 @@ import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/models/admin';
 import { DriverType } from '../../../../server/models/driver';
+import { chevronLeft } from '../../icons/other';
 
 type EmployeeDetailProps = {
   id: string;
@@ -133,6 +134,22 @@ const findEmployee = (
   return employee;
 };
 
+const Header = () => {
+  return (
+    <div className={styles.pageDivTitle}>
+      <Link
+        to={{
+          pathname: '/employees',
+        }}
+        className={styles.header}
+      >
+        <img className={styles.chevronLeft} src={chevronLeft} />
+        Employees
+      </Link>
+    </div>
+  );
+};
+
 const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
   const { drivers, admins } = useEmployees();
@@ -216,36 +233,39 @@ const EmployeeDetail = () => {
     };
 
     return (
-      <main id="main" className={styles.detailContainer}>
-        <UserDetail
-          firstName={employee.firstName}
-          lastName={employee.lastName}
-          netId={employee.netId}
-          employee={employee}
-          role={roleValue()}
-          photoLink={employee.photoLink}
-        >
-          <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
-          <UserContactInfo
-            icon={isAdmin || isBoth ? user : wheel}
-            alt="role"
-            text={role()}
-          />
-          <UserContactInfo
-            icon={clock}
-            alt="availability"
-            text={avail === '' ? 'N/A' : avail}
-          />
-          {employee.startDate && (
+      <main id="main">
+        <Header />
+        <div className={styles.detailContainer}>
+          <UserDetail
+            firstName={employee.firstName}
+            lastName={employee.lastName}
+            netId={employee.netId}
+            employee={employee}
+            role={roleValue()}
+            photoLink={employee.photoLink}
+          >
+            <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
             <UserContactInfo
-              icon={calender_dark}
-              alt="join date"
-              text={employee.startDate}
+              icon={isAdmin || isBoth ? user : wheel}
+              alt="role"
+              text={role()}
             />
-          )}
-        </UserDetail>
-        <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-        <PastRides isStudent={false} rides={rides} />
+            <UserContactInfo
+              icon={clock}
+              alt="availability"
+              text={avail === '' ? 'N/A' : avail}
+            />
+            {employee.startDate && (
+              <UserContactInfo
+                icon={calender_dark}
+                alt="join date"
+                text={employee.startDate}
+              />
+            )}
+          </UserDetail>
+          <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
+          <PastRides isStudent={false} rides={rides} />
+        </div>
       </main>
     );
   }

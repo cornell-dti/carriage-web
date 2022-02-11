@@ -7,7 +7,7 @@ type Availability = {
   endTime: string;
 };
 
-type AvailabilityType = {
+export type AvailabilityType = {
   Mon?: Availability;
   Tue?: Availability;
   Wed?: Availability;

@@ -4,7 +4,7 @@ import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './exportButton.module.css';
-import Toast from '../ConfirmationToast/ConfirmationToast';
+import { useToast } from '../../context/toastContext';
 
 type clickHandler = {
   toastMsg: string;
@@ -21,13 +21,12 @@ const ExportButton = ({
 }: clickHandler) => {
   const { withDefaults } = useReq();
   const [downloadData, setDownloadData] = useState<string>('');
-  const [showingToast, setToast] = useState(false);
+  const { showToast } = useToast();
   const csvLink = useRef<
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
   >(null);
 
   const downloadCSV = () => {
-    setToast(false);
     fetch(endpoint, withDefaults())
       .then((res) => res.text())
       .then((data) => {
@@ -40,12 +39,11 @@ const ExportButton = ({
           csvLink.current.link.click();
         }
       })
-      .then(() => setToast(true));
+      .then(() => showToast(toastMsg));
   };
 
   return (
     <>
-      {showingToast ? <Toast message={toastMsg} /> : null}
       <Button
         onClick={() => downloadCSV()}
         outline={true}
