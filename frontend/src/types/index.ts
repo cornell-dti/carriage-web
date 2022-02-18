@@ -93,3 +93,10 @@ export type TableData = {
     [name: string]: number;
   };
 };
+
+export enum RepeatValues {
+  DoesNotRepeat = 'Does Not Repeat',
+  Daily = 'Daily',
+  Weekly = 'Weekly',
+  Custom = 'Custom',
+}

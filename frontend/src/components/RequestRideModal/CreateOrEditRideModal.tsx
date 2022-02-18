@@ -185,11 +185,11 @@ const CreateOrEditRideModal = ({
       ).then(afterSubmit);
     } else {
       // edit regular ride or all recurring rides by editing parent ride
-      if (!ride.parentRide) {
+      if (
+        !ride.parentRide ||
+        (ride.parentRide && ride.parentRide.type === 'active')
+      ) {
         rideData.type = 'unscheduled';
-      } else if (ride.parentRide && ride.parentRide.type !== 'past') {
-        rideData.type = 'unscheduled';
-        rideData.startTime = startDate;
       }
       fetch(
         `/api/rides/${ride.id}`,
