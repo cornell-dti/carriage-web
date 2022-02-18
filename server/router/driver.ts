@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import * as db from './common';
 import { Driver, DriverType, AvailabilityType } from '../models/driver';
 import { validateUser } from '../util';
-import { Ride, Status } from '../models/ride';
+import { Ride, Status, RideType } from '../models/ride';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();
@@ -32,6 +32,10 @@ router.get('/available', validateUser('User'), (req, res) => {
     undefined,
   ];
   const reqDate = numToDay[moment(date as string).day()];
+  if (reqStartTime >= reqEndTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
+
   const condition = new Condition('status')
     .not()
     .eq(Status.CANCELLED)
@@ -43,19 +47,25 @@ router.get('/available', validateUser('User'), (req, res) => {
     .where('endTime')
     .ge(startTime)
     .le(endTime);
-  let allRides = [];
+  let allRides: RideType[];
   db.scan(res, Ride, condition, (rides) => {
     allRides = rides;
   });
 
-  if (reqStartTime >= reqEndTime) {
-    res.status(400).send({ err: 'startTime must precede endTime' });
+  function alreadyScheduled(driver: DriverType) {
+    return allRides.some((ride) => {
+      ride.driver?.id === driver.id;
+    });
   }
 
   db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
     const drivers = doc.filter((driver) => {
       const availStart = reqDate && driver.availability[reqDate]?.startTime;
       const availEnd = reqDate && driver.availability[reqDate]?.endTime;
+
+      if (alreadyScheduled(driver)) {
+        return false;
+      }
 
       if (availStart === undefined || availEnd === undefined) {
         return false;
