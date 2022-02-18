@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import { Document } from 'dynamoose/dist/Document';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Driver, DriverType } from '../models/driver';
+import { Driver, DriverType, AvailabilityType } from '../models/driver';
 import { validateUser } from '../util';
 import { Ride, Status } from '../models/ride';
 import { UserType } from '../models/subscription';
@@ -12,17 +12,53 @@ import { UserType } from '../models/subscription';
 const router = express.Router();
 const tableName = 'Drivers';
 
+// Get all drivers
+router.get('/', validateUser('Admin'), (req, res) => {
+  db.getAll(res, Driver, tableName);
+});
+
+// Get all available drivers at a specific date and time
+router.get('/available', validateUser('User'), (req, res) => {
+  const { date, startTime, endTime } = req.query;
+  const reqStartTime = startTime as string;
+  const reqEndTime = endTime as string;
+  const numToDay: (keyof AvailabilityType | undefined)[] = [
+    undefined,
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    undefined,
+  ];
+  const reqDate = numToDay[moment(date as string).day()];
+
+  if (reqStartTime >= reqEndTime) {
+    res.status(400).send({ err: 'startTime must precede endTime' });
+  }
+
+  db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
+    const drivers = doc.filter((driver) => {
+      const availStart = reqDate && driver.availability[reqDate]?.startTime;
+      const availEnd = reqDate && driver.availability[reqDate]?.endTime;
+
+      if (availStart === undefined || availEnd === undefined) {
+        return false;
+      }
+
+      return availEnd >= reqEndTime && availStart <= reqStartTime;
+    });
+
+    res.send({ data: drivers });
+  });
+});
+
 // Get a driver by id in Drivers table
 router.get('/:id', validateUser('User'), (req, res) => {
   const {
     params: { id },
   } = req;
   db.getById(res, Driver, id, tableName);
-});
-
-// Get all drivers
-router.get('/', validateUser('Admin'), (req, res) => {
-  db.getAll(res, Driver, tableName);
 });
 
 // Get profile information for a driver
@@ -41,67 +77,6 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
       availability,
       vehicle,
     });
-  });
-});
-
-// Get whether a driver is available at a given time
-// startTime and endTime must be in the format YYYY-MM-DDTHH:MM
-router.get('/:id/:startTime/:endTime', (req, res) => {
-  const {
-    params: { id, startTime, endTime },
-  } = req;
-
-  const reqStart = moment(startTime);
-  const reqEnd = moment(endTime);
-
-  if (reqStart.date() !== reqEnd.date()) {
-    res.status(400).send({ err: 'startTime and endTime dates must be equal' });
-  }
-
-  const reqStartTime = reqStart.format('HH:mm');
-  const reqEndTime = reqEnd.format('HH:mm');
-
-  if (reqStartTime > reqEndTime) {
-    res.status(400).send({ err: 'startTime must precede endTime' });
-  }
-
-  const reqStartDay = moment(startTime).day();
-  const reqEndDay = moment(endTime).day();
-
-  let available = false;
-
-  db.getById(res, Driver, id, tableName, (driver) => {
-    const { availability } = driver as DriverType;
-    const availStart = (() => {
-      if (reqStartDay === 1) return availability.Mon?.startTime;
-      if (reqStartDay === 2) return availability.Tue?.startTime;
-      if (reqStartDay === 3) return availability.Wed?.startTime;
-      if (reqStartDay === 4) return availability.Thu?.startTime;
-      if (reqStartDay === 5) return availability.Fri?.startTime;
-      return null;
-    })();
-
-    const availStartTime = moment(availStart as string, 'HH:mm').format(
-      'HH:mm'
-    );
-
-    if (availStart != null && availStartTime <= reqStartTime) {
-      const availEnd = (() => {
-        if (reqEndDay === 1) return availability.Mon?.endTime;
-        if (reqEndDay === 2) return availability.Tue?.endTime;
-        if (reqEndDay === 3) return availability.Wed?.endTime;
-        if (reqEndDay === 4) return availability.Thu?.endTime;
-        if (reqEndDay === 5) return availability.Fri?.endTime;
-        return null;
-      })();
-
-      const availEndTime = moment(availEnd as string, 'HH:mm').format('HH:mm');
-
-      if (availEnd != null && availEndTime >= reqEndTime) {
-        available = true;
-      }
-    }
-    res.status(200).send(available);
   });
 });
 

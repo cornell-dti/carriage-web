@@ -9,6 +9,7 @@ type AssignModalProps = {
   close: () => void;
   ride: Ride;
   allDrivers: Driver[];
+  reassign: boolean;
 };
 
 type DriverRowProps = {
@@ -33,6 +34,7 @@ const AssignDriverModal = ({
   close,
   ride,
   allDrivers,
+  reassign = false,
 }: AssignModalProps) => {
   const { withDefaults } = useReq();
   const { refreshRides } = useRides();
@@ -60,7 +62,7 @@ const AssignDriverModal = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           driver,
-          type: 'active',
+          type: !reassign ? 'active' : undefined,
         }),
       })
     ).then(() => refreshRides());

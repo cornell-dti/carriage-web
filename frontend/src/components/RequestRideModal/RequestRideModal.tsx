@@ -4,7 +4,7 @@ import { RideModalType } from './types';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Button } from '../FormElements/FormElements';
 import CreateOrEditRideModal from './CreateOrEditRideModal';
-import Toast from '../ConfirmationToast/ConfirmationToast';
+import { useToast } from '../../context/toastContext';
 
 type RequestRideModalProps = {
   onSubmit?: () => void;
@@ -18,7 +18,7 @@ const RequestRideModal = ({
   const [modalType, setModalType] = useState<RideModalType>();
   const [typeModalIsOpen, setTypeModalIsOpen] = useState(false);
   const [createOrEditModalIsOpen, setCreateOrEditModalIsOpen] = useState(false);
-  const [showingToast, setToast] = useState(false);
+  const { showToast } = useToast();
 
   const openTypeModal = () => {
     setTypeModalIsOpen(true);
@@ -29,7 +29,6 @@ const RequestRideModal = ({
   };
 
   const openCreateOrEditModal = (newModalType: RideModalType) => {
-    setToast(false);
     setModalType(newModalType);
     setCreateOrEditModalIsOpen(true);
   };
@@ -39,7 +38,7 @@ const RequestRideModal = ({
   };
 
   const handleSubmit = () => {
-    setToast(true);
+    showToast(`Your ride has been ${!ride ? 'created' : 'edited'}`);
     onSubmit();
   };
 
@@ -51,9 +50,6 @@ const RequestRideModal = ({
 
   return (
     <>
-      {showingToast ? (
-        <Toast message={`Your ride has been ${!ride ? 'created' : 'edited'}`} />
-      ) : null}
       {!ride ? (
         <Button onClick={() => openCreateOrEditModal('CREATE')}>
           + Request a ride
