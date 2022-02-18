@@ -46,7 +46,13 @@ router.get('/available', validateUser('User'), (req, res) => {
     .or()
     .where('endTime')
     .ge(startTime)
-    .le(endTime);
+    .le(endTime)
+    .or()
+    .where('startTime')
+    .le(startTime)
+    .and()
+    .where('endTime')
+    .ge(endTime);
   let allRides: RideType[];
   db.scan(res, Ride, condition, (rides) => {
     allRides = rides;
