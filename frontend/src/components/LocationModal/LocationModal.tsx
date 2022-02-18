@@ -1,9 +1,9 @@
 import { parseAddress } from 'addresser';
+import { useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useReq } from '../../context/req';
 import { Location, ObjectType, Tag } from '../../types/index';
-import Toast from '../ConfirmationToast/ConfirmationToast';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
@@ -54,7 +54,7 @@ const LocationModal = ({
   onEditLocation,
 }: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [showingToast, setToast] = useState(false);
+  const { showToast } = useToast();
   const { register, handleSubmit, errors } = useForm();
   const { name, address, info } = errors;
   const { withDefaults } = useReq();
@@ -64,7 +64,6 @@ const LocationModal = ({
 
   const openModal = () => {
     setIsOpen(true);
-    setToast(false);
   };
 
   const closeModal = () => setIsOpen(false);
@@ -85,11 +84,11 @@ const LocationModal = ({
 
     if (!existingLocation && onAddLocation) {
       onAddLocation(newLocation);
+      showToast('Location has been added.');
     } else if (existingLocation && onEditLocation) {
       onEditLocation(newLocation);
+      showToast('Location has been updated.');
     }
-
-    setToast(true);
     closeModal();
   };
 
@@ -102,15 +101,6 @@ const LocationModal = ({
       ) : (
         <Button onClick={openModal}>+ Add a location</Button>
       )}
-      {showingToast ? (
-        <Toast
-          message={
-            existingLocation
-              ? 'Location has been updated.'
-              : 'Location has been added.'
-          }
-        />
-      ) : null}
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.inputContainer}>

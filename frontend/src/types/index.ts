@@ -8,9 +8,15 @@ import { VehicleType } from '../../../server/models/vehicle';
 export type Rider = RiderType;
 
 export enum Accessibility {
+  NONE = '',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
+  MOTOR_SCOOTER = 'Motorized Scooter',
+  KNEE_SCOOTER = 'Knee Scooter',
+  LOW_VISION = 'Low Vision/Blind',
+  SERVICE_ANIMALS = 'Service Animals',
+  OTHER = 'Other',
 }
 
 export type Availability = {

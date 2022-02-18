@@ -24,7 +24,7 @@ const RiderModalInfo = ({
       lastName: rider?.lastName ?? '',
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility.join(','), // if no needs, default is undefined
+      needs: rider?.accessibility ?? '', // if no needs, default is undefined
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
@@ -42,7 +42,7 @@ const RiderModalInfo = ({
     endDate,
   }: ObjectType) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
-    const accessibility = needs.split(',').map((n: string) => n.trim());
+    const accessibility = needs;
     onSubmit({
       firstName,
       lastName,
@@ -128,22 +128,15 @@ const RiderModalInfo = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <Input
-            id="needs"
-            name="needs"
-            type="text"
-            ref={register({
-              validate: (needs) => {
-                if (needs === '') {
-                  return true;
-                }
-                const needsArr = needs.split(',').map((n: string) => n.trim());
-                const isValidNeed = (acc: boolean, val: Accessibility) =>
-                  acc && Object.values(Accessibility).includes(val);
-                return needsArr.reduce(isValidNeed, true);
-              },
+          <select name="needs" ref={register({ required: true })}>
+            {Object.values(Accessibility).map((value, index) => {
+              return (
+                <option key={index} value={value}>
+                  {value}
+                </option>
+              );
             })}
-          />
+          </select>
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or

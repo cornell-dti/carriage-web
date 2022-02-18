@@ -1,13 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
 import { useReq } from '../../context/req';
-import { Ride, Rider } from '../../types';
+import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
+import { chevronLeft } from '../../icons/other';
+
+const Header = () => {
+  return (
+    <div className={styles.pageDivTitle}>
+      <Link
+        to={{
+          pathname: '/riders',
+        }}
+        className={styles.header}
+      >
+        <img className={styles.chevronLeft} src={chevronLeft} />
+        Students
+      </Link>
+    </div>
+  );
+};
 
 const RiderDetail = () => {
   const { withDefaults } = useReq();
@@ -43,31 +60,34 @@ const RiderDetail = () => {
   }, [rider, riders, riderId, withDefaults]);
 
   return rider ? (
-    <main id="main" className={styles.detailContainer}>
-      <UserDetail
-        firstName={rider.firstName}
-        lastName={rider.lastName}
-        netId={netid!}
-        photoLink={rider.photoLink}
-        rider={rider}
-      >
-        <div className={styles.riderContactInfo}>
-          <UserContactInfo
-            icon={phone}
-            alt="phone number"
-            text={rider.phoneNumber}
-          />
-          <UserContactInfo icon={home} alt="address" text={rider.address} />
-          <UserContactInfo
-            icon={calendar}
-            alt="active dates"
-            text={`${formatDate(rider.joinDate)} - ${formatDate(
-              rider.endDate
-            )}`}
-          />
-        </div>
-      </UserDetail>
-      <PastRides isStudent={true} rides={rides} />
+    <main id="main">
+      <Header />
+      <div className={styles.detailContainer}>
+        <UserDetail
+          firstName={rider.firstName}
+          lastName={rider.lastName}
+          netId={netid!}
+          photoLink={rider.photoLink}
+          rider={rider}
+        >
+          <div className={styles.riderContactInfo}>
+            <UserContactInfo
+              icon={phone}
+              alt="phone number"
+              text={rider.phoneNumber}
+            />
+            <UserContactInfo icon={home} alt="address" text={rider.address} />
+            <UserContactInfo
+              icon={calendar}
+              alt="active dates"
+              text={`${formatDate(rider.joinDate)} - ${formatDate(
+                rider.endDate
+              )}`}
+            />
+          </div>
+        </UserDetail>
+        <PastRides isStudent={true} rides={rides} />
+      </div>
     </main>
   ) : null;
 };

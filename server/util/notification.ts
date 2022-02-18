@@ -1,6 +1,7 @@
 import webpush from 'web-push';
 import AWS from 'aws-sdk';
 import { Condition } from 'dynamoose';
+import { v4 as uuid } from 'uuid';
 import config, { webpushValues, snsValues } from '../config';
 import {
   Subscription,
@@ -54,7 +55,8 @@ const sendMsg = (
   sub: SubscriptionType,
   title: string,
   body: string,
-  notifEvent: NotificationEvent
+  notifEvent: NotificationEvent,
+  ride: RideType
 ) => {
   if (sub.platform === PlatformType.WEB) {
     const webSub = {
@@ -88,8 +90,13 @@ const sendMsg = (
   const payload = JSON.stringify({
     default: 'Default message.',
     GCM: JSON.stringify({
+      priority: 'high',
+      content_available: true,
       data: {
+        id: uuid(),
         notifEvent,
+        ride,
+        sentTime: new Date().toISOString(),
       },
       notification: {
         title,
@@ -155,7 +162,8 @@ export const sendToUsers = (
   title: string,
   body: string,
   notifEvent: NotificationEvent,
-  receiver?: UserType,
+  ride: RideType,
+  receiver: UserType,
   userId?: string
 ) =>
   new Promise((resolve, reject) => {
@@ -172,7 +180,7 @@ export const sendToUsers = (
       } else {
         const promises = data.map((doc) => {
           const sub = JSON.parse(JSON.stringify(doc.toJSON()));
-          return sendMsg(sub, title, body, notifEvent);
+          return sendMsg(sub, title, body, notifEvent, ride);
         });
         Promise.allSettled(promises).then((results) => {
           const status = results.map((el) => el.status);
@@ -201,6 +209,9 @@ export const getNotificationEvent = (
   if (type === Type.ACTIVE && driver) {
     return Change.SCHEDULED;
   }
+  if (driver) {
+    return Change.REASSIGN_DRIVER;
+  }
   return Change.EDITED;
 };
 
@@ -227,7 +238,14 @@ export const notify = (
         }
         const title = 'Carriage'; // placeholder
         const body = getMessage(sender, receiver, notifEvent, updatedRide);
-        return sendToUsers(title, body, notifEvent, receiver, userId);
+        return sendToUsers(
+          title,
+          body,
+          notifEvent,
+          updatedRide,
+          receiver,
+          userId
+        );
       })
     )
       .then(() => resolve(updatedRide))

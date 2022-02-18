@@ -332,7 +332,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
         db.update(res, Ride, { id }, update, tableName, handleEdit(update));
       }
     } else {
-      res.status(400).send({ err: 'Invalid operaton' });
+      res.status(400).send({ err: 'Invalid operation' });
     }
   });
 });

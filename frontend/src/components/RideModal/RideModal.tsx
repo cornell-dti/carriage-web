@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
+import { useToast } from '../../context/toastContext';
 
 type RideModalProps = {
   open?: boolean;
@@ -34,7 +34,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showingToast, setToast] = useState(false);
+  const { showToast } = useToast();
   const { withDefaults } = useReq();
   const { refreshRides } = useRides();
 
@@ -45,7 +45,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   const openModal = () => {
     setCurrentPage(0);
     setIsOpen(true);
-    setToast(false);
   };
 
   const closeModal = useCallback(() => {
@@ -111,7 +110,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
       }
       setIsSubmitted(false);
       closeModal();
-      setToast(true);
+      showToast(ride ? 'Ride edited.' : 'Ride added.');
     }
   }, [closeModal, formData, isSubmitted, ride, withDefaults]);
 
@@ -119,7 +118,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   // because otherwise the pages would show up wrongly
   return ride ? (
     <>
-      {showingToast ? <Toast message="Ride edited." /> : null}
       <Modal
         paginate
         title={['Edit Ride', 'Edit Ride']}
@@ -141,7 +139,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
     </>
   ) : (
     <>
-      {showingToast ? <Toast message="Ride added." /> : null}
       {/* only have a button if this modal is not controlled by a table */}
       {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal
