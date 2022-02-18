@@ -32,6 +32,21 @@ router.get('/available', validateUser('User'), (req, res) => {
     undefined,
   ];
   const reqDate = numToDay[moment(date as string).day()];
+  const condition = new Condition('status')
+    .not()
+    .eq(Status.CANCELLED)
+    .and()
+    .where('startTime')
+    .ge(startTime)
+    .le(endTime)
+    .or()
+    .where('endTime')
+    .ge(startTime)
+    .le(endTime);
+  let allRides = [];
+  db.scan(res, Ride, condition, (rides) => {
+    allRides = rides;
+  });
 
   if (reqStartTime >= reqEndTime) {
     res.status(400).send({ err: 'startTime must precede endTime' });
