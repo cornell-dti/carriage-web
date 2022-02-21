@@ -11,6 +11,7 @@ export function getById(
   callback?: (value: any) => void
 ) {
   model.get(id || '', (err, data) => {
+    console.log(`get ${table} ${id}`);
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
@@ -30,6 +31,7 @@ export function batchGet(
   table: string,
   callback?: (value: any) => void
 ) {
+  console.log(`batch ${table} ${keys}`);
   if (!keys.length) {
     res.send({ data: [] });
   }
@@ -52,6 +54,7 @@ export function getAll(
   table: string,
   callback?: (value: any) => void
 ) {
+  console.log(`getAll ${table}`);
   model.scan().exec((err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
@@ -70,6 +73,7 @@ export function create(
   document: Document,
   callback?: (value: any) => void
 ) {
+  console.log(`create`);
   document.save((err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
@@ -91,6 +95,7 @@ export function update(
   table: string,
   callback?: (value: any) => void
 ) {
+  console.log(`update ${table} ${key}`);
   model.update(key, operation, (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
@@ -113,6 +118,7 @@ export function conditionalUpdate(
   table: string,
   callback?: (value: any) => void
 ) {
+  console.log(`condUpdate ${table} ${key}`);
   model.update(
     key,
     operation,
@@ -137,6 +143,7 @@ export function deleteById(
   id: string | ObjectType | undefined,
   table: string
 ) {
+  console.log(`delete ${table} ${id}`);
   model.get(id || '', (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
@@ -155,6 +162,7 @@ export function query(
   index: string,
   callback?: (value: any) => void
 ) {
+  console.log(`query`);
   model
     .query(condition)
     .using(index)
@@ -177,6 +185,7 @@ export function scan(
   condition: Condition,
   callback?: (value: any) => void
 ) {
+  console.log(`scan`);
   model.scan(condition).exec((err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });

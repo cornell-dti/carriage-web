@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import express from 'express';
-import dynamoose from 'dynamoose';
+import morgan from 'morgan';
 import path from 'path';
 import cors from 'cors';
 
@@ -36,6 +36,7 @@ initDynamoose();
 
 const app = express();
 app.use(cors());
+app.use(morgan('combined'));
 app.use(express.json({ limit: '500kb' }));
 app.use(express.urlencoded({ extended: false }));
 
