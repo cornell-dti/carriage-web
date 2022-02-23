@@ -6,6 +6,8 @@ import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
 import { edit, detailTrash, red_trash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
+import ConfirmationModal from '../Modal/ConfirmationModal';
+import Modal from '../Modal/Modal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
@@ -71,8 +73,15 @@ const UserDetail = ({
   const [isShowing, setIsShowing] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-  const [deleteStudent, setDeleteStudent] = useState(false);
-  const history = useHistory();
+  const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
+
+  const openConfirmationModal = () => {
+    setConfirmationModalisOpen(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalisOpen(false);
+  };
 
   const toggleActive = (): void => {
     if (rider) {
@@ -89,7 +98,7 @@ const UserDetail = ({
       });
     }
   };
-  const studentDelete = () => {
+  /*const studentDelete = () => {
     fetch(
       `/api/riders/${!rider ? '' : rider.id}`,
       withDefaults({
@@ -98,10 +107,9 @@ const UserDetail = ({
     )
       .then(refreshRiders)
       .then(() => {
-        //setToast(true);
         history.push('/riders');
       });
-  };
+  };*/
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
@@ -149,13 +157,14 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
-              <Switch>
-                <Route path="/riders">
-                  <button className = {styles.back_div}onClick={studentDelete}>
-                    <img className={styles.trashIcon} alt="trash" src={red_trash} />
-                  </button>
-                </Route>
-              </Switch>
+            <button className={styles.back_div} onClick={openConfirmationModal}>
+              <img className={styles.trashIcon} alt="trash" src={red_trash} />
+            </button>
+            <ConfirmationModal
+              open={confirmationModalisOpen}
+              rider={rider}
+              onClose={closeConfirmationModal}
+            />
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>

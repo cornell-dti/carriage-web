@@ -16,4 +16,3 @@ export { default as dti_logo } from './dti_logo.svg';
 export { default as dti_desc } from './dti_desc.svg';
 export { default as chevronLeft } from './chevron-left.svg';
 export { default as red_trash } from './red-trash.svg';
-

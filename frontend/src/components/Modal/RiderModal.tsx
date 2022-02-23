@@ -8,7 +8,7 @@ import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
-import { edit, trash, trashbig } from '../../icons/other/index';
+import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 
 type RiderModalProps = {
@@ -29,10 +29,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   const openModal = () => {
     setIsOpen(true);
-  };
-
-  const studentDelete = () => {
-    setDeleteStudent(true);
   };
 
   const closeModal = () => setIsOpen(false);
