@@ -1,5 +1,7 @@
 .modal {
   width: 16rem;
+  flex-direction: column;
+  display: flex;
 }
 .modalText {
   font-size: 1.12rem;
@@ -7,7 +9,7 @@
 }
 
 .buttonContainer {
-  margin-top: 1.5rem;
+  padding-top: 1.5rem;
   display: inline;
   justify-content: space-between;
 }

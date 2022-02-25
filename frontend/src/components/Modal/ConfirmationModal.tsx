@@ -38,10 +38,10 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
   };
 
   return (
-    <Modal title={''} isOpen={open} onClose={closeModal}>
+    <Modal title={''} isOpen={open} onClose={closeModal} displayClose={true}>
       <div className={styles.modal}>
         <p className={styles.modalText}>
-          Are you sure you want to remove this student?
+          Are you sure you want to remove {rider?.firstName} {rider?.lastName}?
         </p>
         <div className={styles.buttonContainer}>
           <Button
