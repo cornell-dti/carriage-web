@@ -54,7 +54,7 @@ export const Row = ({
   header,
   groupStart,
   className,
-  onClick
+  onClick,
 }: RowProps) => {
   const { width } = useWindowSize();
   const isMobile = Boolean(width && width < 700);
@@ -94,11 +94,11 @@ export const Row = ({
             !isMobile
               ? {
                   gridTemplateColumns: formatColSizes(nonGroupCols),
-                  gridColumn: `1 / ${groupStart + 1}`
+                  gridColumn: `1 / ${groupStart + 1}`,
                 }
               : {
                   gridTemplateRows: formatRowSizes(nonGroupCols),
-                  gridRow: `1 / ${groupStart + 1}`
+                  gridRow: `1 / ${groupStart + 1}`,
                 }
           }
         >
@@ -110,11 +110,11 @@ export const Row = ({
             !isMobile
               ? {
                   gridTemplateColumns: formatColSizes(groupCols),
-                  gridColumn: `${groupStart + 1} / -1`
+                  gridColumn: `${groupStart + 1} / -1`,
                 }
               : {
                   gridTemplateRows: formatRowSizes(groupCols),
-                  gridRow: `${groupStart + 1} / -1`
+                  gridRow: `${groupStart + 1} / -1`,
                 }
           }
         >
@@ -135,11 +135,11 @@ export const Row = ({
           ? {
               gridTemplateColumns: formatColSizes(colSizes),
               cursor: onClick ? 'pointer' : undefined,
-              width: '100%'
+              width: '100%',
             }
           : {
               gridTemplateRows: formatRowSizes(colSizes),
-              cursor: onClick ? 'pointer' : undefined
+              cursor: onClick ? 'pointer' : undefined,
             }
       }
     >
