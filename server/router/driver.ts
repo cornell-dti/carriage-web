@@ -40,19 +40,22 @@ router.get('/available', validateUser('User'), (req, res) => {
     .not()
     .eq(Status.CANCELLED)
     .and()
-    .where('startTime')
-    .ge(startTime)
-    .le(endTime)
-    .or()
-    .where('endTime')
-    .ge(startTime)
-    .le(endTime)
-    .or()
-    .where('startTime')
-    .le(startTime)
-    .and()
-    .where('endTime')
-    .ge(endTime);
+    .group((condition) =>
+      condition
+        .where('startTime')
+        .ge(startTime)
+        .le(endTime)
+        .or()
+        .where('endTime')
+        .ge(startTime)
+        .le(endTime)
+        .or()
+        .where('startTime')
+        .le(startTime)
+        .and()
+        .where('endTime')
+        .ge(endTime)
+    );
   let allRides: RideType[];
   db.scan(res, Ride, condition, (rides) => {
     allRides = rides;
