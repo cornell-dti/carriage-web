@@ -5,11 +5,19 @@ import cn from 'classnames';
 import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
+import { Ride } from '../../types';
 
 type Message = {
   time: Date;
   title: string;
   body: string;
+};
+
+type NotificationData = {
+  title: string;
+  body: string;
+  ride: Ride;
+  sentTime: string;
 };
 
 const truncate = (str: string, num: number) => {
@@ -26,15 +34,13 @@ const Notification = () => {
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
-      const { body, time } = event.data;
-      const parsed = JSON.parse(body);
+      const { body, ride, sentTime, title }: NotificationData = event.data;
       const newMsg = {
-        time: new Date(time),
-        title: `Ride with ID ${truncate(parsed.ride.id, 8)}`,
-        body: `Changed by ${parsed.changedBy.userType}`,
-        day: parsed.ride.startTime,
+        time: new Date(sentTime),
+        title,
+        body,
+        day: ride.startTime,
       };
-
       setNewMessages([newMsg, ...newMessages]);
       setNotify(true);
     });

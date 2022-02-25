@@ -40,30 +40,22 @@ self.addEventListener('push', (event) => {
   }
 
   if (Notification.permission === 'granted') {
-    navigator.serviceWorker.getRegistration().then(function (reg) {
-      reg.showNotification(data.title, {
-        body: data.body,
-      });
+    console.log('granted');
+    self.clients.matchAll().then((c) => {
+      if (c.length === 0) {
+        console.log('show');
+        // Show notification
+        event.waitUntil(
+          self.registration.showNotification.showNotification(data.title)
+        );
+      } else {
+        // Send a message to the page to update the UI
+        c.forEach((client) => {
+          client.postMessage(data);
+        });
+      }
     });
+  } else {
+    console.log('notification needs permission');
   }
-
-  // if (Notification.permission === 'granted') {
-  //   self.clients.matchAll().then((c) => {
-  //     if (c.length === 0) {
-  //       // Show notification
-  //       return navigator.serviceWorker.getRegistration().then((reg) => {
-  //         return reg.showNotification(data.title, {
-  //           body: data.body,
-  //         });
-  //       });
-  //     } else {
-  //       // Send a message to the page to update the UI
-  //       c.forEach((client) => {
-  //         client.postMessage(data);
-  //       });
-  //     }
-  //   });
-  // } else {
-  //   console.log('notification needs permission');
-  // }
 });
