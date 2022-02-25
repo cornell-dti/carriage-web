@@ -5,29 +5,15 @@ import LocationsTable from '../../components/UserTables/LocationsTable';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
 import LocationModal from '../../components/LocationModal/LocationModal';
+import { useLocations } from '../../context/LocationsContext';
 
 const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);
-  const { withDefaults } = useReq();
+  const loc = useLocations().locations;
 
   useEffect(() => {
-    const getExistingLocations = async () => {
-      const locationsData = await fetch('/api/locations', withDefaults())
-        .then((res) => res.json())
-        .then((data) => data.data);
-      locationsData.sort((a: Location, b: Location) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-      setLocations(locationsData);
-    };
-    getExistingLocations();
-  }, [withDefaults]);
+    setLocations(loc);
+  }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
     setLocations([...locations, newLocation]);

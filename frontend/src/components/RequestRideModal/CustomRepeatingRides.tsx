@@ -45,7 +45,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
         handleClick(days[day - 1]);
       });
     }
-  }, [dayLabels, handleClick, ride]);
+  }, [ride]);
 
   const dayClicked = () =>
     week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
