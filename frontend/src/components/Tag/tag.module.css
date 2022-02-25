@@ -1,9 +1,9 @@
 .reducedTag {
   height: 11px;
   width: 11px;
-  float: left;
-  position: relative;
-  top: 0.4rem;
+  display: inline-block;
+  margin-left: 6px;
+  margin-right: 5px;
   line-height: 1;
   border-radius: 50%;
 }
