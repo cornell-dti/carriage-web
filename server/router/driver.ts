@@ -20,8 +20,14 @@ router.get('/', validateUser('Admin'), (req, res) => {
 // Get all available drivers at a specific date and time
 router.get('/available', validateUser('User'), (req, res) => {
   const { date, startTime, endTime } = req.query;
-  const reqStartTime = startTime as string;
-  const reqEndTime = endTime as string;
+  const reqStartTime = moment(
+    (date as string) + startTime,
+    'YYYY-MM-DDHH:mm'
+  ).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+  const reqEndTime = moment(
+    (date as string) + endTime,
+    'YYYY-MM-DDHH:mm'
+  ).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
   const numToDay: (keyof AvailabilityType | undefined)[] = [
     undefined,
     'Mon',
@@ -56,25 +62,22 @@ router.get('/available', validateUser('User'), (req, res) => {
         .where('endTime')
         .ge(reqEndTime)
     );
-  let allRides: RideType[];
-  db.scan(res, Ride, condition, (rides) => {
-    allRides = rides;
-  });
 
-  function alreadyScheduled(driver: DriverType) {
-    return allRides.some((ride) => {
-      ride.driver?.id === driver.id;
+  db.getAll(res, Driver, tableName, async (doc: DriverType[]) => {
+    let allRides: RideType[] = [];
+    await db.scan(res, Ride, condition, (rides) => {
+      allRides = rides;
     });
-  }
-
-  db.getAll(res, Driver, tableName, (doc: DriverType[]) => {
     const drivers = doc.filter((driver) => {
       const availStart = reqDate && driver.availability[reqDate]?.startTime;
       const availEnd = reqDate && driver.availability[reqDate]?.endTime;
 
-      if (alreadyScheduled(driver)) {
+      if (
+        allRides.some((ride) => {
+          ride.driver?.id === driver.id;
+        })
+      )
         return false;
-      }
 
       if (availStart === undefined || availEnd === undefined) {
         return false;
