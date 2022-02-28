@@ -43,7 +43,7 @@ const Modal = ({
   currentPage = 0,
   children,
   onClose,
-  displayClose
+  displayClose,
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
@@ -70,7 +70,7 @@ const Modal = ({
               <div className={styles.modal}>
                 <div className={styles.topContainer}>
                   <h1 className={styles.title}>{currentTitle}</h1>
-                  {!displayClose && 
+                  {!displayClose && (
                     <button
                       className={styles.closeBtn}
                       id={'close'}
@@ -78,7 +78,7 @@ const Modal = ({
                     >
                       <img alt="close" src={close} />
                     </button>
-                  }
+                  )}
                 </div>
                 <div className={styles.page}>{pages[currentPage]}</div>
               </div>

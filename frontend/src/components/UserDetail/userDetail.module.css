@@ -75,11 +75,6 @@
   height: auto;
 }
 
-.edit_icon {
-  width: 1.25rem;
-  height: auto;
-}
-
 .back_div {
   width: 2.5rem;
   height: 2.5rem;
@@ -91,26 +86,6 @@
   align-items: center;
   border: none;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
-}
-  background-color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.twoButtonDiv {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.deleteStudentButton {
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background: none;
-  cursor: pointer;
 }
 
 .userEditContainer {

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
-
+import Toast from '../ConfirmationToast/ConfirmationToast';
 import { Rider } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
   const { withDefaults } = useReq();
   const history = useHistory();
+  const [showingToast, setToast] = useState(false);
 
   const closeModal = () => {
     onClose();
@@ -32,6 +33,7 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
     )
       .then(refreshRiders)
       .then(() => {
+        setToast(true);
         history.push('/riders');
         closeModal();
       });
@@ -39,6 +41,7 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
 
   return (
     <Modal title={''} isOpen={open} onClose={closeModal} displayClose={true}>
+      {showingToast ? <Toast message={'The student has been deleted'} /> : null}
       <div className={styles.modal}>
         <p className={styles.modalText}>
           Are you sure you want to remove {rider?.firstName} {rider?.lastName}?
@@ -65,6 +68,3 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
 };
 
 export default ConfirmationModal;
-
-//Will put the API Code here, as well as all the other code needed to create the modal
-//reference the Figma for the CSS designs

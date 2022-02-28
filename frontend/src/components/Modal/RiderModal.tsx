@@ -20,12 +20,10 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
-  const [deleteStudent, setDeleteStudent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-  const history = useHistory();
 
   const openModal = () => {
     setIsOpen(true);
@@ -43,20 +41,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
     setIsSubmitted(true);
     closeModal();
   };
-  useEffect(() => {
-    if (deleteStudent) {
-      fetch(
-        `/api/riders/${!existingRider ? '' : existingRider.id}`,
-        withDefaults({
-          method: 'DELETE',
-        })
-      ).then(() => {
-        setToast(true);
-        refreshRiders;
-        history.push('/riders');
-      });
-    }
-  }, [deleteStudent]);
+
   useEffect(() => {
     if (isSubmitted) {
       fetch(
