@@ -2,22 +2,35 @@ import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import Toast from '../ConfirmationToast/ConfirmationToast';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType, Ride } from '../../types/index';
+import { ObjectType, RepeatValues, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
+import { useToast } from '../../context/toastContext';
 
 type RideModalProps = {
   open?: boolean;
   close?: () => void;
   ride?: Ride;
+  editSingle?: boolean;
 };
 
-const RideModal = ({ open, close, ride }: RideModalProps) => {
-  const originalRideData = ride
-    ? {
+const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
+  const originalRideData = getRideData();
+  const [formData, setFormData] = useState<ObjectType>(originalRideData);
+  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { showToast } = useToast();
+  const { withDefaults } = useReq();
+  const { refreshRides } = useRides();
+
+  // using function instead of const so the function can be hoisted and
+  // not get in the way of the state and hooks
+  function getRideData() {
+    if (ride) {
+      let rideData: ObjectType = {
         date: format_date(ride.startTime),
         pickupTime: moment(ride.startTime).format('kk:mm'),
         dropoffTime: moment(ride.endTime).format('kk:mm'),
@@ -28,15 +41,38 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         dropoffLoc: ride.endLocation.id
           ? ride.endLocation.name
           : ride.endLocation.address,
+      };
+      if (ride.recurring) {
+        let repeats;
+        let days;
+        const startDay = moment(ride.startTime).weekday();
+
+        if (ride.recurringDays!.length === 5) {
+          repeats = RepeatValues.Daily;
+        } else if (
+          ride.recurringDays!.length === 1 &&
+          ride.recurringDays![0] === startDay
+        ) {
+          repeats = RepeatValues.Weekly;
+        } else {
+          repeats = RepeatValues.Custom;
+          const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+          days = ride.recurringDays!.reduce((prev, curr) => {
+            return { ...prev, [numToDay[curr]]: '1' };
+          }, {} as ObjectType);
+        }
+
+        rideData = {
+          ...rideData,
+          repeats,
+          days,
+          endDate: format_date(ride.endDate),
+        };
       }
-    : {};
-  const [formData, setFormData] = useState<ObjectType>(originalRideData);
-  const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showingToast, setToast] = useState(false);
-  const { withDefaults } = useReq();
-  const { refreshRides } = useRides();
+      return rideData;
+    }
+    return {};
+  }
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -45,7 +81,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   const openModal = () => {
     setCurrentPage(0);
     setIsOpen(true);
-    setToast(false);
   };
 
   const closeModal = useCallback(() => {
@@ -66,21 +101,51 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
 
   const submitData = () => setIsSubmitted(true);
 
+  const getRecurringDays = (
+    date: string,
+    repeats: RepeatValues,
+    days: ObjectType
+  ) => {
+    switch (repeats) {
+      case RepeatValues.Daily:
+        return [1, 2, 3, 4, 5];
+      case RepeatValues.Weekly:
+        return [moment(date).weekday()];
+      default: {
+        const dayToNum: ObjectType = {
+          Mon: 1,
+          Tue: 2,
+          Wed: 3,
+          Thu: 4,
+          Fri: 5,
+        };
+        return Object.keys(days)
+          .filter((day) => days[day] !== '')
+          .map((day) => dayToNum[day]);
+      }
+    }
+  };
+
   useEffect(() => {
     if (isSubmitted) {
       const {
         date,
         pickupTime,
         dropoffTime,
+        repeats,
+        endDate,
+        days,
         driver,
         rider,
         startLocation,
         endLocation,
       } = formData;
+
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
       const hasDriver = Boolean(driver) && driver !== 'None';
-      const rideData: ObjectType = {
+
+      let rideData: ObjectType = {
         type: hasDriver ? 'active' : 'unscheduled',
         startTime,
         endTime,
@@ -89,18 +154,48 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         startLocation,
         endLocation,
       };
+
+      if (repeats !== RepeatValues.DoesNotRepeat) {
+        rideData = {
+          ...rideData,
+          recurring: true,
+          recurringDays: getRecurringDays(date, repeats, days),
+          endDate: format_date(endDate),
+        };
+      }
+
+      console.log(rideData);
+
       if (ride) {
+        // scheduled ride
         if (ride.type === 'active') {
           rideData.type = 'unscheduled';
         }
-        fetch(
-          `/api/rides/${ride.id}`,
-          withDefaults({
-            method: 'PUT',
-            body: JSON.stringify(rideData),
-          })
-        ).then(refreshRides);
+        if (editSingle) {
+          // edit single instance of repeating ride
+          fetch(
+            `/api/rides/${ride.id}/edits`,
+            withDefaults({
+              method: 'PUT',
+              body: JSON.stringify({
+                deleteOnly: false,
+                origDate: format_date(ride.startTime),
+                ...rideData,
+              }),
+            })
+          ).then(refreshRides);
+        } else {
+          // edit ride or all instances of repeating ride
+          fetch(
+            `/api/rides/${ride.id}`,
+            withDefaults({
+              method: 'PUT',
+              body: JSON.stringify(rideData),
+            })
+          ).then(refreshRides);
+        }
       } else {
+        // unscheduled ride
         fetch(
           '/api/rides',
           withDefaults({
@@ -109,9 +204,10 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           })
         ).then(refreshRides);
       }
+
       setIsSubmitted(false);
       closeModal();
-      setToast(true);
+      showToast(ride ? 'Ride edited.' : 'Ride added.');
     }
   }, [closeModal, formData, isSubmitted, ride, withDefaults]);
 
@@ -119,7 +215,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
   // because otherwise the pages would show up wrongly
   return ride ? (
     <>
-      {showingToast ? <Toast message="Ride edited." /> : null}
       <Modal
         paginate
         title={['Edit Ride', 'Edit Ride']}
@@ -128,7 +223,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         onClose={closeModal}
       >
         <RideTimesPage
-          isEditing
+          defaultRepeating={ride.recurring}
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />
@@ -141,7 +236,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
     </>
   ) : (
     <>
-      {showingToast ? <Toast message="Ride added." /> : null}
       {/* only have a button if this modal is not controlled by a table */}
       {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal

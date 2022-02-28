@@ -3,13 +3,13 @@ import Modal from './Modal';
 import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
-import Toast from '../ConfirmationToast/ConfirmationToast';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
+import { useToast } from '../../context/toastContext';
 
 type RiderModalProps = {
   existingRider?: Rider;
@@ -21,7 +21,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   const [formData, setFormData] = useState<ObjectType>({});
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [showingToast, setToast] = useState(false);
+  const { showToast } = useToast();
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
 
@@ -37,7 +37,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
   };
 
   const submitData = () => {
-    setToast(false);
     setIsSubmitted(true);
     closeModal();
   };
@@ -52,7 +51,9 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         })
       ).then(() => {
         refreshRiders();
-        setToast(true);
+        showToast(
+          `The student has been ${!existingRider ? 'added' : 'edited'}`
+        );
         if (isRiderWeb) {
           refreshUser();
         }
@@ -71,15 +72,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   return (
     <>
-      {showingToast ? (
-        <Toast
-          message={
-            !existingRider
-              ? 'The student has been added.'
-              : 'The student has been edited.'
-          }
-        />
-      ) : null}
       {!existingRider ? (
         <Button className={styles.addRiderButton} onClick={openModal}>
           + Add Student
