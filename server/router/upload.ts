@@ -36,7 +36,7 @@ router.post('/', validateUser('User'), (req, res) => {
       if (s3Err) {
         res.status(s3Err.statusCode || 500).send({ err: s3Err.message });
       } else {
-        const photoLink = `${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
+        const photoLink = `https://${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
         const operation = { $SET: { photoLink } };
 
         if (tableName === 'Drivers') {
