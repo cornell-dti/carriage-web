@@ -14,6 +14,7 @@ export enum Change {
   EDITED = 'edited',
   REPEATING_EDITED = 'repeating_edited',
   CREATED = 'created',
+  REASSIGN_DRIVER = 'reassign_driver',
 }
 
 export type NotificationEvent = Change | Status;

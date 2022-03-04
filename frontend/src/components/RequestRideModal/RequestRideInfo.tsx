@@ -10,6 +10,7 @@ import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
 import { checkBounds, isTimeValid } from '../../util/index';
+import { useLocations } from '../../context/LocationsContext';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -35,34 +36,11 @@ const RequestRideInfo = ({
   const shouldDisableStartDate =
     (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
     (ride && ride.type !== 'unscheduled');
+  const loc = useLocations().locations;
 
   useEffect(() => {
-    const getExistingLocations = async () => {
-      const locationsData = await fetch(
-        '/api/locations?active=true',
-        withDefaults()
-      )
-        .then((res) => res.json())
-        .then((data) => data.data);
-      const sortedLocations = locationsData.sort((a: Location, b: Location) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-      // Logic to prevent the other from being the default value
-      sortedLocations.push({
-        id: 'Other',
-        name: 'Other',
-        address: 'custom, do not use',
-      });
-      setLocations(sortedLocations);
-    };
-    getExistingLocations();
-  }, [withDefaults]);
+    setLocations(loc);
+  }, [loc]);
 
   useEffect(() => {
     if (ride) {
