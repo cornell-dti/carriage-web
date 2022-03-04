@@ -99,11 +99,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         <Button className={styles.addRiderButton} onClick={openModal}>
           + Add Student
         </Button>
-      ) : (
-        <button className={styles.editRiderButton} onClick={openModal}>
-          <img className={styles.editIcon} alt="edit" src={edit} />
-        </button>
-      )}
+      ) : null}
       <Modal
         title={!existingRider ? 'Add a Student' : 'Edit a Student'}
         isOpen={isOpen}

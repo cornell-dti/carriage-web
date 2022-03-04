@@ -201,6 +201,9 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
+            <button className={styles.edit_button} onClick={openModal}>
+              <img className={styles.edit_icon} alt="edit" src={edit_icon} />
+            </button>
             <button className={styles.back_div} onClick={openConfirmationModal}>
               <img className={styles.trashIcon} alt="trash" src={red_trash} />
             </button>
@@ -209,6 +212,19 @@ const UserDetail = ({
               rider={rider}
               onClose={closeConfirmationModal}
             />
+            <Modal
+              title={'Edit a Student'}
+              isOpen={isOpen}
+              currentPage={0}
+              onClose={closeModal}
+            >
+              <RiderModalInfo
+                onSubmit={saveDataThen(submitData)}
+                setIsOpen={setIsOpen}
+                setFormData={setFormData}
+                rider={rider}
+              />
+            </Modal>
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>
