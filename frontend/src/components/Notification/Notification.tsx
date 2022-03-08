@@ -51,14 +51,12 @@ const Notification = () => {
       <div key={i} className={styles.body}>
         <div className={styles.user}>
           <div className={styles.avatar}>
-            <span className={styles.initials}>T</span>
+            <span className={styles.initials}>C</span>
           </div>
         </div>
         <div className={styles.msg}>
           <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
-          <p>
-            {title} - {body}
-          </p>
+          <p>{body}</p>
         </div>
         <div className={styles.link}>View</div>
       </div>
