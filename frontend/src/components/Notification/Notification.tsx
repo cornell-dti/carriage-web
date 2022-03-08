@@ -44,7 +44,7 @@ const Notification = () => {
       setNewMessages([newMsg, ...newMessages]);
       setNotify(true);
     });
-  });
+  }, []);
 
   const mapMessages = (msgs: Message[]) =>
     msgs.map(({ time, title, body }, i) => (

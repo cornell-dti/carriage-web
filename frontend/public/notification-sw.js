@@ -34,12 +34,12 @@ self.addEventListener('push', (event) => {
 
   if (Notification.permission === 'granted') {
     self.clients.matchAll().then((c) => {
-      // Show notification
-      event.waitUntil(self.registration.showNotification(data.title, data));
       // Send a message to the page to update the UI
       c.forEach((client) => {
         client.postMessage(data);
       });
+      // Show notification
+      event.waitUntil(self.registration.showNotification(data.title, data));
     });
   } else {
     console.log('notification needs permission');
