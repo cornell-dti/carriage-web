@@ -18,7 +18,6 @@ self.addEventListener('notificationclick', function (event) {
       .then(function (clientList) {
         for (var i = 0; i < clientList.length; i++) {
           var client = clientList[i];
-          console.log(client);
           if (client.url === '/' && 'focus' in client) {
             return client.focus();
           }
@@ -32,7 +31,6 @@ self.addEventListener('notificationclick', function (event) {
 
 self.addEventListener('push', (event) => {
   const data = event.data.json();
-  console.log(data);
 
   if (Notification.permission === 'granted') {
     self.clients.matchAll().then((c) => {
