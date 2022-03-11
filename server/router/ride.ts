@@ -351,7 +351,6 @@ router.delete('/:id', validateUser('User'), (req, res) => {
         const { userType } = res.locals.user;
         deletedRide.startLocation = ride.startLocation;
         deletedRide.endLocation = ride.endLocation;
-        console.log(deletedRide);
         notify(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
