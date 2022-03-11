@@ -346,9 +346,11 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     const { recurring, type } = ride;
     if (type === Type.ACTIVE) {
       const operation = { status: Status.CANCELLED };
-      db.update(res, Ride, { id }, operation, tableName, (doc) => {
+      db.update(res, Ride, { id }, operation, tableName, async (doc) => {
         const deletedRide = JSON.parse(JSON.stringify(doc.toJSON()));
         const { userType } = res.locals.user;
+        ride.startLocation = await getRideLocation(ride.startLocation);
+        ride.endLocation = await getRideLocation(ride.endLocation);
         notify(deletedRide, operation, userType)
           .then(() => res.send(doc))
           .catch(() => res.send(doc));
