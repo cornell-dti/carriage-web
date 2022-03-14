@@ -72,7 +72,6 @@ const UserDetail = ({
   const [isShowing, setIsShowing] = useState(false);
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
-  const [showingToastDelete, setToastDelete] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
@@ -82,7 +81,6 @@ const UserDetail = ({
   };
 
   const closeConfirmationModal = () => {
-    setToastDelete(true);
     setConfirmationModalisOpen(false);
   };
 
@@ -108,10 +106,6 @@ const UserDetail = ({
         <Toast
           message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
         />
-      ) : null}
-      {showingToast ? <Toast message={'The student has been edited.'} /> : null}
-      {showingToastDelete ? (
-        <Toast message={'The student has been deleted.'} />
       ) : null}
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== '' ? (
@@ -152,7 +146,10 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
-            <button className={styles.back_div} onClick={openConfirmationModal}>
+            <button
+              className={styles.deleteButton}
+              onClick={openConfirmationModal}
+            >
               <img className={styles.trashIcon} alt="trash" src={red_trash} />
             </button>
             <ConfirmationModal
