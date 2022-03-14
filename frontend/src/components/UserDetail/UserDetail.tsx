@@ -111,9 +111,10 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <Button onClick={toggleActive}>
-                {rider.active ? 'Deactivate' : 'Activate'}
-              </Button>
+              <label className={styles.switch}>
+                  <input type="checkbox" />
+                <span className={styles.slider}></span>
+               </label>
             ) : null}
             {employee ? (
               <EmployeeModal
