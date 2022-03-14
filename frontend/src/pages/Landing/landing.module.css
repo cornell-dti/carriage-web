@@ -1,6 +1,9 @@
-
-.background{
-  background: linear-gradient(90deg, #383736 1.91%, rgba(17, 17, 17, 0) 128.09%);
+.background {
+  background: linear-gradient(
+    90deg,
+    #383736 1.91%,
+    rgba(17, 17, 17, 0) 128.09%
+  );
   /* background-size:  .; */
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -9,50 +12,47 @@
   height: 100vh;
   /* padding: 30px 30px 30px 30px; */
 }
-.descriptionA{
+.descriptionA {
   color: white;
   position: relative;
   left: 35%;
   font-weight: 500;
   font-size: 24px;
 }
-.termsButton{
-  background-color: #FF647C;
+.termsButton {
+  background-color: #ff647c;
   border-radius: 8px;
 }
-.carriageHeading{
+.carriageHeading {
   color: white;
   font-size: 96px;
   font-weight: 700;
   position: relative;
   left: 11%;
-
 }
-.carCol{
-  padding-right: 100px !important; 
+.carCol {
+  padding-right: 100px !important;
   float: right;
   margin: none !important;
-
-
 }
-.car{
+.car {
   float: right;
   /* margin-left: 50px; */
 }
 
-.sittingImgdiv{
+.sittingImgdiv {
   width: fit-content !important;
   margin-right: 50px;
 }
 
-.whiteBackground{
+.whiteBackground {
   background-color: red;
-  height: fit-content; 
+  height: fit-content;
   width: inherit;
   padding-top: 100px;
   padding-bottom: 100px;
 }
-.paneText{
+.paneText {
   font-weight: 500;
   font-size: 48px;
 }

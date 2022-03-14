@@ -11,7 +11,7 @@ import {
   logo,
   dti_logo,
   dti_desc,
-  landingCarBuildings
+  landingCarBuildings,
 } from '../../icons/other';
 
 type LandingPropType = {

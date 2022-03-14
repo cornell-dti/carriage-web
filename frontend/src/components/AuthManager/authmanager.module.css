@@ -15,14 +15,14 @@
   width: fit-content;
   height: fit-content;
 }
-p{
+p {
   padding: 0px 0px 0px 0px;
 }
-.studentBtn{
+.studentBtn {
   background: white;
   margin-right: 50px;
 }
-.adminBtn{
+.adminBtn {
   background: black;
   color: white;
 }
