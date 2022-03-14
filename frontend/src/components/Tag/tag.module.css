@@ -1,7 +1,10 @@
 .reducedTag {
   height: 11px;
   width: 11px;
-  float: left;
+  display: inline-block;
+  margin-left: 6px;
+  margin-right: 5px;
+  line-height: 1;
   border-radius: 50%;
 }
 
