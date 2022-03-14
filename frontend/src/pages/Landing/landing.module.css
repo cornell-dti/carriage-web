@@ -1,3 +1,61 @@
+
+.background{
+  background: linear-gradient(90deg, #383736 1.91%, rgba(17, 17, 17, 0) 128.09%);
+  /* background-size:  .; */
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100vh;
+  /* padding: 30px 30px 30px 30px; */
+}
+.descriptionA{
+  color: white;
+  position: relative;
+  left: 35%;
+  font-weight: 500;
+  font-size: 24px;
+}
+.termsButton{
+  background-color: #FF647C;
+  border-radius: 8px;
+}
+.carriageHeading{
+  color: white;
+  font-size: 96px;
+  font-weight: 700;
+  position: relative;
+  left: 11%;
+
+}
+.carCol{
+  padding-right: 100px !important; 
+  float: right;
+  margin: none !important;
+
+
+}
+.car{
+  float: right;
+  /* margin-left: 50px; */
+}
+
+.sittingImgdiv{
+  width: fit-content !important;
+  margin-right: 50px;
+}
+
+.whiteBackground{
+  background-color: red;
+  height: fit-content; 
+  width: inherit;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+.paneText{
+  font-weight: 500;
+  font-size: 48px;
+}
 .home {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url(./campus.jpg) no-repeat center center fixed;
@@ -63,10 +121,10 @@
   top: 14px;
 }
 
-.container {
+.authContainer {
+  padding-top: 30px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  float: right;
 }
 
 .title {

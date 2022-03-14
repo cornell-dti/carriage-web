@@ -5,12 +5,27 @@
   justify-content: center;
   border: none;
   border-radius: 12px;
-  background: white;
   box-shadow: 0px 0px 10px gray;
   margin: 8px;
+  /* float: right; */
+  /* margin-right: 50px; */
   padding: 16px;
+  padding-bottom: 10px;
+  /* padding-top: 10px; */
+  width: fit-content;
+  height: fit-content;
 }
-
+p{
+  padding: 0px 0px 0px 0px;
+}
+.studentBtn{
+  background: white;
+  margin-right: 50px;
+}
+.adminBtn{
+  background: black;
+  color: white;
+}
 .btn:hover {
   cursor: pointer;
 }
@@ -22,7 +37,7 @@
 }
 
 .icon {
-  height: 45px;
-  width: 45px;
+  height: 40px;
+  width: 40px;
   margin: 2px;
 }

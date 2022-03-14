@@ -5,7 +5,7 @@ import {
   useLocation,
   Redirect,
   Route,
-  Switch,
+  Switch
 } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
@@ -61,8 +61,8 @@ export const AuthManager = () => {
       ...options,
       headers: {
         authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     } as RequestInit;
   }
 
@@ -73,8 +73,8 @@ export const AuthManager = () => {
       fetch(fetchURL, {
         headers: {
           authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       })
         .then((res) => res.json())
         .then((data) => setUser(data));
@@ -95,8 +95,8 @@ export const AuthManager = () => {
             body: JSON.stringify({
               token,
               table,
-              clientId,
-            }),
+              clientId
+            })
           })
         )
           .then((res) => res.json())
@@ -130,7 +130,7 @@ export const AuthManager = () => {
           render={(renderProps) => (
             <button
               onClick={renderProps.onClick}
-              className={styles.btn}
+              className={`${styles.btn} ${styles.studentBtn}`}
               disabled={renderProps.disabled}
             >
               <img
@@ -153,7 +153,7 @@ export const AuthManager = () => {
           render={(renderProps) => (
             <button
               onClick={renderProps.onClick}
-              className={styles.btn}
+              className={`${styles.btn} ${styles.adminBtn}`}
               disabled={renderProps.disabled}
             >
               <img
