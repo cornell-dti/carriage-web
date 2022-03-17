@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
 import { logo, dti_logo, dti_desc } from '../../icons/other';
-import Toast from '../../components/ConfirmationToast/ConfirmationToast';
 
 type LandingPropType = {
   students: ReactElement;
@@ -11,7 +10,6 @@ type LandingPropType = {
 
 const Landing = ({ students, admins }: LandingPropType) => (
   <main id="main">
-    <Toast message={'yoooo'} toastType={'Error'} />
     <div className={styles.home}>
       <div className={styles.main}>
         <div className={styles.left}>

@@ -64,7 +64,7 @@ const UserDetail = ({
   role,
   photoLink,
   isRider,
-  rider
+  rider,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
@@ -78,7 +78,7 @@ const UserDetail = ({
         `/api/riders/${id}`,
         withDefaults({
           method: 'PUT',
-          body: JSON.stringify({ active: !active })
+          body: JSON.stringify({ active: !active }),
         })
       ).then(() => {
         setIsShowing(true);
@@ -128,7 +128,7 @@ const UserDetail = ({
                   availability: employee.availability,
                   role,
                   photoLink: employee.photoLink,
-                  startDate: employee.startDate
+                  startDate: employee.startDate,
                 }}
               />
             ) : (

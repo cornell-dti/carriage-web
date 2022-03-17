@@ -19,11 +19,10 @@
   color: white;
 }
 
-
-.successToast{
+.successToast {
   background-color: #00c48c;
 }
 
-.errorToast{
-  background-color: #FF0000;
+.errorToast {
+  background-color: #ff0000;
 }

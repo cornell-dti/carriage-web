@@ -14,7 +14,7 @@ type toastStat = {
 };
 
 const initalState: toastStat = {
-  visible: true,
+  visible: false,
   message: '',
   showToast: function () {}
 };
@@ -35,7 +35,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
     setVisible(true);
     setTimeout(() => {
       setVisible(false);
-    }, 1300000);
+    }, 2000);
   };
 
   return (
