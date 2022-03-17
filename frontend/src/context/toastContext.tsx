@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { check } from '../icons/other/index';
 import { createPortal } from 'react-dom';
 
-enum ToastStatus {
+export enum ToastStatus {
   SUCCESS = 'Success',
   ERROR = 'Error'
 }
@@ -10,13 +10,15 @@ enum ToastStatus {
 type toastStat = {
   visible: boolean;
   message: string;
-  showToast: (message: string) => void;
+  showToast: (message: string, currentToastType: ToastStatus) => void;
+  toastType: boolean;
 };
 
 const initalState: toastStat = {
   visible: false,
   message: '',
-  showToast: function () {}
+  showToast: function () {},
+  toastType: false
 };
 
 const ToastContext = React.createContext(initalState);
@@ -29,10 +31,15 @@ type ToastProviderProps = {
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [message, setMessage] = useState<string>('');
   const [visible, setVisible] = useState(false);
-
-  const showToast = (inputMessage: string) => {
+  const [toastType, setToastType] = useState(true);
+  const showToast = (inputMessage: string, currentToastType: ToastStatus) => {
     setMessage(inputMessage);
     setVisible(true);
+    currentToastType == ToastStatus.ERROR
+      ? setToastType(false)
+      : currentToastType == ToastStatus.SUCCESS
+      ? setToastType(true)
+      : new Error('Invalid Toast type');
     setTimeout(() => {
       setVisible(false);
     }, 2000);
@@ -43,7 +50,8 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
       value={{
         visible,
         message,
-        showToast
+        showToast,
+        toastType
       }}
     >
       {children}

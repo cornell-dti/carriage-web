@@ -9,6 +9,7 @@ import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -64,12 +65,13 @@ const UserDetail = ({
   role,
   photoLink,
   isRider,
-  rider,
+  rider
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const { toastType } = useToast();
 
   const toggleActive = (): void => {
     if (rider) {
@@ -78,7 +80,7 @@ const UserDetail = ({
         `/api/riders/${id}`,
         withDefaults({
           method: 'PUT',
-          body: JSON.stringify({ active: !active }),
+          body: JSON.stringify({ active: !active })
         })
       ).then(() => {
         setIsShowing(true);
@@ -92,7 +94,7 @@ const UserDetail = ({
       {isShowing && rider ? (
         <Toast
           message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
-          toastType={'Success'}
+          toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
       <div className={styles.imgContainer}>
@@ -128,7 +130,7 @@ const UserDetail = ({
                   availability: employee.availability,
                   role,
                   photoLink: employee.photoLink,
-                  startDate: employee.startDate,
+                  startDate: employee.startDate
                 }}
               />
             ) : (

@@ -1,5 +1,5 @@
 import { parseAddress } from 'addresser';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useReq } from '../../context/req';
@@ -31,7 +31,7 @@ const isAddress = (address: string) => {
     streetSuffix,
     placeName,
     stateName,
-    zipCode,
+    zipCode
   } = parsedAddr;
   if (
     !(
@@ -51,7 +51,7 @@ const isAddress = (address: string) => {
 const LocationModal = ({
   existingLocation,
   onAddLocation,
-  onEditLocation,
+  onEditLocation
 }: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
@@ -78,16 +78,16 @@ const LocationModal = ({
       url,
       withDefaults({
         method,
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       })
     ).then((res) => res.json());
 
     if (!existingLocation && onAddLocation) {
       onAddLocation(newLocation);
-      showToast('Location has been added.');
+      showToast('Location has been added.', ToastStatus.SUCCESS);
     } else if (existingLocation && onEditLocation) {
       onEditLocation(newLocation);
-      showToast('Location has been updated.');
+      showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
     closeModal();
   };

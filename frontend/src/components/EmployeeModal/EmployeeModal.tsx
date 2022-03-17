@@ -12,7 +12,7 @@ import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { edit } from '../../icons/other/index';
-import { useToast } from '../../context/toastContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -87,14 +87,14 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
     const photo = {
       id: employeeId,
       tableName: table,
-      fileBuffer: imageBase64,
+      fileBuffer: imageBase64
     };
     // Upload image
     await fetch(
       '/api/upload',
       withDefaults({
         method: 'POST',
-        body: JSON.stringify(photo),
+        body: JSON.stringify(photo)
       })
     )
       .then(() => {
@@ -115,18 +115,18 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         endpoint,
         withDefaults({
           method: 'POST',
-          body: JSON.stringify(employeeData),
+          body: JSON.stringify(employeeData)
         })
       ).then(() => {
         refresh();
-        showToast('The employee has been added.');
+        showToast('The employee has been added.', ToastStatus.SUCCESS);
       });
     } else {
       const createdEmployee = await fetch(
         endpoint,
         withDefaults({
           method: 'POST',
-          body: JSON.stringify(employeeData),
+          body: JSON.stringify(employeeData)
         })
       ).then((res) => res.json());
 
@@ -145,11 +145,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       withDefaults({
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(employeeData),
+        body: JSON.stringify(employeeData)
       })
     ).then((res) => {
       refresh();
-      showToast('The employee has been edited.');
+      showToast('The employee has been edited.', ToastStatus.SUCCESS);
       return res.json();
     });
     if (imageBase64 !== '') {
@@ -165,7 +165,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         firstName,
         lastName,
         email: netid + '@cornell.edu',
-        phoneNumber,
+        phoneNumber
       };
       if (existingEmployee) {
         updateExistingEmployee(
@@ -190,7 +190,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         phoneNumber,
         startDate,
         availability: parseAvailability(availability),
-        admin: selectedRole === 'both',
+        admin: selectedRole === 'both'
       };
       if (existingEmployee) {
         updateExistingEmployee(

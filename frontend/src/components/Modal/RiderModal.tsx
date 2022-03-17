@@ -8,7 +8,7 @@ import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 import { edit } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type RiderModalProps = {
   existingRider?: Rider;
@@ -46,12 +46,14 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         `/api/riders/${!existingRider ? '' : existingRider.id}`,
         withDefaults({
           method: !existingRider ? 'POST' : 'PUT',
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formData)
         })
       ).then(() => {
         refreshRiders();
+        console.log('yiee');
         showToast(
-          `The student has been ${!existingRider ? 'added' : 'edited'}`
+          `The student has been ${!existingRider ? 'added' : 'edited'}`,
+          ToastStatus.SUCCESS
         );
         if (isRiderWeb) {
           refreshUser();
@@ -66,7 +68,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
     isSubmitted,
     refreshRiders,
     refreshUser,
-    withDefaults,
+    withDefaults
   ]);
 
   return (

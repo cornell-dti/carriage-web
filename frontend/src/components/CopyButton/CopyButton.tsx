@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import styles from './copyButton.module.css';
-import { useToast } from '../../context/toastContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 const CopyButton = () => {
   const { showToast } = useToast();
@@ -15,7 +15,9 @@ const CopyButton = () => {
   const handleClick = () => {
     navigator.clipboard
       .writeText(emails)
-      .then(() => showToast('Student e-mails copied to clipboard.'));
+      .then(() =>
+        showToast('Student e-mails copied to clipboard.', ToastStatus.SUCCESS)
+      );
   };
 
   return (
