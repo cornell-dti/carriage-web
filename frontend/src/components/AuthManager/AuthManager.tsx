@@ -179,7 +179,11 @@ export const AuthManager = () => {
 
     return (
       <>
-        {visible && createPortal(<Toast message={message} />, document.body)}
+        {visible &&
+          createPortal(
+            <Toast message={message} toastType={'Success'} />,
+            document.body
+          )}
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
           <ReqContext.Provider value={{ withDefaults }}>
             <SubscribeWrapper userId={id}>

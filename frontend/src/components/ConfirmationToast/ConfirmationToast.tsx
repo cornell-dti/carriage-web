@@ -10,12 +10,12 @@ type toastProps = {
 const Toast = ({ message, toastType }: toastProps) => {
   return typeof toastType === 'undefined' || toastType == 'Success' ? (
     <div className={`${styles.toast} ${styles.successToast}`}>
-      <img alt="toast blocked" src={check} />
+      <img alt="toast check" src={check} />
       <p className={styles.toasttext}>{message}</p>
     </div>
   ) : (
     <div className={`${styles.toast} ${styles.errorToast}`}>
-      <img alt="toast check" src={block} />
+      <img alt="toast block" src={block} />
       <p className={styles.toasttext}>{message}</p>
     </div>
   );
