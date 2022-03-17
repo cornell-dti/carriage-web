@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 
 export enum ToastStatus {
   SUCCESS = 'Success',
-  ERROR = 'Error'
+  ERROR = 'Error',
 }
 
 type toastStat = {
@@ -18,7 +18,7 @@ const initalState: toastStat = {
   visible: false,
   message: '',
   showToast: function () {},
-  toastType: false
+  toastType: false,
 };
 
 const ToastContext = React.createContext(initalState);
@@ -51,7 +51,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         visible,
         message,
         showToast,
-        toastType
+        toastType,
       }}
     >
       {children}

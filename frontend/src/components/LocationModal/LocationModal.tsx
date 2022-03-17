@@ -31,7 +31,7 @@ const isAddress = (address: string) => {
     streetSuffix,
     placeName,
     stateName,
-    zipCode
+    zipCode,
   } = parsedAddr;
   if (
     !(
@@ -51,7 +51,7 @@ const isAddress = (address: string) => {
 const LocationModal = ({
   existingLocation,
   onAddLocation,
-  onEditLocation
+  onEditLocation,
 }: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
@@ -78,7 +78,7 @@ const LocationModal = ({
       url,
       withDefaults({
         method,
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       })
     ).then((res) => res.json());
 

@@ -46,7 +46,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         `/api/riders/${!existingRider ? '' : existingRider.id}`,
         withDefaults({
           method: !existingRider ? 'POST' : 'PUT',
-          body: JSON.stringify(formData)
+          body: JSON.stringify(formData),
         })
       ).then(() => {
         refreshRiders();
@@ -68,7 +68,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
     isSubmitted,
     refreshRiders,
     refreshUser,
-    withDefaults
+    withDefaults,
   ]);
 
   return (

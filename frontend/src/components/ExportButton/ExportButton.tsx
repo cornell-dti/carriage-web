@@ -17,7 +17,7 @@ const ExportButton = ({
   toastMsg,
   endpoint,
   csvCols,
-  filename
+  filename,
 }: clickHandler) => {
   const { withDefaults } = useReq();
   const [downloadData, setDownloadData] = useState<string>('');

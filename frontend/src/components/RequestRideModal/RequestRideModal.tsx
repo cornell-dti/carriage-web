@@ -13,7 +13,7 @@ type RequestRideModalProps = {
 
 const RequestRideModal = ({
   onSubmit = () => {},
-  ride
+  ride,
 }: RequestRideModalProps) => {
   const [modalType, setModalType] = useState<RideModalType>();
   const [typeModalIsOpen, setTypeModalIsOpen] = useState(false);

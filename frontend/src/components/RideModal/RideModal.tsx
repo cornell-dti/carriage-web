@@ -40,7 +40,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           : ride.startLocation.address,
         dropoffLoc: ride.endLocation.id
           ? ride.endLocation.name
-          : ride.endLocation.address
+          : ride.endLocation.address,
       };
       if (ride.recurring) {
         let repeats;
@@ -66,7 +66,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           ...rideData,
           repeats,
           days,
-          endDate: format_date(ride.endDate)
+          endDate: format_date(ride.endDate),
         };
       }
       return rideData;
@@ -117,7 +117,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           Tue: 2,
           Wed: 3,
           Thu: 4,
-          Fri: 5
+          Fri: 5,
         };
         return Object.keys(days)
           .filter((day) => days[day] !== '')
@@ -138,7 +138,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         driver,
         rider,
         startLocation,
-        endLocation
+        endLocation,
       } = formData;
 
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
@@ -152,7 +152,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         driver: hasDriver ? driver : undefined,
         rider,
         startLocation,
-        endLocation
+        endLocation,
       };
 
       if (repeats !== RepeatValues.DoesNotRepeat) {
@@ -160,7 +160,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           ...rideData,
           recurring: true,
           recurringDays: getRecurringDays(date, repeats, days),
-          endDate: format_date(endDate)
+          endDate: format_date(endDate),
         };
       }
 
@@ -180,8 +180,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
               body: JSON.stringify({
                 deleteOnly: false,
                 origDate: format_date(ride.startTime),
-                ...rideData
-              })
+                ...rideData,
+              }),
             })
           ).then(refreshRides);
         } else {
@@ -190,7 +190,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
             `/api/rides/${ride.id}`,
             withDefaults({
               method: 'PUT',
-              body: JSON.stringify(rideData)
+              body: JSON.stringify(rideData),
             })
           ).then(refreshRides);
         }
@@ -200,7 +200,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           '/api/rides',
           withDefaults({
             method: 'POST',
-            body: JSON.stringify(rideData)
+            body: JSON.stringify(rideData),
           })
         ).then(refreshRides);
       }
