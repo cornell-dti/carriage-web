@@ -5,13 +5,13 @@ import { Row, Col, Button, Container } from 'react-bootstrap';
 import sitting3 from './icons/sitting3.png';
 import sitting5 from './icons/sitting5.png';
 import sitting7 from './icons/sitting7.png';
-import mac from './icons/macbook.png';
-import macContent from './icons/macbookContent.png';
 import {
   logo,
   dti_logo,
   dti_desc,
   landingCarBuildings,
+  mac1,
+  mac2
 } from '../../icons/other';
 
 type LandingPropType = {
@@ -83,21 +83,21 @@ const Landing = ({ students, admins }: LandingPropType) =>
                     <img
                       src={sitting3}
                       className={styles.sittingImg}
-                      alt="sitting png 1"
+                      alt="image of man sitting in wheelchair"
                     />
                   </div>
                   <div className={styles.sittingImgdiv}>
                     <img
                       src={sitting5}
                       className={styles.sittingImg}
-                      alt="sitting png 2"
+                      alt="image of woman sitting on sidewalk"
                     />
                   </div>
                   <div className={styles.sittingImgdiv}>
                     <img
                       src={sitting7}
                       className={styles.sittingImg}
-                      alt="sitting png 3"
+                      alt="image of woman sitting in wheelchair with outstretched arm"
                     />
                   </div>
                 </Row>
@@ -105,31 +105,17 @@ const Landing = ({ students, admins }: LandingPropType) =>
             </Row>
           </div>
         </Row>
-        <Row>
-          <Col xs={6}>
-            <Row>
-              <div className={styles.sittingImgdiv}>
-                <img
-                  src={sitting3}
-                  className={styles.sittingImg}
-                  alt="sitting png 1"
-                />
-              </div>
-              <div className={styles.sittingImgdiv}>
-                <img
-                  src={sitting5}
-                  className={styles.sittingImg}
-                  alt="sitting png 2"
-                />
-              </div>
-              <div className={styles.sittingImgdiv}>
-                <img
-                  src={sitting7}
-                  className={styles.sittingImg}
-                  alt="sitting png 3"
-                />
-              </div>
-            </Row>
+        {/* pane B */}
+        <Row className={styles.background}>
+          <Col
+            xs={6}
+            className={`d-flex justify-content-center d-flex align-items-center`}
+          >
+            {/* <Row> */}
+            <div>
+              <img src={mac1} className={styles.mac1} alt="sitting png 1" />
+            </div>
+            {/* </Row> */}
           </Col>
           <Col
             xs={6}
@@ -141,7 +127,7 @@ const Landing = ({ students, admins }: LandingPropType) =>
             </div>
           </Col>
         </Row>
-        <Row>
+        <Row className={styles.background}>
           <Col
             xs={6}
             className={`d-flex justify-content-center d-flex align-items-center`}
@@ -150,27 +136,16 @@ const Landing = ({ students, admins }: LandingPropType) =>
               Students schedule, edit, and cancel rides on rider web
             </div>
           </Col>
-          <Col xs={6}>
+          <Col
+            xs={6}
+            className={`d-flex justify-content-center d-flex align-items-center`}
+          >
             <Row>
               <div className={styles.sittingImgdiv}>
                 <img
-                  src={sitting3}
-                  className={styles.sittingImg}
-                  alt="sitting png 1"
-                />
-              </div>
-              <div className={styles.sittingImgdiv}>
-                <img
-                  src={sitting5}
-                  className={styles.sittingImg}
-                  alt="sitting png 2"
-                />
-              </div>
-              <div className={styles.sittingImgdiv}>
-                <img
-                  src={sitting7}
-                  className={styles.sittingImg}
-                  alt="sitting png 3"
+                  src={mac2}
+                  className={styles.mac2}
+                  alt="macbook with carriage's cancel recurring ride page"
                 />
               </div>
             </Row>

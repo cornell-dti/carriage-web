@@ -16,3 +16,5 @@ export { default as dti_logo } from './dti_logo.svg';
 export { default as dti_desc } from './dti_desc.svg';
 export { default as chevronLeft } from './chevron-left.svg';
 export { default as landingCarBuildings } from './landingCarBuildings.svg';
+export {default as mac1 } from './mac1.svg';
+export {default as mac2 } from './mac2.svg';

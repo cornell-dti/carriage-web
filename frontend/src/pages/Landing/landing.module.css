@@ -46,7 +46,7 @@
 }
 
 .whiteBackground {
-  background-color: red;
+  background-color: white;
   height: fit-content;
   width: inherit;
   padding-top: 100px;
@@ -55,6 +55,9 @@
 .paneText {
   font-weight: 500;
   font-size: 48px;
+}
+.mac1{
+ display: inline;
 }
 .home {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
