@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
+import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
-import { edit } from '../../icons/other/index';
+import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 import { ToastStatus, useToast } from '../../context/toastContext';
 

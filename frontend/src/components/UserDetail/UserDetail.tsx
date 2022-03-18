@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import cn from 'classnames';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { detailTrash } from '../../icons/other/index';
+import { red_trash } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
+import ConfirmationModal from '../Modal/ConfirmationModal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import AuthContext from '../../context/auth';
+
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -69,9 +72,20 @@ const UserDetail = ({
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
+  const { refreshUser } = useContext(AuthContext);
+  const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
   const { toastType } = useToast();
+  const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
+
+  const openConfirmationModal = () => {
+    setConfirmationModalisOpen(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setConfirmationModalisOpen(false);
+  };
 
   const toggleActive = (): void => {
     if (rider) {
@@ -136,6 +150,17 @@ const UserDetail = ({
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
+            <button
+              className={styles.deleteButton}
+              onClick={openConfirmationModal}
+            >
+              <img className={styles.trashIcon} alt="trash" src={red_trash} />
+            </button>
+            <ConfirmationModal
+              open={confirmationModalisOpen}
+              rider={rider}
+              onClose={closeConfirmationModal}
+            />
           </div>
         </div>
         <div className={styles.contactInfoContainer}>{children}</div>
