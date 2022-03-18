@@ -39,7 +39,7 @@ self.addEventListener('push', (event) => {
         client.postMessage(data);
       });
       // Show notification
-      event.waitUntil(self.registration.showNotification(data.title, data));
+      self.registration.showNotification(data.title, data);
     });
   } else {
     console.log('notification needs permission');
