@@ -1,0 +1,36 @@
+.modal {
+  width: 18rem;
+  flex-direction: column;
+  display: flex;
+}
+.modalText {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.buttonContainer {
+  padding-top: 1.5rem;
+  display: inline;
+  justify-content: space-between;
+}
+
+.removeButton {
+  background: #ff647c;
+  color: #ffffff;
+  border: 0.063rem solid #ff647c;
+  box-sizing: border-box;
+  margin: auto;
+  font-weight: 500;
+  margin-left: 2rem;
+}
+
+.cancelButton {
+  background: #ffffff;
+  color: #000000;
+  border: 0.063rem solid #000000;
+  box-sizing: border-box;
+  margin: auto;
+  margin-left: 1.4rem;
+  font-weight: 500;
+}
