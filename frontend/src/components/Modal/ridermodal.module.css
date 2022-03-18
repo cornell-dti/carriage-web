@@ -101,25 +101,7 @@
   height: auto;
 }
 
-.trashIcon {
-  width: 2rem;
-  height: auto;
-}
-
 .editRiderButton {
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background: none;
-  cursor: pointer;
-}
-.twoButtonDiv {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.deleteStudentButton {
   margin: 0;
   border: 0;
   padding: 0;
