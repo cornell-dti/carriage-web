@@ -38,8 +38,8 @@ const unscheduledRide: RideType = {
     address: '',
     tag: Tag.CENTRAL,
   },
-  startTime: '2021-09-28T15:00:00.000Z',
-  endTime: '2021-09-28T15:00:00.000Z',
+  startTime: '2022-09-28T15:00:00.000Z',
+  endTime: '2022-09-28T15:00:00.000Z',
   status: Status.NOT_STARTED,
   late: false,
   rider,
@@ -81,6 +81,6 @@ const scheduledRide: RideType = {
 // Test what notifications are sent
 notify(
   unscheduledRide,
-  { endTime: '2021-09-28T15:00:00.000Z' },
+  { endTime: '2022-09-28T15:00:00.000Z' },
   UserType.ADMIN
 );
