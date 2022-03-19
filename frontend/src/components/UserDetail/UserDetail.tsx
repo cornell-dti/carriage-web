@@ -13,7 +13,6 @@ import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import AuthContext from '../../context/auth';
 
-
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
 };
