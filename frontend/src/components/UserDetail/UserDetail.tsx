@@ -10,6 +10,7 @@ import ConfirmationModal from '../Modal/ConfirmationModal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 import AuthContext from '../../context/auth';
 
 type otherInfo = {
@@ -74,6 +75,7 @@ const UserDetail = ({
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const { toastType } = useToast();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
   const openConfirmationModal = () => {
@@ -105,6 +107,7 @@ const UserDetail = ({
       {isShowing && rider ? (
         <Toast
           message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
+          toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
       <div className={styles.imgContainer}>

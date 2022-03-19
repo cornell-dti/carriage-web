@@ -22,7 +22,7 @@ import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 import { createPortal } from 'react-dom';
 
@@ -175,11 +175,18 @@ export const AuthManager = () => {
   );
 
   const SiteContent = () => {
-    const { visible, message } = useToast();
+    const { visible, message, toastType } = useToast();
 
     return (
       <>
-        {visible && createPortal(<Toast message={message} />, document.body)}
+        {visible &&
+          createPortal(
+            <Toast
+              message={message}
+              toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+            />,
+            document.body
+          )}
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
           <ReqContext.Provider value={{ withDefaults }}>
             <SubscribeWrapper userId={id}>
