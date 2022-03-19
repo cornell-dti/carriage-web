@@ -6,7 +6,7 @@ import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { Rider } from '../../types/index';
 import { useHistory } from 'react-router-dom';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type ConfirmationProps = {
   open: boolean;
@@ -34,7 +34,7 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
       .then(refreshRiders)
       .then(() => {
         history.push('/riders');
-        showToast('The student has been deleted.');
+        showToast('The student has been deleted.', ToastStatus.SUCCESS);
         closeModal();
       });
   };
