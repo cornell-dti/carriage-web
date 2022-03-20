@@ -112,7 +112,11 @@ const UserDetail = ({
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
               <label className={styles.switch}>
-                <input type="checkbox" onClick={toggleActive} checked= {rider.active} />
+                <input
+                  type="checkbox"
+                  onClick={toggleActive}
+                  checked={rider.active}
+                />
                 <span className={styles.slider}></span>
               </label>
             ) : null}
