@@ -221,7 +221,7 @@ const RiderModalInfo = ({
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>
-          {isEditing ? 'Edit Student' : 'Add a Student'}
+          {isEditing ? 'Save' : 'Add a Student'}
         </Button>
       </div>
     </form>
