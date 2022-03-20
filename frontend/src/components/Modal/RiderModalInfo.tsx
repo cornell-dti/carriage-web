@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label } from '../FormElements/FormElements';
+import { Button, Input, Label, SRLabel } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 
@@ -81,6 +81,8 @@ const RiderModalInfo = ({
           {errors.firstName && (
             <p className={styles.error}>Please enter a name</p>
           )}
+        </div>
+        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
           </Label>
@@ -95,7 +97,7 @@ const RiderModalInfo = ({
             <p className={styles.error}>Please enter a name</p>
           )}
         </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
+        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
           <Label className={styles.label} htmlFor="netid">
             NetID:{' '}
           </Label>
@@ -109,7 +111,7 @@ const RiderModalInfo = ({
           />
           {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
+        <div className={cn(styles.gridR1, styles.gridCSmall4)}>
           <Label className={styles.label} htmlFor="phoneNumber">
             Phone Number:{' '}
           </Label>
@@ -219,7 +221,7 @@ const RiderModalInfo = ({
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>
-          {isEditing ? 'Edit a Student' : 'Add a Student'}
+          {isEditing ? 'Edit Student' : 'Add a Student'}
         </Button>
       </div>
     </form>
