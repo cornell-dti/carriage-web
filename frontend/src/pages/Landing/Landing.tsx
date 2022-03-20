@@ -20,8 +20,12 @@ const Landing = ({ students, admins }: LandingPropType) => (
           <div className={styles.spacing_container}>
             <h1 className={styles.heading}>Login</h1>
             <div className={styles.container}>
-              {students}
-              {admins}
+              <div className={styles.container_item_left}>
+                {students}
+              </div>
+              <div className={styles.container_item_right}>
+                {admins}
+              </div>
             </div>
           </div>
           <div className={styles.dti_container}>

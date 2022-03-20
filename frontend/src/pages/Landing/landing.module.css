@@ -65,8 +65,16 @@
 
 .container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+}
+
+.container_item_left{
+  margin-right: 33px;
+}
+
+.container_item_right{
+  margin-left: 33px;
 }
 
 .title {
