@@ -5,7 +5,12 @@ import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import RiderModalInfo from '../Modal/RiderModalInfo';
 import styles from './userDetail.module.css';
-import { edit, detailTrash, red_trash, edit_icon } from '../../icons/other/index';
+import {
+  edit,
+  detailTrash,
+  red_trash,
+  edit_icon,
+} from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import Modal from '../Modal/Modal';
@@ -149,7 +154,6 @@ const UserDetail = ({
     withDefaults,
   ]);
 
-
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
@@ -157,11 +161,7 @@ const UserDetail = ({
           message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
         />
       ) : null}
-      {showingToast ? (
-        <Toast
-          message={'The student has been edited.'}
-        />
-      ) : null}
+      {showingToast ? <Toast message={'The student has been edited.'} /> : null}
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== '' ? (
           <img
