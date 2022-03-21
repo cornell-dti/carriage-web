@@ -56,6 +56,16 @@ router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Rider, tableName);
 });
 
+// Get a rider's active state
+router.get('/:id/active', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  db.getById(res, Rider, id, tableName, (rider: RiderType) => {
+    res.send(rider.active);
+  });
+});
+
 // Get profile information for a rider
 router.get('/:id/profile', validateUser('User'), (req, res) => {
   const {
