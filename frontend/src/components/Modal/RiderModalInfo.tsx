@@ -62,7 +62,9 @@ const RiderModalInfo = ({
 
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
-  const isStudentEditing = isEditing && localUserType === 'Rider';
+  const isStudent = localUserType === 'Rider';
+  const isStudentEditing = isEditing && isStudent;
+  const determiner = isStudent ? 'your' : 'a';
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
@@ -79,7 +81,7 @@ const RiderModalInfo = ({
             className={styles.firstRow}
           />
           {errors.firstName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>Please enter {determiner} first name</p>
           )}
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
@@ -92,7 +94,7 @@ const RiderModalInfo = ({
             className={styles.firstRow}
           />
           {errors.lastName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>Please enter {determiner} last name</p>
           )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
@@ -116,12 +118,17 @@ const RiderModalInfo = ({
           <Input
             id="phoneNumber"
             name="phoneNumber"
-            type="text"
-            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+            type="tel"
+            pattern="[0-9]{10}"
+            required
+            ref={register({ required: true })}
             className={styles.firstRow}
           />
+          <p style={{ fontSize: '0.75rem' }}>Format: 1234567890</p>
           {errors.phoneNumber && (
-            <p className={styles.error}>Please enter a phone number</p>
+            <p className={styles.error}>
+              Please enter {determiner} phone number
+            </p>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
@@ -158,7 +165,9 @@ const RiderModalInfo = ({
             })}
           />
           {errors.address && (
-            <p className={styles.error}>Please enter an address</p>
+            <p className={styles.error}>
+              Please enter {isStudent ? 'your' : 'an'} address
+            </p>
           )}
         </div>
         <div className={cn(styles.gridR3, styles.gridCAll)}>
