@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect } from 'react';
 import styles from './landing.module.css';
 import { logo, dti_logo, dti_desc } from '../../icons/other';
+import { Helmet } from 'react-helmet';
 
 type LandingPropType = {
   students: ReactElement;
@@ -16,6 +17,9 @@ const Landing = ({ students, admins }: LandingPropType) => {
 
   return (
     <main id="main">
+      <Helmet>
+        <title>Carriage</title>
+      </Helmet>
       <div className={styles.home}>
         <div className={styles.main}>
           <div className={styles.left}>
