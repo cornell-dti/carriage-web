@@ -126,12 +126,6 @@ export const AuthManager = () => {
   }
 
   const LoginPage = () => {
-    useEffect(() => {
-      if (document) {
-        document.getElementById('google-login')?.remove();
-      }
-    });
-
     const SignInButton = ({ isAdmin = false }: { isAdmin?: boolean }) => (
       <GoogleLogin
         render={(renderProps) => (
