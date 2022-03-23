@@ -132,55 +132,35 @@ export const AuthManager = () => {
       }
     });
 
-    return (
-      <LandingPage
-        students={
-          <GoogleLogin
-            render={(renderProps) => (
-              <button
-                onClick={renderProps.onClick}
-                className={styles.btn}
-                disabled={renderProps.disabled}
-              >
-                <img
-                  src={googleLogin}
-                  className={styles.icon}
-                  alt="google logo"
-                />
-                <div className={styles.heading}>Students</div>
-                Sign in with Google
-              </button>
-            )}
-            onSuccess={generateOnSignIn(false)}
-            clientId={clientId}
-            cookiePolicy="single_host_origin"
-            isSignedIn
-          />
-        }
-        admins={
-          <GoogleLogin
-            render={(renderProps) => (
-              <button
-                onClick={renderProps.onClick}
-                className={styles.btn}
-                disabled={renderProps.disabled}
-              >
-                <img
-                  src={googleLogin}
-                  className={styles.icon}
-                  alt="google logo"
-                />
-                <div className={styles.heading}>Admins</div>
-                Sign in with Google
-              </button>
-            )}
-            onSuccess={generateOnSignIn(true)}
-            clientId={clientId}
-            cookiePolicy="single_host_origin"
-            isSignedIn
-          />
-        }
+    const SignInButton = ({ isAdmin = false }: { isAdmin?: boolean }) => (
+      <GoogleLogin
+        render={(renderProps) => (
+          <button
+            onClick={renderProps.onClick}
+            className={styles.btn}
+            disabled={renderProps.disabled}
+          >
+            <img src={googleLogin} className={styles.icon} alt="google logo" />
+            <div className={styles.heading}>
+              {isAdmin ? 'Admins' : 'Students'}
+            </div>
+            Sign in with Google
+          </button>
+        )}
+        onSuccess={generateOnSignIn(isAdmin)}
+        clientId={clientId}
+        cookiePolicy="single_host_origin"
+        isSignedIn
       />
+    );
+
+    return (
+      <>
+        <LandingPage
+          students={<SignInButton />}
+          admins={<SignInButton isAdmin />}
+        />
+      </>
     );
   };
 
