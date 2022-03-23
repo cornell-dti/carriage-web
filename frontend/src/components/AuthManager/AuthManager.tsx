@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleLogin, useGoogleLogout } from 'react-google-login';
+import {
+  GoogleLogin,
+  useGoogleLogin,
+  useGoogleLogout,
+} from 'react-google-login';
 import {
   useHistory,
   useLocation,
@@ -38,14 +42,12 @@ export const AuthManager = () => {
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
-  const { signOut } = useGoogleLogout({ clientId });
 
   useEffect(() => {
     setInitPath(pathname);
   }, [pathname]);
 
   function logout() {
-    signOut();
     localStorage.removeItem('userType');
     if (jwt) {
       setJWT('');
@@ -123,56 +125,64 @@ export const AuthManager = () => {
     };
   }
 
-  const LoginPage = () => (
-    <LandingPage
-      students={
-        <GoogleLogin
-          render={(renderProps) => (
-            <button
-              onClick={renderProps.onClick}
-              className={styles.btn}
-              disabled={renderProps.disabled}
-            >
-              <img
-                src={googleLogin}
-                className={styles.icon}
-                alt="google logo"
-              />
-              <div className={styles.heading}>Students</div>
-              Sign in with Google
-            </button>
-          )}
-          onSuccess={generateOnSignIn(false)}
-          clientId={clientId}
-          cookiePolicy="single_host_origin"
-          isSignedIn
-        />
+  const LoginPage = () => {
+    useEffect(() => {
+      if (document) {
+        document.getElementById('google-login')?.remove();
       }
-      admins={
-        <GoogleLogin
-          render={(renderProps) => (
-            <button
-              onClick={renderProps.onClick}
-              className={styles.btn}
-              disabled={renderProps.disabled}
-            >
-              <img
-                src={googleLogin}
-                className={styles.icon}
-                alt="google logo"
-              />
-              <div className={styles.heading}>Admins</div>
-              Sign in with Google
-            </button>
-          )}
-          onSuccess={generateOnSignIn(true)}
-          clientId={clientId}
-          cookiePolicy="single_host_origin"
-          isSignedIn
-        />
-      }
-    />
-  );
+    });
+
+    return (
+      <LandingPage
+        students={
+          <GoogleLogin
+            render={(renderProps) => (
+              <button
+                onClick={renderProps.onClick}
+                className={styles.btn}
+                disabled={renderProps.disabled}
+              >
+                <img
+                  src={googleLogin}
+                  className={styles.icon}
+                  alt="google logo"
+                />
+                <div className={styles.heading}>Students</div>
+                Sign in with Google
+              </button>
+            )}
+            onSuccess={generateOnSignIn(false)}
+            clientId={clientId}
+            cookiePolicy="single_host_origin"
+            isSignedIn
+          />
+        }
+        admins={
+          <GoogleLogin
+            render={(renderProps) => (
+              <button
+                onClick={renderProps.onClick}
+                className={styles.btn}
+                disabled={renderProps.disabled}
+              >
+                <img
+                  src={googleLogin}
+                  className={styles.icon}
+                  alt="google logo"
+                />
+                <div className={styles.heading}>Admins</div>
+                Sign in with Google
+              </button>
+            )}
+            onSuccess={generateOnSignIn(true)}
+            clientId={clientId}
+            cookiePolicy="single_host_origin"
+            isSignedIn
+          />
+        }
+      />
+    );
+  };
 
   const SiteContent = () => {
     const { visible, message, toastType } = useToast();

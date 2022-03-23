@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useRef,
 } from 'react';
+import { Helmet } from 'react-helmet';
 import { Ride } from '../../types';
 import { useReq } from '../../context/req';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
@@ -38,7 +39,14 @@ const Schedule = () => {
   return (
     <main id="main">
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Hi {user?.firstName ?? ''}</h1>
+        {user?.firstName && (
+          <>
+            <Helmet>
+              <title>{user.firstName}'s Ride Schedule - Carriage</title>
+            </Helmet>
+            <h1 className={styles.header}>{user.firstName}'s Ride Schedule</h1>
+          </>
+        )}
         <div className={styles.rightSection}>
           <RequestRideModal onSubmit={refreshRides} />
           <Notification />
