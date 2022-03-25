@@ -87,11 +87,11 @@ const UserDetail = ({
     }
   };
 
-  const active = (): boolean => {
+  const getActive = (): boolean => {
     return true;
   };
 
-  const [a, setActive] = useState();
+  const [active, setActive] = useState();
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
