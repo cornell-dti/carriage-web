@@ -12,7 +12,7 @@ import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { edit } from '../../icons/other/index';
-import { useToast } from '../../context/toastContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -119,7 +119,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         })
       ).then(() => {
         refresh();
-        showToast('The employee has been added.');
+        showToast('The employee has been added.', ToastStatus.SUCCESS);
       });
     } else {
       const createdEmployee = await fetch(
@@ -149,7 +149,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       })
     ).then((res) => {
       refresh();
-      showToast('The employee has been edited.');
+      showToast('The employee has been edited.', ToastStatus.SUCCESS);
       return res.json();
     });
     if (imageBase64 !== '') {

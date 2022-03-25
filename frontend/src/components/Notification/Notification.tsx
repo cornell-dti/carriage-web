@@ -5,11 +5,19 @@ import cn from 'classnames';
 import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
+import { Ride } from '../../types';
 
 type Message = {
   time: Date;
   title: string;
   body: string;
+};
+
+type NotificationData = {
+  title: string;
+  body: string;
+  ride: Ride;
+  sentTime: string;
 };
 
 const truncate = (str: string, num: number) => {
@@ -26,33 +34,29 @@ const Notification = () => {
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
-      const { body, time } = event.data;
-      const parsed = JSON.parse(body);
+      const { body, ride, sentTime, title }: NotificationData = event.data;
       const newMsg = {
-        time: new Date(time),
-        title: `Ride with ID ${truncate(parsed.ride.id, 8)}`,
-        body: `Changed by ${parsed.changedBy.userType}`,
-        day: parsed.ride.startTime,
+        time: new Date(sentTime),
+        title,
+        body,
+        day: ride.startTime,
       };
-
       setNewMessages([newMsg, ...newMessages]);
       setNotify(true);
     });
-  });
+  }, []);
 
   const mapMessages = (msgs: Message[]) =>
     msgs.map(({ time, title, body }, i) => (
       <div key={i} className={styles.body}>
         <div className={styles.user}>
           <div className={styles.avatar}>
-            <span className={styles.initials}>T</span>
+            <span className={styles.initials}>C</span>
           </div>
         </div>
         <div className={styles.msg}>
           <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
-          <p>
-            {title} - {body}
-          </p>
+          <p>{body}</p>
         </div>
         <div className={styles.link}>View</div>
       </div>

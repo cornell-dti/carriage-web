@@ -70,8 +70,8 @@ export const Row = ({
       if (typeof cell === 'string') {
         return <Cell key={idx} data={cell} />;
       }
-      const { data: cData, tag, smallTag } = cell;
-      return <Cell key={idx} data={cData} tag={tag} smallTag={smallTag} />;
+      const { data: cData, tag } = cell;
+      return <Cell key={idx} data={cData} tag={tag} smallTag={true} />;
     });
 
   if (!header && groupStart) {

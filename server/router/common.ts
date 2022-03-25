@@ -32,18 +32,19 @@ export function batchGet(
 ) {
   if (!keys.length) {
     res.send({ data: [] });
+  } else {
+    model.batchGet(keys, (err, data) => {
+      if (err) {
+        res.status(err.statusCode || 500).send({ err: err.message });
+      } else if (!data) {
+        res.status(400).send({ err: `items not found in ${table}` });
+      } else if (callback) {
+        data.populate().then((doc) => callback(doc));
+      } else {
+        data.populate().then((doc) => res.status(200).send({ data: doc }));
+      }
+    });
   }
-  model.batchGet(keys, (err, data) => {
-    if (err) {
-      res.status(err.statusCode || 500).send({ err: err.message });
-    } else if (!data) {
-      res.status(400).send({ err: `items not found in ${table}` });
-    } else if (callback) {
-      data.populate().then((doc) => callback(doc));
-    } else {
-      data.populate().then((doc) => res.status(200).send({ data: doc }));
-    }
-  });
 }
 
 export function getAll(
