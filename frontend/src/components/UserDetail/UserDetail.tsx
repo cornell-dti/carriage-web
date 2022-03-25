@@ -87,6 +87,8 @@ const UserDetail = ({
     }
   };
 
+  const [active, setActive] = useState({ rider });
+
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
