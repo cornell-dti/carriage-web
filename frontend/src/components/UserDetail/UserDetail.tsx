@@ -70,6 +70,7 @@ const UserDetail = ({
   const [isShowing, setIsShowing] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const [active, setActive] = useState(rider ? rider.active : true);
 
   const toggleActive = (): void => {
     if (rider) {
@@ -83,15 +84,10 @@ const UserDetail = ({
       ).then(() => {
         setIsShowing(true);
         refreshRiders();
+        setActive(!active);
       });
     }
   };
-
-  const getActive = (): boolean => {
-    return true;
-  };
-
-  const [active, setActive] = useState();
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
@@ -121,7 +117,7 @@ const UserDetail = ({
                 <input
                   type="checkbox"
                   onClick={toggleActive}
-                  checked={!rider.active}
+                  checked={rider.active}
                 />
                 <span className={styles.slider}></span>
               </label>
