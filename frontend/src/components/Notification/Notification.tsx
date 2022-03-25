@@ -66,7 +66,7 @@ const Notification = () => {
     <Popup
       trigger={
         <button className={styles.bell}>
-          <img src={notificationBell} alt="notification bell" />
+          <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
               src={notificationBadge}
@@ -86,6 +86,7 @@ const Notification = () => {
         margin: '10px',
         width: '333px',
       }}
+      on="focus"
     >
       <div className={styles.content}>
         {newMessages.length === 0 || (

@@ -3,6 +3,9 @@
   border: none;
   cursor: pointer;
   position: relative;
+  height: 44px;
+  width: 44px;
+  margin-left: 1rem;
 }
 
 .bell:focus {
