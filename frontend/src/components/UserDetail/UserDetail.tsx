@@ -112,9 +112,9 @@ const UserDetail = ({
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
               <label className={styles.switch}>
-                  <input type="checkbox" />
+                <input type="checkbox" />
                 <span className={styles.slider}></span>
-               </label>
+              </label>
             ) : null}
             {employee ? (
               <EmployeeModal
