@@ -87,7 +87,11 @@ const UserDetail = ({
     }
   };
 
-  const [active, setActive] = useState({ rider });
+  const active = (): boolean => {
+    return true;
+  };
+
+  const [a, setActive] = useState();
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
@@ -117,7 +121,7 @@ const UserDetail = ({
                 <input
                   type="checkbox"
                   onClick={toggleActive}
-                  checked={rider.active}
+                  checked={!rider.active}
                 />
                 <span className={styles.slider}></span>
               </label>
