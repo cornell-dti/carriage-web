@@ -29,6 +29,8 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Li Fengyu - Software Developer
 - Harrison Chin - Software Developer
 
+- Rohit Valiveti - Software Developer
+
 **Past Contributors**
 
 - Sam Steinberg - Product Manager
