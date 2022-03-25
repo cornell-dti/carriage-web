@@ -11,7 +11,7 @@ import {
   dti_desc,
   landingCarBuildings,
   mac1,
-  mac2
+  mac2,
 } from '../../icons/other';
 
 type LandingPropType = {
