@@ -2,8 +2,7 @@
 
 #### Contents
 
-- [Carriage](#carriage)
-      - [Contents](#contents)
+- [Carriage](#carriage) - [Contents](#contents)
   - [About](#about)
   - [Contributors:](#contributors)
 
@@ -27,6 +26,10 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Michael Torku - Software Developer
 - Austin Wu - Software Developer
 - Li Fengyu - Software Developer
+- Harrison Chin - Software Developer
+- Andrew Choi - Software Developer
+
+- Rohit Valiveti - Software Developer
 
 **Past Contributors**
 

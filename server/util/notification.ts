@@ -66,6 +66,8 @@ const sendMsg = (
     const payload = {
       title,
       body,
+      ride,
+      sentTime: new Date().toISOString(),
     };
     return new Promise((resolve, reject) => {
       webpush
