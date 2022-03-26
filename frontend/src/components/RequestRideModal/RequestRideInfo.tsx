@@ -27,8 +27,6 @@ const RequestRideInfo = ({
 }: RequestRideInfoProps) => {
   const { register, formState, getValues, watch, setValue } = useFormContext();
   const { errors } = formState;
-  const { withDefaults } = useReq();
-  const [locations, setLocations] = useState<Location[]>([]);
   const [custom, setCustom] = useState(ride?.recurring || false);
   const watchRepeating = watch('recurring', ride?.recurring || false);
   const watchPickupCustom = watch('startLocation');
@@ -36,11 +34,7 @@ const RequestRideInfo = ({
   const shouldDisableStartDate =
     (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
     (ride && ride.type !== 'unscheduled');
-  const loc = useLocations().locations;
-
-  useEffect(() => {
-    setLocations(loc);
-  }, [loc]);
+  const { locations } = useLocations();
 
   useEffect(() => {
     if (ride) {
