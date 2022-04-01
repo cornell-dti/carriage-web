@@ -90,8 +90,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                 >
                   <img alt={''} src={icon} />
                 </div>
+                <p className={styles.caption}>{caption}</p>
               </Link>
-              <p className={styles.caption}>{caption}</p>
             </div>
           ))}
         </div>
