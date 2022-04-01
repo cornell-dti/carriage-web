@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label, SRLabel } from '../FormElements/FormElements';
+import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 
@@ -182,7 +182,7 @@ const RiderModalInfo = ({
                 <p className={styles.error}>Please enter a join date</p>
               )}
             </div>
-            <p className={styles.to}>to</p>
+            <p className={cn(styles.to, styles.gridCSmall3)}>to</p>
             <div>
               <Label className={styles.label} htmlFor="endDate">
                 End Date:{' '}
