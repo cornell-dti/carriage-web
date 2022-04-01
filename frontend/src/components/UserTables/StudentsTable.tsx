@@ -87,7 +87,7 @@ const StudentsTable = () => {
             </span>
           ),
         };
-        const disability = accessibility || "";
+        const disability = accessibility || '';
         const phone = fmtPhone(phoneNumber);
         const shortAddress = address.split(',')[0];
         const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
