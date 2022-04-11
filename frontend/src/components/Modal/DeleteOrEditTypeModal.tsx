@@ -5,6 +5,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
 import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -23,10 +24,12 @@ const DeleteOrEditTypeModal = ({
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
+  const { refreshRides } = useRides();
 
   const closeModal = () => {
-    onClose();
+    refreshRides();
     setSingle(true);
+    onClose();
   };
 
   const confirmCancel = () => {
@@ -41,10 +44,10 @@ const DeleteOrEditTypeModal = ({
             origDate: startDate,
           }),
         })
-      ).then(() => closeModal());
+      ).then(closeModal);
     } else {
       fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' })).then(
-        () => closeModal()
+        closeModal
       );
     }
   };
