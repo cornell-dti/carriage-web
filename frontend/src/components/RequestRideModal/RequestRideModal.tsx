@@ -7,14 +7,10 @@ import CreateOrEditRideModal from './CreateOrEditRideModal';
 import { useToast, ToastStatus } from '../../context/toastContext';
 
 type RequestRideModalProps = {
-  onSubmit?: () => void;
   ride?: Ride;
 };
 
-const RequestRideModal = ({
-  onSubmit = () => {},
-  ride,
-}: RequestRideModalProps) => {
+const RequestRideModal = ({ ride }: RequestRideModalProps) => {
   const [modalType, setModalType] = useState<RideModalType>();
   const [typeModalIsOpen, setTypeModalIsOpen] = useState(false);
   const [createOrEditModalIsOpen, setCreateOrEditModalIsOpen] = useState(false);
@@ -42,7 +38,6 @@ const RequestRideModal = ({
       `Your ride has been ${!ride ? 'created' : 'edited'}`,
       ToastStatus.SUCCESS
     );
-    onSubmit();
   };
 
   useEffect(() => {
