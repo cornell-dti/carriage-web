@@ -42,33 +42,37 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const { withDefaults } = useReq();
   const { curDate } = useDate();
   const date = format_date(curDate);
-  const { id, user } = useContext(AuthContext);
+  const { id } = useContext(AuthContext);
 
   const refreshRides = useCallback(async () => {
-    const ridesData: Ride[] = await fetch(
-      `/api/rides?date=${date}`,
-      withDefaults()
-    )
-      .then((res) => res.json())
-      .then((data) => data.data);
-    if (ridesData) {
-      setUnscheduledRides(
-        ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
-      );
-
-      setScheduledRides(
-        ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
-      );
-    }
-    const userRides: Ride[] = await fetch(
-      `/api/rides?rider=${id}`,
-      withDefaults()
-    )
-      .then((res) => res.json())
-      .then((data) => data.data);
-    if (userRides) {
-      setPastRides(userRides.filter(({ type }) => type === Type.PAST));
-      setUpcomingRides(userRides.filter(({ type }) => type !== Type.PAST));
+    const localUserType = localStorage.getItem('userType');
+    if (localUserType === 'Admin') {
+      const ridesData: Ride[] = await fetch(
+        `/api/rides?date=${date}`,
+        withDefaults()
+      )
+        .then((res) => res.json())
+        .then((data) => data.data);
+      if (ridesData) {
+        setUnscheduledRides(
+          ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
+        );
+        setScheduledRides(
+          ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
+        );
+      }
+    } else {
+      const userRides: Ride[] = await fetch(
+        `/api/rides?rider=${id}`,
+        withDefaults()
+      )
+        .then((res) => res.json())
+        .then((data) => data.data);
+      console.log(userRides);
+      if (userRides) {
+        setPastRides(userRides.filter(({ type }) => type === Type.PAST));
+        setUpcomingRides(userRides.filter(({ type }) => type !== Type.PAST));
+      }
     }
   }, [withDefaults, date]);
 
