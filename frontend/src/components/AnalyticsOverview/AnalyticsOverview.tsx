@@ -70,7 +70,7 @@ const AnalyticsOverview = ({ type, data, label }: AnalyticsOverviewProps) => {
           return acc + (curr.drivers[fullName] || 0);
         }, 0);
         return {
-          icon: driver.photoLink ? `https://${driver.photoLink}` : '',
+          icon: driver.photoLink ? `${driver.photoLink}` : '',
           alt: `${driver.firstName} ${driver.lastName.substr(0, 1)}.`,
           stats: driverStat,
           description: `${driver.firstName} ${driver.lastName.substr(0, 1)}.`,

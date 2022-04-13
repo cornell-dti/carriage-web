@@ -9,7 +9,7 @@ type UploadProps = {
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const [imageURL, setImageURL] = useState(
-    existingPhoto ? `https://${existingPhoto}` : ''
+    existingPhoto ? `${existingPhoto}` : ''
   );
   const inputRef = createRef<HTMLInputElement>();
   /* This is for accessibility purposes only */
