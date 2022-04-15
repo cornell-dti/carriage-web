@@ -63,6 +63,7 @@ const schema = new dynamoose.Schema({
   },
   accessibility: {
     type: String,
+    enum: Object.values(Accessibility),
     required: false,
   },
   organization: {
