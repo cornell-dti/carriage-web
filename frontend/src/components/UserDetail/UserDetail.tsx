@@ -116,7 +116,7 @@ const UserDetail = ({
         {photoLink && photoLink !== '' ? (
           <img
             className={styles.profilePic}
-            src={`https://${photoLink}`}
+            src={`${photoLink}`}
             alt="profile"
           />
         ) : null}

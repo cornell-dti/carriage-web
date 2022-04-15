@@ -97,7 +97,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             <img
               alt="profile_picture"
               className={styles.profile}
-              src={profile === '' || !profile ? blank : `https://${profile}`}
+              src={profile === '' || !profile ? blank : `${profile}`}
             />
           )}
           {profile !== '' && (
