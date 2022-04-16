@@ -99,16 +99,16 @@ const UserDetail = ({
       ).then(() => {
         setIsShowing(true);
         refreshRiders();
-        setActive(!active);
       });
     }
+    setActive(!active);
   };
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
         <Toast
-          message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
+          message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
           toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
@@ -129,14 +129,21 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <label className={styles.switch}>
-                <input
-                  type="checkbox"
-                  onClick={toggleActive}
-                  checked={rider.active}
-                />
-                <span className={styles.slider}></span>
-              </label>
+              <div>
+                <label
+                  className={rider.active ? styles.active : styles.inactive}
+                >
+                  {rider.active ? 'Active ' : 'Inactive '}
+                </label>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    onClick={toggleActive}
+                    checked={rider.active}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             ) : null}
             {employee ? (
               <EmployeeModal
