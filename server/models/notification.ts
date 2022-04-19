@@ -44,6 +44,6 @@ const schema = new dynamoose.Schema({
 
 export const Admin = dynamoose.model('Notifications', schema, {
   // Create is default to be true; table will be created if it doesn't exist
-// However, can be set to false at a later time
+  // However, can be set to false at a later time
   create: true,
 });
