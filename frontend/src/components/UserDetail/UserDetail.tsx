@@ -77,6 +77,7 @@ const UserDetail = ({
   const { refreshRiders } = useRiders();
   const [active, setActive] = useState(rider ? rider.active : true);
   const { toastType } = useToast();
+  const [message, setMessage] = useState(active ? 'activated' : 'deactivated');
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
   const openConfirmationModal = () => {
@@ -97,6 +98,7 @@ const UserDetail = ({
           body: JSON.stringify({ active: !active }),
         })
       ).then(() => {
+        setMessage(!active ? 'activated' : 'deactivated');
         setIsShowing(true);
         refreshRiders();
       });
@@ -108,7 +110,7 @@ const UserDetail = ({
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
         <Toast
-          message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
+          message={`Rider ${message}.`}
           toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
