@@ -3,13 +3,12 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 
-type pastRideProps = {
-  past: boolean;
+type upcomingRidesProps = {
   isStudent: boolean;
   rides: Ride[];
 };
 
-const PastRides = ({ isStudent, rides, past }: pastRideProps) => {
+const UpcomingRides = ({ isStudent, rides }: upcomingRidesProps) => {
   const colSizes = [1, 1, 1, 1, 1];
   const headers = [
     isStudent ? 'Date' : 'Name',
@@ -21,9 +20,7 @@ const PastRides = ({ isStudent, rides, past }: pastRideProps) => {
 
   return (
     <div className={styles.pastRidesContainer}>
-      <h3 className={styles.userDetailHeader}>
-        {past ? 'Past Rides' : 'Upcoming Rides'}
-      </h3>
+      <h3 className={styles.userDetailHeader}>Upcoming Rides</h3>
       {rides.length !== 0 ? (
         <Table>
           <Row
@@ -72,4 +69,4 @@ const PastRides = ({ isStudent, rides, past }: pastRideProps) => {
   );
 };
 
-export default PastRides;
+export default UpcomingRides;
