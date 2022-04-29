@@ -20,7 +20,8 @@
 }
 
 .icon {
-  margin-left: 0.75rem;
+  margin-left: auto;
+  display: block;
 }
 
 .contentContainer {

@@ -58,6 +58,11 @@
 .primaryBtn:focus {
   box-shadow: 0 0 0 3px #0075db;
 }
+.primaryBtn:hover {
+  background-color: white;
+  border: 0.063rem solid #000000;
+  color: black;
+}
 .secondaryBtn {
   background-color: white;
   border: 0.063rem solid #000000;
@@ -65,6 +70,10 @@
 }
 .secondaryBtn:focus {
   box-shadow: 0 0 0 3px #0075db;
+}
+.secondaryBtn:hover {
+  background-color: black;
+  color: white;
 }
 
 .srlabel {
