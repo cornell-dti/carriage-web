@@ -4,7 +4,6 @@ import { useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
-import UpcomingRides from './UpcomingRides';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
 import styles from './userDetail.module.css';
