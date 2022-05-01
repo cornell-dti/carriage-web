@@ -41,6 +41,8 @@
 .infoContainer {
   display: flex;
   align-items: center;
+  overflow-y: auto;
+  height: 1.5rem;
 }
 
 .icon {
