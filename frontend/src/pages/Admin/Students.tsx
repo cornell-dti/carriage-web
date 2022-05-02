@@ -7,8 +7,8 @@ import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 
 const Riders = () => {
-  const [searchName, setSearchName] = useState<string>("");
-  return(
+  const [searchName, setSearchName] = useState<string>('');
+  return (
     <main id="main">
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Students</h1>
@@ -18,16 +18,12 @@ const Riders = () => {
           <Notification />
         </div>
       </div>
-        <SearchBar
-          enteredName = {searchName}
-          setEnteredName = {setSearchName}
-        />
-        <div className = {styles.studentTable}>
-          <StudentsTable
-            searchName = {searchName}
-          />
-        </div>
-    </main>);
+      <SearchBar enteredName={searchName} setEnteredName={setSearchName} />
+      <div className={styles.studentTable}>
+        <StudentsTable searchName={searchName} />
+      </div>
+    </main>
+  );
 };
 
 export default Riders;

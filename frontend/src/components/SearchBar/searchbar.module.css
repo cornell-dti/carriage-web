@@ -2,32 +2,31 @@
   width: 933px;
   height: 40px;
   margin-left: 2rem;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid #000000;
   box-sizing: border-box;
   border-radius: 10px;
   display: flex;
   flex-direction: row;
 }
-.searchIcon{
-  margin-top: .4rem;
+.searchIcon {
+  margin-top: 0.4rem;
   margin-left: 1rem;
 }
 .searchInputs {
-  margin-top: .4rem;
-  border-width:0px;
-  border:none;
-  outline:none;
+  margin-top: 0.4rem;
+  border-width: 0px;
+  border: none;
+  outline: none;
   margin-left: 1rem;
 }
 input {
-  border-width:0px;
-  border:none;
-  outline:none;
+  border-width: 0px;
+  border: none;
+  outline: none;
   font-style: normal;
   font-weight: 600;
   font-size: 20px;
   line-height: 24px;
   width: 850px;
 }
-
