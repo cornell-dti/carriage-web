@@ -75,7 +75,6 @@ const UserDetail = ({
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-  const [active, setActive] = useState(rider ? rider.active : true);
   const { toastType } = useToast();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
@@ -99,7 +98,6 @@ const UserDetail = ({
       ).then(() => {
         setIsShowing(true);
         refreshRiders();
-        setActive(!active);
       });
     }
   };
@@ -129,14 +127,9 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <label className={styles.switch}>
-                <input
-                  type="checkbox"
-                  onClick={toggleActive}
-                  checked={rider.active}
-                />
-                <span className={styles.slider}></span>
-              </label>
+              <Button onClick={toggleActive}>
+                {rider.active ? 'Deactivate' : 'Activate'}
+              </Button>
             ) : null}
             {employee ? (
               <EmployeeModal
