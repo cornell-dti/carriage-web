@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import cn from 'classnames';
 import { useGoogleLogout } from 'react-google-login';
 import {
@@ -75,7 +75,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <Link
+              <NavLink
                 key={path}
                 onClick={() => setSelected(path)}
                 className={styles.icon}
@@ -91,7 +91,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                   <img alt={''} src={icon} />
                 </div>
                 <p className={styles.caption}>{caption}</p>
-              </Link>
+              </NavLink>
             </div>
           ))}
         </div>
