@@ -131,7 +131,7 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <div>
+              <div className={styles.button}>
                 <label
                   className={rider.active ? styles.active : styles.inactive}
                 >

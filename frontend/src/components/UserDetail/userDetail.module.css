@@ -264,8 +264,17 @@ input:checked + .slider:before {
 }
 
 .active {
+  margin-top: 4px;
+  margin-right: 6px;
   color: black;
 }
 .inactive {
+  margin-top: 4px;
+  margin-right: 6px;
   color: gray;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
 }
