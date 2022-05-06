@@ -34,10 +34,10 @@ const Home = () => {
 
       <Schedule />
 
-      <Collapsible title={'Unscheduled Rides'}>
+      <Collapsible title={'Unscheduled Rides'} alt="unscheduled rides">
         <UnscheduledTable />
       </Collapsible>
-      <Collapsible title={'Scheduled Rides'}>
+      <Collapsible title={'Scheduled Rides'} alt="scheduled rides">
         <ScheduledTable />
       </Collapsible>
     </main>

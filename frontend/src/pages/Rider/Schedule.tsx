@@ -54,10 +54,10 @@ const Schedule = () => {
       </div>
       {rides && rides.length > 0 && (
         <>
-          <Collapsible title={'Your Upcoming Rides'}>
+          <Collapsible title={'Your Upcoming Rides'} alt="upcoming rides">
             <RiderScheduleTable data={rides} isPast={false} />
           </Collapsible>
-          <Collapsible title={'Your Past Rides'}>
+          <Collapsible title={'Your Past Rides'} alt="past rides">
             <RiderScheduleTable data={rides} isPast={true} />
           </Collapsible>
         </>

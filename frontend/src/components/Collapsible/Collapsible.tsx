@@ -4,10 +4,11 @@ import { up, down } from '../../icons/other/index';
 
 type CollapsibleSection = {
   title: string;
+  alt: string;
   children: JSX.Element | JSX.Element[];
 };
 
-const Collapsible = ({ title, children }: CollapsibleSection) => {
+const Collapsible = ({ title, alt, children }: CollapsibleSection) => {
   const [expanded, setExpanded] = useState(false);
   const icon = expanded ? down : up;
 
@@ -24,7 +25,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
           className={styles.icon}
           src={icon}
           role={'button'}
-          alt={'see more'}
+          alt={`${!expanded ? 'See more' : 'Hide'} ${alt}`}
           tabIndex={0}
           onKeyPress={handleKeywordKeyPress}
         />
