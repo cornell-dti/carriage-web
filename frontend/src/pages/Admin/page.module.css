@@ -29,3 +29,6 @@
 .hidden {
   display: none;
 }
+.studentTable {
+  margin-top: 1rem;
+}

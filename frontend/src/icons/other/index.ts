@@ -17,3 +17,4 @@ export { default as dti_desc } from './dti_desc.svg';
 export { default as chevronLeft } from './chevron-left.svg';
 export { default as block } from './blocked.svg';
 export { default as red_trash } from './red-trash.svg';
+export { default as search_icon } from './search.svg';

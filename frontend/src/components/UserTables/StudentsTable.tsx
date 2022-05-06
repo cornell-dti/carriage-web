@@ -15,7 +15,10 @@ type UsageType = {
   [id: string]: UsageData;
 };
 
-const StudentsTable = () => {
+type studentTableProps = {
+  searchName: string;
+};
+const StudentsTable = ({ searchName }: studentTableProps) => {
   const { riders } = useRiders();
   const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
@@ -56,72 +59,79 @@ const StudentsTable = () => {
     const secondPart = number.slice(6);
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
-
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
   return (
     <Table>
       <Row header colSizes={colSizes} data={headers} />
-      {riders.map((r) => {
-        const {
-          id,
-          firstName,
-          lastName,
-          email,
-          address,
-          phoneNumber,
-          accessibility,
-          joinDate,
-          endDate,
-          active,
-        } = r;
-        const netId = email.split('@')[0];
-        const nameNetId = {
-          data: (
-            <span>
-              <span style={{ fontWeight: 'bold' }}>
-                {`${firstName} ${lastName}`}
+      {riders
+        .filter((r) =>
+          (r.firstName + ' ' + r.lastName)
+            .toLowerCase()
+            .includes((searchName + '').toLowerCase())
+        )
+        .map((r) => {
+          const {
+            id,
+            firstName,
+            lastName,
+            email,
+            address,
+            phoneNumber,
+            accessibility,
+            joinDate,
+            endDate,
+            active,
+          } = r;
+          const netId = email.split('@')[0];
+          const nameNetId = {
+            data: (
+              <span>
+                <span style={{ fontWeight: 'bold' }}>
+                  {`${firstName} ${lastName}`}
+                </span>
+                {` ${netId}`}
               </span>
-              {` ${netId}`}
-            </span>
-          ),
-        };
-        const disability = accessibility || '';
-        const phone = fmtPhone(phoneNumber);
-        const shortAddress = address.split(',')[0];
-        const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
-        const usageData = getUsageData(id);
-        const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
-        const location = {
-          pathname: `/riders/${r.id}`,
-        };
-        const data = [
-          nameNetId,
-          phone,
-          shortAddress,
-          joinEndDate,
-          usageData,
-          disability,
-        ];
-        return (
-          <Link
-            key={id}
-            to={location}
-            style={{
-              display: 'block',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
-          >
-            <Row
-              data={data}
-              colSizes={colSizes}
-              className={isStudentInvalid ? styles.invalid : undefined}
-            />
-          </Link>
-        );
-      })}
+            ),
+          };
+          const disability = accessibility || '';
+          const phone = fmtPhone(phoneNumber);
+          const shortAddress = address.split(',')[0];
+          const joinEndDate = `${formatDate(joinDate)} - ${formatDate(
+            endDate
+          )}`;
+          const usageData = getUsageData(id);
+          const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
+          const location = {
+            pathname: `/riders/${r.id}`,
+          };
+          const data = [
+            nameNetId,
+            phone,
+            shortAddress,
+            joinEndDate,
+            usageData,
+            disability,
+          ];
+          return (
+            <Link
+              key={id}
+              to={location}
+              style={{
+                display: 'block',
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              <Row
+                data={data}
+                colSizes={colSizes}
+                className={isStudentInvalid ? styles.invalid : undefined}
+              />
+            </Link>
+          );
+        })}
     </Table>
   );
 };
