@@ -1,7 +1,10 @@
 import dynamoose from 'dynamoose';
+import { NotificationEvent, Change } from '../util/types';
+import { Status } from '../models/ride';
 
 export type NotificationType = {
   id: string;
+  notifEvent: NotificationEvent;
   userID: string;
   rideID: string;
   title: string;
@@ -18,6 +21,11 @@ const schema = new dynamoose.Schema({
   },
   userID: {
     type: String,
+    required: true,
+  },
+  notifEvent: {
+    type: String,
+    enum: Object.values({ ...Change, ...Status }),
     required: true,
   },
   rideID: {
