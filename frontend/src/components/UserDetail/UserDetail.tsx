@@ -75,7 +75,6 @@ const UserDetail = ({
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-  const [active, setActive] = useState(rider ? rider.active : true);
   const { toastType } = useToast();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
@@ -101,14 +100,13 @@ const UserDetail = ({
         refreshRiders();
       });
     }
-    setActive(!active);
   };
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
         <Toast
-          message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
+          message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
           toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
@@ -129,21 +127,9 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <div>
-                <label
-                  className={rider.active ? styles.active : styles.inactive}
-                >
-                  {rider.active ? 'Active ' : 'Inactive '}
-                </label>
-                <label className={styles.switch}>
-                  <input
-                    type="checkbox"
-                    onClick={toggleActive}
-                    checked={rider.active}
-                  />
-                  <span className={styles.slider}></span>
-                </label>
-              </div>
+              <Button onClick={toggleActive}>
+                {rider.active ? 'Deactivate' : 'Activate'}
+              </Button>
             ) : null}
             {employee ? (
               <EmployeeModal
