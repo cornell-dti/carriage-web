@@ -16,6 +16,7 @@ const SearchBar = ({ enteredName, setEnteredName }: SearchBarProps) => {
       <div className={styles.searchInputs}>
         <input
           type="text"
+          className={styles.searchBar}
           placeholder="Search for students..."
           onChange={(e) => setEnteredName(e.target.value)}
           value={enteredName}
