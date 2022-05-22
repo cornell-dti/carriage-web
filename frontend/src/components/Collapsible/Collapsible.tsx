@@ -11,26 +11,36 @@ type CollapsibleSection = {
 const Collapsible = ({ title, alt, children }: CollapsibleSection) => {
   const [expanded, setExpanded] = useState(false);
   const icon = expanded ? down : up;
+  const buttonId = `${alt}accordion`.replace(' ', '');
+  const sectionId = `${alt}section`.replace(' ', '');
 
-  const handleKeywordKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      setExpanded(!expanded);
-    }
-  };
   return (
-    <div className={styles.collapsible}>
-      <div className={styles.banner} onClick={() => setExpanded(!expanded)}>
-        <h2 className={styles.title}>{title}</h2>
-        <img
-          className={styles.icon}
-          src={icon}
-          role={'button'}
-          alt={`${!expanded ? 'See more' : 'Hide'} ${alt}`}
-          tabIndex={0}
-          onKeyPress={handleKeywordKeyPress}
-        />
+    <div>
+      <h3>
+        <button
+          id={buttonId}
+          className={styles.banner}
+          onClick={() => setExpanded(!expanded)}
+          aria-expanded={`${expanded}`}
+          aria-controls={sectionId}
+        >
+          <span className={styles.title}>{title}</span>
+          <img
+            className={styles.icon}
+            src={icon}
+            alt={`${!expanded ? 'See more' : 'Hide'} ${alt}`}
+          />
+        </button>
+      </h3>
+      <div
+        className={styles.contentContainer}
+        id={sectionId}
+        role="region"
+        aria-labelledby={buttonId}
+        hidden={!expanded}
+      >
+        {children}
       </div>
-      {expanded && <div className={styles.contentContainer}>{children}</div>}
     </div>
   );
 };
