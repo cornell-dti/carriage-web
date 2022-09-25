@@ -14,7 +14,7 @@
     "classnames": "^2.2.6",
     "focus-trap-react": "^8.5.0",
     "jwt-decode": "^3.1.2",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "react": "^17.0.1",
     "react-big-calendar": "^0.33.5",
     "react-csv": "^2.0.3",
