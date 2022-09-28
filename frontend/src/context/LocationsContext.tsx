@@ -20,7 +20,6 @@ type locationsProviderProps = {
 };
 
 export const LocationsProvider = ({ children }: locationsProviderProps) => {
-  const componentMounted = useRef(true);
   const [locations, setLocations] = useState<Array<Location>>([]);
   const { withDefaults } = useReq();
   const refreshLocations = useCallback(async () => {
@@ -34,17 +33,13 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
       locationsData.sort((a: Location, b: Location) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
+      setLocations(locationsData);
     }
-
-    locationsData && componentMounted.current && setLocations(locationsData);
   }, [withDefaults]);
 
   React.useEffect(() => {
     refreshLocations();
-    return () => {
-      componentMounted.current = false;
-    };
-  }, [refreshLocations]);
+  }, []);
 
   return (
     <LocationsContext.Provider value={{ locations, refreshLocations }}>

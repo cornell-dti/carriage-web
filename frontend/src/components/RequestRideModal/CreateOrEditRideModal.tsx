@@ -10,6 +10,7 @@ import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
+import { useRides } from '../../context/RidesContext';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -26,6 +27,8 @@ const CreateOrEditRideModal = ({
   onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
+  const { refreshRides } = useRides();
+
   const defaultStartDate = () => {
     if (ride) {
       if (
@@ -156,6 +159,7 @@ const CreateOrEditRideModal = ({
 
     const afterSubmit = () => {
       onSubmit();
+      refreshRides();
       closeModal();
     };
 
