@@ -107,7 +107,9 @@ const RiderModalInfo = ({
             disabled={isStudentEditing}
             className={styles.firstRow}
           />
-          {errors.netid && <p className={styles.error}>NetId cannot be empty</p>}
+          {errors.netid && (
+            <p className={styles.error}>NetId cannot be empty</p>
+          )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
           <Label className={styles.label} htmlFor="phoneNumber">
