@@ -79,7 +79,7 @@ const RiderModalInfo = ({
             className={styles.firstRow}
           />
           {errors.firstName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>First name cannot be empty</p>
           )}
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
@@ -92,7 +92,7 @@ const RiderModalInfo = ({
             className={styles.firstRow}
           />
           {errors.lastName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>Last name cannot be empty</p>
           )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
@@ -107,7 +107,7 @@ const RiderModalInfo = ({
             disabled={isStudentEditing}
             className={styles.firstRow}
           />
-          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
+          {errors.netid && <p className={styles.error}>NetId cannot be empty</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
           <Label className={styles.label} htmlFor="phoneNumber">
@@ -116,12 +116,12 @@ const RiderModalInfo = ({
           <Input
             id="phoneNumber"
             name="phoneNumber"
-            type="text"
+            type="tel"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
             className={styles.firstRow}
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>Please enter a phone number</p>
+            <p className={styles.error}>Phone number cannot be empty</p>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
