@@ -8,15 +8,15 @@
 
 ## Docs
 
+Carriage documentation is located at our [Notion](https://dti-carriage.notion.site/DTI-Carriage-Wiki-e10ea27fa06f4cbbb3fcd57873d331e6).
+
+Want to run this locally? From our [Useful Commands page](https://dti-carriage.notion.site/Useful-Commands-b20422d052b444d396b04a6df4debc07).
 After cloning the repository, run:
 `npm run install:server`
 `npm run install:frontend`
 `npm run start:server`
 `npm run start:frontend`
 This will start an instance running locally.
-
-To restart the Dyno from Heroku CLI:
-`heroku dyno:restart -a carriage-web`
 
 ## About
 
