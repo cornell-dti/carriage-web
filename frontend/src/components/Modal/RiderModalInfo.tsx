@@ -134,7 +134,7 @@ const RiderModalInfo = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <br/>
+          <br />
           <select name="needs" ref={register({ required: true })}>
             {Object.values(Accessibility).map((value, index) => {
               return (
