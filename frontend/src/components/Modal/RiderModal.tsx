@@ -84,7 +84,7 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         </button>
       )}
       <Modal
-        title={!existingRider ? 'Add a Student' : 'Edit a Student'}
+        title={!existingRider ? 'Add a Student' : 'Edit Student Information'}
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}

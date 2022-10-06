@@ -66,146 +66,136 @@ const RiderModalInfo = ({
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
+      <div className={cn(styles.inputContainer)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
-            First Name:{' '}
-          </Label>
           <Input
             id="firstName"
             name="firstName"
             type="text"
             ref={register({ required: true })}
-            className={styles.firstRow}
+            placeholder="name"
+            className={styles.input}
           />
           {errors.firstName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>First name cannot be empty</p>
           )}
-          <Label className={styles.label} htmlFor="lastName">
-            Last Name:{' '}
-          </Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            type="text"
-            ref={register({ required: true })}
-            className={styles.firstRow}
-          />
-          {errors.lastName && (
-            <p className={styles.error}>Please enter a name</p>
-          )}
-        </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="netid">
-            NetID:{' '}
-          </Label>
+
           <Input
             id="netid"
             name="netid"
             type="text"
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
             disabled={isStudentEditing}
-            className={styles.firstRow}
+            placeholder="net id"
+            className={styles.input}
           />
-          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
-        </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
-            Phone Number:{' '}
-          </Label>
+          {errors.netid && (
+            <p className={styles.error}>NetId cannot be empty</p>
+          )}
+
           <Input
             id="phoneNumber"
             name="phoneNumber"
-            type="text"
+            type="tel"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
-            className={styles.firstRow}
+            placeholder="phone number"
+            className={styles.input}
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>Please enter a phone number</p>
+            <p className={styles.error}>Phone number cannot be empty</p>
           )}
         </div>
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="needs">
-            Needs:{' '}
+
+        <div className={cn(styles.gridR1)}>
+          <div>
+            <select
+              name="needs"
+              ref={register({ required: true })}
+              className={cn(styles.input)}
+            >
+              <option value="" disabled selected>
+                Needs
+              </option>
+              {Object.values(Accessibility).map((value, index) => {
+                return (
+                  <option key={index} value={value}>
+                    {value}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.needs?.type === 'validate' && (
+              <p className={styles.error}>
+                Invalid needs. You can enter 'Assistant', 'Crutches', or
+                'Wheelchair'
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              id="address"
+              name="address"
+              type="text"
+              ref={register({
+                required: true,
+                pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+              })}
+              className={cn(styles.address)}
+              placeholder="address"
+            />
+            {errors.address && (
+              <p className={styles.error}>Please enter an address</p>
+            )}
+          </div>
+        </div>
+
+        <Label className={styles.duration} htmlFor="joinDate">
+          Duration
+        </Label>
+
+        <div className={cn(styles.gridR1)}>
+          <div>
+            <Input
+              id="joinDate"
+              type="date"
+              name="joinDate"
+              ref={register({ required: true })}
+              disabled={isStudentEditing}
+              className={styles.riderDate}
+              placeholder="join date"
+            />
+            {errors.joinDate && (
+              <p className={styles.error}>Please enter a join date</p>
+            )}
+          </div>
+
+          <Label className={styles.to} htmlFor="joinDate">
+            to
           </Label>
-          <select name="needs" ref={register({ required: true })}>
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
-            })}
-          </select>
-          {errors.needs?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid needs. You can enter 'Assistant', 'Crutches', or
-              'Wheelchair'
-            </p>
-          )}
-        </div>
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor="address">
-            Address:{' '}
-          </Label>
-          <Input
-            id="address"
-            name="address"
-            type="text"
-            ref={register({
-              required: true,
-              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
-            })}
-          />
-          {errors.address && (
-            <p className={styles.error}>Please enter an address</p>
-          )}
-        </div>
-        <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <p>Duration</p>
-          <div className={styles.lastRow}>
-            <div>
-              <Label className={styles.label} htmlFor="joinDate">
-                Join Date:{' '}
-              </Label>
-              <Input
-                id="joinDate"
-                type="date"
-                name="joinDate"
-                ref={register({ required: true })}
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
-              )}
-            </div>
-            <p className={styles.to}>to</p>
-            <div>
-              <Label className={styles.label} htmlFor="endDate">
-                End Date:{' '}
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                name="endDate"
-                ref={register({
-                  required: true,
-                  validate: (endDate) => {
-                    const joinDate = getValues('joinDate');
-                    return joinDate < endDate;
-                  },
-                })}
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
-              )}
-              {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
-              )}
-            </div>
+
+          <div>
+            <Input
+              id="endDate"
+              type="date"
+              name="endDate"
+              ref={register({
+                required: true,
+                validate: (endDate) => {
+                  const joinDate = getValues('joinDate');
+                  return joinDate < endDate;
+                },
+              })}
+              disabled={isStudentEditing}
+              className={styles.riderDate}
+              placeholder="end date"
+            />
+            {errors.endDate?.type === 'required' && (
+              <p className={styles.error}>Please enter an end date</p>
+            )}
+            {errors.endDate?.type === 'validate' && (
+              <p className={styles.error}>Invalid end time</p>
+            )}
           </div>
         </div>
       </div>
@@ -219,7 +209,7 @@ const RiderModalInfo = ({
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>
-          {isEditing ? 'Edit a Student' : 'Add a Student'}
+          {isEditing ? 'Save' : 'Add a Student'}
         </Button>
       </div>
     </form>
