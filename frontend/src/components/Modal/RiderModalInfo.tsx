@@ -81,6 +81,8 @@ const RiderModalInfo = ({
           {errors.firstName && (
             <p className={styles.error}>Please enter a name</p>
           )}
+        </div>
+        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
           </Label>
@@ -94,20 +96,6 @@ const RiderModalInfo = ({
           {errors.lastName && (
             <p className={styles.error}>Please enter a name</p>
           )}
-        </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="netid">
-            NetID:{' '}
-          </Label>
-          <Input
-            id="netid"
-            name="netid"
-            type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
-            disabled={isStudentEditing}
-            className={styles.firstRow}
-          />
-          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
           <Label className={styles.label} htmlFor="phoneNumber">
@@ -124,27 +112,7 @@ const RiderModalInfo = ({
             <p className={styles.error}>Please enter a phone number</p>
           )}
         </div>
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="needs">
-            Needs:{' '}
-          </Label>
-          <select name="needs" ref={register({ required: true })}>
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
-            })}
-          </select>
-          {errors.needs?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid needs. You can enter 'Assistant', 'Crutches', or
-              'Wheelchair'
-            </p>
-          )}
-        </div>
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+        <div className={cn(styles.gridR2, styles.gridCSmall1)}>
           <Label className={styles.label} htmlFor="address">
             Address:{' '}
           </Label>
@@ -161,8 +129,45 @@ const RiderModalInfo = ({
             <p className={styles.error}>Please enter an address</p>
           )}
         </div>
+
+        <div className={cn(styles.gridR2, styles.gridCSmall2)}>
+          <Label className={styles.label} htmlFor="needs">
+            Needs:{' '}
+          </Label>
+          <br/>
+          <select name="needs" ref={register({ required: true })}>
+            {Object.values(Accessibility).map((value, index) => {
+              return (
+                <option key={index} value={value}>
+                  {value}
+                </option>
+              );
+            })}
+          </select>
+          {errors.needs?.type === 'validate' && (
+            <p className={styles.error}>
+              Invalid needs. You can choose 'Assistant', 'Crutches', or
+              'Wheelchair'
+            </p>
+          )}
+        </div>
+
+        <div className={cn(styles.gridR2, styles.gridCSmall3)}>
+          <Label className={styles.label} htmlFor="netid">
+            NetID:{' '}
+          </Label>
+          <Input
+            id="netid"
+            name="netid"
+            type="text"
+            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+            disabled={isStudentEditing}
+            className={styles.firstRow}
+          />
+          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
+        </div>
         <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <p>Duration</p>
+          <p>Duration:</p>
           <div className={styles.lastRow}>
             <div>
               <Label className={styles.label} htmlFor="joinDate">
