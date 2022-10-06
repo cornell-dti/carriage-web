@@ -77,6 +77,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             marginLeft: '2rem',
             marginTop: '1rem',
             marginBottom: '1rem',
+            marginRight: '0.75rem',
           }}
         />
         Show inactive students
