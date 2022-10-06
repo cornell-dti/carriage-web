@@ -69,8 +69,8 @@ const RiderModalInfo = ({
       <div className={cn(styles.inputContainer)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
           <Input
-            id="firstName"
-            name="firstName"
+            id="name"
+            name="name"
             type="text"
             ref={register({ required: true })}
             placeholder="name"
