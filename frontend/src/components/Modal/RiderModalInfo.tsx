@@ -68,42 +68,48 @@ const RiderModalInfo = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Input
-            id="name"
-            name="name"
-            type="text"
-            ref={register({ required: true })}
-            placeholder="name"
-            className={styles.input}
-          />
-          {errors.firstName && (
-            <p className={styles.error}>First name cannot be empty</p>
-          )}
-
-          <Input
-            id="netid"
-            name="netid"
-            type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
-            disabled={isStudentEditing}
-            placeholder="net id"
-            className={styles.input}
-          />
-          {errors.netid && (
-            <p className={styles.error}>NetId cannot be empty</p>
-          )}
-
-          <Input
-            id="phoneNumber"
-            name="phoneNumber"
-            type="tel"
-            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
-            placeholder="phone number"
-            className={styles.input}
-          />
-          {errors.phoneNumber && (
-            <p className={styles.error}>Phone number cannot be empty</p>
-          )}
+          <div>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              ref={register({ required: true })}
+              placeholder="name"
+              className={styles.input}
+            />
+            {errors.firstName && (
+              <p className={styles.error}>First name cannot be empty</p>
+            )}
+          </div>
+          
+          <div>
+            <Input
+              id="netid"
+              name="netid"
+              type="text"
+              ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+              disabled={isStudentEditing}
+              placeholder="net id"
+              className={styles.input}
+            />
+            {errors.netid && (
+              <p className={styles.error}>NetId cannot be empty</p>
+            )}
+          </div>
+          
+          <div>
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="tel"
+              ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+              placeholder="phone number"
+              className={styles.input}
+            />
+            {errors.phoneNumber && (
+              <p className={styles.error}>Phone number cannot be empty</p>
+            )}
+          </div>
         </div>
 
         <div className={cn(styles.gridR1)}>
