@@ -72,23 +72,25 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <Link
-                key={path}
-                onClick={() => setSelected(path)}
-                className={styles.icon}
-                to={path}
-              >
-                <div
-                  className={
-                    path === selected
-                      ? cn(styles.selected, styles.circle)
-                      : styles.circle
-                  }
+              <p className={styles.caption}>
+                <Link
+                  key={path}
+                  onClick={() => setSelected(path)}
+                  className={styles.icon}
+                  to={path}
                 >
-                  <img alt={''} src={icon} />
-                </div>
-              </Link>
-              <p className={styles.caption}>{caption}</p>
+                  <div
+                    className={
+                      path === selected
+                        ? cn(styles.selected, styles.circle)
+                        : styles.circle
+                    }
+                  >
+                    <img alt=" " src={icon} />
+                  </div>
+                </Link>
+                {caption}
+              </p>
             </div>
           ))}
         </div>
