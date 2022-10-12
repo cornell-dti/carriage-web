@@ -81,7 +81,7 @@ const RiderModalInfo = ({
               <p className={styles.error}>First name cannot be empty</p>
             )}
           </div>
-          
+
           <div>
             <Input
               id="netid"
@@ -96,7 +96,7 @@ const RiderModalInfo = ({
               <p className={styles.error}>NetId cannot be empty</p>
             )}
           </div>
-          
+
           <div>
             <Input
               id="phoneNumber"
