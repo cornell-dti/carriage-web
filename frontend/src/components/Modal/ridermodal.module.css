@@ -6,27 +6,24 @@
 }
 
 .inputContainer {
-  margin-bottom: 1.5rem;
-}
-
-.rideTime {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-template-rows: repeat(3, 1fr);
   column-gap: 1rem;
   row-gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .gridCSmall1 {
-  grid-column: 1 / span 2;
+  grid-column: 1;
 }
 
 .gridCSmall2 {
-  grid-column: 3 / span 2;
+  grid-column: 3;
 }
 
 .gridCSmall3 {
-  grid-column: 5 / span 2;
+  grid-column: 5;
 }
 
 .gridCBig1 {

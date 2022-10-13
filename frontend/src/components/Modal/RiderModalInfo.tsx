@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
+import Modal from './Modal';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -66,7 +67,7 @@ const RiderModalInfo = ({
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
+      <div className={cn(styles.inputContainer)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
           <Label className={styles.label} htmlFor="firstName">
             First Name:{' '}
