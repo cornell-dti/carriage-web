@@ -17,8 +17,8 @@ const Home = () => {
   const today = format_date(curDate);
 
   React.useEffect(() => {
-    window.localStorage.setItem("lastPage", "/admin")
-  }, [])
+    window.localStorage.setItem('lastPage', '/admin');
+  }, []);
 
   return (
     <main id="main">

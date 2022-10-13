@@ -6,21 +6,21 @@ import Notification from '../../components/Notification/Notification';
 
 const Employees = () => {
   React.useEffect(() => {
-    window.localStorage.setItem("lastPage", "/admin/employees");
-  }, [])
+    window.localStorage.setItem('lastPage', '/admin/employees');
+  }, []);
 
-  return(
-  <main id="main">
-    <div className={styles.pageTitle}>
-      <h1 className={styles.header}>Employees</h1>
-      <div className={styles.rightSection}>
-        <EmployeeModal />
-        <Notification />
+  return (
+    <main id="main">
+      <div className={styles.pageTitle}>
+        <h1 className={styles.header}>Employees</h1>
+        <div className={styles.rightSection}>
+          <EmployeeModal />
+          <Notification />
+        </div>
       </div>
-    </div>
-    <EmployeeCards />
-  </main>
-);
-}
+      <EmployeeCards />
+    </main>
+  );
+};
 
 export default Employees;

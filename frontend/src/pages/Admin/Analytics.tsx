@@ -19,9 +19,8 @@ const Analytics = () => {
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
   React.useEffect(() => {
-    window.localStorage.setItem("lastPage", "/admin/analytics")
-  }, [])
-  
+    window.localStorage.setItem('lastPage', '/admin/analytics');
+  }, []);
 
   const refreshTable = (start = startDate, end = endDate) => {
     fetch(`/api/stats/?from=${start}&to=${end}`, withDefaults())

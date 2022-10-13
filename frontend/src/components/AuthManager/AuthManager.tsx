@@ -41,14 +41,11 @@ export const AuthManager = () => {
   const { signOut } = useGoogleLogout({ clientId });
 
   useEffect(() => {
-    if (!window.localStorage.getItem("lastPage")) {
+    if (!window.localStorage.getItem('lastPage')) {
       setInitPath(pathname);
     } else {
-      setInitPath(String(window.localStorage.getItem("lastPage")))
+      setInitPath(String(window.localStorage.getItem('lastPage')));
     }
-    
-
-
   }, [pathname]);
 
   function logout() {
