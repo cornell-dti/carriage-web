@@ -13,7 +13,8 @@ const Locations = () => {
 
   useEffect(() => {
     setLocations(loc);
-  }, [loc]);
+    window.localStorage.setItem("lastPage", "/admin/locations")
+  }, [loc]);  
 
   const handleAddLocation = (newLocation: Location) => {
     setLocations([...locations, newLocation]);
