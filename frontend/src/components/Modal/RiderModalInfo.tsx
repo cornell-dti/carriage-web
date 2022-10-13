@@ -64,6 +64,7 @@ const RiderModalInfo = ({
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
 
+  console.log()
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
@@ -123,7 +124,7 @@ const RiderModalInfo = ({
             className={styles.firstRow}
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>Phone number cannot be empty</p>
+            <p className={styles.error}>Phone number is not valid</p>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
