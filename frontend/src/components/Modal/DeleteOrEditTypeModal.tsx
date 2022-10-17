@@ -5,6 +5,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
 import { format_date } from '../../util/index';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -23,6 +24,7 @@ const DeleteOrEditTypeModal = ({
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
+  const { showToast } = useToast();
 
   const closeModal = () => {
     onClose();
@@ -47,6 +49,10 @@ const DeleteOrEditTypeModal = ({
         () => closeModal()
       );
     }
+    showToast(
+      ride.recurring && !single ? 'Rides Cancelled' : 'Ride Cancelled',
+      ToastStatus.SUCCESS
+    );
   };
 
   const changeSelection = (e: any) => {
@@ -73,6 +79,9 @@ const DeleteOrEditTypeModal = ({
             Are you sure you want to cancel this ride?
           </p>
           <div className={styles.buttonContainer}>
+            <Button outline type="button" onClick={closeModal}>
+              Back
+            </Button>
             <Button
               type="button"
               onClick={confirmCancel}
@@ -110,6 +119,13 @@ const DeleteOrEditTypeModal = ({
             </Label>
           </div>
           <div className={styles.buttonContainer}>
+            <Button
+              type="button"
+              onClick={closeModal}
+              className={styles.blackButton}
+            >
+              Back
+            </Button>
             <Button
               type="submit"
               onClick={onButtonClick}
