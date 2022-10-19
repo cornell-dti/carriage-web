@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  app:
+    build: ./server
+    command: >
+      sh -c "DOCKERTODO bash commands here"
+    volumes:
+      - ./server:/code
+    ports:
+      - '8000:8000'
+    environment:
+      - DEBUG=True
+      - DOCKERTODO (more env vars)
+    depends_on:
+      - DOCKERTODO (any other volumes)
+    networks:
+      - networkone
+  frontend:
+    build: ./frontend
+    #    command: nginx -g daemon off # not sure if this is necessary, honestly
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      - REACT_APP_BACKEND_URL=TODO
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - app
+    volumes:
+      - ./frontend/certbot:/etc/letsencrypt
+      - ./frontend/certbot/www:/var/www/certbot/:ro
+    networks:
+      - networkone
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./frontend/certbot:/etc/letsencrypt
+      - ./frontend/certbot/www:/var/www/certbot/:rw
+    networks:
+      - networkone
+networks:
+  networkone:
