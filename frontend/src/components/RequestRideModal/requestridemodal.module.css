@@ -30,6 +30,9 @@
 .box {
   display: flex;
 }
+.btn {
+  margin-right: 10px;
+}
 .dayBox {
   display: flex;
 }
