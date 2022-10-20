@@ -130,7 +130,7 @@ const DeleteOrEditTypeModal = ({
             </Label>
           </div>
           <div className={styles.buttonContainer}>
-          <Button outline type="button" onClick={closeModal}>
+            <Button outline type="button" onClick={closeModal}>
               Back
             </Button>
             <Button
