@@ -188,6 +188,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                   setOpenEditModal(index);
                   setEditSingle(single);
                 }}
+                isRider={false}
               />
               <AssignDriverModal
                 isOpen={openAssignModal === index}
