@@ -55,6 +55,7 @@ const DeleteOrEditTypeModal = ({
       ride.recurring && !single ? 'Rides Cancelled' : 'Ride Cancelled',
       ToastStatus.SUCCESS
     );
+    window.location.reload();
   };
 
   const changeSelection = (e: any) => {
