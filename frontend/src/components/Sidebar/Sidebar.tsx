@@ -85,7 +85,10 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                       : styles.circle
                   }
                 >
-                  <a aria-current={path === selected ? 'page' : undefined}></a>
+                  <a
+                    href={path}
+                    aria-current={path === selected ? 'page' : undefined}
+                  ></a>
                   <img alt={''} src={icon} />
                 </div>
               </Link>
