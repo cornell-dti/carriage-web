@@ -6,7 +6,7 @@
 }
 
 .inputContainer {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .rideTime {
@@ -31,9 +31,13 @@
 
 .gridCBig1 {
   grid-column: 1 / span 3;
+  float: inline-start;
 }
 .gridCBig2 {
   grid-column: 4 / span 3;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  float: right;
 }
 .gridCAll {
   grid-column: 1 / span 6;
@@ -42,7 +46,11 @@
 .duration {
   font-size: 0.9rem;
 }
-
+.fieldset {
+  position: relative;
+  height: 100%;
+  align-self: center;
+}
 .to {
   font-size: 0.9rem;
   grid-column: 3 / span 1;
@@ -76,6 +84,7 @@
 
 .firstRow {
   max-width: 90%;
+  margin: 5px;
 }
 
 .lastRow {
