@@ -6,6 +6,7 @@ import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
 import { format_date } from '../../util/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import { useRides } from '../../context/RidesContext';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -27,6 +28,7 @@ const DeleteOrEditTypeModal = ({
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
   const { showToast } = useToast();
+  const { refreshRides } = useRides();
 
   const closeModal = () => {
     onClose();
@@ -45,17 +47,18 @@ const DeleteOrEditTypeModal = ({
             origDate: startDate,
           }),
         })
-      ).then(() => closeModal());
+      )
+        .then(() => closeModal())
+        .then(refreshRides);
     } else {
-      fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' })).then(
-        () => closeModal()
-      );
+      fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' }))
+        .then(() => closeModal())
+        .then(refreshRides);
     }
     showToast(
       ride.recurring && !single ? 'Rides Cancelled' : 'Ride Cancelled',
       ToastStatus.SUCCESS
     );
-    window.location.reload();
   };
 
   const changeSelection = (e: any) => {
