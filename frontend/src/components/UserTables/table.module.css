@@ -140,6 +140,10 @@
   margin-left: 0.5em;
 }
 
+.dataValues {
+  display: flex;
+}
+
 .scheduleTable {
   overflow-y: auto;
 }
