@@ -86,7 +86,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                         : styles.circle
                     }
                   >
-                    <img alt=" " src={icon} />
+                    <img alt={'A sidebar button icon'} src={icon} />
                   </div>
                 </Link>
                 {caption}
