@@ -12,7 +12,8 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
   const icon = expanded ? down : up;
 
   const handleKeywordKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    e.preventDefault();
+    if (e.key === 'Enter' || e.key === ' ') {
       setExpanded(!expanded);
     }
   };
@@ -24,6 +25,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
         aria-expanded={expanded}
         aria-controls={`region-${title}`}
         onClick={() => setExpanded(!expanded)}
+        onKeyPress={handleKeywordKeyPress}
         tabIndex={0}
       >
         <h2 className={styles.title}>{title}</h2>
@@ -32,7 +34,6 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
           src={icon}
           aria-hidden={true}
           tabIndex={-1}
-          onKeyPress={handleKeywordKeyPress}
         />
       </div>
       {expanded && (
