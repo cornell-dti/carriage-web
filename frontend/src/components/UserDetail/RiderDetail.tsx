@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
+import Schedule from '../../pages/Rider/Schedule';
 import { useReq } from '../../context/req';
 import { Ride } from '../../types';
 import styles from './userDetail.module.css';
@@ -86,7 +87,7 @@ const RiderDetail = () => {
             />
           </div>
         </UserDetail>
-        <PastRides isStudent={true} rides={rides} />
+        <Schedule email={rider.email} />
       </div>
     </main>
   ) : null;

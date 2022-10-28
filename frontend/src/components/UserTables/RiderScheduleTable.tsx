@@ -8,9 +8,14 @@ import { useDate } from '../../context/date';
 type RiderScheduleTableProp = {
   data: Ride[];
   isPast: boolean; // true if past rides, false if upcoming rides
+  email: string;
 };
 
-const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
+const RiderScheduleTable = ({
+  data,
+  isPast,
+  email,
+}: RiderScheduleTableProp) => {
   const { curDate } = useDate();
   const [rideMapArray, setRideMapArray] = useState<any[]>([]);
 
@@ -27,9 +32,9 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   );
 
   // removes rides whose startTime is past the current time
-  const filterRides = useCallback(
+  const filterPastRides = useCallback(
     (ride: Ride): boolean => {
-      if (isPast) return ride.type === Type.PAST;
+      if (isPast && ride.rider.email !== email) return ride.type === Type.PAST;
       return ride.type !== Type.PAST;
     },
     [isPast]
@@ -136,9 +141,9 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
 
   useEffect(() => {
     let allRides = generateRecurringRides(data).concat(data);
-    allRides = allRides.filter(filterRides).sort(compRides);
+    allRides = allRides.filter(filterPastRides).sort(compRides);
     rideMapToArray(getRideMap(allRides));
-  }, [compRides, data, filterRides, generateRecurringRides, getRideMap]);
+  }, [compRides, data, filterPastRides, generateRecurringRides, getRideMap]);
 
   // returns date in the format "MM/DD/YYYY"
   const formatDate = (date: string): string =>
@@ -163,19 +168,6 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
     }
   };
 
-  const getWeekday = (time: string): string => {
-    const weekdays = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ];
-    return weekdays[new Date(time).getDay()];
-  };
-
   return (
     <div className={styles.scheduleTable}>
       <div className={styles.scheduleTableInner}>
@@ -183,13 +175,17 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
           ([date, rideArray]) =>
             rideArray.length > 0 && (
               <React.Fragment key={date}>
-                <h1 className={styles.formHeader}>
+                {/* <h1 className={styles.formHeader}>
                   {date}
                   <span className={styles.gray}>
                     - {getWeekday(rideArray[0].startTime)}
                   </span>
-                </h1>
-                <RiderRidesTable rides={rideArray} isPast={isPast} />
+                </h1> */}
+                <RiderRidesTable
+                  rides={rideArray}
+                  isPast={isPast}
+                  email={email}
+                />
               </React.Fragment>
             )
         )}

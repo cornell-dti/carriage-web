@@ -1,27 +1,24 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Ride, Type } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
-import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
-import RequestRideModal from '../RequestRideModal/RequestRideModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
   isPast: boolean;
+  email: string;
 };
 
-const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
-  const [deleteOpen, setDeleteOpen] = useState(-1);
+const RiderRidesTable = ({ rides, isPast, email }: RiderRidesTableProps) => {
   const colSizes = [1, 1, 1, 1, 1, 1];
   const headers = [
+    'Date',
     'Time',
     'Pickup Location',
     'Dropoff Location',
-    'This ride repeats...',
-    'Status',
-    '',
+    'Needs',
+    'Outcome',
   ];
 
   return (
@@ -41,30 +38,14 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
           const dropoffTag = ride.endLocation.tag;
+          const { rider } = ride;
+          const needs = rider ? rider.accessibility || '' : '';
 
           // returns date in the format "MM/DD/YYYY"
           const formatDate = (date: string): string =>
             moment(date).format('MM/DD/YYYY');
 
-          const startDate = formatDate(ride.endTime);
-          const weekdays = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
-
-          const formatWeekdays = (recurringDays: number[]): string => {
-            const letters: string[] = [];
-            recurringDays.forEach((day) => {
-              letters.push(weekdays[day]);
-            });
-            return letters.join(', ');
-          };
-
-          const isRecurring = ride.recurring;
-          const recurringDays = isRecurring
-            ? formatWeekdays(ride.recurringDays!)
-            : 'Not repeating';
-          const endDate = isRecurring ? formatDate(ride.endDate!) : 'N/A';
-          const recurringDateRange = isRecurring
-            ? `${startDate}-${endDate}`
-            : undefined;
+          const startDate = formatDate(ride.startTime);
 
           const startEndTime = {
             data: (
@@ -76,14 +57,6 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           };
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
-          const valueRepeat = {
-            data: (
-              <p>
-                {recurringDays}
-                <span className={styles.bold}> {recurringDateRange}</span>
-              </p>
-            ),
-          };
 
           let valueStatus;
           switch (ride.type) {
@@ -97,51 +70,21 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
               valueStatus = 'Past';
           }
 
-          const editButton = <RequestRideModal ride={ride} />;
-
-          const deleteButton = (
-            <button
-              className={styles.deleteIcon}
-              onClick={() => setDeleteOpen(index)}
-            >
-              <img src={trashbig} alt="delete ride" />
-            </button>
-          );
-
-          const onClose = () => {
-            setDeleteOpen(-1);
-          };
-
           const isOneHourBeforeRideStart = moment().isBefore(
             moment(ride.startTime).subtract(1, 'hour')
           );
 
-          const valueEditDelete = {
-            data: !isPast ? (
-              <>
-                {ride.type === Type.UNSCHEDULED && editButton}
-                {isOneHourBeforeRideStart && deleteButton}
-              </>
-            ) : null,
-          };
-
           const unscheduledRideData = [
+            startDate,
             startEndTime,
             valuePickup,
             valueDropoff,
-            valueRepeat,
+            needs,
             valueStatus,
-            valueEditDelete,
           ];
 
           return (
             <span key={ride.id}>
-              <DeleteOrEditTypeModal
-                open={deleteOpen === index}
-                ride={ride}
-                onClose={onClose}
-                deleting={true}
-              />
               <Row data={unscheduledRideData} colSizes={colSizes} />
             </span>
           );
