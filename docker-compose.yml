@@ -3,17 +3,27 @@ version: '3.9'
 services:
   app:
     build: ./server
-    command: >
-      sh -c "DOCKERTODO bash commands here"
+    # command: >
+    #   sh -c "DOCKERTODO bash commands here"
     volumes:
       - ./server:/code
     ports:
-      - '8000:8000'
+      - '3001:8000' #?????????
     environment:
       - DEBUG=True
-      - DOCKERTODO (more env vars)
-    depends_on:
-      - DOCKERTODO (any other volumes)
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - JWT_SECRET=${JWT_SECRET}
+      - PUBLIC_VAPID_KEY=${PUBLIC_VAPID_KEY}
+      - PRIVATE_VAPID_KEY=${PRIVATE_VAPID_KEY}
+      - WEB_PUSH_CONTACT="mailto:DOCKERTODOcontact@my-site.com"
+      - IOS_DRIVER_ARN=${IOS_DRIVER_ARN}
+      - IOS_RIDER_ARN=${IOS_RIDER_ARN}
+      - ANDROID_ARN=${ANDROID_ARN}
+      - HOSTNAME=${HOSTNAME}
+      - USE_HOSTNAME=false
+    # depends_on:
+    #   - DOCKERTODO (any other volumes)
     networks:
       - networkone
   frontend:
@@ -23,7 +33,8 @@ services:
       - '80:80'
       - '443:443'
     environment:
-      - REACT_APP_BACKEND_URL=TODO
+      - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
+      - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - app

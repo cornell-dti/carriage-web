@@ -5,9 +5,9 @@ docker compose build
 docker compose up -d
 
 # run certbot setup
-docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d DOCKERTODODOMAIN.END --non-interactive --agree-tos -m DOCKERTODOOUREMAIL@DOMAIN.END
+docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ -d DOCKERTODO.DOMAIN.COM --non-interactive --agree-tos -m DOCKERTODOcontact@my-site.com
 # add crontab to renew certs
-crontab -l | { cat; echo "0 0 1 * * /bin/bash cd /root/luciviewer-combined && docker compose run --rm certbot renew"; } | crontab -
+crontab -l | { cat; echo "0 0 1 * * /bin/bash cd /root/carriage-web && docker compose run --rm certbot renew"; } | crontab -
 # stop containers and remove them
 docker compose down -v
 y | docker system prune -a

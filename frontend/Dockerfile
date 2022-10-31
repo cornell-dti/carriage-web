@@ -9,19 +9,16 @@ WORKDIR /app
 
 # add env variables
 ENV PATH /app/node_modules/.bin:$PATH
-ENV REACT_APP_BACKEND_URL https://DOCKERTODO.DOMAINHERE/FORBACKEND
 ENV CHOKIDAR_USEPOLLING true
 
 # install app dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm run install:server
-RUN npm run install:frontend
+RUN npm install
 
 # add app
 COPY . ./
-RUN npm run build:server
-RUN npm run build:frontend
+RUN npm run build
 
 # optionally: run the app locally on port 3001
 # CMD ["npm", "start"]
