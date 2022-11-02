@@ -53,11 +53,17 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   );
   const [imageBase64, setImageBase64] = useState('');
   const { withDefaults } = useReq();
-  const { refreshAdmins, refreshDrivers } = useEmployees();
+  const { refreshAdmins, refreshDrivers, drivers } = useEmployees();
   const methods = useForm();
 
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
+  
+
+  React.useEffect(() => {
+    // console.log(drivers)
+
+  }, [])
 
   const openModal = () => {
     setIsOpen(true);
@@ -234,7 +240,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       console.log('Undefined file upload');
     }
   }
-
   return (
     <>
       {existingEmployee ? (
