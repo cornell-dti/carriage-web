@@ -93,8 +93,6 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
 //Convert DriverType to EmployeeType
 const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
-
-  
   return drivers.map((driver) => ({
     id: driver.id,
     firstName: driver.firstName,
@@ -129,7 +127,7 @@ const findEmployee = (
   const employee = DriverToEmployees(drivers).find(
     (employee) => employee.id === employeeId
   );
-  console.log(drivers)
+  console.log(drivers);
   if (!employee)
     return AdminToEmployees(admins).find(
       (employee) => employee.id === employeeId
