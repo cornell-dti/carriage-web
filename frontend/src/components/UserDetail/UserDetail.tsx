@@ -101,7 +101,6 @@ const UserDetail = ({
       });
     }
   };
-  console.log(employee);
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (

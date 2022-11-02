@@ -59,9 +59,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
 
-  React.useEffect(() => {
-    // console.log(drivers)
-  }, []);
 
   const openModal = () => {
     setIsOpen(true);
