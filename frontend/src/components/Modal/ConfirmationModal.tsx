@@ -39,12 +39,17 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
       });
   };
 
+  const modalText = `Are you sure you want to remove ${rider?.firstName} ${rider?.lastName}?`;
   return (
-    <Modal title={''} isOpen={open} onClose={closeModal} displayClose={true}>
+    <Modal
+      title={''}
+      label={'test label'}
+      isOpen={open}
+      onClose={closeModal}
+      displayClose={true}
+    >
       <div className={styles.modal}>
-        <p className={styles.modalText}>
-          Are you sure you want to remove {rider?.firstName} {rider?.lastName}?
-        </p>
+        <p className={styles.modalText}>{modalText}</p>
         <div className={styles.buttonContainer}>
           <Button
             type="button"

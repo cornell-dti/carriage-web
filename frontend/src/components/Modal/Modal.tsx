@@ -34,6 +34,7 @@ type ModalProps = {
   children: React.ReactNode;
   onClose?: () => void;
   displayClose?: boolean;
+  label?: string;
 };
 
 const Modal = ({
@@ -44,6 +45,7 @@ const Modal = ({
   children,
   onClose,
   displayClose,
+  label,
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
@@ -68,15 +70,23 @@ const Modal = ({
           >
             <div className={styles.background}>
               <div className={styles.modal}>
-                <div className={styles.topContainer}>
-                  <h1 className={styles.title}>{currentTitle}</h1>
+                <div
+                  className={styles.topContainer}
+                  role="dialog"
+                  aria-modal={true}
+                  aria-label={label ?? (currentTitle as string)}
+                >
+                  <h1 className={styles.title} tabIndex={-1}>
+                    {currentTitle}
+                  </h1>
                   {!displayClose && (
                     <button
                       className={styles.closeBtn}
                       id={'close'}
                       onClick={onClose}
+                      aria-label="Close"
                     >
-                      <img alt="close" src={close} />
+                      <img aria-hidden="true" src={close} />
                     </button>
                   )}
                 </div>
