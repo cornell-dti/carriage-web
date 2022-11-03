@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
@@ -18,6 +18,7 @@ const Home = () => {
 
   React.useEffect(() => {
     window.localStorage.setItem('lastPage', '/admin');
+    document.title = 'Home - Carriage';
   }, []);
 
   return (

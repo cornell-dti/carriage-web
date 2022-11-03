@@ -20,6 +20,7 @@ const Analytics = () => {
 
   React.useEffect(() => {
     window.localStorage.setItem('lastPage', '/admin/analytics');
+    document.title = 'Analytics - Carriage';
   }, []);
 
   const refreshTable = (start = startDate, end = endDate) => {

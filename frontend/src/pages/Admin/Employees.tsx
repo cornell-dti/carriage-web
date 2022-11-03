@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import styles from './page.module.css';
@@ -7,6 +7,7 @@ import Notification from '../../components/Notification/Notification';
 const Employees = () => {
   React.useEffect(() => {
     window.localStorage.setItem('lastPage', '/admin/employees');
+    document.title = 'Employees - Carriage';
   }, []);
 
   return (
