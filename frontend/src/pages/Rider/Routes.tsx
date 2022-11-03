@@ -15,10 +15,10 @@ import { RidesProvider } from '../../context/RidesContext';
 
 // Must be separate component, or else skip ref doesn't work.
 const Routes = () => {
-  const skipRef = useSkipMain();
+  // const skipRef = useSkipMain();
   return (
     <>
-      <div tabIndex={-1} ref={skipRef}></div>
+      {/* <div tabIndex={-1} ref={skipRef}></div> */}
       <HashLink className="skip-main" to="#main">
         Skip to main content
       </HashLink>

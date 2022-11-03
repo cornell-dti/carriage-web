@@ -5,7 +5,7 @@ import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
 
 const Employees = () => (
-  <main id="main">
+  <main id="main" tabIndex={-1}>
     <div className={styles.pageTitle}>
       <h1 className={styles.header}>Employees</h1>
       <div className={styles.rightSection}>

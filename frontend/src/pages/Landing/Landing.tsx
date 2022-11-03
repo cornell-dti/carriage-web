@@ -9,7 +9,7 @@ type LandingPropType = {
 };
 
 const Landing = ({ students, admins }: LandingPropType) => (
-  <main id="main">
+  <main id="main" tabIndex={-1}>
     <div className={styles.home}>
       <div className={styles.main}>
         <div className={styles.left}>

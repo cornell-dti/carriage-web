@@ -17,7 +17,7 @@ const Home = () => {
   const today = format_date(curDate);
 
   return (
-    <main id="main">
+    <main id="main" tabIndex={-1}>
       <div className={styles.pageTitle}>
         <MiniCal />
         <div className={styles.rightSection}>

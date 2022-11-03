@@ -46,7 +46,7 @@ const Settings = () => {
   const netId = user?.email.split('@')[0] || '';
 
   return (
-    <main id="main">
+    <main id="main" tabIndex={-1}>
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
         <div className={pageStyles.rightSection}>

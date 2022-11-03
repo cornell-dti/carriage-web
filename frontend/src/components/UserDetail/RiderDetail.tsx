@@ -60,7 +60,7 @@ const RiderDetail = () => {
   }, [rider, riders, riderId, withDefaults]);
 
   return rider ? (
-    <main id="main">
+    <main id="main" tabIndex={-1}>
       <Header />
       <div className={styles.detailContainer}>
         <UserDetail

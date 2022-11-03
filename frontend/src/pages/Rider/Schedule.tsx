@@ -36,7 +36,7 @@ const Schedule = () => {
   }, [refreshRides]);
 
   return (
-    <main id="main">
+    <main id="main" tabIndex={-1}>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Hi {user?.firstName ?? ''}</h1>
         <div className={styles.rightSection}>

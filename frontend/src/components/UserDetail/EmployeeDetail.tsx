@@ -233,7 +233,7 @@ const EmployeeDetail = () => {
     };
 
     return (
-      <main id="main">
+      <main id="main" tabIndex={-1}>
         <Header />
         <div className={styles.detailContainer}>
           <UserDetail

@@ -22,7 +22,7 @@ const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
   const [currentTab, setCurrentTab] = useState(0);
 
   return (
-    <main id="main">
+    <main id="main" tabIndex={-1}>
       <div className={pageStyles.pageTitle}>
         <div>
           <div>
