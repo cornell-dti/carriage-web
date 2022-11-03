@@ -82,7 +82,6 @@
   margin: auto;
   background-color: Transparent;
   border: none;
-  outline: none;
 }
 .logoutLink:focus {
   outline: 3px solid #0075db;

@@ -18,6 +18,10 @@ const Analytics = () => {
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
+  React.useEffect(() => {
+    document.title = 'Analytics - Carriage';
+  });
+
   const refreshTable = (start = startDate, end = endDate) => {
     fetch(`/api/stats/?from=${start}&to=${end}`, withDefaults())
       .then((res) => res.json())
