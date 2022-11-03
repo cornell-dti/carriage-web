@@ -47,6 +47,14 @@ const RiderDetail = () => {
     moment(date).format('MM/DD/YYYY');
 
   useEffect(() => {
+    if (rider) {
+      document.title = `${rider.firstName} ${rider.lastName} - Carriage`;
+    } else {
+      document.title = 'Rider Details - Carriage';
+    }
+  }, [rider]);
+
+  useEffect(() => {
     if (riderId) {
       if (!rider) {
         fetch(`/api/riders/${riderId}`, withDefaults())
