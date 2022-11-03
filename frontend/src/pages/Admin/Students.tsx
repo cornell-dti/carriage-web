@@ -8,6 +8,11 @@ import styles from './page.module.css';
 
 const Riders = () => {
   const [searchName, setSearchName] = useState<string>('');
+
+  React.useEffect(() => {
+    window.localStorage.setItem('lastPage', '/admin/riders');
+  }, []);
+
   return (
     <main id="main">
       <div className={styles.pageTitle}>
