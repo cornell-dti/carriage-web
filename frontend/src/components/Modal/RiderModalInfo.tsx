@@ -81,7 +81,7 @@ const RiderModalInfo = ({
               <p className={styles.error}>First name cannot be empty.</p>
             )}
           </div>
-          
+
           <div>
             <Input
               id="lastName"
@@ -106,13 +106,15 @@ const RiderModalInfo = ({
               className={styles.input}
             />
             {errors.phoneNumber && (
-              <p className={styles.error}>Please enter a valid phone number (without hyphens).</p>
+              <p className={styles.error}>
+                Please enter a valid phone number (without hyphens).
+              </p>
             )}
           </div>
         </div>
 
         <div className={cn(styles.gridR1)}>
-        <div>
+          <div>
             <Input
               id="netid"
               name="netid"
@@ -145,9 +147,7 @@ const RiderModalInfo = ({
               })}
             </select>
             {errors.needs?.type === 'validate' && (
-              <p className={styles.error}>
-                Please enter a need.
-              </p>
+              <p className={styles.error}>Please enter a need.</p>
             )}
           </div>
 
