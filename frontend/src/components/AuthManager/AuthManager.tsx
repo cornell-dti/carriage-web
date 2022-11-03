@@ -50,7 +50,7 @@ export const AuthManager = () => {
 
   function logout() {
     signOut();
-    // localStorage.removeItem('userType');
+    localStorage.removeItem('userType');
     localStorage.removeItem('lastPage')
     if (jwt) {
       setJWT('');

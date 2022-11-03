@@ -44,6 +44,9 @@ const NotifPreferences = () => (
 const Settings = () => {
   const { user } = useContext(AuthContext);
   const netId = user?.email.split('@')[0] || '';
+  React.useEffect(() => {
+    window.localStorage.setItem('lastPage', '/rider/settings');
+  }, []);
 
   return (
     <main id="main">

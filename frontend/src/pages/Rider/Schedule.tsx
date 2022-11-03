@@ -21,6 +21,10 @@ const Schedule = () => {
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
 
+  React.useEffect(() => {
+    window.localStorage.setItem('lastPage', '/rider/schedule');
+  }, []);
+
   const refreshRides = useCallback(() => {
     fetch(`/api/rides?rider=${id}`, withDefaults())
       .then((res) => res.json())
