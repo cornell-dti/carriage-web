@@ -33,7 +33,7 @@
 .error {
   color: #eb0023;
   font-size: 0.8rem;
-  padding: 0.25rem;
+  margin-left: 10px;
 }
 
 .riderDate {
@@ -43,7 +43,7 @@
 
 .input {
   height: 35px;
-  width: 150px;
+  width: 200px;
   margin: 10px;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .address {
-  width: 300px;
+  width: 200px;
   height: 35px;
   margin: 10px;
 }

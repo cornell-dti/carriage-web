@@ -70,30 +70,29 @@ const RiderModalInfo = ({
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
           <div>
             <Input
-              id="name"
-              name="name"
+              id="firstName"
+              name="firstName"
               type="text"
               ref={register({ required: true })}
-              placeholder="name"
+              placeholder="first name"
               className={styles.input}
             />
             {errors.firstName && (
-              <p className={styles.error}>First name cannot be empty</p>
+              <p className={styles.error}>First name cannot be empty.</p>
             )}
           </div>
-
+          
           <div>
             <Input
-              id="netid"
-              name="netid"
+              id="lastName"
+              name="lastName"
               type="text"
-              ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
-              disabled={isStudentEditing}
-              placeholder="net id"
+              ref={register({ required: true })}
+              placeholder="first name"
               className={styles.input}
             />
-            {errors.netid && (
-              <p className={styles.error}>NetId cannot be empty</p>
+            {errors.lastName && (
+              <p className={styles.error}>Please enter last name.</p>
             )}
           </div>
 
@@ -107,12 +106,27 @@ const RiderModalInfo = ({
               className={styles.input}
             />
             {errors.phoneNumber && (
-              <p className={styles.error}>Phone number cannot be empty</p>
+              <p className={styles.error}>Please enter a valid phone number (without hyphens).</p>
             )}
           </div>
         </div>
 
         <div className={cn(styles.gridR1)}>
+        <div>
+            <Input
+              id="netid"
+              name="netid"
+              type="text"
+              ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+              disabled={isStudentEditing}
+              placeholder="net id"
+              className={styles.input}
+            />
+            {errors.netid && (
+              <p className={styles.error}>Please enter a valid NetId.</p>
+            )}
+          </div>
+
           <div>
             <select
               name="needs"
@@ -132,8 +146,7 @@ const RiderModalInfo = ({
             </select>
             {errors.needs?.type === 'validate' && (
               <p className={styles.error}>
-                Invalid needs. You can enter 'Assistant', 'Crutches', or
-                'Wheelchair'
+                Please enter a need.
               </p>
             )}
           </div>
@@ -151,7 +164,7 @@ const RiderModalInfo = ({
               placeholder="address"
             />
             {errors.address && (
-              <p className={styles.error}>Please enter an address</p>
+              <p className={styles.error}>Please enter a valid address</p>
             )}
           </div>
         </div>
@@ -172,7 +185,7 @@ const RiderModalInfo = ({
               placeholder="join date"
             />
             {errors.joinDate && (
-              <p className={styles.error}>Please enter a join date</p>
+              <p className={styles.error}>Please enter a valid join date</p>
             )}
           </div>
 
@@ -197,10 +210,10 @@ const RiderModalInfo = ({
               placeholder="end date"
             />
             {errors.endDate?.type === 'required' && (
-              <p className={styles.error}>Please enter an end date</p>
+              <p className={styles.error}>Please enter a valid end date</p>
             )}
             {errors.endDate?.type === 'validate' && (
-              <p className={styles.error}>Invalid end time</p>
+              <p className={styles.error}>Please enter a valid end date</p>
             )}
           </div>
         </div>
