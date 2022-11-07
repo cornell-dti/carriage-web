@@ -34,15 +34,7 @@ const RiderDetail = () => {
   const [rider, setRider] = useState(
     riders.find((rider) => rider.id === riderId)
   );
-  const [rides, setRides] = useState<Ride[]>([]);
   const netid = rider?.email.split('@')[0];
-  const compRides = (a: Ride, b: Ride) => {
-    const x = new Date(a.startTime);
-    const y = new Date(b.startTime);
-    if (x < y) return -1;
-    if (x > y) return 1;
-    return 0;
-  };
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
@@ -61,9 +53,6 @@ const RiderDetail = () => {
           .then((res) => res.json())
           .then((data) => setRider(data));
       }
-      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
-        .then((res) => res.json())
-        .then(({ data }) => setRides(data.sort(compRides)));
     }
     setRider(riders.find((rider) => rider.id === riderId));
   }, [rider, riders, riderId, withDefaults]);

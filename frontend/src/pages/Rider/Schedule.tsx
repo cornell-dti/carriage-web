@@ -7,21 +7,21 @@ import React, {
 } from 'react';
 import { Ride, Status } from '../../types/index';
 import { useReq } from '../../context/req';
+import { useParams } from 'react-router-dom';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
-import styles from './page.module.css';
 import { useRides } from '../../context/RidesContext';
-import moment from 'moment';
 
 type ScheduleProps = {
   email: string;
 };
 
 const Schedule = ({ email }: ScheduleProps) => {
-  const componentMounted = useRef(true);
   const [rides, setRides] = useState<Ride[]>();
+  const { id: riderId } = useParams<{ id: string }>();
+  const [filteredRides, setFilteredRides] = useState<Ride[]>();
   const [pastRides, setPastRides] = useState<Ride[]>();
   const [absentRides, setAbsentRides] = useState<Ride[]>();
   const [filter, setFilter] = useState(false);
@@ -37,65 +37,69 @@ const Schedule = ({ email }: ScheduleProps) => {
     return 0;
   };
 
-  const datetime = moment().toDate();
-  console.log(datetime);
+  const datetime = new Date();
 
-  useEffect(() => {
-    const combined = scheduledRides
-      .sort(compRides)
-      .concat(unscheduledRides.sort(compRides));
-    console.log(combined);
-    const filteredRides = combined.filter((r) => {
-      const date = new Date(r.endTime);
-      return r.rider.email === email && date > datetime;
-    });
-    setRides(filteredRides);
-
-    const filteredPastRides = combined.filter((r) => {
-      const date = new Date(r.endTime);
-      return r.rider.email === email && date < datetime;
-    });
-    setPastRides(filteredPastRides);
-
-    setAbsentRides(
-      combined.filter((r) => {
-        return r.status === Status.NO_SHOW;
-      })
-    );
-  }, [scheduledRides, unscheduledRides]);
-
-  // ****************************
-  // This seems to be the way that they live refresh the rides
-  // ****************************
   const refreshRides = useCallback(() => {
-    fetch(`/api/rides/`, withDefaults())
+    fetch(`/api/rides?rider=${riderId}`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => componentMounted.current && setRides([...data]));
+      .then(({ data }) => setRides([...data]));
   }, [id, withDefaults]);
 
   useEffect(() => {
     refreshRides();
+  }, [refreshRides, scheduledRides, unscheduledRides, setRides]);
 
-    return () => {
-      componentMounted.current = false;
-    };
-  }, [refreshRides]);
+  console.log(rides);
+  const sorted = rides?.sort(compRides);
+  console.log('sorted');
+  console.log(sorted);
+  useEffect(() => {
+    const filteredRides = sorted?.filter((r) => {
+      const end = new Date(r.endTime);
+      return r.rider.email == email && end > datetime;
+    });
+    setFilteredRides(filteredRides);
 
-  //**************************************************** */
-  // Check how to pass name to filter rides this way
-  // no_show is absent
-  // can filter past rides through getting current datetime and checking if later than endTime
-  //**************************************************** */
+    const filteredPastRides = sorted?.filter((r) => {
+      const end = new Date(r.endTime);
+      return r.rider.email == email && end < datetime;
+    });
+    setPastRides(filteredPastRides);
+
+    setAbsentRides(
+      sorted?.filter((r) => {
+        return r.status === Status.NO_SHOW;
+      })
+    );
+  }, [
+    refreshRides,
+    scheduledRides,
+    unscheduledRides,
+    rides,
+    setAbsentRides,
+    setFilteredRides,
+    setRides,
+  ]);
+  console.log('Filtered');
+  console.log(filteredRides);
+  filteredRides?.forEach((r) =>
+    console.log(new Date(r.endTime).toLocaleString())
+  );
+
   return (
     <main id="main">
-      {rides && rides.length >= 0 && (
+      {filteredRides && filteredRides.length >= 0 && (
         <Collapsible title={'Your Upcoming Rides'}>
-          <RiderScheduleTable data={rides} isPast={false} email={email} />
+          <RiderScheduleTable
+            data={filteredRides}
+            isPast={false}
+            email={email}
+          />
         </Collapsible>
       )}
       {pastRides && pastRides.length >= 0 && (
         <Collapsible title={'Your Past Rides'}>
-          <RiderScheduleTable data={pastRides} isPast={true} email={email} />
+          <RiderScheduleTable data={pastRides} isPast={false} email={email} />
         </Collapsible>
       )}
 
@@ -117,7 +121,7 @@ const Schedule = ({ email }: ScheduleProps) => {
       {filter && absentRides && absentRides.length >= 0 && (
         <RiderScheduleTable data={absentRides} isPast={true} email={email} />
       )}
-      {/* {rides && !rides.length && <NoRidesView />} */}
+      {rides && !rides.length && <NoRidesView />}
     </main>
   );
 };

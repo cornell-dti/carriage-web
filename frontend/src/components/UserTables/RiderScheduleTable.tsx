@@ -34,7 +34,7 @@ const RiderScheduleTable = ({
   // removes rides whose startTime is past the current time
   const filterPastRides = useCallback(
     (ride: Ride): boolean => {
-      if (isPast && ride.rider.email !== email) return ride.type === Type.PAST;
+      if (isPast) return ride.type === Type.PAST;
       return ride.type !== Type.PAST;
     },
     [isPast]
