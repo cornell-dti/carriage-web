@@ -6,7 +6,20 @@
 }
 
 .inputContainer {
-  margin-bottom: 0.5rem;
+  width: 780px;
+  max-height: 600px;
+}
+
+.generalFieldSet {
+  width: 760px;
+  height: max-content;
+  margin-bottom: -30px;
+}
+
+.durationFieldSet {
+  height: max-content;
+  width: 760px;
+  margin-top: -65px;
 }
 
 .rideTime {
@@ -37,7 +50,7 @@
   grid-column: 4 / span 3;
   padding-top: 5px;
   padding-bottom: 5px;
-  float: right;
+  float: left;
 }
 .gridCAll {
   grid-column: 1 / span 6;
@@ -72,6 +85,11 @@
   grid-row: 3;
 }
 
+.needs {
+  width: max-content;
+  height: max-content;
+  margin-top: 35px;
+}
 .error {
   color: #eb0023;
   font-size: 0.8rem;
@@ -98,7 +116,8 @@
 .buttonContainer {
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  width: 570px;
+  margin-top: -100px;
 }
 
 .submit {

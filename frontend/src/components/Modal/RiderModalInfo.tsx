@@ -67,12 +67,7 @@ const RiderModalInfo = ({
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <fieldset
-          style={{
-            width: 'max-content',
-            height: 'max-content',
-          }}
-        >
+        <fieldset className={cn(styles.generalFieldSet)}>
           <legend>General Info:</legend>
           <div className={cn(styles.gridR1, styles.gridCBig1)}>
             <Label className={styles.label} htmlFor="firstName">
@@ -156,7 +151,7 @@ const RiderModalInfo = ({
             )}
           </div>
         </fieldset>
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
+        <div className={cn(styles.gridR2, styles.gridCBig1, styles.needs)}>
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
@@ -178,51 +173,53 @@ const RiderModalInfo = ({
         </div>
 
         <div className={cn(styles.gridR3, styles.gridCBig1)}>
-          <legend>Duration</legend>
-          <div className={styles.lastRow}>
-            <div>
-              <Label className={styles.label} htmlFor="joinDate">
-                Join Date:{' '}
-              </Label>
-              <Input
-                id="joinDate"
-                type="date"
-                name="joinDate"
-                ref={register({ required: true })}
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
-              )}
+          <fieldset className={cn(styles.durationFieldSet)}>
+            <legend>Duration</legend>
+            <div className={styles.lastRow}>
+              <div>
+                <Label className={styles.label} htmlFor="joinDate">
+                  Join Date:{' '}
+                </Label>
+                <Input
+                  id="joinDate"
+                  type="date"
+                  name="joinDate"
+                  ref={register({ required: true })}
+                  disabled={isStudentEditing}
+                  className={styles.riderDate}
+                />
+                {errors.joinDate && (
+                  <p className={styles.error}>Please enter a join date</p>
+                )}
+              </div>
+              <p className={styles.to}>to</p>
+              <div>
+                <Label className={styles.label} htmlFor="endDate">
+                  End Date:{' '}
+                </Label>
+                <Input
+                  id="endDate"
+                  type="date"
+                  name="endDate"
+                  ref={register({
+                    required: true,
+                    validate: (endDate) => {
+                      const joinDate = getValues('joinDate');
+                      return joinDate < endDate;
+                    },
+                  })}
+                  disabled={isStudentEditing}
+                  className={styles.riderDate}
+                />
+                {errors.endDate?.type === 'required' && (
+                  <p className={styles.error}>Please enter an end date</p>
+                )}
+                {errors.endDate?.type === 'validate' && (
+                  <p className={styles.error}>Invalid end time</p>
+                )}
+              </div>
             </div>
-            <p className={styles.to}>to</p>
-            <div>
-              <Label className={styles.label} htmlFor="endDate">
-                End Date:{' '}
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                name="endDate"
-                ref={register({
-                  required: true,
-                  validate: (endDate) => {
-                    const joinDate = getValues('joinDate');
-                    return joinDate < endDate;
-                  },
-                })}
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
-              )}
-              {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
-              )}
-            </div>
-          </div>
+          </fieldset>
         </div>
       </div>
       <div className={styles.buttonContainer}>
