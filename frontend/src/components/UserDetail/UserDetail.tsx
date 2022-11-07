@@ -75,7 +75,9 @@ const UserDetail = ({
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
+  const [active, setActive] = useState(rider ? rider.active : true);
   const { toastType } = useToast();
+  const [message, setMessage] = useState(active ? 'activated' : 'deactivated');
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
   const openConfirmationModal = () => {
@@ -96,17 +98,19 @@ const UserDetail = ({
           body: JSON.stringify({ active: !active }),
         })
       ).then(() => {
+        setMessage(!active ? 'activated' : 'deactivated');
         setIsShowing(true);
         refreshRiders();
       });
     }
+    setActive(!active);
   };
 
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
         <Toast
-          message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
+          message={`Rider ${message}.`}
           toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
@@ -127,9 +131,21 @@ const UserDetail = ({
           </div>
           <div className={styles.userEditContainer}>
             {rider && !isRider ? (
-              <Button onClick={toggleActive}>
-                {rider.active ? 'Deactivate' : 'Activate'}
-              </Button>
+              <div className={styles.button}>
+                <label
+                  className={rider.active ? styles.active : styles.inactive}
+                >
+                  {rider.active ? 'Active ' : 'Inactive '}
+                </label>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    onClick={toggleActive}
+                    checked={rider.active}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             ) : null}
             {employee ? (
               <EmployeeModal

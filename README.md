@@ -43,6 +43,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Rohit Valiveti - Software Developer
 - Daniel Wei - Technical Project Manager
 
+
 **Past Contributors**
 
 - Sam Steinberg - Product Manager
