@@ -9,6 +9,7 @@ type LandingPropType = {
 };
 
 const Landing = ({ students, admins }: LandingPropType) => {
+  document.title = 'Login - Carriage';
   return (
     <main id="main">
       <div className={styles.home}>
