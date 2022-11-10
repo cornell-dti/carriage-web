@@ -1,0 +1,24 @@
+@media (max-width: 1500px) {
+  .calendar {
+    font-size: 8px !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .calendar {
+    font-size: 7px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendar {
+    font-size: 6px !important;
+  }
+}
+
+/* Large screens */
+@media (min-width: 2500px) {
+  .calendar {
+    font-size: 12px !important;
+  }
+}

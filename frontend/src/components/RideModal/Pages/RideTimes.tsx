@@ -8,6 +8,7 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
+import CalendarPickerModal from '../../Modal/CalendarPickerModal';
 
 // VERY TEMPORARY IMPLEMENTATION
 // We use this "day selector" component a few times throughout the codebase,
@@ -154,6 +155,7 @@ const RideTimesPage = ({
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
             <Label htmlFor="date">Day:</Label>
+            <CalendarPickerModal />
             <Input
               id="date"
               type="date"
