@@ -2,7 +2,10 @@ import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
 import { logo, dti_logo, dti_desc } from '../../icons/other';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import useClientId from '../../hooks/useClientId';
 
+const clientId = useClientId();
 type LandingPropType = {
   students: ReactElement;
   admins: ReactElement;
@@ -20,8 +23,19 @@ const Landing = ({ students, admins }: LandingPropType) => (
           <div className={styles.spacing_container}>
             <h1 className={styles.heading}>Login</h1>
             <div className={styles.container}>
-              <div className={styles.container_item_left}>{students}</div>
-              <div className={styles.container_item_right}>{admins}</div>
+              <div className={styles.container_item_left}>
+                <GoogleOAuthProvider
+                  clientId={clientId}
+                  onScriptLoadError={() => console.log('error')}
+                >
+                  {students}
+                </GoogleOAuthProvider>
+              </div>
+              <div className={styles.container_item_right}>
+                <GoogleOAuthProvider clientId={clientId}>
+                  {admins}
+                </GoogleOAuthProvider>
+              </div>
             </div>
           </div>
           <div className={styles.dti_container}>

@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleLogin, useGoogleLogout } from 'react-google-login';
+// import { GoogleLogin, useGoogleLogout } from 'react-google-login';
+import { GoogleLogin } from '@react-oauth/google';
+import { googleLogout } from '@react-oauth/google';
+
 import {
   useHistory,
   useLocation,
@@ -38,12 +41,11 @@ export const AuthManager = () => {
   const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
-  const { signOut } = useGoogleLogout({ clientId });
 
   useEffect(() => {
     setInitPath(pathname);
   }, [pathname]);
-  console.log();
+
   function get_cookie(name: string) {
     return document.cookie.split(';').some((c) => {
       return c.trim().startsWith(name + '=');
@@ -52,12 +54,12 @@ export const AuthManager = () => {
 
   function jwt_value() {
     try {
-      const jwt_index = document.cookie.indexOf('jwt=');
-      const jwt_end_string = document.cookie.slice(jwt_index + 4);
+       const jwt_index = document.cookie.indexOf('jwt=')+4;
+      const jwt_end_string = document.cookie.slice(jwt_index);
       const jwt_end_index = jwt_end_string.indexOf(';');
       return document.cookie.slice(
-        jwt_index + 4,
-        jwt_index + 4 + jwt_end_index
+        jwt_index,
+        jwt_index + jwt_end_index
       );
     } catch {
       return '';
@@ -66,7 +68,7 @@ export const AuthManager = () => {
 
   function delete_cookie(name: string) {
     if (get_cookie(name)) {
-      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
     }
   }
 
@@ -75,7 +77,7 @@ export const AuthManager = () => {
   }
 
   function logout() {
-    signOut();
+    googleLogout();
     localStorage.removeItem('userType');
     delete_cookie('jwt');
     if (jwt) {
@@ -159,48 +161,48 @@ export const AuthManager = () => {
     <LandingPage
       students={
         <GoogleLogin
-          render={(renderProps) => (
-            <button
-              onClick={renderProps.onClick}
-              className={styles.btn}
-              disabled={renderProps.disabled}
-            >
-              <img
-                src={googleLogin}
-                className={styles.icon}
-                alt="google logo"
-              />
-              <div className={styles.heading}>Students</div>
-              Sign in with Google
-            </button>
-          )}
+          // render={(renderProps) => (
+          //   <button
+          //     onClick={renderProps.onClick}
+          //     className={styles.btn}
+          //     disabled={renderProps.disabled}
+          //   >
+          //     <img
+          //       src={googleLogin}
+          //       className={styles.icon}
+          //       alt="google logo"
+          //     />
+          //     <div className={styles.heading}>Students</div>
+          //     Sign in with Google
+          //   </button>
+          // )}
           onSuccess={generateOnSignIn(false)}
-          clientId={clientId}
-          cookiePolicy="single_host_origin"
-          isSignedIn
+          // clientId={clientId}
+          // cookiePolicy="single_host_origin"
+          // isSignedIn
         />
       }
       admins={
         <GoogleLogin
-          render={(renderProps) => (
-            <button
-              onClick={renderProps.onClick}
-              className={styles.btn}
-              disabled={renderProps.disabled}
-            >
-              <img
-                src={googleLogin}
-                className={styles.icon}
-                alt="google logo"
-              />
-              <div className={styles.heading}>Admins</div>
-              Sign in with Google
-            </button>
-          )}
+          // render={(renderProps) => (
+          //   <button
+          //     onClick={renderProps.onClick}
+          //     className={styles.btn}
+          //     disabled={renderProps.disabled}
+          //   >
+          //     <img
+          //       src={googleLogin}
+          //       className={styles.icon}
+          //       alt="google logo"
+          //     />
+          //     <div className={styles.heading}>Admins</div>
+          //     Sign in with Google
+          //   </button>
+          // )}
           onSuccess={generateOnSignIn(true)}
-          clientId={clientId}
-          cookiePolicy="single_host_origin"
-          isSignedIn
+          // clientId={clientId}
+          // cookiePolicy="single_host_origin"
+          // isSignedIn
         />
       }
     />
