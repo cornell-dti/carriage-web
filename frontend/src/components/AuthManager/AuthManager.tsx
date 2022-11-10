@@ -31,17 +31,18 @@ import axios from 'axios';
 import { createPortal } from 'react-dom';
 
 export const AuthManager = () => {
-  const [signedIn, setSignedIn] = useState(get_cookie('jwt'));
-  const [jwt, setJWT] = useState(jwt_value());
+  const [signedIn, setSignedIn] = useState(getCookie('jwt'));
+  const [jwt, setJWT] = useState(jwtValue());
   const [id, setId] = useState(localStorage.getItem('userId')!);
   const [initPath, setInitPath] = useState('');
-  console.log(JSON.parse(localStorage.getItem('user')!));
   const [user, setUser] = useState<Admin | Rider>(
     JSON.parse(localStorage.getItem('user')!)
   );
   // useState can take a function that returns the new state value, so need to
   // supply a function that returns another function
-  const [refreshUser, setRefreshUser] = useState(() => () => {});
+  const [refreshUser, setRefreshUser] = useState(() =>
+    createRefresh(id, localStorage.getItem('userType')!, jwtValue())
+  );
   const history = useHistory();
   const { pathname } = useLocation();
 
@@ -49,33 +50,33 @@ export const AuthManager = () => {
     setInitPath(pathname);
   }, [pathname]);
 
-  function get_cookie(name: string) {
+  function getCookie(name: string) {
     return document.cookie.split(';').some((c) => {
       return c.trim().startsWith(name + '=');
     });
   }
 
-  function jwt_value() {
+  function jwtValue() {
     try {
-      const jwt_index = document.cookie.indexOf('jwt=') + 4;
-      const jwt_end_string = document.cookie.slice(jwt_index);
-      const jwt_end_index = jwt_end_string.indexOf(';');
-      return jwt_end_index != -1
-        ? document.cookie.slice(jwt_index, jwt_index + jwt_end_index)
-        : document.cookie.slice(jwt_index);
+      const jwtIndex = document.cookie.indexOf('jwt=') + 4;
+      const jwtEndString = document.cookie.slice(jwtIndex);
+      const jwtEndIndex = jwtEndString.indexOf(';');
+      return jwtEndIndex != -1
+        ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
+        : document.cookie.slice(jwtIndex);
     } catch {
       return '';
     }
   }
 
-  function delete_cookie(name: string) {
-    if (get_cookie(name)) {
+  function deleteCookie(name: string) {
+    if (getCookie(name)) {
       document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
     }
   }
 
-  function setCookie(c_name: string, value: string) {
-    document.cookie = c_name + '=' + value + ';';
+  function setCookie(cookieName: string, value: string) {
+    document.cookie = cookieName + '=' + value + ';';
   }
 
   function googleAuth(isAdmin: boolean) {
@@ -88,13 +89,12 @@ export const AuthManager = () => {
           })
           .then((res) => res.data);
 
-        console.log(userInfo);
         signIn(isAdmin, userInfo);
       },
       onError: (errorResponse: any) => console.log(errorResponse),
     });
   }
-  console.log(jwt);
+
   function signIn(isAdmin: boolean, userInfo: any) {
     const userType = isAdmin ? 'Admin' : 'Rider';
     const table = `${userType}s`;
@@ -140,13 +140,11 @@ export const AuthManager = () => {
   const adminLogin = googleAuth(true);
   const studentLogin = googleAuth(false);
   function logout() {
-    console.log('called');
     googleLogout();
-    console.log('logged  out of google');
     localStorage.removeItem('userType');
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
-    delete_cookie('jwt');
+    deleteCookie('jwt');
     if (jwt) {
       setJWT('');
     }
@@ -167,6 +165,7 @@ export const AuthManager = () => {
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
+    console.log('called');
     const fetchURL =
       userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
     return () => {
@@ -178,12 +177,12 @@ export const AuthManager = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setUser(data);
           localStorage.setItem('user', JSON.stringify(data));
+          setUser(data);
         });
     };
   }
-
+  console.log(refreshUser);
   const LoginPage = () => (
     <LandingPage
       students={

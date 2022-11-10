@@ -39,7 +39,6 @@ const Sidebar = ({ type, children }: SidebarProps) => {
 
   useEffect(() => {
     const { id } = authContext;
-    console.log(id);
     if (isAdmin) {
       fetch(`/api/admins/${id}`, reqContext.withDefaults())
         .then((res) => res.json())
