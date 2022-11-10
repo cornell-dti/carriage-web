@@ -33,13 +33,15 @@ import { createPortal } from 'react-dom';
 export const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(get_cookie('jwt'));
   const [jwt, setJWT] = useState(jwt_value());
-  const [id, setId] = useState('');
+  const [id, setId] = useState(localStorage.getItem('userId')!);
   const [initPath, setInitPath] = useState('');
-  const [user, setUser] = useState<Admin | Rider>();
+  console.log(JSON.parse(localStorage.getItem('user')!));
+  const [user, setUser] = useState<Admin | Rider>(
+    JSON.parse(localStorage.getItem('user')!)
+  );
   // useState can take a function that returns the new state value, so need to
   // supply a function that returns another function
   const [refreshUser, setRefreshUser] = useState(() => () => {});
-  const clientId = useClientId();
   const history = useHistory();
   const { pathname } = useLocation();
 
@@ -58,7 +60,9 @@ export const AuthManager = () => {
       const jwt_index = document.cookie.indexOf('jwt=') + 4;
       const jwt_end_string = document.cookie.slice(jwt_index);
       const jwt_end_index = jwt_end_string.indexOf(';');
-      return document.cookie.slice(jwt_index, jwt_index + jwt_end_index);
+      return jwt_end_index != -1
+        ? document.cookie.slice(jwt_index, jwt_index + jwt_end_index)
+        : document.cookie.slice(jwt_index);
     } catch {
       return '';
     }
@@ -71,7 +75,7 @@ export const AuthManager = () => {
   }
 
   function setCookie(c_name: string, value: string) {
-    document.cookie = c_name + '=' + value;
+    document.cookie = c_name + '=' + value + ';';
   }
 
   function googleAuth(isAdmin: boolean) {
@@ -90,7 +94,7 @@ export const AuthManager = () => {
       onError: (errorResponse: any) => console.log(errorResponse),
     });
   }
-
+  console.log(jwt);
   function signIn(isAdmin: boolean, userInfo: any) {
     const userType = isAdmin ? 'Admin' : 'Rider';
     const table = `${userType}s`;
@@ -114,6 +118,7 @@ export const AuthManager = () => {
           setCookie('jwt', serverJWT);
           const decoded: any = jwtDecode(serverJWT);
           setId(decoded.id);
+          localStorage.setItem('userId', decoded.id);
           localStorage.setItem('userType', decoded.userType);
           setJWT(serverJWT);
           const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
@@ -133,14 +138,14 @@ export const AuthManager = () => {
   }
 
   const adminLogin = googleAuth(true);
-
   const studentLogin = googleAuth(false);
-  console.log('called');
   function logout() {
     console.log('called');
     googleLogout();
     console.log('logged  out of google');
     localStorage.removeItem('userType');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
     delete_cookie('jwt');
     if (jwt) {
       setJWT('');
@@ -172,7 +177,10 @@ export const AuthManager = () => {
         },
       })
         .then((res) => res.json())
-        .then((data) => setUser(data));
+        .then((data) => {
+          setUser(data);
+          localStorage.setItem('user', JSON.stringify(data));
+        });
     };
   }
 

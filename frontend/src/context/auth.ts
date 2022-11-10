@@ -3,7 +3,7 @@ import { Admin, Rider } from '../types/index';
 
 type AuthState = {
   logout: () => void;
-  id: string;
+  id: any;
   user?: Admin | Rider;
   refreshUser: () => void;
 };

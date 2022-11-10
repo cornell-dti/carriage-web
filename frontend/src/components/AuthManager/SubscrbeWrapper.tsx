@@ -3,7 +3,7 @@ import subscribeUser from './subscribeUser';
 import { useReq } from '../../context/req';
 
 interface Props {
-  userId: string;
+  userId: any;
   children: any;
 }
 
