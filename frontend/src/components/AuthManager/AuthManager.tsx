@@ -13,7 +13,6 @@ import {
 } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
-import useClientId from '../../hooks/useClientId';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
@@ -27,10 +26,12 @@ import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
-import axios from 'axios';
 import { createPortal } from 'react-dom';
+import axios from 'axios';
+import Cryptr from 'cryptr';
+const cryptr = new Cryptr(`${process.env.ENCRYPTION_KEY}`);
 
-export const AuthManager = () => {
+const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
   const [jwt, setJWT] = useState(jwtValue());
   const [id, setId] = useState(localStorage.getItem('userId')!);
@@ -61,9 +62,11 @@ export const AuthManager = () => {
       const jwtIndex = document.cookie.indexOf('jwt=') + 4;
       const jwtEndString = document.cookie.slice(jwtIndex);
       const jwtEndIndex = jwtEndString.indexOf(';');
-      return jwtEndIndex != -1
-        ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
-        : document.cookie.slice(jwtIndex);
+      const encrypted_jwt =
+        jwtEndIndex != -1
+          ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
+          : document.cookie.slice(jwtIndex);
+      return cryptr.decrypt(encrypted_jwt);
     } catch {
       return '';
     }
@@ -76,7 +79,7 @@ export const AuthManager = () => {
   }
 
   function setCookie(cookieName: string, value: string) {
-    document.cookie = cookieName + '=' + value + ';';
+    document.cookie = cookieName + '=' + cryptr.encrypt(value) + ';';
   }
 
   function googleAuth(isAdmin: boolean) {
@@ -165,7 +168,6 @@ export const AuthManager = () => {
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
-    console.log('called');
     const fetchURL =
       userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
     return () => {
@@ -182,7 +184,6 @@ export const AuthManager = () => {
         });
     };
   }
-  console.log(refreshUser);
   const LoginPage = () => (
     <LandingPage
       students={
