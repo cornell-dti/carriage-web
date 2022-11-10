@@ -2,7 +2,7 @@
 # To test the development server locally only, remove 'AS builder' from the line below; and uncomment the line that reads 'CMD ["npm", "start"]'. Then, comment out all of STAGE 2
 
 # pull the base image
-FROM node:16.15.1-alpine AS builder
+FROM node:19-bullseye AS builder
 
 # set the working direction
 WORKDIR /app
