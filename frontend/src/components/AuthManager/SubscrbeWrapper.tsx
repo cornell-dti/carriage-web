@@ -4,6 +4,7 @@ import { useReq } from '../../context/req';
 
 interface Props {
   userId: string;
+  children: any;
 }
 
 const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {

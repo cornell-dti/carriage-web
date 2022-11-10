@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-// import { GoogleLogin, useGoogleLogout } from 'react-google-login';
-import { GoogleLogin } from '@react-oauth/google';
-import { googleLogout } from '@react-oauth/google';
-
+import {
+  useGoogleLogin,
+  googleLogout,
+  TokenResponse,
+} from '@react-oauth/google';
 import {
   useHistory,
   useLocation,
@@ -26,7 +27,7 @@ import RiderRoutes from '../../pages/Rider/Routes';
 import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
-
+import axios from 'axios';
 import { createPortal } from 'react-dom';
 
 export const AuthManager = () => {
@@ -54,13 +55,10 @@ export const AuthManager = () => {
 
   function jwt_value() {
     try {
-       const jwt_index = document.cookie.indexOf('jwt=')+4;
+      const jwt_index = document.cookie.indexOf('jwt=') + 4;
       const jwt_end_string = document.cookie.slice(jwt_index);
       const jwt_end_index = jwt_end_string.indexOf(';');
-      return document.cookie.slice(
-        jwt_index,
-        jwt_index + jwt_end_index
-      );
+      return document.cookie.slice(jwt_index, jwt_index + jwt_end_index);
     } catch {
       return '';
     }
@@ -68,7 +66,7 @@ export const AuthManager = () => {
 
   function delete_cookie(name: string) {
     if (get_cookie(name)) {
-        document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
     }
   }
 
@@ -76,8 +74,72 @@ export const AuthManager = () => {
     document.cookie = c_name + '=' + value;
   }
 
+  function googleAuth(isAdmin: boolean) {
+    return useGoogleLogin({
+      flow: 'implicit',
+      onSuccess: async (tokenResponse: TokenResponse) => {
+        const userInfo = await axios
+          .get('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          })
+          .then((res) => res.data);
+
+        console.log(userInfo);
+        signIn(isAdmin, userInfo);
+      },
+      onError: (errorResponse: any) => console.log(errorResponse),
+    });
+  }
+
+  function signIn(isAdmin: boolean, userInfo: any) {
+    const userType = isAdmin ? 'Admin' : 'Rider';
+    const table = `${userType}s`;
+    const localUserType = localStorage.getItem('userType');
+    if (!localUserType || localUserType === userType) {
+      (async () => {
+        const serverJWT = await fetch(
+          '/api/auth',
+          withDefaults({
+            method: 'POST',
+            body: JSON.stringify({
+              userInfo,
+              table,
+            }),
+          })
+        )
+          .then((res) => res.json())
+          .then((json) => json.jwt);
+
+        if (serverJWT) {
+          setCookie('jwt', serverJWT);
+          const decoded: any = jwtDecode(serverJWT);
+          setId(decoded.id);
+          localStorage.setItem('userType', decoded.userType);
+          setJWT(serverJWT);
+          const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
+          refreshFunc();
+          setRefreshUser(() => refreshFunc);
+          setSignedIn(true);
+          if (initPath === '/') {
+            history.push(isAdmin ? '/admin/home' : '/rider/home');
+          } else {
+            history.push(initPath);
+          }
+        } else {
+          logout();
+        }
+      })();
+    }
+  }
+
+  const adminLogin = googleAuth(true);
+
+  const studentLogin = googleAuth(false);
+  console.log('called');
   function logout() {
+    console.log('called');
     googleLogout();
+    console.log('logged  out of google');
     localStorage.removeItem('userType');
     delete_cookie('jwt');
     if (jwt) {
@@ -114,96 +176,21 @@ export const AuthManager = () => {
     };
   }
 
-  function generateOnSignIn(isAdmin: boolean) {
-    const userType = isAdmin ? 'Admin' : 'Rider';
-    const table = `${userType}s`;
-    const localUserType = localStorage.getItem('userType');
-    return async function onSignIn(googleUser: any) {
-      if (!localUserType || localUserType === userType) {
-        const { id_token: token } = googleUser.getAuthResponse();
-        const serverJWT = await fetch(
-          '/api/auth',
-          withDefaults({
-            method: 'POST',
-            body: JSON.stringify({
-              token,
-              table,
-              clientId,
-            }),
-          })
-        )
-          .then((res) => res.json())
-          .then((json) => json.jwt);
-
-        if (serverJWT) {
-          setCookie('jwt', serverJWT);
-          const decoded: any = jwtDecode(serverJWT);
-          setId(decoded.id);
-          localStorage.setItem('userType', decoded.userType);
-          setJWT(serverJWT);
-          const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
-          refreshFunc();
-          setRefreshUser(() => refreshFunc);
-          setSignedIn(true);
-          if (initPath === '/') {
-            history.push(isAdmin ? '/admin/home' : '/rider/home');
-          } else {
-            history.push(initPath);
-          }
-        } else {
-          logout();
-        }
-      }
-    };
-  }
-
   const LoginPage = () => (
     <LandingPage
       students={
-        <GoogleLogin
-          // render={(renderProps) => (
-          //   <button
-          //     onClick={renderProps.onClick}
-          //     className={styles.btn}
-          //     disabled={renderProps.disabled}
-          //   >
-          //     <img
-          //       src={googleLogin}
-          //       className={styles.icon}
-          //       alt="google logo"
-          //     />
-          //     <div className={styles.heading}>Students</div>
-          //     Sign in with Google
-          //   </button>
-          // )}
-          onSuccess={generateOnSignIn(false)}
-          // clientId={clientId}
-          // cookiePolicy="single_host_origin"
-          // isSignedIn
-        />
+        <button onClick={() => studentLogin()} className={styles.btn}>
+          <img src={googleLogin} className={styles.icon} alt="google logo" />
+          <div className={styles.heading}>Students</div>
+          Sign in with Google
+        </button>
       }
       admins={
-        <GoogleLogin
-          // render={(renderProps) => (
-          //   <button
-          //     onClick={renderProps.onClick}
-          //     className={styles.btn}
-          //     disabled={renderProps.disabled}
-          //   >
-          //     <img
-          //       src={googleLogin}
-          //       className={styles.icon}
-          //       alt="google logo"
-          //     />
-          //     <div className={styles.heading}>Admins</div>
-          //     Sign in with Google
-          //   </button>
-          // )}
-          onSuccess={generateOnSignIn(true)}
-          // clientId={clientId}
-          // cookiePolicy="single_host_origin"
-          // isSignedIn
-        />
+        <button onClick={() => adminLogin()} className={styles.btn}>
+          <img src={googleLogin} className={styles.icon} alt="google logo" />
+          <div className={styles.heading}>Admins</div>
+          Sign in with Google
+        </button>
       }
     />
   );

@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { GoogleLogout } from 'react-google-login';
 import {
   home,
   drivers,
@@ -103,18 +102,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             />
           )}
           {profile !== '' && (
-            <GoogleLogout
-              onLogoutSuccess={authContext.logout}
-              clientId={clientId}
-              render={(renderProps) => (
-                <button
-                  onClick={renderProps.onClick}
-                  className={styles.logoutLink}
-                >
-                  Log out
-                </button>
-              )}
-            />
+            <button className={styles.logoutLink} onClick={authContext.logout}>
+              Log out
+            </button>
           )}
         </div>
       </nav>
