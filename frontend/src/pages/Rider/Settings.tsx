@@ -44,6 +44,7 @@ const NotifPreferences = () => (
 const Settings = () => {
   const { user } = useContext(AuthContext);
   const netId = user?.email.split('@')[0] || '';
+  document.title = 'Settings - Carriage';
 
   return (
     <main id="main">
