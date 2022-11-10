@@ -44,6 +44,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/no-unescaped-entities': 'off',
     'react/display-name': 'off',
+    'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
     react: {

@@ -11,6 +11,9 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-router-hash-link": "^1.2.1",
     "addresser": "^1.1.19",
+    "ajv": "^7.2.3",
+    "ajv-errors": "^2.0.1",
+    "ajv-formats": "^2.1.1",
     "classnames": "^2.2.6",
     "focus-trap-react": "^8.5.0",
     "jwt-decode": "^3.1.2",
@@ -64,5 +67,8 @@
   },
   "devDependencies": {
     "eslint-config-prettier": "^8.3.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }

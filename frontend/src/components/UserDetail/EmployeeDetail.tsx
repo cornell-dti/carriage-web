@@ -156,7 +156,7 @@ const EmployeeDetail = () => {
   const [employee, setEmployee] = useState(
     findEmployee(drivers, admins, employeeId)
   );
-  const pathArr = location.pathname.split('/');
+  const pathArr = window.location.pathname.split('/');
   const userType = pathArr[1];
 
   const [rides, setRides] = useState<Ride[]>([]);
