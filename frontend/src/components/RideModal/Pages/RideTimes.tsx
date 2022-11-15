@@ -8,7 +8,8 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
-import CalendarPickerModal from '../../Modal/CalendarPickerModal';
+import CalendarPicker from '../../Modal/CalendarPickerModal';
+import CalandarModal from '../../Modal/CalendarModal';
 
 // VERY TEMPORARY IMPLEMENTATION
 // We use this "day selector" component a few times throughout the codebase,
@@ -149,28 +150,72 @@ const RideTimesPage = ({
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
 
+  const [date, setDate] = React.useState<string>('');
+
+  const isValidDay = (day: string) => {
+    return day.length === 8 && day.indexOf('/') != day.lastIndexOf('/');
+  };
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
             <Label htmlFor="date">Day:</Label>
-            <CalendarPickerModal />
-            <Input
+            {/* <CalandarModal /> */}
+            <CalendarPicker
+              callback={(date: any) => {
+                console.log('this was called');
+                const { day, month, year } = date;
+                setDate(`${month}/${day}/${year}`);
+              }}
+              date={isValidDay(date) ? date : undefined}
+            />
+
+            <div id={'date-picker-container'}>
+              <hr />
+              <input
+                type="text"
+                value={date}
+                onChange={(event: any) => {
+                  event.preventDefault();
+                  setDate(event.target.value);
+                }}
+              />
+              <button
+                onClick={() => {
+                  // TODO: implement opening the modal here
+                }}
+              >
+                Lol
+              </button>
+              <hr />
+            </div>
+
+            {/* <Input
               id="date"
               type="date"
               name="date"
-              ref={register({
-                required: true,
-                validate: (date) => {
-                  const fmtDate = format_date(date);
-                  const fmtCurr = format_date(curDate);
-                  const notWeekend =
-                    moment(date).day() !== 0 && moment(date).day() !== 6;
-                  return fmtDate >= fmtCurr && notWeekend;
-                },
-              })}
-            />
+              onChange={(date: any) => {
+                console.log("Here's date: ");
+                console.log(typeof date);
+                console.log(date);
+
+                setDate(date);
+              }}
+              // disabled
+              // ref={register({
+              //   required: true,
+              //   validate: (date) => {
+              //     const fmtDate = format_date(date);
+              //     const fmtCurr = format_date(curDate);
+              //     const notWeekend =
+              //       moment(date).day() !== 0 && moment(date).day() !== 6;
+              //     return fmtDate >= fmtCurr && notWeekend;
+              //   },
+              // })}
+            /> */}
+
             {errors.date?.type === 'required' && (
               <p className={styles.error}>Please enter a date</p>
             )}

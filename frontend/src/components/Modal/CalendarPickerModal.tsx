@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import {
   Calendar,
@@ -8,9 +8,32 @@ import {
 } from 'react-modern-calendar-datepicker';
 import styles from './calendarPickerModal.module.css';
 
-const CalendarPickerModal = () => {
+const CalanderPicker = (props: {
+   callback?: (day: any) => void;
+   date?: string;
+}) => {
   const today = utils('en').getToday();
-  const [selectedDay, setSelectedDay] = React.useState<DayValue>(null);
+  const [selectedDay, setSelectedDay] = React.useState<DayValue>(today);
+
+  useEffect(() => {
+    if (props.date) {
+      const dateParts: string[] = props.date.split("/");
+      const ourDay: DayValue = {
+        year: parseInt(dateParts[2]),
+        month: parseInt(dateParts[0]),
+        day: parseInt(dateParts[1]),
+      };
+      setSelectedDay(ourDay);
+    }
+  }, [props.date]);
+
+  useEffect(() => {
+    // TODO: don't pass it a DayValue
+    // pass it whatever the typeof input="date" is
+    if (props.callback) {
+      props.callback(selectedDay);
+    }
+  }, [selectedDay]);
 
   const currentDate = new Date();
   const endDate = new Date(
@@ -37,17 +60,19 @@ const CalendarPickerModal = () => {
   };
 
   return (
-    <Calendar
-      value={selectedDay}
-      minimumDate={today}
-      onChange={setSelectedDay}
-      disabledDays={disabledDays}
-      onDisabledDayError={handleDisabledSelect}
-      colorPrimary="#D5E9FA"
-      calendarClassName={styles.calendar}
-      shouldHighlightWeekends
-    />
+    <>
+      <Calendar
+        value={selectedDay}
+        minimumDate={today}
+        onChange={setSelectedDay}
+        disabledDays={disabledDays}
+        onDisabledDayError={handleDisabledSelect}
+        colorPrimary="#D5E9FA"
+        calendarClassName={styles.calendar}
+        shouldHighlightWeekends
+      />
+    </>
   );
 };
 
-export default CalendarPickerModal;
+export default CalanderPicker;
