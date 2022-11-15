@@ -2,8 +2,10 @@
 
 FROM node:lts-alpine as builder
 
-# install dependencies
+# set the working directory
 WORKDIR /usr/src/app
+
+# install dependencies
 COPY package*.json ./
 RUN npm install
 
