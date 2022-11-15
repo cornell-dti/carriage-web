@@ -8,7 +8,7 @@ services:
     volumes:
       - ./server:/code
     ports:
-      - '3001:8000' #?????????
+      - '3001:3001' # ? looks like this one is being used
     environment:
       - DEBUG=True
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
@@ -16,7 +16,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - PUBLIC_VAPID_KEY=${PUBLIC_VAPID_KEY}
       - PRIVATE_VAPID_KEY=${PRIVATE_VAPID_KEY}
-      - WEB_PUSH_CONTACT="mailto:DOCKERTODOcontact@my-site.com"
+      - WEB_PUSH_CONTACT="sender@example.com"
       - IOS_DRIVER_ARN=${IOS_DRIVER_ARN}
       - IOS_RIDER_ARN=${IOS_RIDER_ARN}
       - ANDROID_ARN=${ANDROID_ARN}
@@ -30,8 +30,8 @@ services:
     build: ./frontend
     #    command: nginx -g daemon off # not sure if this is necessary, honestly
     ports:
-      - '80:80'
-      - '443:443'
+      - '3000:3000' # ? looks like this one is being used
+      # - '443:443' # ?
     environment:
       - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
       - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}

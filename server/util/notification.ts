@@ -14,7 +14,7 @@ import { Change, NotificationEvent } from './types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';
 
-AWS.config.update({ ...config, region: 'us-east-1' });
+AWS.config.update({ ...config, region: 'us-east-2' });
 const sns = new AWS.SNS();
 webpush.setVapidDetails(
   webpushValues.contact,

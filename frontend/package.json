@@ -63,7 +63,7 @@
   "proxy": "http://localhost:3001",
   "//": {
     "local-backend": "http://localhost:3001",
-    "deployed-backend": "https://carriage-web.herokuapp.com"
+    "deployed-backend": "http://localhost:3001"
   },
   "devDependencies": {
     "eslint-config-prettier": "^8.3.0"

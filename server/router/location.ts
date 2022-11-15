@@ -19,7 +19,8 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all locations
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (query === {}) {
+  if (false) {
+    // originally: if query === {}
     db.getAll(res, Location, tableName);
   } else {
     const { active } = query;

@@ -5,15 +5,18 @@
 FROM node:19-bullseye AS builder
 
 # set the working direction
-WORKDIR /app
+WORKDIR /
 
 # add env variables
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH /node_modules/.bin:$PATH
 ENV CHOKIDAR_USEPOLLING true
 
+# TEMPORARY FIX ONLY: disable type checking
+ENV TSC_COMPILE_ON_ERROR=true
+ENV ESLINT_NO_DEV_ERRORS=true
+
 # install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
+COPY package*.json ./
 RUN npm install
 
 # add app
@@ -23,24 +26,29 @@ RUN npm run build
 # optionally: run the app locally on port 3001
 # CMD ["npm", "start"]
 
-# STAGE 2: BUILD PRODUCTION IMAGE
+# or, just serve the app lol
+EXPOSE 3000
+RUN npm install -g serve
+CMD ["serve", "-s", "build"]
 
-# pull the base image
-FROM nginx:latest
+# # STAGE 2: BUILD PRODUCTION IMAGE
 
-# Set working directory to nginx resources directory
-WORKDIR /usr/share/nginx/html
+# # pull the base image
+# FROM nginx:latest
 
-# Remove default nginx static resources
-RUN rm -rf ./*
+# # Set working directory to nginx resources directory
+# WORKDIR /usr/share/nginx/html
 
-# Copies static resources from builder stage
-COPY --from=builder /app/build .
+# # Remove default nginx static resources
+# RUN rm -rf ./*
 
-# Replace default nginx configuration with custom configuration
-WORKDIR /etc/nginx/conf.d
-RUN rm default.conf
-COPY --from=builder /app/default.conf .
+# # Copies static resources from builder stage
+# COPY --from=builder /build .
 
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# # Replace default nginx configuration with custom configuration
+# WORKDIR /etc/nginx/conf.d
+# RUN rm default.conf
+# COPY --from=builder /default.conf .
+
+# # Containers run nginx with global directives and daemon off
+# ENTRYPOINT ["nginx", "-g", "daemon off;"]
