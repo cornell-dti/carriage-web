@@ -23,9 +23,6 @@ RUN npm install
 COPY . ./
 RUN npm run build
 
-# optionally: run the app locally on port 3001
-# CMD ["npm", "start"]
-
 # or, just serve the app lol
 EXPOSE 3000
 RUN npm install -g serve
