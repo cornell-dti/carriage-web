@@ -53,12 +53,11 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
   );
   const [imageBase64, setImageBase64] = useState('');
   const { withDefaults } = useReq();
-  const { refreshAdmins, refreshDrivers, drivers } = useEmployees();
+  const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
 
   const openModal = () => {
     setIsOpen(true);

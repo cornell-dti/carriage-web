@@ -127,7 +127,6 @@ const findEmployee = (
   const employee = DriverToEmployees(drivers).find(
     (employee) => employee.id === employeeId
   );
-  console.log(drivers);
   if (!employee)
     return AdminToEmployees(admins).find(
       (employee) => employee.id === employeeId
