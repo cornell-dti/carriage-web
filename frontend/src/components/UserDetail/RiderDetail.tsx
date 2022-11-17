@@ -56,13 +56,13 @@ const RiderDetail = () => {
   useEffect(() => {
     if (riderId) {
       if (!rider) {
-        fetch(`/api/riders/${riderId}`, withDefaults())
-          .then((res) => res.json())
-          .then((data) => setRider(data));
+        // fetch(`/api/riders/${riderId}`, withDefaults())
+        //   .then((res) => res.json())
+        //   .then((data) => setRider(data));
       }
-      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
-        .then((res) => res.json())
-        .then(({ data }) => setRides(data.sort(compRides)));
+      // fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
+      //   .then((res) => res.json())
+      //   .then(({ data }) => setRides(data.sort(compRides)));
     }
     setRider(riders.find((rider) => rider.id === riderId));
   }, [rider, riders, riderId, withDefaults]);

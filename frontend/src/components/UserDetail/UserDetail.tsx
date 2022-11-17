@@ -89,16 +89,16 @@ const UserDetail = ({
   const toggleActive = (): void => {
     if (rider) {
       const { id, active } = rider;
-      fetch(
-        `/api/riders/${id}`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify({ active: !active }),
-        })
-      ).then(() => {
-        setIsShowing(true);
-        refreshRiders();
-      });
+      // fetch(
+      //   `/api/riders/${id}`,
+      //   withDefaults({
+      //     method: 'PUT',
+      //     body: JSON.stringify({ active: !active }),
+      //   })
+      // ).then(() => {
+      //   setIsShowing(true);
+      //   refreshRiders();
+      // });
     }
   };
 

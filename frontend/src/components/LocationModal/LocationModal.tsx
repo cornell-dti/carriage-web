@@ -102,7 +102,7 @@ const LocationModal = ({
         <Button onClick={openModal}>+ Add a location</Button>
       )}
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={() => handleSubmit(onSubmit)}>
           <div className={styles.inputContainer}>
             <Label htmlFor="name">Name</Label>
             <Input

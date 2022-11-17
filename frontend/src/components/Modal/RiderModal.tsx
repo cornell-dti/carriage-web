@@ -43,23 +43,23 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch(
-        `/api/riders/${!existingRider ? '' : existingRider.id}`,
-        withDefaults({
-          method: !existingRider ? 'POST' : 'PUT',
-          body: JSON.stringify(formData),
-        })
-      ).then(() => {
-        refreshRiders();
-        console.log('yiee');
-        showToast(
-          `The student has been ${!existingRider ? 'added' : 'edited'}`,
-          ToastStatus.SUCCESS
-        );
-        if (isRiderWeb) {
-          refreshUser();
-        }
-      });
+      // fetch(
+      //   `/api/riders/${!existingRider ? '' : existingRider.id}`,
+      //   withDefaults({
+      //     method: !existingRider ? 'POST' : 'PUT',
+      //     body: JSON.stringify(formData),
+      //   })
+      // ).then(() => {
+      //   refreshRiders();
+      //   console.log('yiee');
+      //   showToast(
+      //     `The student has been ${!existingRider ? 'added' : 'edited'}`,
+      //     ToastStatus.SUCCESS
+      //   );
+      //   if (isRiderWeb) {
+      //     refreshUser();
+      //   }
+      // });
       setIsSubmitted(false);
     }
   }, [

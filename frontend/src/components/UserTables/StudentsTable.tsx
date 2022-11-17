@@ -37,9 +37,9 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   const [filter, setFilter] = useState(false);
 
   useEffect(() => {
-    fetch('/api/riders/usage', withDefaults())
-      .then((res) => res.json())
-      .then((data) => setUsage(data));
+    // fetch('/api/riders/usage', withDefaults())
+    //   .then((res) => res.json())
+    //   .then((data) => setUsage(data));
   }, [withDefaults]);
 
   const getUsageData = (id: string) => ({

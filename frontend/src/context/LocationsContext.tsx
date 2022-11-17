@@ -24,19 +24,18 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
   const [locations, setLocations] = useState<Array<Location>>([]);
   const { withDefaults } = useReq();
   const refreshLocations = useCallback(async () => {
-    const locationsData: Array<Location> = await fetch(
-      '/api/locations',
-      withDefaults()
-    )
-      .then((res) => res.json())
-      .then((data) => data.data);
-    if (locationsData) {
-      locationsData.sort((a: Location, b: Location) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      });
-    }
-
-    locationsData && componentMounted.current && setLocations(locationsData);
+    // const locationsData: Array<Location> = await fetch(
+    //   '/api/locations',
+    //   withDefaults()
+    // )
+    //   .then((res) => res.json())
+    //   .then((data) => data.data);
+    // if (locationsData) {
+    //   locationsData.sort((a: Location, b: Location) => {
+    //     return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    //   });
+    // }
+    // locationsData && componentMounted.current && setLocations(locationsData);
   }, [withDefaults]);
 
   React.useEffect(() => {

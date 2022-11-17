@@ -25,18 +25,18 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
   };
 
   const studentDelete = () => {
-    fetch(
-      `/api/riders/${!rider ? '' : rider.id}`,
-      withDefaults({
-        method: 'DELETE',
-      })
-    )
-      .then(refreshRiders)
-      .then(() => {
-        history.push('/riders');
-        showToast('The student has been deleted.', ToastStatus.SUCCESS);
-        closeModal();
-      });
+    // fetch(
+    //   `/api/riders/${!rider ? '' : rider.id}`,
+    //   withDefaults({
+    //     method: 'DELETE',
+    //   })
+    // )
+    //   .then(refreshRiders)
+    //   .then(() => {
+    //     history.push('/riders');
+    //     showToast('The student has been deleted.', ToastStatus.SUCCESS);
+    //     closeModal();
+    //   });
   };
 
   return (

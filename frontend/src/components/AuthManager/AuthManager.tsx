@@ -70,14 +70,14 @@ export const AuthManager = () => {
     const fetchURL =
       userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
     return () => {
-      fetch(fetchURL, {
-        headers: {
-          authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => setUser(data));
+      // fetch(fetchURL, {
+      //   headers: {
+      //     authorization: `Bearer ${token}`,
+      //     'Content-Type': 'application/json',
+      //   },
+      // })
+      //   .then((res) => res.json())
+      //   .then((data) => setUser(data));
     };
   }
 
