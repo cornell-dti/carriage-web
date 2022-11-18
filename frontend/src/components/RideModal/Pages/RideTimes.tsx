@@ -173,7 +173,9 @@ const RideTimesPage = ({
               <p className={styles.error}>Please enter a date</p>
             )}
             {errors.date?.type === 'validate' && (
-              <p className={styles.error}>Invalid date</p>
+              <p className={styles.error}>
+                Please enter a valid start date (No rides on weekends)
+              </p>
             )}
           </div>
           <div className={styles.col2}>
@@ -211,7 +213,7 @@ const RideTimesPage = ({
               })}
             />
             {errors.pickupTime?.type === 'required' && (
-              <p className={styles.error}>Please enter a time</p>
+              <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.pickupTime?.type === 'validate' && (
               <p className={styles.error}>Invalid time</p>
@@ -234,7 +236,7 @@ const RideTimesPage = ({
               })}
             />
             {errors.dropoffTime?.type === 'required' && (
-              <p className={styles.error}>Please enter a time</p>
+              <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
               <p className={styles.error}>Invalid time</p>
