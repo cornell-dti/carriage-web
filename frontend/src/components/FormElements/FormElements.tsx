@@ -1,6 +1,7 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
+import CalendarPicker from '../RideModal/CalendarPicker';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -28,14 +29,21 @@ type InputType = React.DetailedHTMLProps<
 
 export const Input = React.forwardRef<HTMLInputElement, InputType>(
   ({ type, className, ...props }, ref) => (
-    <input
-      {...props}
-      className={cn(styles.input, styles[`${type}Input`], className)}
-      type={type}
-      ref={ref}
-    />
+    <>
+      {/* {type === 'date' && <CalendarPicker />} */}
+      <input
+        {...props}
+        className={cn(styles.input, styles[`${type}Input`], className)}
+        type={type}
+        ref={ref}
+      />
+    </>
   )
 );
+
+// export const Input2 = React.forwardRef<HTMLInputElement, InputType>(
+//   ({ type, className, ...props }, ref) => <CalendarPicker ref={ref} />
+// );
 
 type ButtonProps = {
   className?: string;

@@ -8,6 +8,8 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
+import CalendarPicker from '../CalendarPicker';
+import { Dayjs } from 'dayjs';
 
 // VERY TEMPORARY IMPLEMENTATION
 // We use this "day selector" component a few times throughout the codebase,
@@ -148,12 +150,15 @@ const RideTimesPage = ({
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
 
+  const [value, setValue] = React.useState<Dayjs | null>(null);
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
             <Label htmlFor="date">Day:</Label>
+            <CalendarPicker value={value} callback={setValue} />
             <Input
               id="date"
               type="date"
@@ -161,6 +166,8 @@ const RideTimesPage = ({
               ref={register({
                 required: true,
                 validate: (date) => {
+                  // console.log(date);
+                  // CONVERT DAYJS DATE TO STRING FORMAT in YEAR-MONTH-DAY
                   const fmtDate = format_date(date);
                   const fmtCurr = format_date(curDate);
                   const notWeekend =
