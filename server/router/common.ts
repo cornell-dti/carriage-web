@@ -186,7 +186,7 @@ export function scan(
     } else if (callback) {
       data.populate().then((doc) => callback(doc));
     } else {
-      data.populate().then((doc) => res.status(200).send({ data: doc }));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }
