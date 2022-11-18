@@ -22,7 +22,6 @@
 
 .newDate {
   display: none;
-  border-color: #0075db;
 }
 
 .timeInput::-webkit-calendar-picker-indicator,
