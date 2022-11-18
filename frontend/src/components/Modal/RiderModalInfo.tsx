@@ -74,7 +74,7 @@ const RiderModalInfo = ({
               name="firstName"
               type="text"
               ref={register({ required: true })}
-              placeholder="first name"
+              placeholder="First Name"
               className={styles.input}
             />
             {errors.firstName && (
@@ -88,7 +88,7 @@ const RiderModalInfo = ({
               name="lastName"
               type="text"
               ref={register({ required: true })}
-              placeholder="first name"
+              placeholder="Last Name"
               className={styles.input}
             />
             {errors.lastName && (
@@ -102,7 +102,7 @@ const RiderModalInfo = ({
               name="phoneNumber"
               type="tel"
               ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
-              placeholder="phone number"
+              placeholder="Phone Number"
               className={styles.input}
             />
             {errors.phoneNumber && (
@@ -121,7 +121,7 @@ const RiderModalInfo = ({
               type="text"
               ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
               disabled={isStudentEditing}
-              placeholder="net id"
+              placeholder="Net Id"
               className={styles.input}
             />
             {errors.netid && (
@@ -161,7 +161,7 @@ const RiderModalInfo = ({
                 pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
               })}
               className={cn(styles.address)}
-              placeholder="address"
+              placeholder="Address"
             />
             {errors.address && (
               <p className={styles.error}>Please enter a valid address</p>
@@ -182,7 +182,7 @@ const RiderModalInfo = ({
               ref={register({ required: true })}
               disabled={isStudentEditing}
               className={styles.riderDate}
-              placeholder="join date"
+              placeholder="Join Date"
             />
             {errors.joinDate && (
               <p className={styles.error}>Please enter a valid join date</p>
@@ -207,7 +207,7 @@ const RiderModalInfo = ({
               })}
               disabled={isStudentEditing}
               className={styles.riderDate}
-              placeholder="end date"
+              placeholder="End Date"
             />
             {errors.endDate?.type === 'required' && (
               <p className={styles.error}>Please enter a valid end date</p>
