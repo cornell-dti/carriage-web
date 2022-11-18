@@ -163,15 +163,19 @@ const RideTimesPage = ({
               id="date"
               type="date"
               name="date"
+              className="newDate"
               ref={register({
                 required: true,
-                validate: (date) => {
-                  // console.log(date);
-                  // CONVERT DAYJS DATE TO STRING FORMAT in YEAR-MONTH-DAY
-                  const fmtDate = format_date(date);
+                validate: () => {
+                  {
+                    value === null && (
+                      <p className={styles.error}>Please enter a date</p>
+                    );
+                  }
+                  const dayJsDate = value!.format('YYYY-MM-DD');
+                  const fmtDate = format_date(dayJsDate);
                   const fmtCurr = format_date(curDate);
-                  const notWeekend =
-                    moment(date).day() !== 0 && moment(date).day() !== 6;
+                  const notWeekend = value!.day() !== 0 && value!.day() !== 6;
                   return fmtDate >= fmtCurr && notWeekend;
                 },
               })}

@@ -20,10 +20,16 @@
   padding: 0.25rem;
 }
 
+.newDate {
+  display: none;
+  border-color: #0075db;
+}
+
 .timeInput::-webkit-calendar-picker-indicator,
 .dateInput::-webkit-calendar-picker-indicator {
   height: 1.125rem;
   width: 1.125rem;
+  display: none;
 }
 
 .input:focus {
