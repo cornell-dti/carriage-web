@@ -20,7 +20,7 @@ const Schedule = () => {
   const [rides, setRides] = useState<Ride[]>();
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
-
+  document.title = 'Schedule - Carriage';
   const refreshRides = useCallback(() => {
     fetch(`/api/rides?rider=${id}`, withDefaults())
       .then((res) => res.json())

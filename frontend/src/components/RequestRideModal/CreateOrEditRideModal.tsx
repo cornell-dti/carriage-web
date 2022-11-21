@@ -10,6 +10,7 @@ import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
+import { LocationsProvider } from '../../context/LocationsContext';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -202,27 +203,29 @@ const CreateOrEditRideModal = ({
   };
 
   return (
-    <Modal
-      title={!ride ? 'Request a Ride' : 'Edit Ride'}
-      isOpen={isOpen}
-      onClose={closeModal}
-    >
-      <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(handleSubmit)}>
-          <div className={styles.inputContainer}>
-            <RequestRideInfo
-              ride={ride}
-              showRepeatingCheckbox={!ride}
-              showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
-              modalType={modalType}
-            />
-            <Button className={styles.submit} type="submit">
-              {!ride ? 'Request a Ride' : 'Edit Ride'}
-            </Button>
-          </div>
-        </form>
-      </FormProvider>
-    </Modal>
+    <LocationsProvider>
+      <Modal
+        title={!ride ? 'Request a Ride' : 'Edit Ride'}
+        isOpen={isOpen}
+        onClose={closeModal}
+      >
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(handleSubmit)}>
+            <div className={styles.inputContainer}>
+              <RequestRideInfo
+                ride={ride}
+                showRepeatingCheckbox={!ride}
+                showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
+                modalType={modalType}
+              />
+              <Button className={styles.submit} type="submit">
+                {!ride ? 'Request a Ride' : 'Edit Ride'}
+              </Button>
+            </div>
+          </form>
+        </FormProvider>
+      </Modal>
+    </LocationsProvider>
   );
 };
 export default CreateOrEditRideModal;
