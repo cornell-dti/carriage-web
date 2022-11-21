@@ -77,7 +77,7 @@ export const AuthManager = () => {
         },
       })
         .then((res) => res.json())
-        .then((data) => setUser(data));
+        .then((data) => setUser(data.data));
     };
   }
 
