@@ -178,10 +178,7 @@ const AuthManager = () => {
         },
       })
         .then((res) => res.json())
-        .then((data) => {
-          localStorage.setItem('user', JSON.stringify(data));
-          setUser(data);
-        });
+        .then((data) => setUser(data.data));
     };
   }
   const LoginPage = () => (
