@@ -105,7 +105,11 @@ const RequestRideInfo = ({
                     isTimeValid(startDate, pickupTime) ||
                     "Can't schedule rides for less than 2 days from today"
                   );
-                else return notWeekend || "Can't schedule rides on weekends";
+                else
+                  return (
+                    notWeekend ||
+                    'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)'
+                  );
               },
             })}
           />
@@ -202,7 +206,10 @@ const RequestRideInfo = ({
                     startDate < endDate ||
                     'End date must be after the start date'
                   );
-                return false || "Can't schedule rides on weekend";
+                return (
+                  false ||
+                  'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)'
+                );
               },
             })}
           />
@@ -229,7 +236,7 @@ const RequestRideInfo = ({
                 const dropOffLocation = getValues('endLocation');
                 return (
                   dropOffLocation !== pickUpLocation ||
-                  'Pick Up and Drop Off locations must be different'
+                  'Please select a valid pickup location.'
                 );
               },
             })}
@@ -260,11 +267,11 @@ const RequestRideInfo = ({
                 const pickup = moment(`${startDate} ${pickupTime}`);
                 if (startDate) {
                   if (!isTimeValid(startDate, pickupTime))
-                    return "Can't schedule rides for less than 2 days from today";
+                    return 'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)';
                 }
                 return (
                   checkBounds(startDate, pickup) ||
-                  'Rides must be scheduled for after 7:30 AM and before 10 PM for any particular day'
+                  'Please select a valid pickup time between 7:45 AM and 10:00 PM.'
                 );
               },
             })}
@@ -332,7 +339,7 @@ const RequestRideInfo = ({
                 return (
                   endLocation !== startLoc ||
                   (endLocation === 'Other' && startLoc === 'Other') ||
-                  'Pick Up and Drop Off locations must be different'
+                  'Please select a valid pickup location.'
                 );
               },
             })}
@@ -365,7 +372,7 @@ const RequestRideInfo = ({
                 if (dropoffTime > pickupTi)
                   return (
                     checkBounds(startDate, dropOff) ||
-                    'Rides must be scheduled for after 7:30 AM and before 10 PM for any particular day'
+                    'Please select a valid pickup time between 7:45 AM and 10:00 PM.'
                   );
                 return 'Drop Off time must be after the Pick Up time';
               },
