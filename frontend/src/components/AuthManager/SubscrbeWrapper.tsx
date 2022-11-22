@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactFragment, ReactElement } from 'react';
 import subscribeUser from './subscribeUser';
 import { useReq } from '../../context/req';
 
 interface Props {
-  userId: any;
-  children: any;
+  userId: string;
+  children: ReactElement;
 }
 
 const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {

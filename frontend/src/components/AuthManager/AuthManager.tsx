@@ -27,9 +27,37 @@ import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
-import axios from 'axios';
-import Cryptr from 'cryptr';
-const cryptr = new Cryptr(`${process.env.ENCRYPTION_KEY}`);
+import * as crypto from 'crypto';
+const algorithm = 'aes-256-ctr';
+const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
+
+const encrypt = (text: crypto.BinaryLike) => {
+  const iv = crypto.randomBytes(16);
+
+  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+
+  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+  return {
+    iv: iv.toString('hex'),
+    content: encrypted.toString('hex'),
+  };
+};
+
+const decrypt = (hash: { iv: any; content: any }) => {
+  const decipher = crypto.createDecipheriv(
+    algorithm,
+    secretKey,
+    Buffer.from(hash.iv, 'hex')
+  );
+
+  const decrpyted = Buffer.concat([
+    decipher.update(Buffer.from(hash.content, 'hex')),
+    decipher.final(),
+  ]);
+
+  return decrpyted.toString();
+};
 
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
@@ -66,7 +94,7 @@ const AuthManager = () => {
         jwtEndIndex != -1
           ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
           : document.cookie.slice(jwtIndex);
-      return cryptr.decrypt(encrypted_jwt);
+      return decrypt(JSON.parse(encrypted_jwt));
     } catch {
       return '';
     }
@@ -79,20 +107,23 @@ const AuthManager = () => {
   }
 
   function setCookie(cookieName: string, value: string) {
-    document.cookie = cookieName + '=' + cryptr.encrypt(value) + ';';
+    document.cookie =
+      cookieName + '=' + JSON.stringify(encrypt(value)) + ';secure=true;';
   }
 
   function googleAuth(isAdmin: boolean) {
     return useGoogleLogin({
       flow: 'implicit',
       onSuccess: async (tokenResponse: TokenResponse) => {
-        const userInfo = await axios
-          .get('https://www.googleapis.com/oauth2/v2/userinfo', {
+        const userInfo = await fetch(
+          'https://www.googleapis.com/oauth2/v2/userinfo',
+          {
+            method: 'GET',
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          })
-          .then((res) => res.data);
-
-        signIn(isAdmin, userInfo);
+          }
+        )
+          .then((res) => res.json())
+          .then((userInfo) => signIn(isAdmin, userInfo));
       },
       onError: (errorResponse: any) => console.log(errorResponse),
     });
@@ -178,7 +209,10 @@ const AuthManager = () => {
         },
       })
         .then((res) => res.json())
-        .then((data) => setUser(data.data));
+        .then((data) => {
+          localStorage.setItem('user', JSON.stringify(data.data));
+          setUser(data.data);
+        });
     };
   }
   const LoginPage = () => (

@@ -42,7 +42,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     if (isAdmin) {
       fetch(`/api/admins/${id}`, reqContext.withDefaults())
         .then((res) => res.json())
-        .then((data) => componentMounted.current && setProfile(data.photoLink));
+        .then(
+          (data) => componentMounted.current && setProfile(data.data.photoLink)
+        );
 
       return () => {
         componentMounted.current = false;
@@ -50,7 +52,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     } else {
       fetch(`/api/riders/${id}`, reqContext.withDefaults())
         .then((res) => res.json())
-        .then((data) => componentMounted.current && setProfile(data.photoLink));
+        .then(
+          (data) => componentMounted.current && setProfile(data.data.photoLink)
+        );
 
       return () => {
         componentMounted.current = false;
