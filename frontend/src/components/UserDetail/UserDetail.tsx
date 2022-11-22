@@ -122,7 +122,7 @@ const UserDetail = ({
       <div className={styles.basicInfoContainer}>
         <div className={styles.basicInfoTop}>
           <div className={styles.nameInfoContainer}>
-            <h1 className={styles.name}>{fullName}</h1>
+            <h2 className={styles.name}>{fullName}</h2>
             <p className={styles.netId}>{netId}</p>
           </div>
           <div className={styles.userEditContainer}>
