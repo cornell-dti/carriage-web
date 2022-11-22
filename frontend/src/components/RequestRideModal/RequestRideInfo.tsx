@@ -92,6 +92,7 @@ const RequestRideInfo = ({
             type="date"
             disabled={shouldDisableStartDate}
             className={cn(styles.input)}
+            aria-required={true}
             ref={register({
               required: true,
               validate: (startDate) => {
@@ -218,6 +219,7 @@ const RequestRideInfo = ({
             className={styles.input}
             name="startLocation"
             aria-labelledby="pickupLabel pickupLocations"
+            aria-required={true}
             ref={register({ required: true })}
           >
             {locations.map((location) => (
@@ -239,6 +241,7 @@ const RequestRideInfo = ({
             name="pickupTime"
             className={styles.input}
             aria-labelledby="pickupLabel pickupTime"
+            aria-required={true}
             ref={register({
               required: true,
               validate: (pickupTime: string) => {
@@ -307,6 +310,7 @@ const RequestRideInfo = ({
             className={styles.input}
             name="endLocation"
             aria-labelledby="dropoffLabel dropoffLocations"
+            aria-required={true}
             ref={register({
               required: true,
               validate: (endLocation: string) => {
@@ -339,6 +343,7 @@ const RequestRideInfo = ({
             name="dropoffTime"
             className={styles.input}
             aria-labelledby="dropoffLabel dropoffTime"
+            aria-required={true}
             ref={register({
               required: true,
               validate: (dropoffTime: string) => {

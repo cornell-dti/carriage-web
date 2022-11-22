@@ -56,6 +56,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             className={styles.nameInput}
             list="names"
+            aria-required={true}
             ref={register({
               required: true,
               validate: (name: string) =>
@@ -81,6 +82,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             list="locations"
             ref={register({ required: true })}
+            aria-required={true}
           />
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
@@ -100,6 +102,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             name="dropoffLoc"
             type="text"
             list="locations"
+            aria-required={true}
             ref={register({
               required: true,
               validate: (dropoffLoc) => {
