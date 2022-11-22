@@ -25,7 +25,8 @@ const RequestRideInfo = ({
   showRepeatingInfo,
   modalType,
 }: RequestRideInfoProps) => {
-  const { register, formState, getValues, watch, setValue } = useFormContext();
+  const { register, setError, formState, getValues, watch, setValue } =
+    useFormContext();
   const { errors } = formState;
   const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
@@ -99,16 +100,17 @@ const RequestRideInfo = ({
                 const notWeekend =
                   moment(startDate).day() !== 0 &&
                   moment(startDate).day() !== 6;
-                return pickupTime
-                  ? isTimeValid(startDate, pickupTime) && notWeekend
-                  : notWeekend;
+                if (pickupTime && notWeekend)
+                  return (
+                    isTimeValid(startDate, pickupTime) ||
+                    "Can't schedule rides for less than 2 days from today"
+                  );
+                else return notWeekend || "Can't schedule rides on weekends";
               },
             })}
           />
           {errors.startDate && (
-            <p className={styles.error}>
-              Please enter a valid start date (No rides on weekends)
-            </p>
+            <p className={styles.error}>{errors.startDate.message}</p>
           )}
         </div>
         {showRepeatingCheckbox && (
@@ -195,14 +197,17 @@ const RequestRideInfo = ({
                 const startDate = getValues('startDate');
                 const notWeekend =
                   moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
-                return startDate < endDate && notWeekend;
+                if (notWeekend)
+                  return (
+                    startDate < endDate ||
+                    'End date must be after the start date'
+                  );
+                return false || "Can't schedule rides on weekend";
               },
             })}
           />
           {errors.endDate && (
-            <p className={styles.error}>
-              Please select a valid end date (No rides on weekends)
-            </p>
+            <p className={styles.error}>{errors.endDate.message}</p>
           )}
         </div>
       ) : null}
@@ -218,7 +223,16 @@ const RequestRideInfo = ({
             className={styles.input}
             name="startLocation"
             aria-labelledby="pickupLabel pickupLocations"
-            ref={register({ required: true })}
+            ref={register({
+              required: true,
+              validate: (pickUpLocation: string) => {
+                const dropOffLocation = getValues('endLocation');
+                return (
+                  dropOffLocation !== pickUpLocation ||
+                  'Pick Up and Drop Off locations must be different'
+                );
+              },
+            })}
           >
             {locations.map((location) => (
               <option key={location.id} value={location.id}>
@@ -227,7 +241,7 @@ const RequestRideInfo = ({
             ))}
           </select>
           {errors.startLocation && (
-            <p className={styles.error}>Please select a valid location</p>
+            <p className={styles.error}>{errors.startLocation.message}</p>
           )}
         </div>
         <div className={styles.errorBox}>
@@ -244,15 +258,19 @@ const RequestRideInfo = ({
               validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
                 const pickup = moment(`${startDate} ${pickupTime}`);
-                return startDate
-                  ? isTimeValid(startDate, pickupTime) &&
-                      checkBounds(startDate, pickup)
-                  : true;
+                if (startDate) {
+                  if (!isTimeValid(startDate, pickupTime))
+                    return "Can't schedule rides for less than 2 days from today";
+                }
+                return (
+                  checkBounds(startDate, pickup) ||
+                  'Rides must be scheduled for after 7:30 AM and before 10 PM for any particular day'
+                );
               },
             })}
           />
           {errors.pickupTime && (
-            <p className={styles.error}>Please choose a valid pickup time</p>
+            <p className={styles.error}>{errors.pickupTime.message}</p>
           )}
         </div>
       </div>
@@ -313,7 +331,8 @@ const RequestRideInfo = ({
                 const startLoc = getValues('startLocation');
                 return (
                   endLocation !== startLoc ||
-                  (endLocation === 'Other' && startLoc === 'Other')
+                  (endLocation === 'Other' && startLoc === 'Other') ||
+                  'Pick Up and Drop Off locations must be different'
                 );
               },
             })}
@@ -325,9 +344,7 @@ const RequestRideInfo = ({
             ))}
           </select>
           {errors.endLocation && (
-            <p className={styles.error}>
-              Please select a valid dropoff location
-            </p>
+            <p className={styles.error}>{errors.endLocation.message}</p>
           )}
         </div>
         <div className={styles.errorBox}>
@@ -345,14 +362,17 @@ const RequestRideInfo = ({
                 const pickupTi = getValues('pickupTime');
                 const startDate = getValues('startDate');
                 const dropOff = moment(`${startDate} ${dropoffTime}`);
-                return (
-                  dropoffTime > pickupTi && checkBounds(startDate, dropOff)
-                );
+                if (dropoffTime > pickupTi)
+                  return (
+                    checkBounds(startDate, dropOff) ||
+                    'Rides must be scheduled for after 7:30 AM and before 10 PM for any particular day'
+                  );
+                return 'Drop Off time must be after the Pick Up time';
               },
             })}
           />
           {errors.dropoffTime && (
-            <p className={styles.error}>Please choose a valid dropoff time</p>
+            <p className={styles.error}>{errors.dropoffTime.message}</p>
           )}
         </div>
       </div>
