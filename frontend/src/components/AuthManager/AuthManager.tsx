@@ -13,7 +13,7 @@ import {
 } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
 import ReqContext from '../../context/req';
-import AuthContext, { ValidUser } from '../../context/auth';
+import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
@@ -64,7 +64,7 @@ const AuthManager = () => {
   const [jwt, setJWT] = useState(jwtValue());
   const [id, setId] = useState(localStorage.getItem('userId')!);
   const [initPath, setInitPath] = useState('');
-  const [user, setUser] = useState<ValidUser>(
+  const [user, setUser] = useState<Rider | Admin>(
     JSON.parse(localStorage.getItem('user')!)
   );
   // useState can take a function that returns the new state value, so need to
