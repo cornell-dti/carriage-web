@@ -347,7 +347,6 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     if (type === Type.ACTIVE) {
       const operation = { status: Status.CANCELLED };
       db.update(res, Ride, { id }, operation, tableName, async (doc) => {
-        console.log(doc);
         const deletedRide = doc;
         const { userType } = res.locals.user;
         deletedRide.startLocation = ride.startLocation;
