@@ -11,6 +11,7 @@ import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import { edit } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 
 type otherInfo = {
@@ -71,6 +72,7 @@ const UserDetail = ({
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
@@ -145,10 +147,21 @@ const UserDetail = ({
                   photoLink: employee.photoLink,
                   startDate: employee.startDate,
                 }}
+                isOpen={isOpen}
+                setIsOpen= {setIsOpen}
               />
             ) : (
               <RiderModal existingRider={rider} isRiderWeb={isRider} />
             )}
+            
+            <input
+              type="image"
+              className={styles.edit}
+              alt="edit"
+              src={edit}
+              onClick={() => setIsOpen(true)}
+            />
+
             <button
               className={styles.deleteButton}
               onClick={openConfirmationModal}

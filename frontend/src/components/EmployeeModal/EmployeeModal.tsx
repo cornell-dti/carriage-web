@@ -27,6 +27,8 @@ type EmployeeModalProps = {
     startDate?: string;
     photoLink?: string;
   };
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
 type AdminData = {
@@ -45,9 +47,8 @@ type DriverData = {
   admin: boolean;
 };
 
-const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
+const EmployeeModal = ({ existingEmployee, isOpen, setIsOpen }: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
@@ -58,10 +59,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => {
     methods.clearErrors();
@@ -237,48 +234,36 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   return (
     <>
-      {existingEmployee ? (
-        <input
-          type="image"
-          className={styles.edit}
-          alt="edit"
-          src={edit}
-          onClick={openModal}
-        />
-      ) : (
-        <Button onClick={openModal}>+ Add an employee</Button>
-      )}
-
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
-        <Upload
-          imageChange={updateBase64}
-          existingPhoto={existingEmployee?.photoLink}
-        />
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
-            <EmployeeInfo
-              firstName={existingEmployee?.firstName}
-              lastName={existingEmployee?.lastName}
-              netId={existingEmployee?.netId}
-              phone={existingEmployee?.phone}
-            />
-            {selectedRole === 'admin' ? null : (
-              <StartDate existingDate={existingEmployee?.startDate} />
-            )}
-            <WorkingHours
-              existingAvailability={existingEmployee?.availability}
-              hide={selectedRole === 'admin'}
-            />
-            <RoleSelector
-              selectedRole={selectedRole}
-              setSelectedRole={setSelectedRole}
-            />
-            <Button className={styles.submit} type="submit">
-              {submitButtonText}
-            </Button>
-          </form>
-        </FormProvider>
-      </Modal>
+        <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
+          <Upload
+            imageChange={updateBase64}
+            existingPhoto={existingEmployee?.photoLink}
+          />
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <EmployeeInfo
+                firstName={existingEmployee?.firstName}
+                lastName={existingEmployee?.lastName}
+                netId={existingEmployee?.netId}
+                phone={existingEmployee?.phone}
+              />
+              {selectedRole === 'admin' ? null : (
+                <StartDate existingDate={existingEmployee?.startDate} />
+              )}
+              <WorkingHours
+                existingAvailability={existingEmployee?.availability}
+                hide={selectedRole === 'admin'}
+              />
+              <RoleSelector
+                selectedRole={selectedRole}
+                setSelectedRole={setSelectedRole}
+              />
+              <Button className={styles.submit} type="submit">
+                {submitButtonText}
+              </Button>
+            </form>
+          </FormProvider>
+        </Modal>
     </>
   );
 };
