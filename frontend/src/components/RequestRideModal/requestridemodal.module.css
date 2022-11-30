@@ -1,6 +1,15 @@
 .inputContainer {
   max-width: 45rem;
 }
+input[type='time']::-webkit-datetime-edit-hour-field:focus {
+  background-color: #3783f6;
+}
+input[type='time']::-webkit-datetime-edit-minute-field:focus {
+  background-color: #3783f6;
+}
+input[type='time']::-webkit-datetime-edit-ampm-field:focus {
+  background-color: #3783f6;
+}
 .input {
   display: inline-block;
   border-radius: 0.5rem;
