@@ -14,20 +14,17 @@ import { ToastStatus, useToast } from '../../context/toastContext';
 type RiderModalProps = {
   existingRider?: Rider;
   isRiderWeb?: boolean;
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
-const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
+const RiderModal = ({ existingRider, isRiderWeb, isOpen, setIsOpen }: RiderModalProps) => {
   const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
-  const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => setIsOpen(false);
 
@@ -73,15 +70,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   return (
     <>
-      {!existingRider ? (
-        <Button className={styles.addRiderButton} onClick={openModal}>
-          + Add Student
-        </Button>
-      ) : (
-        <button className={styles.editRiderButton} onClick={openModal}>
-          <img className={styles.editIcon} alt="edit" src={edit} />
-        </button>
-      )}
       <Modal
         title={!existingRider ? 'Add a Student' : 'Edit a Student'}
         isOpen={isOpen}

@@ -4,14 +4,13 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { red_trash } from '../../icons/other/index';
+import { red_trash, edit } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import { Rider } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
-import { edit } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 
 type otherInfo = {
@@ -72,7 +71,8 @@ const UserDetail = ({
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isEmployeeOpen, setEmployeeOpen] = useState(false);
+  const [isRiderOpen, setRiderOpen] = useState(false);
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
@@ -147,20 +147,24 @@ const UserDetail = ({
                   photoLink: employee.photoLink,
                   startDate: employee.startDate,
                 }}
-                isOpen={isOpen}
-                setIsOpen= {setIsOpen}
+                isOpen={isEmployeeOpen}
+                setIsOpen= {setEmployeeOpen}
               />
             ) : (
-              <RiderModal existingRider={rider} isRiderWeb={isRider} />
+              <RiderModal 
+                existingRider={rider} 
+                isRiderWeb={isRider} 
+                isOpen = {isRiderOpen} 
+                setIsOpen = {setRiderOpen} 
+              />
             )}
-            
-            <input
-              type="image"
+
+            <button
               className={styles.edit}
-              alt="edit"
-              src={edit}
-              onClick={() => setIsOpen(true)}
-            />
+              onClick={() => employee ? setEmployeeOpen(true) : setRiderOpen(true)}
+            >
+              <img className={styles.editIcon} alt="edit" src={edit} />
+            </button>
 
             <button
               className={styles.deleteButton}
