@@ -18,7 +18,12 @@ type RiderModalProps = {
   setIsOpen: any;
 };
 
-const RiderModal = ({ existingRider, isRiderWeb, isOpen, setIsOpen }: RiderModalProps) => {
+const RiderModal = ({
+  existingRider,
+  isRiderWeb,
+  isOpen,
+  setIsOpen,
+}: RiderModalProps) => {
   const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
   const [isSubmitted, setIsSubmitted] = useState(false);

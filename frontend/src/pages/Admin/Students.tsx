@@ -21,8 +21,13 @@ const Riders = () => {
         <h1 className={styles.header}>Students</h1>
         <div className={styles.rightSection}>
           <CopyButton />
-          <Button className={styles.addRiderButton} onClick={() => setIsOpen(true)}>+ Add Student</Button>
-          <RiderModal isOpen = {isOpen} setIsOpen = {setIsOpen} />
+          <Button
+            className={styles.addRiderButton}
+            onClick={() => setIsOpen(true)}
+          >
+            + Add Student
+          </Button>
+          <RiderModal isOpen={isOpen} setIsOpen={setIsOpen} />
           <Notification />
         </div>
       </div>

@@ -148,20 +148,22 @@ const UserDetail = ({
                   startDate: employee.startDate,
                 }}
                 isOpen={isEmployeeOpen}
-                setIsOpen= {setEmployeeOpen}
+                setIsOpen={setEmployeeOpen}
               />
             ) : (
-              <RiderModal 
-                existingRider={rider} 
-                isRiderWeb={isRider} 
-                isOpen = {isRiderOpen} 
-                setIsOpen = {setRiderOpen} 
+              <RiderModal
+                existingRider={rider}
+                isRiderWeb={isRider}
+                isOpen={isRiderOpen}
+                setIsOpen={setRiderOpen}
               />
             )}
 
             <button
               className={styles.edit}
-              onClick={() => employee ? setEmployeeOpen(true) : setRiderOpen(true)}
+              onClick={() =>
+                employee ? setEmployeeOpen(true) : setRiderOpen(true)
+              }
             >
               <img className={styles.editIcon} alt="edit" src={edit} />
             </button>

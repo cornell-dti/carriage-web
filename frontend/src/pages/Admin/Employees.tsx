@@ -17,8 +17,8 @@ const Employees = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Employees</h1>
         <div className={styles.rightSection}>
-          <Button onClick={()=> setIsOpen(true)}>+ Add an employee</Button>
-          <EmployeeModal isOpen = {isOpen} setIsOpen = {setIsOpen}/>
+          <Button onClick={() => setIsOpen(true)}>+ Add an employee</Button>
+          <EmployeeModal isOpen={isOpen} setIsOpen={setIsOpen} />
           <Notification />
         </div>
       </div>
