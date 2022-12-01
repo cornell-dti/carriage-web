@@ -10,7 +10,7 @@ import { ToastStatus, useToast } from '../../context/toastContext';
 
 type ConfirmationProps = {
   open: boolean;
-  rider?: Rider | undefined;
+  rider?: Rider;
   onClose: () => void;
 };
 
