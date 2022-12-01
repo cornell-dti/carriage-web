@@ -39,6 +39,7 @@ const Schedule = ({ email }: ScheduleProps) => {
 
   const datetime = new Date();
 
+  document.title = 'Schedule - Carriage';
   const refreshRides = useCallback(() => {
     fetch(`/api/rides?rider=${riderId}`, withDefaults())
       .then((res) => res.json())
