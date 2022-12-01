@@ -38,12 +38,13 @@ const Schedule = () => {
   return (
     <main id="main">
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Hi {user?.firstName ?? ''}</h1>
+        <h1 className={styles.header}>Schedule</h1>
         <div className={styles.rightSection}>
           <RequestRideModal onSubmit={refreshRides} />
           <Notification />
         </div>
       </div>
+
       {rides && rides.length > 0 && (
         <>
           <Collapsible title={'Your Upcoming Rides'}>
