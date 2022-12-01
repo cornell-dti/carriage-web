@@ -15,12 +15,13 @@ ENV CHOKIDAR_USEPOLLING true
 ENV TSC_COMPILE_ON_ERROR=true
 ENV ESLINT_NO_DEV_ERRORS=true
 
-# install app dependencies
-COPY package*.json ./
-RUN npm install
+# # install app dependencies
+# COPY package*.json ./
+# RUN npm install
 
 # add app
 COPY . ./
+RUN npm install 
 RUN npm run build
 
 # or, just serve the app lol
