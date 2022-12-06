@@ -10,8 +10,9 @@
 }
 
 .badge {
-  position: absolute;
-  width: 7px;
+  width: 44px;
+  height: 44px;
+  margin: 0 1rem;
 }
 
 .body {
