@@ -133,7 +133,7 @@ const RiderModalInfo = ({
               )}
             </div>
           </div>
-          <div className={cn(styles.gridR2, styles.gridCBig1)}>
+          <div className={cn(styles.gridR3, styles.gridCBig1)}>
             <Label className={styles.label} htmlFor="address">
               Address:{' '}
             </Label>
