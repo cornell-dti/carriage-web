@@ -51,7 +51,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
         })
       ).then(() => {
         refreshRiders();
-        console.log('yiee');
         showToast(
           `The student has been ${!existingRider ? 'added' : 'edited'}`,
           ToastStatus.SUCCESS

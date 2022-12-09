@@ -1,5 +1,3 @@
-import { OAuth2Client } from 'google-auth-library';
-import { LoginTicket } from 'google-auth-library/build/src/auth/loginticket';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { ModelType } from 'dynamoose/dist/General';
@@ -18,12 +16,6 @@ const audience = [
   // rider ios
   '241748771473-7rfda2grc8f7p099bmf98en0q9bcvp18.apps.googleusercontent.com',
 ];
-
-async function verify(clientId: string, token: string): Promise<LoginTicket> {
-  const client = new OAuth2Client(clientId);
-  const authRes = await client.verifyIdToken({ idToken: token, audience });
-  return authRes;
-}
 
 function getModel(table: string) {
   const tableToModel: { [table: string]: ModelType<Document> } = {
@@ -90,27 +82,22 @@ function findUserAndSendToken(
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const { token, clientId, table } = req.body;
-  verify(clientId, token)
-    .then((authRes) => {
-      const payload = authRes.getPayload();
-      const model = getModel(table);
-      const email = payload?.email;
-      if (payload?.aud === clientId && model && email) {
-        findUserAndSendToken(res, model, table, email);
-      } else if (payload?.aud !== clientId) {
-        res.status(400).send({ err: 'Invalid client id' });
-      } else if (!model) {
-        res.status(400).send({ err: 'Table not found' });
-      } else if (!email) {
-        res.status(400).send({ err: 'Email not found' });
-      } else {
-        res.status(400).send({ err: 'Payload not found' });
-      }
-    })
-    .catch((err) => {
-      res.status(err.statusCode || 500).send({ err: err.message });
-    });
+  const { userInfo, table } = req.body;
+  const model = getModel(table);
+  try {
+    const email = userInfo?.email;
+    if (model && email) {
+      findUserAndSendToken(res, model, table, email);
+    } else if (!model) {
+      res.status(400).send({ err: 'Table not found' });
+    } else if (!email) {
+      res.status(400).send({ err: 'Email not found' });
+    } else {
+      res.status(400).send({ err: 'Payload not found' });
+    }
+  } catch (err: any) {
+    res.status(500).send({ err: err.message });
+  }
 });
 
 export default router;
