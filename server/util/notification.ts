@@ -134,7 +134,7 @@ export const deleteAll = () =>
         reject();
       } else {
         const promises = data.map((doc) => {
-          const sub = JSON.parse(JSON.stringify(doc.toJSON()));
+          const sub = doc.toJSON();
           return new Promise((resolve2, reject2) => {
             const { id } = sub;
             Subscription.get(id, (err2, data2) => {

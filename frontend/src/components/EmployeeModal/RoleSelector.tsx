@@ -20,7 +20,7 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           className={styles.radioButton}
           id="driver"
           name="role"
-          type="radio"
+          type="checkbox"
           value="driver"
           onChange={onChange}
           defaultChecked={selectedRole === 'driver' || true}
@@ -34,13 +34,13 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           className={styles.radioButton}
           id="admin"
           name="role"
-          type="radio"
+          type="checkbox"
           value="admin"
           onChange={onChange}
           defaultChecked={selectedRole === 'admin' || false}
         />
         <Label className={styles.driverLabel} htmlFor={'admin'}>
-          Admin
+          Redrunner Admin
         </Label>
       </div>
       <div className={styles.radioOption}>
@@ -48,13 +48,13 @@ const RoleSelector = ({ selectedRole, setSelectedRole }: Props) => {
           className={styles.radioButton}
           id="both"
           name="role"
-          type="radio"
+          type="checkbox"
           value="both"
           onChange={onChange}
           defaultChecked={selectedRole === 'both' || false}
         />
         <Label className={styles.driverLabel} htmlFor={'both'}>
-          Both
+          SDS Admin
         </Label>
       </div>
     </div>
