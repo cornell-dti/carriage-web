@@ -56,6 +56,7 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
                   type="radio"
                   value={d.id}
                   ref={register({ required: true })}
+                  aria-required="true"
                 />
               </div>
             ))
