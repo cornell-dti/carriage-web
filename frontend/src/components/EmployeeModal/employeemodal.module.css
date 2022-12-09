@@ -22,8 +22,9 @@
 
 .uploadContainer {
   position: absolute;
-  right: 0;
-  text-align: center;
+  left: 550px;
+  top: 45px;
+  text-align: left;
 }
 
 .uploadImg {
@@ -47,6 +48,7 @@
 
 .workingHours {
   margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .workingHoursTitle {
