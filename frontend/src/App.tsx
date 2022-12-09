@@ -1,13 +1,13 @@
 import { ToastProvider } from './context/toastContext';
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { AuthManager } from './components/AuthManager/AuthManager';
+import { GoogleAuth } from './components/AuthManager/GoogleAuth';
 import './styles/App.css';
 
 const App = () => (
   <Router>
     <ToastProvider>
-      <AuthManager />
+      <GoogleAuth />
     </ToastProvider>
   </Router>
 );

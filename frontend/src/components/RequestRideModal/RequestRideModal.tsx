@@ -5,6 +5,7 @@ import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Button } from '../FormElements/FormElements';
 import CreateOrEditRideModal from './CreateOrEditRideModal';
 import { useToast, ToastStatus } from '../../context/toastContext';
+import styles from './requestridemodal.module.css';
 
 type RequestRideModalProps = {
   onSubmit?: () => void;
@@ -54,7 +55,10 @@ const RequestRideModal = ({
   return (
     <>
       {!ride ? (
-        <Button onClick={() => openCreateOrEditModal('CREATE')}>
+        <Button
+          className={styles.btn}
+          onClick={() => openCreateOrEditModal('CREATE')}
+        >
           + Request a ride
         </Button>
       ) : (

@@ -173,6 +173,14 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
+    if (employee) {
+      document.title = `${employee.firstName} ${employee.lastName} - Carriage`;
+    } else {
+      document.title = 'Employee Details - Carriage';
+    }
+  }, [employee]);
+
+  useEffect(() => {
     if (!employee && employeeId) {
       if (userType === 'admins') {
         fetch(`/api/admins/${employeeId}`, withDefaults())

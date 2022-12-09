@@ -5,6 +5,8 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
 import { format_date } from '../../util/index';
+import { ToastStatus, useToast } from '../../context/toastContext';
+import { useRides } from '../../context/RidesContext';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -12,6 +14,7 @@ type DeleteOrEditTypeModalProps = {
   onClose: () => void;
   deleting: boolean;
   onNext?: (single: boolean) => void;
+  isRider?: boolean;
 };
 
 const DeleteOrEditTypeModal = ({
@@ -20,9 +23,12 @@ const DeleteOrEditTypeModal = ({
   onClose,
   deleting,
   onNext,
+  isRider,
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
   const { withDefaults } = useReq();
+  const { showToast } = useToast();
+  const { refreshRides } = useRides();
 
   const closeModal = () => {
     onClose();
@@ -41,12 +47,18 @@ const DeleteOrEditTypeModal = ({
             origDate: startDate,
           }),
         })
-      ).then(() => closeModal());
+      )
+        .then(() => closeModal())
+        .then(refreshRides);
     } else {
-      fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' })).then(
-        () => closeModal()
-      );
+      fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' }))
+        .then(() => closeModal())
+        .then(refreshRides);
     }
+    showToast(
+      ride.recurring && !single ? 'Rides Cancelled' : 'Ride Cancelled',
+      ToastStatus.SUCCESS
+    );
   };
 
   const changeSelection = (e: any) => {
@@ -63,9 +75,18 @@ const DeleteOrEditTypeModal = ({
   };
   return (
     <Modal
-      title={deleting ? 'Cancel Ride' : 'Edit Repeating Ride'}
+      title={
+        !isRider && !ride.recurring
+          ? ''
+          : deleting
+          ? ride.recurring
+            ? 'Cancel Recurring Ride'
+            : 'Cancel Ride'
+          : 'Edit Repeating Ride'
+      }
       isOpen={open}
       onClose={closeModal}
+      isRider={isRider}
     >
       {deleting && !ride.recurring ? (
         <div className={styles.modal}>
@@ -73,6 +94,9 @@ const DeleteOrEditTypeModal = ({
             Are you sure you want to cancel this ride?
           </p>
           <div className={styles.buttonContainer}>
+            <Button outline type="button" onClick={closeModal}>
+              Back
+            </Button>
             <Button
               type="button"
               onClick={confirmCancel}
@@ -110,6 +134,9 @@ const DeleteOrEditTypeModal = ({
             </Label>
           </div>
           <div className={styles.buttonContainer}>
+            <Button outline type="button" onClick={closeModal}>
+              Back
+            </Button>
             <Button
               type="submit"
               onClick={onButtonClick}
