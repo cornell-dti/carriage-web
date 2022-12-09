@@ -76,7 +76,7 @@ const RiderModalInfo = ({
             name="firstName"
             type="text"
             ref={register({ required: true })}
-            aria-required={true}
+            aria-required="true"
             className={styles.firstRow}
           />
           {errors.firstName && (
@@ -91,7 +91,7 @@ const RiderModalInfo = ({
             type="text"
             ref={register({ required: true })}
             className={styles.firstRow}
-            aria-required={true}
+            aria-required="true"
           />
           {errors.lastName && (
             <p className={styles.error}>Please enter a name</p>
@@ -108,7 +108,7 @@ const RiderModalInfo = ({
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
             disabled={isStudentEditing}
             className={styles.firstRow}
-            aria-required={true}
+            aria-required="true"
           />
           {errors.netid && <p className={styles.error}>Please enter a netid</p>}
         </div>
@@ -122,7 +122,7 @@ const RiderModalInfo = ({
             type="text"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
             className={styles.firstRow}
-            aria-required={true}
+            aria-required="true"
           />
           {errors.phoneNumber && (
             <p className={styles.error}>Please enter a phone number</p>
@@ -134,7 +134,7 @@ const RiderModalInfo = ({
           </Label>
           <select
             name="needs"
-            aria-required={true}
+            aria-required="true"
             ref={register({ required: true })}
           >
             {Object.values(Accessibility).map((value, index) => {
@@ -160,7 +160,7 @@ const RiderModalInfo = ({
             id="address"
             name="address"
             type="text"
-            aria-required={true}
+            aria-required="true"
             ref={register({
               required: true,
               pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
@@ -181,7 +181,7 @@ const RiderModalInfo = ({
                 id="joinDate"
                 type="date"
                 name="joinDate"
-                aria-required={true}
+                aria-required="true"
                 ref={register({ required: true })}
                 disabled={isStudentEditing}
                 className={styles.riderDate}
@@ -199,7 +199,7 @@ const RiderModalInfo = ({
                 id="endDate"
                 type="date"
                 name="endDate"
-                aria-required={true}
+                aria-required="true"
                 ref={register({
                   required: true,
                   validate: (endDate) => {

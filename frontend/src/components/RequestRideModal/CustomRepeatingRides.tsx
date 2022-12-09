@@ -62,7 +62,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
             aria-labelledby={`${label[0]} repeatDays`}
             name={day}
             type="button"
-            aria-required={true}
+            aria-required="true"
             ref={register({
               required: true,
               validate: () => dayClicked(),

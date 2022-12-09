@@ -21,7 +21,7 @@ const StartDate = ({ existingDate }: StartDateProps) => {
         name="startDate"
         defaultValue={existingDate}
         ref={register({ required: true })}
-        aria-required={true}
+        aria-required="true"
       />
     </div>
   );
