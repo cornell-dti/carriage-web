@@ -7,6 +7,10 @@ import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 
 const Riders = () => {
+  React.useEffect(() => {
+    document.title = 'Students - Carriage';
+  });
+
   const [searchName, setSearchName] = useState<string>('');
   return (
     <main id="main">

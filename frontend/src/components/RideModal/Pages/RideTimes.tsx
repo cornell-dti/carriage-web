@@ -100,6 +100,7 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
           id="endDate"
           type="date"
           name="endDate"
+          aria-required="true"
           ref={register({
             required: true,
             validate: (endDate) => {
@@ -158,6 +159,7 @@ const RideTimesPage = ({
               id="date"
               type="date"
               name="date"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: (date) => {
@@ -182,6 +184,7 @@ const RideTimesPage = ({
               id="repeats"
               name="repeats"
               ref={register({ required: true })}
+              aria-required="true"
               className={styles.select}
             >
               {Object.values(RepeatValues).map((repeatValue) => (
@@ -201,6 +204,7 @@ const RideTimesPage = ({
               id="pickupTime"
               type="time"
               name="pickupTime"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: (pickupTime) => {
@@ -223,6 +227,7 @@ const RideTimesPage = ({
               id="dropoffTime"
               type="time"
               name="dropoffTime"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: (dropoffTime) => {

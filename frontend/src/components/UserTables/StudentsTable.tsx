@@ -18,10 +18,11 @@ type UsageType = {
 type studentTableProps = {
   searchName: string;
 };
+
 const StudentsTable = ({ searchName }: studentTableProps) => {
   const { riders } = useRiders();
   const { withDefaults } = useReq();
-  const colSizes = [1, 0.75, 0.75, 1, 1.25, 1];
+  const colSizes = [1, 0.75, 0.75, 1, 1.25, 1, 1, 1];
   const headers = [
     'Name / NetId',
     'Number',
@@ -29,11 +30,14 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
     'Date',
     'Usage',
     'Disability',
+    'Activity',
+    '',
   ];
   const [usage, setUsage] = useState<UsageType>({});
+  const [filter, setFilter] = useState(false);
 
   useEffect(() => {
-    fetch('/api/riders/usage', withDefaults())
+    fetch('/api/riders/', withDefaults())
       .then((res) => res.json())
       .then((data) => setUsage(data));
   }, [withDefaults]);
@@ -63,15 +67,38 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
     moment(date).format('MM/DD/YYYY');
 
   return (
-    <Table>
-      <Row header colSizes={colSizes} data={headers} />
-      {riders
-        .filter((r) =>
-          (r.firstName + ' ' + r.lastName)
-            .toLowerCase()
-            .includes((searchName + '').toLowerCase())
-        )
-        .map((r) => {
+    <>
+      <label>
+        <input
+          type="checkbox"
+          checked={filter}
+          onChange={() => setFilter(!filter)}
+          style={{
+            marginLeft: '2rem',
+            marginTop: '1rem',
+            marginBottom: '1rem',
+            marginRight: '0.75rem',
+          }}
+        />
+        Show inactive students
+      </label>
+      <Table>
+        <Row header colSizes={colSizes} data={headers} />
+
+        {(filter
+          ? riders.filter(
+              (r) =>
+                r.active === false &&
+                (r.firstName + ' ' + r.lastName)
+                  .toLowerCase()
+                  .includes((searchName + '').toLowerCase())
+            )
+          : riders.filter((r) =>
+              (r.firstName + ' ' + r.lastName)
+                .toLowerCase()
+                .includes((searchName + '').toLowerCase())
+            )
+        ).map((r) => {
           const {
             id,
             firstName,
@@ -106,6 +133,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
           const location = {
             pathname: `/riders/${r.id}`,
           };
+          const isActive = active ? 'Active' : 'Inactive';
           const data = [
             nameNetId,
             phone,
@@ -113,6 +141,8 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             joinEndDate,
             usageData,
             disability,
+            isActive,
+            'Edit',
           ];
           return (
             <Link
@@ -132,7 +162,8 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             </Link>
           );
         })}
-    </Table>
+      </Table>
+    </>
   );
 };
 

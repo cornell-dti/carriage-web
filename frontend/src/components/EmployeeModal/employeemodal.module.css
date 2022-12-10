@@ -77,7 +77,6 @@
   cursor: pointer;
   background-color: white;
   border: none;
-  outline: none;
 }
 
 .addAvailabilityInput:hover {
@@ -117,7 +116,6 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  outline: none;
   margin: 0 0.125rem;
   background-color: rgba(0, 0, 0, 0.1);
 }

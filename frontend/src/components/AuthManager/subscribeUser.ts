@@ -15,7 +15,7 @@ const convertedVapidKey = urlBase64ToUint8Array(
   process.env.REACT_APP_PUBLIC_VAPID_KEY!
 );
 
-type WithDefaultsType = (options?: RequestInit | undefined) => RequestInit;
+type WithDefaultsType = (options?: RequestInit) => RequestInit;
 
 const sendSubscription = (
   userType: string,
