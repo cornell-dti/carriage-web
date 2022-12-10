@@ -64,7 +64,6 @@ const RiderModalInfo = ({
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
 
-  console.log();
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
