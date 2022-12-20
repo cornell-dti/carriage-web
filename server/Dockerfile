@@ -14,7 +14,7 @@ ENV ESLINT_NO_DEV_ERRORS=true
 
 # install pm2 for prod server
 RUN npm install pm2 -g
-RUN pm2 install typescript
+RUN npm install typescript
 
 # install dependencies
 COPY package*.json ./
@@ -29,4 +29,4 @@ RUN npm run tsc
 EXPOSE 3001
 
 # run
-CMD ["pm2-runtime", "app.ts"]
+CMD ["nodemon", "--exec", "ts-node", "app.ts"]

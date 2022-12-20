@@ -23,7 +23,7 @@ ENV ESLINT_NO_DEV_ERRORS=true
 COPY . ./
 RUN npm install 
 RUN npm run build
-
+COPY . ./
 # or, just serve the app lol
 EXPOSE 3000
 RUN npm install -g serve
