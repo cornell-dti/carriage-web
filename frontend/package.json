@@ -34,6 +34,9 @@
     "reactjs-popup": "^2.0.4",
     "typescript": "^4.8.4"
   },
+  "browser": {
+    "crypto": false
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
