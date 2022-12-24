@@ -112,12 +112,5 @@ This is the script that is run when the docker container is started. It will cle
     - [ ] The file [tsconfig.base.json](../tsconfig.base.json) is currently modified with the extra line `"checkJs": false` to disable type checking. 
 - [ ] ESLint is currently disabled in both Dockerfiles. The code itself is not up to standards, so we need to fix the code before we can enable ESLint.
     - [ ] The main culprit is `useGoogleLogin` in [frontend/src/components/AuthManager/AuthManager.tsx](../frontend/src/components/AuthManager/AuthManager.tsx). This is because the `useGoogleLogin` function is named like a hook, but it is not a hook. ESLint is complaining about this.
-- [ ] Crypto.js is somehow broken and cannot be built correctly. The following lines are added to [frontend/package.json](../frontend/package.json) to fix this:
-    ```
-    "browser": {
-        "crypto": false
-    },
-    ```
-    This is a temporary fix and might break certain aspects of the app. We need to find a better solution.
 - [ ] The backend is currently executed using `nodemon`, which is a development tool. This is because the compiled typescript has the following error: `Error: Vapid subject is not a url or mailto url`, so we cannot serve the built version. 
 
