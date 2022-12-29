@@ -19,27 +19,23 @@ router.get('/:id', validateUser('User'), (req, res) => {
 // Get and query all locations
 router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
-  if (false) {
-    // originally: if query === {}
-    db.getAll(res, Location, tableName);
-  } else {
-    const { active } = query;
-    let condition = new Condition();
-    if (active) {
-      if (active === 'true') {
-        condition = condition
-          .where('tag')
-          .not()
-          .eq(Tag.INACTIVE)
-          .where('tag')
-          .not()
-          .eq(Tag.CUSTOM);
-      } else {
-        condition = condition.where('tag').eq(Tag.INACTIVE);
-      }
+
+  const { active } = query;
+  let condition = new Condition();
+  if (active) {
+    if (active === 'true') {
+      condition = condition
+        .where('tag')
+        .not()
+        .eq(Tag.INACTIVE)
+        .where('tag')
+        .not()
+        .eq(Tag.CUSTOM);
+    } else {
+      condition = condition.where('tag').eq(Tag.INACTIVE);
     }
-    db.scan(res, Location, condition);
   }
+  db.scan(res, Location, condition);
 });
 
 // Put a location in Locations table
