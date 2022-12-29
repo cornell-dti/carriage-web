@@ -25,6 +25,6 @@ RUN npm run build
 COPY . .
 
 # or, just serve the app temporarily
-# EXPOSE 3000
-# RUN npm install -g serve
-# CMD ["serve", "-s", "build"]
+EXPOSE 3000
+RUN npm install -g serve
+CMD ["serve", "-s", "build"]

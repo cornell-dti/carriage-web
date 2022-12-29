@@ -2,7 +2,9 @@
 Setting up NGINX with ENV variables on top of SSL is quite difficult. That's why there are multiple bash scripts located here for convenience. 
 
 ## Section 0: Setting up the environment variables
-Edit the `.env` files. Note: The `DOMAIN` and `EMAIL` variables are new. The `DOMAIN` variable is the domain that the app will be deployed to. The `EMAIL` variable is the email that will be used for the SSL certificate.
+Edit the `.env` files. 
+
+Note: The `DOMAIN` and `EMAIL` variables are new. The `DOMAIN` variable is the domain that the app will be deployed to. The `EMAIL` variable is the email that will be used for the SSL certificate.
 
 Ultimately...
 
@@ -32,6 +34,7 @@ PUBLIC_VAPID_KEY
 PRIVATE_VAPID_KEY
 IOS_DRIVER_ARN
 IOS_RIDER_ARN
+WEB_PUSH_CONTACT
 ANDROID_ARN
 HOSTNAME
 REACT_APP_CLIENT_ID
@@ -39,6 +42,8 @@ REACT_APP_PUBLIC_VAPID_KEYnt21nakk
 REACT_APP_ENCRYPTION_KEY
 DOMAIN
 EMAIL
+
+If anything is missing, contact the current developers!
 
 ## Section 1: First time deploying the app
 The first time the app is set up with a new domain, we need to make sure that the domain is updated in the `.env` file. Then, we need to run the following commands:

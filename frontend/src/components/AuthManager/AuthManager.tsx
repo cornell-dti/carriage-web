@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  useGoogleLogin,
+  useGoogleLogin as googleAuth,
   googleLogout,
   TokenResponse,
 } from '@react-oauth/google';
@@ -97,7 +97,7 @@ const AuthManager = () => {
   }
 
   function GoogleAuth(isAdmin: boolean) {
-    return useGoogleLogin({
+    return googleAuth({
       flow: 'implicit',
       onSuccess: async (tokenResponse: TokenResponse) => {
         const userInfo = await fetch(

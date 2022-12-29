@@ -18,12 +18,7 @@ After cloning the repository, run:
 `npm run start:frontend`
 This will start an instance running locally.
 
-Alternatively, to use Docker
-Build: `docker compose build`
-Run: `docker compose --env-file .env up`
-If there's an error, try running the npm install commands above first.
-
-For Deployment purposes, see `/deployment`.
+For Deployment and other Docker-related purposes, see `/deployment`.
 
 ## About
 
