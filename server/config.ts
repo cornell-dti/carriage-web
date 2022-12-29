@@ -10,7 +10,7 @@ export default {
 };
 
 export const webpushValues = {
-  contact: process.env.EMAIL, // originally process.env.WEB_PUSH_CONTACT
+  contact: process.env.EMAIL!, // originally process.env.WEB_PUSH_CONTACT
   public: process.env.PUBLIC_VAPID_KEY!,
   private: process.env.PRIVATE_VAPID_KEY!,
 };
