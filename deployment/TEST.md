@@ -39,3 +39,6 @@ Finally, run the following commands:
 Build: `docker compose --env-file .env build`
 
 Run: `docker compose --env-file .env up`
+
+## Section 6: KNOWN ISSUES
+- [ ] Try testing it with the instructions above, and then logging in. It doesn't seem to work.

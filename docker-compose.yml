@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   app:
+    container_name: app
     build: ./server
     volumes:
       - ./server:/usr/src/server
@@ -22,8 +23,6 @@ services:
       - HOSTNAME=${HOSTNAME}
       - USE_HOSTNAME=false
     restart: always
-    networks:
-      - networkone
   frontend:
     build: ./frontend
     ports:
@@ -40,8 +39,6 @@ services:
       - ./frontend/certbot:/etc/letsencrypt
       - ./frontend/certbot/www:/var/www/certbot/
       - build-data:/usr/src/frontend/build
-    networks:
-      - networkone
   # web:
   #   image: nginx:stable-alpine
   #   ports:
@@ -58,16 +55,10 @@ services:
   #   depends_on:
   #     - frontend
   #   restart: always
-  #   networks:
-  #     - networkone
   certbot:
     image: certbot/certbot:latest
     volumes:
       - ./frontend/certbot:/etc/letsencrypt
       - ./frontend/certbot/www:/var/www/certbot/
-    networks:
-      - networkone
-networks:
-  networkone:
 volumes:
   build-data:
