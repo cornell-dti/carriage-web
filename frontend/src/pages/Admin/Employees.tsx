@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
+import { Button } from '../../components/FormElements/FormElements';
 
 const Employees = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     document.title = 'Employees - Carriage';
   });
@@ -14,7 +17,8 @@ const Employees = () => {
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Employees</h1>
         <div className={styles.rightSection}>
-          <EmployeeModal />
+          <Button onClick={() => setIsOpen(true)}>+ Add an employee</Button>
+          <EmployeeModal isOpen={isOpen} setIsOpen={setIsOpen} />
           <Notification />
         </div>
       </div>
