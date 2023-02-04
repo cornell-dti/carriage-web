@@ -235,7 +235,6 @@ const EmployeeModal = ({
       console.log('Undefined file upload');
     }
   }
-
   return (
     <>
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
