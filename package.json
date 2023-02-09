@@ -22,7 +22,7 @@
   "scripts": {
     "heroku-postbuild": "npm run build:frontend && npm run build:server",
     "start:frontend": "cd frontend && npm run start",
-    "start:server": "cd server && npm run start",
+    "start:server": "cd server && npm run dev",
     "build:frontend": "cd frontend && npm run build",
     "build:server": "cd server && npm run tsc",
     "install:frontend": "cd frontend && npm install",

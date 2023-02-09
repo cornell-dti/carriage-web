@@ -32,7 +32,8 @@
     "web-push": "^3.4.4"
   },
   "scripts": {
-    "start": "nodemon --exec \"ts-node\" app.ts",
+    "start": "ts-node index.ts",
+    "dev": "nodemon --exec \"ts-node\" app.ts",
     "tsc": "tsc",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
