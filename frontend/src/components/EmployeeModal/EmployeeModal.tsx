@@ -27,6 +27,8 @@ type EmployeeModalProps = {
     startDate?: string;
     photoLink?: string;
   };
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
 type AdminData = {
@@ -45,9 +47,12 @@ type DriverData = {
   admin: boolean;
 };
 
-const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
+const EmployeeModal = ({
+  existingEmployee,
+  isOpen,
+  setIsOpen,
+}: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
@@ -58,10 +63,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => {
     methods.clearErrors();
@@ -234,21 +235,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       console.log('Undefined file upload');
     }
   }
-
   return (
     <>
-      {existingEmployee ? (
-        <input
-          type="image"
-          className={styles.edit}
-          alt="edit"
-          src={edit}
-          onClick={openModal}
-        />
-      ) : (
-        <Button onClick={openModal}>+ Add an employee</Button>
-      )}
-
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}

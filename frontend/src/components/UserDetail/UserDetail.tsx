@@ -4,7 +4,7 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
-import { red_trash } from '../../icons/other/index';
+import { red_trash, edit } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';
 import { Rider } from '../../types/index';
@@ -71,6 +71,8 @@ const UserDetail = ({
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
+  const [isEmployeeOpen, setEmployeeOpen] = useState(false);
+  const [isRiderOpen, setRiderOpen] = useState(false);
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
   const { withDefaults } = useReq();
@@ -101,7 +103,6 @@ const UserDetail = ({
       });
     }
   };
-
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
@@ -145,10 +146,27 @@ const UserDetail = ({
                   photoLink: employee.photoLink,
                   startDate: employee.startDate,
                 }}
+                isOpen={isEmployeeOpen}
+                setIsOpen={setEmployeeOpen}
               />
             ) : (
-              <RiderModal existingRider={rider} isRiderWeb={isRider} />
+              <RiderModal
+                existingRider={rider}
+                isRiderWeb={isRider}
+                isOpen={isRiderOpen}
+                setIsOpen={setRiderOpen}
+              />
             )}
+
+            <button
+              className={styles.edit}
+              onClick={() =>
+                employee ? setEmployeeOpen(true) : setRiderOpen(true)
+              }
+            >
+              <img className={styles.editIcon} alt="edit" src={edit} />
+            </button>
+
             <button
               className={styles.deleteButton}
               onClick={openConfirmationModal}
