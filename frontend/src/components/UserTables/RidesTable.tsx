@@ -23,6 +23,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
 
+  console.log(rides);
+
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
     '',
@@ -61,6 +63,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             minute: '2-digit',
           });
           const { rider } = ride;
+          console.log('YEE');
+          console.log(ride);
           const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
           const needs = rider ? rider.accessibility || '' : '';
           const pickupLocation = ride.startLocation.name;

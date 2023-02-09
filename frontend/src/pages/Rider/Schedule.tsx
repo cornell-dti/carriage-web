@@ -50,10 +50,7 @@ const Schedule = ({ email }: ScheduleProps) => {
     refreshRides();
   }, [refreshRides, scheduledRides, unscheduledRides, setRides]);
 
-  console.log(rides);
   const sorted = rides?.sort(compRides);
-  console.log('sorted');
-  console.log(sorted);
   useEffect(() => {
     const filteredRides = sorted?.filter((r) => {
       const end = new Date(r.endTime);
@@ -81,11 +78,6 @@ const Schedule = ({ email }: ScheduleProps) => {
     setFilteredRides,
     setRides,
   ]);
-  console.log('Filtered');
-  console.log(filteredRides);
-  filteredRides?.forEach((r) =>
-    console.log(new Date(r.endTime).toLocaleString())
-  );
 
   return (
     <main id="main">
