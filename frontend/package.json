@@ -16,6 +16,7 @@
     "@types/react-router-hash-link": "^1.2.1",
     "addresser": "^1.1.19",
     "classnames": "^2.3.2",
+    "crypto-js": "^4.1.1",
     "focus-trap-react": "^8.5.0",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
@@ -66,7 +67,7 @@
     "deployed-backend": "https://carriage-web.herokuapp.com"
   },
   "devDependencies": {
-    "@types/cryptr": "^4.0.1",
+    "@types/crypto-js": "^4.1.1",
     "eslint-config-prettier": "^8.3.0"
   }
 }
