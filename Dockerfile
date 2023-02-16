@@ -11,9 +11,6 @@ COPY . .
 
 RUN npm install
 
-# Copy .env file for the frontend
-COPY frontend/.env /app/frontend/.env
-
 # Install dependencies for the frontend and build the app
 WORKDIR /app/frontend
 RUN npm install && npm run build
