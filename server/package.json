@@ -32,7 +32,7 @@
     "web-push": "^3.4.4"
   },
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node app.ts",
     "dev": "nodemon --exec \"ts-node\" app.ts",
     "tsc": "tsc",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",

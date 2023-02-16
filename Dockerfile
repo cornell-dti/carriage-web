@@ -1,5 +1,5 @@
 # Base image
-FROM node:14-alpine
+FROM node:16-alpine
 
 # Create a directory for the app
 WORKDIR /app
@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy the frontend and server directories to the app directory
 COPY frontend /app/frontend
 COPY server /app/server
+COPY . .
+
+RUN npm install
 
 # Copy .env file for the frontend
 COPY frontend/.env /app/frontend/.env
@@ -19,8 +22,8 @@ RUN npm install && npm run build
 WORKDIR /app/server
 RUN npm install
 
-# Expose port 3000 for the server
-EXPOSE 3000
+# Expose port 3001 for the server
+EXPOSE 3001
 
 # Start the server
 CMD ["npm", "start"]
