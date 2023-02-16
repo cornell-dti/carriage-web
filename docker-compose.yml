@@ -1,33 +1,13 @@
 version: '3'
+
 services:
-  frontend:
-    build:
-      context: ./frontend
+  carriage:
+    build: .
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - server/.env
+      - frontend/.env
     ports:
       - '3000:3000'
-    environment:
-      - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
-      - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
-      - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
-      - DOMAIN=${DOMAIN}
-
-  server:
-    build:
-      context: ./server
-    ports:
-      - '3001:3001'
-    depends_on:
-      - frontend
-    environment:
-      - DEBUG=True
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - JWT_SECRET=${JWT_SECRET}
-      - PUBLIC_VAPID_KEY=${PUBLIC_VAPID_KEY}
-      - PRIVATE_VAPID_KEY=${PRIVATE_VAPID_KEY}
-      - WEB_PUSH_CONTACT=${WEB_PUSH_CONTACT}
-      - IOS_DRIVER_ARN=${IOS_DRIVER_ARN}
-      - IOS_RIDER_ARN=${IOS_RIDER_ARN}
-      - ANDROID_ARN=${ANDROID_ARN}
-      - HOSTNAME=${HOSTNAME}
-      - USE_HOSTNAME=false
+    restart: always
