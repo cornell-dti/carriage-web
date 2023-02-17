@@ -15,7 +15,7 @@ const rider: RiderType = {
   lastName: 'Rider',
   phoneNumber: '',
   email: '',
-  accessibility: "",
+  accessibility: '',
   joinDate: '',
   endDate: '',
   address: '',
