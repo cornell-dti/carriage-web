@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "@react-oauth/google": "^0.4.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.2.2",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
@@ -68,7 +69,6 @@
     "deployed-backend": "https://carriage-web.herokuapp.com"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
     "eslint-config-prettier": "^8.3.0"
   }
 }
