@@ -32,9 +32,9 @@
     "web-push": "^3.4.4"
   },
   "scripts": {
-    "start": "ts-node app.ts",
+    "build": "tsc",
+    "start": "node build/app.js",
     "dev": "nodemon --exec \"ts-node\" app.ts",
-    "tsc": "tsc",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"

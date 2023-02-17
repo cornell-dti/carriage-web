@@ -4,20 +4,24 @@ FROM node:16-alpine
 # Create a directory for the app
 WORKDIR /app
 
+# Copy package.jsons first to install
+COPY package.json /app/package.json
+COPY frontend/package.json /app/frontend/package.json
+COPY server/package.json /app/server/package.json
+RUN npm install
+
 # Copy the frontend and server directories to the app directory
 COPY frontend /app/frontend
 COPY server /app/server
 COPY . .
 
-RUN npm install
-
 # Install dependencies for the frontend and build the app
 WORKDIR /app/frontend
-RUN npm install && npm run build
+RUN npm run build
 
 # Install dependencies for the server
 WORKDIR /app/server
-RUN npm install
+RUN npm run build
 
 # Expose port 3001 for the server
 EXPOSE 3001
