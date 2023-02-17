@@ -34,8 +34,8 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "env-cmd -f ../.env react-scripts start",
-    "build": "env-cmd -f ../.env react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
