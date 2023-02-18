@@ -5,8 +5,11 @@ import RiderModal from '../../components/Modal/RiderModal';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
+import { Button } from '../../components/FormElements/FormElements';
 
 const Riders = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   React.useEffect(() => {
     document.title = 'Students - Carriage';
   });
@@ -18,7 +21,13 @@ const Riders = () => {
         <h1 className={styles.header}>Students</h1>
         <div className={styles.rightSection}>
           <CopyButton />
-          <RiderModal />
+          <Button
+            className={styles.addRiderButton}
+            onClick={() => setIsOpen(true)}
+          >
+            + Add Student
+          </Button>
+          <RiderModal isOpen={isOpen} setIsOpen={setIsOpen} />
           <Notification />
         </div>
       </div>

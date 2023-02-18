@@ -102,6 +102,7 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
           id="endDate"
           type="date"
           name="endDate"
+          aria-required="true"
           ref={register({
             required: true,
             validate: (endDate) => {
@@ -164,6 +165,7 @@ const RideTimesPage = ({
               type="date"
               name="date"
               className="newDate"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: () => {
@@ -184,7 +186,9 @@ const RideTimesPage = ({
               <p className={styles.error}>Please enter a date</p>
             )}
             {errors.date?.type === 'validate' && (
-              <p className={styles.error}>Invalid date</p>
+              <p className={styles.error}>
+                Please enter a valid start date (No rides on weekends)
+              </p>
             )}
           </div>
           <div className={styles.col2}>
@@ -193,6 +197,7 @@ const RideTimesPage = ({
               id="repeats"
               name="repeats"
               ref={register({ required: true })}
+              aria-required="true"
               className={styles.select}
             >
               {Object.values(RepeatValues).map((repeatValue) => (
@@ -212,6 +217,7 @@ const RideTimesPage = ({
               id="pickupTime"
               type="time"
               name="pickupTime"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: (pickupTime) => {
@@ -222,7 +228,7 @@ const RideTimesPage = ({
               })}
             />
             {errors.pickupTime?.type === 'required' && (
-              <p className={styles.error}>Please enter a time</p>
+              <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.pickupTime?.type === 'validate' && (
               <p className={styles.error}>Invalid time</p>
@@ -234,6 +240,7 @@ const RideTimesPage = ({
               id="dropoffTime"
               type="time"
               name="dropoffTime"
+              aria-required="true"
               ref={register({
                 required: true,
                 validate: (dropoffTime) => {
@@ -245,7 +252,7 @@ const RideTimesPage = ({
               })}
             />
             {errors.dropoffTime?.type === 'required' && (
-              <p className={styles.error}>Please enter a time</p>
+              <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
               <p className={styles.error}>Invalid time</p>

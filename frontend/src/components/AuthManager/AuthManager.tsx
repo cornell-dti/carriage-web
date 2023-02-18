@@ -16,6 +16,7 @@ import ReqContext from '../../context/req';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
+import Home from '../../pages/Admin/Home';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
@@ -236,7 +237,7 @@ const AuthManager = () => {
 
   const SiteContent = () => {
     const { visible, message, toastType } = useToast();
-
+    const localUserType = localStorage.getItem('userType');
     return (
       <>
         {visible &&
@@ -251,7 +252,11 @@ const AuthManager = () => {
           <ReqContext.Provider value={{ withDefaults }}>
             <SubscribeWrapper userId={id}>
               <Switch>
-                <Route exact path="/" component={LoginPage} />
+                {localUserType === 'Admin' ? (
+                  <PrivateRoute exact path="/" component={AdminRoutes} />
+                ) : (
+                  <PrivateRoute forRider path="/" component={RiderRoutes} />
+                )}
                 <PrivateRoute path="/admin" component={AdminRoutes} />
                 <PrivateRoute forRider path="/rider" component={RiderRoutes} />
                 <Route path="*">

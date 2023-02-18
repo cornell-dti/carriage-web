@@ -29,6 +29,7 @@ const EmployeeInfo = ({
           type="text"
           defaultValue={firstName}
           className={cn(styles.input)}
+          aria-required="true"
           ref={register({ required: true })}
         />
         {errors.firstName && (
@@ -43,6 +44,7 @@ const EmployeeInfo = ({
           type="text"
           defaultValue={lastName}
           className={cn(styles.input)}
+          aria-required="true"
           ref={register({ required: true })}
         />
         {errors.lastName && (
@@ -57,6 +59,7 @@ const EmployeeInfo = ({
           type="text"
           defaultValue={netId}
           className={cn(styles.input)}
+          aria-required="true"
           ref={register({ required: true })}
         />
         {errors.netid && (
@@ -73,6 +76,7 @@ const EmployeeInfo = ({
           defaultValue={phone}
           min={10}
           max={10}
+          aria-required="true"
           className={cn(styles.input)}
           ref={register({
             required: true,
