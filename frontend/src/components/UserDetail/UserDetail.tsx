@@ -103,12 +103,11 @@ const UserDetail = ({
       });
     }
   };
-
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
         <Toast
-          message={`Rider ${rider.active ? 'deactivated' : 'activated'}.`}
+          message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
           toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
         />
       ) : null}
