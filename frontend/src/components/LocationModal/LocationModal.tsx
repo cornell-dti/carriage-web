@@ -1,5 +1,5 @@
 import { parseAddress } from 'addresser';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useReq } from '../../context/req';
@@ -84,10 +84,10 @@ const LocationModal = ({
 
     if (!existingLocation && onAddLocation) {
       onAddLocation(newLocation);
-      showToast('Location has been added.');
+      showToast('Location has been added.', ToastStatus.SUCCESS);
     } else if (existingLocation && onEditLocation) {
       onEditLocation(newLocation);
-      showToast('Location has been updated.');
+      showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
     closeModal();
   };
@@ -112,6 +112,7 @@ const LocationModal = ({
               defaultValue={existingLocation?.name}
               className={styles.input}
               ref={register({ required: true })}
+              aria-required="true"
             />
             {name && <p className={styles.errorMsg}>Please enter a name</p>}
             <Label htmlFor="address">Address</Label>
@@ -121,6 +122,7 @@ const LocationModal = ({
               id="address"
               defaultValue={existingLocation?.address}
               className={styles.input}
+              aria-required="true"
               ref={register({ required: true })}
             />
             {address && <p className={styles.errorMsg}>{address.message}</p>}
@@ -132,6 +134,7 @@ const LocationModal = ({
               defaultValue={existingLocation?.info}
               className={styles.input}
               ref={register({ required: true })}
+              aria-required="true"
             />
             {info && (
               <p className={styles.errorMsg}>
@@ -145,6 +148,7 @@ const LocationModal = ({
               defaultValue={existingLocation?.tag}
               ref={register({ required: true })}
               className={styles.styledSelect}
+              aria-required="true"
             >
               {Object.values(Tag).map((value) =>
                 value === 'custom' ? null : (

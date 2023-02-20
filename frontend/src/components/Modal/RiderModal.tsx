@@ -9,25 +9,27 @@ import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type RiderModalProps = {
   existingRider?: Rider;
   isRiderWeb?: boolean;
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
-const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
+const RiderModal = ({
+  existingRider,
+  isRiderWeb,
+  isOpen,
+  setIsOpen,
+}: RiderModalProps) => {
   const { refreshUser } = useContext(AuthContext);
   const [formData, setFormData] = useState<ObjectType>({});
-  const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
   const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => setIsOpen(false);
 
@@ -52,7 +54,8 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
       ).then(() => {
         refreshRiders();
         showToast(
-          `The student has been ${!existingRider ? 'added' : 'edited'}`
+          `The student has been ${!existingRider ? 'added' : 'edited'}`,
+          ToastStatus.SUCCESS
         );
         if (isRiderWeb) {
           refreshUser();
@@ -72,15 +75,6 @@ const RiderModal = ({ existingRider, isRiderWeb }: RiderModalProps) => {
 
   return (
     <>
-      {!existingRider ? (
-        <Button className={styles.addRiderButton} onClick={openModal}>
-          + Add Student
-        </Button>
-      ) : (
-        <button className={styles.editRiderButton} onClick={openModal}>
-          <img className={styles.editIcon} alt="edit" src={edit} />
-        </button>
-      )}
       <Modal
         title={!existingRider ? 'Add a Student' : 'Edit Student'}
         isOpen={isOpen}

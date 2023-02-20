@@ -12,7 +12,7 @@ import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { edit } from '../../icons/other/index';
-import { useToast } from '../../context/toastContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -27,6 +27,8 @@ type EmployeeModalProps = {
     startDate?: string;
     photoLink?: string;
   };
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
 type AdminData = {
@@ -45,9 +47,12 @@ type DriverData = {
   admin: boolean;
 };
 
-const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
+const EmployeeModal = ({
+  existingEmployee,
+  isOpen,
+  setIsOpen,
+}: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
@@ -58,10 +63,6 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
 
   const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
   const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   const closeModal = () => {
     methods.clearErrors();
@@ -119,7 +120,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
         })
       ).then(() => {
         refresh();
-        showToast('The employee has been added.');
+        showToast('The employee has been added.', ToastStatus.SUCCESS);
       });
     } else {
       const createdEmployee = await fetch(
@@ -149,7 +150,7 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       })
     ).then((res) => {
       refresh();
-      showToast('The employee has been edited.');
+      showToast('The employee has been edited.', ToastStatus.SUCCESS);
       return res.json();
     });
     if (imageBase64 !== '') {
@@ -234,21 +235,8 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
       console.log('Undefined file upload');
     }
   }
-
   return (
     <>
-      {existingEmployee ? (
-        <input
-          type="image"
-          className={styles.edit}
-          alt="edit"
-          src={edit}
-          onClick={openModal}
-        />
-      ) : (
-        <Button onClick={openModal}>+ Add an employee</Button>
-      )}
-
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <Upload
           imageChange={updateBase64}
@@ -262,12 +250,12 @@ const EmployeeModal = ({ existingEmployee }: EmployeeModalProps) => {
               netId={existingEmployee?.netId}
               phone={existingEmployee?.phone}
             />
-            {selectedRole === 'admin' ? null : (
-              <StartDate existingDate={existingEmployee?.startDate} />
-            )}
+
+            <StartDate existingDate={existingEmployee?.startDate} />
+
             <WorkingHours
               existingAvailability={existingEmployee?.availability}
-              hide={selectedRole === 'admin'}
+              hide={false}
             />
             <RoleSelector
               selectedRole={selectedRole}

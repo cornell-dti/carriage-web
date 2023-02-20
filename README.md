@@ -2,10 +2,21 @@
 
 #### Contents
 
-- [Carriage](#carriage)
-      - [Contents](#contents)
+- [Carriage](#carriage) - [Contents](#contents)
   - [About](#about)
   - [Contributors:](#contributors)
+
+## Docs
+
+Carriage documentation is located at our [Notion](https://dti-carriage.notion.site/DTI-Carriage-Wiki-e10ea27fa06f4cbbb3fcd57873d331e6).
+
+Want to run this locally? From our [Useful Commands page](https://dti-carriage.notion.site/Useful-Commands-b20422d052b444d396b04a6df4debc07).
+After cloning the repository, run:
+`npm run install:server`
+`npm run install:frontend`
+`npm run start:server`
+`npm run start:frontend`
+This will start an instance running locally.
 
 ## About
 
@@ -24,10 +35,14 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Zack Ashen - Software Developer
 - Tucker Stanley - Software Developer
 - Justin Kang - Software Developer
-- Michael Torku - Software Developer
+- Michael Torku - Technical Project Manager
 - Austin Wu - Software Developer
 - Li Fengyu - Software Developer
 - Harrison Chin - Software Developer
+- Andrew Choi - Software Developer
+- Rohit Valiveti - Software Developer
+- Daniel Wei - Technical Project Manager
+- Pratyush Sudhakar - Software Developer
 
 **Past Contributors**
 

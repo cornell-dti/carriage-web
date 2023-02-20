@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import cn from 'classnames';
-import { GoogleLogout } from 'react-google-login';
 import {
   home,
   drivers,
@@ -40,13 +39,27 @@ const Sidebar = ({ type, children }: SidebarProps) => {
 
   useEffect(() => {
     const { id } = authContext;
-    fetch(`/api/admins/${id}`, reqContext.withDefaults())
-      .then((res) => res.json())
-      .then((data) => componentMounted.current && setProfile(data.photoLink));
+    if (isAdmin) {
+      fetch(`/api/admins/${id}`, reqContext.withDefaults())
+        .then((res) => res.json())
+        .then(
+          (data) => componentMounted.current && setProfile(data.data.photoLink)
+        );
 
-    return () => {
-      componentMounted.current = false;
-    };
+      return () => {
+        componentMounted.current = false;
+      };
+    } else {
+      fetch(`/api/riders/${id}`, reqContext.withDefaults())
+        .then((res) => res.json())
+        .then(
+          (data) => componentMounted.current && setProfile(data.data.photoLink)
+        );
+
+      return () => {
+        componentMounted.current = false;
+      };
+    }
   }, [authContext, authContext.id, reqContext]);
 
   const adminMenu: MenuItem[] = [
@@ -72,23 +85,25 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <Link
-                key={path}
-                onClick={() => setSelected(path)}
-                className={styles.icon}
-                to={path}
-              >
-                <div
-                  className={
-                    path === selected
-                      ? cn(styles.selected, styles.circle)
-                      : styles.circle
-                  }
+              <p className={styles.caption}>
+                <Link
+                  key={path}
+                  onClick={() => setSelected(path)}
+                  className={styles.icon}
+                  to={path}
                 >
-                  <img alt={''} src={icon} />
-                </div>
-              </Link>
-              <p className={styles.caption}>{caption}</p>
+                  <div
+                    className={
+                      path === selected
+                        ? cn(styles.selected, styles.circle)
+                        : styles.circle
+                    }
+                  >
+                    <img alt={'A sidebar button icon'} src={icon} />
+                  </div>
+                </Link>
+                {caption}
+              </p>
             </div>
           ))}
         </div>
@@ -97,22 +112,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             <img
               alt="profile_picture"
               className={styles.profile}
-              src={profile === '' || !profile ? blank : `https://${profile}`}
+              src={profile === '' || !profile ? blank : `${profile}`}
             />
           )}
           {profile !== '' && (
-            <GoogleLogout
-              onLogoutSuccess={authContext.logout}
-              clientId={clientId}
-              render={(renderProps) => (
-                <button
-                  onClick={renderProps.onClick}
-                  className={styles.logoutLink}
-                >
-                  Log out
-                </button>
-              )}
-            />
+            <button className={styles.logoutLink} onClick={authContext.logout}>
+              Log out
+            </button>
           )}
         </div>
       </nav>

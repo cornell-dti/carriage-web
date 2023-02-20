@@ -7,7 +7,7 @@ import { ObjectType, RepeatValues, Ride } from '../../types/index';
 import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
-import { useToast } from '../../context/toastContext';
+import { ToastStatus, useToast } from '../../context/toastContext';
 
 type RideModalProps = {
   open?: boolean;
@@ -207,7 +207,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
 
       setIsSubmitted(false);
       closeModal();
-      showToast(ride ? 'Ride edited.' : 'Ride added.');
+      showToast(ride ? 'Ride edited.' : 'Ride added.', ToastStatus.SUCCESS);
     }
   }, [closeModal, formData, isSubmitted, ride, withDefaults]);
 

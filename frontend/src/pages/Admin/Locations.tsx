@@ -12,6 +12,10 @@ const Locations = () => {
   const loc = useLocations().locations;
 
   useEffect(() => {
+    document.title = 'Locations - Carriage';
+  });
+
+  useEffect(() => {
     setLocations(loc);
   }, [loc]);
 

@@ -7,6 +7,7 @@ import RideModal from '../RideModal/RideModal';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
+import { trashbig } from '../../icons/other/index';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -20,6 +21,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(-1);
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(-1);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -60,7 +62,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           });
           const { rider } = ride;
           const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
-          const needs = rider ? (rider.accessibility || []).join(', ') : '';
+          const needs = rider ? rider.accessibility || '' : '';
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
@@ -111,21 +113,34 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             </Button>
           );
 
+          const deleteButton = (
+            <button
+              className={styles.deleteIcon}
+              onClick={() => {
+                setDeleteOpen(index);
+              }}
+            >
+              <img src={trashbig} alt="delete ride" />
+            </button>
+          );
+
           const valueEditAssign = {
             data: (
-              <>
+              <div className={styles.dataValues}>
                 {editButton}
                 {assignButton(false)}
-              </>
+                {deleteButton}
+              </div>
             ),
           };
 
           const valueEditReassign = {
             data: (
-              <>
+              <div className={styles.dataValues}>
                 {editButton}
                 {assignButton(true)}
-              </>
+                {deleteButton}
+              </div>
             ),
           };
 
@@ -164,15 +179,16 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             <>
               {hasButtons ? unscheduledRow() : scheduledRow()}
               <DeleteOrEditTypeModal
-                open={openDeleteOrEditModal === index}
-                onClose={() => setOpenDeleteOrEditModal(-1)}
+                open={deleteOpen === index}
+                onClose={() => setDeleteOpen(-1)}
+                ride={rides[index]}
+                deleting={true}
                 onNext={(single) => {
                   setOpenDeleteOrEditModal(-1);
                   setOpenEditModal(index);
                   setEditSingle(single);
                 }}
-                ride={rides[index]}
-                deleting={false}
+                isRider={false}
               />
               <AssignDriverModal
                 isOpen={openAssignModal === index}

@@ -16,9 +16,9 @@ export function getById(
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      data.populate().then((doc) => callback(doc));
+      callback(data.toJSON());
     } else {
-      data.populate().then((doc) => res.status(200).send(doc));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }
@@ -39,9 +39,9 @@ export function batchGet(
       } else if (!data) {
         res.status(400).send({ err: `items not found in ${table}` });
       } else if (callback) {
-        data.populate().then((doc) => callback(doc));
+        callback(data.toJSON());
       } else {
-        data.populate().then((doc) => res.status(200).send({ data: doc }));
+        res.status(200).send({ data: data.toJSON() });
       }
     });
   }
@@ -59,9 +59,9 @@ export function getAll(
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
-      data.populate().then((doc) => callback(doc));
+      callback(data.toJSON());
     } else {
-      data.populate().then((doc) => res.status(200).send({ data: doc }));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }
@@ -77,9 +77,9 @@ export function create(
     } else if (!data) {
       res.status(400).send({ err: 'error when saving document' });
     } else if (callback) {
-      data.populate().then((doc) => callback(doc));
+      callback(data.toJSON());
     } else {
-      data.populate().then((doc) => res.status(200).send(doc));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }
@@ -98,9 +98,9 @@ export function update(
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      data.populate().then((doc) => callback(doc));
+      callback(data.toJSON());
     } else {
-      data.populate().then((doc) => res.status(200).send(doc));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }
@@ -124,9 +124,9 @@ export function conditionalUpdate(
       } else if (!data) {
         res.status(400).send({ err: `id not found in ${table}` });
       } else if (callback) {
-        data.populate().then((doc) => callback(doc));
+        callback(data.toJSON());
       } else {
-        data.populate().then((doc) => res.status(200).send(doc));
+        res.status(200).send({ data: data.toJSON() });
       }
     }
   );
@@ -163,11 +163,9 @@ export function query(
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
       } else if (callback) {
-        data.populate().then((doc: Document) => callback(doc));
+        callback(data.toJSON());
       } else {
-        data
-          .populate()
-          .then((doc: Document) => res.status(200).send({ data: doc }));
+        res.status(200).send({ data: data.toJSON() });
       }
     });
 }
@@ -184,9 +182,9 @@ export function scan(
     } else if (!data) {
       res.status(400).send({ err: 'error when scanning table' });
     } else if (callback) {
-      data.populate().then((doc) => callback(doc));
+      callback(data.toJSON());
     } else {
-      data.populate().then((doc) => res.status(200).send({ data: doc }));
+      res.status(200).send({ data: data.toJSON() });
     }
   });
 }

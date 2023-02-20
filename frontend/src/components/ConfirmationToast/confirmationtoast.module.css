@@ -4,7 +4,6 @@
   left: 50%;
   transform: translate(-50%, 0);
   margin: auto;
-  background-color: #00c48c;
   padding: 0.75rem 1rem;
   box-shadow: 4px 6px 30px 5px rgba(0, 0, 0, 0.15);
   border-radius: 0.625rem;
@@ -18,4 +17,12 @@
   height: 100%;
   margin-left: 0.625rem;
   color: white;
+}
+
+.successToast {
+  background-color: #00c48c;
+}
+
+.errorToast {
+  background-color: #ff0000;
 }
