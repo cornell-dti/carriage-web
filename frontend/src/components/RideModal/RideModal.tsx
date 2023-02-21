@@ -141,6 +141,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         endLocation,
       } = formData;
 
+      console.log(formData);
+
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
       const hasDriver = Boolean(driver) && driver !== 'None';

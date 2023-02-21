@@ -14,6 +14,8 @@ const ScheduledTable = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
 
+  console.log(scheduledRides);
+
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
