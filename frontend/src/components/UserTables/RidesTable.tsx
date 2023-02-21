@@ -8,6 +8,7 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import { useRiders } from '../../context/RidersContext';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -60,9 +61,16 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             hour: '2-digit',
             minute: '2-digit',
           });
+          // Line 65 only returns the id of the rider of the ride
           const { rider } = ride;
-          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
-          const needs = rider ? rider.accessibility || '' : '';
+          const ridersInfo = useRiders();
+          const riderInfo = ridersInfo.riders.filter(
+            (x) => String(rider) == x.id
+          )[0];
+          const riderName = riderInfo
+            ? `${riderInfo.firstName} ${riderInfo.lastName}`
+            : '';
+          const needs = riderInfo ? riderInfo.accessibility || '' : '';
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
