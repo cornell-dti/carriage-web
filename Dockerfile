@@ -5,7 +5,7 @@ FROM node:16-alpine
 WORKDIR /app
 
 # Copy package.jsons first to install
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json /app/
 COPY frontend/package.json frontend/package-lock.json /app/frontend/
 COPY server/package.json server/package-lock.json /app/server/
 RUN npm install
