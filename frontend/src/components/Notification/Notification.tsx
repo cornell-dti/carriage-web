@@ -61,7 +61,7 @@ const Notification = () => {
         <div className={styles.link}>View</div>
       </div>
     ));
-  
+
   const element = document.getElementsByClassName(
     'notification_bell__HML54'
   )[0]!;
