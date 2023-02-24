@@ -86,17 +86,17 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         <Row header colSizes={colSizes} data={headers} />
 
         {(filter
-          ? riders.filter(
-              (r) =>
-                (r.firstName + ' ' + r.lastName)
-                  .toLowerCase()
-                  .includes((searchName + '').toLowerCase())
-            )
-          : riders.filter((r) =>
-              r.active === true && 
+          ? riders.filter((r) =>
               (r.firstName + ' ' + r.lastName)
                 .toLowerCase()
                 .includes((searchName + '').toLowerCase())
+            )
+          : riders.filter(
+              (r) =>
+                r.active === true &&
+                (r.firstName + ' ' + r.lastName)
+                  .toLowerCase()
+                  .includes((searchName + '').toLowerCase())
             )
         ).map((r) => {
           const {
