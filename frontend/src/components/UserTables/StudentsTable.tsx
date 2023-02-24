@@ -88,12 +88,12 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         {(filter
           ? riders.filter(
               (r) =>
-                r.active === false &&
                 (r.firstName + ' ' + r.lastName)
                   .toLowerCase()
                   .includes((searchName + '').toLowerCase())
             )
           : riders.filter((r) =>
+              r.active === true && 
               (r.firstName + ' ' + r.lastName)
                 .toLowerCase()
                 .includes((searchName + '').toLowerCase())
