@@ -64,7 +64,15 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
   const formatDate = (date: string): string =>
-    moment(date).format('MM/DD/YYYY');
+    moment(date).format('MM/DD/YYYY');  
+
+  const filterStudents = (filter: boolean) =>
+  riders.filter((r) =>
+    (r.firstName + ' ' + r.lastName)
+      .toLowerCase()
+      .includes((searchName + '').toLowerCase()) &&
+    (filter ? true : r.active)
+  );
 
   return (
     <>
@@ -85,20 +93,8 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
       <Table>
         <Row header colSizes={colSizes} data={headers} />
 
-        {(filter
-          ? riders.filter((r) =>
-              (r.firstName + ' ' + r.lastName)
-                .toLowerCase()
-                .includes((searchName + '').toLowerCase())
-            )
-          : riders.filter(
-              (r) =>
-                r.active === true &&
-                (r.firstName + ' ' + r.lastName)
-                  .toLowerCase()
-                  .includes((searchName + '').toLowerCase())
-            )
-        ).map((r) => {
+        {filterStudents(filter)
+        .map((r) => {
           const {
             id,
             firstName,
