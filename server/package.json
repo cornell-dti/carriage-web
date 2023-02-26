@@ -16,6 +16,7 @@
     "aws-sdk": "^2.747.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "dynamoose": "^2.7.3",
     "express": "^4.18.2",
@@ -34,7 +35,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/app.js",
-    "dev": "nodemon --exec \"ts-node\" src/app.ts",
+    "dev": "cross-env NODE_ENV=test nodemon --exec \"ts-node\" src/app.ts",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"

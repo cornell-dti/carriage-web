@@ -1,5 +1,6 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
+import defaultModelConfig from '../util/modelConfig';
 
 export enum UserType {
   ADMIN = 'Admin',
@@ -71,4 +72,8 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Subscription = dynamoose.model('Subscriptions', schema); // , { create: false }
+export const Subscription = dynamoose.model(
+  'Subscriptions',
+  schema,
+  defaultModelConfig
+);
