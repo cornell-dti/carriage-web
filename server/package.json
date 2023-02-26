@@ -37,7 +37,8 @@
     "dev": "cross-env NODE_ENV=test nodemon --exec \"ts-node\" src/app.ts",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --check-leaks ts-node/register -r ts-node/register test/**/*.ts",
+    "test-dev": "nodemon --watch . --ext ts --exec \"mocha -r ts-node/register test/**/*.test.ts\""
   },
   "repository": {
     "type": "git",
@@ -50,6 +51,9 @@
   },
   "homepage": "https://github.com/cornell-dti/carriage-web#readme",
   "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "@types/supertest": "^2.0.12",
     "chai": "^4.3.7",
     "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
