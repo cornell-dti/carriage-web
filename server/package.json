@@ -16,7 +16,6 @@
     "aws-sdk": "^2.747.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
-    "cross-env": "^7.0.3",
     "dotenv": "^8.2.0",
     "dynamoose": "^2.7.3",
     "express": "^4.18.2",
@@ -49,5 +48,11 @@
   "bugs": {
     "url": "https://github.com/cornell-dti/carriage-web/issues"
   },
-  "homepage": "https://github.com/cornell-dti/carriage-web#readme"
+  "homepage": "https://github.com/cornell-dti/carriage-web#readme",
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  }
 }
