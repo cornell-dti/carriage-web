@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  useGoogleLogin,
+  useGoogleLogin as googleAuth,
   googleLogout,
   TokenResponse,
 } from '@react-oauth/google';
@@ -28,36 +28,22 @@ import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
-import * as crypto from 'crypto';
-const algorithm = 'aes-256-ctr';
+import CryptoJS from 'crypto-js';
+
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
-const encrypt = (text: crypto.BinaryLike) => {
-  const iv = crypto.randomBytes(16);
-
-  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-
-  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-
-  return {
-    iv: iv.toString('hex'),
-    content: encrypted.toString('hex'),
-  };
+const encrypt = (data: string) => {
+  const encrypted = CryptoJS.AES.encrypt(
+    JSON.stringify(data),
+    secretKey
+  ).toString();
+  return encrypted;
 };
 
-const decrypt = (hash: { iv: any; content: any }) => {
-  const decipher = crypto.createDecipheriv(
-    algorithm,
-    secretKey,
-    Buffer.from(hash.iv, 'hex')
-  );
-
-  const decrpyted = Buffer.concat([
-    decipher.update(Buffer.from(hash.content, 'hex')),
-    decipher.final(),
-  ]);
-
-  return decrpyted.toString();
+const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
+  const bytes = CryptoJS.AES.decrypt(hash, secretKey);
+  const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  return decryptedData;
 };
 
 const AuthManager = () => {
@@ -95,7 +81,7 @@ const AuthManager = () => {
         jwtEndIndex != -1
           ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
           : document.cookie.slice(jwtIndex);
-      return decrypt(JSON.parse(encrypted_jwt));
+      return decrypt(encrypted_jwt);
     } catch {
       return '';
     }
@@ -108,12 +94,11 @@ const AuthManager = () => {
   }
 
   function setCookie(cookieName: string, value: string) {
-    document.cookie =
-      cookieName + '=' + JSON.stringify(encrypt(value)) + ';secure=true;';
+    document.cookie = cookieName + '=' + encrypt(value) + ';secure=true;';
   }
 
-  function googleAuth(isAdmin: boolean) {
-    return useGoogleLogin({
+  function GoogleAuth(isAdmin: boolean) {
+    return googleAuth({
       flow: 'implicit',
       onSuccess: async (tokenResponse: TokenResponse) => {
         const userInfo = await fetch(
@@ -172,8 +157,8 @@ const AuthManager = () => {
     }
   }
 
-  const adminLogin = googleAuth(true);
-  const studentLogin = googleAuth(false);
+  const adminLogin = GoogleAuth(true);
+  const studentLogin = GoogleAuth(false);
   function logout() {
     googleLogout();
     localStorage.removeItem('userType');
