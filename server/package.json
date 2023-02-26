@@ -34,11 +34,11 @@
   "scripts": {
     "build": "tsc",
     "start": "node build/app.js",
-    "dev": "cross-env NODE_ENV=test nodemon --exec \"ts-node\" src/app.ts",
+    "dev": "nodemon --exec \"ts-node\" src/app.ts",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "mocha --check-leaks ts-node/register -r ts-node/register test/**/*.ts",
-    "test-dev": "nodemon --watch . --ext ts --exec \"mocha -r ts-node/register test/**/*.test.ts\""
+    "test": "cross-env NODE_ENV=test mocha --check-leaks ts-node/register -r ts-node/register test/**/*.ts",
+    "test-dev": "cross-env NODE_ENV=test nodemon --watch . --ext ts --exec \"mocha -r ts-node/register test/**/*.test.ts\""
   },
   "repository": {
     "type": "git",
