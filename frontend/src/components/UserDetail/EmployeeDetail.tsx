@@ -15,8 +15,8 @@ import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
-import { AdminType } from '../../../../server/models/admin';
-import { DriverType } from '../../../../server/models/driver';
+import { AdminType } from '../../../../server/src/models/admin';
+import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
 
 type EmployeeDetailProps = {
