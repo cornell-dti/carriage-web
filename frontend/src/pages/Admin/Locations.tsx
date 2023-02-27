@@ -11,9 +11,7 @@ const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const loc = useLocations().locations;
 
-  useEffect(() => {
     document.title = 'Locations - Carriage';
-  });
 
   useEffect(() => {
     setLocations(loc);
