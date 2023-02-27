@@ -7,15 +7,19 @@ import { useRiders } from '../../context/RidersContext';
 import { Rider } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import { useEmployees } from '../../context/EmployeesContext';
 
 type ConfirmationProps = {
   open: boolean;
   rider?: Rider;
   onClose: () => void;
+  employeeId?: string 
+  role?: string
 };
 
-const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
+const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
+  const {refreshDrivers, refreshAdmins} = useEmployees()
   const { withDefaults } = useReq();
   const history = useHistory();
   const { showToast } = useToast(); // do this
@@ -25,18 +29,65 @@ const ConfirmationModal = ({ open, rider, onClose }: ConfirmationProps) => {
   };
 
   const studentDelete = () => {
-    fetch(
-      `/api/riders/${!rider ? '' : rider.id}`,
-      withDefaults({
-        method: 'DELETE',
-      })
-    )
-      .then(refreshRiders)
-      .then(() => {
-        history.push('/riders');
-        showToast('The student has been deleted.', ToastStatus.SUCCESS);
-        closeModal();
-      });
+    // If admin and driver, need to update corresponding driver schema's 'admin' attribute
+    if (role==='admin'){ 
+      fetch(
+        `/api/admins/${employeeId ? employeeId : ''}`,
+        withDefaults({
+          method: 'DELETE',
+        })
+      )
+        .then(refreshAdmins)
+        .then(() => {
+          history.push('/admins');
+          showToast('The admin has been deleted.', ToastStatus.SUCCESS);
+          closeModal();
+        });
+    }
+    else if (role==='driver'){
+      fetch(
+        `/api/drivers/${employeeId ? employeeId : ''}`,
+        withDefaults({
+          method: 'DELETE',
+        })
+      )
+        .then(refreshDrivers)
+        .then(() => {
+          history.push('/drivers');
+          showToast('The driver has been deleted.', ToastStatus.SUCCESS);
+          closeModal();
+        });
+    }
+    // Update both driver and admin dbs
+    else if (role==='both'){
+      fetch(
+        `/api/drivers/${employeeId ? employeeId : ''}`,
+        withDefaults({
+          method: 'DELETE',
+        })
+      )
+        .then(refreshDrivers)
+        .then(refreshAdmins)
+        .then(() => {
+          history.push('/admins');
+          showToast('The employee has been deleted.', ToastStatus.SUCCESS);
+          closeModal();
+        });
+    }
+    else {
+      fetch(
+        `/api/riders/${!rider ? '' : rider.id}`,
+        withDefaults({
+          method: 'DELETE',
+        })
+      )
+        .then(refreshRiders)
+        .then(() => {
+          history.push('/riders');
+          showToast('The rider has been deleted.', ToastStatus.SUCCESS);
+          closeModal();
+        });
+    }
   };
 
   return (
