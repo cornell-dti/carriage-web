@@ -20,7 +20,11 @@ const Locations = () => {
   }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
-    setLocations([...locations, newLocation]);
+    setLocations(
+      [...locations, newLocation].sort((a: Location, b: Location) => {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+      })
+    );
   };
 
   return (
