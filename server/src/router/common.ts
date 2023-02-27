@@ -77,7 +77,6 @@ export function create(
     } else if (!data) {
       res.status(400).send({ err: 'error when saving document' });
     } else if (callback) {
-      console.log(await data.populate());
       callback((await data.populate()).toJSON());
     } else {
       res.status(200).send({ data: (await data.populate()).toJSON() });
