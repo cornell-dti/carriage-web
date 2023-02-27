@@ -83,7 +83,7 @@ const LocationModal = ({
     ).then((res) => res.json());
 
     if (!existingLocation && onAddLocation) {
-      onAddLocation(newLocation);
+      onAddLocation(newLocation.data);
       showToast('Location has been added.', ToastStatus.SUCCESS);
     } else if (existingLocation && onEditLocation) {
       onEditLocation(newLocation);
