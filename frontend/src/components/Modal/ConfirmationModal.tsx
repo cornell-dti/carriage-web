@@ -4,25 +4,23 @@ import { Button } from '../FormElements/FormElements';
 import { useReq } from '../../context/req';
 import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
-import { Rider } from '../../types/index';
+import { Rider, User } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { useEmployees } from '../../context/EmployeesContext';
 
 type ConfirmationProps = {
   open: boolean;
-  rider?: Rider;
   onClose: () => void;
-  employeeId?: string;
-  role?: string;
+  role?: string; // 'admin', 'driver', 'both', or undefined if rider
+  user: User;
 };
 
 const ConfirmationModal = ({
   open,
-  rider,
   onClose,
-  employeeId,
   role,
+  user,
 }: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
   const { refreshDrivers, refreshAdmins } = useEmployees();
@@ -34,63 +32,48 @@ const ConfirmationModal = ({
     onClose();
   };
 
-  const studentDelete = () => {
-    // If admin and driver, need to update corresponding driver schema's 'admin' attribute
+  // userType should be either 'admin', 'driver', 'rider'
+  const deleteAPICall = (
+    userType: string,
+    userId: string,
+    refreshFunc: () => Promise<void>
+  ) => {
+    const userGroup = `${userType}s`;
+    fetch(
+      `/api/${userGroup}/${userId ? userId : ''}`,
+      withDefaults({
+        method: 'DELETE',
+      })
+    )
+      .then(refreshFunc)
+      .then(() => {
+        history.push(
+          `/${userGroup}`
+          // `/admins/${userType === 'rider' ? 'students' : 'employees'}`
+        );
+        showToast(`The ${userType} has been deleted.`, ToastStatus.SUCCESS);
+        closeModal();
+      });
+  };
+
+  const userDelete = () => {
     if (role === 'admin') {
-      fetch(
-        `/api/admins/${employeeId ? employeeId : ''}`,
-        withDefaults({
-          method: 'DELETE',
-        })
-      )
-        .then(refreshAdmins)
-        .then(() => {
-          history.push('/admins');
-          showToast('The admin has been deleted.', ToastStatus.SUCCESS);
-          closeModal();
-        });
+      deleteAPICall(role, user.id, refreshAdmins);
     } else if (role === 'driver') {
+      deleteAPICall(role, user.id, refreshDrivers);
+    } else if (role === 'both') {
+      // Delete from both drivers & admins; delete manually from drivers to avoid multiple toasts
+      //PROBLEM: Since ids are different in drivers and admins db, need to find the corresponding
+      // id of this user in the admins db; ids not guranteed to be identical in both dbs
+      deleteAPICall('driver', user.id, refreshDrivers);
       fetch(
-        `/api/drivers/${employeeId ? employeeId : ''}`,
+        `/api/admins/${user.id ? user.id : ''}`,
         withDefaults({
           method: 'DELETE',
         })
-      )
-        .then(refreshDrivers)
-        .then(() => {
-          history.push('/drivers');
-          showToast('The driver has been deleted.', ToastStatus.SUCCESS);
-          closeModal();
-        });
-    }
-    // Update both driver and admin dbs
-    else if (role === 'both') {
-      fetch(
-        `/api/drivers/${employeeId ? employeeId : ''}`,
-        withDefaults({
-          method: 'DELETE',
-        })
-      )
-        .then(refreshDrivers)
-        .then(refreshAdmins)
-        .then(() => {
-          history.push('/admins');
-          showToast('The employee has been deleted.', ToastStatus.SUCCESS);
-          closeModal();
-        });
+      ).then(refreshAdmins);
     } else {
-      fetch(
-        `/api/riders/${!rider ? '' : rider.id}`,
-        withDefaults({
-          method: 'DELETE',
-        })
-      )
-        .then(refreshRiders)
-        .then(() => {
-          history.push('/riders');
-          showToast('The rider has been deleted.', ToastStatus.SUCCESS);
-          closeModal();
-        });
+      deleteAPICall('rider', user.id, refreshRiders);
     }
   };
 
@@ -98,7 +81,7 @@ const ConfirmationModal = ({
     <Modal title={''} isOpen={open} onClose={closeModal} displayClose={true}>
       <div className={styles.modal}>
         <p className={styles.modalText}>
-          Are you sure you want to remove {rider?.firstName} {rider?.lastName}?
+          Are you sure you want to remove {user.firstName} {user.lastName}?
         </p>
         <div className={styles.buttonContainer}>
           <Button
@@ -110,7 +93,7 @@ const ConfirmationModal = ({
           </Button>
           <Button
             type="button"
-            onClick={studentDelete}
+            onClick={userDelete}
             className={styles.removeButton}
           >
             Remove
