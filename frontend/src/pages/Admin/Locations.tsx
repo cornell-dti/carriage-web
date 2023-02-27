@@ -8,10 +8,9 @@ import LocationModal from '../../components/LocationModal/LocationModal';
 import { useLocations } from '../../context/LocationsContext';
 
 const Locations = () => {
+  document.title = 'Locations - Carriage';
   const [locations, setLocations] = useState<Location[]>([]);
   const loc = useLocations().locations;
-
-    document.title = 'Locations - Carriage';
 
   useEffect(() => {
     setLocations(loc);
