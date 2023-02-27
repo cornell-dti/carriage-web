@@ -177,7 +177,7 @@ const UserDetail = ({
               open={confirmationModalisOpen}
               rider={rider}
               onClose={closeConfirmationModal}
-              employeeId = {employee ? employee.id : ''}
+              employeeId={employee ? employee.id : ''}
               role={role}
             />
           </div>

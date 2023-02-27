@@ -13,13 +13,19 @@ type ConfirmationProps = {
   open: boolean;
   rider?: Rider;
   onClose: () => void;
-  employeeId?: string 
-  role?: string
+  employeeId?: string;
+  role?: string;
 };
 
-const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: ConfirmationProps) => {
+const ConfirmationModal = ({
+  open,
+  rider,
+  onClose,
+  employeeId,
+  role,
+}: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
-  const {refreshDrivers, refreshAdmins} = useEmployees()
+  const { refreshDrivers, refreshAdmins } = useEmployees();
   const { withDefaults } = useReq();
   const history = useHistory();
   const { showToast } = useToast(); // do this
@@ -30,7 +36,7 @@ const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: Confirmat
 
   const studentDelete = () => {
     // If admin and driver, need to update corresponding driver schema's 'admin' attribute
-    if (role==='admin'){ 
+    if (role === 'admin') {
       fetch(
         `/api/admins/${employeeId ? employeeId : ''}`,
         withDefaults({
@@ -43,8 +49,7 @@ const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: Confirmat
           showToast('The admin has been deleted.', ToastStatus.SUCCESS);
           closeModal();
         });
-    }
-    else if (role==='driver'){
+    } else if (role === 'driver') {
       fetch(
         `/api/drivers/${employeeId ? employeeId : ''}`,
         withDefaults({
@@ -59,7 +64,7 @@ const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: Confirmat
         });
     }
     // Update both driver and admin dbs
-    else if (role==='both'){
+    else if (role === 'both') {
       fetch(
         `/api/drivers/${employeeId ? employeeId : ''}`,
         withDefaults({
@@ -73,8 +78,7 @@ const ConfirmationModal = ({ open, rider, onClose, employeeId, role }: Confirmat
           showToast('The employee has been deleted.', ToastStatus.SUCCESS);
           closeModal();
         });
-    }
-    else {
+    } else {
       fetch(
         `/api/riders/${!rider ? '' : rider.id}`,
         withDefaults({
