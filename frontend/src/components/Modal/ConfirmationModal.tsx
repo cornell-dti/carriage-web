@@ -47,9 +47,7 @@ const ConfirmationModal = ({
     )
       .then(refreshFunc)
       .then(() => {
-        history.push(
-          `/${userType === 'rider' ? 'riders' : 'employees'}`
-        );
+        history.push(`/${userType === 'rider' ? 'riders' : 'employees'}`);
         showToast(`The ${userType} has been deleted.`, ToastStatus.SUCCESS);
         closeModal();
       });
