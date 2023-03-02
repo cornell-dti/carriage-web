@@ -37,8 +37,8 @@
     "dev": "nodemon --exec \"ts-node\" src/app.ts",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "cross-env NODE_ENV=test mocha --check-leaks ts-node/register -r ts-node/register tests/**/*.ts",
-    "test-dev": "cross-env NODE_ENV=test nodemon --watch . --ext ts --exec \"mocha -r ts-node/register tests/**/*.test.ts\""
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register tests/**/*.ts",
+    "test:watch": "cross-env NODE_ENV=test nodemon --watch . --ext ts --exec \"mocha -r ts-node/register tests/**/*.ts\""
   },
   "repository": {
     "type": "git",
