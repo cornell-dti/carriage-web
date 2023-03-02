@@ -22,6 +22,7 @@ jobs:
       REACT_APP_PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
       REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
     steps:
+      - run: echo $WEB_PUSH_CONTACT
       - uses: actions/checkout@master
       - name: Set up Node
         uses: actions/setup-node@v1
