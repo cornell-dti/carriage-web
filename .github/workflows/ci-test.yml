@@ -10,17 +10,17 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
       PRIVATE_VAPID_KEY: ${{ secrets.PRIVATE_VAPID_KEY }}
-      WEB_PUSH_CONTACT: 'mailto:dticarriage@gmail.com'
+      WEB_PUSH_CONTACT: ${{ secrets.WEB_PUSH_CONTACT }}
       IOS_DRIVER_ARN: ${{ secrets.IOS_DRIVER_ARN }}
       IOS_RIDER_ARN: ${{ secrets.IOS_RIDER_ARN }}
       ANDROID_ARN: ${{ secrets.ANDROID_ARN }}
-      HOSTNAME: 0.0.0.0
-      USE_HOSTNAME: true
-      EMAIL: 'mailto:dticarriage@gmail.com'
-      DOMAIN: DOCKERTODO.com
+      HOSTNAME: ${{ secrets.HOSTNAME }}
+      USE_HOSTNAME: ${{ secrets.USE_HOSTNAME }}
+      EMAIL: ${{ secrets.EMAIL }}
+      DOMAIN: ${{ secrets.DOMAIN }}
       REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
       REACT_APP_PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
-      REACT_APP_ENCRYPTION_KEY: qhQUNwonQlfNxEhVLcUTEjWKtB5f1qAj
+      REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
     steps:
       - uses: actions/checkout@master
       - name: Set up Node
