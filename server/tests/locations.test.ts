@@ -34,9 +34,9 @@ describe('Locations', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
-      expect(res.body).to.have.property('data');
-      expect(res.body.data).to.be.an('array').and.to.have.lengthOf(1);
       expect(res.status).to.be.equal(200);
+      expect(res.body).to.have.property('data');
+      expect(res.body.data).to.be.an('array').and.to.have.lengthOf(2);
     });
   });
 });
