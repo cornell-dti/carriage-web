@@ -111,7 +111,7 @@ const AuthManager = () => {
           .then((res) => res.json())
           .then((userInfo) => signIn(isAdmin, userInfo));
       },
-      onError: (errorResponse: any) => console.log(errorResponse),
+      onError: (errorResponse: any) => console.error(errorResponse),
     });
   }
 
