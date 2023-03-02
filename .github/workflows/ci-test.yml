@@ -11,6 +11,6 @@ jobs:
         with:
           node-version: '16.x'
       - name: Install Dependencies
-        run: npm install --production
+        run: npm install --dev
       - name: Test Server
-        run: CI='' npm run test:server
+        run: npm run test:server
