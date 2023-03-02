@@ -4,6 +4,23 @@ on: pull_request
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
+      PRIVATE_VAPID_KEY: ${{ secrets.PRIVATE_VAPID_KEY }}
+      WEB_PUSH_CONTACT: 'mailto:dticarriage@gmail.com'
+      IOS_DRIVER_ARN: ${{ secrets.IOS_DRIVER_ARN }}
+      IOS_RIDER_ARN: ${{ secrets.IOS_RIDER_ARN }}
+      ANDROID_ARN: ${{ secrets.ANDROID_ARN }}
+      HOSTNAME: 0.0.0.0
+      USE_HOSTNAME: true
+      EMAIL: 'mailto:dticarriage@gmail.com'
+      DOMAIN: DOCKERTODO.com
+      REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+      REACT_APP_PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
+      REACT_APP_ENCRYPTION_KEY: qhQUNwonQlfNxEhVLcUTEjWKtB5f1qAj
     steps:
       - uses: actions/checkout@master
       - name: Set up Node
