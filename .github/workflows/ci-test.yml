@@ -1,0 +1,16 @@
+name: CI Test
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Install Dependencies
+        run: npm install --production
+      - name: Test Server
+        run: CI='' npm run test:server
