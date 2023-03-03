@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '16.x'
       - name: Install Dependencies
-        run: npm install --production
+        run: npm install
       - name: Build Frontend
         run: CI='' npm run build:frontend
       - name: Build Server

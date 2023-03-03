@@ -1,5 +1,6 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
+import defaultModelConfig from '../util/modelConfig';
 
 export type AdminType = {
   id: string;
@@ -37,4 +38,4 @@ const schema = new dynamoose.Schema({
   photoLink: String,
 });
 
-export const Admin = dynamoose.model('Admins', schema, { create: false });
+export const Admin = dynamoose.model('Admins', schema, defaultModelConfig);

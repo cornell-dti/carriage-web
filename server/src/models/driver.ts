@@ -1,6 +1,7 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import { Vehicle, VehicleType } from './vehicle';
+import defaultModelConfig from '../util/modelConfig';
 
 type Availability = {
   startTime: string;
@@ -85,4 +86,4 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Driver = dynamoose.model('Drivers', schema, { create: false });
+export const Driver = dynamoose.model('Drivers', schema, defaultModelConfig);

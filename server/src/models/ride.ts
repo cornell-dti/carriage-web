@@ -5,6 +5,7 @@ import { Location, Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
 import { formatAddress, getRideLocation, isAddress } from '../util';
+import defaultModelConfig from '../util/modelConfig';
 
 export enum Type {
   ACTIVE = 'active',
@@ -125,4 +126,4 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Ride = dynamoose.model('Rides', schema, { create: false });
+export const Ride = dynamoose.model('Rides', schema, defaultModelConfig);

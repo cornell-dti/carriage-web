@@ -33,7 +33,7 @@
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
     "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:server": "cd server && npm run test"
   },
   "repository": {
     "type": "git",
