@@ -175,8 +175,9 @@ const UserDetail = ({
             </button>
             <ConfirmationModal
               open={confirmationModalisOpen}
-              rider={rider}
+              user={employee ? employee : rider!}
               onClose={closeConfirmationModal}
+              role={role} // Specifies Admin Role, undefined if rider
             />
           </div>
         </div>

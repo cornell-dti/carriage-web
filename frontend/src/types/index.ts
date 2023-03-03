@@ -44,6 +44,12 @@ export type Employee = {
   startDate?: string;
 };
 
+export type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
 export type ObjectType = {
   [x: string]: any;
 };
