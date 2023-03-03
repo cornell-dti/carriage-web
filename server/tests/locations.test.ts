@@ -23,9 +23,7 @@ describe('Locations', () => {
     });
   });
 
-  after(async () => {
-    await clearDB();
-  });
+  after(clearDB);
 
   describe('GET /api/locations', () => {
     it('should return 200 OK', async () => {

@@ -10,7 +10,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
       PRIVATE_VAPID_KEY: ${{ secrets.PRIVATE_VAPID_KEY }}
-      WEB_PUSH_CONTACT: mailto:carriagedti@gmail.com
+      WEB_PUSH_CONTACT: '${{ secrets.WEB_PUSH_CONTACT }}'
       IOS_DRIVER_ARN: ${{ secrets.IOS_DRIVER_ARN }}
       IOS_RIDER_ARN: ${{ secrets.IOS_RIDER_ARN }}
       ANDROID_ARN: ${{ secrets.ANDROID_ARN }}
