@@ -1,4 +1,4 @@
-name: CI Run Test Suites
+name: CI Test
 on: pull_request
 
 jobs:
