@@ -17,7 +17,10 @@ import styles from './page.module.css';
 
 const Schedule = () => {
   const componentMounted = useRef(true);
-  const [rides, setRides] = useState<Ride[]>();
+  const now = new Date().toISOString();
+  const [rides, setRides] = useState<Ride[]>([]);
+  const [currRides, setCurrRides] = useState<Ride[]>([]);
+  const [pastRides, setPastRides] = useState<Ride[]>([]);
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
   document.title = 'Schedule - Carriage';
@@ -33,7 +36,16 @@ const Schedule = () => {
     return () => {
       componentMounted.current = false;
     };
-  }, [refreshRides]);
+  }, [refreshRides, rides]);
+
+  useEffect(() => {
+    setPastRides((prev) =>
+      prev.concat(rides?.filter((ride) => ride.endTime < now) || [])
+    );
+    setCurrRides((prev) =>
+      prev.concat(rides?.filter((ride) => ride.endTime >= now) || [])
+    );
+  }, [rides]);
 
   return (
     <main id="main">
@@ -47,10 +59,10 @@ const Schedule = () => {
       {rides && rides.length > 0 && (
         <>
           <Collapsible title={'Your Upcoming Rides'}>
-            <RiderScheduleTable data={rides} isPast={false} />
+            <RiderScheduleTable data={currRides} isPast={false} />
           </Collapsible>
           <Collapsible title={'Your Past Rides'}>
-            <RiderScheduleTable data={rides} isPast={true} />
+            <RiderScheduleTable data={pastRides} isPast={false} />
           </Collapsible>
         </>
       )}
