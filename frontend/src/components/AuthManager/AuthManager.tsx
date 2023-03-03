@@ -101,13 +101,10 @@ const AuthManager = () => {
     return googleAuth({
       flow: 'implicit',
       onSuccess: async (tokenResponse: TokenResponse) => {
-        const userInfo = await fetch(
-          'https://www.googleapis.com/oauth2/v2/userinfo',
-          {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          }
-        )
+        await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        })
           .then((res) => res.json())
           .then((userInfo) => signIn(isAdmin, userInfo));
       },
