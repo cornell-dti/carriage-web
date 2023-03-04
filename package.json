@@ -20,9 +20,9 @@
     "prettier": "^2.3.2"
   },
   "scripts": {
-    "heroku-postbuild": "npm run build:frontend && npm run build:server",
+    "build": "npm run build:frontend && npm run build:server",
     "start:frontend": "cd frontend && npm run start",
-    "start:server": "cd server && npm run dev",
+    "start:server": "cd server && npm run start",
     "build:frontend": "cd frontend && npm run build",
     "build:server": "cd server && npm run build",
     "install:frontend": "cd frontend && npm install",
