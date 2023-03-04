@@ -2,7 +2,7 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
-import serverless from 'serverless-http'
+import serverless from 'serverless-http';
 
 // Set default timezone for moment
 import moment from 'moment-timezone';
@@ -49,10 +49,12 @@ router.use('/api/auth', auth);
 router.use('/api/upload', upload);
 router.use('/api/notification', notification);
 router.use('/api/stats', stats);
-router.get('/api/health-check', (_, response) => response.status(200).send('OK'));
+router.get('/api/health-check', (_, response) =>
+  response.status(200).send('OK')
+);
 
 // Link to netlify lambda
-app.use('/.netlify/functions/server', router);
+app.use(['/', '/.netlify/functions/server'], router);
 
 // Serve static files from frontend
 const frontendBuild = '../../frontend/build';
