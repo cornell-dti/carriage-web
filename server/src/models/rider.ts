@@ -1,6 +1,7 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
+import defaultModelConfig from '../util/modelConfig';
 
 export enum Accessibility {
   NONE = '',
@@ -110,4 +111,4 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Rider = dynamoose.model('Riders', schema, { create: false });
+export const Rider = dynamoose.model('Riders', schema, defaultModelConfig);

@@ -8,19 +8,20 @@ import LocationModal from '../../components/LocationModal/LocationModal';
 import { useLocations } from '../../context/LocationsContext';
 
 const Locations = () => {
+  document.title = 'Locations - Carriage';
   const [locations, setLocations] = useState<Location[]>([]);
   const loc = useLocations().locations;
-
-  useEffect(() => {
-    document.title = 'Locations - Carriage';
-  });
 
   useEffect(() => {
     setLocations(loc);
   }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
-    setLocations([...locations, newLocation]);
+    setLocations(
+      [...locations, newLocation].sort((a: Location, b: Location) => {
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+      })
+    );
   };
 
   return (

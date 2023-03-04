@@ -15,8 +15,8 @@ import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
-import { AdminType } from '../../../../server/models/admin';
-import { DriverType } from '../../../../server/models/driver';
+import { AdminType } from '../../../../server/src/models/admin';
+import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
 
 type EmployeeDetailProps = {
@@ -157,7 +157,7 @@ const EmployeeDetail = () => {
     findEmployee(drivers, admins, employeeId)
   );
   const pathArr = location.pathname.split('/');
-  const userType = pathArr[1];
+  const userType = pathArr[2];
 
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
@@ -202,20 +202,19 @@ const EmployeeDetail = () => {
               phone: driver.phoneNumber,
             });
           });
+        fetch(`/api/drivers/${employeeId}/stats`, withDefaults())
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.err) {
+              setRideCount(Math.floor(data.rides));
+              setWorkingHours(Math.floor(data.workingHours));
+            }
+          });
       }
     }
     fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
       .then((res) => res.json())
       .then(({ data }) => setRides(data.sort(compRides)));
-
-    fetch(`/api/drivers/${employeeId}/stats`, withDefaults())
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.err) {
-          setRideCount(Math.floor(data.rides));
-          setWorkingHours(Math.floor(data.workingHours));
-        }
-      });
     setEmployee(findEmployee(drivers, admins, employeeId));
   }, [admins, drivers, employeeId, withDefaults, userType]);
 
