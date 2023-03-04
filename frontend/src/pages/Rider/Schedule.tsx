@@ -32,20 +32,16 @@ const Schedule = () => {
 
   useEffect(() => {
     refreshRides();
-
+    setPastRides((prev) =>
+      prev.concat(rides.filter((ride) => ride.endTime < now) || [])
+    );
+    setCurrRides((prev) =>
+      prev.concat(rides.filter((ride) => ride.endTime >= now) || [])
+    );
     return () => {
       componentMounted.current = false;
     };
   }, [refreshRides, rides]);
-
-  useEffect(() => {
-    setPastRides((prev) =>
-      prev.concat(rides?.filter((ride) => ride.endTime < now) || [])
-    );
-    setCurrRides((prev) =>
-      prev.concat(rides?.filter((ride) => ride.endTime >= now) || [])
-    );
-  }, [rides]);
 
   return (
     <main id="main">
