@@ -1,14 +1,13 @@
 /* eslint-disable no-console */
 import express from 'express';
-import dynamoose from 'dynamoose';
 import path from 'path';
 import cors from 'cors';
+import serverless from 'serverless-http'
 
 // Set default timezone for moment
 import moment from 'moment-timezone';
 moment.tz.setDefault('America/New_York');
 
-import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
 import admin from './router/admin';
@@ -39,17 +38,21 @@ app.use(cors());
 app.use(express.json({ limit: '500kb' }));
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/riders', rider);
-app.use('/api/drivers', driver);
-app.use('/api/admins', admin);
-app.use('/api/rides', ride);
-app.use('/api/vehicles', vehicle);
-app.use('/api/locations', location);
-app.use('/api/auth', auth);
-app.use('/api/upload', upload);
-app.use('/api/notification', notification);
-app.use('/api/stats', stats);
-app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
+const router = express.Router();
+router.use('/api/riders', rider);
+router.use('/api/drivers', driver);
+router.use('/api/admins', admin);
+router.use('/api/rides', ride);
+router.use('/api/vehicles', vehicle);
+router.use('/api/locations', location);
+router.use('/api/auth', auth);
+router.use('/api/upload', upload);
+router.use('/api/notification', notification);
+router.use('/api/stats', stats);
+router.get('/api/health-check', (_, response) => response.status(200).send('OK'));
+
+// Link to netlify lambda
+app.use('/.netlify/functions/server', router);
 
 // Serve static files from frontend
 const frontendBuild = '../../frontend/build';
@@ -71,3 +74,4 @@ if (useHostname) {
 }
 
 export default app;
+export const handler = serverless(app);
