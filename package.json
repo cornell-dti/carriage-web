@@ -21,6 +21,7 @@
   },
   "scripts": {
     "build": "npm run build:frontend && npm run build:server",
+    "start": "npm run start:server",
     "start:frontend": "cd frontend && npm run start",
     "start:server": "cd server && npm run start",
     "build:frontend": "cd frontend && npm run build",
