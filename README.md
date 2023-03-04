@@ -34,6 +34,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Pratyush Sudhakar - Technical Project Manager
 - Enoch Chen - Software Developer
 - Desmond Atikpui - Software Developer
+- Stuti Gupta - Software Developer
 
 **Past Contributors**
 
