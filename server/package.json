@@ -37,7 +37,8 @@
     "dev": "nodemon --exec \"ts-node\" src/app.ts",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test mocha -r ts-node/register \"tests/**/*.ts\" --exit --timeout 10000",
+    "test:watch": "cross-env NODE_ENV=test nodemon --watch . --ext ts --exec \"mocha -r ts-node/register tests/**/*.ts\""
   },
   "repository": {
     "type": "git",
@@ -48,5 +49,14 @@
   "bugs": {
     "url": "https://github.com/cornell-dti/carriage-web/issues"
   },
-  "homepage": "https://github.com/cornell-dti/carriage-web#readme"
+  "homepage": "https://github.com/cornell-dti/carriage-web#readme",
+  "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "@types/supertest": "^2.0.12",
+    "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  }
 }

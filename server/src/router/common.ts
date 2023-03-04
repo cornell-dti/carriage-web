@@ -10,15 +10,15 @@ export function getById(
   table: string,
   callback?: (value: any) => void
 ) {
-  model.get(id || '', (err, data) => {
+  model.get(id || '', async (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      callback(data.toJSON());
+      callback((await data.populate()).toJSON());
     } else {
-      res.status(200).send({ data: data.toJSON() });
+      res.status(200).send({ data: (await data.populate()).toJSON() });
     }
   });
 }
@@ -33,15 +33,15 @@ export function batchGet(
   if (!keys.length) {
     res.send({ data: [] });
   } else {
-    model.batchGet(keys, (err, data) => {
+    model.batchGet(keys, async (err, data) => {
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
       } else if (!data) {
         res.status(400).send({ err: `items not found in ${table}` });
       } else if (callback) {
-        callback(data.toJSON());
+        callback((await data.populate()).toJSON());
       } else {
-        res.status(200).send({ data: data.toJSON() });
+        res.status(200).send({ data: (await data.populate()).toJSON() });
       }
     });
   }
@@ -53,15 +53,15 @@ export function getAll(
   table: string,
   callback?: (value: any) => void
 ) {
-  model.scan().exec((err, data) => {
+  model.scan().exec(async (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `items not found in ${table}` });
     } else if (callback) {
-      callback(data.toJSON());
+      callback((await data.populate()).toJSON());
     } else {
-      res.status(200).send({ data: data.toJSON() });
+      res.status(200).send({ data: (await data.populate()).toJSON() });
     }
   });
 }
@@ -71,15 +71,15 @@ export function create(
   document: Document,
   callback?: (value: any) => void
 ) {
-  document.save((err, data) => {
+  document.save(async (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: 'error when saving document' });
     } else if (callback) {
-      callback(data.toJSON());
+      callback((await data.populate()).toJSON());
     } else {
-      res.status(200).send({ data: data.toJSON() });
+      res.status(200).send({ data: (await data.populate()).toJSON() });
     }
   });
 }
@@ -92,15 +92,15 @@ export function update(
   table: string,
   callback?: (value: any) => void
 ) {
-  model.update(key, operation, (err, data) => {
+  model.update(key, operation, async (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: `id not found in ${table}` });
     } else if (callback) {
-      callback(data.toJSON());
+      callback((await data.populate()).toJSON());
     } else {
-      res.status(200).send({ data: data.toJSON() });
+      res.status(200).send({ data: (await data.populate()).toJSON() });
     }
   });
 }
@@ -118,15 +118,15 @@ export function conditionalUpdate(
     key,
     operation,
     { condition, return: 'document' },
-    (err, data) => {
+    async (err, data) => {
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
       } else if (!data) {
         res.status(400).send({ err: `id not found in ${table}` });
       } else if (callback) {
-        callback(data.toJSON());
+        callback((await data.populate()).toJSON());
       } else {
-        res.status(200).send({ data: data.toJSON() });
+        res.status(200).send({ data: (await data.populate()).toJSON() });
       }
     }
   );
@@ -159,13 +159,13 @@ export function query(
   model
     .query(condition)
     .using(index)
-    .exec((err: any, data: any) => {
+    .exec(async (err: any, data: any) => {
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
       } else if (callback) {
-        callback(data.toJSON());
+        callback((await data.populate()).toJSON());
       } else {
-        res.status(200).send({ data: data.toJSON() });
+        res.status(200).send({ data: (await data.populate()).toJSON() });
       }
     });
 }
@@ -176,15 +176,15 @@ export function scan(
   condition: Condition,
   callback?: (value: any) => void
 ) {
-  model.scan(condition).exec((err, data) => {
+  model.scan(condition).exec(async (err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: 'error when scanning table' });
     } else if (callback) {
-      callback(data.toJSON());
+      callback((await data.populate()).toJSON());
     } else {
-      res.status(200).send({ data: data.toJSON() });
+      res.status(200).send({ data: (await data.populate()).toJSON() });
     }
   });
 }

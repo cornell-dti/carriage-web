@@ -1,6 +1,7 @@
 import dynamoose from 'dynamoose';
 import { NotificationEvent, Change } from '../util/types';
 import { Status } from '../models/ride';
+import defaultModelConfig from '../util/modelConfig';
 
 export type NotificationType = {
   id: string;
@@ -50,8 +51,8 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Notification = dynamoose.model('Notifications', schema, {
-  // Create is default to be true; table will be created if it doesn't exist
-  // However, can be set to false at a later time
-  create: true,
-});
+export const Notification = dynamoose.model(
+  'Notifications',
+  schema,
+  defaultModelConfig
+);

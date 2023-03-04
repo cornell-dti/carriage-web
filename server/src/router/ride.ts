@@ -196,8 +196,8 @@ router.put('/:id', validateUser('User'), (req, res) => {
     const { rider, driver } = ride;
     if (
       res.locals.user.userType === UserType.ADMIN ||
-      res.locals.user.id == rider ||
-      (driver && res.locals.user.id === driver)
+      res.locals.user.id == rider.id ||
+      (driver && res.locals.user.id === driver.id)
     ) {
       db.update(res, Ride, { id }, body, tableName, async (doc) => {
         const ride = doc;
