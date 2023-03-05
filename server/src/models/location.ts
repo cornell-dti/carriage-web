@@ -1,5 +1,6 @@
 import dynamoose from 'dynamoose';
 import { formatAddress, isAddress } from '../util';
+import defaultModelConfig from '../util/modelConfig';
 
 export enum Tag {
   WEST = 'west',
@@ -44,4 +45,8 @@ const schema = new dynamoose.Schema({
   },
 });
 
-export const Location = dynamoose.model('Locations', schema, { create: false });
+export const Location = dynamoose.model(
+  'Locations',
+  schema,
+  defaultModelConfig
+);

@@ -34,10 +34,10 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
     '',
   ];
   const [usage, setUsage] = useState<UsageType>({});
-  const [filter, setFilter] = useState(false);
+  const [showInactive, setShowInactive] = useState(false);
 
   useEffect(() => {
-    fetch('/api/riders/usage', withDefaults())
+    fetch('/api/riders/', withDefaults())
       .then((res) => res.json())
       .then((data) => setUsage(data));
   }, [withDefaults]);
@@ -66,13 +66,21 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
+  const filteredStudents = riders.filter(
+    (r) =>
+      (r.firstName + ' ' + r.lastName)
+        .toLowerCase()
+        .includes((searchName + '').toLowerCase()) &&
+      (showInactive ? true : r.active)
+  );
+
   return (
     <>
       <label>
         <input
           type="checkbox"
-          checked={filter}
-          onChange={() => setFilter(!filter)}
+          checked={showInactive}
+          onChange={() => setShowInactive(!showInactive)}
           style={{
             marginLeft: '2rem',
             marginTop: '1rem',
@@ -85,20 +93,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
       <Table>
         <Row header colSizes={colSizes} data={headers} />
 
-        {(filter
-          ? riders.filter(
-              (r) =>
-                r.active === false &&
-                (r.firstName + ' ' + r.lastName)
-                  .toLowerCase()
-                  .includes((searchName + '').toLowerCase())
-            )
-          : riders.filter((r) =>
-              (r.firstName + ' ' + r.lastName)
-                .toLowerCase()
-                .includes((searchName + '').toLowerCase())
-            )
-        ).map((r) => {
+        {filteredStudents.map((r) => {
           const {
             id,
             firstName,

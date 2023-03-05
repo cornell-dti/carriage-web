@@ -6,7 +6,7 @@
 
 .error {
   color: #eb0023;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .inputContainer {
@@ -54,7 +54,6 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  outline: none;
   margin: 0 0.125rem;
   background-color: rgba(0, 0, 0, 0.1);
 }

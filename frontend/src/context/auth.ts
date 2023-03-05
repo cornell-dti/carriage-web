@@ -1,10 +1,12 @@
 import { createContext } from 'react';
 import { Admin, Rider } from '../types/index';
 
+export type ValidUser = Admin | Rider;
+
 type AuthState = {
   logout: () => void;
-  id: string;
-  user?: Admin | Rider;
+  id: any;
+  user?: ValidUser;
   refreshUser: () => void;
 };
 

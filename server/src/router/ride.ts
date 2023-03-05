@@ -149,7 +149,7 @@ router.post('/', validateUser('User'), (req, res) => {
       deleted: recurring ? [] : undefined,
     });
     db.create(res, ride, async (doc) => {
-      const ride = doc.toJSON() as RideType;
+      const ride = doc as RideType;
       const { userType } = res.locals.user;
       ride.startLocation = await getRideLocation(ride.startLocation);
       ride.endLocation = await getRideLocation(ride.endLocation);
@@ -200,7 +200,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
       (driver && res.locals.user.id === driver.id)
     ) {
       db.update(res, Ride, { id }, body, tableName, async (doc) => {
-        const ride = JSON.parse(JSON.stringify(doc.toJSON()));
+        const ride = doc;
         const { userType } = res.locals.user;
         ride.startLocation = await getRideLocation(ride.startLocation);
         ride.endLocation = await getRideLocation(ride.endLocation);
@@ -347,7 +347,7 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     if (type === Type.ACTIVE) {
       const operation = { status: Status.CANCELLED };
       db.update(res, Ride, { id }, operation, tableName, async (doc) => {
-        const deletedRide = doc.toJSON();
+        const deletedRide = doc;
         const { userType } = res.locals.user;
         deletedRide.startLocation = ride.startLocation;
         deletedRide.endLocation = ride.endLocation;

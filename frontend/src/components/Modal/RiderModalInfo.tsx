@@ -76,10 +76,11 @@ const RiderModalInfo = ({
             name="firstName"
             type="text"
             ref={register({ required: true })}
+            aria-required="true"
             className={styles.firstRow}
           />
           {errors.firstName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>First name cannot be empty</p>
           )}
           <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
@@ -90,9 +91,10 @@ const RiderModalInfo = ({
             type="text"
             ref={register({ required: true })}
             className={styles.firstRow}
+            aria-required="true"
           />
           {errors.lastName && (
-            <p className={styles.error}>Please enter a name</p>
+            <p className={styles.error}>Last name cannot be empty</p>
           )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
@@ -106,8 +108,11 @@ const RiderModalInfo = ({
             ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
             disabled={isStudentEditing}
             className={styles.firstRow}
+            aria-required="true"
           />
-          {errors.netid && <p className={styles.error}>Please enter a netid</p>}
+          {errors.netid && (
+            <p className={styles.error}>NetId cannot be empty</p>
+          )}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
           <Label className={styles.label} htmlFor="phoneNumber">
@@ -116,19 +121,24 @@ const RiderModalInfo = ({
           <Input
             id="phoneNumber"
             name="phoneNumber"
-            type="text"
+            type="tel"
             ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
             className={styles.firstRow}
+            aria-required="true"
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>Please enter a phone number</p>
+            <p className={styles.error}>Phone number is not valid</p>
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <select name="needs" ref={register({ required: true })}>
+          <select
+            name="needs"
+            aria-required="true"
+            ref={register({ required: true })}
+          >
             {Object.values(Accessibility).map((value, index) => {
               return (
                 <option key={index} value={value}>
@@ -152,6 +162,7 @@ const RiderModalInfo = ({
             id="address"
             name="address"
             type="text"
+            aria-required="true"
             ref={register({
               required: true,
               pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
@@ -172,6 +183,7 @@ const RiderModalInfo = ({
                 id="joinDate"
                 type="date"
                 name="joinDate"
+                aria-required="true"
                 ref={register({ required: true })}
                 disabled={isStudentEditing}
                 className={styles.riderDate}
@@ -189,6 +201,7 @@ const RiderModalInfo = ({
                 id="endDate"
                 type="date"
                 name="endDate"
+                aria-required="true"
                 ref={register({
                   required: true,
                   validate: (endDate) => {
