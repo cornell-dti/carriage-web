@@ -21,9 +21,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
+          context: .
           push: true
           build-args: |
-            'REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}'
-            'REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}'
-            'REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}'
+            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
+            REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
+            REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
           tags: dticarriage/carriage-service:latest
