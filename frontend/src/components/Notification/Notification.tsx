@@ -64,7 +64,6 @@ const Notification = () => {
 
   useEffect(() => {
     const element = document.getElementById('popup');
-    console.log(element);
     element?.removeAttribute('aria-describedby');
   }, []);
 
