@@ -1,6 +1,28 @@
 .inputContainer {
   max-width: 45rem;
 }
+.input[type='time']::-webkit-datetime-edit-hour-field:focus,
+.input[type='time']::-webkit-datetime-edit-minute-field:focus,
+.input[type='time']::-webkit-datetime-edit-ampm-field:focus {
+  background-color: #3783f6;
+}
+
+.input[type='time']::-o-datetime-edit-hour-field:focus,
+.input[type='time']::-o-datetime-edit-minute-field:focus,
+.input[type='time']::-o-datetime-edit-ampm-field:focus {
+  background-color: #3783f6;
+}
+
+.input[type='time']::-moz-datetime-edit-hour-field:focus,
+.input[type='time']::-moz-datetime-edit-minute-field:focus,
+.input[type='time']::-moz-datetime-edit-ampm-field:focus {
+  background-color: #3783f6;
+}
+.input[type='time']::-ms-datetime-edit-hour-field,
+.input[type='time']::-ms-datetime-edit-minute-field:focus,
+.input[type='time']::-ms-datetime-edit-ampm-field:focus {
+  background-color: #3783f6;
+}
 .input {
   display: inline-block;
   border-radius: 0.5rem;
