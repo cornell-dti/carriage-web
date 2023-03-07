@@ -4,6 +4,9 @@ FROM node:16-alpine
 # Create a directory for the app
 WORKDIR /app
 
+# Set production environment for node
+ENV NODE_ENV=production
+
 # Read build-time environment variables
 ARG REACT_APP_CLIENT_ID
 ENV REACT_APP_CLIENT_ID ${REACT_APP_CLIENT_ID}
