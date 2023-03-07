@@ -62,15 +62,16 @@ const Notification = () => {
       </div>
     ));
 
-  const element = document.getElementsByClassName(
-    'notification_bell__HML54'
-  )[0]!;
-  element.removeAttribute('aria-describedby');
+  useEffect(() => {
+    const element = document.getElementById('popup');
+    console.log(element);
+    element?.removeAttribute('aria-describedby');
+  }, []);
 
   return (
     <Popup
       trigger={
-        <button className={styles.bell}>
+        <button id="popup" className={styles.bell}>
           <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
