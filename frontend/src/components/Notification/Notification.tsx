@@ -62,15 +62,16 @@ const Notification = () => {
       </div>
     ));
 
+  const element = document.getElementsByClassName(
+    'notification_bell__HML54'
+  )[0]!;
+  element.removeAttribute('aria-describedby');
+
   return (
     <Popup
       trigger={
         <button className={styles.bell}>
-          <img
-            className={styles.badge}
-            src={notificationBell}
-            alt="notification bell"
-          />
+          <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
               src={notificationBadge}
