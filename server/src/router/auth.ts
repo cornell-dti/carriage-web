@@ -82,7 +82,8 @@ function findUserAndSendToken(
 
 // Verify an authentication token
 router.post('/', (req, res) => {
-  const { userInfo, table } = req.body;
+  let { userInfo, table } = req.body;
+  if (typeof userInfo !== 'object') userInfo = JSON.parse(userInfo);
   const model = getModel(table);
   try {
     const email = userInfo?.email;
