@@ -24,7 +24,7 @@ const DisplayMessage = ({ key, time, title, body }: Message) => {
     <div key={key} className={styles.body}>
       <div className={styles.user}>
         <div className={styles.avatar}>
-          <span className={styles.initials}>{title}</span>
+          <span className={styles.initials}>C</span>
         </div>
       </div>
       <div className={styles.msg}>
