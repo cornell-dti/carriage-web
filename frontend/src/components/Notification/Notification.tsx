@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import moment from 'moment';
 import Popup from 'reactjs-popup';
 import cn from 'classnames';
@@ -6,6 +6,7 @@ import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
 import { Ride } from '../../types';
+import DisplayMessage from './Message';
 
 type Message = {
   time: Date;
@@ -20,17 +21,16 @@ type NotificationData = {
   sentTime: string;
 };
 
-const truncate = (str: string, num: number) => {
-  if (str.length <= num) {
-    return str;
-  }
-  return `${str.slice(0, num)}...`;
-};
-
 const Notification = () => {
   const [newMessages, setNewMessages] = useState<Message[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [notify, setNotify] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      time: new Date(),
+      title: 'Scheduled Ride',
+      body: 'this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body;',
+    },
+  ]);
+  const [notify, setNotify] = useState(true);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
@@ -48,18 +48,7 @@ const Notification = () => {
 
   const mapMessages = (msgs: Message[]) =>
     msgs.map(({ time, title, body }, i) => (
-      <div key={i} className={styles.body}>
-        <div className={styles.user}>
-          <div className={styles.avatar}>
-            <span className={styles.initials}>C</span>
-          </div>
-        </div>
-        <div className={styles.msg}>
-          <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
-          <p>{body}</p>
-        </div>
-        <div className={styles.link}>View</div>
-      </div>
+      <DisplayMessage key={i} {...{ time, title, body }} />
     ));
 
   useEffect(() => {
