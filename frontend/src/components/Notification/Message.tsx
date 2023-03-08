@@ -31,7 +31,7 @@ const DisplayMessage = ({ key, time, title, body }: Message) => {
         <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
         <p>{trunc ? truncate(body) : body}</p>
       </div>
-      <div className={styles.link} onClick={() => onViewClick()}>
+      <div className={styles.link} onClick={onViewClick}>
         {trunc ? 'View More' : 'Less'}
       </div>
     </div>
