@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useId } from 'react';
-import moment from 'moment';
+import React, { useState, useEffect } from 'react';
 import Popup from 'reactjs-popup';
 import cn from 'classnames';
 import styles from './notification.module.css';
