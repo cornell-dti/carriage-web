@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useId } from '@react-aria/utils';
 import moment from 'moment';
 import Popup from 'reactjs-popup';
 import cn from 'classnames';
@@ -31,6 +32,7 @@ const Notification = () => {
   const [newMessages, setNewMessages] = useState<Message[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
+  const popupId = useId();
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
@@ -63,14 +65,14 @@ const Notification = () => {
     ));
 
   useEffect(() => {
-    const element = document.getElementById('popup');
+    const element = document.getElementById(popupId);
     element?.removeAttribute('aria-describedby');
   }, []);
 
   return (
     <Popup
       trigger={
-        <button id="popup" className={styles.bell}>
+        <button id={popupId} className={styles.bell}>
           <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
