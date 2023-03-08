@@ -23,14 +23,8 @@ type NotificationData = {
 
 const Notification = () => {
   const [newMessages, setNewMessages] = useState<Message[]>([]);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      time: new Date(),
-      title: 'Scheduled Ride',
-      body: 'this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body; this is body;',
-    },
-  ]);
-  const [notify, setNotify] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [notify, setNotify] = useState(false);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
