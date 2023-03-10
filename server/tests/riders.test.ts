@@ -100,7 +100,7 @@ describe('Riders', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
       expect(res.body).to.have.property('data');
-      expect(res.body.data).to.deep.equal(rider[0]);
+      expect(res.body.data).to.deep.equal(riders[0]);
     });
   });
 
@@ -114,7 +114,7 @@ describe('Riders', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
       expect(res.body).to.have.property('data');
-      expect(res.body.data.reverse()).to.deep.equal(rider);
+      expect(res.body.data.reverse()).to.deep.equal(riders);
     });
   });
 
@@ -127,13 +127,13 @@ describe('Riders', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.email).to.be.equal(rider[0].email);
-      expect(res.body.phoneNumber).to.be.equal(rider[0].phoneNumber);
-      expect(res.body.firstName).to.be.equal(rider[0].firstName);
-      expect(res.body.lastName).to.be.equal(rider[0].lastName);
-      expect(res.body.pronouns).to.be.equal(rider[0].pronouns);
-      expect(res.body.joinDate).to.be.equal(rider[0].joinDate);
-      expect(res.body.endDate).to.be.equal(rider[0].endDate);
+      expect(res.body.email).to.be.equal(riders[0].email);
+      expect(res.body.phoneNumber).to.be.equal(riders[0].phoneNumber);
+      expect(res.body.firstName).to.be.equal(riders[0].firstName);
+      expect(res.body.lastName).to.be.equal(riders[0].lastName);
+      expect(res.body.pronouns).to.be.equal(riders[0].pronouns);
+      expect(res.body.joinDate).to.be.equal(riders[0].joinDate);
+      expect(res.body.endDate).to.be.equal(riders[0].endDate);
     });
   });
 
@@ -146,8 +146,8 @@ describe('Riders', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.organization).to.be.equal(rider[0].organization);
-      expect(res.body.description).to.be.equal(rider[0].description);
+      expect(res.body.organization).to.be.equal(riders[0].organization);
+      expect(res.body.description).to.be.equal(riders[0].description);
     });
   });
 
@@ -160,8 +160,8 @@ describe('Riders', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.accessibility).to.be.equal(rider[0].accessibility);
-      expect(res.body.description).to.be.equal(rider[0].description);
+      expect(res.body.accessibility).to.be.equal(riders[0].accessibility);
+      expect(res.body.description).to.be.equal(riders[0].description);
     });
   });
 
@@ -178,7 +178,7 @@ describe('Riders', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
       expect(res.body).to.have.property('data');
-      expect(res.body.data).to.deep.equal(rider[0].favoriteLocations);
+      expect(res.body.data).to.deep.equal(riders[0].favoriteLocations);
     });
   });
 
@@ -229,7 +229,7 @@ describe('Riders', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.body.id).to.deep.equal(
-        rider[0].favoriteLocations[rider[0].favoriteLocations.length - 1]
+        riders[0].favoriteLocations[riders[0].favoriteLocations.length - 1]
       );
     });
   });
