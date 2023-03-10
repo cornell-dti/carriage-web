@@ -6,7 +6,7 @@ import { Rider } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 
 let adminToken: string;
-const rider = [
+const riders = [
   {
     id: 'abc-10',
     email: 'test-email@test.com',
