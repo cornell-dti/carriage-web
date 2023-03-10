@@ -81,6 +81,7 @@ const Modal = ({
                       className={styles.closeBtn}
                       id={'close'}
                       onClick={onClose}
+                      aria-label={currentTitle as string}
                     >
                       <img alt="close" src={close} />
                     </button>
