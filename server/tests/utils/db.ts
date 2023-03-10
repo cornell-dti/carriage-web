@@ -3,7 +3,10 @@ import { Document } from 'dynamoose/dist/Document';
 import * as models from '../../src/models';
 import { v4 as uuid } from 'uuid';
 
-export const populateDB = async <T extends Document>(table: ModelType<T>, data: any) => {
+export const populateDB = async <T extends Document>(
+  table: ModelType<T>,
+  data: any
+) => {
   return await table.create({
     id: uuid(),
     ...data,
