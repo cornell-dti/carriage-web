@@ -160,7 +160,6 @@ describe('Testing Functionality of Riders Endpoints', () => {
   });
 
   const newRiderData = {
-    id: 'abc-12',
     email: 'test-email2@test.com',
     phoneNumber: '1234567892',
     firstName: 'Test',
@@ -190,8 +189,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
       // this is randomly generated and cannot be tested for,
       // but the accuracy of the rest of the data can be
       delete sentData.id;
-      const { id, ...noID } = newRiderData;
-      expect(sentData).to.deep.equal(noID);
+      expect(sentData).to.deep.equal(newRiderData);
       // retrieve this new rider
       const res2 = await request(app)
         .get(`/api/riders/${res.body.data.id}`)
@@ -200,7 +198,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .expect('content-type', 'application/json; charset=utf-8');
       const retrievedData = res2.body.data;
       delete retrievedData.id;
-      expect(retrievedData).to.deep.equal(noID);
+      expect(retrievedData).to.deep.equal(newRiderData);
     });
   });
 
