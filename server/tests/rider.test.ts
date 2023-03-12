@@ -36,14 +36,14 @@ const riders = [
     joinDate: '2023-03-09',
     endDate: '2024-03-09',
     address: '37 Colonial Ln, Ithaca, NY 14850',
-    favoriteLocations: ['west'],
+    favoriteLocations: ['RedRunner'],
     organization: 'CULift',
     photoLink: '',
     active: true,
   },
 ];
 
-describe('Riders', () => {
+describe('Testing Functionality of Riders Endpoints', () => {
   before(async () => {
     adminToken = await authorize('Admin', {
       firstName: 'Test-Admin',
@@ -51,48 +51,16 @@ describe('Riders', () => {
       phoneNumber: '1111111111',
       email: 'test-admin@cornell.edu',
     });
-    await populateDB(Rider, {
-      id: 'abc-10',
-      email: 'test-email@test.com',
-      phoneNumber: '1234567890',
-      firstName: 'Test',
-      lastName: 'Testing',
-      pronouns: 'he/him/his',
-      accessibility: 'Crutches',
-      description: '',
-      joinDate: '2023-03-09',
-      endDate: '2024-03-09',
-      address: '36 Colonial Ln, Ithaca, NY 14850',
-      favoriteLocations: ['west'],
-      organization: 'CULift',
-      photoLink: '',
-      active: true,
-    });
-    // add second rider
-    await populateDB(Rider, {
-      id: 'abc-11',
-      email: 'test-email1@test.com',
-      phoneNumber: '1234567891',
-      firstName: 'Test',
-      lastName: 'Testing1',
-      pronouns: 'he/him/his',
-      accessibility: 'Crutches',
-      description: '',
-      joinDate: '2023-03-09',
-      endDate: '2024-03-09',
-      address: '37 Colonial Ln, Ithaca, NY 14850',
-      favoriteLocations: ['west'],
-      organization: 'CULift',
-      photoLink: '',
-      active: true,
+    riders.forEach(async (rider) => {
+      await populateDB(Rider, rider);
     });
   });
 
   after(clearDB);
 
   // testing retrieval of specific rider
-  describe('GET /api/riders/abc-10', () => {
-    it('should return 200 OK', async () => {
+  describe('Testing Get Rider by Id', () => {
+    it('should fetch rider with id abc-10', async () => {
       const res = await request(app)
         .get('/api/riders/abc-10')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -105,8 +73,8 @@ describe('Riders', () => {
   });
 
   // testing retrieval of all riders
-  describe('GET /api/riders', () => {
-    it('should return 200 OK', async () => {
+  describe('GET all riders', () => {
+    it('should return all riders', async () => {
       const res = await request(app)
         .get('/api/riders/')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -118,50 +86,59 @@ describe('Riders', () => {
     });
   });
 
+  const riderProfile = {
+    email: 'test-email@test.com',
+    phoneNumber: '1234567890',
+    firstName: 'Test',
+    lastName: 'Testing',
+    pronouns: 'he/him/his',
+    joinDate: '2023-03-09',
+    endDate: '2024-03-09',
+  };
   // testing retrieval of rider profile
-  describe('GET /api/riders/abc-10/profile', () => {
-    it('should return 200 OK', async () => {
+  describe('GET a rider profile by ID', () => {
+    it("should return rider's profile with id abc-10", async () => {
       const res = await request(app)
         .get('/api/riders/abc-10/profile')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.email).to.be.equal(riders[0].email);
-      expect(res.body.phoneNumber).to.be.equal(riders[0].phoneNumber);
-      expect(res.body.firstName).to.be.equal(riders[0].firstName);
-      expect(res.body.lastName).to.be.equal(riders[0].lastName);
-      expect(res.body.pronouns).to.be.equal(riders[0].pronouns);
-      expect(res.body.joinDate).to.be.equal(riders[0].joinDate);
-      expect(res.body.endDate).to.be.equal(riders[0].endDate);
+      expect(res.body).to.deep.equal(riderProfile);
     });
   });
 
+  const riderOrganization = {
+    organization: riders[0].organization,
+    description: riders[0].description,
+  };
   // testing retrieval of org info
-  describe('GET /api/riders/abc-10/organization', () => {
-    it('should return 200 OK', async () => {
+  describe("GET a rider's organization by the rider's ID", () => {
+    it("should return rider's organization with id abc-10", async () => {
       const res = await request(app)
         .get('/api/riders/abc-10/organization')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.organization).to.be.equal(riders[0].organization);
-      expect(res.body.description).to.be.equal(riders[0].description);
+      expect(res.body).to.deep.equal(riderOrganization);
     });
   });
 
+  const riderAccessibility = {
+    accessibility: riders[0].accessibility,
+    description: riders[0].description,
+  };
   // testing retrieval of accessibility info
-  describe('GET /api/riders/abc-10/accessibility', () => {
-    it('should return 200 OK', async () => {
+  describe("GET a rider's accessiblity by the rider's ID", () => {
+    it("should return rider's accessibility with id abc-10", async () => {
       const res = await request(app)
         .get('/api/riders/abc-10/accessibility')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.status).to.be.equal(200);
-      expect(res.body.accessibility).to.be.equal(riders[0].accessibility);
-      expect(res.body.description).to.be.equal(riders[0].description);
+      expect(res.body).to.deep.equal(riderAccessibility);
     });
   });
 
@@ -169,8 +146,8 @@ describe('Riders', () => {
   // *******************************************************************************
   // note at the moment I don't think favorites works, it just returns an empty list
   // *******************************************************************************
-  describe('GET /api/riders/abc-10/favorites', () => {
-    it('should return 200 OK', async () => {
+  describe("GET a rider's favorite locations by the rider's ID", () => {
+    it("should return rider's favorite locations with id abc-10", async () => {
       const res = await request(app)
         .get('/api/riders/abc-10/favorites')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -182,7 +159,7 @@ describe('Riders', () => {
     });
   });
 
-  const sendRidersData = {
+  const newRiderData = {
     email: 'test-email2@test.com',
     phoneNumber: '1234567892',
     firstName: 'Test',
@@ -200,11 +177,11 @@ describe('Riders', () => {
   };
 
   // testing the addition of a new rider
-  describe('POST /api/riders', () => {
-    it('should return 200 OK', async () => {
+  describe('Create a new rider', () => {
+    it('should return the data of the new rider', async () => {
       const res = await request(app)
         .post('/api/riders/')
-        .send(sendRidersData)
+        .send(newRiderData)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
@@ -212,7 +189,7 @@ describe('Riders', () => {
       // this is randomly generated and cannot be tested for,
       // but the accuracy of the rest of the data can be
       delete sentData.id;
-      expect(sentData).to.deep.equal(sendRidersData);
+      expect(sentData).to.deep.equal(newRiderData);
     });
   });
 
@@ -220,8 +197,8 @@ describe('Riders', () => {
   // ***************************************************
   // getting a 400 bad request for some reason
   // ***************************************************
-  describe('POST /api/riders/abc-10/favorites', () => {
-    it('should return 200 OK', async () => {
+  describe('POST a new favorite location for a rider', () => {
+    it('should return the new location', async () => {
       const res = await request(app)
         .post('/api/riders/abc-10/favorites')
         .send({ id: 'central' })
@@ -235,8 +212,8 @@ describe('Riders', () => {
   });
 
   // testing the updating of info of a rider
-  describe('PUT /api/riders/abc-10', () => {
-    it('should return 200 OK', async () => {
+  describe('PUT new information for a rider by id abc-10', () => {
+    it('should return all fields in the document of the rider', async () => {
       const res = await request(app)
         .put('/api/riders/abc-10')
         .send({ firstName: 'NewName' })
@@ -248,14 +225,22 @@ describe('Riders', () => {
   });
 
   // testing the deletion of a rider
-  describe('DELETE /api/riders/abc-10', () => {
-    it('should return 200 OK', async () => {
+  describe('DELETE a rider by id abc-10', () => {
+    it("should return the deleted rider's UUID", async () => {
       const res = await request(app)
         .delete('/api/riders/abc-10')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.body).to.deep.equal({ id: 'abc-10' });
+
+      // try to fetch the deleted rider's information; should return 400 error
+      const res2 = await request(app)
+        .get('/api/riders/abc-10')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(400)
+        .expect('content-type', 'application/json; charset=utf-8');
+      expect(res2.body).to.deep.equal({ err: 'id not found in Riders' });
     });
   });
 });
