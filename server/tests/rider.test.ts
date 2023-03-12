@@ -160,6 +160,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
   });
 
   const newRiderData = {
+    id: 'abc-12',
     email: 'test-email2@test.com',
     phoneNumber: '1234567892',
     firstName: 'Test',
@@ -189,7 +190,15 @@ describe('Testing Functionality of Riders Endpoints', () => {
       // this is randomly generated and cannot be tested for,
       // but the accuracy of the rest of the data can be
       delete sentData.id;
-      expect(sentData).to.deep.equal(newRiderData);
+      const { id, ...noID } = newRiderData;
+      expect(sentData).to.deep.equal(noID);
+      // retrieve this new rider
+      const res2 = await request(app)
+        .get('/api/riders/abc-12')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      expect(res2.body.data).to.deep.equal(newRiderData);
     });
   });
 
@@ -205,9 +214,18 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
+      const favoriteLocations = riders[0].favoriteLocations;
+      favoriteLocations.push('central');
       expect(res.body.id).to.deep.equal(
-        riders[0].favoriteLocations[riders[0].favoriteLocations.length - 1]
+        favoriteLocations[favoriteLocations.length - 1]
       );
+      // retrieve this rider's new favorite location list
+      const res2 = await request(app)
+        .get(`/api/riders/abc-10`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      expect(res2.body.data.favoriteLocations).to.deep.equal(favoriteLocations);
     });
   });
 
@@ -221,6 +239,13 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(res.body.data.firstName).to.be.equal('NewName');
+      // retrieve rider and see if there is a new name
+      const res2 = await request(app)
+        .get(`/api/riders/abc-10`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('content-type', 'application/json; charset=utf-8');
+      expect(res2.body.data.firstName).to.be.equal('NewName');
     });
   });
 
