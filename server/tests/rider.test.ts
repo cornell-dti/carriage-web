@@ -4,9 +4,10 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Rider } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
+import { RiderType, Organization } from '../src/models/rider';
 
 let adminToken: string;
-const riders = [
+const riders: RiderType[] = [
   {
     id: 'abc-10',
     email: 'test-email@test.com',
@@ -20,7 +21,7 @@ const riders = [
     endDate: '2024-03-09',
     address: '36 Colonial Ln, Ithaca, NY 14850',
     favoriteLocations: ['west'],
-    organization: 'CULift',
+    organization: Organization.REDRUNNER,
     photoLink: '',
     active: true,
   },
@@ -32,12 +33,12 @@ const riders = [
     lastName: 'Testing1',
     pronouns: 'he/him/his',
     accessibility: 'Crutches',
-    description: '',
+    description: 'needs help',
     joinDate: '2023-03-09',
     endDate: '2024-03-09',
     address: '37 Colonial Ln, Ithaca, NY 14850',
     favoriteLocations: ['RedRunner'],
-    organization: 'CULift',
+    organization: Organization.CULIFT,
     photoLink: '',
     active: true,
   },
