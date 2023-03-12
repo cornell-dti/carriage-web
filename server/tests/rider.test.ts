@@ -194,11 +194,13 @@ describe('Testing Functionality of Riders Endpoints', () => {
       expect(sentData).to.deep.equal(noID);
       // retrieve this new rider
       const res2 = await request(app)
-        .get('/api/riders/abc-12')
+        .get(`/api/riders/${res.body.data.id}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('content-type', 'application/json; charset=utf-8');
-      expect(res2.body.data).to.deep.equal(newRiderData);
+      const retrievedData = res2.body.data;
+      delete retrievedData.id;
+      expect(retrievedData).to.deep.equal(noID);
     });
   });
 
