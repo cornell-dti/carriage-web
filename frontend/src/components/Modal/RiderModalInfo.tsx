@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
@@ -18,10 +18,19 @@ const RiderModalInfo = ({
   setFormData,
   rider,
 }: ModalFormProps) => {
+  const fullName =
+    rider?.firstName && rider?.lastName
+      ? rider?.firstName + ' ' + rider?.lastName
+      : '';
+
+  const [checkedNeeds, setCheckedNeeds] = useState<string[]>([]);
+  const [extraNeedsInput, setExtraNeedsInput] = useState(false);
+  const [dropdown, setDropdown] = useState(false);
+  const [arrowRotation, setArrowRotation] = useState(270);
+
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
-      firstName: rider?.firstName ?? '',
-      lastName: rider?.lastName ?? '',
+      name: fullName ?? '',
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
       needs: rider?.accessibility ?? '', // if no needs, default is undefined
@@ -30,19 +39,29 @@ const RiderModalInfo = ({
       endDate: rider?.endDate ?? '',
     },
   });
+
   const { errors } = formState;
+
   const beforeSubmit = ({
-    firstName,
-    lastName,
+    name,
     netid,
     phoneNumber,
-    needs,
+    otherNeeds,
     address,
     joinDate,
     endDate,
   }: ObjectType) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
-    const accessibility = needs;
+
+    const accessibility = otherNeeds
+      ? checkedNeeds.join(',') + `,Other:${otherNeeds}`
+      : checkedNeeds.join(',');
+
+    const nameParts = name.trim().split(/\s+/);
+    const firstName =
+      nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(-1)[0] : '';
+
     onSubmit({
       firstName,
       lastName,
@@ -60,125 +79,210 @@ const RiderModalInfo = ({
     setIsOpen(false);
   };
 
+  const handleDropDown = () => {
+    setDropdown(!dropdown);
+    setArrowRotation(dropdown ? 270 : 90);
+  };
+
+  const handleCheckboxChange = (e: {
+    target: { value: string; checked: boolean };
+  }) => {
+    const need = e.target.value;
+    const checked = e.target.checked;
+
+    if (checked) {
+      setCheckedNeeds((pre) => [...pre, need]);
+    } else {
+      setCheckedNeeds((pre) => pre.filter((n) => n !== need));
+    }
+  };
+
+  const handleNext = () => {
+    setExtraNeedsInput(checkedNeeds.includes('Other') ? true : false);
+    setDropdown(!dropdown);
+    setCheckedNeeds(checkedNeeds.filter((value) => value != 'Other'));
+  };
+
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
-            First Name:{' '}
-          </Label>
-          <Input
-            id="firstName"
-            name="firstName"
-            type="text"
-            ref={register({ required: true })}
-            aria-required="true"
-            className={styles.firstRow}
-          />
-          {errors.firstName && (
-            <p className={styles.error}>First name cannot be empty</p>
-          )}
-          <Label className={styles.label} htmlFor="lastName">
-            Last Name:{' '}
-          </Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            type="text"
-            ref={register({ required: true })}
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.lastName && (
-            <p className={styles.error}>Last name cannot be empty</p>
-          )}
+      <div className={styles.flexInputContainer}>
+        <div className={styles.flexRow}>
+          <div>
+            <Input
+              id="name"
+              name="name"
+              placeholder="Name"
+              type="text"
+              ref={register({ required: true })}
+              aria-required="true"
+              className={cn(styles.firstRow, styles.flexItems)}
+            />
+            {errors.name && (
+              <p className={styles.error}>Name cannot be empty</p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              id="netid"
+              name="netid"
+              placeholder="NetID"
+              type="text"
+              ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+              disabled={isStudentEditing}
+              className={cn(styles.firstRow, styles.flexItems)}
+              aria-required="true"
+            />
+            {errors.netid && (
+              <p className={styles.error}>NetId cannot be empty</p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              id="phoneNumber"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              type="tel"
+              ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+              className={cn(styles.firstRow, styles.flexItems)}
+              aria-required="true"
+            />
+
+            {errors.phoneNumber && (
+              <p className={styles.error}>Phone number is not valid</p>
+            )}
+          </div>
         </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="netid">
-            NetID:{' '}
-          </Label>
-          <Input
-            id="netid"
-            name="netid"
-            type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
-            disabled={isStudentEditing}
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.netid && (
-            <p className={styles.error}>NetId cannot be empty</p>
-          )}
-        </div>
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
-            Phone Number:{' '}
-          </Label>
-          <Input
-            id="phoneNumber"
-            name="phoneNumber"
-            type="tel"
-            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.phoneNumber && (
-            <p className={styles.error}>Phone number is not valid</p>
-          )}
-        </div>
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="needs">
-            Needs:{' '}
-          </Label>
-          <select
-            name="needs"
-            aria-required="true"
-            ref={register({ required: true })}
-          >
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
-            })}
-          </select>
-          {errors.needs?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid needs. You can enter 'Assistant', 'Crutches', or
-              'Wheelchair'
+
+        <div className={styles.flexRow}>
+          <div>
+            <p
+              className={cn(
+                styles.flexNeeds,
+                styles.flexItems,
+                styles.dropdownHead
+              )}
+              onClick={() => handleDropDown()}
+            >
+              Needs
+              <span
+                className={styles.arrow}
+                style={{ transform: `rotate(${arrowRotation}deg)` }}
+              >
+                &#171;
+              </span>
             </p>
-          )}
+
+            {dropdown && (
+              <ul className={cn(styles.checkboxDropdownList)}>
+                {Object.values(Accessibility)
+                  .filter((value) => value !== '')
+                  .sort((a, b) => {
+                    if (a === 'Other') return 1;
+                    if (b === 'Other') return -1;
+                    return a.localeCompare(b);
+                  })
+                  .map((value, index) => {
+                    const isChecked = checkedNeeds.includes(value);
+                    return (
+                      <li key={index} className={styles.dropdownItems}>
+                        <Input
+                          type="checkbox"
+                          value={value}
+                          id={`checkbox-${index}`}
+                          onChange={handleCheckboxChange}
+                          checked={isChecked}
+                        />
+                        <label
+                          className={styles.dropdownLabels}
+                          htmlFor={`checkbox-${index}`}
+                        >
+                          {value}
+                        </label>
+                      </li>
+                    );
+                  })}
+                <Button
+                  type="button"
+                  className={styles.next}
+                  onClick={() => handleNext()}
+                >
+                  Next
+                </Button>
+              </ul>
+            )}
+
+            {errors.needs?.type === 'validate' && (
+              <p className={styles.error}>
+                Invalid needs. You can enter 'Assistant', 'Crutches', or
+                'Wheelchair'
+              </p>
+            )}
+          </div>
+
+          <div>
+            {/* Conditionally render other field when Next button is clicked */}
+            {extraNeedsInput && (
+              <div className={styles.hiddenFlex}>
+                <p className={styles.flexItems}>Other</p>
+
+                <Input
+                  id="otherNeeds"
+                  name="otherNeeds"
+                  className={cn(
+                    styles.flexNeeds,
+                    styles.flexItems,
+                    styles.hiddenFlexInput,
+                    styles.firstRow
+                  )}
+                  type="text"
+                  placeholder="Input text..."
+                  aria-required="true"
+                  ref={register({
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+                  })}
+                />
+
+                {errors.needs?.type === 'validate' && (
+                  <p className={styles.error}>
+                    Invalid needs. You can enter 'Assistant', 'Crutches', or
+                    'Wheelchair'
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <Input
+              id="address"
+              name="address"
+              className={styles.flexItems}
+              type="text"
+              placeholder="Address"
+              aria-required="true"
+              ref={register({
+                required: true,
+                pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+              })}
+            />
+            {errors.address && (
+              <p className={styles.error}>Please enter an address</p>
+            )}
+          </div>
         </div>
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor="address">
-            Address:{' '}
-          </Label>
-          <Input
-            id="address"
-            name="address"
-            type="text"
-            aria-required="true"
-            ref={register({
-              required: true,
-              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
-            })}
-          />
-          {errors.address && (
-            <p className={styles.error}>Please enter an address</p>
-          )}
-        </div>
-        <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <p>Duration</p>
-          <div className={styles.lastRow}>
-            <div>
-              <Label className={styles.label} htmlFor="joinDate">
-                Join Date:{' '}
-              </Label>
+
+        <p className={styles.duration}>Duration</p>
+
+        <div className={styles.flexRow}>
+          <div>
+            <div className={styles.flexTo}>
               <Input
                 id="joinDate"
                 type="date"
@@ -186,42 +290,50 @@ const RiderModalInfo = ({
                 aria-required="true"
                 ref={register({ required: true })}
                 disabled={isStudentEditing}
-                className={styles.riderDate}
+                className={cn(
+                  styles.flexItems,
+                  styles.riderDate,
+                  styles.flexDate
+                )}
               />
-              {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
-              )}
+              <p>to</p>
             </div>
-            <p className={styles.to}>to</p>
-            <div>
-              <Label className={styles.label} htmlFor="endDate">
-                End Date:{' '}
-              </Label>
-              <Input
-                id="endDate"
-                type="date"
-                name="endDate"
-                aria-required="true"
-                ref={register({
-                  required: true,
-                  validate: (endDate) => {
-                    const joinDate = getValues('joinDate');
-                    return joinDate < endDate;
-                  },
-                })}
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
+
+            {errors.joinDate && (
+              <p className={styles.error}>Please enter a join date</p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              id="endDate"
+              type="date"
+              name="endDate"
+              aria-required="true"
+              ref={register({
+                required: true,
+                validate: (endDate) => {
+                  const joinDate = getValues('joinDate');
+                  return joinDate < endDate;
+                },
+              })}
+              disabled={isStudentEditing}
+              className={cn(
+                styles.flexItems,
+                styles.riderDate,
+                styles.flexDate
               )}
-              {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
-              )}
-            </div>
+            />
+            {errors.endDate?.type === 'required' && (
+              <p className={styles.error}>Please enter an end date</p>
+            )}
+            {errors.endDate?.type === 'validate' && (
+              <p className={styles.error}>Invalid end time</p>
+            )}
           </div>
         </div>
       </div>
+
       <div className={styles.buttonContainer}>
         <Button
           type="button"
