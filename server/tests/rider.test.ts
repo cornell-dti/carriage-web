@@ -269,7 +269,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
     expect(res.status).to.be.equal(200);
-    expect(res.body).to.deep.equal(testRiders[0].favoriteLocations);
+    expect(res.body.data).to.deep.equal(testRiders[0].favoriteLocations);
   };
   // testing retrieval of favorite locations
   // *******************************************************************************
@@ -366,18 +366,15 @@ describe('Testing Functionality of Riders Endpoints', () => {
       .auth(authToken, { type: 'bearer' })
       .expect(200)
       .expect('Content-Type', 'application/json; charset=utf-8');
-    const favoriteLocations = testRiders[0].favoriteLocations;
-    favoriteLocations.push('Test-Location 2');
-    expect(res.body.id).to.deep.equal(
-      favoriteLocations[favoriteLocations.length - 1]
-    );
+    expect(res.body.data).to.deep.equal(testLocations[1]);
     // retrieve this rider's new favorite location list
+    const favoriteLocations = testRiders[0].favoriteLocations;
     const res2 = await request(app)
-      .get(`/api/riders/abc-10`)
+      .get(`/api/riders/abc-10/favorites`)
       .auth(authToken, { type: 'bearer' })
       .expect(200)
       .expect('content-type', 'application/json; charset=utf-8');
-    expect(res2.body.data.favoriteLocations).to.deep.equal(favoriteLocations);
+    expect(res2.body.data).to.deep.equal(favoriteLocations);
   };
 
   const generateErrorAddFavoriteTest = async (authToken: string) => {
@@ -471,25 +468,8 @@ describe('Testing Functionality of Riders Endpoints', () => {
       .expect(400)
       .expect('Content-Type', 'application/json; charset=utf-8');
   };
-  describe('DELETE a rider by id abc-10', () => {
-    it("should return the deleted rider's UUID", async () => {
-      const res = await request(app)
-        .delete('/api/riders/abc-10')
-        .set('Authorization', `Bearer ${adminToken}`)
-        .expect(200)
-        .expect('Content-Type', 'application/json; charset=utf-8');
-      expect(res.body).to.deep.equal({ id: 'abc-10' });
 
-      // try to fetch the deleted rider's information; should return 400 error
-      const res2 = await request(app)
-        .get('/api/riders/abc-10')
-        .set('Authorization', `Bearer ${adminToken}`)
-        .expect(400)
-        .expect('content-type', 'application/json; charset=utf-8');
-      expect(res2.body).to.deep.equal({ err: 'id not found in Riders' });
-    });
-  });
-  describe('Create a new rider', () => {
+  describe('Delete a rider by id abc-10', () => {
     it('should return correct response for Admin account', async () =>
       await generateDeleteRiderTest(adminToken));
     it('should fail with 400 given Driver account', async () =>
