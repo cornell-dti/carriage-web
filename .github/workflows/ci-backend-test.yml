@@ -1,5 +1,7 @@
 name: CI Test
-on: pull_request
+on: 
+  pull_request:
+    paths: ["server/**"]
 
 jobs:
   build:
@@ -18,17 +20,13 @@ jobs:
       USE_HOSTNAME: ${{ secrets.USE_HOSTNAME }}
       EMAIL: ${{ secrets.EMAIL }}
       DOMAIN: ${{ secrets.DOMAIN }}
-      REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
-      REACT_APP_PUBLIC_VAPID_KEY: ${{ secrets.PUBLIC_VAPID_KEY }}
-      REACT_APP_ENCRYPTION_KEY: ${{ secrets.REACT_APP_ENCRYPTION_KEY }}
     steps:
-      - run: echo $WEB_PUSH_CONTACT
       - uses: actions/checkout@master
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
           node-version: '16.x'
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Server Dependencies
+        run: npm run install:server
       - name: Test Server
         run: npm run test:server
