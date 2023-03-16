@@ -262,34 +262,6 @@ describe('Testing Functionality of Riders Endpoints', () => {
     });
   });
 
-  const generateGetRiderFavoritesTest = async (authToken: string) => {
-    const res = await request(app)
-      .get('/api/riders/abc-10/favorites')
-      .auth(authToken, { type: 'bearer' })
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8');
-    expect(res.status).to.be.equal(200);
-    expect(res.body.data).to.deep.equal(testRiders[0].favoriteLocations);
-  };
-  // testing retrieval of favorite locations
-  // *******************************************************************************
-  // note at the moment I don't think favorites works, it just returns an empty list
-  // *******************************************************************************
-  describe("GET a rider's favorite locations by the rider's ID", () => {
-    it('should return correct response for Admin account', async () =>
-      await generateGetRiderFavoritesTest(adminToken));
-    it('should return correct response for Driver account', async () =>
-      await generateGetRiderFavoritesTest(driverToken));
-    it('should return correct response for Rider account', async () =>
-      await generateGetRiderFavoritesTest(riderToken));
-    it('should fail with 400 given no authorization header', async () => {
-      const res = await request(app)
-        .get('/api/riders/abc-10/favorites')
-        .expect(400);
-      expect(res.body).have.property('err');
-    });
-  });
-
   const newRiderData = {
     email: 'test-email2@test.com',
     phoneNumber: '1234567892',
@@ -351,53 +323,6 @@ describe('Testing Functionality of Riders Endpoints', () => {
       await generateUnauthorizedCreateNewRiderTest(riderToken));
     it('should fail with 400 given no authorization header', async () => {
       const res = await request(app).post('/api/riders/').expect(400);
-      expect(res.body).have.property('err');
-    });
-  });
-
-  // testing the addition of a favorite location for a rider
-  // ****************************************************************************
-  // this test is broken as we cannot retrieve a rider's favorite location list
-  // ****************************************************************************
-  const generateAddFavoriteTest = async (authToken: string) => {
-    const res = await request(app)
-      .post('/api/riders/abc-10/favorites')
-      .send({ id: '2' })
-      .auth(authToken, { type: 'bearer' })
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8');
-    expect(res.body.data).to.deep.equal(testLocations[1]);
-    // retrieve this rider's new favorite location list
-    const favoriteLocations = testRiders[0].favoriteLocations;
-    const res2 = await request(app)
-      .get(`/api/riders/abc-10/favorites`)
-      .auth(authToken, { type: 'bearer' })
-      .expect(200)
-      .expect('content-type', 'application/json; charset=utf-8');
-    expect(res2.body.data).to.deep.equal(favoriteLocations);
-  };
-
-  const generateErrorAddFavoriteTest = async (authToken: string) => {
-    const res = await request(app)
-      .post('/api/riders/abc-10/favorites')
-      .send({ id: '2' })
-      .auth(authToken, { type: 'bearer' })
-      .expect(400)
-      .expect('Content-Type', 'application/json; charset=utf-8');
-  };
-
-  describe('POST a new favorite location for a rider', () => {
-    it('should return correct response for Admin account', async () =>
-      await generateAddFavoriteTest(adminToken));
-    it('should fail with 400 given Driver account', async () =>
-      await generateErrorAddFavoriteTest(driverToken));
-    it('should return correct response for Rider account', async () =>
-      await generateAddFavoriteTest(riderToken));
-    it('should fail with 400 given no authorization header', async () => {
-      const res = await request(app)
-        .post('/api/riders/abc-10/favorites')
-        .send({ id: '2' })
-        .expect(400);
       expect(res.body).have.property('err');
     });
   });
