@@ -20,6 +20,7 @@ const testDriver = {
   firstName: 'Test-Driver',
   lastName: 'Test-Driver',
   phoneNumber: '2222222222',
+  startDate: 'start date',
   email: 'test-driver@cornell.edu',
   admin: false,
 };
