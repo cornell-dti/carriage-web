@@ -66,10 +66,23 @@ const testLocations: LocationType[] = [
   },
 ];
 
+const testLocationData = (val: any) => {
+  expect(val).to.have.property('id');
+  const match = testLocations.find((l) => l.id === val.id);
+  if (!match) {
+    expect.fail('location returned from api does not match test data');
+  }
+  expect(val).to.have.property('name', match.name);
+  expect(val).to.have.property('address', match.address);
+  expect(val).to.have.property('tag', match.tag);
+  expect(val).to.have.property('info', match.info);
+};
+
 describe('/locations tests', () => {
   let adminToken: string;
   let driverToken: string;
   let riderToken: string;
+
   before(async () => {
     adminToken = await authorize('Admin', testAdmin);
     driverToken = await authorize('Driver', testDriver);
@@ -79,39 +92,73 @@ describe('/locations tests', () => {
 
   after(clearDB);
 
-  const generateLocationTest = async (authToken: string) => {
-    const res = await request(app)
-      .get('/api/locations')
-      .auth(authToken, { type: 'bearer' })
-      .expect(200)
-      .expect('Content-Type', 'application/json; charset=utf-8');
-    expect(res.status).to.be.equal(200);
-    expect(res.body).to.have.property('data');
-    expect(res.body.data)
-      .to.be.an('array')
-      .and.to.have.lengthOf(testLocations.length);
-    (res.body.data as any[]).forEach((val) => {
-      expect(val).to.have.property('id');
-      const match = testLocations.find((l) => l.id === val.id);
-      if (!match) {
-        expect.fail('location returned from api does not match test data');
-      }
-      expect(val).to.have.property('name', match.name);
-      expect(val).to.have.property('address', match.address);
-      expect(val).to.have.property('tag', match.tag);
-      expect(val).to.have.property('info', match.info);
-    });
-  };
-
   describe('GET /api/locations', () => {
+    const testWithToken = async (authToken: string) => {
+      const res = await request(app)
+        .get('/api/locations')
+        .auth(authToken, { type: 'bearer' })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(res.status).to.be.equal(200);
+      expect(res.body).to.have.property('data');
+      expect(res.body.data)
+        .to.be.an('array')
+        .and.to.have.lengthOf(testLocations.length);
+      (res.body.data as any[]).forEach(testLocationData);
+    };
     it('should return correct response for Admin account', async () =>
-      await generateLocationTest(adminToken));
+      await testWithToken(adminToken));
     it('should return correct response for Driver account', async () =>
-      await generateLocationTest(driverToken));
+      await testWithToken(driverToken));
     it('should return correct response for Rider account', async () =>
-      await generateLocationTest(riderToken));
+      await testWithToken(riderToken));
     it('should fail with 400 given no authorization header', async () => {
       const res = await request(app).get('/api/locations').expect(400);
+      expect(res.body).have.property('err');
+    });
+  });
+
+  describe('GET /api/locations/:id', () => {
+    const testWithToken = async (authToken: string, id: string) => {
+      const res = await request(app)
+        .get(`/api/locations/${id}`)
+        .auth(authToken, { type: 'bearer' })
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(res.status).to.be.equal(200);
+      expect(res.body).to.have.property('data');
+      testLocationData(res.body.data);
+    };
+    const testErrorWithToken = async (authToken: string, id: string) => {
+      const res = await request(app)
+        .get(`/api/locations/${id}`)
+        .auth(authToken, { type: 'bearer' })
+        .expect(400);
+      expect(res.body).to.have.property('err');
+    };
+    it('should return correct response for Admin account', async () =>
+      await Promise.all([
+        testWithToken(adminToken, '1'),
+        testWithToken(adminToken, '2'),
+        testErrorWithToken(adminToken, '3'),
+        testErrorWithToken(adminToken, 'hello'),
+      ]));
+    it('should return correct response for Driver account', async () =>
+      await Promise.all([
+        testWithToken(driverToken, '1'),
+        testWithToken(driverToken, '2'),
+        testErrorWithToken(driverToken, '3'),
+        testErrorWithToken(driverToken, 'hello'),
+      ]));
+    it('should return correct response for Rider account', async () =>
+      await Promise.all([
+        testWithToken(riderToken, '1'),
+        testWithToken(riderToken, '2'),
+        testErrorWithToken(riderToken, '3'),
+        testErrorWithToken(riderToken, 'hello'),
+      ]));
+    it('some id should fail with 400 given no authorization header', async () => {
+      const res = await request(app).get('/api/locations/1').expect(400);
       expect(res.body).have.property('err');
     });
   });
