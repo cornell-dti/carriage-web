@@ -9,35 +9,22 @@ import { LocationType, Tag } from '../src/models/location';
 import { DriverType } from '../src/models/driver';
 import { RiderType } from '../src/models/rider';
 
-const testAdmin: Omit<AdminType, 'id'> = {
+const testAdmin = {
   firstName: 'Test-Admin',
   lastName: 'Test-Admin',
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
 };
 
-const testDriver: Omit<DriverType, 'id'> = {
+const testDriver = {
   firstName: 'Test-Driver',
   lastName: 'Test-Driver',
-  availability: {
-    Mon: undefined,
-    Tue: undefined,
-    Wed: undefined,
-    Thu: undefined,
-    Fri: undefined,
-  },
-  vehicle: {
-    id: '1',
-    name: 'Hot Wheels',
-    capacity: 2,
-  },
   phoneNumber: '2222222222',
-  startDate: 'start date',
   email: 'test-driver@cornell.edu',
   admin: false,
 };
 
-const testRider: Omit<RiderType, 'id'> = {
+const testRider = {
   firstName: 'Test-Rider',
   lastName: 'Test-Rider',
   phoneNumber: '3333333333',
