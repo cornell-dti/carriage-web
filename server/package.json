@@ -38,7 +38,7 @@
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "tsc --pretty --noEmit",
     "test": "cross-env NODE_ENV=test mocha -r ts-node/register \"tests/**/*.ts\" --exit --timeout 10000",
-    "test:watch": "cross-env NODE_ENV=test nodemon --watch . --ext ts --exec \"mocha -r ts-node/register tests/**/*.ts\""
+    "test:watch": "cross-env NODE_ENV=test ./node_modules/nodemon/bin/nodemon.js --watch . --exec 'mocha -r ts-node/register \"tests/**/*.ts\" || true'"
   },
   "repository": {
     "type": "git",
