@@ -1,7 +1,7 @@
 name: CI Test
 on: 
   pull_request:
-    paths: ["server/**"]
+    paths: ['server/**']
 
 jobs:
   build:
