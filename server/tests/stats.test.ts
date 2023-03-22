@@ -145,7 +145,7 @@ describe('Stats Tests', () => {
   describe('PUT & GET of same date', () => {
     it('Updates stats at a random Date and GETs Data at that date', async () => {
       const statsData = generateEditDatesData();
-      // Format Date 'YYYY-MM-DD'; Assume statsData just contains 1 date.
+      // Format Date 'YYYY-MM-DD'; Assume statsData just contains 1 date
       const from = `${statsData[0].year}-${statsData[0].monthDay.substring(
         0,
         2
