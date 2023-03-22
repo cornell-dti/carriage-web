@@ -108,7 +108,7 @@ describe('Stats Tests', () => {
   });
 
   after(clearDB);
-  
+
   describe('GET /api/stats', () => {
     it('Fetch the stats in the range of specified dates', async () => {
       const res = await request(app)
