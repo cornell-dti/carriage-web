@@ -7,7 +7,7 @@ import moment from 'moment';
 import { clearDB } from './utils/db';
 
 // Generate 2 random dates formatted "YYYY-MM-DD"
-const generate_get_dates = (): [string, string] => {
+const generateGetDates = (): [string, string] => {
   const latestDate = moment(); // current date and time
   const earliestDate = moment().subtract(1, 'year'); // one year ago
 
@@ -21,21 +21,21 @@ const generate_get_dates = (): [string, string] => {
       Math.random() * (latestDate.valueOf() - earliestDate.valueOf())
   ).format('YYYY-MM-DD');
 
-  let to_date: string;
-  let from_date: string;
+  let toDate: string;
+  let fromDate: string;
   if (moment(randomDate1).isAfter(randomDate2)) {
-    to_date = randomDate1;
-    from_date = randomDate2;
+    toDate = randomDate1;
+    fromDate = randomDate2;
   } else {
-    from_date = randomDate1;
-    to_date = randomDate2;
+    fromDate = randomDate1;
+    toDate = randomDate2;
   }
 
-  return [from_date, to_date];
+  return [fromDate, toDate];
 };
 
 //Generate n=1 random dates and corresposnding StatsType Data to be updated
-const generate_edit_dates_data = (): StatsType[] => {
+const generateEditDatesData = (): StatsType[] => {
   const n = 1; // Adjust parameter for more data values
   const latestDate = moment(); // current date and time
   const earliestDate = moment().subtract(1, 'year'); // one year ago
@@ -73,7 +73,7 @@ const generate_edit_dates_data = (): StatsType[] => {
 
 // Formats Stats Type Data to proper request structure
 // Currently Assumes stats contains 1 element
-const format_edit_dates_request = (stats: StatsType[]) => {
+const formatEditDatesRequest = (stats: StatsType[]) => {
   const updatedStats: StatsType = stats[0];
   const formatDate = `${updatedStats.monthDay.substring(
     0,
@@ -96,7 +96,7 @@ const format_edit_dates_request = (stats: StatsType[]) => {
 
 describe('Stats Tests', () => {
   let adminToken: string;
-  const [from_date, to_date] = generate_get_dates();
+  const [fromDate, toDate] = generateGetDates();
 
   before(async () => {
     adminToken = await authorize('Admin', {
@@ -110,25 +110,25 @@ describe('Stats Tests', () => {
   describe('GET /api/stats', () => {
     it('Fetch the stats in the range of specified dates', async () => {
       const res = await request(app)
-        .get(`/api/stats?from=${from_date}&to=${to_date ? to_date : ''}`)
+        .get(`/api/stats?from=${fromDate}&to=${toDate ? toDate : ''}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       const days =
-        moment(to_date as string, 'YYYY-MM-DD').diff(
-          moment(from_date as string, 'YYYY-MM-DD'),
+        moment(toDate as string, 'YYYY-MM-DD').diff(
+          moment(fromDate as string, 'YYYY-MM-DD'),
           'days'
         ) + 1;
       expect(res.body)
         .to.be.an('array')
-        .and.to.have.lengthOf(to_date ? days : 1);
+        .and.to.have.lengthOf(toDate ? days : 1);
     });
   });
 
   describe('PUT /api/stats', () => {
     it('Update Date', async () => {
-      const statsData = generate_edit_dates_data();
-      const requestBody = format_edit_dates_request(statsData);
+      const statsData = generateEditDatesData();
+      const requestBody = formatEditDatesRequest(statsData);
       const res = await request(app)
         .put('/api/stats')
         .send(requestBody)
@@ -144,14 +144,14 @@ describe('Stats Tests', () => {
 
   describe('PUT & GET of same date', () => {
     it('Updates stats at a random Date and GETs Data at that date', async () => {
-      const statsData = generate_edit_dates_data();
+      const statsData = generateEditDatesData();
       // Format Date 'YYYY-MM-DD'; Assume statsData just contains 1 date.
       const from = `${statsData[0].year}-${statsData[0].monthDay.substring(
         0,
         2
       )}-${statsData[0].monthDay.substring(2, 4)}`;
       const to = null;
-      const requestBody = format_edit_dates_request(statsData);
+      const requestBody = formatEditDatesRequest(statsData);
       await request(app)
         .put('/api/stats')
         .send(requestBody)
