@@ -107,6 +107,8 @@ describe('Stats Tests', () => {
     });
   });
 
+  after(clearDB);
+  
   describe('GET /api/stats', () => {
     it('Fetch the stats in the range of specified dates', async () => {
       const res = await request(app)
@@ -140,8 +142,6 @@ describe('Stats Tests', () => {
     });
   });
 
-  after(clearDB);
-
   describe('PUT & GET of same date', () => {
     it('Updates stats at a random Date and GETs Data at that date', async () => {
       const statsData = generateEditDatesData();
@@ -166,6 +166,5 @@ describe('Stats Tests', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(getRes.body[0]).to.deep.equal(statsData[0]);
     });
-    after(clearDB);
   });
 });
