@@ -7,8 +7,10 @@ import { clearDB, populateDB } from './utils/db';
 import { RiderType, Organization } from '../src/models/rider';
 import { LocationType, Tag } from '../src/models/location';
 import { AdminType } from '../src/models/admin';
-import { DriverType } from '../src/models/driver';
+import { Driver, DriverType } from '../src/models/driver';
+import { Ride, RideType, Status, Type } from '../src/models/ride';
 import { auth } from 'google-auth-library';
+import moment from 'moment';
 
 const testLocations: LocationType[] = [
   {
@@ -50,7 +52,7 @@ const testDriver: Omit<DriverType, 'id'> = {
     capacity: 2,
   },
   phoneNumber: '2222222222',
-  startDate: 'start date',
+  startDate: '2023-03-09',
   email: 'test-driver@cornell.edu',
   admin: false,
 };
@@ -68,7 +70,7 @@ const testRiders: RiderType[] = [
     joinDate: '2023-03-09',
     endDate: '2024-03-09',
     address: '36 Colonial Ln, Ithaca, NY 14850',
-    favoriteLocations: ['Test-Location 1'],
+    favoriteLocations: ['1'],
     organization: Organization.REDRUNNER,
     photoLink: '',
     active: true,
@@ -85,10 +87,91 @@ const testRiders: RiderType[] = [
     joinDate: '2023-03-09',
     endDate: '2024-03-09',
     address: '37 Colonial Ln, Ithaca, NY 14850',
-    favoriteLocations: ['Test-Location 2'],
+    favoriteLocations: ['2'],
     organization: Organization.CULIFT,
     photoLink: '',
     active: true,
+  },
+];
+
+const testRideDriver: DriverType = {
+  id: 'test-driver0',
+  firstName: 'Test-Driver',
+  lastName: 'Test-Driver',
+  availability: {
+    Mon: undefined,
+    Tue: undefined,
+    Wed: undefined,
+    Thu: undefined,
+    Fri: undefined,
+  },
+  vehicle: {
+    id: '1',
+    name: 'Hot Wheels',
+    capacity: 2,
+  },
+  phoneNumber: '2222222222',
+  startDate: '2023-03-09',
+  email: 'test-driver@cornell.edu',
+  admin: false,
+};
+
+const testRides: RideType[] = [
+  {
+    id: 'test-ride0',
+    type: Type.ACTIVE,
+    status: Status.NOT_STARTED,
+    late: false,
+    startLocation: {
+      id: '1',
+      name: 'Test-Location 1',
+      address: '123 Test Location',
+      tag: Tag.WEST,
+    },
+    endLocation: {
+      id: '2',
+      name: 'Test-Location 2',
+      address: '321 Test Drive',
+      tag: Tag.NORTH,
+    },
+    startTime: moment().add(20, 'minutes').toISOString(),
+    endTime: moment().add(40, 'minutes').toISOString(),
+    rider: testRiders[0],
+    driver: testRideDriver,
+    recurring: false,
+    recurringDays: undefined,
+    endDate: '2024-04-09',
+    deleted: undefined,
+    edits: undefined,
+    parentRide: undefined,
+  },
+  {
+    id: 'test-ride1',
+    type: Type.ACTIVE,
+    status: Status.NO_SHOW,
+    late: false,
+    startLocation: {
+      id: '2',
+      name: 'Test-Location 2',
+      address: '321 Test Drive',
+      tag: Tag.NORTH,
+    },
+    endLocation: {
+      id: '1',
+      name: 'Test-Location 1',
+      address: '123 Test Location',
+      tag: Tag.WEST,
+    },
+    startTime: moment().add(120, 'minutes').toISOString(),
+    endTime: moment().add(140, 'minutes').toISOString(),
+    rider: testRiders[0],
+    driver: testRideDriver,
+    recurring: false,
+    recurringDays: undefined,
+    endDate: '2024-04-09',
+    deleted: undefined,
+    edits: undefined,
+    parentRide: undefined,
   },
 ];
 
@@ -97,16 +180,75 @@ describe('Testing Functionality of Riders Endpoints', () => {
   let driverToken: string;
   let riderToken: string;
   before(async () => {
+    await Promise.all(
+      testLocations.map((location) => populateDB(Location, location))
+    );
     adminToken = await authorize('Admin', testAdmin);
     driverToken = await authorize('Driver', testDriver);
     riderToken = await authorize('Rider', testRiders[0]);
     await Promise.all(
       testRiders.slice(1).map((rider) => populateDB(Rider, rider))
     );
-    await Promise.all(testLocations.map((data) => populateDB(Location, data)));
+    await populateDB(Driver, testRideDriver);
+    await Promise.all(testRides.map((ride) => populateDB(Ride, ride)));
   });
 
   after(clearDB);
+  // TODO: CREATE USAGE TESTS
+  // fetching rider usage
+  describe('Testing retrieval of rider usage', () => {
+    const rider0usage = {
+      studentRides: '2',
+      noShowCount: '1',
+    };
+    const generateGetRiderUsageTest = async (authToken: string) => {
+      const res = await request(app)
+        .get('/api/riders/abc-10/usage')
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      res.status === 200
+        ? expect(res.body).to.deep.equal(rider0usage)
+        : expect(res.status).to.be.equal(400);
+    };
+    it('should return correct response for Admin account', async () =>
+      await generateGetRiderUsageTest(adminToken));
+    it('should fail with 400 given Driver account', async () =>
+      await generateGetRiderUsageTest(driverToken));
+    it('should fail with 400 given Rider account', async () =>
+      await generateGetRiderUsageTest(riderToken));
+    it('should fail with 400 given no authorization header', async () => {
+      const res = await request(app)
+        .get('/api/riders/abc-10/usage')
+        .expect(400);
+      expect(res.body).have.property('err');
+    });
+  });
+  // TODO: CREATE CURRENT RIDE TESTS
+  // testing retrieval of rider's current ride
+  describe("Testing Get Rider's Current/Soonest Rider Within 30 Minutes", () => {
+    const generateGetCurrRideTest = async (authToken: string) => {
+      const res = await request(app)
+        .get('/api/riders/abc-10/currentride')
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      res.status === 200
+        ? (expect(res.status).to.be.equal(200),
+          expect(res.body).to.deep.equal(testRides[0]))
+        : expect(res.status).to.be.equal(400);
+    };
+    it('should return correct response for Admin account', async () =>
+      await generateGetCurrRideTest(adminToken));
+    it('should fail with 400 given Driver account', async () =>
+      await generateGetCurrRideTest(driverToken));
+    it('should return correct response for Rider account', async () =>
+      await generateGetCurrRideTest(riderToken));
+    it('should fail with 400 given no authorization header', async () => {
+      const res = await request(app)
+        .get('/api/riders/abc-10/currentride')
+        .expect(400);
+      expect(res.body).have.property('err');
+    });
+  });
 
   // testing retrieval of specific rider by ID
   describe('Testing Get Rider by Id', () => {
@@ -185,6 +327,79 @@ describe('Testing Functionality of Riders Endpoints', () => {
       const res = await request(app)
         .get('/api/riders/abc-10/profile')
         .expect(400);
+      expect(res.body).have.property('err');
+    });
+  });
+
+  // testing the retrieval of a rider's favorite locations
+  describe("GET a rider's favorite locations", () => {
+    const generateGetFavoriteLocTest = async (authToken: string) => {
+      const res = await request(app)
+        .get('/api/riders/abc-11/favorites')
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+
+      res.status === 200
+        ? async () => {
+            // this endpoint doesn't return the fields in the same order,
+            // so we have to sort both by field name
+            const sortedData = Object.entries(res.body.data).sort();
+            const sortedTruthData = Object.entries(testLocations[1]).sort();
+            expect(res.body).to.have.property('data');
+            expect(sortedData).to.deep.equal(sortedTruthData);
+          }
+        : expect(res.status).to.be.equal(400);
+    };
+    it('should return correct response for Admin account', async () =>
+      await generateGetFavoriteLocTest(adminToken));
+    it('should return correct response for Driver account', async () =>
+      await generateGetFavoriteLocTest(driverToken));
+    it('should return correct response for Rider account', async () =>
+      await generateGetFavoriteLocTest(riderToken));
+    it('should fail with 400 given no authorization header', async () => {
+      const res = await request(app)
+        .get('/api/riders/abc-11/favorites')
+        .expect(400);
+      expect(res.body).have.property('err');
+    });
+  });
+
+  // testing the addition of a favorite location for a rider
+  describe('POST a new favorite location for a rider', () => {
+    const generateAddFavoriteLocTest = async (authToken: string) => {
+      const res = await request(app)
+        .post('/api/riders/abc-10/favorites')
+        .send({ id: '2' })
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      res.status === 200
+        ? async () => {
+            expect(res.body).to.deep.equal(testLocations[1]);
+
+            // check that the new favorite location was added
+            const res2 = await request(app)
+              .get('/api/riders/abc-10')
+              .auth(authToken, { type: 'bearer' })
+              .expect(200)
+              .expect('content-type', 'application/json; charset=utf-8');
+            const sortedData = Object.entries(res2.body.data).sort();
+            const sortedTruthData = Object.entries(testLocations[0])
+              .sort()
+              .concat(Object.entries(testLocations[1]).sort());
+            expect(sortedData).to.deep.equal(sortedTruthData);
+          }
+        : expect(res.status).to.be.equal(400);
+    };
+    it('should return correct response for Admin account', async () =>
+      await generateAddFavoriteLocTest(adminToken));
+    it('should fail with 400 given Driver account', async () =>
+      await generateAddFavoriteLocTest(driverToken));
+    it('should return correct response for Rider account', async () =>
+      await generateAddFavoriteLocTest(riderToken));
+    it('should fail with 400 given no authorization header', async () => {
+      const res = await request(app)
+        .post('/api/riders/abc-10/favorites')
+        .send({ id: '2' });
       expect(res.body).have.property('err');
     });
   });
