@@ -6,6 +6,12 @@
 
 .input {
   font-size: 1.5rem;
+  min-height: 40px;
+  width: 280px;
+}
+
+.div {
+  font-size: 1.5rem;
 }
 
 .errorMsg {
@@ -13,10 +19,14 @@
   font-size: 0.8rem;
 }
 
-.styledSelect {
-  padding: 0.2rem;
-}
-
 .submit {
   float: right;
+}
+
+.inputContainer {
+  min-height: 40px;
+  width: 280px;
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
 }
