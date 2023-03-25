@@ -7,7 +7,6 @@ import { Location, ObjectType, Tag } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
-import Select from 'react-select'
 
 type LocationModalProps = {
   existingLocation?: Location;
@@ -148,7 +147,7 @@ const LocationModal = ({
               id="tag"
               defaultValue={existingLocation?.tag}
               ref={register({ required: true })}
-              className={styles.inputContainer}
+              className={styles.styledSelect}
               aria-required="true"
             >
               {Object.values(Tag).map((value) =>
@@ -159,13 +158,12 @@ const LocationModal = ({
                 )
               )}
             </select>
-            </div>
             <div>
               <Button className={styles.submit} type="submit">
                 {submitButtonText}
               </Button>
             </div>
-
+          </div>
         </form>
       </Modal>
     </>
