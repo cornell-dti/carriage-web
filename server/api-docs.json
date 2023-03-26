@@ -1,0 +1,358 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Carriage API",
+    "description": "API Documentation for Carriage."
+  },
+  "host": "localhost:3001",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "User",
+      "description": "Endpoints"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/api/auth": {
+      "post": {
+        "summary": "Authenticate user and generate JWT",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "clientId": {
+                    "type": "string"
+                  },
+                  "table": {
+                    "type": "string",
+                    "enum": [
+                      "Riders",
+                      "Drivers",
+                      "Dispatchers"
+                    ]
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "token",
+                  "clientId",
+                  "table",
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JWT token generated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jwt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "jwt"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/riders/{id}": {
+      "get": {
+        "summary": "Get a specific rider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested rider",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rider"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific rider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rider"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated rider",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rider"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific rider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ID of the deleted rider",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all riders",
+        "responses": {
+          "200": {
+            "description": "All riders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Rider"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new rider",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rider"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created rider",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Rider"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivers/{id}": {
+      "get": {
+        "summary": "Get a specific driver",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested driver",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific driver",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Driver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated driver",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific driver",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The ID of the deleted driver",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all drivers",
+        "responses": {
+          "200": {
+            "description": "All drivers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Driver"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new driver",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Driver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created driver",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Driver"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,8 +4,15 @@
     "target": "es6",
     "outDir": "build",
     "allowJs": true,
-    "module": "commonjs"
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": ["src", "tests"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src",
+    "tests"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

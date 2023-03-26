@@ -3,6 +3,8 @@ import express from 'express';
 import dynamoose from 'dynamoose';
 import path from 'path';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import spec from '../api-docs.json';
 
 // Set default timezone for moment
 import moment from 'moment-timezone';
@@ -50,6 +52,11 @@ app.use('/api/upload', upload);
 app.use('/api/notification', notification);
 app.use('/api/stats', stats);
 app.get('/api/health-check', (_, response) => response.status(200).send('OK'));
+app.use(
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(spec, { explorer: true })
+);
 
 // Serve static files from frontend
 const frontendBuild = '../../frontend/build';
