@@ -2,6 +2,16 @@ import request from 'supertest';
 import { expect } from 'chai';
 import authorize from './utils/auth';
 import { clearDB } from './utils/db';
+import app from '../src/app';
+
+// Basic Data: Non-recurring ride
+const testRideRequest1 = {
+  startLocation: '321 Test Drive',
+  endLocation: '321 Test Drive',
+  recurring: false,
+  startTime: '2022-01-31T23:50:00.000Z',
+  endTime: '2022-01-31T23:55:00.000Z',
+};
 
 describe('Rides Tests', () => {
   let adminToken: string;
@@ -15,4 +25,24 @@ describe('Rides Tests', () => {
     });
   });
   after(clearDB);
+
+  describe('POST & GET /api/rides', () => {
+    it('Creates a new ride and compares response with same one requested', async () => {
+      const postRes = await request(app)
+        .post('/api/rides')
+        .send(testRideRequest1)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      const rideId = postRes.body['id'];
+
+      const getRes = await request(app)
+        .get(`/api/rides/${rideId}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(getRes.body.data).to.deep.equal(postRes.body);
+    });
+  });
 });
