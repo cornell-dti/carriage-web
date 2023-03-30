@@ -26,7 +26,7 @@ describe('Rides Tests', () => {
   });
   after(clearDB);
 
-  describe('POST & GET /api/rides', () => {
+  describe('POST & GET & DELETE /api/rides', () => {
     it('Creates a new ride and compares response with same one requested', async () => {
       const postRes = await request(app)
         .post('/api/rides')
@@ -43,6 +43,25 @@ describe('Rides Tests', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(getRes.body.data).to.deep.equal(postRes.body);
+
+      const delRes = await request(app)
+        .delete(`/api/rides/${rideId}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(delRes.body['id']).equals(rideId);
+    });
+  });
+
+  describe('DELETE Request with an id that does not exist in db', () => {
+    it('Should return an error that the id is not found in the rides db', async () => {
+      const randomId = 'nonexistant-id';
+      const delRes = await request(app)
+        .delete(`/api/rides/${randomId}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(400)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(delRes.body['err']).equals('id not found in Rides');
     });
   });
 });
