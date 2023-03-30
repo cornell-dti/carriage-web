@@ -49,8 +49,41 @@ const testRideResponse2 = {
   late: false,
 };
 
+const putReq1 = {
+  startLocation: '678 Test Lane',
+  endLocation: '12 NewTest Road',
+  recurringDays: [2, 3, 4],
+  startTime: '2023-03-30T13:55:00.000Z',
+  endTime: '2023-04-22T23:55:00.000Z',
+};
+
+// GET Request response after PUT Request for testRideRequest2 and putReq1
+const testRideResponse3 = {
+  startLocation: {
+    name: '678 Test Lane',
+    address: '678 Test Lane',
+    tag: 'custom',
+  },
+  endLocation: {
+    name: '12 NewTest Road',
+    address: '12 NewTest Road',
+    tag: 'custom',
+  },
+  recurring: true,
+  recurringDays: [2, 3, 4],
+  startTime: '2023-03-30T13:55:00.000Z',
+  endTime: '2023-04-22T23:55:00.000Z',
+  endDate: '2023-05-25',
+  id: '',
+  edits: [],
+  deleted: [],
+  type: 'unscheduled',
+  status: 'not_started',
+  late: false,
+};
+
 // Invalid POST Request data
-const testRideReq3 = {
+const testRideReq4 = {
   startLocation: '321 Test Drive',
   endLocation: '321 Test Drive',
   recurring: true,
@@ -114,7 +147,7 @@ describe('Rides Tests', () => {
     it('Should return error sayign invalid repeatind ride', async () => {
       const postRes = await request(app)
         .post('/api/rides')
-        .send(testRideReq3)
+        .send(testRideReq4)
         .set('Accept', 'application/json')
         .set('Content-Type', 'application/json')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -140,6 +173,27 @@ describe('Rides Tests', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(getRes.body.data).to.deep.equal(postRes.body);
+    });
+  });
+
+  describe('PUT /api/rides/:id', () => {
+    it('Creates ride and updates data', async () => {
+      const postRes = await request(app)
+        .post('/api/rides')
+        .send(testRideRequest2)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      const rideId = postRes.body['id'];
+      testRideResponse3.id = rideId;
+      const putRes = await request(app)
+        .put(`/api/rides/${rideId}`)
+        .send(putReq1)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(putRes.body).to.deep.equal(testRideResponse3);
     });
   });
 });
