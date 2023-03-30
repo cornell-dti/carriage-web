@@ -3,143 +3,18 @@ import { expect } from 'chai';
 import authorize from './utils/auth';
 import { clearDB } from './utils/db';
 import app from '../src/app';
-
-// Basic Data: Non-recurring ride
-const testRideRequest1 = {
-  startLocation: '321 Test Drive',
-  endLocation: '321 Test Drive',
-  recurring: false,
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-};
-
-// Recurring Ride Post Request Data
-const testRideRequest2 = {
-  startLocation: '321 Test Drive',
-  endLocation: '321 Test Drive',
-  recurring: true,
-  recurringDays: [1, 2, 3, 4, 5],
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-  endDate: '2023-05-25',
-};
-
-// GET Request data from testRideRequest2
-const testRideResponse2 = {
-  startLocation: {
-    name: '321 Test Drive',
-    address: '321 Test Drive',
-    tag: 'custom',
-  },
-  endLocation: {
-    name: '321 Test Drive',
-    address: '321 Test Drive',
-    tag: 'custom',
-  },
-  recurring: true,
-  recurringDays: [1, 2, 3, 4, 5],
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-  endDate: '2023-05-25',
-  id: '',
-  edits: [],
-  deleted: [],
-  type: 'unscheduled',
-  status: 'not_started',
-  late: false,
-};
-
-// Updated data for put request
-const putReq1 = {
-  startLocation: '678 Test Lane',
-  endLocation: '12 NewTest Road',
-  recurringDays: [2, 3, 4],
-  startTime: '2023-03-30T13:55:00.000Z',
-  endTime: '2023-04-22T23:55:00.000Z',
-};
-
-// GET Request response after PUT Request for testRideRequest2 and putReq1
-const testRideResponse3 = {
-  startLocation: {
-    name: '678 Test Lane',
-    address: '678 Test Lane',
-    tag: 'custom',
-  },
-  endLocation: {
-    name: '12 NewTest Road',
-    address: '12 NewTest Road',
-    tag: 'custom',
-  },
-  recurring: true,
-  recurringDays: [2, 3, 4],
-  startTime: '2023-03-30T13:55:00.000Z',
-  endTime: '2023-04-22T23:55:00.000Z',
-  endDate: '2023-05-25',
-  id: '',
-  edits: [],
-  deleted: [],
-  type: 'unscheduled',
-  status: 'not_started',
-  late: false,
-};
-
-// Invalid POST Request data
-const testRideReq4 = {
-  startLocation: '321 Test Drive',
-  endLocation: '321 Test Drive',
-  recurring: true,
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-};
-
-// Start Location POST Requst Data
-const startLoc = {
-  name: 'Toni Morrison Hall',
-  address: '18 Sisson Pl',
-  tag: 'north',
-  info: 'In front of dining hall',
-};
-
-// End Location POST Request Data
-const endLoc = {
-  name: '7/11',
-  address: '409 College Ave',
-  tag: 'ctown',
-  info: 'In front of building',
-};
-
-// POST reqeust data with existing locations
-const testRideRequest5 = {
-  startLocation: '',
-  endLocation: '',
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-};
-
-// GET response for testRideRequest5 after adding locations
-const testRideResponse5 = {
-  startLocation: {
-    name: 'Toni Morrison Hall',
-    address: '18 Sisson Pl',
-    tag: 'north',
-    info: 'In front of dining hall',
-    id: '',
-  },
-  endLocation: {
-    name: '7/11',
-    address: '409 College Ave',
-    tag: 'ctown',
-    info: 'In front of building',
-    id: '',
-  },
-  recurring: false,
-  startTime: '2022-01-31T23:50:00.000Z',
-  endTime: '2022-01-31T23:55:00.000Z',
-  id: '',
-  type: 'unscheduled',
-  status: 'not_started',
-  late: false,
-};
+import {
+  endLoc,
+  putReq1,
+  startLoc,
+  testRideReq4,
+  testRideRequest1,
+  testRideRequest2,
+  testRideResponse2,
+  testRideResponse3,
+  testRideResponse5,
+  testRideRequest5,
+} from './ride-test-data';
 
 describe('Rides Tests', () => {
   let adminToken: string;
@@ -285,6 +160,35 @@ describe('Rides Tests', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(getRes.body.data).to.deep.equal(testRideResponse5);
+    });
+  });
+  after(clearDB);
+  describe('GET /api/rides/?date=DATE', () => {
+    it('Retrieves all rides in the specified date', async () => {
+      const date = '2022-01-31';
+
+      const postRes1 = await request(app)
+        .post('/api/rides')
+        .send(testRideRequest1)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      const postRes2 = await request(app)
+        .post('/api/rides')
+        .send(testRideRequest2)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+
+      const getRes = await request(app)
+        .get(`/api/rides/?date=${date}`)
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      expect(getRes.body.data.length).to.equal(3);
     });
   });
 });
