@@ -82,6 +82,7 @@ function findUserAndSendToken(
 
 // Verify an authentication token
 router.post('/', (req, res) => {
+  console.log("called")
   const { userInfo, table } = req.body;
   const model = getModel(table);
   try {

@@ -3,9 +3,9 @@
   "info": {
     "version": "1.0.0",
     "title": "Carriage API",
-    "description": "API Documentation for Carriage."
+    "description": "API Documentation for the Carriage ride sharing platform, which includes endpoints for Drivers, Riders, Admins, Rides, Subscriptions, and Stats."
   },
-  "host": "localhost:3001",
+  "host": "localhost:3001/",
   "basePath": "/",
   "tags": [
     {
@@ -16,6 +16,12 @@
   "schemes": [
     "http",
     "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
   ],
   "paths": {
     "/api/auth": {
@@ -171,185 +177,130 @@
             }
           }
         }
-      },
-      "get": {
-        "summary": "Get all riders",
-        "responses": {
-          "200": {
-            "description": "All riders",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Rider"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new rider",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Rider"
-              }
+      }
+    }
+  },
+  "/": {
+    "get": {
+      "summary": "Get all drivers",
+      "tags": [
+        "Admin"
+      ],
+      "responses": {
+        "200": {
+          "description": "Returns a list of all drivers",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Driver"
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "The created rider",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Rider"
-                }
-              }
-            }
-          }
+        "500": {
+          "description": "Internal server error"
         }
       }
     },
-    "/api/drivers/{id}": {
-      "get": {
-        "summary": "Get a specific driver",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The requested driver",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Driver"
-                }
-              }
-            }
+    "post": {
+      "summary": "Create a new driver",
+      "tags": [
+        "Admin"
+      ],
+      "parameters": [
+        {
+          "name": "body",
+          "in": "body",
+          "description": "Driver object",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Driver"
           }
         }
-      },
-      "put": {
-        "summary": "Update a specific driver",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
+      ],
+      "responses": {
+        "201": {
+          "description": "Driver created",
+          "schema": {
+            "$ref": "#/definitions/Driver"
           }
-        ],
-        "requestBody": {
+        },
+        "400": {
+          "description": "Bad request"
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/available": {
+    "get": {
+      "summary": "Get all available drivers at a specific date and time",
+      "tags": [
+        "User"
+      ],
+      "parameters": [
+        {
+          "name": "date",
+          "in": "query",
+          "description": "The date in format 'YYYY-MM-DD'",
           "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Driver"
-              }
+          "type": "string"
+        },
+        {
+          "name": "startTime",
+          "in": "query",
+          "description": "The start time in format 'HH:mm'",
+          "required": true,
+          "type": "string"
+        },
+        {
+          "name": "endTime",
+          "in": "query",
+          "description": "The end time in format 'HH:mm'",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Returns a list of all available drivers",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Driver"
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "The updated driver",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Driver"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a specific driver",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The ID of the deleted driver",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "Get all drivers",
-        "responses": {
-          "200": {
-            "description": "All drivers",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Driver"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new driver",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Driver"
-              }
-            }
-          }
+        "400": {
+          "description": "Bad request"
         },
-        "responses": {
-          "200": {
-            "description": "The created driver",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Driver"
-                }
-              }
-            }
+        "500": {
+          "description": "Internal server error"
+        }
+      }
+    }
+  },
+  "/{id}": {
+    "get": {
+      "summary": "Get a driver by ID",
+      "tags": [
+        "User"
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Driver ID",
+          "required": true,
+          "type": "string"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Returns a driver",
+          "schema": {
+            "$ref": "#/definitions/Driver"
           }
         }
       }
