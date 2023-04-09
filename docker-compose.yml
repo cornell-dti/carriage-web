@@ -2,6 +2,21 @@ version: '3'
 
 services:
   carriage:
+    environment:
+      - NODE_ENV=production
+      - DEBUG=True
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - JWT_SECRET=${JWT_SECRET}
+      - PUBLIC_VAPID_KEY=${PUBLIC_VAPID_KEY}
+      - PRIVATE_VAPID_KEY=${PRIVATE_VAPID_KEY}
+      - WEB_PUSH_CONTACT=${WEB_PUSH_CONTACT}
+      - IOS_DRIVER_ARN=${IOS_DRIVER_ARN}
+      - IOS_RIDER_ARN=${IOS_RIDER_ARN}
+      - ANDROID_ARN=${ANDROID_ARN}
+      - HOSTNAME=${HOSTNAME}
+      - USE_HOSTNAME=${USE_HOSTNAME}
+      - DOMAIN=${DOMAIN}
     build:
       context: .
       args:
@@ -12,4 +27,3 @@ services:
       - '3001:3001'
     image: dticarriage/carriage-service:latest
     restart: always
-    env_file: .env
