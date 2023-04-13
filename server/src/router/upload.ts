@@ -53,4 +53,25 @@ router.post('/', validateUser('User'), (req, res) => {
   }
 });
 
+// Gets all admin images
+router.get('/', validateUser('User'), (req, res) => {
+  const {
+    body: { id, tableName },
+  } = req;
+  const objectKey = `${tableName}/${id}`;
+  const params = {
+    Bucket: BUCKET_NAME,
+    Key: objectKey,
+  };
+  s3bucket.getObject(params, (s3Err, data) => {
+    if (s3Err) {
+      res.status(s3Err.statusCode || 500).send({ err: s3Err.message });
+    } else {
+      const image = data.Body?.toString('base64')
+      // Buffer.from().toString('base64');
+      res.send({ data });
+    }
+  });
+});
+
 export default router;
