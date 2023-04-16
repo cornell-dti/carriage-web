@@ -4,6 +4,17 @@ FROM node:16-alpine
 # Create a directory for the app
 WORKDIR /app
 
+# Set production environment for node
+ENV NODE_ENV=production
+
+# Read build-time environment variables
+ARG REACT_APP_CLIENT_ID
+ENV REACT_APP_CLIENT_ID ${REACT_APP_CLIENT_ID}
+ARG REACT_APP_PUBLIC_VAPID_KEY
+ENV REACT_APP_PUBLIC_VAPID_KEY ${REACT_APP_PUBLIC_VAPID_KEY}
+ARG REACT_APP_ENCRYPTION_KEY
+ENV REACT_APP_ENCRYPTION_KEY ${REACT_APP_ENCRYPTION_KEY}
+
 # Copy package.jsons first to install
 COPY package.json package-lock.json /app/
 COPY frontend/package.json frontend/package-lock.json /app/frontend/
