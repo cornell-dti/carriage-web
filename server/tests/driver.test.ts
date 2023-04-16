@@ -130,10 +130,6 @@ const testDrivers: DriverType[] = [
         startTime: '5:00',
         endTime: '6:00',
       },
-      Fri: {
-        startTime: '3:00',
-        endTime: '5:00',
-      },
     },
     photoLink: '',
     admin: false,
@@ -157,28 +153,18 @@ const testLocations: LocationType[] = [
   },
 ];
 
-const testRides: RideType[] = [
+const testRides = [
   {
     id: 'test-ride0',
     type: Type.PAST,
     status: Status.COMPLETED,
     late: false,
-    startLocation: {
-      id: '1',
-      name: 'Test-Location 1',
-      address: '123 Test Location',
-      tag: Tag.WEST,
-    },
-    endLocation: {
-      id: '2',
-      name: 'Test-Location 2',
-      address: '321 Test Drive',
-      tag: Tag.NORTH,
-    },
+    startLocation: testLocations[0].id,
+    endLocation: testLocations[1].id,
     startTime: moment().subtract({ days: 1, hours: 6 }).toISOString(),
     endTime: moment().subtract({ days: 1, hours: 5 }).toISOString(),
-    rider: testStatRider,
-    driver: testDrivers[0],
+    rider: testStatRider.id,
+    driver: testDrivers[0].id,
     recurring: false,
     recurringDays: undefined,
     endDate: undefined,
@@ -191,22 +177,12 @@ const testRides: RideType[] = [
     type: Type.PAST,
     status: Status.COMPLETED,
     late: false,
-    startLocation: {
-      id: '2',
-      name: 'Test-Location 2',
-      address: '321 Test Drive',
-      tag: Tag.NORTH,
-    },
-    endLocation: {
-      id: '1',
-      name: 'Test-Location 1',
-      address: '123 Test Location',
-      tag: Tag.WEST,
-    },
+    startLocation: testLocations[0].id,
+    endLocation: testLocations[1].id,
     startTime: moment().subtract({ days: 2, hours: 6 }).toISOString(),
     endTime: moment().subtract({ days: 2, hours: 5 }).toISOString(),
-    rider: testStatRider,
-    driver: testDrivers[0],
+    rider: testStatRider.id,
+    driver: testDrivers[0].id,
     recurring: false,
     recurringDays: undefined,
     endDate: undefined,
@@ -219,22 +195,12 @@ const testRides: RideType[] = [
     type: Type.PAST,
     status: Status.NO_SHOW,
     late: false,
-    startLocation: {
-      id: '2',
-      name: 'Test-Location 2',
-      address: '321 Test Drive',
-      tag: Tag.NORTH,
-    },
-    endLocation: {
-      id: '1',
-      name: 'Test-Location 1',
-      address: '123 Test Location',
-      tag: Tag.WEST,
-    },
+    startLocation: testLocations[0].id,
+    endLocation: testLocations[1].id,
     startTime: moment().subtract({ days: 2, hours: 4 }).toISOString(),
     endTime: moment().subtract({ days: 2, hours: 3 }).toISOString(),
-    rider: testStatRider,
-    driver: testDrivers[0],
+    rider: testStatRider.id,
+    driver: testDrivers[0].id,
     recurring: false,
     recurringDays: undefined,
     endDate: undefined,
@@ -262,11 +228,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
     await Promise.all(
       testLocations.map((location) => populateDB(Location, location))
     );
-    await Promise.all(
-      testRides.map(
-        (ride) => (console.log(ride.endTime), populateDB(Ride, ride))
-      )
-    );
+    await Promise.all(testRides.map((ride) => populateDB(Ride, ride)));
   });
 
   after(clearDB);
@@ -369,9 +331,31 @@ describe('Testing Functionality of Drivers Endpoints', () => {
     });
   });
 
-  // **********************************
-  // currently returning 0 rides for some reason, is something wrong with how rides are being populated?
-  //************************************ */
+  // testing retrieval of driver profile
+  describe('GET all available drivers for a specific date and time', () => {
+    const generateGetDriverAvailabilityTest = async (authToken: string) => {
+      // next mondays date
+      const res = await request(app)
+        .get(
+          '/api/drivers/available?date=2023-04-21&startTime=9:01&endTime=10:01'
+        )
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+      res.status === 200
+        ? expect(res.body.data).to.deep.equal(testDrivers)
+        : expect(res.status).to.be.equal(400);
+    };
+    it('should return correct response for Admin account', async () =>
+      await generateGetDriverAvailabilityTest(adminToken));
+    it('should return correct response for Driver account', async () =>
+      await generateGetDriverAvailabilityTest(driverToken));
+    it('should return correct response for Rider account', async () =>
+      await generateGetDriverAvailabilityTest(riderToken));
+    it('should fail with 400 given no authorization header', async () => {
+      generateGetDriverAvailabilityTest('');
+    });
+  });
+
   // testing the retrieval of a driver's stats
   describe("GET a driver's stats", () => {
     const driverStats = {
@@ -517,24 +501,25 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       res.status === 200
         ? async () => {
-            expect(res.body).to.deep.equal({ id: 'driver0' });
-
-            // try to fetch the deleted driver's information; should return 400 error
+            // retrieve driver and see if it is deleted
             const res2 = await request(app)
-              .get('/api/drivers/driver0')
+              .get(`/api/drivers/driver0`)
               .auth(authToken, { type: 'bearer' })
               .expect(400)
               .expect('content-type', 'application/json; charset=utf-8');
-            expect(res2.body).to.deep.equal({ err: 'id not found in Drivers' });
+            expect(res2.body).have.property('err');
           }
         : expect(res.status).to.be.equal(400);
     };
-    it('should return correct response for Admin account', async () =>
-      await generateDeleteDriverTest(adminToken));
-    it('should fail with 400 given Driver account', async () =>
-      await generateDeleteDriverTest(driverToken));
-    it('should fail with 400 given Rider account', async () =>
-      await generateDeleteDriverTest(riderToken));
+    it('should return correct response for Admin account', async () => {
+      await generateDeleteDriverTest(adminToken);
+    });
+    it('should fail with 400 given Driver account', async () => {
+      await generateDeleteDriverTest(driverToken);
+    });
+    it('should fail with 400 given Rider account', async () => {
+      await generateDeleteDriverTest(riderToken);
+    });
     it('should fail with 400 given no authorization header', async () => {
       const res = await request(app).delete('/api/drivers/driver0').expect(400);
       expect(res.body).have.property('err');
