@@ -200,7 +200,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get('/api/riders/abc-10/usage')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? expect(res.body).to.deep.equal(rider0usage)
         : expect(res.status).to.be.equal(400);
     };
@@ -230,7 +230,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get(`/api/rides/${testRides[1].id}`)
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? (expect(res.status).to.be.equal(200),
           expect(res.body).to.deep.equal(ride.body.data))
         : expect(res.status).to.be.equal(400);
@@ -279,7 +279,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get('/api/riders/')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? (expect(res.status).to.be.equal(200),
           expect(res.body).to.have.property('data'),
           expect(res.body.data.reverse()).to.deep.equal(testRiders))
@@ -338,7 +338,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? async () => {
             // this endpoint doesn't return the fields in the same order,
             // so we have to sort both by field name
@@ -371,7 +371,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .send({ id: '2' })
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? async () => {
             expect(res.body).to.deep.equal(testLocations[1]);
 
@@ -486,7 +486,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? async () => {
             const sentData = { ...res.body.data };
             delete sentData.id;
@@ -522,7 +522,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .send({ firstName: 'NewName' })
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      res.status === 200 && expect(res.body).not.have.property('err')
         ? async () => {
             expect(res.body.data.firstName).to.be.equal('NewName');
             // retrieve rider and see if there is a new name
@@ -556,7 +556,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
       .delete('/api/riders/abc-10')
       .auth(authToken, { type: 'bearer' })
       .expect('Content-Type', 'application/json; charset=utf-8');
-    res.status === 200
+    res.status === 200 && expect(res.body).not.have.property('err')
       ? async () => {
           expect(res.body).to.deep.equal({ id: 'abc-10' });
 
