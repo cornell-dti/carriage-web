@@ -82,23 +82,23 @@ const testDrivers = [
     startDate: '2023-03-09',
     availability: {
       Mon: {
-        startTime: '8:00',
+        startTime: '08:00',
         endTime: '12:00',
       },
       Tue: {
-        startTime: '8:00',
+        startTime: '08:00',
         endTime: '12:00',
       },
       Wed: {
-        startTime: '8:00',
+        startTime: '08:00',
         endTime: '12:00',
       },
       Thu: {
-        startTime: '8:00',
+        startTime: '08:00',
         endTime: '12:00',
       },
       Fri: {
-        startTime: '8:00',
+        startTime: '08:00',
         endTime: '12:00',
       },
     },
@@ -115,7 +115,7 @@ const testDrivers = [
     startDate: '2023-03-10',
     availability: {
       Mon: {
-        startTime: '9:00',
+        startTime: '09:00',
         endTime: '12:00',
       },
       Tue: {
@@ -123,12 +123,12 @@ const testDrivers = [
         endTime: '12:00',
       },
       Wed: {
-        startTime: '2:00',
-        endTime: '7:00',
+        startTime: '12:00',
+        endTime: '17:00',
       },
       Thu: {
-        startTime: '5:00',
-        endTime: '6:00',
+        startTime: '15:00',
+        endTime: '16:00',
       },
     },
     photoLink: '',
@@ -280,7 +280,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .get('/api/drivers/')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      authToken === adminToken
         ? (expect(res.status).to.be.equal(200),
           expect(res.body).to.have.property('data'),
           expect(res.body.data).to.deep.equal(driversWithVehicles))
@@ -331,18 +331,26 @@ describe('Testing Functionality of Drivers Endpoints', () => {
     });
   });
 
-  // testing retrieval of driver profile
+  // testing retrieval of available drivers
   describe('GET all available drivers for a specific date and time', () => {
     const generateGetDriverAvailabilityTest = async (authToken: string) => {
       // next mondays date
       const res = await request(app)
         .get(
-          '/api/drivers/available?date=2023-04-21&startTime=9:01&endTime=10:01'
+          '/api/drivers/available?date=2023-04-17&startTime=09:01&endTime=10:01'
         )
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
-        ? expect(res.body.data).to.deep.equal(testDrivers)
+      // all drivers are available at this time so we get all of them with their populated fields
+      const drivers = await request(app)
+        .get('/api/drivers/')
+        .auth(adminToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
+
+      authToken === adminToken ||
+      authToken === driverToken ||
+      authToken === riderToken
+        ? expect(res.body.data).to.deep.equal(drivers.body.data)
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () =>
@@ -359,7 +367,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
   // testing the retrieval of a driver's stats
   describe("GET a driver's stats", () => {
     const driverStats = {
-      rides: 2,
+      rides: 1,
       workingHours: 20,
     };
     const generateGetDriverStatsTest = async (authToken: string) => {
@@ -367,7 +375,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .get('/api/drivers/driver0/stats')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      authToken === adminToken
         ? expect(res.body).to.deep.equal(driverStats)
         : expect(res.status).to.be.equal(400);
     };
@@ -428,7 +436,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .send(newDriverData)
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      authToken === adminToken
         ? async () => {
             const sentData = { ...res.body.data };
             // this is randomly generated and cannot be tested for,
@@ -467,7 +475,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .send({ firstName: 'NewName' })
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      authToken === adminToken || authToken === driverToken
         ? async () => {
             expect(res.body.data.firstName).to.be.equal('NewName');
             // retrieve driver and see if there is a new name
@@ -499,7 +507,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .delete('/api/drivers/driver0')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200
+      authToken === adminToken
         ? async () => {
             // retrieve driver and see if it is deleted
             const res2 = await request(app)
