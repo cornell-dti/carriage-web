@@ -200,8 +200,9 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get('/api/riders/abc-10/usage')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200 && expect(res.body).not.have.property('err')
-        ? expect(res.body).to.deep.equal(rider0usage)
+      authToken == adminToken
+        ? (expect(res.status).to.be.equal(200),
+          expect(res.body).to.deep.equal(rider0usage))
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () =>
@@ -230,7 +231,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get(`/api/rides/${testRides[1].id}`)
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200 && expect(res.body).not.have.property('err')
+      authToken === adminToken || authToken == riderToken
         ? (expect(res.status).to.be.equal(200),
           expect(res.body).to.deep.equal(ride.body.data))
         : expect(res.status).to.be.equal(400);
@@ -279,7 +280,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .get('/api/riders/')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200 && expect(res.body).not.have.property('err')
+      authToken === adminToken
         ? (expect(res.status).to.be.equal(200),
           expect(res.body).to.have.property('data'),
           expect(res.body.data.reverse()).to.deep.equal(testRiders))
@@ -338,12 +339,15 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      res.status === 200 && expect(res.body).not.have.property('err')
+      authToken === adminToken ||
+      authToken === driverToken ||
+      authToken === riderToken
         ? async () => {
             // this endpoint doesn't return the fields in the same order,
             // so we have to sort both by field name
             const sortedData = Object.entries(res.body.data).sort();
             const sortedTruthData = Object.entries(testLocations[1]).sort();
+            expect(res.status).to.be.equal(200);
             expect(res.body).to.have.property('data');
             expect(sortedData).to.deep.equal(sortedTruthData);
           }
@@ -371,10 +375,10 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .send({ id: '2' })
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
-      res.status === 200 && expect(res.body).not.have.property('err')
+      authToken === adminToken || authToken === riderToken
         ? async () => {
             expect(res.body).to.deep.equal(testLocations[1]);
-
+            expect(res.status).to.be.equal(200);
             // check that the new favorite location was added
             const res2 = await request(app)
               .get('/api/riders/abc-10')
@@ -486,8 +490,9 @@ describe('Testing Functionality of Riders Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
 
-      res.status === 200 && expect(res.body).not.have.property('err')
+      authToken === adminToken
         ? async () => {
+            expect(res.status).to.be.equal(200);
             const sentData = { ...res.body.data };
             delete sentData.id;
             expect(sentData).to.deep.equal(newRiderData);
