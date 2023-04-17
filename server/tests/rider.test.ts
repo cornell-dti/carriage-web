@@ -2,13 +2,12 @@ import request from 'supertest';
 import { expect } from 'chai';
 import app from '../src/app';
 import authorize from './utils/auth';
-import { Rider, Location } from '../src/models';
+import { Rider, Location, Vehicle } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { RiderType, Organization } from '../src/models/rider';
+import { Organization } from '../src/models/rider';
 import { LocationType, Tag } from '../src/models/location';
 import { AdminType } from '../src/models/admin';
-import { Driver, DriverType } from '../src/models/driver';
-import { Ride, RideType, Status, Type } from '../src/models/ride';
+import { Ride, Status, Type } from '../src/models/ride';
 import { auth } from 'google-auth-library';
 import moment from 'moment';
 
@@ -36,28 +35,47 @@ const testAdmin: Omit<AdminType, 'id'> = {
   email: 'test-admin@cornell.edu',
 };
 
-const testDriver: Omit<DriverType, 'id'> = {
-  firstName: 'Test-Driver',
-  lastName: 'Test-Driver',
-  availability: {
-    Mon: undefined,
-    Tue: undefined,
-    Wed: undefined,
-    Thu: undefined,
-    Fri: undefined,
-  },
-  vehicle: {
-    id: '1',
-    name: 'Hot Wheels',
-    capacity: 2,
-  },
-  phoneNumber: '2222222222',
+const testVehicle = {
+  id: '1',
+  name: 'Hot Wheels',
+  capacity: 2,
+};
+
+const testDriver = {
+  id: 'driver0',
+  email: 'drivertest-email@test.com',
+  phoneNumber: '1234567890',
+  firstName: 'Test',
+  lastName: 'Testing',
+  vehicle: testVehicle.id,
   startDate: '2023-03-09',
-  email: 'test-driver@cornell.edu',
+  availability: {
+    Mon: {
+      startTime: '8:00',
+      endTime: '12:00',
+    },
+    Tue: {
+      startTime: '8:00',
+      endTime: '12:00',
+    },
+    Wed: {
+      startTime: '8:00',
+      endTime: '12:00',
+    },
+    Thu: {
+      startTime: '8:00',
+      endTime: '12:00',
+    },
+    Fri: {
+      startTime: '8:00',
+      endTime: '12:00',
+    },
+  },
+  photoLink: '',
   admin: false,
 };
 
-const testRiders: RiderType[] = [
+const testRiders = [
   {
     id: 'abc-10',
     email: 'test-email@test.com',
@@ -94,53 +112,21 @@ const testRiders: RiderType[] = [
   },
 ];
 
-const testRideDriver: DriverType = {
-  id: 'test-driver0',
-  firstName: 'Test-Driver',
-  lastName: 'Test-Driver',
-  availability: {
-    Mon: undefined,
-    Tue: undefined,
-    Wed: undefined,
-    Thu: undefined,
-    Fri: undefined,
-  },
-  vehicle: {
-    id: '1',
-    name: 'Hot Wheels',
-    capacity: 2,
-  },
-  phoneNumber: '2222222222',
-  startDate: '2023-03-09',
-  email: 'test-driver@cornell.edu',
-  admin: false,
-};
-
-const testRides: RideType[] = [
+const testRides = [
   {
     id: 'test-ride0',
-    type: Type.ACTIVE,
-    status: Status.NOT_STARTED,
+    type: Type.PAST,
+    status: Status.NO_SHOW,
     late: false,
-    startLocation: {
-      id: '1',
-      name: 'Test-Location 1',
-      address: '123 Test Location',
-      tag: Tag.WEST,
-    },
-    endLocation: {
-      id: '2',
-      name: 'Test-Location 2',
-      address: '321 Test Drive',
-      tag: Tag.NORTH,
-    },
-    startTime: moment().add(20, 'minutes').toISOString(),
-    endTime: moment().add(40, 'minutes').toISOString(),
-    rider: testRiders[0],
-    driver: testRideDriver,
+    startLocation: testLocations[0].id,
+    endLocation: testLocations[1].id,
+    startTime: moment().subtract(20, 'minutes').toISOString(),
+    endTime: moment().subtract(40, 'minutes').toISOString(),
+    rider: testRiders[0].id,
+    driver: testDriver.id,
     recurring: false,
     recurringDays: undefined,
-    endDate: '2024-04-09',
+    endDate: undefined,
     deleted: undefined,
     edits: undefined,
     parentRide: undefined,
@@ -148,27 +134,35 @@ const testRides: RideType[] = [
   {
     id: 'test-ride1',
     type: Type.ACTIVE,
-    status: Status.NO_SHOW,
+    status: Status.NOT_STARTED,
     late: false,
-    startLocation: {
-      id: '2',
-      name: 'Test-Location 2',
-      address: '321 Test Drive',
-      tag: Tag.NORTH,
-    },
-    endLocation: {
-      id: '1',
-      name: 'Test-Location 1',
-      address: '123 Test Location',
-      tag: Tag.WEST,
-    },
-    startTime: moment().add(120, 'minutes').toISOString(),
-    endTime: moment().add(140, 'minutes').toISOString(),
-    rider: testRiders[0],
-    driver: testRideDriver,
+    startLocation: testLocations[1].id,
+    endLocation: testLocations[0].id,
+    startTime: moment().add(20, 'minutes').toISOString(),
+    endTime: moment().add(30, 'minutes').toISOString(),
+    rider: testRiders[0].id,
+    driver: testDriver.id,
     recurring: false,
     recurringDays: undefined,
-    endDate: '2024-04-09',
+    endDate: undefined,
+    deleted: undefined,
+    edits: undefined,
+    parentRide: undefined,
+  },
+  {
+    id: 'test-ride2',
+    type: Type.PAST,
+    status: Status.COMPLETED,
+    late: false,
+    startLocation: testLocations[1].id,
+    endLocation: testLocations[0].id,
+    startTime: moment().subtract(60, 'minutes').toISOString(),
+    endTime: moment().subtract(50, 'minutes').toISOString(),
+    rider: testRiders[0].id,
+    driver: testDriver.id,
+    recurring: false,
+    recurringDays: undefined,
+    endDate: undefined,
     deleted: undefined,
     edits: undefined,
     parentRide: undefined,
@@ -189,17 +183,17 @@ describe('Testing Functionality of Riders Endpoints', () => {
     await Promise.all(
       testRiders.slice(1).map((rider) => populateDB(Rider, rider))
     );
-    await populateDB(Driver, testRideDriver);
+    await populateDB(Vehicle, testVehicle);
     await Promise.all(testRides.map((ride) => populateDB(Ride, ride)));
   });
 
   after(clearDB);
-  // TODO: CREATE USAGE TESTS
+
   // fetching rider usage
   describe('Testing retrieval of rider usage', () => {
     const rider0usage = {
-      studentRides: '2',
-      noShowCount: '1',
+      studentRides: 1,
+      noShowCount: 1,
     };
     const generateGetRiderUsageTest = async (authToken: string) => {
       const res = await request(app)
@@ -223,17 +217,22 @@ describe('Testing Functionality of Riders Endpoints', () => {
       expect(res.body).have.property('err');
     });
   });
-  // TODO: CREATE CURRENT RIDE TESTS
+
   // testing retrieval of rider's current ride
-  describe("Testing Get Rider's Current/Soonest Rider Within 30 Minutes", () => {
+  describe("Testing Get Rider's Current/Soonest ride Within 30 Minutes", () => {
     const generateGetCurrRideTest = async (authToken: string) => {
       const res = await request(app)
         .get('/api/riders/abc-10/currentride')
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
+      // get the ride with the populated fields from the databse
+      const ride = await request(app)
+        .get(`/api/rides/${testRides[1].id}`)
+        .auth(authToken, { type: 'bearer' })
+        .expect('Content-Type', 'application/json; charset=utf-8');
       res.status === 200
         ? (expect(res.status).to.be.equal(200),
-          expect(res.body).to.deep.equal(testRides[0]))
+          expect(res.body).to.deep.equal(ride.body.data))
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () =>
@@ -476,7 +475,7 @@ describe('Testing Functionality of Riders Endpoints', () => {
         joinDate: '2023-03-09',
         endDate: '2024-03-09',
         address: '3 Colonial Ln, Ithaca, NY 14850',
-        favoriteLocations: ['Test-Location 1'],
+        favoriteLocations: ['1'],
         organization: Organization.CULIFT,
         photoLink: '',
         active: true,
