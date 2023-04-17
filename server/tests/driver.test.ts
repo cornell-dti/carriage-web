@@ -430,21 +430,21 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       res.status === 200
         ? async () => {
-          const sentData = { ...res.body.data };
-          // this is randomly generated and cannot be tested for,
-          // but the accuracy of the rest of the data can be
-          delete sentData.id;
-          expect(sentData).to.deep.equal(driverWithVehicleObj);
-          // retrieve this new rider
-          const res2 = await request(app)
-            .get(`/api/drivers/${res.body.data.id}`)
-            .auth(authToken, { type: 'bearer' })
-            .expect(200)
-            .expect('content-type', 'application/json; charset=utf-8');
-          const retrievedData = res2.body.data;
-          delete retrievedData.id;
-          expect(retrievedData).to.deep.equal(driverWithVehicleObj);
-        }
+            const sentData = { ...res.body.data };
+            // this is randomly generated and cannot be tested for,
+            // but the accuracy of the rest of the data can be
+            delete sentData.id;
+            expect(sentData).to.deep.equal(driverWithVehicleObj);
+            // retrieve this new rider
+            const res2 = await request(app)
+              .get(`/api/drivers/${res.body.data.id}`)
+              .auth(authToken, { type: 'bearer' })
+              .expect(200)
+              .expect('content-type', 'application/json; charset=utf-8');
+            const retrievedData = res2.body.data;
+            delete retrievedData.id;
+            expect(retrievedData).to.deep.equal(driverWithVehicleObj);
+          }
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () =>
@@ -469,15 +469,15 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       res.status === 200
         ? async () => {
-          expect(res.body.data.firstName).to.be.equal('NewName');
-          // retrieve driver and see if there is a new name
-          const res2 = await request(app)
-            .get(`/api/drivers/driver0`)
-            .auth(authToken, { type: 'bearer' })
-            .expect(200)
-            .expect('content-type', 'application/json; charset=utf-8');
-          expect(res2.body.data.firstName).to.be.equal('NewName');
-        }
+            expect(res.body.data.firstName).to.be.equal('NewName');
+            // retrieve driver and see if there is a new name
+            const res2 = await request(app)
+              .get(`/api/drivers/driver0`)
+              .auth(authToken, { type: 'bearer' })
+              .expect(200)
+              .expect('content-type', 'application/json; charset=utf-8');
+            expect(res2.body.data.firstName).to.be.equal('NewName');
+          }
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () =>
@@ -501,14 +501,14 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .expect('Content-Type', 'application/json; charset=utf-8');
       res.status === 200
         ? async () => {
-          // retrieve driver and see if it is deleted
-          const res2 = await request(app)
-            .get(`/api/drivers/driver0`)
-            .auth(authToken, { type: 'bearer' })
-            .expect(400)
-            .expect('content-type', 'application/json; charset=utf-8');
-          expect(res2.body).have.property('err');
-        }
+            // retrieve driver and see if it is deleted
+            const res2 = await request(app)
+              .get(`/api/drivers/driver0`)
+              .auth(authToken, { type: 'bearer' })
+              .expect(400)
+              .expect('content-type', 'application/json; charset=utf-8');
+            expect(res2.body).have.property('err');
+          }
         : expect(res.status).to.be.equal(400);
     };
     it('should return correct response for Admin account', async () => {
