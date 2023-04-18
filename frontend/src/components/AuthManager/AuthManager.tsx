@@ -99,20 +99,15 @@ const AuthManager = () => {
 
   function GoogleAuth(isAdmin: boolean) {
     return googleAuth({
-      flow: 'implicit',
-      onSuccess: async (tokenResponse: TokenResponse) => {
-        await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-        })
-          .then((res) => res.json())
-          .then((userInfo) => signIn(isAdmin, userInfo));
+      flow: 'auth-code',
+      onSuccess: async (res) => {
+        signIn(isAdmin, res.code);
       },
       onError: (errorResponse: any) => console.error(errorResponse),
     });
   }
 
-  function signIn(isAdmin: boolean, userInfo: any) {
+  function signIn(isAdmin: boolean, code: string) {
     const userType = isAdmin ? 'Admin' : 'Rider';
     const table = `${userType}s`;
     const localUserType = localStorage.getItem('userType');
@@ -123,7 +118,7 @@ const AuthManager = () => {
           withDefaults({
             method: 'POST',
             body: JSON.stringify({
-              userInfo,
+              code,
               table,
             }),
           })

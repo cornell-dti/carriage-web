@@ -5,6 +5,8 @@ import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
 import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
+import { OAuth2Client } from 'google-auth-library';
+import { oauthValues } from '../config';
 
 const router = express.Router();
 
@@ -80,15 +82,28 @@ function findUserAndSendToken(
   });
 }
 
-// Verify an authentication token
-router.post('/', (req, res) => {
-  const { table } = req.body;
-  let { userInfo } = req.body;
-  if (typeof userInfo !== 'object') userInfo = JSON.parse(userInfo);
+async function getIdToken(client: OAuth2Client, code: string) {
+  const { tokens } = await client.getToken(code);
+  const idToken = tokens.id_token!;
+  return idToken;
+}
 
-  const model = getModel(table);
+// Verify an authentication token
+// If a code is supplied, retrieves the token from the code such that either a
+// code or token is sufficient
+router.post('/', async (req, res) => {
+  const { code, table } = req.body;
   try {
-    const email = userInfo?.email;
+    console.log(req.headers);
+    const client = new OAuth2Client({
+      clientId: oauthValues.client_id,
+      clientSecret: oauthValues.client_secret,
+      redirectUri: req.get('origin'),
+    });
+    const idToken = req.body.idToken || (await getIdToken(client, code));
+    const result = await client.verifyIdToken({ idToken, audience });
+    const email = result.getPayload()?.email;
+    const model = getModel(table);
     if (model && email) {
       findUserAndSendToken(res, model, table, email);
     } else if (!model) {
@@ -98,8 +113,9 @@ router.post('/', (req, res) => {
     } else {
       res.status(400).send({ err: 'Payload not found' });
     }
-  } catch (err: any) {
-    res.status(500).send({ err: err.message });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ err });
   }
 });
 
