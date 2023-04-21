@@ -161,8 +161,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 1, hours: 6 }).toISOString(),
-    endTime: moment().subtract({ days: 1, hours: 5 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 6 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 5 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -179,8 +179,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 2, hours: 6 }).toISOString(),
-    endTime: moment().subtract({ days: 2, hours: 5 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 4 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 3 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -197,8 +197,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 2, hours: 4 }).toISOString(),
-    endTime: moment().subtract({ days: 2, hours: 3 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 2 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 1 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -367,7 +367,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
   // testing the retrieval of a driver's stats
   describe("GET a driver's stats", () => {
     const driverStats = {
-      rides: 1,
+      rides: 2,
       workingHours: 20,
     };
     const generateGetDriverStatsTest = async (authToken: string) => {
