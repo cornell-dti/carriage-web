@@ -9,7 +9,6 @@ import {
   user,
   calender_dark,
 } from '../../icons/userInfo/index';
-import { useReq } from '../../context/req';
 import PastRides from './PastRides';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
@@ -18,6 +17,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
+import axios from '../../util/axios';
 
 type EmployeeDetailProps = {
   id: string;
@@ -162,7 +162,6 @@ const EmployeeDetail = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
   const [workingHours, setWorkingHours] = useState(-1);
-  const { withDefaults } = useReq();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -183,8 +182,9 @@ const EmployeeDetail = () => {
   useEffect(() => {
     if (!employee && employeeId) {
       if (userType === 'admins') {
-        fetch(`/api/admins/${employeeId}`, withDefaults())
-          .then((res) => res.json())
+        axios
+          .get(`/api/admins/${employeeId}`)
+          .then((res) => res.data)
           .then((admin) => {
             setEmployee({
               ...admin,
@@ -193,8 +193,9 @@ const EmployeeDetail = () => {
             });
           });
       } else {
-        fetch(`/api/drivers/${employeeId}`, withDefaults())
-          .then((res) => res.json())
+        axios
+          .get(`/api/drivers/${employeeId}`)
+          .then((res) => res.data)
           .then((driver) => {
             setEmployee({
               ...driver,
@@ -202,8 +203,9 @@ const EmployeeDetail = () => {
               phone: driver.phoneNumber,
             });
           });
-        fetch(`/api/drivers/${employeeId}/stats`, withDefaults())
-          .then((res) => res.json())
+        axios
+          .get(`/api/drivers/${employeeId}/stats`)
+          .then((res) => res.data)
           .then((data) => {
             if (!data.err) {
               setRideCount(Math.floor(data.rides));
@@ -212,11 +214,12 @@ const EmployeeDetail = () => {
           });
       }
     }
-    fetch(`/api/rides?type=past&driver=${employeeId}`, withDefaults())
-      .then((res) => res.json())
+    axios
+      .get(`/api/rides?type=past&driver=${employeeId}`)
+      .then((res) => res.data)
       .then(({ data }) => setRides(data.sort(compRides)));
     setEmployee(findEmployee(drivers, admins, employeeId));
-  }, [admins, drivers, employeeId, withDefaults, userType]);
+  }, [admins, drivers, employeeId, userType]);
 
   if (employee) {
     const isAdmin = !employee.availability;

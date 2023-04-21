@@ -5,11 +5,11 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
-import { useReq } from '../../context/req';
 import { useRiders } from '../../context/RidersContext';
 import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import axios from '../../util/axios';
 
 type RiderModalProps = {
   existingRider?: Rider;
@@ -28,7 +28,6 @@ const RiderModal = ({
   const [formData, setFormData] = useState<ObjectType>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
-  const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
 
   const closeModal = () => setIsOpen(false);
@@ -45,12 +44,10 @@ const RiderModal = ({
 
   useEffect(() => {
     if (isSubmitted) {
-      fetch(
+      const method = existingRider ? axios.post : axios.put;
+      method(
         `/api/riders/${!existingRider ? '' : existingRider.id}`,
-        withDefaults({
-          method: !existingRider ? 'POST' : 'PUT',
-          body: JSON.stringify(formData),
-        })
+        formData
       ).then(() => {
         refreshRiders();
         showToast(
@@ -70,7 +67,6 @@ const RiderModal = ({
     isSubmitted,
     refreshRiders,
     refreshUser,
-    withDefaults,
   ]);
 
   return (

@@ -94,6 +94,7 @@ async function getIdToken(client: OAuth2Client, code: string) {
 router.post('/', async (req, res) => {
   const { code, table } = req.body;
   try {
+    console.log(req.get('origin'));
     const client = new OAuth2Client({
       clientId: oauthValues.client_id,
       clientSecret: oauthValues.client_secret,

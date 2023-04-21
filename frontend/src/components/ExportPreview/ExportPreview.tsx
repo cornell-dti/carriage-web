@@ -4,15 +4,14 @@ import ScheduledTable from '../UserTables/ScheduledTable';
 import { Driver } from '../../types/index';
 import styles from './exportPreview.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
-import { useReq } from '../../context/req';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import { format_date } from '../../util';
+import axios from '../../util/axios';
 
 const ExportPreview = () => {
   const { drivers } = useEmployees();
   const [downloadData, setDownloadData] = useState<string>('');
-  const { withDefaults } = useReq();
   const { curDate } = useDate();
   const csvLink = useRef<
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
@@ -21,8 +20,12 @@ const ExportPreview = () => {
   const today = format_date(curDate);
 
   const downloadCSV = () => {
-    fetch(`/api/rides/download?date=${today}`, withDefaults())
-      .then((res) => res.text())
+    axios
+      .get(`/api/rides/download?date=${today}`, {
+        responseType: 'text',
+        transformResponse: [(data) => data],
+      })
+      .then((res) => res.data)
       .then((data) => {
         setDownloadData(data);
         if (csvLink.current) {

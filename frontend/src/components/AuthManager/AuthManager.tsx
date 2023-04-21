@@ -12,7 +12,6 @@ import {
   Switch,
 } from 'react-router-dom';
 import jwtDecode from 'jwt-decode';
-import ReqContext from '../../context/req';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
@@ -29,6 +28,7 @@ import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
+import axios, { setAuthToken } from '../../util/axios';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
@@ -48,7 +48,6 @@ const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
-  const [jwt, setJWT] = useState(jwtValue());
   const [id, setId] = useState(localStorage.getItem('userId')!);
   const [initPath, setInitPath] = useState('');
   const [user, setUser] = useState<Rider | Admin>(
@@ -61,6 +60,10 @@ const AuthManager = () => {
   );
   const history = useHistory();
   const { pathname } = useLocation();
+
+  useEffect(() => {
+    setAuthToken(jwtValue());
+  }, []);
 
   useEffect(() => {
     setInitPath(pathname);
@@ -113,17 +116,13 @@ const AuthManager = () => {
     const localUserType = localStorage.getItem('userType');
     if (!localUserType || localUserType === userType) {
       (async () => {
-        const serverJWT = await fetch(
-          '/api/auth',
-          withDefaults({
-            method: 'POST',
-            body: JSON.stringify({
-              code,
-              table,
-            }),
+        const serverJWT = await axios
+          .post('/api/auth', {
+            code,
+            table,
           })
-        )
-          .then((res) => res.json())
+
+          .then((res) => res.data)
           .then((json) => json.jwt);
 
         if (serverJWT) {
@@ -132,7 +131,7 @@ const AuthManager = () => {
           setId(decoded.id);
           localStorage.setItem('userId', decoded.id);
           localStorage.setItem('userType', decoded.userType);
-          setJWT(serverJWT);
+          setAuthToken(serverJWT);
           const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
           refreshFunc();
           setRefreshUser(() => refreshFunc);
@@ -157,36 +156,20 @@ const AuthManager = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
     deleteCookie('jwt');
-    if (jwt) {
-      setJWT('');
-    }
+    setAuthToken('');
     setSignedIn(false);
     if (pathname !== '/') {
       history.push('/');
     }
   }
 
-  function withDefaults(options?: RequestInit) {
-    return {
-      ...options,
-      headers: {
-        authorization: `Bearer ${jwt}`,
-        'Content-Type': 'application/json',
-      },
-    } as RequestInit;
-  }
-
   function createRefresh(userId: string, userType: string, token: string) {
-    const fetchURL =
+    const endpoint =
       userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
     return () => {
-      fetch(fetchURL, {
-        headers: {
-          authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
+      axios
+        .get(endpoint)
+        .then((res) => res.data)
         .then((data) => {
           localStorage.setItem('user', JSON.stringify(data.data));
           setUser(data.data);
@@ -226,22 +209,20 @@ const AuthManager = () => {
             document.body
           )}
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-          <ReqContext.Provider value={{ withDefaults }}>
-            <SubscribeWrapper userId={id}>
-              <Switch>
-                {localUserType === 'Admin' ? (
-                  <PrivateRoute exact path="/" component={AdminRoutes} />
-                ) : (
-                  <PrivateRoute forRider path="/" component={RiderRoutes} />
-                )}
-                <PrivateRoute path="/admin" component={AdminRoutes} />
-                <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-                <Route path="*">
-                  <Redirect to="/" />
-                </Route>
-              </Switch>
-            </SubscribeWrapper>
-          </ReqContext.Provider>
+          <SubscribeWrapper userId={id}>
+            <Switch>
+              {localUserType === 'Admin' ? (
+                <PrivateRoute exact path="/" component={AdminRoutes} />
+              ) : (
+                <PrivateRoute forRider path="/" component={RiderRoutes} />
+              )}
+              <PrivateRoute path="/admin" component={AdminRoutes} />
+              <PrivateRoute forRider path="/rider" component={RiderRoutes} />
+              <Route path="*">
+                <Redirect to="" />
+              </Route>
+            </Switch>
+          </SubscribeWrapper>
         </AuthContext.Provider>
       </>
     );
@@ -251,7 +232,7 @@ const AuthManager = () => {
     <Switch>
       <Route exact path="/" component={LoginPage} />
       <Route path="*">
-        <Redirect to="/" />
+        <Redirect to="" />
       </Route>
     </Switch>
   );

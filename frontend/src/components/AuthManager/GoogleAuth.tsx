@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AuthManager from './AuthManager';
 import useClientId from '../../hooks/useClientId';

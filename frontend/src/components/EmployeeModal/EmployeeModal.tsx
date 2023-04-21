@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
@@ -13,6 +12,7 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { edit } from '../../icons/other/index';
 import { useToast, ToastStatus } from '../../context/toastContext';
+import axios from '../../util/axios';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -57,7 +57,6 @@ const EmployeeModal = ({
     existingEmployee?.role ? existingEmployee?.role : 'driver'
   );
   const [imageBase64, setImageBase64] = useState('');
-  const { withDefaults } = useReq();
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
@@ -91,13 +90,8 @@ const EmployeeModal = ({
       fileBuffer: imageBase64,
     };
     // Upload image
-    await fetch(
-      '/api/upload',
-      withDefaults({
-        method: 'POST',
-        body: JSON.stringify(photo),
-      })
-    )
+    await axios
+      .post('/api/upload', photo)
       .then(() => {
         refresh();
       })
@@ -112,24 +106,14 @@ const EmployeeModal = ({
   ) => {
     if (imageBase64 === '') {
       // If no image has been uploaded, create new employee
-      fetch(
-        endpoint,
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify(employeeData),
-        })
-      ).then(() => {
+      axios.post(endpoint, employeeData).then(() => {
         refresh();
         showToast('The employee has been added.', ToastStatus.SUCCESS);
       });
     } else {
-      const createdEmployee = await fetch(
-        endpoint,
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify(employeeData),
-        })
-      ).then((res) => res.json());
+      const createdEmployee = await axios
+        .post(endpoint, employeeData)
+        .then((res) => res.data);
 
       uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
     }
@@ -141,18 +125,13 @@ const EmployeeModal = ({
     refresh: () => Promise<void>,
     table: string
   ) => {
-    const updatedEmployee = await fetch(
-      `${endpoint}/${existingEmployee!.id}`,
-      withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(employeeData),
-      })
-    ).then((res) => {
-      refresh();
-      showToast('The employee has been edited.', ToastStatus.SUCCESS);
-      return res.json();
-    });
+    const updatedEmployee = await axios
+      .put(`${endpoint}/${existingEmployee!.id}`, employeeData)
+      .then((res) => {
+        refresh();
+        showToast('The employee has been edited.', ToastStatus.SUCCESS);
+        return res.data;
+      });
     if (imageBase64 !== '') {
       uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
     }

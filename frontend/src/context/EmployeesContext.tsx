@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Admin, Driver } from '../types';
-import { useReq } from './req';
+import axios from '../util/axios';
 
 type employeesState = {
   drivers: Array<Driver>;
@@ -26,14 +26,11 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const componentMounted = useRef(true);
   const [drivers, setDrivers] = useState<Array<Driver>>([]);
   const [admins, setAdmins] = useState<Array<Admin>>([]);
-  const { withDefaults } = useReq();
 
   const refreshDrivers = useCallback(async () => {
-    const driversData: Array<Driver> = await fetch(
-      '/api/drivers',
-      withDefaults()
-    )
-      .then((res) => res.json())
+    const driversData: Array<Driver> = await axios
+      .get('/api/drivers')
+      .then((res) => res.data)
       .then((data) => data.data);
     driversData &&
       driversData.sort((a: Driver, b: Driver) => {
@@ -42,11 +39,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         return aFull < bFull ? -1 : 1;
       });
     driversData && componentMounted.current && setDrivers(driversData);
-  }, [withDefaults]);
+  }, []);
 
   const refreshAdmins = useCallback(async () => {
-    const adminsData: Array<Admin> = await fetch('/api/admins', withDefaults())
-      .then((res) => res.json())
+    const adminsData: Array<Admin> = await axios
+      .get('/api/admins')
+      .then((res) => res.data)
       .then((data) => data.data);
     adminsData &&
       adminsData.sort((a: Admin, b: Admin) => {
@@ -55,7 +53,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         return aFull < bFull ? -1 : 1;
       });
     adminsData && componentMounted.current && setAdmins(adminsData);
-  }, [withDefaults]);
+  }, []);
 
   // Initialize the data
   React.useEffect(() => {

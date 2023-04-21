@@ -1,8 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { Ride, Driver } from '../../types/index';
-import { useReq } from '../../context/req';
 import styles from './assigndrivermodal.module.css';
 import { useRides } from '../../context/RidesContext';
+import axios from '../../util/axios';
 
 type AssignModalProps = {
   isOpen: boolean;
@@ -36,7 +36,6 @@ const AssignDriverModal = ({
   allDrivers,
   reassign = false,
 }: AssignModalProps) => {
-  const { withDefaults } = useReq();
   const { refreshRides } = useRides();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
   function useOutsideAlerter(ref: any) {
@@ -55,17 +54,12 @@ const AssignDriverModal = ({
   }
   const wrapperRef = useRef(null);
   const addDriver = (driver: Driver) => {
-    fetch(
-      `/api/rides/${ride.id}`,
-      withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          driver,
-          type: !reassign ? 'active' : undefined,
-        }),
+    axios
+      .put(`/api/rides/${ride.id}`, {
+        driver,
+        type: !reassign ? 'active' : undefined,
       })
-    ).then(() => refreshRides());
+      .then(() => refreshRides());
     close();
   };
   useOutsideAlerter(wrapperRef);

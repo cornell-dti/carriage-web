@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import cn from 'classnames';
 import Toast from '../ConfirmationToast/ConfirmationToast';
-import { useReq } from '../../context/req';
 import RiderModal from '../Modal/RiderModal';
 import styles from './userDetail.module.css';
 import { red_trash, edit } from '../../icons/other/index';
@@ -12,6 +11,7 @@ import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import AuthContext from '../../context/auth';
+import axios from '../../util/axios';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -75,7 +75,6 @@ const UserDetail = ({
   const [isRiderOpen, setRiderOpen] = useState(false);
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
-  const { withDefaults } = useReq();
   const { refreshRiders } = useRiders();
   const { toastType } = useToast();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
@@ -91,13 +90,7 @@ const UserDetail = ({
   const toggleActive = (): void => {
     if (rider) {
       const { id, active } = rider;
-      fetch(
-        `/api/riders/${id}`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify({ active: !active }),
-        })
-      ).then(() => {
+      axios.put(`/api/riders/${id}`, { active: !active }).then(() => {
         setIsShowing(true);
         refreshRiders();
       });

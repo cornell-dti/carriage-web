@@ -5,7 +5,6 @@ import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
-import { useReq } from '../../../context/req';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
 

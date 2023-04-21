@@ -6,7 +6,6 @@ import React, {
   useRef,
 } from 'react';
 import { Ride } from '../../types';
-import { useReq } from '../../context/req';
 import RiderScheduleTable from '../../components/UserTables/RiderScheduleTable';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import AuthContext from '../../context/auth';
@@ -14,6 +13,7 @@ import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import RequestRideModal from '../../components/RequestRideModal/RequestRideModal';
 import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
+import axios from '../../util/axios';
 
 const Schedule = () => {
   const componentMounted = useRef(true);
@@ -22,13 +22,13 @@ const Schedule = () => {
   const [currRides, setCurrRides] = useState<Ride[]>([]);
   const [pastRides, setPastRides] = useState<Ride[]>([]);
   const { id, user } = useContext(AuthContext);
-  const { withDefaults } = useReq();
   document.title = 'Schedule - Carriage';
   const refreshRides = useCallback(() => {
-    fetch(`/api/rides?rider=${id}`, withDefaults())
-      .then((res) => res.json())
+    axios
+      .get(`/api/rides?rider=${id}`)
+      .then((res) => res.data)
       .then(({ data }) => componentMounted.current && setRides([...data]));
-  }, [id, withDefaults]);
+  }, [id]);
 
   useEffect(() => {
     refreshRides();
