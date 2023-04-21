@@ -94,7 +94,6 @@ async function getIdToken(client: OAuth2Client, code: string) {
 router.post('/', async (req, res) => {
   const { code, table } = req.body;
   try {
-    console.log(req.get('origin'));
     const client = new OAuth2Client({
       clientId: oauthValues.client_id,
       clientSecret: oauthValues.client_secret,
@@ -118,5 +117,26 @@ router.post('/', async (req, res) => {
     res.status(500).send({ err });
   }
 });
+
+if (process.env.NODE_ENV === 'test') {
+  router.post('/dummy', async (req, res) => {
+    const { email, table } = req.body;
+    try {
+      const model = getModel(table);
+      if (model && email) {
+        findUserAndSendToken(res, model, table, email);
+      } else if (!model) {
+        res.status(400).send({ err: 'Table not found' });
+      } else if (!email) {
+        res.status(400).send({ err: 'Email not found' });
+      } else {
+        res.status(400).send({ err: 'Payload not found' });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ err });
+    }
+  });
+}
 
 export default router;
