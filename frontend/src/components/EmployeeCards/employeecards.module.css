@@ -2,8 +2,9 @@
   margin-top: 1rem;
 }
 
-.dayText {
-  font-weight: bold;
+.timeText {
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 .link {

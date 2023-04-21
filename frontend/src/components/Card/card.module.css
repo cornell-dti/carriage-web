@@ -1,6 +1,7 @@
 .card {
   display: inline-block;
   width: 17.2rem;
+  height: 23rem;
   background-color: white;
   border-radius: 0.5rem;
   overflow: hidden;
@@ -15,7 +16,7 @@
 }
 
 .contentContainer {
-  padding: 1.2rem 1rem 1.81rem;
+  padding: 1.2rem 0rem 1.81rem 1rem;
 }
 
 .titleContainer {

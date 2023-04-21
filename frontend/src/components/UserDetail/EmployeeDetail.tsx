@@ -274,7 +274,7 @@ const EmployeeDetail = () => {
             )}
           </UserDetail>
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-          <PastRides isStudent={false} rides={rides} />
+          {/* <PastRides isStudent={false} rides={rides} /> */}
         </div>
       </main>
     );
