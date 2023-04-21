@@ -1,7 +1,7 @@
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
-import axios from "./util/axios";
+import axios from './util/axios';
 
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
@@ -111,10 +111,11 @@ function registerValidSW(swUrl: string, config?: Config) {
 
 function checkValidServiceWorker(swUrl: string, config?: Config) {
   // Check if the service worker can be found. If it can't reload the page.
-  axios.get(swUrl, { headers: { 'Service-Worker': 'script' } })
+  axios
+    .get(swUrl, { headers: { 'Service-Worker': 'script' } })
     .then((response) => {
       // Ensure service worker exists, and that we really are getting a JS file.
-      const contentType = response.headers["Content-Type"] as string;
+      const contentType = response.headers['Content-Type'] as string;
       if (
         response.status === 404 ||
         (contentType != null && contentType.indexOf('javascript') === -1)
