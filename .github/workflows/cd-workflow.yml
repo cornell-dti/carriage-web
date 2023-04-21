@@ -38,6 +38,7 @@ jobs:
             ANDROID_ARN=${{ secrets.ANDROID_ARN }},
             HOSTNAME=${{ secrets.HOSTNAME }},
             USE_HOSTNAME=${{ secrets.USE_HOSTNAME }},
+            REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }},
             REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }},
             REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }},
             REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }},
@@ -57,6 +58,7 @@ jobs:
         with:
           push: true
           build-args: |
+            REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }}
             REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
             REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
             REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
