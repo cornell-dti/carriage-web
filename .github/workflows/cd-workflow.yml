@@ -38,6 +38,8 @@ jobs:
             ANDROID_ARN=${{ secrets.ANDROID_ARN }},
             HOSTNAME=${{ secrets.HOSTNAME }},
             USE_HOSTNAME=${{ secrets.USE_HOSTNAME }},
+            OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }}
+            OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}
             REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }},
             REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }},
             REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }},
