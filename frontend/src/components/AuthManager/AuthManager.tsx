@@ -51,7 +51,6 @@ const AuthManager = () => {
   const [jwt, setJWT] = useState(jwtValue());
   const [id, setId] = useState(localStorage.getItem('userId')!);
   const [initPath, setInitPath] = useState('');
-  console.log()
   const [user, setUser] = useState<Rider | Admin>(
     JSON.parse(localStorage.getItem('user')!)
   );
@@ -95,7 +94,6 @@ const AuthManager = () => {
   }
 
   function setCookie(cookieName: string, value: string) {
-    console.log('called')
     document.cookie = cookieName + '=' + encrypt(value) + ';secure=true;';
   }
 
@@ -132,7 +130,7 @@ const AuthManager = () => {
         )
           .then((res) => res.json())
           .then((json) => json.jwt);
-          console.log(serverJWT);
+
         if (serverJWT) {
           setCookie('jwt', serverJWT);
           const decoded: any = jwtDecode(serverJWT);
@@ -195,7 +193,6 @@ const AuthManager = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data)
           localStorage.setItem('user', JSON.stringify(data.data));
           setUser(data.data);
         });
