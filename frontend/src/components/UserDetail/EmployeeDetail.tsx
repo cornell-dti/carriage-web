@@ -185,7 +185,7 @@ const EmployeeDetail = () => {
         axios
           .get(`/api/admins/${employeeId}`)
           .then((res) => res.data)
-          .then((admin) => {
+          .then(({ data: admin }) => {
             setEmployee({
               ...admin,
               availability: '',
@@ -196,7 +196,7 @@ const EmployeeDetail = () => {
         axios
           .get(`/api/drivers/${employeeId}`)
           .then((res) => res.data)
-          .then((driver) => {
+          .then(({ data: driver }) => {
             setEmployee({
               ...driver,
               availability: formatAvailability(driver.availability),
@@ -206,7 +206,7 @@ const EmployeeDetail = () => {
         axios
           .get(`/api/drivers/${employeeId}/stats`)
           .then((res) => res.data)
-          .then((data) => {
+          .then(({ data }) => {
             if (!data.err) {
               setRideCount(Math.floor(data.rides));
               setWorkingHours(Math.floor(data.workingHours));

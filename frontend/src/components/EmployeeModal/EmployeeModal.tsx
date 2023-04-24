@@ -104,16 +104,13 @@ const EmployeeModal = ({
     refresh: () => Promise<void>,
     table: string
   ) => {
+    const res = await axios.post(endpoint, employeeData);
     if (imageBase64 === '') {
       // If no image has been uploaded, create new employee
-      axios.post(endpoint, employeeData).then(() => {
-        refresh();
-        showToast('The employee has been added.', ToastStatus.SUCCESS);
-      });
+      refresh();
+      showToast('The employee has been added.', ToastStatus.SUCCESS);
     } else {
-      const createdEmployee = await axios
-        .post(endpoint, employeeData)
-        .then((res) => res.data);
+      const { data: createdEmployee } = await res.data;
 
       uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
     }

@@ -121,7 +121,6 @@ const AuthManager = () => {
             code,
             table,
           })
-
           .then((res) => res.data)
           .then((json) => json.jwt);
 
@@ -170,9 +169,9 @@ const AuthManager = () => {
       axios
         .get(endpoint)
         .then((res) => res.data)
-        .then((data) => {
-          localStorage.setItem('user', JSON.stringify(data.data));
-          setUser(data.data);
+        .then(({ data }) => {
+          localStorage.setItem('user', JSON.stringify(data));
+          setUser(data);
         });
     };
   }
