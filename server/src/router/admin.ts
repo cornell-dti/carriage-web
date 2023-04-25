@@ -36,7 +36,12 @@ router.put('/:id', validateUser('Admin'), (req, res) => {
     params: { id },
     body,
   } = req;
-  db.update(res, Admin, { id }, body, tableName);
+
+  const Update = () => {
+    db.update(res, Admin, { id }, body, tableName);
+  };
+
+  db.getById(res, Admin, id, tableName, Update);
 });
 
 // Remove an admin
