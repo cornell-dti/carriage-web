@@ -44,8 +44,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .then((data) => data.data);
 
     driversData?.sort(sortByName);
-    componentMounted.current &&
-      setDrivers((prevDrivers) => [...prevDrivers, ...driversData]);
+    componentMounted.current && setDrivers(driversData);
   }, []);
 
   const refreshAdmins = useCallback(async () => {
@@ -55,8 +54,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .then((data) => data.data);
 
     adminsData?.sort(sortByName);
-    componentMounted.current &&
-      setAdmins((prevAdmins) => [...prevAdmins, ...adminsData]);
+    componentMounted.current && setAdmins(adminsData);
   }, []);
 
   // Initialize the data

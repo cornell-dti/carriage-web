@@ -57,13 +57,15 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
+
   if (existingEmployee?.isDriver !== undefined) {
     if (existingEmployee.isDriver) {
       existingEmployee?.type?.push('driver');
     }
-  } else if (existingEmployee?.type) {
-    existingEmployee.type = ['driver'];
+  } else if (existingEmployee) {
+    existingEmployee.type = existingEmployee?.type || ['driver'];
   }
+
   const [selectedRole, setSelectedRole] = useState<string[]>(
     existingEmployee?.type || []
   );
@@ -151,14 +153,14 @@ const EmployeeModal = ({
     isNewDriver = false
   ) => {
     if (isNewDriver) {
-      await createNewEmployee(
+      return await createNewEmployee(
         driver,
         '/api/drivers',
         () => refreshDrivers(),
         'Drivers'
       );
     } else {
-      await updateExistingEmployee(
+      return await updateExistingEmployee(
         driver,
         '/api/drivers',
         () => refreshDrivers(),
@@ -216,32 +218,66 @@ const EmployeeModal = ({
       isDriver: selectedRole.includes('driver'),
     };
 
-    const isNewAdmin =
-      existingEmployee &&
-      !existingEmployee.availability &&
-      !existingEmployee.isDriver;
-    const isNewDriver =
-      !existingEmployee ||
-      (existingEmployee && existingEmployee.isDriver === undefined);
+    const existingDriver = existingEmployee?.isDriver === undefined;
+    const existingAdmin = existingEmployee?.isDriver !== undefined;
 
-    if (selectedRole.includes('driver')) {
-      await createOrUpdateDriver(
-        { ...driver, id: existingEmployee?.id },
-        isNewDriver
-      );
-    } else if (existingEmployee?.isDriver !== undefined) {
-      await deleteDriver(existingEmployee.id);
+    if (existingEmployee) {
+      if (selectedRole.includes('driver')) {
+        if (selectedRole.some((role) => role.includes('admin'))) {
+          if (existingDriver && existingAdmin) {
+            await createOrUpdateDriver(driver, false);
+            await createOrUpdateAdmin(admin, false);
+          } else if (existingDriver) {
+            await createOrUpdateDriver(driver, false);
+            await createOrUpdateAdmin(
+              { ...admin, id: existingEmployee.id },
+              true
+            );
+          } else if (existingAdmin) {
+            await createOrUpdateDriver(
+              { ...driver, id: existingEmployee.id },
+              true
+            );
+            await createOrUpdateAdmin(admin, false);
+          }
+        } else {
+          if (existingDriver && existingAdmin) {
+            await createOrUpdateDriver(driver, false);
+            await deleteAdmin(existingEmployee.id);
+          } else if (existingDriver) {
+            await createOrUpdateDriver(driver, false);
+          } else if (existingAdmin) {
+            await createOrUpdateDriver(
+              { ...driver, id: existingEmployee.id },
+              true
+            );
+            await deleteAdmin(existingEmployee.id);
+          }
+        }
+      } else {
+        if (existingDriver && existingAdmin) {
+          await deleteDriver(existingEmployee.id);
+          await createOrUpdateAdmin(admin, false);
+        } else if (existingDriver) {
+          await deleteDriver(existingEmployee.id);
+          await createOrUpdateAdmin(
+            { ...admin, id: existingEmployee.id },
+            true
+          );
+        }
+      }
+    } else {
+      if (selectedRole.includes('driver')) {
+        if (selectedRole.some((role) => role.includes('admin'))) {
+          const id = (await createOrUpdateDriver(driver, true)).data.data.id;
+          await createOrUpdateAdmin({ ...admin, id: id }, true);
+        } else {
+          await createOrUpdateDriver(driver, true);
+        }
+      } else {
+        await createOrUpdateAdmin(admin, true);
+      }
     }
-
-    if (selectedRole.some((role) => role.includes('admin'))) {
-      await createOrUpdateAdmin(
-        { ...admin, id: existingEmployee?.id },
-        isNewAdmin
-      );
-    } else if (existingEmployee?.isDriver !== undefined) {
-      await deleteAdmin(existingEmployee.id);
-    }
-
     closeModal();
   };
 

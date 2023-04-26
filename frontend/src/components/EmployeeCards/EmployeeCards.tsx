@@ -110,7 +110,7 @@ const EmployeeCard = ({
   };
 
   const parsedAvail = formatAvail(availability!);
-  const isAdmin = !availability;
+  const isAdmin = isDriver !== undefined;
   const isBoth = isDriver && isDriver == true;
   const roles = (): string => {
     if (isBoth) return 'Admin • Driver';
