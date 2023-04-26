@@ -54,26 +54,10 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
     lastName: admin.lastName,
     type: admin.type,
     isDriver: admin.isDriver,
-    availability: formatAvailability(admin.availability)!,
     netId: admin.email.split('@')[0],
     phone: admin.phoneNumber,
     photoLink: admin.photoLink,
   }));
-};
-
-const findEmployee = (
-  drivers: DriverType[],
-  admins: AdminType[],
-  employeeId: string
-): EmployeeDetailProps => {
-  const employee = DriverToEmployees(drivers).find(
-    (employee) => employee.id === employeeId
-  );
-  if (!employee)
-    return AdminToEmployees(admins).find(
-      (employee) => employee.id === employeeId
-    )!;
-  return employee;
 };
 
 const EmployeeCard = ({
