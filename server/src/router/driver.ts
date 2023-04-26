@@ -113,7 +113,7 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
         data: {
           rides: data.length,
           workingHours: calculateHoursWorked(driver),
-        }
+        },
       });
     });
   });
