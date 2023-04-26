@@ -15,11 +15,21 @@ const initialState: employeesState = {
   refreshDrivers: async () => undefined,
   refreshAdmins: async () => undefined,
 };
+
 const EmployeesContext = React.createContext(initialState);
 export const useEmployees = () => React.useContext(EmployeesContext);
 
 type EmployeesProviderProps = {
   children: React.ReactNode;
+};
+
+const sortByName = (
+  a: { firstName: string; lastName: string },
+  b: { firstName: string; lastName: string }
+) => {
+  const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+  const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+  return aFull < bFull ? -1 : 1;
 };
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
@@ -32,13 +42,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .get('/api/drivers')
       .then((res) => res.data)
       .then((data) => data.data);
-    driversData &&
-      driversData.sort((a: Driver, b: Driver) => {
-        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-        return aFull < bFull ? -1 : 1;
-      });
-    driversData && componentMounted.current && setDrivers(driversData);
+
+    driversData?.sort(sortByName);
+    componentMounted.current &&
+      setDrivers((prevDrivers) => [...prevDrivers, ...driversData]);
   }, []);
 
   const refreshAdmins = useCallback(async () => {
@@ -46,13 +53,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       .get('/api/admins')
       .then((res) => res.data)
       .then((data) => data.data);
-    adminsData &&
-      adminsData.sort((a: Admin, b: Admin) => {
-        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-        return aFull < bFull ? -1 : 1;
-      });
-    adminsData && componentMounted.current && setAdmins(adminsData);
+
+    adminsData?.sort(sortByName);
+    componentMounted.current &&
+      setAdmins((prevAdmins) => [...prevAdmins, ...adminsData]);
   }, []);
 
   // Initialize the data
@@ -61,7 +65,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     refreshAdmins();
 
     return () => {
-      componentMounted.current = false;
+      componentMounted.current = true;
     };
   }, [refreshAdmins, refreshDrivers]);
 

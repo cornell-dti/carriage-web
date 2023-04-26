@@ -38,10 +38,11 @@ type EmployeeDetailProps = {
   id: string;
   firstName: string;
   lastName: string;
+  type?: string[];
+  isDriver?: boolean;
   netId: string;
-  phone: string;
+  phoneNumber: string;
   availability?: string[][];
-  admin?: boolean;
   photoLink?: string;
   startDate?: string;
 };
@@ -131,11 +132,12 @@ const UserDetail = ({
                   id: employee.id,
                   firstName: employee.firstName,
                   lastName: employee.lastName,
+                  type: employee?.type,
+                  isDriver: employee?.isDriver,
                   netId: employee.netId,
                   email: `${employee.netId}@cornell.edu`,
-                  phone: employee.phone.replaceAll('-', ''), // remove dashes'-'
+                  phone: employee.phoneNumber.replaceAll('-', ''), // remove dashes'-'
                   availability: employee.availability,
-                  role,
                   photoLink: employee.photoLink,
                   startDate: employee.startDate,
                 }}

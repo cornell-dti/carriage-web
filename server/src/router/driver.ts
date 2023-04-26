@@ -110,8 +110,10 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
   db.getById(res, Driver, id, tableName, (driver) => {
     db.scan(res, Ride, condition, (data: Document[]) => {
       res.send({
-        rides: data.length,
-        workingHours: calculateHoursWorked(driver),
+        data: {
+          rides: data.length,
+          workingHours: calculateHoursWorked(driver),
+        }
       });
     });
   });
@@ -121,8 +123,8 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const driver = new Driver({
-    ...body,
     id: uuid(),
+    ...body,
   });
   db.create(res, driver);
 });
