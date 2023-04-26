@@ -2,7 +2,6 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import defaultModelConfig from '../util/modelConfig';
 
-
 export type AdminRole = 'sds-admin' | 'redrunner-admin';
 
 export type AdminType = {
