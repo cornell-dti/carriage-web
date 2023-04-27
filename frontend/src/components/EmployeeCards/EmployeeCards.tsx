@@ -176,14 +176,9 @@ const EmployeeCards = () => {
 
   return (
     <div className={styles.cardsContainer}>
-      {filteredEmployees &&
-        filteredEmployees.map((employee) => (
-          <EmployeeCard
-            key={employee.id}
-            id={employee.id}
-            employee={employee}
-          />
-        ))}
+      {filteredEmployees.map((employee) => (
+        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
+      ))}
     </div>
   );
 };

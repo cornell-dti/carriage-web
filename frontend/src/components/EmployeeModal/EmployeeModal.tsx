@@ -36,8 +36,8 @@ type AdminData = {
   id?: string;
   firstName: any;
   lastName: any;
-  type?: string[];
-  isDriver?: boolean;
+  type: string[];
+  isDriver: boolean;
   email: any;
   phoneNumber: any;
 };
