@@ -1,4 +1,5 @@
 import express from 'express';
+import { VehicleType } from '../src/models/vehicle';
 
 // Basic Data: Non-recurring ride
 export const testRideRequest1 = {
@@ -136,3 +137,191 @@ export const testRideResponse5 = {
   status: 'not_started',
   late: false,
 };
+
+// Test Rider Request Body:
+export const rider1 = {
+  email: 'abc123@cornell.edu',
+  phoneNumber: '1111111111',
+  firstName: 'test-first-name',
+  lastName: 'test-last-name',
+  accessibility: '',
+  organization: 'CULift',
+  pronouns: 'he/him/his',
+  joinDate: '2023-04-13',
+  address: '201 Stewart Ave',
+  endDate: '2023-06-13',
+};
+
+export const rider1Res = {
+  email: 'abc123@cornell.edu',
+  phoneNumber: '1111111111',
+  firstName: 'test-first-name',
+  lastName: 'test-last-name',
+  accessibility: '',
+  organization: 'CULift',
+  pronouns: 'he/him/his',
+  joinDate: '2023-04-13',
+  address: '201 Stewart Ave, Ithaca, NY 14850',
+  endDate: '2023-06-13',
+  id: '',
+  favoriteLocations: [],
+  active: true,
+};
+
+// Test Driver Request Body:
+export const driver1 = {
+  email: 'def5@cornell.edu',
+  phoneNumber: '2222222222',
+  firstName: 'test-driver-first',
+  lastName: 'test-driver-last',
+  vehicle: '',
+  availability: {},
+  admin: false,
+  startDate: '2023-03-13',
+};
+
+export const driver1Res = {};
+
+// Create Ride Requst Body
+export const rideReq6 = {
+  startLocation: '321 Test Drive',
+  endLocation: '321 Test Drive',
+  recurring: true,
+  recurringDays: [1, 2, 3, 4, 5],
+  startTime: '2022-01-31T23:50:00.000Z',
+  endTime: '2022-01-31T23:55:00.000Z',
+  endDate: '2023-05-25',
+  driver: '',
+  rider: '',
+};
+
+export const rideRes6 = {
+  startLocation: {
+    name: '321 Test Drive',
+    address: '321 Test Drive',
+    tag: 'custom',
+  },
+  endLocation: {
+    name: '321 Test Drive',
+    address: '321 Test Drive',
+    tag: 'custom',
+  },
+  recurring: true,
+  recurringDays: [1, 2, 3, 4, 5],
+  startTime: '2022-01-31T23:50:00.000Z',
+  endTime: '2022-01-31T23:55:00.000Z',
+  endDate: '2023-05-25',
+  id: '',
+  edits: [],
+  deleted: [],
+  type: 'unscheduled',
+  status: 'not_started',
+  late: false,
+  driver: {
+    email: 'def5@cornell.edu',
+    phoneNumber: '2222222222',
+    firstName: 'test-driver-first',
+    lastName: 'test-driver-last',
+    vehicle: '',
+    availability: {},
+    admin: false,
+    startDate: '2023-03-13',
+    id: '',
+  },
+  rider: {
+    email: 'abc123@cornell.edu',
+    phoneNumber: '1111111111',
+    firstName: 'test-first-name',
+    lastName: 'test-last-name',
+    accessibility: '',
+    organization: 'CULift',
+    pronouns: 'he/him/his',
+    joinDate: '2023-04-13',
+    address: '201 Stewart Ave',
+    endDate: '2023-06-13',
+    id: '',
+  },
+};
+
+const testVehicles: VehicleType[] = [
+  {
+    id: 'vehicle1',
+    name: 'Toyota',
+    capacity: 5,
+  },
+  {
+    id: 'vehicle2',
+    name: 'Honda',
+    capacity: 4,
+  },
+  {
+    id: 'vehicle3',
+    name: 'Acura',
+    capacity: 4,
+  },
+];
+
+export const testDrivers = [
+  {
+    id: 'driver0',
+    email: 'drivertest-email@test.com',
+    phoneNumber: '1234567890',
+    firstName: 'Test',
+    lastName: 'Testing',
+    vehicle: testVehicles[0].id,
+    startDate: '2023-03-09',
+    availability: {
+      Mon: {
+        startTime: '08:00',
+        endTime: '12:00',
+      },
+      Tue: {
+        startTime: '08:00',
+        endTime: '12:00',
+      },
+      Wed: {
+        startTime: '08:00',
+        endTime: '12:00',
+      },
+      Thu: {
+        startTime: '08:00',
+        endTime: '12:00',
+      },
+      Fri: {
+        startTime: '08:00',
+        endTime: '12:00',
+      },
+    },
+    photoLink: '',
+    admin: false,
+  },
+  {
+    id: 'driver1',
+    email: 'drivertest-email1@test.com',
+    phoneNumber: '1234567891',
+    firstName: 'Test',
+    lastName: 'Testing1',
+    vehicle: testVehicles[1].id,
+    startDate: '2023-03-10',
+    availability: {
+      Mon: {
+        startTime: '09:00',
+        endTime: '12:00',
+      },
+      Tue: {
+        startTime: '11:00',
+        endTime: '12:00',
+      },
+      Wed: {
+        startTime: '12:00',
+        endTime: '17:00',
+      },
+      Thu: {
+        startTime: '15:00',
+        endTime: '16:00',
+      },
+    },
+    photoLink: '',
+    admin: false,
+  },
+];

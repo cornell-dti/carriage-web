@@ -14,6 +14,11 @@ import {
   testRideResponse3,
   testRideResponse5,
   testRideRequest5,
+  rider1,
+  driver1,
+  rideReq6,
+  rideRes6,
+  testDrivers,
 } from './ride-test-data';
 
 describe('Rides Tests', () => {
@@ -189,6 +194,44 @@ describe('Rides Tests', () => {
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
       expect(getRes.body.data.length).to.equal(3);
+    });
+  });
+
+  describe('POST /api/rides with rider & driver', () => {
+    it('Creates a ride with a rider and driver', async () => {
+      const riderRes = await request(app)
+        .post('/api/riders')
+        .send(rider1)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      const riderId = riderRes.body['data']['id'];
+
+      const driverRes = await request(app)
+        .post('/api/drivers')
+        .send(testDrivers[0])
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      const driverId = driverRes.body['data']['id'];
+      console.log('driver res done');
+
+      rideReq6['driver'] = driverId;
+      rideReq6['rider'] = riderId;
+
+      const postRes = await request(app)
+        .post('/api/rides')
+        .send(rideReq6)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(200);
+      console.log('post res done');
+      rideRes6['driver']['id'] = driverId;
+      rideRes6['rider']['id'] = riderId;
+      expect(postRes.body.data).to.deep.equal(rideRes6);
     });
   });
 });
