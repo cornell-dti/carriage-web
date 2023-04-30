@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import * as db from './common';
 import { Admin } from '../models/admin';
 import { validateUser } from '../util';
+import { Condition } from 'dynamoose';
 
 const router = express.Router();
 const tableName = 'Admins';
@@ -27,6 +28,7 @@ router.post('/', validateUser('Admin'), (req, res) => {
     ...body,
     id: uuid(),
   });
+
   db.create(res, admin);
 });
 
@@ -37,11 +39,9 @@ router.put('/:id', validateUser('Admin'), (req, res) => {
     body,
   } = req;
 
-  const Update = () => {
-    db.update(res, Admin, { id }, body, tableName);
-  };
+  const condition = new Condition().where('id').eq(id);
 
-  db.getById(res, Admin, id, tableName, Update);
+  db.conditionalUpdate(res, Admin, { id }, body, condition, tableName);
 });
 
 // Remove an admin

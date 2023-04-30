@@ -3,12 +3,41 @@ import { expect } from 'chai';
 import app from '../src/app';
 import authorize from './utils/auth';
 import { clearDB, populateDB } from './utils/db';
+import { Admin } from '../src/models';
 
-import {
-  AdminRequest1,
-  AdminFixedID,
-  AdminMissingData,
-} from './admin-test-data';
+//Testing Data
+// Basic Data: Appropriate Admin
+const AdminRequest1 = {
+  firstName: 'Endpoint-Test',
+  lastName: 'Admin',
+  phoneNumber: '0000000000',
+  email: 'adminEndpointTest@example.com',
+  photoLink: 'random-link',
+};
+
+//Admin with Fixed ID
+const AdminFixedID = {
+  firstName: 'Endpoint-Test-Fixed-ID',
+  lastName: 'Admin',
+  phoneNumber: '0000000000',
+  email: 'adminEndpointTest@example.com',
+  photoLink: 'random-link',
+  id: 1,
+};
+
+//Admin with Missing Data
+const AdminMissingData = {
+  lastName: 'Admin',
+  phoneNumber: '0000000000',
+  email: 'adminEndpointTest@example.com',
+  photoLink: 'random-link',
+};
+
+// Test with invalid email input
+const AdminInvalidEmail = {
+  ...AdminRequest1,
+  email: 'invalid-email',
+};
 
 describe('Admin Tests', () => {
   let adminToken: string;
@@ -40,7 +69,7 @@ describe('Admin Tests', () => {
       expect(postAdmin.body.data).to.have.property('id');
     });
 
-    it('Create a new admin with fixed ID : succeed but ID should be UUID not Fixed', async () => {
+    it('Create a new admin with fixed ID : success but ID should be UUID not Fixed', async () => {
       const postAdminFixedID = await request(app)
         .post('/api/admins')
         .send(AdminFixedID)
@@ -62,6 +91,17 @@ describe('Admin Tests', () => {
         .expect(500);
 
       expect(postAdminMissingData.body).to.have.property('err');
+    });
+
+    it('Create a new admin : fail with invalid email input', async () => {
+      const postAdminInvalidEmail = await request(app)
+        .post('/api/admins')
+        .send(AdminInvalidEmail)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(500); //should be a 400 Bad request but server side data validation is not handled properly
+      expect(postAdminInvalidEmail.body).to.have.property('err');
     });
   });
 
@@ -96,6 +136,24 @@ describe('Admin Tests', () => {
 
       expect(putAdminFail.body).to.have.property('err');
     });
+
+    // Test with invalid email input for PUT request
+    it('Update an existing admin : fail with invalid email input', async () => {
+      const adminToUpdateInvalidEmail = {
+        ...AdminRequest1,
+        email: 'invalid-email',
+      };
+
+      const putAdminInvalidEmail = await request(app)
+        .put(`/api/admins/${globalAdminID}`)
+        .send(adminToUpdateInvalidEmail)
+        .set('Accept', 'application/json')
+        .set('Content-Type', 'application/json')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .expect(500); //should be a 400 Bad request but server side data validation is not handled properly
+
+      expect(putAdminInvalidEmail.body).to.have.property('err');
+    });
   });
 
   describe('GET /api/admins/:id', () => {
@@ -128,6 +186,20 @@ describe('Admin Tests', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect('Content-Type', 'application/json; charset=utf-8');
+
+      const storedAdmins = await Admin.scan().exec();
+      expect(getAllAdmin.body.data).to.deep.equal(
+        storedAdmins.map((admin: { toJSON: () => any }) => admin.toJSON())
+      );
+    });
+
+    // Test unauthorized access (without token)
+    it('Retrieve all admins : fail with unauthorized access (without token)', async () => {
+      const getAllAdminUnauthorized = await request(app)
+        .get('/api/admins/')
+        .expect(400);
+
+      expect(getAllAdminUnauthorized.body).to.have.property('err');
     });
   });
 
