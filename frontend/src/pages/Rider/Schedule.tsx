@@ -13,6 +13,7 @@ import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import RequestRideModal from '../../components/RequestRideModal/RequestRideModal';
 import Notification from '../../components/Notification/Notification';
+import LoadingScreen from '../../components/LoadingScreen/LoadingScreen';
 import styles from './page.module.css';
 
 const Schedule = () => {
@@ -21,13 +22,17 @@ const Schedule = () => {
   const [rides, setRides] = useState<Ride[]>([]);
   const [currRides, setCurrRides] = useState<Ride[]>([]);
   const [pastRides, setPastRides] = useState<Ride[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const { id, user } = useContext(AuthContext);
   const { withDefaults } = useReq();
   document.title = 'Schedule - Carriage';
   const refreshRides = useCallback(() => {
     fetch(`/api/rides?rider=${id}`, withDefaults())
       .then((res) => res.json())
-      .then(({ data }) => componentMounted.current && setRides([...data]));
+      .then(({ data }) => {
+        componentMounted.current && setRides([...data]);
+      })
+      .then(() => setIsLoading(false));
   }, [id, withDefaults]);
 
   useEffect(() => {
@@ -52,7 +57,8 @@ const Schedule = () => {
           <Notification />
         </div>
       </div>
-      {rides && rides.length > 0 && (
+      {isLoading && <LoadingScreen />}
+      {!isLoading && rides && rides.length > 0 && (
         <>
           <Collapsible title={'Your Upcoming Rides'}>
             <RiderScheduleTable data={currRides} isPast={false} />
@@ -62,7 +68,7 @@ const Schedule = () => {
           </Collapsible>
         </>
       )}
-      {rides && !rides.length && <NoRidesView />}
+      {!isLoading && rides && !rides.length && <NoRidesView />}
     </main>
   );
 };
