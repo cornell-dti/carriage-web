@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import {
@@ -23,10 +23,11 @@ type EmployeeDetailProps = {
   id: string;
   firstName: string;
   lastName: string;
+  type?: string[];
+  isDriver?: boolean;
   netId: string;
-  phone: string;
+  phoneNumber: string;
   availability?: string[][];
-  admin?: boolean;
   photoLink?: string;
   startDate?: string;
 };
@@ -99,8 +100,7 @@ const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
     lastName: driver.lastName,
     availability: formatAvailability(driver.availability)!,
     netId: driver.email.split('@')[0],
-    phone: driver.phoneNumber,
-    admin: driver.admin,
+    phoneNumber: driver.phoneNumber,
     photoLink: driver.photoLink,
     startDate: driver.startDate,
   }));
@@ -112,9 +112,10 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
     id: admin.id,
     firstName: admin.firstName,
     lastName: admin.lastName,
+    type: admin.type,
+    isDriver: admin.isDriver,
     netId: admin.email.split('@')[0],
-    phone: admin.phoneNumber,
-    admin: true,
+    phoneNumber: admin.phoneNumber,
     photoLink: admin.photoLink,
   }));
 };
@@ -124,11 +125,12 @@ const findEmployee = (
   admins: AdminType[],
   employeeId: string
 ): EmployeeDetailProps => {
-  const employee = DriverToEmployees(drivers).find(
+  const employee = AdminToEmployees(admins).find(
     (employee) => employee.id === employeeId
   );
+  console.log(employee);
   if (!employee)
-    return AdminToEmployees(admins).find(
+    return DriverToEmployees(drivers).find(
       (employee) => employee.id === employeeId
     )!;
   return employee;
@@ -152,12 +154,9 @@ const Header = () => {
 
 const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
-  const { drivers, admins } = useEmployees();
-  const [employee, setEmployee] = useState(
-    findEmployee(drivers, admins, employeeId)
-  );
+  const [employee, setEmployee] = useState<EmployeeDetailProps>();
   const pathArr = location.pathname.split('/');
-  const userType = pathArr[2];
+  const [userType, setUserType] = useState<string>(pathArr[2]);
 
   const [rides, setRides] = useState<Ride[]>([]);
   const [rideCount, setRideCount] = useState(-1);
@@ -179,51 +178,83 @@ const EmployeeDetail = () => {
     }
   }, [employee]);
 
-  useEffect(() => {
-    if (!employee && employeeId) {
-      if (userType === 'admins') {
-        axios
-          .get(`/api/admins/${employeeId}`)
-          .then((res) => res.data)
-          .then(({ data: admin }) => {
+  const fetchAdminData = async (employeeId: any) => {
+    const res = await axios.get(`/api/admins/${employeeId}`);
+    return res.data.data;
+  };
+
+  const fetchDriverData = async (employeeId: any) => {
+    const res = await axios.get(`/api/drivers/${employeeId}`);
+    return res.data.data;
+  };
+
+  const fetchStats = async (employeeId: any) => {
+    const res = await axios.get(`/api/drivers/${employeeId}/stats`);
+    return res.data.data;
+  };
+
+  const fetchPastRides = async (employeeId: any) => {
+    const res = await axios.get(`/api/rides?type=past&driver=${employeeId}`);
+    return res.data.data;
+  };
+
+  const setEmployeeData = (employeeId: string, userType: string) => {
+    if (userType === 'admins') {
+      fetchAdminData(employeeId).then((adminData) => {
+        if (adminData.isDriver) {
+          fetchDriverData(employeeId).then((driverData) => {
             setEmployee({
-              ...admin,
-              availability: '',
-              phone: admin.phoneNumber,
+              ...driverData,
+              ...adminData,
+              ...{ netId: adminData.email.split('@')[0] },
+              availability: formatAvailability(driverData.availability),
             });
+            setEmployeeRides(employeeId);
+            setEmployeeStats(employeeId);
           });
-      } else {
-        axios
-          .get(`/api/drivers/${employeeId}`)
-          .then((res) => res.data)
-          .then(({ data: driver }) => {
-            setEmployee({
-              ...driver,
-              availability: formatAvailability(driver.availability),
-              phone: driver.phoneNumber,
-            });
+        } else {
+          setEmployee({
+            ...adminData,
+            ...{ netId: adminData.email.split('@')[0] },
+            availability: formatAvailability(adminData.availability),
           });
-        axios
-          .get(`/api/drivers/${employeeId}/stats`)
-          .then((res) => res.data)
-          .then(({ data }) => {
-            if (!data.err) {
-              setRideCount(Math.floor(data.rides));
-              setWorkingHours(Math.floor(data.workingHours));
-            }
-          });
-      }
+        }
+      });
+    } else if (userType === 'drivers') {
+      fetchDriverData(employeeId).then((driverData) => {
+        setEmployee({
+          ...driverData,
+          ...{ netId: driverData.email.split('@')[0] },
+          availability: formatAvailability(driverData.availability),
+        });
+        setEmployeeRides(employeeId);
+        setEmployeeStats(employeeId);
+      });
     }
-    axios
-      .get(`/api/rides?type=past&driver=${employeeId}`)
-      .then((res) => res.data)
-      .then(({ data }) => setRides(data.sort(compRides)));
-    setEmployee(findEmployee(drivers, admins, employeeId));
-  }, [admins, drivers, employeeId, userType]);
+  };
+
+  const setEmployeeStats = (employeeId: string) => {
+    fetchStats(employeeId).then((data) => {
+      if (!data.err) {
+        setRideCount(Math.floor(data.rides));
+        setWorkingHours(Math.floor(data.workingHours));
+      }
+    });
+  };
+
+  const setEmployeeRides = (employeeId: string) => {
+    fetchPastRides(employeeId).then((data) => {
+      setRides(data.sort(compRides));
+    });
+  };
+
+  useEffect(() => {
+    setEmployeeData(employeeId, userType);
+  }, [employeeId, userType]);
 
   if (employee) {
-    const isAdmin = !employee.availability;
-    const isBoth = !isAdmin && employee.admin; // admin and driver
+    const isAdmin = employee.isDriver !== undefined;
+    const isBoth = employee.isDriver ?? false; // isDriver is only for admins + also driver if true
     const availToString = (acc: string, [day, timeRange]: string[]) =>
       `${acc + day}: ${timeRange} • `;
     const parsedAvail = employee.availability
@@ -254,7 +285,11 @@ const EmployeeDetail = () => {
             role={roleValue()}
             photoLink={employee.photoLink}
           >
-            <UserContactInfo icon={phone} alt="phone" text={employee.phone} />
+            <UserContactInfo
+              icon={phone}
+              alt="phone"
+              text={employee.phoneNumber}
+            />
             <UserContactInfo
               icon={isAdmin || isBoth ? user : wheel}
               alt="role"

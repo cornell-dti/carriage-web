@@ -14,6 +14,7 @@ const testAdmin = {
   lastName: 'Test-Admin',
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
+  type: ['sds-admin'],
 };
 
 const testDriver = {
@@ -22,7 +23,6 @@ const testDriver = {
   phoneNumber: '2222222222',
   startDate: 'start date',
   email: 'test-driver@cornell.edu',
-  admin: false,
 };
 
 const testRider = {

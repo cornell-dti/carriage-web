@@ -17,6 +17,8 @@ const testAdmin: Omit<AdminType, 'id'> = {
   lastName: 'Test-Admin',
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
+  type: ['sds-admin'],
+  isDriver: false,
 };
 
 const testRider: Omit<RiderType, 'id'> = {
@@ -103,7 +105,6 @@ const testDrivers = [
       },
     },
     photoLink: '',
-    admin: false,
   },
   {
     id: 'driver1',
@@ -132,7 +133,6 @@ const testDrivers = [
       },
     },
     photoLink: '',
-    admin: false,
   },
 ];
 
@@ -303,7 +303,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
     const generateGetDriverProfileTest = async (authToken: string) => {
       // testDrivers is stored with drivers where the vehicle field contains the vehicle ID
       // we need the vehicle field to contain the entire vehicle object
-      const { id, admin, photoLink, startDate, vehicle, ...driverProfile } =
+      const { id, photoLink, startDate, vehicle, ...driverProfile } =
         testDrivers[0];
       const driverProfileWithVehicle = {
         ...driverProfile,
@@ -376,7 +376,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
       authToken === adminToken
-        ? expect(res.body).to.deep.equal(driverStats)
+        ? expect(res.body.data).to.deep.equal(driverStats)
         : expect(res.status).to.be.equal(400);
     };
     // completed 2 of 3 rides (one no show) and completed 20 hours of work

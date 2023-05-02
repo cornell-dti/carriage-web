@@ -44,7 +44,7 @@ const RiderModal = ({
 
   useEffect(() => {
     if (isSubmitted) {
-      const method = existingRider ? axios.post : axios.put;
+      const method = existingRider ? axios.put : axios.post;
       method(
         `/api/riders/${!existingRider ? '' : existingRider.id}`,
         formData

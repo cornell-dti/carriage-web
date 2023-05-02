@@ -19,11 +19,12 @@ type EmployeeModalProps = {
     id?: string;
     firstName?: string;
     lastName?: string;
+    type?: string[];
+    isDriver?: boolean;
     netId?: string;
     email?: string;
     phone?: string;
     availability?: string[][];
-    role?: string;
     startDate?: string;
     photoLink?: string;
   };
@@ -32,19 +33,22 @@ type EmployeeModalProps = {
 };
 
 type AdminData = {
+  id?: string;
   firstName: any;
   lastName: any;
+  type: string[];
+  isDriver: boolean;
   email: any;
   phoneNumber: any;
 };
 
 type DriverData = {
+  id?: string;
   firstName: any;
   lastName: any;
   email: any;
   phoneNumber: any;
   availability: ObjectType;
-  admin: boolean;
 };
 
 const EmployeeModal = ({
@@ -53,8 +57,17 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const [selectedRole, setSelectedRole] = useState(
-    existingEmployee?.role ? existingEmployee?.role : 'driver'
+
+  if (existingEmployee?.isDriver !== undefined) {
+    if (existingEmployee.isDriver) {
+      existingEmployee?.type?.push('driver');
+    }
+  } else if (existingEmployee) {
+    existingEmployee.type = existingEmployee?.type || ['driver'];
+  }
+
+  const [selectedRole, setSelectedRole] = useState<string[]>(
+    existingEmployee?.type || []
   );
   const [imageBase64, setImageBase64] = useState('');
   const { refreshAdmins, refreshDrivers } = useEmployees();
@@ -111,9 +124,9 @@ const EmployeeModal = ({
       showToast('The employee has been added.', ToastStatus.SUCCESS);
     } else {
       const { data: createdEmployee } = await res.data;
-
       uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
     }
+    return res;
   };
 
   const updateExistingEmployee = async (
@@ -132,57 +145,137 @@ const EmployeeModal = ({
     if (imageBase64 !== '') {
       uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
     }
+    return updatedEmployee;
+  };
+
+  const createOrUpdateDriver = async (
+    driver: AdminData | DriverData,
+    isNewDriver = false
+  ) => {
+    if (isNewDriver) {
+      return await createNewEmployee(
+        driver,
+        '/api/drivers',
+        () => refreshDrivers(),
+        'Drivers'
+      );
+    } else {
+      return await updateExistingEmployee(
+        driver,
+        '/api/drivers',
+        () => refreshDrivers(),
+        'Drivers'
+      );
+    }
+  };
+
+  const createOrUpdateAdmin = async (admin: AdminData, isNewAdmin = false) => {
+    if (isNewAdmin) {
+      await createNewEmployee(
+        admin,
+        '/api/admins',
+        () => refreshAdmins(),
+        'Admins'
+      );
+    } else {
+      await updateExistingEmployee(
+        admin,
+        '/api/admins',
+        () => refreshAdmins(),
+        'Admins'
+      );
+    }
+  };
+
+  const deleteDriver = async (id: string | undefined) => {
+    await axios.delete(`/api/drivers/${id}`);
+  };
+
+  const deleteAdmin = async (id: string | undefined) => {
+    await axios.delete(`/api/admins/${id}`);
   };
 
   const onSubmit = async (data: ObjectType) => {
     const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
-    if (selectedRole === 'admin') {
-      const admin = {
-        firstName,
-        lastName,
-        email: netid + '@cornell.edu',
-        phoneNumber,
-      };
-      if (existingEmployee) {
-        updateExistingEmployee(
-          admin,
-          '/api/admins',
-          () => refreshAdmins(),
-          'Admins'
-        );
+
+    const driver = {
+      firstName,
+      lastName,
+      email: netid + '@cornell.edu',
+      phoneNumber,
+      startDate,
+      availability: parseAvailability(availability),
+    };
+
+    const admin = {
+      firstName,
+      lastName,
+      email: netid + '@cornell.edu',
+      type: selectedRole.filter((role) => !(role === 'driver')),
+      phoneNumber,
+      availability: parseAvailability(availability),
+      isDriver: selectedRole.includes('driver'),
+    };
+
+    const existingDriver = existingEmployee?.isDriver === undefined;
+    const existingAdmin = existingEmployee?.isDriver !== undefined;
+
+    if (existingEmployee) {
+      if (selectedRole.includes('driver')) {
+        if (selectedRole.some((role) => role.includes('admin'))) {
+          if (existingDriver && existingAdmin) {
+            await createOrUpdateDriver(driver, false);
+            await createOrUpdateAdmin(admin, false);
+          } else if (existingDriver) {
+            await createOrUpdateDriver(driver, false);
+            await createOrUpdateAdmin(
+              { ...admin, id: existingEmployee.id },
+              true
+            );
+          } else if (existingAdmin) {
+            await createOrUpdateDriver(
+              { ...driver, id: existingEmployee.id },
+              true
+            );
+            await createOrUpdateAdmin(admin, false);
+          }
+        } else {
+          if (existingDriver && existingAdmin) {
+            await createOrUpdateDriver(driver, false);
+            await deleteAdmin(existingEmployee.id);
+          } else if (existingDriver) {
+            await createOrUpdateDriver(driver, false);
+          } else if (existingAdmin) {
+            await createOrUpdateDriver(
+              { ...driver, id: existingEmployee.id },
+              true
+            );
+            await deleteAdmin(existingEmployee.id);
+          }
+        }
       } else {
-        createNewEmployee(
-          admin,
-          '/api/admins',
-          () => refreshAdmins(),
-          'Admins'
-        );
+        if (existingDriver && existingAdmin) {
+          await deleteDriver(existingEmployee.id);
+          await createOrUpdateAdmin(admin, false);
+        } else if (existingDriver) {
+          await deleteDriver(existingEmployee.id);
+          await createOrUpdateAdmin(
+            { ...admin, id: existingEmployee.id },
+            true
+          );
+        }
       }
     } else {
-      const driver = {
-        firstName,
-        lastName,
-        email: netid + '@cornell.edu',
-        phoneNumber,
-        startDate,
-        availability: parseAvailability(availability),
-        admin: selectedRole === 'both',
-      };
-      if (existingEmployee) {
-        updateExistingEmployee(
-          driver,
-          '/api/drivers',
-          () => refreshDrivers(),
-          'Drivers'
-        );
+      if (selectedRole.includes('driver')) {
+        if (selectedRole.some((role) => role.includes('admin'))) {
+          const id = (await createOrUpdateDriver(driver, true)).data.data.id;
+          await createOrUpdateAdmin({ ...admin, id: id }, true);
+        } else {
+          await createOrUpdateDriver(driver, true);
+        }
       } else {
-        createNewEmployee(
-          driver,
-          '/api/drivers',
-          () => refreshDrivers(),
-          'Drivers'
-        );
+        await createOrUpdateAdmin(admin, true);
       }
     }
     closeModal();
@@ -234,8 +327,8 @@ const EmployeeModal = ({
               hide={false}
             />
             <RoleSelector
-              selectedRole={selectedRole}
-              setSelectedRole={setSelectedRole}
+              selectedRoles={selectedRole}
+              setSelectedRoles={setSelectedRole}
             />
             <Button className={styles.submit} type="submit">
               {submitButtonText}

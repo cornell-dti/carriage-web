@@ -58,7 +58,7 @@ const RiderDetail = () => {
         axios
           .get(`/api/riders/${riderId}`)
           .then((res) => res.data)
-          .then((data) => setRider(data));
+          .then(({ data }) => setRider(data));
       }
       axios
         .get(`/api/rides?type=past&rider=${riderId}`)
