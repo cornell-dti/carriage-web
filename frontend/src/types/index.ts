@@ -36,10 +36,11 @@ export type Employee = {
   id: string;
   firstName: string;
   lastName: string;
+  type?: string[];
+  isDriver?: boolean;
   phoneNumber: string;
   email: string;
   availability?: AvailabilityType;
-  admin?: boolean;
   photoLink?: string;
   startDate?: string;
 };

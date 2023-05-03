@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ReactFragment, ReactElement } from 'react';
 import subscribeUser from './subscribeUser';
-import { useReq } from '../../context/req';
 
 interface Props {
   userId: string;
@@ -10,7 +9,6 @@ interface Props {
 const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {
   const userType = localStorage.getItem('userType');
   const [availability, setAvailability] = useState(true); // TODO
-  const { withDefaults } = useReq();
 
   const checkNotificationAvailability = () => {
     setAvailability('serviceWorker' in navigator && 'PushManager' in window);
@@ -19,9 +17,9 @@ const SubscribeWrapper: React.FC<Props> = ({ userId, children }) => {
 
   useEffect(() => {
     if (userType && availability) {
-      subscribeUser(userType, userId, withDefaults);
+      subscribeUser(userType, userId);
     }
-  }, [availability, userId, userType, withDefaults]);
+  }, [availability, userId, userType]);
 
   return <>{children}</>;
 };

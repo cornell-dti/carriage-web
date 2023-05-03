@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
-import { useReq } from '../../context/req';
 import styles from './exportButton.module.css';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import axios from '../../util/axios';
 
 type clickHandler = {
   toastMsg: string;
@@ -19,7 +19,6 @@ const ExportButton = ({
   csvCols,
   filename,
 }: clickHandler) => {
-  const { withDefaults } = useReq();
   const [downloadData, setDownloadData] = useState<string>('');
   const { showToast } = useToast();
   const csvLink = useRef<
@@ -27,8 +26,12 @@ const ExportButton = ({
   >(null);
 
   const downloadCSV = () => {
-    fetch(endpoint, withDefaults())
-      .then((res) => res.text())
+    axios
+      .get(endpoint, {
+        responseType: 'text',
+        transformResponse: [(data) => data],
+      })
+      .then((res) => res.data)
       .then((data) => {
         if (data === '') {
           setDownloadData(csvCols);

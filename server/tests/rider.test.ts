@@ -33,6 +33,8 @@ const testAdmin: Omit<AdminType, 'id'> = {
   lastName: 'Test-Admin',
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
+  type: ['sds-admin'],
+  isDriver: false,
 };
 
 const testVehicle = {
@@ -72,7 +74,6 @@ const testDriver = {
     },
   },
   photoLink: '',
-  admin: false,
 };
 
 const testRiders = [

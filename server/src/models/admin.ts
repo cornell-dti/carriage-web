@@ -2,10 +2,14 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import defaultModelConfig from '../util/modelConfig';
 
+export type AdminRole = 'sds-admin' | 'redrunner-admin';
+
 export type AdminType = {
   id: string;
   firstName: string;
   lastName: string;
+  type: AdminRole[];
+  isDriver: boolean;
   phoneNumber: string;
   email: string;
   photoLink?: string;
@@ -24,6 +28,16 @@ const schema = new dynamoose.Schema({
   lastName: {
     type: String,
     required: true,
+  },
+  type: {
+    type: Array,
+    schema: [String],
+    required: true,
+  },
+  isDriver: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
   phoneNumber: {
     type: String,

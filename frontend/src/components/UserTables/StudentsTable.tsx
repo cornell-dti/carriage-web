@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import moment from 'moment';
-import { useReq } from '../../context/req';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
 import styles from './table.module.css';
+import axios from '../../util/axios';
 
 type UsageData = {
   noShows: number;
@@ -21,7 +21,6 @@ type studentTableProps = {
 
 const StudentsTable = ({ searchName }: studentTableProps) => {
   const { riders } = useRiders();
-  const { withDefaults } = useReq();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1, 1, 1];
   const headers = [
     'Name / NetId',
@@ -37,10 +36,11 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   const [showInactive, setShowInactive] = useState(false);
 
   useEffect(() => {
-    fetch('/api/riders/', withDefaults())
-      .then((res) => res.json())
+    axios
+      .get('/api/riders/')
+      .then((res) => res.data)
       .then((data) => setUsage(data));
-  }, [withDefaults]);
+  }, []);
 
   const getUsageData = (id: string) => ({
     data: (

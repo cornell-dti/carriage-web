@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { useReq } from '../../context/req';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -9,10 +8,10 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
+import axios from '../../util/axios';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
-  const { withDefaults } = useReq();
   const { drivers } = useEmployees();
   const today = moment();
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
@@ -23,8 +22,9 @@ const Analytics = () => {
   });
 
   const refreshTable = (start = startDate, end = endDate) => {
-    fetch(`/api/stats/?from=${start}&to=${end}`, withDefaults())
-      .then((res) => res.json())
+    axios
+      .get(`/api/stats/?from=${start}&to=${end}`)
+      .then((res) => res.data)
       .then((data) => setData([...data]));
   };
 

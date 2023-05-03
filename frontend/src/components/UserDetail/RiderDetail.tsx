@@ -4,11 +4,11 @@ import { useParams, Link } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
-import { useReq } from '../../context/req';
 import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
+import axios from '../../util/axios';
 
 const Header = () => {
   return (
@@ -27,7 +27,6 @@ const Header = () => {
 };
 
 const RiderDetail = () => {
-  const { withDefaults } = useReq();
   const { id: riderId } = useParams<{ id: string }>();
   const { riders } = useRiders();
   const [rider, setRider] = useState(
@@ -56,16 +55,18 @@ const RiderDetail = () => {
   useEffect(() => {
     if (riderId) {
       if (!rider) {
-        fetch(`/api/riders/${riderId}`, withDefaults())
-          .then((res) => res.json())
-          .then((data) => setRider(data));
+        axios
+          .get(`/api/riders/${riderId}`)
+          .then((res) => res.data)
+          .then(({ data }) => setRider(data));
       }
-      fetch(`/api/rides?type=past&rider=${riderId}`, withDefaults())
-        .then((res) => res.json())
+      axios
+        .get(`/api/rides?type=past&rider=${riderId}`)
+        .then((res) => res.data)
         .then(({ data }) => setRides(data.sort(compRides)));
     }
     setRider(riders.find((rider) => rider.id === riderId));
-  }, [rider, riders, riderId, withDefaults]);
+  }, [rider, riders, riderId]);
 
   return rider ? (
     <main id="main">

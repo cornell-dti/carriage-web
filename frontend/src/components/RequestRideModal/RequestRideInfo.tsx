@@ -3,7 +3,6 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
 import moment from 'moment';
-import { useReq } from '../../context/req';
 import styles from './requestridemodal.module.css';
 import { Location, Ride } from '../../types';
 import { Label, Input } from '../FormElements/FormElements';
@@ -28,7 +27,6 @@ const RequestRideInfo = ({
   const { register, setError, formState, getValues, watch, setValue } =
     useFormContext();
   const { errors } = formState;
-  const { withDefaults } = useReq();
   const [locations, setLocations] = useState<Location[]>([]);
   const [custom, setCustom] = useState(ride?.recurring || false);
   const watchRepeating = watch('recurring', ride?.recurring || false);

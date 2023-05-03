@@ -59,7 +59,6 @@ const driver1: DriverType = {
   phoneNumber: '',
   startDate: '',
   email: '',
-  admin: false,
 };
 
 const driver2: DriverType = {

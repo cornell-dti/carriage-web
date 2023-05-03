@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 import { Ride } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
-import { useReq } from '../../context/req';
 import styles from './deleteOrEditModal.module.css';
 import { format_date } from '../../util/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { useRides } from '../../context/RidesContext';
+import axios from '../../util/axios';
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -26,7 +26,6 @@ const DeleteOrEditTypeModal = ({
   isRider,
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
-  const { withDefaults } = useReq();
   const { showToast } = useToast();
   const { refreshRides } = useRides();
 
@@ -38,20 +37,16 @@ const DeleteOrEditTypeModal = ({
   const confirmCancel = () => {
     if (ride.recurring && single) {
       const startDate = format_date(ride.startTime);
-      fetch(
-        `/api/rides/${ride.id}/edits`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify({
-            deleteOnly: true,
-            origDate: startDate,
-          }),
+      axios
+        .put(`/api/rides/${ride.id}/edits`, {
+          deleteOnly: true,
+          origDate: startDate,
         })
-      )
         .then(() => closeModal())
         .then(refreshRides);
     } else {
-      fetch(`/api/rides/${ride.id}`, withDefaults({ method: 'DELETE' }))
+      axios
+        .delete(`/api/rides/${ride.id}`)
         .then(() => closeModal())
         .then(refreshRides);
     }
