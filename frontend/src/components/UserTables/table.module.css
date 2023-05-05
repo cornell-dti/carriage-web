@@ -86,6 +86,10 @@
   font-weight: bold;
 }
 
+.highlight {
+  background-color: rgb(177, 255, 177);
+}
+
 .gray {
   color: #616161;
 }
