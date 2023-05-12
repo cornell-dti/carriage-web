@@ -20,3 +20,8 @@ export const snsValues = {
   ios_rider: process.env.IOS_RIDER_ARN!,
   android: process.env.ANDROID_ARN!,
 };
+
+export const oauthValues = {
+  client_id: process.env.OAUTH_CLIENT_ID,
+  client_secret: process.env.OAUTH_CLIENT_SECRET,
+};

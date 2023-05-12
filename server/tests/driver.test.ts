@@ -17,6 +17,8 @@ const testAdmin: Omit<AdminType, 'id'> = {
   lastName: 'Test-Admin',
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
+  type: ['sds-admin'],
+  isDriver: false,
 };
 
 const testRider: Omit<RiderType, 'id'> = {
@@ -103,7 +105,6 @@ const testDrivers = [
       },
     },
     photoLink: '',
-    admin: false,
   },
   {
     id: 'driver1',
@@ -132,7 +133,6 @@ const testDrivers = [
       },
     },
     photoLink: '',
-    admin: false,
   },
 ];
 
@@ -161,8 +161,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 1, hours: 6 }).toISOString(),
-    endTime: moment().subtract({ days: 1, hours: 5 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 6 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 5 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -179,8 +179,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 2, hours: 6 }).toISOString(),
-    endTime: moment().subtract({ days: 2, hours: 5 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 4 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 3 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -197,8 +197,8 @@ const testRides = [
     late: false,
     startLocation: testLocations[0].id,
     endLocation: testLocations[1].id,
-    startTime: moment().subtract({ days: 2, hours: 4 }).toISOString(),
-    endTime: moment().subtract({ days: 2, hours: 3 }).toISOString(),
+    startTime: moment().subtract({ days: 7, hours: 2 }).toISOString(),
+    endTime: moment().subtract({ days: 7, hours: 1 }).toISOString(),
     rider: testStatRider.id,
     driver: testDrivers[0].id,
     recurring: false,
@@ -303,7 +303,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
     const generateGetDriverProfileTest = async (authToken: string) => {
       // testDrivers is stored with drivers where the vehicle field contains the vehicle ID
       // we need the vehicle field to contain the entire vehicle object
-      const { id, admin, photoLink, startDate, vehicle, ...driverProfile } =
+      const { id, photoLink, startDate, vehicle, ...driverProfile } =
         testDrivers[0];
       const driverProfileWithVehicle = {
         ...driverProfile,
@@ -367,7 +367,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
   // testing the retrieval of a driver's stats
   describe("GET a driver's stats", () => {
     const driverStats = {
-      rides: 1,
+      rides: 2,
       workingHours: 20,
     };
     const generateGetDriverStatsTest = async (authToken: string) => {
@@ -376,7 +376,7 @@ describe('Testing Functionality of Drivers Endpoints', () => {
         .auth(authToken, { type: 'bearer' })
         .expect('Content-Type', 'application/json; charset=utf-8');
       authToken === adminToken
-        ? expect(res.body).to.deep.equal(driverStats)
+        ? expect(res.body.data).to.deep.equal(driverStats)
         : expect(res.status).to.be.equal(400);
     };
     // completed 2 of 3 rides (one no show) and completed 20 hours of work

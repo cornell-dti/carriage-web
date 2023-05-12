@@ -3,12 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, Admin } from '../../types';
+import { Employee, Admin, Driver } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
-import { time } from 'console';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -25,10 +24,11 @@ type EmployeeDetailProps = {
   id: string;
   firstName: string;
   lastName: string;
+  role?: string[];
+  driverId?: string;
   netId: string;
   phone: string;
   availability?: string[][];
-  admin?: boolean;
   photoLink?: string;
   startDate?: string;
 };
@@ -41,7 +41,6 @@ const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
     availability: formatAvailability(driver.availability)!,
     netId: driver.email.split('@')[0],
     phone: driver.phoneNumber,
-    admin: driver.admin,
     photoLink: driver.photoLink,
     startDate: driver.startDate,
   }));
@@ -53,73 +52,51 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
     id: admin.id,
     firstName: admin.firstName,
     lastName: admin.lastName,
+    type: admin.type,
+    isDriver: admin.isDriver,
     netId: admin.email.split('@')[0],
     phone: admin.phoneNumber,
-    admin: true,
     photoLink: admin.photoLink,
   }));
 };
 
-const findEmployee = (
-  drivers: DriverType[],
-  admins: AdminType[],
-  employeeId: string
-): EmployeeDetailProps => {
-  const employee = DriverToEmployees(drivers).find(
-    (employee) => employee.id === employeeId
-  );
-  if (!employee)
-    return AdminToEmployees(admins).find(
-      (employee) => employee.id === employeeId
-    )!;
-  return employee;
-};
 const EmployeeCard = ({
   id,
   employee: {
     firstName,
     lastName,
     email,
+    type,
+    isDriver,
     phoneNumber,
     availability,
-    admin,
     photoLink,
     startDate,
   },
 }: EmployeeCardProps) => {
-  const { drivers, admins } = useEmployees();
-  const [employee, setEmployee] = useState(findEmployee(drivers, admins, id));
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-  let prevTimeRange =
-    employee.availability && employee.availability[0]
-      ? employee.availability[0][1]
-      : '';
 
-  const availToString = (acc: string, [day, timeRange]: string[]) =>
-    // need to account for only one time range
-    timeRange !== prevTimeRange
-      ? acc.charAt(acc.length - 1) === '•'
-        ? `${acc + day}: ${timeRange} •`
-        : `${acc}: ${prevTimeRange} • ${day}: ${timeRange} `
-      : acc !== ''
-      ? ((prevTimeRange = timeRange), `${acc + '/' + day}`)
-      : ((prevTimeRange = timeRange), `${acc + day}`);
+  const formatAvail = (availability: {
+    [key: string]: { startTime: string; endTime: string };
+  }) => {
+    if (!availability) {
+      return 'N/A';
+    }
 
-  const parsedAvail = employee.availability
-    ? employee.availability.reduce(availToString, '')
-    : '';
-  let avail = parsedAvail.substring(0, parsedAvail.length);
-  avail =
-    avail === ''
-      ? 'N/A'
-      : avail.charAt(avail.length - 1) !== 'm'
-      ? avail + ': ' + prevTimeRange
-      : avail;
+    return Object.entries(availability)
+      .filter(([day, timeRange]) => timeRange?.startTime && timeRange?.endTime)
+      .map(
+        ([day, timeRange]) =>
+          `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
+      )
+      .join('\n ');
+  };
 
-  const isAdmin = !availability;
-  const isBoth = !isAdmin && admin; // admin and driver
-  const role = (): string => {
+  const parsedAvail = formatAvail(availability!);
+  const isAdmin = isDriver !== undefined;
+  const isBoth = isDriver && isDriver == true;
+  const roles = (): string => {
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
@@ -130,19 +107,19 @@ const EmployeeCard = ({
     firstName,
     lastName,
     netId,
+    type,
     phone: fmtPhone,
-    availability: avail,
-    admin,
+    availability: parsedAvail,
     photoLink,
     startDate,
   };
-
   return (
     <Link
       to={{
-        pathname: isAdmin
-          ? `/admins/${userInfo.id}`
-          : `/drivers/${userInfo.id}`,
+        pathname:
+          isAdmin || isBoth
+            ? `/admins/${userInfo.id}`
+            : `/drivers/${userInfo.id}`,
       }}
       style={{ textDecoration: 'none', color: 'inherit' }}
       className={styles.link}
@@ -158,14 +135,18 @@ const EmployeeCard = ({
         </CardInfo>
 
         <CardInfo icon={clock} alt="clock">
-          {avail ? <p className={styles.timeText}>{avail}</p> : <p>N/A</p>}
+          {parsedAvail ? (
+            <p className={styles.timeText}>{parsedAvail}</p>
+          ) : (
+            <p>N/A</p>
+          )}
         </CardInfo>
 
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
           alt={isAdmin || isBoth ? 'admin' : 'wheel'}
         >
-          <p>{role()}</p>
+          <p>{roles()}</p>
         </CardInfo>
       </Card>
     </Link>
@@ -175,8 +156,15 @@ const EmployeeCard = ({
 const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
-  const allDrivers = [...admins, ...drivers];
-  allDrivers.sort((a: Admin, b: Admin) => {
+  const allEmployees = [...admins, ...drivers];
+  const adminIds = new Set(admins.map((admin) => admin.id));
+  const filteredEmployees = allEmployees.filter((employee: Employee) => {
+    // if not admin (means driver), check if another admin is representing this driver
+    if (employee['isDriver'] == undefined) return !adminIds.has(employee.id);
+    return true;
+  });
+
+  filteredEmployees.sort((a: Employee, b: Employee) => {
     if (a.firstName < b.firstName) {
       return -1;
     }
@@ -188,10 +176,9 @@ const EmployeeCards = () => {
 
   return (
     <div className={styles.cardsContainer}>
-      {allDrivers &&
-        allDrivers.map((driver) => (
-          <EmployeeCard key={driver.id} id={driver.id} employee={driver} />
-        ))}
+      {filteredEmployees.map((employee) => (
+        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
+      ))}
     </div>
   );
 };

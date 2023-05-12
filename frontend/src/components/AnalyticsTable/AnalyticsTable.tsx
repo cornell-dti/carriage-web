@@ -6,7 +6,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
 import styles from './analyticstable.module.css';
-import { useReq } from '../../context/req';
+import axios from '../../util/axios';
 
 type Cell = string | number;
 
@@ -87,7 +87,6 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
   const [driverNames, setDriverNames] = useState<string[]>([]);
-  const { withDefaults } = useReq();
   const { drivers } = useEmployees();
 
   const sharedCols = ['Date', 'Daily Total'];
@@ -164,13 +163,7 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   };
 
   const handleSubmit = () => {
-    fetch(
-      '/api/stats/',
-      withDefaults({
-        method: 'PUT',
-        body: JSON.stringify(editData),
-      })
-    ).then(() => refreshTable());
+    axios.put('/api/stats/', editData).then(() => refreshTable());
     setEditData({ dates: {} });
     setIsEditing(false);
   };

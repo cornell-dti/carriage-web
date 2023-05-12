@@ -4,7 +4,6 @@ import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import cn from 'classnames';
 import moment from 'moment';
 import { Ride, Driver } from '../../types';
-import { useReq } from '../../context/req';
 import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
@@ -12,6 +11,7 @@ import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
+import axios from '../../util/axios';
 
 const colorMap = new Map<string, string[]>([
   ['red', ['FFA26B', 'FFC7A6']],
@@ -38,7 +38,6 @@ type CalendarDriver = {
 
 const Schedule = () => {
   const localizer = momentLocalizer(moment);
-  const { withDefaults } = useReq();
   const { scheduledRides, refreshRides } = useRides();
 
   const scheduleDay = useDate().curDate;
@@ -118,31 +117,22 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     const rideId = ride.id;
     const { recurring } = ride;
     if (recurring) {
-      fetch(
-        `api/rides/${rideId}/edits`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify({ deleteOnly: 'true', origDate: scheduleDay }),
+      axios
+        .put(`api/rides/${rideId}/edits`, {
+          deleteOnly: 'true',
+          origDate: scheduleDay,
         })
-      )
         .then(refreshRides)
         .then(closeModal);
     } else {
-      fetch(`/api/rides/${rideId}`, withDefaults({ method: 'DELETE' }))
-        .then(refreshRides)
-        .then(closeModal);
+      axios.delete(`/api/rides/${rideId}`).then(refreshRides).then(closeModal);
     }
   };
 
   const updateRides = (rideId: string, updatedDriver: Driver) => {
-    fetch(
-      `/api/rides/${rideId}`,
-      withDefaults({
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ driver: updatedDriver }),
-      })
-    ).then(refreshRides);
+    axios
+      .put(`/api/rides/${rideId}`, { driver: updatedDriver })
+      .then(refreshRides);
   };
 
   const onEventDrop = ({ event, resourceId }: any) => {

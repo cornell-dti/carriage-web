@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { ModalPageProps } from '../../Modal/types';
 import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
-import { useReq } from '../../../context/req';
+import axios from '../../../util/axios';
 
 const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   const { register, handleSubmit, formState } = useForm({
@@ -12,7 +12,6 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
     },
   });
   const { errors } = formState;
-  const { withDefaults } = useReq();
   const [loaded, setLoaded] = useState(false);
 
   const { date, pickupTime: startTime, dropoffTime: endTime } = formData!;
@@ -21,11 +20,11 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
 
   useEffect(() => {
     if (startTime && endTime && date) {
-      fetch(
-        `/api/drivers/available?date=${date}&startTime=${startTime}&endTime=${endTime}`,
-        withDefaults()
-      )
-        .then((res) => res.json())
+      axios
+        .get(
+          `/api/drivers/available?date=${date}&startTime=${startTime}&endTime=${endTime}`
+        )
+        .then((res) => res.data)
         .then((data) => {
           setAvailableDrivers([
             { id: 'None', firstName: 'None', lastName: 'None' },

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Admin, Location } from '../types';
-import { useReq } from './req';
+import axios from '../util/axios';
 
 type locationsState = {
   locations: Array<Location>;
@@ -22,13 +22,10 @@ type locationsProviderProps = {
 export const LocationsProvider = ({ children }: locationsProviderProps) => {
   const componentMounted = useRef(true);
   const [locations, setLocations] = useState<Array<Location>>([]);
-  const { withDefaults } = useReq();
   const refreshLocations = useCallback(async () => {
-    const locationsData: Array<Location> = await fetch(
-      '/api/locations',
-      withDefaults()
-    )
-      .then((res) => res.json())
+    const locationsData: Array<Location> = await axios
+      .get('/api/locations')
+      .then((res) => res.data)
       .then((data) => data.data);
     if (locationsData) {
       locationsData.sort((a: Location, b: Location) => {
@@ -37,7 +34,7 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
     }
 
     locationsData && componentMounted.current && setLocations(locationsData);
-  }, [withDefaults]);
+  }, []);
 
   React.useEffect(() => {
     refreshLocations();

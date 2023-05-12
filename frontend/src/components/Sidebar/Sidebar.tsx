@@ -11,10 +11,10 @@ import {
   blank,
 } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
-import ReqContext from '../../context/req';
 import useClientId from '../../hooks/useClientId';
 import styles from './sidebar.module.css';
 import Footer from '../Footer/Footer';
+import axios from '../../util/axios';
 
 type SidebarProps = {
   type: 'admin' | 'rider';
@@ -33,15 +33,15 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const [selected, setSelected] = useState(pathname);
   const [profile, setProfile] = useState('');
   const authContext = useContext(AuthContext);
-  const reqContext = useContext(ReqContext);
   const localUserType = localStorage.getItem('userType');
   const isAdmin = localUserType === 'Admin';
 
   useEffect(() => {
     const { id } = authContext;
     if (isAdmin) {
-      fetch(`/api/admins/${id}`, reqContext.withDefaults())
-        .then((res) => res.json())
+      axios
+        .get(`/api/admins/${id}`)
+        .then((res) => res.data)
         .then(
           (data) => componentMounted.current && setProfile(data.data.photoLink)
         );
@@ -50,8 +50,9 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         componentMounted.current = false;
       };
     } else {
-      fetch(`/api/riders/${id}`, reqContext.withDefaults())
-        .then((res) => res.json())
+      axios
+        .get(`/api/riders/${id}`)
+        .then((res) => res.data)
         .then(
           (data) => componentMounted.current && setProfile(data.data.photoLink)
         );
@@ -60,7 +61,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         componentMounted.current = false;
       };
     }
-  }, [authContext, authContext.id, reqContext]);
+  }, [authContext, authContext.id]);
 
   const adminMenu: MenuItem[] = [
     { icon: home, caption: 'Home', path: '/home' },
@@ -76,8 +77,6 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   ];
 
   const menuItems = type === 'admin' ? adminMenu : riderMenu;
-
-  const clientId = useClientId();
 
   return (
     <div className={styles.container}>
