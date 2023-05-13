@@ -33,7 +33,9 @@ const Landing = ({ students, admins }: LandingPropType) => {
           </div>
         </div>
       </div>
-      <div><Footer/></div>
+      <div>
+        <Footer />
+      </div>
     </main>
   );
 };

@@ -136,5 +136,22 @@
 }
 
 .footer {
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+}
+
+.blackTop {
+  flex: 10;
+  background-color: black;
+}
+
+.white {
+  flex: 5;
+  background-color: white;
+}
+
+.blackBottom {
+  flex: 1;
+  background-color: black;
 }
