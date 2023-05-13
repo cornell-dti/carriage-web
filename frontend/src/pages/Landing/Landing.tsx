@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
-import Footer from '../../components/Footer/Footer';
+import Footer from './Footer';
 import { logo, dti_logo, dti_desc } from '../../icons/other';
 
 type LandingPropType = {
@@ -32,6 +32,9 @@ const Landing = ({ students, admins }: LandingPropType) => {
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <Footer />
       </div>
     </main>
   );
