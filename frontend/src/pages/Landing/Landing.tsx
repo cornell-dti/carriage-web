@@ -20,7 +20,10 @@ const Landing = ({ students, admins }: LandingPropType) => {
           </div>
           <div className={styles.right}>
             <div className={styles.spacing_container}>
-              <h1 className={styles.heading}>Login</h1>
+              <h1 className={styles.heading}>Carriage</h1>
+              <p className={styles.description}>
+                Efficient Transit for CULifts
+              </p>
               <div className={styles.container}>
                 <div className={styles.container_item_left}>{students}</div>
                 <div className={styles.container_item_right}>{admins}</div>
