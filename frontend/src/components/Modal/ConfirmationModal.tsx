@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
-import { useReq } from '../../context/req';
 import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { Rider, User } from '../../types/index';
 import { useHistory } from 'react-router-dom';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { useEmployees } from '../../context/EmployeesContext';
+import axios from '../../util/axios';
 
 type ConfirmationProps = {
   open: boolean;
@@ -24,7 +24,6 @@ const ConfirmationModal = ({
 }: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
   const { refreshDrivers, refreshAdmins } = useEmployees();
-  const { withDefaults } = useReq();
   const history = useHistory();
   const { showToast } = useToast(); // do this
 
@@ -39,15 +38,11 @@ const ConfirmationModal = ({
     refreshFunc: () => Promise<void>
   ) => {
     const userGroup = `${userType}s`;
-    fetch(
-      `/api/${userGroup}/${userId ? userId : ''}`,
-      withDefaults({
-        method: 'DELETE',
-      })
-    )
+    axios
+      .delete(`/api/${userGroup}/${userId ? userId : ''}`)
       .then(refreshFunc)
       .then(() => {
-        history.push(`/${userType === 'rider' ? 'riders' : 'employees'}`);
+        // history.push(`/${userType === 'rider' ? 'riders' : 'employees'}`);
         showToast(`The ${userType} has been deleted.`, ToastStatus.SUCCESS);
         closeModal();
       });
@@ -63,12 +58,7 @@ const ConfirmationModal = ({
       //PROBLEM: Since ids are different in drivers and admins db, need to find the corresponding
       // id of this user in the admins db; ids not guranteed to be identical in both dbs
       deleteAPICall('driver', user.id, refreshDrivers);
-      fetch(
-        `/api/admins/${user.id ? user.id : ''}`,
-        withDefaults({
-          method: 'DELETE',
-        })
-      ).then(refreshAdmins);
+      axios.delete(`/api/admins/${user.id ? user.id : ''}`).then(refreshAdmins);
     } else {
       deleteAPICall('rider', user.id, refreshRiders);
     }

@@ -24,8 +24,8 @@ router.get('/', validateUser('Admin'), (req, res) => {
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const admin = new Admin({
-    ...body,
     id: uuid(),
+    ...body,
   });
   db.create(res, admin);
 });

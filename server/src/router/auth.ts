@@ -5,14 +5,18 @@ import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
 import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
+import { OAuth2Client } from 'google-auth-library';
+import { oauthValues } from '../config';
 
 const router = express.Router();
 
 const audience = [
   // driver ios
   '241748771473-a4q5skhr0is8r994o7ie9scrnm5ua760.apps.googleusercontent.com',
-  // web + android
+  // android
   '241748771473-0r3v31qcthi2kj09e5qk96mhsm5omrvr.apps.googleusercontent.com',
+  // web
+  '241748771473-da6i0hbtsl78nlkvbvaauvigh3lv0gt0.apps.googleusercontent.com',
   // rider ios
   '241748771473-7rfda2grc8f7p099bmf98en0q9bcvp18.apps.googleusercontent.com',
 ];
@@ -80,12 +84,27 @@ function findUserAndSendToken(
   });
 }
 
+async function getIdToken(client: OAuth2Client, code: string) {
+  const { tokens } = await client.getToken(code);
+  const idToken = tokens.id_token!;
+  return idToken;
+}
+
 // Verify an authentication token
-router.post('/', (req, res) => {
-  const { userInfo, table } = req.body;
-  const model = getModel(table);
+// If a code is supplied, retrieves the token from the code such that either a
+// code or token is sufficient
+router.post('/', async (req, res) => {
+  const { code, table } = req.body;
   try {
-    const email = userInfo?.email;
+    const client = new OAuth2Client({
+      clientId: oauthValues.client_id,
+      clientSecret: oauthValues.client_secret,
+      redirectUri: req.get('origin'),
+    });
+    const idToken = req.body.idToken || (await getIdToken(client, code));
+    const result = await client.verifyIdToken({ idToken, audience });
+    const email = result.getPayload()?.email;
+    const model = getModel(table);
     if (model && email) {
       findUserAndSendToken(res, model, table, email);
     } else if (!model) {
@@ -95,9 +114,31 @@ router.post('/', (req, res) => {
     } else {
       res.status(400).send({ err: 'Payload not found' });
     }
-  } catch (err: any) {
-    res.status(500).send({ err: err.message });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ err });
   }
 });
+
+if (process.env.NODE_ENV === 'test') {
+  router.post('/dummy', async (req, res) => {
+    const { email, table } = req.body;
+    try {
+      const model = getModel(table);
+      if (model && email) {
+        findUserAndSendToken(res, model, table, email);
+      } else if (!model) {
+        res.status(400).send({ err: 'Table not found' });
+      } else if (!email) {
+        res.status(400).send({ err: 'Email not found' });
+      } else {
+        res.status(400).send({ err: 'Payload not found' });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ err });
+    }
+  });
+}
 
 export default router;

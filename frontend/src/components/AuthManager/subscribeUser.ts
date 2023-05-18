@@ -1,3 +1,5 @@
+import axios from '../../util/axios';
+
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -20,8 +22,7 @@ type WithDefaultsType = (options?: RequestInit) => RequestInit;
 const sendSubscription = (
   userType: string,
   userId: string,
-  sub: PushSubscription,
-  withDefaults: WithDefaultsType
+  sub: PushSubscription
 ) => {
   const subscription = {
     userType,
@@ -29,20 +30,10 @@ const sendSubscription = (
     platform: 'web',
     webSub: sub,
   };
-  fetch(
-    '/api/notification/subscribe',
-    withDefaults({
-      method: 'POST',
-      body: JSON.stringify(subscription),
-    })
-  );
+  axios.post('/api/notification/subscribe', subscription);
 };
 
-const subscribeUser = (
-  userType: string,
-  userId: string,
-  withDefaults: WithDefaultsType
-) => {
+const subscribeUser = (userType: string, userId: string) => {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
       .then((registration) => {
@@ -63,12 +54,7 @@ const subscribeUser = (
                 })
                 .then((newSubscription) => {
                   // 'New subscription added.'
-                  sendSubscription(
-                    userType,
-                    userId,
-                    newSubscription,
-                    withDefaults
-                  );
+                  sendSubscription(userType, userId, newSubscription);
                 })
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
@@ -78,12 +64,7 @@ const subscribeUser = (
             } else {
               // 'Existed subscription detected.'
               // sending anyway right now
-              sendSubscription(
-                userType,
-                userId,
-                existedSubscription,
-                withDefaults
-              );
+              sendSubscription(userType, userId, existedSubscription);
             }
           });
       })

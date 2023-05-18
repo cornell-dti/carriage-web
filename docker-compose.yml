@@ -2,7 +2,6 @@ version: '3'
 
 services:
   carriage:
-    build: .
     environment:
       - NODE_ENV=production
       - DEBUG=True
@@ -17,10 +16,16 @@ services:
       - ANDROID_ARN=${ANDROID_ARN}
       - HOSTNAME=${HOSTNAME}
       - USE_HOSTNAME=${USE_HOSTNAME}
-      - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
-      - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
-      - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
       - DOMAIN=${DOMAIN}
+      - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
+      - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
+    build:
+      context: .
+      args:
+        - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
+        - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
+        - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
+        - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
     ports:
       - '3001:3001'
     image: dticarriage/carriage-service:latest

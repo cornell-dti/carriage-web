@@ -1,11 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, Admin } from '../../types';
+import { Employee, Admin, Driver } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
+import { AdminType } from '../../../../server/src/models/admin';
+import { DriverType } from '../../../../server/src/models/driver';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -18,6 +20,45 @@ type EmployeeCardProps = {
   id: string;
   employee: Employee;
 };
+type EmployeeDetailProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role?: string[];
+  driverId?: string;
+  netId: string;
+  phone: string;
+  availability?: string[][];
+  photoLink?: string;
+  startDate?: string;
+};
+//Convert DriverType to EmployeeType
+const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
+  return drivers.map((driver) => ({
+    id: driver.id,
+    firstName: driver.firstName,
+    lastName: driver.lastName,
+    availability: formatAvailability(driver.availability)!,
+    netId: driver.email.split('@')[0],
+    phone: driver.phoneNumber,
+    photoLink: driver.photoLink,
+    startDate: driver.startDate,
+  }));
+};
+
+//Convert AdminType to EmployeeType
+const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
+  return admins.map((admin) => ({
+    id: admin.id,
+    firstName: admin.firstName,
+    lastName: admin.lastName,
+    type: admin.type,
+    isDriver: admin.isDriver,
+    netId: admin.email.split('@')[0],
+    phone: admin.phoneNumber,
+    photoLink: admin.photoLink,
+  }));
+};
 
 const EmployeeCard = ({
   id,
@@ -25,20 +66,37 @@ const EmployeeCard = ({
     firstName,
     lastName,
     email,
+    type,
+    isDriver,
     phoneNumber,
     availability,
-    admin,
     photoLink,
     startDate,
   },
 }: EmployeeCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-  const fmtAvailability = formatAvailability(availability);
 
-  const isAdmin = !availability;
-  const isBoth = !isAdmin && admin; // admin and driver
-  const role = (): string => {
+  const formatAvail = (availability: {
+    [key: string]: { startTime: string; endTime: string };
+  }) => {
+    if (!availability) {
+      return 'N/A';
+    }
+
+    return Object.entries(availability)
+      .filter(([day, timeRange]) => timeRange?.startTime && timeRange?.endTime)
+      .map(
+        ([day, timeRange]) =>
+          `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
+      )
+      .join('\n ');
+  };
+
+  const parsedAvail = formatAvail(availability!);
+  const isAdmin = isDriver !== undefined;
+  const isBoth = isDriver && isDriver == true;
+  const roles = (): string => {
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
@@ -49,19 +107,19 @@ const EmployeeCard = ({
     firstName,
     lastName,
     netId,
+    type,
     phone: fmtPhone,
-    availability: fmtAvailability,
-    admin,
+    availability: parsedAvail,
     photoLink,
     startDate,
   };
-
   return (
     <Link
       to={{
-        pathname: isAdmin
-          ? `/admins/${userInfo.id}`
-          : `/drivers/${userInfo.id}`,
+        pathname:
+          isAdmin || isBoth
+            ? `/admins/${userInfo.id}`
+            : `/drivers/${userInfo.id}`,
       }}
       style={{ textDecoration: 'none', color: 'inherit' }}
       className={styles.link}
@@ -77,24 +135,18 @@ const EmployeeCard = ({
         </CardInfo>
 
         <CardInfo icon={clock} alt="clock">
-          <div>
-            {fmtAvailability ? (
-              fmtAvailability.map(([day, timeRange]) => (
-                <p key={day}>
-                  <span className={styles.dayText}>{day}:</span> {timeRange}
-                </p>
-              ))
-            ) : (
-              <p>N/A</p>
-            )}
-          </div>
+          {parsedAvail ? (
+            <p className={styles.timeText}>{parsedAvail}</p>
+          ) : (
+            <p>N/A</p>
+          )}
         </CardInfo>
 
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
           alt={isAdmin || isBoth ? 'admin' : 'wheel'}
         >
-          <p>{role()}</p>
+          <p>{roles()}</p>
         </CardInfo>
       </Card>
     </Link>
@@ -104,8 +156,15 @@ const EmployeeCard = ({
 const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
-  const allDrivers = [...admins, ...drivers];
-  allDrivers.sort((a: Admin, b: Admin) => {
+  const allEmployees = [...admins, ...drivers];
+  const adminIds = new Set(admins.map((admin) => admin.id));
+  const filteredEmployees = allEmployees.filter((employee: Employee) => {
+    // if not admin (means driver), check if another admin is representing this driver
+    if (employee['isDriver'] == undefined) return !adminIds.has(employee.id);
+    return true;
+  });
+
+  filteredEmployees.sort((a: Employee, b: Employee) => {
     if (a.firstName < b.firstName) {
       return -1;
     }
@@ -117,10 +176,9 @@ const EmployeeCards = () => {
 
   return (
     <div className={styles.cardsContainer}>
-      {allDrivers &&
-        allDrivers.map((driver) => (
-          <EmployeeCard key={driver.id} id={driver.id} employee={driver} />
-        ))}
+      {filteredEmployees.map((employee) => (
+        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
+      ))}
     </div>
   );
 };

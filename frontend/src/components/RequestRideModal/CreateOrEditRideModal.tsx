@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
-import { useReq } from '../../context/req';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType, Ride } from '../../types/index';
@@ -11,6 +10,7 @@ import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
 import { LocationsProvider } from '../../context/LocationsContext';
+import axios from '../../util/axios';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -52,7 +52,6 @@ const CreateOrEditRideModal = ({
   };
 
   const methods = useForm({ defaultValues });
-  const { withDefaults } = useReq();
   const { id } = useContext(AuthContext);
 
   const closeModal = () => {
@@ -163,27 +162,17 @@ const CreateOrEditRideModal = ({
     if (!ride) {
       // create ride
       rideData.type = 'unscheduled';
-      fetch(
-        '/api/rides',
-        withDefaults({
-          method: 'POST',
-          body: JSON.stringify(rideData),
-        })
-      ).then(afterSubmit);
+      axios.post('/api/rides', rideData).then(afterSubmit);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
       rideData.type = 'unscheduled';
-      fetch(
-        `/api/rides/${ride.id}/edits`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify({
-            deleteOnly: false,
-            origDate: format_date(ride.startTime),
-            ...rideData,
-          }),
+      axios
+        .put(`/api/rides/${ride.id}/edits`, {
+          deleteOnly: false,
+          origDate: format_date(ride.startTime),
+          ...rideData,
         })
-      ).then(afterSubmit);
+        .then(afterSubmit);
     } else {
       // edit regular ride or all recurring rides by editing parent ride
       if (
@@ -192,13 +181,7 @@ const CreateOrEditRideModal = ({
       ) {
         rideData.type = 'unscheduled';
       }
-      fetch(
-        `/api/rides/${ride.id}`,
-        withDefaults({
-          method: 'PUT',
-          body: JSON.stringify(rideData),
-        })
-      ).then(afterSubmit);
+      axios.put(`/api/rides/${ride.id}`, rideData).then(afterSubmit);
     }
   };
 

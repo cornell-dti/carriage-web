@@ -13,15 +13,12 @@ const modelFromRole = {
 
 const authorize = async (role: Role, data: any | null = {}) => {
   const model = modelFromRole[role];
-  await populateDB(model, data);
-  const user = (await model.scan().exec())[0];
+  const user = await populateDB(model, data);
   const res = await request(app)
-    .post('/api/auth')
+    .post('/api/auth/dummy')
     .send({
       table: `${role}s`,
-      userInfo: {
-        email: user.email,
-      },
+      email: user.email,
     })
     .expect(200);
   return res.body.jwt;

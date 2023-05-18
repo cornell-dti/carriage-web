@@ -4,10 +4,10 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, RepeatValues, Ride } from '../../types/index';
-import { useReq } from '../../context/req';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
+import axios from '../../util/axios';
 
 type RideModalProps = {
   open?: boolean;
@@ -23,7 +23,6 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
-  const { withDefaults } = useReq();
   const { refreshRides } = useRides();
 
   // using function instead of const so the function can be hoisted and
@@ -173,43 +172,27 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         }
         if (editSingle) {
           // edit single instance of repeating ride
-          fetch(
-            `/api/rides/${ride.id}/edits`,
-            withDefaults({
-              method: 'PUT',
-              body: JSON.stringify({
-                deleteOnly: false,
-                origDate: format_date(ride.startTime),
-                ...rideData,
-              }),
+          axios
+            .put(`/api/rides/${ride.id}/edits`, {
+              deleteOnly: false,
+              origDate: format_date(ride.startTime),
+              ...rideData,
             })
-          ).then(refreshRides);
+            .then(refreshRides);
         } else {
           // edit ride or all instances of repeating ride
-          fetch(
-            `/api/rides/${ride.id}`,
-            withDefaults({
-              method: 'PUT',
-              body: JSON.stringify(rideData),
-            })
-          ).then(refreshRides);
+          axios.put(`/api/rides/${ride.id}`, rideData).then(refreshRides);
         }
       } else {
         // unscheduled ride
-        fetch(
-          '/api/rides',
-          withDefaults({
-            method: 'POST',
-            body: JSON.stringify(rideData),
-          })
-        ).then(refreshRides);
+        axios.post('/api/rides', rideData).then(refreshRides);
       }
 
       setIsSubmitted(false);
       closeModal();
       showToast(ride ? 'Ride edited.' : 'Ride added.', ToastStatus.SUCCESS);
     }
-  }, [closeModal, formData, isSubmitted, ride, withDefaults]);
+  }, [closeModal, formData, isSubmitted, ride]);
 
   // have to do a ternary operator on the entire modal
   // because otherwise the pages would show up wrongly

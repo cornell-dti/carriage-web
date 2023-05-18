@@ -2,7 +2,7 @@ import app from '../src/app';
 import { expect } from 'chai';
 import request from 'supertest';
 
-describe('Health check', () => {
+describe('Checking API Health', () => {
   it('returns status 200 and "OK"', (done) => {
     request(app)
       .get('/api/health-check')

@@ -2,11 +2,11 @@ import { parseAddress } from 'addresser';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useReq } from '../../context/req';
 import { Location, ObjectType, Tag } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
+import axios from '../../util/axios';
 
 type LocationModalProps = {
   existingLocation?: Location;
@@ -57,7 +57,6 @@ const LocationModal = ({
   const { showToast } = useToast();
   const { register, handleSubmit, errors } = useForm();
   const { name, address, info } = errors;
-  const { withDefaults } = useReq();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
   const submitButtonText = existingLocation ? 'Save' : 'Add';
@@ -72,15 +71,9 @@ const LocationModal = ({
     const url = existingLocation
       ? `/api/locations/${existingLocation!.id}`
       : '/api/locations';
-    const method = existingLocation ? 'PUT' : 'POST';
+    const method = existingLocation ? axios.put : axios.post;
 
-    const newLocation = await fetch(
-      url,
-      withDefaults({
-        method,
-        body: JSON.stringify(data),
-      })
-    ).then((res) => res.json());
+    const newLocation = await method(url, data).then((res) => res.data);
 
     if (!existingLocation && onAddLocation) {
       onAddLocation(newLocation.data);
