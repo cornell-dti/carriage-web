@@ -13,7 +13,6 @@ export { default as detailTrash } from './detailTrash.svg';
 export { default as x } from './x.svg';
 export { default as trashbig } from './trashbig.svg';
 export { default as dti_logo } from './dti_logo.svg';
-export { default as dti_desc } from './dti_desc.svg';
 export { default as chevronLeft } from './chevron-left.svg';
 export { default as block } from './blocked.svg';
 export { default as red_trash } from './red-trash.svg';
