@@ -10,9 +10,11 @@ import { Ride } from '../../types';
 import DisplayMessage from './Message';
 
 type Message = {
+  key: number;
   time: Date;
   title: string;
   body: string;
+  read: boolean;
 };
 
 type NotificationData = {
@@ -27,15 +29,24 @@ const Notification = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
   const popupId = useId();
+  const markAsRead = (key: number) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((message) =>
+        message.key === key ? { ...message, read: true } : message
+      )
+    );
+  };
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
       const { body, ride, sentTime, title }: NotificationData = event.data;
       const newMsg = {
+        key: newMessages.length + 1,
         time: new Date(sentTime),
         title,
         body,
         day: ride.startTime,
+        read: false,
       };
       setNewMessages([newMsg, ...newMessages]);
       setNotify(true);
@@ -43,8 +54,8 @@ const Notification = () => {
   }, []);
 
   const mapMessages = (msgs: Message[]) =>
-    msgs.map(({ time, title, body }, i) => (
-      <DisplayMessage key={i} {...{ time, title, body }} />
+    msgs.map((message) => (
+      <DisplayMessage {...message} key={message.key} markAsRead={markAsRead} />
     ));
 
   useEffect(() => {

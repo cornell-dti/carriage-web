@@ -17,6 +17,13 @@
   height: 10px;
 }
 
+.messageBadge {
+  position: absolute;
+  left: 15px;
+  width: 10px;
+  height: 10px;
+}
+
 .body {
   padding: 10px;
   font-size: 12px;
