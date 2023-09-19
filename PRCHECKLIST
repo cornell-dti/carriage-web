@@ -1,17 +1,14 @@
-version: "2"
-checklists:
-  - name: Server
-    tasks:
-      - +task+ Test all existing server tests.
-      - +task+ Test all possible usage of endpoints across all 3 repositories.
-      - +task+ Make sure the auth endpoint still works if it was changed.
-      - +task+ Make sure the backend is compatible with any new features added on the frontend.
-  - name: Accessibility
-    tasks:
-      - +task+ Make sure there are no new accessibility issues.
-  - name: Design
-    tasks:
-      - +task+ Make sure the designs match the ones in Figma.
-  - name: General
-    tasks:
-      - +task+ Make sure there exists a task for this particular pull request in Trello.
++comment+ General
++task+ Make sure there exists a task for this particular pull request in Trello.
+
++comment+ Server
++task+ Test all existing server tests.
++task+ Test all possible usage of endpoints across all 3 repositories.
++task+ Make sure the auth endpoint still works if it was changed.
++task+ Make sure the backend is compatible with any new features added on the frontend.
+
++comment+ Accessibility
++task+ Make sure there are no new accessibility issues.
+
++comment+ Design
++task+ Make sure the designs match the ones in Figma.
