@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import { dti_logo } from '../../icons/other';
+import group525 from './images/Group525.png';
 
 const Footer = () => {
   return (
@@ -40,7 +41,7 @@ const Footer = () => {
           employees and <br />
           dispatch rides.
         </p>
-        <img src="frontend/src/pages/Landing/Group525.png" />
+        <img src={group525} />
       </div>
       <div className={styles.blackBottom}>
         <div
