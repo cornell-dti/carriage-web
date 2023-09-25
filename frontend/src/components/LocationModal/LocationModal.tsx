@@ -140,7 +140,7 @@ const LocationModal = ({
               id="tag"
               defaultValue={existingLocation?.tag}
               ref={register({ required: true })}
-              className={styles.styledSelect}
+              className={styles.inputContainer}
               aria-required="true"
             >
               {Object.values(Tag).map((value) =>

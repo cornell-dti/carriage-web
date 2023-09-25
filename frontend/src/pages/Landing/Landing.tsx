@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
-import Footer from './Footer';
-import { logo, dti_logo, dti_desc } from '../../icons/other';
+import Footer from '../../components/Footer/Footer';
+import { logo } from '../../icons/other';
+import dti from './dti.png';
 
 type LandingPropType = {
   students: ReactElement;
@@ -30,8 +31,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
               </div>
             </div>
             <div className={styles.dti_container}>
-              <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
-              <img src={dti_desc} className={styles.dti_desc} alt="DTI desc" />
+              <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
             </div>
           </div>
         </div>

@@ -35,6 +35,8 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Enoch Chen - Software Developer
 - Desmond Atikpui - Software Developer
 - Stuti Gupta - Software Developer
+- Kevin Lin - Software Developer
+- Colin Wu - Software Developer
 
 **Past Contributors**
 
