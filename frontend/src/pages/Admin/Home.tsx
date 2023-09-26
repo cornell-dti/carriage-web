@@ -23,7 +23,6 @@ const Home = () => {
   return (
     <main id="main">
       <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Home</h1>
         <MiniCal />
         <div className={styles.rightSection}>
           <ExportButton
