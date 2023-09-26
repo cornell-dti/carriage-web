@@ -1,7 +1,9 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import { dti_logo } from '../../icons/other';
-import group525 from './images/Group525.png';
+import bottomLaptop from './images/bottomLaptop.png';
+import topLaptop from './images/topLaptop.png';
+import iPhone from './images/iPhone.png';
 
 const Footer = () => {
   return (
@@ -10,11 +12,12 @@ const Footer = () => {
         <p
           style={{
             color: 'white',
-            fontSize: 25,
+            fontSize: '40px',
             textAlign: 'left',
-            paddingLeft: 100,
-            paddingTop: 30,
-            paddingBottom: 30,
+            paddingRight: 50,
+            paddingLeft: 50,
+            paddingTop: 100,
+            paddingBottom: 100,
           }}
         >
           Students schedule, <br />
@@ -22,18 +25,22 @@ const Footer = () => {
           on rider web <br />
           and mobile.
         </p>
-        <img src="frontend/src/pages/Landing/Group525.png" />
+        <img src={iPhone} className="topImage" />
+        <img src={topLaptop} className="topImage" />
       </div>
 
       <div className={styles.white}>
+        <img src={bottomLaptop} className="bottomImage" />
         <p
           style={{
             color: 'black',
-            fontSize: 25,
+            fontSize: '40px',
             textAlign: 'right',
-            paddingRight: 200,
-            paddingTop: 30,
-            paddingBottom: 30,
+            paddingRight: 50,
+            paddingLeft: 100,
+            paddingTop: 100,
+            paddingBottom: 100,
+            fontWeight: 600,
           }}
         >
           Administrators add <br />
@@ -41,7 +48,6 @@ const Footer = () => {
           employees and <br />
           dispatch rides.
         </p>
-        <img src={group525} />
       </div>
       <div className={styles.blackBottom}>
         <div

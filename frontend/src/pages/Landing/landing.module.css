@@ -148,11 +148,15 @@
 }
 
 .blackTop {
+  display: flex;
+  align-items: center;
   flex: 10;
   background-color: black;
 }
 
 .white {
+  display: flex;
+  align-items: center;
   flex: 5;
   background-color: white;
 }
@@ -164,4 +168,16 @@
 
 .carriage-login {
   display: flex;
+}
+
+.topImage {
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-right: 200px; /* Add some spacing between text and image */
+}
+
+.bottomImage {
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-left: 200px; /* Add some spacing between text and image */
 }
