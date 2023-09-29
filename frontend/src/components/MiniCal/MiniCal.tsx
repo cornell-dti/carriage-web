@@ -1,5 +1,5 @@
-import React from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useRef, forwardRef, HTMLProps } from 'react';
+import DatePicker, { ReactDatePickerProps } from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
@@ -33,24 +33,26 @@ const Icon = () => (
 
 const MiniCal = () => {
   const { curDate, setCurDate } = useDate();
+  const inputRef = useRef<HTMLButtonElement>(null);
 
   const updateDate = (d: Date) => {
     setCurDate(d);
   };
-  class CustomInput extends React.Component<any> {
-    render() {
+
+  const CustomInput = forwardRef<HTMLButtonElement>(
+    ({ onClick, value }: HTMLProps<HTMLButtonElement>, ref) => {
       return (
-        <button className={styles.customInput} onClick={this.props.onClick}>
+        <button className={styles.customInput} onClick={onClick} ref={ref}>
           <span className={styles.primary}>
             {isToday(curDate) ? 'Today ' : ' '}
             {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
           </span>
           <span className={styles.space} /> <Icon />
-          <span className={styles.space} /> {this.props.value}
+          <span className={styles.space} /> {value}
         </button>
       );
     }
-  }
+  );
 
   const Indicators = ({ date }: { date: Date }) => (
     <svg
@@ -78,76 +80,79 @@ const MiniCal = () => {
     window.scroll(x, y);
   };
 
+  const renderHeader: ReactDatePickerProps['renderCustomHeader'] = ({
+    date,
+    decreaseMonth,
+    increaseMonth,
+    prevMonthButtonDisabled,
+    nextMonthButtonDisabled,
+  }) => (
+    <div>
+      <div className={styles.justify}>
+        <button
+          className={cn(styles.btn2, { [styles.active]: isToday(date) })}
+          onClick={() => {
+            updateDate(new Date());
+            pseudoScroll();
+          }}
+        >
+          TODAY
+        </button>
+        <Indicators date={date} />
+        <button
+          className={cn(styles.btn2, {
+            [styles.active]: isTomorrow(date),
+          })}
+          onClick={() => {
+            const tomorrow = new Date();
+            tomorrow.setDate(new Date().getDate() + 1);
+            updateDate(tomorrow);
+            pseudoScroll();
+          }}
+        >
+          TOMORROW
+        </button>
+      </div>
+      <div className={styles.justify}>
+        <button
+          className={styles.btn}
+          onClick={decreaseMonth}
+          disabled={prevMonthButtonDisabled}
+        >
+          {'<'}
+        </button>
+        <span className={styles.month}>
+          {`${date.toLocaleString('default', {
+            month: 'long',
+          })} ${date.getFullYear()}`}
+        </span>
+
+        <button
+          className={styles.btn}
+          onClick={increaseMonth}
+          disabled={nextMonthButtonDisabled}
+        >
+          {'>'}
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className={styles.root}>
       <DatePicker
         adjustDateOnChange
         selected={curDate}
         onChange={updateDate}
-        closeOnScroll={true}
+        closeOnScroll
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
-        customInput={<CustomInput />}
+        // Set to arbitrary non empty value to preserve actual CustomInput ref
+        customInputRef="#"
+        customInput={<CustomInput ref={inputRef} />}
         highlightDates={[{ 'custom--today': [new Date()] }]}
-        renderCustomHeader={({
-          date,
-          changeYear,
-          changeMonth,
-          decreaseMonth,
-          increaseMonth,
-          prevMonthButtonDisabled,
-          nextMonthButtonDisabled,
-        }) => (
-          <div>
-            <div className={styles.justify}>
-              <button
-                className={cn(styles.btn2, { [styles.active]: isToday(date) })}
-                onClick={() => {
-                  updateDate(new Date());
-                  pseudoScroll();
-                }}
-              >
-                TODAY
-              </button>
-              <Indicators date={date} />
-              <button
-                className={cn(styles.btn2, {
-                  [styles.active]: isTomorrow(date),
-                })}
-                onClick={() => {
-                  const tomorrow = new Date();
-                  tomorrow.setDate(new Date().getDate() + 1);
-                  updateDate(tomorrow);
-                  pseudoScroll();
-                }}
-              >
-                TOMORROW
-              </button>
-            </div>
-            <div className={styles.justify}>
-              <button
-                className={styles.btn}
-                onClick={decreaseMonth}
-                disabled={prevMonthButtonDisabled}
-              >
-                {'<'}
-              </button>
-              <span className={styles.month}>
-                {`${date.toLocaleString('default', {
-                  month: 'long',
-                })} ${date.getFullYear()}`}
-              </span>
-
-              <button
-                className={styles.btn}
-                onClick={increaseMonth}
-                disabled={nextMonthButtonDisabled}
-              >
-                {'>'}
-              </button>
-            </div>
-          </div>
-        )}
+        onCalendarClose={() => inputRef.current?.focus()}
+        renderCustomHeader={renderHeader}
       />
     </div>
   );
