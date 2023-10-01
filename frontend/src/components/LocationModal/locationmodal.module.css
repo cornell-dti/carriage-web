@@ -6,6 +6,8 @@
 
 .input {
   font-size: 1.5rem;
+  min-height: 40px;
+  width: 280px;
 }
 
 .errorMsg {
@@ -19,4 +21,12 @@
 
 .submit {
   float: right;
+}
+
+.inputContainer {
+  min-height: 40px;
+  width: 280px;
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
 }

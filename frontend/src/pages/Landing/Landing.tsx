@@ -1,7 +1,8 @@
 import React, { ReactElement } from 'react';
 import styles from './landing.module.css';
 import Footer from './Footer';
-import { logo, dti_logo, dti_desc } from '../../icons/other';
+import { logo } from '../../icons/other';
+import dti from './dti.png';
 
 type LandingPropType = {
   students: ReactElement;
