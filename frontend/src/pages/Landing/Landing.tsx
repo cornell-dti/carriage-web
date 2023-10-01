@@ -13,27 +13,18 @@ const Landing = ({ students, admins }: LandingPropType) => {
   return (
     <main id="main">
       <div className={styles.home}>
-        <div className={styles.main}>
-          <div className={styles.left}>
-            <img src={logo} className={styles.badge} alt="Carriage logo" />
-            <span className={styles.title}>Carriage</span>
+        <div>
+          <h1 className={styles.heading}>Carriage</h1>
+          <p className={styles.description}>Efficient Transit for CULifts</p>
+          <div className={styles.button_container}>
+            <div className={styles.container_item_left}>{students}</div>
+            <div className={styles.container_item_right}>{admins}</div>
           </div>
-          <div className={styles.right}>
-            <div className={styles.spacing_container}>
-              <h1 className={styles.heading}>Carriage</h1>
-              <p className={styles.description}>
-                Efficient Transit for CULifts
-              </p>
-              <div className={styles.container}>
-                <div className={styles.container_item_left}>{students}</div>
-                <div className={styles.container_item_right}>{admins}</div>
-              </div>
-            </div>
-            <div className={styles.dti_container}>
-              <img src={dti_logo} className={styles.dti_logo} alt="DTI logo" />
-              <img src={dti_desc} className={styles.dti_desc} alt="DTI desc" />
-            </div>
-          </div>
+        </div>
+        <div>
+          <a href="/" className={styles.terms}>
+            Terms of Services
+          </a>
         </div>
       </div>
       <div>

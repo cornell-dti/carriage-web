@@ -63,10 +63,54 @@
   top: 14px;
 }
 
-.container {
+.terms {
   display: flex;
+  position: absolute;
+  top: 75px;
+  right: 100px;
+  align-items: center;
+  background-color: #ff647c;
+  color: white;
+  padding: 7px 10px; /* Increase padding to make the button bigger */
+  font-size: 18px; /* Increase font size */
+  border-radius: 10px;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline from anchor */
+  display: inline-block;
+}
+
+.button_container {
+  display: flex;
+  position: absolute;
+  top: 265px;
+  left: 150px;
   justify-content: space-between;
   align-items: center;
+}
+
+.heading {
+  width: 100%;
+  font-size: 96px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  position: absolute;
+  top: 5px;
+  left: 145px;
+  /* justify-content: space-between; */
+  /* align-items: center; */
+}
+
+.description {
+  width: 100%;
+  font-size: 10;
+  font-weight: italics;
+  color: white;
+  display: flex;
+  position: absolute;
+  top: 210px;
+  left: 155px;
 }
 
 .container_item_left {
@@ -121,17 +165,11 @@
   }
 }
 
-.heading {
+/* .heading {
   width: 100%;
   font-size: 32;
   font-weight: bold;
-}
-
-.description {
-  width: 100%;
-  font-size: 10;
-  font-weight: italics;
-}
+} */
 
 .input {
   width: 100%;
