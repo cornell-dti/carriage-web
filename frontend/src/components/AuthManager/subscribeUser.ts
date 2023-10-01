@@ -59,6 +59,9 @@ const subscribeUser = (userType: string, userId: string) => {
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
                     // 'Permission was not granted.'
+                    alert('Please allow notifications to receive notifications.');
+                  } else {
+                    alert('An error ocurred during the subscription process. Please contact the administrator for help.');
                   }
                 });
             } else {
