@@ -162,6 +162,15 @@ const EmployeeDetail = () => {
   const [rideCount, setRideCount] = useState(-1);
   const [workingHours, setWorkingHours] = useState(-1);
 
+  /**
+   * Compares ride [a] with ride [b] based on their start time. Returns a
+   * negative number if [a] starts before [b], a positive number if [a] starts
+   * after [b], and 0 otherwise
+   *
+   * @param a the first ride to compare
+   * @param b the second ride to compare
+   * @returns -1, 1, or 0 if the start time of [a] is before, after, or the same as [b]
+   */
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
