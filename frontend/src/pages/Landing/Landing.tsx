@@ -8,6 +8,11 @@ type LandingPropType = {
   students: ReactElement;
   admins: ReactElement;
 };
+// This page loads the landing page for Carriage; it is the first page that users see when opening Carriage.
+// The styling is located in landing.module.css.
+// The footer is imported from Footer.tsx
+// The header is constructed in this file using the 'students' and 'admins' elements,
+// as well as text and buttons.
 
 const Landing = ({ students, admins }: LandingPropType) => {
   document.title = 'Login - Carriage';
