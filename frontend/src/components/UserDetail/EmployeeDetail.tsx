@@ -145,7 +145,7 @@ const Header = () => {
         }}
         className={styles.header}
       >
-        <img className={styles.chevronLeft} src={chevronLeft} />
+        <img className={styles.chevronLeft} src={chevronLeft} alt="Employees" />
         Employees
       </Link>
     </div>
