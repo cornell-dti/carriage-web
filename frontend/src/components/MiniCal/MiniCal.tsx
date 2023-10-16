@@ -39,8 +39,17 @@ const MiniCal = () => {
   };
   class CustomInput extends React.Component<any> {
     render() {
+      const isExpanded = this.props.isCalendarOpen;
+      const ariaExpanded = isExpanded ? 'false' : 'true';
+      const ariaControls = isExpanded ? 'calendar-content' : undefined;
+
       return (
-        <button className={styles.customInput} onClick={this.props.onClick}>
+        <button
+          className={styles.customInput}
+          onClick={this.props.onClick}
+          aria-expanded={ariaExpanded}
+          aria-controls={ariaControls}
+        >
           <span className={styles.primary}>
             {isToday(curDate) ? 'Today ' : ' '}
             {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
