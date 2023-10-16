@@ -3,6 +3,7 @@ import styles from './landing.module.css';
 import Footer from './Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
+import slope from './images/Slope.png';
 
 type LandingPropType = {
   students: ReactElement;
@@ -32,7 +33,11 @@ const Landing = ({ students, admins }: LandingPropType) => {
             Terms of Services
           </a>
         </div>
+        <div className={styles.image_container}>
+          <img src={slope} />
+        </div>
       </div>
+
       <div>
         <Footer />
       </div>

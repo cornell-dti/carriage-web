@@ -1,16 +1,22 @@
 .home {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(./campus.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  height: 100vh;
+  background-color: black;
+  height: 225vh;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 0 1.25rem;
+}
+.image_container {
+  margin-top: 900px;
+  position: relative;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .main {
   border: 1px solid black;
@@ -182,6 +188,7 @@
   align-items: center;
   flex: 10;
   background-color: black;
+  width: 100%;
 }
 
 .white {
@@ -194,6 +201,7 @@
 .blackBottom {
   flex: 1;
   background-color: black;
+  width: 100%;
 }
 
 .carriage-login {
