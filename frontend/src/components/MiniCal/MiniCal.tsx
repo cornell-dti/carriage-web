@@ -33,6 +33,7 @@ const Icon = () => (
 
 const MiniCal = () => {
   const { curDate, setCurDate } = useDate();
+  const datePickerRef = React.useRef<any>(null);
 
   const updateDate = (d: Date) => {
     setCurDate(d);
@@ -82,7 +83,9 @@ const MiniCal = () => {
     <div className={styles.root}>
       <DatePicker
         adjustDateOnChange
+        ref={datePickerRef}
         selected={curDate}
+        shouldCloseOnSelect={false}
         onChange={updateDate}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
@@ -103,7 +106,11 @@ const MiniCal = () => {
               <button
                 className={cn(styles.btn2, { [styles.active]: isToday(date) })}
                 onClick={() => {
-                  updateDate(new Date());
+                  const today = new Date();
+                  if (datePickerRef.current) {
+                    datePickerRef.current.setSelected(today);
+                  }
+                  updateDate(today);
                   pseudoScroll();
                 }}
               >
@@ -117,6 +124,9 @@ const MiniCal = () => {
                 onClick={() => {
                   const tomorrow = new Date();
                   tomorrow.setDate(new Date().getDate() + 1);
+                  if (datePickerRef.current) {
+                    datePickerRef.current.setSelected(tomorrow);
+                  }
                   updateDate(tomorrow);
                   pseudoScroll();
                 }}
