@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -32,6 +32,7 @@ const Icon = () => (
 );
 
 const MiniCal = () => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { curDate, setCurDate } = useDate();
 
   const updateDate = (d: Date) => {
@@ -39,16 +40,12 @@ const MiniCal = () => {
   };
   class CustomInput extends React.Component<any> {
     render() {
-      const isExpanded = this.props.isCalendarOpen;
-      const ariaExpanded = isExpanded ? 'false' : 'true';
-      const ariaControls = isExpanded ? 'calendar-content' : undefined;
 
       return (
         <button
           className={styles.customInput}
           onClick={this.props.onClick}
-          aria-expanded={ariaExpanded}
-          aria-controls={ariaControls}
+          aria-expanded={isCalendarOpen}
         >
           <span className={styles.primary}>
             {isToday(curDate) ? 'Today ' : ' '}
@@ -96,6 +93,9 @@ const MiniCal = () => {
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
+        onCalendarClose={() => setIsCalendarOpen(false)}
+        onCalendarOpen={() => setIsCalendarOpen(true)}
+
         customInput={<CustomInput />}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
