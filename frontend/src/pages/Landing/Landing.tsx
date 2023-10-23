@@ -4,6 +4,7 @@ import Footer from './Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import slope from './images/Slope.png';
+import ellipse from './images/ellipse.png';
 
 type LandingPropType = {
   students: ReactElement;
@@ -33,9 +34,10 @@ const Landing = ({ students, admins }: LandingPropType) => {
             Terms of Services
           </a>
         </div>
-        <div className={styles.image_container}>
-          <img src={slope} />
-        </div>
+        {/* <div className={styles.image_container}>
+          <img className={styles.image_overlay} src={ellipse} />
+          <img className={styles.image_base} src={slope} />
+        </div> */}
       </div>
 
       <div>
