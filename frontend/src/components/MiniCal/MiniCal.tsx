@@ -40,7 +40,6 @@ const MiniCal = () => {
   };
   class CustomInput extends React.Component<any> {
     render() {
-
       return (
         <button
           className={styles.customInput}
@@ -95,7 +94,6 @@ const MiniCal = () => {
         showPopperArrow={false}
         onCalendarClose={() => setIsCalendarOpen(false)}
         onCalendarOpen={() => setIsCalendarOpen(true)}
-
         customInput={<CustomInput />}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
