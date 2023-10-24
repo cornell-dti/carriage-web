@@ -306,13 +306,21 @@ const EmployeeModal = ({
   }
   return (
     <>
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
+      <Modal
+        title={modalTitle}
+        isOpen={isOpen}
+        onClose={closeModal}
+        id="employee-modal"
+      >
         <Upload
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            aria-labelledby="employee-modal"
+          >
             <EmployeeInfo
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
