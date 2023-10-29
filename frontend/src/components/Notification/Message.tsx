@@ -13,12 +13,19 @@ type Message = {
   markAsRead: (key: number) => void;
 };
 
-const truncate = (str: string) => {
+/**
+ * Truncates a string to a maximum length of 30 characters.
+ * If the string is longer than 30 characters, it appends '...' to the end.
+ *
+ * @param {string} str - The string to be truncated.
+ * @returns {string} - The truncated string. If the original string is 30 characters or fewer, it returns the original string.
+ */
+function truncate(str: string) {
   if (str.length <= 30) {
     return str;
   }
   return `${str.slice(0, 30)}...`;
-};
+}
 
 const DisplayMessage = ({
   key,
