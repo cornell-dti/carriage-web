@@ -73,7 +73,11 @@ const Notification = () => {
   return (
     <Popup
       trigger={
-        <button id={popupId} aria-expanded={isNotifOpen} className={styles.bell}>
+        <button
+          id={popupId}
+          aria-expanded={isNotifOpen}
+          className={styles.bell}
+        >
           <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
