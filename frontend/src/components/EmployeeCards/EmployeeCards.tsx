@@ -156,27 +156,26 @@ const EmployeeCard = ({
 const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
 
-  const allEmployees = [...admins, ...drivers];
-  const adminIds = new Set(admins.map((admin) => admin.id));
-  const filteredEmployees = allEmployees.filter((employee: Employee) => {
-    // if not admin (means driver), check if another admin is representing this driver
-    if (employee['isDriver'] == undefined) return !adminIds.has(employee.id);
-    return true;
+  const employees: Record<string, DriverType | AdminType> = {};
+  [...admins, ...drivers].forEach((employee) => {
+    employees[employee.id] = { ...employees[employee.id], ...employee };
   });
 
-  filteredEmployees.sort((a: Employee, b: Employee) => {
-    if (a.firstName < b.firstName) {
-      return -1;
+  const sortedEmployees = Object.values(employees).sort(
+    (a: Employee, b: Employee) => {
+      if (a.firstName < b.firstName) {
+        return -1;
+      }
+      if (a.firstName > b.firstName) {
+        return 1;
+      }
+      return 0;
     }
-    if (a.firstName > b.firstName) {
-      return 1;
-    }
-    return 0;
-  });
+  );
 
   return (
     <div className={styles.cardsContainer}>
-      {filteredEmployees.map((employee) => (
+      {sortedEmployees.map((employee) => (
         <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
       ))}
     </div>
