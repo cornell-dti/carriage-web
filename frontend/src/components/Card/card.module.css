@@ -35,8 +35,8 @@
 .netId {
   display: inline-block;
   font-size: 0.938rem;
-  opacity: 0.5;
   margin-left: 0.313rem;
+  color: #595959;
 }
 
 .infoContainer {
