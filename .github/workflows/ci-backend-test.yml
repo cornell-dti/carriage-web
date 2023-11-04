@@ -1,10 +1,10 @@
-name: CI Test
-on: 
+name: CI Backend Test
+on:
   pull_request:
     paths: ['server/**']
 
 jobs:
-  build:
+  run-tests:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
