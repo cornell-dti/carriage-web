@@ -32,27 +32,33 @@ const Icon = () => (
 );
 
 const MiniCal = () => {
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const { curDate, setCurDate } = useDate();
+  const [isExpanded, setExpanded] = useState('Collapsed');
 
   const updateDate = (d: Date) => {
     setCurDate(d);
   };
+
+  const updateExpanded = (s: string) => {
+    setExpanded(s);
+  };
+
   class CustomInput extends React.Component<any> {
     render() {
       return (
-        <button
-          className={styles.customInput}
-          onClick={this.props.onClick}
-          aria-expanded={isCalendarOpen}
-        >
-          <span className={styles.primary}>
-            {isToday(curDate) ? 'Today ' : ' '}
-            {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+        <>
+          <span aria-live="polite" className={styles.modal_state}>
+            Modal is{isExpanded}
           </span>
-          <span className={styles.space} /> <Icon />
-          <span className={styles.space} /> {this.props.value}
-        </button>
+          <button className={styles.customInput} onClick={this.props.onClick}>
+            <span className={styles.primary}>
+              {isToday(curDate) ? 'Today ' : ' '}
+              {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+            </span>
+            <span className={styles.space} /> <Icon />
+            <span className={styles.space} /> {this.props.value}
+          </button>
+        </>
       );
     }
   }
@@ -92,8 +98,8 @@ const MiniCal = () => {
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
-        onCalendarClose={() => setIsCalendarOpen(false)}
-        onCalendarOpen={() => setIsCalendarOpen(true)}
+        onCalendarOpen={() => updateExpanded('Expanded')}
+        onCalendarClose={() => updateExpanded('Collapsed')}
         customInput={<CustomInput />}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
