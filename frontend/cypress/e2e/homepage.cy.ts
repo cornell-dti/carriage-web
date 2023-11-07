@@ -14,14 +14,26 @@ describe('Landing Page', () => {
   });
 
   it('has visible student and admin login buttons with correct text', () => {
-    cy.get('[data-cy="container_item_left"]').should('contain', 'Sign in with Google').and('contain', 'Students');
-    cy.get('[data-cy="container_item_right"]').should('contain', 'Sign in with Google').and('contain', 'Admins');
+    cy.get('[data-cy="container_item_left"]')
+      .should('contain', 'Sign in with Google')
+      .and('contain', 'Students');
+    cy.get('[data-cy="container_item_right"]')
+      .should('contain', 'Sign in with Google')
+      .and('contain', 'Admins');
   });
 
   it('has a visible logo for both student and admin buttons', () => {
     cy.get('[data-cy="badge"]').should('have.attr', 'alt', 'Carriage logo');
-    cy.get('[data-cy="container_item_left"] img').should('have.attr', 'alt', 'google logo');
-    cy.get('[data-cy="container_item_right"] img').should('have.attr', 'alt', 'google logo');
+    cy.get('[data-cy="container_item_left"] img').should(
+      'have.attr',
+      'alt',
+      'google logo'
+    );
+    cy.get('[data-cy="container_item_right"] img').should(
+      'have.attr',
+      'alt',
+      'google logo'
+    );
   });
 
   it('student login button triggers the correct function', () => {
