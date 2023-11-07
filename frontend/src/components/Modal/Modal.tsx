@@ -36,6 +36,7 @@ type ModalProps = {
   displayClose?: boolean;
   isRider?: boolean;
   id?: string;
+  arialabelledby?: string;
 };
 
 const Modal = ({
@@ -47,7 +48,8 @@ const Modal = ({
   onClose,
   displayClose,
   isRider = true,
-  id,
+  arialabelledby,
+  id = 'modal',
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
@@ -75,7 +77,7 @@ const Modal = ({
                 className={styles.modal}
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby={id}
+                aria-labelledby={arialabelledby ?? id}
               >
                 <div className={styles.topContainer}>
                   {isRider ? (

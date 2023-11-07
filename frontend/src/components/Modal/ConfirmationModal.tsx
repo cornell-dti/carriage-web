@@ -65,9 +65,15 @@ const ConfirmationModal = ({
   };
 
   return (
-    <Modal title={''} isOpen={open} onClose={closeModal} displayClose={true} id="confirm-modal">
+    <Modal
+      title={''}
+      isOpen={open}
+      onClose={closeModal}
+      displayClose={true}
+      arialabelledby="confirm-text"
+    >
       <div className={styles.modal}>
-        <p className={styles.modalText}>
+        <p className={styles.modalText} id="confirm-text">
           Are you sure you want to remove {user.firstName} {user.lastName}?
         </p>
         <div className={styles.buttonContainer}>

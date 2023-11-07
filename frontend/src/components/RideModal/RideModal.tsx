@@ -227,6 +227,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         isOpen={isOpen}
         currentPage={currentPage}
         onClose={closeModal}
+        id="ride-modal"
       >
         <RideTimesPage
           formData={formData}
