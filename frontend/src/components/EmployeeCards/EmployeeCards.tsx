@@ -8,7 +8,6 @@ import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
-import SearchBar from '../SearchBar/SearchBar';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -167,9 +166,12 @@ const matchesQuery = (rawQuery: string) => {
       employee.vehicle?.name?.toLowerCase().includes(query));
 };
 
-const EmployeeCards = () => {
+type EmployeeCardsProps = {
+  query: string;
+};
+
+const EmployeeCards = ({ query }: EmployeeCardsProps) => {
   const { admins, drivers } = useEmployees();
-  const [query, setQuery] = useState('');
 
   const employees = useMemo(() => {
     const allEmployees = [...admins, ...drivers];
@@ -188,22 +190,11 @@ const EmployeeCards = () => {
   }, [admins, drivers, query]);
 
   return (
-    <>
-      <SearchBar
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for employees..."
-      />
-      <div className={styles.cardsContainer}>
-        {employees.map((employee) => (
-          <EmployeeCard
-            key={employee.id}
-            id={employee.id}
-            employee={employee}
-          />
-        ))}
-      </div>
-    </>
+    <div className={styles.cardsContainer}>
+      {employees.map((employee) => (
+        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
+      ))}
+    </div>
   );
 };
 
