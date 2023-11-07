@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
@@ -8,6 +8,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
+import SearchBar from '../SearchBar/SearchBar';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -153,32 +154,56 @@ const EmployeeCard = ({
   );
 };
 
+const matchesQuery = (rawQuery: string) => {
+  const query = rawQuery.toLowerCase();
+  return (employee: DriverType | AdminType) =>
+    employee.firstName.toLowerCase().includes(query) ||
+    employee.lastName.toLowerCase().includes(query) ||
+    employee.email.toLowerCase().includes(query) ||
+    employee.phoneNumber.toLowerCase().includes(query) ||
+    ('type' in employee &&
+      employee.type?.some((role) => role.includes(query))) ||
+    ('vehicle' in employee &&
+      employee.vehicle?.name?.toLowerCase().includes(query));
+};
+
 const EmployeeCards = () => {
   const { admins, drivers } = useEmployees();
+  const [query, setQuery] = useState('');
 
-  const employees: Record<string, DriverType | AdminType> = {};
-  [...admins, ...drivers].forEach((employee) => {
-    employees[employee.id] = { ...employees[employee.id], ...employee };
-  });
-
-  const sortedEmployees = Object.values(employees).sort(
-    (a: Employee, b: Employee) => {
-      if (a.firstName < b.firstName) {
-        return -1;
-      }
-      if (a.firstName > b.firstName) {
-        return 1;
-      }
-      return 0;
+  const employees = useMemo(() => {
+    const allEmployees = [...admins, ...drivers];
+    const employeeSet: Record<string, DriverType | AdminType> = {};
+    allEmployees.forEach((employee) => {
+      employeeSet[employee.id] = { ...employeeSet[employee.id], ...employee };
+    });
+    const sortedEmployees = Object.values(employeeSet).sort(
+      (a: Employee, b: Employee) => a.firstName.localeCompare(b.firstName)
+    );
+    if (!query) {
+      return sortedEmployees;
     }
-  );
+    // By filtering after coalescing step, we keep role info intact
+    return sortedEmployees.filter(matchesQuery(query));
+  }, [admins, drivers, query]);
 
   return (
-    <div className={styles.cardsContainer}>
-      {sortedEmployees.map((employee) => (
-        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
-      ))}
-    </div>
+    <>
+      <SearchBar
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for employees..."
+      />
+      <div className={styles.cardsContainer}>
+        {employees.map((employee) => (
+          <EmployeeCard
+            key={employee.id}
+            id={employee.id}
+            employee={employee}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 
