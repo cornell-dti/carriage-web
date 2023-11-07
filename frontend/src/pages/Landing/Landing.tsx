@@ -13,22 +13,49 @@ const Landing = ({ students, admins }: LandingPropType) => {
   document.title = 'Login - Carriage';
   return (
     <main id="main">
-      <div className={styles.home}>
-        <div className={styles.main}>
-          <div className={styles.left}>
-            <img src={logo} className={styles.badge} alt="Carriage logo" />
-            <span className={styles.title}>Carriage</span>
+      <div data-cy="home" className={styles.home}>
+        <div data-cy="main" className={styles.main}>
+          <div data-cy="left" className={styles.left}>
+            <img
+              src={logo}
+              data-cy="badge"
+              className={styles.badge}
+              alt="Carriage logo"
+            />
+            <span data-cy="title" className={styles.title}>
+              Carriage
+            </span>
           </div>
-          <div className={styles.right}>
-            <div className={styles.spacing_container}>
-              <h1 className={styles.heading}>Login</h1>
-              <div className={styles.container}>
-                <div className={styles.container_item_left}>{students}</div>
-                <div className={styles.container_item_right}>{admins}</div>
+          <div data-cy="right" className={styles.right}>
+            <div
+              data-cy="spacing_container"
+              className={styles.spacing_container}
+            >
+              <h1 data-cy="heading" className={styles.heading}>
+                Login
+              </h1>
+              <div data-cy="container" className={styles.container}>
+                <div
+                  data-cy="container_item_left"
+                  className={styles.container_item_left}
+                >
+                  {students}
+                </div>
+                <div
+                  data-cy="container_item_right"
+                  className={styles.container_item_right}
+                >
+                  {admins}
+                </div>
               </div>
             </div>
-            <div className={styles.dti_container}>
-              <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
+            <div data-cy="dti_container" className={styles.dti_container}>
+              <img
+                src={dti}
+                data-cy="dti_logo"
+                className={styles.dti_logo}
+                alt="DTI Logo"
+              />
             </div>
           </div>
         </div>

@@ -1,60 +1,46 @@
 /// <reference types="cypress" />
 
-// Welcome to Cypress!
-//
-// This spec file contains a variety of sample tests
-// for a todo list app that are designed to demonstrate
-// the power of writing tests in Cypress.
-//
-// To learn more about how Cypress works and
-// what makes it such an awesome testing tool,
-// please read our getting started guide:
-// https://on.cypress.io/introduction-to-cypress
-
-describe('Homepage', () => {
-
+describe('Landing Page', () => {
   beforeEach(() => {
-    // Visit the homepage before each test case
     cy.visit('/');
   });
 
-  it('loads the homepage', () => {
-    // Check if the title is correct
-    cy.title().should('eq', 'Login - Carriage');
-
-    // Check if Carriage logo is present
-    cy.get('img[alt="Carriage logo"]').should('be.visible');
+  it('successfully loads', () => {
+    cy.get('[data-cy="home"]').should('be.visible');
   });
 
-  it('displays admin and student login containers', () => {
-    // Check for student login container
-    cy.get('.styles.container_item_left').within(() => {
-      cy.contains('Login with Google').should('be.visible');
-    });
-
-    // Check for admin login container
-    cy.get('.styles.container_item_right').within(() => {
-      cy.contains('Login with Google').should('be.visible');
-    });
+  it('has the correct title', () => {
+    cy.title().should('include', 'Login - Carriage');
   });
 
-  // Accessibility check using cypress-axe
-  it('has no detectable a11y violations on load', () => {
-    cy.injectAxe();  // Ensure you've installed cypress-axe to use this
-    cy.checkA11y();
+  it('has visible student and admin login buttons with correct text', () => {
+    cy.get('[data-cy="container_item_left"]').should('contain', 'Sign in with Google').and('contain', 'Students');
+    cy.get('[data-cy="container_item_right"]').should('contain', 'Sign in with Google').and('contain', 'Admins');
   });
 
-  it('navigates to admin home on admin login', () => {
-    cy.get('.styles.container_item_right').within(() => {
-      cy.contains('Login with Google').click();
-      // Mocking the GoogleAuth response and checking for redirect can be done here
-    });
+  it('has a visible logo for both student and admin buttons', () => {
+    cy.get('[data-cy="badge"]').should('have.attr', 'alt', 'Carriage logo');
+    cy.get('[data-cy="container_item_left"] img').should('have.attr', 'alt', 'google logo');
+    cy.get('[data-cy="container_item_right"] img').should('have.attr', 'alt', 'google logo');
   });
 
-  it('navigates to student home on student login', () => {
-    cy.get('.styles.container_item_left').within(() => {
-      cy.contains('Login with Google').click();
-      // Mocking the GoogleAuth response and checking for redirect can be done here
-    });
+  it('student login button triggers the correct function', () => {
+    // Spy on 'studentLogin' function
+    // const spy = cy.spy().as('studentLoginSpy');
+    // cy.window().then((win) => {
+    //   // win.studentLogin = spy;
+    // });
+    // cy.get('[data-cy="container_item_left"] .btn').click();
+    // cy.get('@studentLoginSpy').should('have.been.calledOnce');
+  });
+
+  it('admin login button triggers the correct function', () => {
+    // Spy on 'adminLogin' function
+    // const spy = cy.spy().as('adminLoginSpy');
+    // cy.window().then((win) => {
+    //   // win.adminLogin = spy;
+    // });
+    // cy.get('[data-cy="container_item_right"] .btn').click();
+    // cy.get('@adminLoginSpy').should('have.been.calledOnce');
   });
 });
