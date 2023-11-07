@@ -71,7 +71,12 @@ const Modal = ({
             }}
           >
             <div className={styles.background}>
-              <div className={styles.modal}>
+              <div
+                className={styles.modal}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={id}
+              >
                 <div className={styles.topContainer}>
                   {isRider ? (
                     <h1 className={styles.title} id={id}>
