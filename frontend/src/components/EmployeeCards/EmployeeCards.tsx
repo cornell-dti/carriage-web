@@ -153,17 +153,28 @@ const EmployeeCard = ({
   );
 };
 
+const searchableFields = (employee: DriverType | AdminType) => {
+  const fields = [
+    employee.firstName,
+    employee.lastName,
+    employee.email,
+    employee.phoneNumber,
+  ];
+  if ('vehicle' in employee) {
+    fields.push(employee.vehicle.name);
+  }
+  if ('type' in employee) {
+    fields.push(...employee.type);
+  }
+  return fields;
+};
+
 const matchesQuery = (rawQuery: string) => {
   const query = rawQuery.toLowerCase();
   return (employee: DriverType | AdminType) =>
-    employee.firstName.toLowerCase().includes(query) ||
-    employee.lastName.toLowerCase().includes(query) ||
-    employee.email.toLowerCase().includes(query) ||
-    employee.phoneNumber.toLowerCase().includes(query) ||
-    ('type' in employee &&
-      employee.type?.some((role) => role.includes(query))) ||
-    ('vehicle' in employee &&
-      employee.vehicle?.name?.toLowerCase().includes(query));
+    searchableFields(employee).some((field) =>
+      field.toLowerCase().includes(query)
+    );
 };
 
 type EmployeeCardsProps = {
