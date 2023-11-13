@@ -34,7 +34,9 @@
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
     "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
-    "test:server": "cd server && npm run test"
+    "test:server": "cd server && npm run test",
+    "test:frontend": "cd frontend and npx cypress runtest",
+    "test": "npm run test:server && npm run test:frontend"
   },
   "repository": {
     "type": "git",

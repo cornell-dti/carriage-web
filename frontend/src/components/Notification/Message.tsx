@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './notification.module.css';
 import moment from 'moment';
-import { useState } from 'react';
 import { notificationBadge } from '../../icons/other';
 
 type Message = {
