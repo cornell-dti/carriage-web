@@ -237,6 +237,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           formData={formData}
           onBack={goPrevPage}
           onSubmit={saveDataThen(goNextPage)}
+          labelid="ride-modal"
         />
         <RiderInfoPage
           formData={formData}
