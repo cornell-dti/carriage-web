@@ -5,6 +5,7 @@ import { logo } from '../../icons/other';
 import dti from './dti.png';
 import slope from './images/Slope.png';
 import ellipse from './images/ellipse.png';
+import landingPage from './images/landing-page.png';
 
 type LandingPropType = {
   students: ReactElement;
@@ -22,6 +23,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
     <main id="main">
       <div className={styles.home}>
         <div>
+          <img src={landingPage} alt="landing page" />
           <h1 className={styles.heading}>Carriage</h1>
           <p className={styles.description}>Efficient Transit for CULifts</p>
           <div className={styles.button_container}>
@@ -34,10 +36,6 @@ const Landing = ({ students, admins }: LandingPropType) => {
             Terms of Services
           </a>
         </div>
-        {/* <div className={styles.image_container}>
-          <img className={styles.image_overlay} src={ellipse} />
-          <img className={styles.image_base} src={slope} />
-        </div> */}
       </div>
 
       <div>
