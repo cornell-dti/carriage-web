@@ -25,6 +25,7 @@ const DateFilter = ({
         <label className={styles.datePickerLabel}>Date Range</label>
         <div className={styles.dateRangeContainer}>
           <input
+            aria-label="Start Date"
             className={styles.input}
             type="date"
             max={today}
@@ -41,6 +42,7 @@ const DateFilter = ({
           />
           <span style={{ margin: '0 1rem' }}>-</span>
           <input
+            aria-label="End Date"
             className={styles.input}
             type="date"
             max={today}
