@@ -9,6 +9,16 @@ type DateFilterProps = {
   onSubmit: (startDate: string, endDate: string) => void;
 };
 
+/*
+ The DateFilter component facilitates the selection of a valid date range through 
+ two input fields for start and end dates. It dynamically updates error messages
+ based on user input, ensuring that the chosen start date is before or on the end date. 
+ The component utilizes React state to manage date inputs and provides accessibility 
+ features for screen readers. The "Apply Dates" button triggers the onSubmit callback 
+ only when there are no validation errors, passing the selected start and end dates 
+ for further handling. 
+*/
+
 const DateFilter = ({
   initStartDate,
   initEndDate,
