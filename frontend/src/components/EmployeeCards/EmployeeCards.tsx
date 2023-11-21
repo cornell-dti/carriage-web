@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
@@ -153,30 +153,56 @@ const EmployeeCard = ({
   );
 };
 
-const EmployeeCards = () => {
+const searchableFields = (employee: DriverType | AdminType) => {
+  const fields = [
+    employee.firstName,
+    employee.lastName,
+    employee.email,
+    employee.phoneNumber,
+  ];
+  if ('vehicle' in employee) {
+    fields.push(employee.vehicle.name);
+  }
+  if ('type' in employee) {
+    fields.push(...employee.type);
+  }
+  return fields;
+};
+
+const matchesQuery = (rawQuery: string) => {
+  const query = rawQuery.toLowerCase();
+  return (employee: DriverType | AdminType) =>
+    searchableFields(employee).some((field) =>
+      field.toLowerCase().includes(query)
+    );
+};
+
+type EmployeeCardsProps = {
+  query: string;
+};
+
+const EmployeeCards = ({ query }: EmployeeCardsProps) => {
   const { admins, drivers } = useEmployees();
 
-  const allEmployees = [...admins, ...drivers];
-  const adminIds = new Set(admins.map((admin) => admin.id));
-  const filteredEmployees = allEmployees.filter((employee: Employee) => {
-    // if not admin (means driver), check if another admin is representing this driver
-    if (employee['isDriver'] == undefined) return !adminIds.has(employee.id);
-    return true;
-  });
-
-  filteredEmployees.sort((a: Employee, b: Employee) => {
-    if (a.firstName < b.firstName) {
-      return -1;
+  const employees = useMemo(() => {
+    const allEmployees = [...admins, ...drivers];
+    const employeeSet: Record<string, DriverType | AdminType> = {};
+    allEmployees.forEach((employee) => {
+      employeeSet[employee.id] = { ...employeeSet[employee.id], ...employee };
+    });
+    const sortedEmployees = Object.values(employeeSet).sort(
+      (a: Employee, b: Employee) => a.firstName.localeCompare(b.firstName)
+    );
+    if (!query) {
+      return sortedEmployees;
     }
-    if (a.firstName > b.firstName) {
-      return 1;
-    }
-    return 0;
-  });
+    // By filtering after coalescing step, we keep role info intact
+    return sortedEmployees.filter(matchesQuery(query));
+  }, [admins, drivers, query]);
 
   return (
     <div className={styles.cardsContainer}>
-      {filteredEmployees.map((employee) => (
+      {employees.map((employee) => (
         <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
       ))}
     </div>
