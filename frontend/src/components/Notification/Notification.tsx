@@ -33,7 +33,7 @@ const Notification = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
   const popupId = useId();
-  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(true);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
