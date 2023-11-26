@@ -71,7 +71,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
       (r.firstName + ' ' + r.lastName)
         .toLowerCase()
         .includes((searchName + '').toLowerCase()) &&
-      (showInactive ? true : r.active)
+      (!showInactive || !r.active)
   );
 
   return (
