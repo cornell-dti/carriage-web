@@ -90,6 +90,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                   onClick={() => setSelected(path)}
                   className={styles.icon}
                   to={path}
+                  aria-label={caption}
                 >
                   <div
                     className={
@@ -101,11 +102,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                     <a
                       href={path}
                       aria-current={path === selected ? 'page' : undefined}
+                      aria-hidden="true" // Hide this element from screen readers
                     ></a>
                     <img alt={''} src={icon} />
                   </div>
                 </Link>
-                {caption}
+                <span aria-hidden="true">{caption}</span>{' '}
+                {/* Hide text from screen readers */}
               </p>
             </div>
           ))}
