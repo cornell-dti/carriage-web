@@ -101,13 +101,13 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   const submitData = () => setIsSubmitted(true);
 
   /**
-   * Converts a ride that repeats into a number array representation used by 
+   * Converts a ride that repeats into a number array representation used by
    * the internal representation of a ride
-   * 
+   *
    * @param date a string representation of the ride start date
-   * @param repeats an enum representing how often this ride repeats: Daily, 
+   * @param repeats an enum representing how often this ride repeats: Daily,
    * Weekly, or Custom
-   * @param days Used if the ride repeats on custom days. An object that 
+   * @param days Used if the ride repeats on custom days. An object that
    * maps days (Mon, Tue, Wed, Thur, Fri) to strings, where the string value is
    * non-empty if the ride repeats on that day
    * @returns a number array containing the days of the week where the ride repeats,
@@ -117,7 +117,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
     date: string,
     repeats: RepeatValues,
     days: ObjectType
-  ) : number[] => {
+  ): number[] => {
     switch (repeats) {
       case RepeatValues.Daily:
         return [1, 2, 3, 4, 5];
