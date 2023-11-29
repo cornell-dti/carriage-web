@@ -21,7 +21,7 @@ export type DriverType = {
   firstName: string;
   lastName: string;
   availability: AvailabilityType;
-  vehicle: VehicleType;
+  vehicle?: VehicleType;
   phoneNumber: string;
   startDate: string;
   email: string;
