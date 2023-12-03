@@ -81,6 +81,11 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
           type="checkbox"
           checked={showInactive}
           onChange={() => setShowInactive(!showInactive)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              setShowInactive(!showInactive);
+            }
+          }}
           style={{
             marginLeft: '2rem',
             marginTop: '1rem',
