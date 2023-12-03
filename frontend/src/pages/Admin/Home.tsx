@@ -18,7 +18,7 @@ const Home = () => {
 
   useEffect(() => {
     document.title = 'Home - Carriage';
-  });
+  }, []);
 
   return (
     <main id="main">

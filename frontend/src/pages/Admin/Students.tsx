@@ -12,7 +12,7 @@ const Riders = () => {
 
   React.useEffect(() => {
     document.title = 'Students - Carriage';
-  });
+  }, []);
 
   const [searchName, setSearchName] = useState<string>('');
   return (
