@@ -227,7 +227,7 @@ const EmployeeModal = ({
     isNewEmployee: boolean,
     apiEndpoint: string, // API endpoint as a string, e.g., '/api/drivers' or '/api/admins'
     refreshFunction: () => Promise<void>, // Function to refresh the data
-    employeeType: string // Employee type as a string, e.g., 'driver' or 'admin'
+    employeeType: string // Employee type as a string, e.g., 'Drivers' or 'Admins'
   ) => {
     if (isNewEmployee) {
       return await createNewEmployee(
@@ -301,14 +301,14 @@ const EmployeeModal = ({
               false,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
             await createOrUpdateEmployee(
               admin,
               false,
               '/api/admins',
               refreshAdmins,
-              'admin'
+              'Admins'
             );
           } else if (existingDriver) {
             await createOrUpdateEmployee(
@@ -316,7 +316,7 @@ const EmployeeModal = ({
               false,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
             const adminData = { ...admin, id: existingEmployee.id };
             await createOrUpdateEmployee(
@@ -324,7 +324,7 @@ const EmployeeModal = ({
               true,
               '/api/admins',
               refreshAdmins,
-              'admin'
+              'Admins'
             );
           } else if (existingAdmin) {
             const driverData = { ...driver, id: existingEmployee.id };
@@ -333,14 +333,14 @@ const EmployeeModal = ({
               true,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
             await createOrUpdateEmployee(
               admin,
               false,
               '/api/admins',
               refreshAdmins,
-              'admin'
+              'Admins'
             );
           }
         } else {
@@ -350,7 +350,7 @@ const EmployeeModal = ({
               false,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
             await deleteAdmin(existingEmployee.id);
           } else if (existingDriver) {
@@ -359,7 +359,7 @@ const EmployeeModal = ({
               false,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
           } else if (existingAdmin) {
             const driverData = { ...driver, id: existingEmployee.id };
@@ -368,7 +368,7 @@ const EmployeeModal = ({
               true,
               '/api/drivers',
               refreshDrivers,
-              'driver'
+              'Drivers'
             );
             await deleteAdmin(existingEmployee.id);
           }
@@ -381,7 +381,7 @@ const EmployeeModal = ({
             false,
             '/api/admins',
             refreshAdmins,
-            'admin'
+            'Admins'
           );
         } else if (existingDriver) {
           await deleteDriver(existingEmployee.id);
@@ -391,7 +391,7 @@ const EmployeeModal = ({
             true,
             '/api/admins',
             refreshAdmins,
-            'admin'
+            'Admins'
           );
         }
       }
@@ -404,7 +404,7 @@ const EmployeeModal = ({
             true,
             '/api/drivers',
             refreshDrivers,
-            'driver'
+            'Drivers'
           );
           const id = updatedDriver.data.id;
           await createOrUpdateEmployee(
@@ -412,7 +412,7 @@ const EmployeeModal = ({
             true,
             '/api/admins',
             refreshAdmins,
-            'admin'
+            'Admins'
           );
         } else {
           await createOrUpdateEmployee(
@@ -420,7 +420,7 @@ const EmployeeModal = ({
             true,
             '/api/drivers',
             refreshDrivers,
-            'driver'
+            'Drivers'
           );
         }
       } else {
@@ -429,7 +429,7 @@ const EmployeeModal = ({
           true,
           '/api/admins',
           refreshAdmins,
-          'admin'
+          'Admins'
         );
       }
     }
