@@ -22,7 +22,7 @@ router.post('/', validateUser('User'), (req, res) => {
     res.status(400).send({ err: 'Invalid file name: empty string' });
   } else if (validTables.includes(tableName)) {
     const objectKey = `${tableName}/${id}`;
-
+    console.log(`Uploading ${objectKey} to S3...`);
     const params = {
       Bucket: BUCKET_NAME,
       Key: objectKey,
