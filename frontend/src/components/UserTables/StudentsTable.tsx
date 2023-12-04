@@ -76,25 +76,29 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
 
   return (
     <>
-      <label>
-        <input
-          type="checkbox"
-          checked={showInactive}
-          onChange={() => setShowInactive(!showInactive)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              setShowInactive(!showInactive);
-            }
-          }}
-          style={{
-            marginLeft: '2rem',
-            marginTop: '1rem',
-            marginBottom: '1rem',
-            marginRight: '0.75rem',
-          }}
-        />
-        Show inactive students
-      </label>
+      <button
+        type="button"
+        onClick={() => setShowInactive(!showInactive)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            setShowInactive(!showInactive);
+          }
+        }}
+        style={{
+          marginLeft: '2rem',
+          marginTop: '1rem',
+          marginBottom: '1rem',
+          marginRight: '0.75rem',
+          padding: '0.5rem',
+          backgroundColor: showInactive ? '#000000' : '#ffffff',
+          color: showInactive ? '#ffffff' : '#000000',
+          border: '0.063rem solid #000000',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Show Inactive Students
+      </button>
       <Table>
         <Row header colSizes={colSizes} data={headers} />
 
