@@ -77,6 +77,14 @@ const EmployeeCard = ({
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
 
+  /**
+   * Formats availability, represented by an object that maps available days to
+   * start and end times, into a printable string with availabilities formatted as '[day]: [start] - [end]'.
+   * Ignores malformed availabilities, e.g. missing start or end times, from being printed.
+   *
+   * @param availability the driver's availability, represented as an object map of days to start and end times
+   * @returns a string representation of a driver's availibility
+   */
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
   }) => {
