@@ -55,11 +55,17 @@ const LocationModal = ({
 }: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, reset } = useForm();
   const { name, address, info } = errors;
+  const [formData, setFormData] = useState({
+    name: existingLocation?.name || '',
+    address: existingLocation?.address || '',
+    info: existingLocation?.info || '',
+    tag: existingLocation?.tag || 'default', // Replace 'default' with your desired default tag
+  });
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
-  const submitButtonText = existingLocation ? 'Save' : 'Add';
+  const submitButtonText = existingLocation ? 'Save' : 'Save';
 
   const openModal = () => {
     setIsOpen(true);
@@ -83,6 +89,17 @@ const LocationModal = ({
       showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
     closeModal();
+  };
+
+  // Clear function to reset form data and errors
+  const clearForm = () => {
+    setFormData({
+      name: '',
+      address: '',
+      info: '',
+      tag: 'default',
+    });
+    reset();
   };
 
   return (
@@ -152,6 +169,13 @@ const LocationModal = ({
               )}
             </select>
             <div>
+              <Button
+                className={styles.clear}
+                type="button"
+                onClick={clearForm}
+              >
+                Clear All
+              </Button>
               <Button className={styles.submit} type="submit">
                 {submitButtonText}
               </Button>
