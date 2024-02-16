@@ -58,6 +58,7 @@ export type ObjectType = {
 export type Vehicle = VehicleType;
 
 export enum Tag {
+  EAST = 'east',
   CENTRAL = 'central',
   NORTH = 'north',
   WEST = 'west',
