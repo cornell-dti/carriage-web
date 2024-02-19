@@ -90,7 +90,7 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
     // day = 12am to 5:00pm
     const dayStart = dateMoment.toISOString();
     const dayEnd = dateMoment.add(17, 'hours').toISOString();
-    // night = 5:01pm to 11:59:59pm
+    // night = 5:01pm to 11:59:59pm.
     const nightStart = moment(dayEnd).add(1, 'seconds').toISOString();
     const nightEnd = moment(currDate as string)
       .endOf('day')
