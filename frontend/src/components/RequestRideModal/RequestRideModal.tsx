@@ -71,7 +71,7 @@ const RequestRideModal = ({
               : () => openCreateOrEditModal('EDIT_REGULAR')
           }
         >
-          Edit
+          Edit Ride
         </Button>
       )}
       {ride && ride.recurring && (

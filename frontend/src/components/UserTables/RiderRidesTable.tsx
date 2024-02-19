@@ -14,7 +14,7 @@ type RiderRidesTableProps = {
 
 const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  const colSizes = [1, 1, 1, 1, 1, 1];
+  const colSizes = [1, 1, 1, 1.25, 1, 1];
   const headers = [
     'Time',
     'Pickup Location',
@@ -80,7 +80,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             data: (
               <p>
                 {recurringDays}
-                <span className={styles.bold}> {recurringDateRange}</span>
+                <span className={styles.highlight}> {recurringDateRange}</span>
               </p>
             ),
           };
@@ -142,7 +142,11 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
                 onClose={onClose}
                 deleting={true}
               />
-              <Row data={unscheduledRideData} colSizes={colSizes} />
+              <Row
+                data={unscheduledRideData}
+                smallTag={false}
+                colSizes={colSizes}
+              />
             </span>
           );
         })}

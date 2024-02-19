@@ -36,6 +36,7 @@ type RowProps = {
   data: Row;
   colSizes: number[];
   header?: boolean;
+  smallTag?: boolean;
   groupStart?: number;
   className?: string;
   onClick?: () => void;
@@ -52,6 +53,7 @@ export const Row = ({
   data,
   colSizes,
   header,
+  smallTag = true,
   groupStart,
   className,
   onClick,
@@ -71,7 +73,7 @@ export const Row = ({
         return <Cell key={idx} data={cell} />;
       }
       const { data: cData, tag } = cell;
-      return <Cell key={idx} data={cData} tag={tag} smallTag={true} />;
+      return <Cell key={idx} data={cData} tag={tag} smallTag={smallTag} />;
     });
 
   if (!header && groupStart) {
