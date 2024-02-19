@@ -1,17 +1,30 @@
 .home {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(./campus.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  height: 100vh;
+  background-color: black;
+  height: 225vh;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   padding: 0 1.25rem;
 }
+
+/* .image_container {
+  position: relative;
+}
+
+.image_overlay {
+  position: absolute;
+  width: 100%;
+  left: 30%;
+  z-index: 1;
+}
+
+.image_base {
+  position: absolute;
+  width: 100%;
+  z-index: 0;
+} */
+
 .main {
   border: 1px solid black;
   border-radius: 16px;
@@ -55,10 +68,54 @@
   top: 14px;
 }
 
-.container {
+.terms {
   display: flex;
+  position: absolute;
+  top: 75px;
+  right: 100px;
+  align-items: center;
+  background-color: #ff647c;
+  color: white;
+  padding: 7px 10px; /* Increase padding to make the button bigger */
+  font-size: 18px; /* Increase font size */
+  border-radius: 10px;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline from anchor */
+  display: inline-block;
+}
+
+.button_container {
+  display: flex;
+  position: absolute;
+  top: 265px;
+  left: 150px;
   justify-content: space-between;
   align-items: center;
+}
+
+.heading {
+  width: 100%;
+  font-size: 96px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  position: absolute;
+  top: 5px;
+  left: 145px;
+  /* justify-content: space-between; */
+  /* align-items: center; */
+}
+
+.description {
+  width: 100%;
+  font-size: 10;
+  font-weight: italics;
+  color: white;
+  display: flex;
+  position: absolute;
+  top: 210px;
+  left: 155px;
 }
 
 .container_item_left {
@@ -113,11 +170,11 @@
   }
 }
 
-.heading {
+/* .heading {
   width: 100%;
   font-size: 32;
   font-weight: bold;
-}
+} */
 
 .input {
   width: 100%;
@@ -128,5 +185,44 @@
 }
 
 .footer {
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+}
+
+.blackTop {
+  display: flex;
+  align-items: center;
+  flex: 10;
+  background-color: black;
+  width: 100%;
+}
+
+.white {
+  display: flex;
+  align-items: center;
+  flex: 5;
+  background-color: white;
+}
+
+.blackBottom {
+  flex: 1;
+  background-color: black;
+  width: 100%;
+}
+
+.carriage-login {
+  display: flex;
+}
+
+.topImage {
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-right: 200px; /* Add some spacing between text and image */
+}
+
+.bottomImage {
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-left: 200px; /* Add some spacing between text and image */
 }
