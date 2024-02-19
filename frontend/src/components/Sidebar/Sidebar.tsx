@@ -89,6 +89,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                   key={path}
                   onClick={() => setSelected(path)}
                   className={styles.icon}
+                  aria-current={path === selected ? 'page' : undefined}
+                  aria-label={caption}
                   to={path}
                 >
                   <div
@@ -98,11 +100,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                         : styles.circle
                     }
                   >
-                    <a
-                      href={path}
-                      aria-current={path === selected ? 'page' : undefined}
-                    ></a>
-                    <img alt={''} src={icon} />
+                    <img alt={caption} src={icon} />
                   </div>
                 </Link>
                 {caption}
