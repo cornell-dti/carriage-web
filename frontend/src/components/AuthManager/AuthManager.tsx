@@ -32,6 +32,16 @@ import axios, { setAuthToken } from '../../util/axios';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
+/**
+ * Encrypts a given string using AES encryption.
+ *
+ * This function takes a string and encrypts it using the AES algorithm with a secret key
+ * retrieved from the environment variables. The encrypted data is returned as a string.
+ * It is used to encrypt the JWT token before storing it in a cookie.
+ *
+ * @param {string} data - The string to be encrypted.
+ * @returns {string} The encrypted string.
+ */
 const encrypt = (data: string) => {
   const encrypted = CryptoJS.AES.encrypt(
     JSON.stringify(data),
@@ -40,6 +50,15 @@ const encrypt = (data: string) => {
   return encrypted;
 };
 
+/**
+ * Decrypts a given string using AES encryption.
+ * This function takes a string and decrypts it using the AES algorithm with a secret key
+ * retrieved from the environment variables. The decrypted data is returned as a string.
+ * It is used to decrypt the JWT token stored in a cookie.
+ *
+ * @param {string} hash - The string to be decrypted.
+ * @returns {string} The decrypted string.
+ */
 const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
   const bytes = CryptoJS.AES.decrypt(hash, secretKey);
   const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));

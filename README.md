@@ -12,11 +12,23 @@ Carriage documentation is located at our [Notion](https://dti-carriage.notion.si
 
 Want to run this locally? From our [Useful Commands page](https://dti-carriage.notion.site/Useful-Commands-b20422d052b444d396b04a6df4debc07).
 After cloning the repository, run:
-`npm run install:server`
-`npm run install:frontend`
-`npm run start:server`
-`npm run start:frontend`
-This will start an instance running locally.
+`npm run install:server`: It will install all dependencies for the backend. (Useful if you are only working on the backend).
+
+`npm run install:frontend`: It will install all dependencies for the frontend. (Useful if you are only working on the frontend).
+
+`npm run install`: It will install all dependencies for both the frontend and backend.
+
+`npm run start:server`: It will start the backend server.
+
+`npm run start:frontend`: It will start the frontend server.
+
+`npm run start`: It will start both the backend and frontend servers.
+
+`npm run test:server`: It will run all tests for the backend.
+
+`npm run test:frontend`: It will run all tests for the frontend.
+
+`npm run test`: It will run all tests for both the backend and frontend.
 
 ## About
 
