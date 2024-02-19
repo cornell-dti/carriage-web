@@ -5,7 +5,12 @@ import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 import axios from '../../../util/axios';
 
-const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
+const DriverPage = ({
+  onBack,
+  onSubmit,
+  formData,
+  labelid,
+}: ModalPageProps & { labelid?: string }) => {
   const { register, handleSubmit, formState } = useForm({
     defaultValues: {
       driver: formData?.driver ?? '',
@@ -38,9 +43,14 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.inputContainer}>
-        <div className={styles.drivers}>
+        <div
+          className={styles.drivers}
+          aria-required="true"
+          role="radiogroup"
+          aria-labelledby={labelid}
+        >
           {loaded ? (
-            availableDrivers.map((d) => (
+            availableDrivers.map((d, index) => (
               <div className={styles.driver} key={d.id}>
                 <Label
                   htmlFor={d.firstName + d.lastName}
@@ -55,7 +65,6 @@ const DriverPage = ({ onBack, onSubmit, formData }: ModalPageProps) => {
                   type="radio"
                   value={d.id}
                   ref={register({ required: true })}
-                  aria-required="true"
                 />
               </div>
             ))

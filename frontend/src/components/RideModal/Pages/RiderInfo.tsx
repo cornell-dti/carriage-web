@@ -88,7 +88,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l.name}>{l.name}</option>
+              <option key={l.id}>{l.name}</option>
             ))}
           </datalist>
         </div>
@@ -118,7 +118,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l.name}>{l.name}</option>
+              <option key={l.id}>{l.name}</option>
             ))}
           </datalist>
         </div>

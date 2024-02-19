@@ -135,6 +135,7 @@ const RiderModalInfo = ({
             Needs:{' '}
           </Label>
           <select
+            id="needs"
             name="needs"
             aria-required="true"
             ref={register({ required: true })}
