@@ -28,23 +28,24 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 
 **Current Contributors**
 
-- Harrison Chin - Software Developer
+
 - Andrew Choi - Product Manager
-- Rohit Valiveti - Software Developer
-- Pratyush Sudhakar - Technical Project Manager
-- Enoch Chen - Software Developer
-- Desmond Atikpui - Software Developer
-- Stuti Gupta - Software Developer
-- Kevin Lin - Software Developer
+- Desmond Atikpui - Technical Project Manager
 - Colin Wu - Software Developer
 
 **Past Contributors**
 
 - Daniel Wei - Technical Project Manager
+- Pratyush Sudhakar - Technical Project Manager
 - Bryan Graeser - Product Manager
 - Nina Xie - Product Manager
 - Matthew Guo - Technical Project Manager
+- Enoch Chen - Software Developer
+- Kevin Lin - Software Developer
+- Stuti Gupta - Software Developer
+- Harrison Chin - Software Developer
 - Aaron Kang - Software Developer
+- Rohit Valiveti - Software Developer
 - Zack Ashen - Software Developer
 - Tucker Stanley - Software Developer
 - Justin Kang - Software Developer
