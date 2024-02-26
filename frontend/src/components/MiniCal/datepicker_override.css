@@ -92,6 +92,7 @@
 .react-datepicker__quarter-text.react-datepicker__quarter--in-range:hover {
   background-color: #000000;
 }
+
 .react-datepicker__month--selected:hover,
 .react-datepicker__month--in-selecting-range:hover,
 .react-datepicker__month--in-range:hover,

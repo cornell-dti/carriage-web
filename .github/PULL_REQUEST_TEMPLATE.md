@@ -18,7 +18,7 @@ This pull request is the first step towards implementing feature Foo
 
 <!--- List any important or subtle points, future considerations, or other items of note. -->
 
-### Breaking Changes  <!-- Optional -->
+### Breaking Changes <!-- Optional -->
 
 <!-- Uncomment items that apply: -->
 
