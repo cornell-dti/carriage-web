@@ -32,6 +32,8 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Andrew Choi - Product Manager
 - Desmond Atikpui - Technical Project Manager
 - Colin Wu - Software Developer
+- Raissa Ji - Software Developer
+- Selena Liu - Software Developer
 
 **Past Contributors**
 
