@@ -8,6 +8,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import formatAvailability from '../../util/employee';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
+import { Button } from '../FormElements/FormElements';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -160,10 +161,10 @@ const searchableFields = (employee: DriverType | AdminType) => {
     employee.email,
     employee.phoneNumber,
   ];
-  if ('vehicle' in employee) {
+  if ('vehicle' in employee && employee.vehicle) {
     fields.push(employee.vehicle.name);
   }
-  if ('type' in employee) {
+  if ('type' in employee && employee.type) {
     fields.push(...employee.type);
   }
   return fields;
@@ -183,6 +184,8 @@ type EmployeeCardsProps = {
 
 const EmployeeCards = ({ query }: EmployeeCardsProps) => {
   const { admins, drivers } = useEmployees();
+  const [filterAdmin, setFilterAdmin] = useState(false);
+  const [filterDriver, setFilterDriver] = useState(false);
 
   const employees = useMemo(() => {
     const allEmployees = [...admins, ...drivers];
@@ -190,22 +193,55 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
     allEmployees.forEach((employee) => {
       employeeSet[employee.id] = { ...employeeSet[employee.id], ...employee };
     });
-    const sortedEmployees = Object.values(employeeSet).sort(
-      (a: Employee, b: Employee) => a.firstName.localeCompare(b.firstName)
-    );
+    const sortedEmployees = Object.values(employeeSet)
+      .filter((employee) => {
+        // if both or neither filters are selected, show all employees
+        if (filterAdmin == filterDriver) {
+          return true;
+        }
+        if (filterDriver) {
+          return 'availability' in employee;
+        }
+        if (filterAdmin) {
+          return 'type' in employee;
+        }
+      })
+      .sort((a, b) => a.firstName.localeCompare(b.firstName));
     if (!query) {
       return sortedEmployees;
     }
     // By filtering after coalescing step, we keep role info intact
     return sortedEmployees.filter(matchesQuery(query));
-  }, [admins, drivers, query]);
+  }, [admins, drivers, query, filterAdmin, filterDriver]);
 
   return (
-    <div className={styles.cardsContainer}>
-      {employees.map((employee) => (
-        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
-      ))}
-    </div>
+    <>
+      <div className={styles.filtersContainer}>
+        <Button
+          type="button"
+          onClick={() => setFilterDriver((v) => !v)}
+          outline={!filterDriver}
+        >
+          Drivers
+        </Button>
+        <Button
+          type="button"
+          onClick={() => setFilterAdmin((v) => !v)}
+          outline={!filterAdmin}
+        >
+          Admins
+        </Button>
+      </div>
+      <div className={styles.cardsContainer}>
+        {employees.map((employee) => (
+          <EmployeeCard
+            key={employee.id}
+            id={employee.id}
+            employee={employee}
+          />
+        ))}
+      </div>
+    </>
   );
 };
 

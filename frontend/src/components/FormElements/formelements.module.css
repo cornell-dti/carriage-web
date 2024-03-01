@@ -48,9 +48,10 @@
 }
 
 .primaryBtn {
-  background-color: black;
   color: white;
-  border: none;
+  background-color: black;
+  border: 0.063rem solid #000000;
+  box-sizing: border-box;
 }
 .primaryBtn:focus {
   box-shadow: 0 0 0 3px #0075db;
