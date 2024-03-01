@@ -122,7 +122,7 @@ const RiderModalInfo = ({
             id="phoneNumber"
             name="phoneNumber"
             type="tel"
-            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
+            ref={register({ required: true, pattern: /^[0-9-]{10,}$/ })}
             className={styles.firstRow}
             aria-required="true"
           />
