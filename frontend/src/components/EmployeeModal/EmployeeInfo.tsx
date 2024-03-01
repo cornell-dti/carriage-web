@@ -75,13 +75,13 @@ const EmployeeInfo = ({
           type="tel"
           defaultValue={phone}
           min={10}
-          max={10}
+          max={12}
           aria-required="true"
           className={cn(styles.input)}
           ref={register({
             required: true,
-            pattern: /[0-9]{10}/,
-            maxLength: 10,
+            pattern: /[0-9-]{10,}/,
+            maxLength: 12,
             minLength: 10,
           })}
         />
