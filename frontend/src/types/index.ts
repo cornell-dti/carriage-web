@@ -8,14 +8,14 @@ import { VehicleType } from '../../../server/src/models/vehicle';
 export type Rider = RiderType;
 
 export enum Accessibility {
-  NONE = '',
+  NONE = 'None',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
   MOTOR_SCOOTER = 'Motorized Scooter',
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
-  SERVICE_ANIMALS = 'Service Animals',
+  SERVICE_ANIMALS = 'Service Animal',
   OTHER = 'Other',
 }
 
@@ -58,6 +58,7 @@ export type ObjectType = {
 export type Vehicle = VehicleType;
 
 export enum Tag {
+  EAST = 'east',
   CENTRAL = 'central',
   NORTH = 'north',
   WEST = 'west',
