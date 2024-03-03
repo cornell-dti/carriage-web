@@ -84,12 +84,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <p className={styles.caption}>
+              <p className={styles.caption} id={path}>
                 <Link
                   key={path}
                   onClick={() => setSelected(path)}
                   className={styles.icon}
                   to={path}
+                  aria-labelledby={path}
                 >
                   <div
                     className={
@@ -102,7 +103,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                       href={path}
                       aria-current={path === selected ? 'page' : undefined}
                     ></a>
-                    <img alt={''} src={icon} />
+                    <img alt={`Go to ${caption}`} src={icon} />
                   </div>
                 </Link>
                 {caption}
