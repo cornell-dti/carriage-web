@@ -8,7 +8,7 @@ type CollapsibleSection = {
 };
 
 const Collapsible = ({ title, children }: CollapsibleSection) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(true); // Every Collapsible component will be expanded by default
   const icon = expanded ? down : up;
 
   const handleKeywordKeyPress = (e: React.KeyboardEvent) => {
