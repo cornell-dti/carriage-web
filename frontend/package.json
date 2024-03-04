@@ -38,7 +38,7 @@
   },
   "scripts": {
     "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts build",
+    "build": "react-scripts --openssl-legacy-provider build",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
