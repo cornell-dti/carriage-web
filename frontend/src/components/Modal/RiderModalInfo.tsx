@@ -153,7 +153,7 @@ const RiderModalInfo = ({
               id="otherNeeds"
               name="otherNeeds"
               type="text"
-              aria-required="true"
+              placeholder='Please Specify Needs'
             ></Input>
           ) : (
             <></>
