@@ -235,16 +235,20 @@ const RideTimesPage = ({
                 validate: (dropoffTime) => {
                   const pickupTime = getValues('pickupTime');
                   const date = getValues('date');
-                  const dropoff = moment(`${date} ${dropoffTime}`);
-                  return pickupTime < dropoffTime && checkBounds(date, dropoff);
+                  const pickupMoment = moment(`${date} ${pickupTime}`);
+                  const dropoffMoment = moment(`${date} ${dropoffTime}`);
+                  const duration = dropoffMoment.diff(pickupMoment, 'minutes');
+                  return duration >= 5 && checkBounds(date, dropoffMoment);
                 },
               })}
             />
             {errors.dropoffTime?.type === 'required' && (
-              <p className={styles.error}>Please choose a valid pickup time</p>
+              <p className={styles.error}>Please choose a valid dropoff time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
-              <p className={styles.error}>Invalid time</p>
+              <p className={styles.error}>
+                Dropoff time must be at least 5 minutes after pickup time
+              </p>
             )}
           </div>
         </div>
