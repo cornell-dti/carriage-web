@@ -153,7 +153,7 @@ const RiderModalInfo = ({
               id="otherNeeds"
               name="otherNeeds"
               type="text"
-              placeholder='Please Specify Needs'
+              placeholder="Please Specify Needs"
             ></Input>
           ) : (
             <></>
