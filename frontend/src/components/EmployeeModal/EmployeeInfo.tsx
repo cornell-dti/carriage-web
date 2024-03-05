@@ -74,15 +74,11 @@ const EmployeeInfo = ({
           id="phoneNumber"
           type="tel"
           defaultValue={phone}
-          min={10}
-          max={10}
           aria-required="true"
           className={cn(styles.input)}
           ref={register({
             required: true,
-            pattern: /[0-9]{10}/,
-            maxLength: 10,
-            minLength: 10,
+            pattern: /^\d{3}-?\d{3}-?\d{4}$/, //phone numbers can optionally take dashes
           })}
         />
         {formState.errors.phoneNumber && (
