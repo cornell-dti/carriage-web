@@ -78,7 +78,7 @@ const EmployeeInfo = ({
           className={cn(styles.input)}
           ref={register({
             required: true,
-            pattern: /^\d{3}-?\d{3}-?\d{4}$/ //phone numbers can optionally take dashes
+            pattern: /^\d{3}-?\d{3}-?\d{4}$/, //phone numbers can optionally take dashes
           })}
         />
         {formState.errors.phoneNumber && (
