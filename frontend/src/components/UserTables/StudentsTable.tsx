@@ -129,7 +129,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             endDate
           )}`;
           const usageData = getUsageData(id);
-          const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
+          const isStudentInvalid = moment().isAfter(moment(endDate)) && !active;
           const location = {
             pathname: `/riders/${r.id}`,
           };
