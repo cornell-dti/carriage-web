@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
+import { useState } from 'react';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -63,7 +64,8 @@ const RiderModalInfo = ({
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
-
+  const emptyStringArray : string[] = [""]
+  const [selectedNeedsOptions, setSelectedNeedsOptions] = useState(emptyStringArray);
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
@@ -138,6 +140,22 @@ const RiderModalInfo = ({
             name="needs"
             aria-required="true"
             ref={register({ required: true })}
+            value={selectedNeedsOptions}
+            onChange={(e) => {
+              if (!selectedNeedsOptions.includes(e.target.value)) {
+                setSelectedNeedsOptions([
+                  e.target.value,
+                  ...selectedNeedsOptions,
+                ]);
+              } else {
+                setSelectedNeedsOptions(
+                  selectedNeedsOptions.filter(
+                    (word) => !(word === e.target.value)
+                  )
+                );
+              }
+            }}
+            multiple={true}
           >
             {Object.values(Accessibility).map((value, index) => {
               return (
