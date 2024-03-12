@@ -5,16 +5,21 @@ import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
 import LocationModal from '../../components/LocationModal/LocationModal';
 import { useLocations } from '../../context/LocationsContext';
+import SearchBar from '../../components/SearchBar/SearchBar';
+
 
 const Locations = () => {
   useEffect(() => {
     document.title = 'Locations - Carriage';
   }, []);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [searchedLocations, setSearchLocations] = useState(locations)
+  const [searchName, setSearchName] = useState('')
   const loc = useLocations().locations;
 
   useEffect(() => {
     setLocations(loc);
+    setSearchLocations(loc)
   }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
@@ -24,7 +29,17 @@ const Locations = () => {
       })
     );
   };
-
+  
+  const handleSearchLocationByName = (query : string) => {
+    setSearchLocations(
+      locations.filter(
+        (location : Location) => {
+          return location.name.toLowerCase().includes(query);
+        }
+      )
+    )
+  }
+  
   return (
     <main id="main">
       <div className={styles.pageTitle}>
@@ -34,7 +49,15 @@ const Locations = () => {
           <Notification />
         </div>
       </div>
-      <LocationsTable locations={locations} setLocations={setLocations} />
+      <SearchBar
+        value={searchName}
+        onChange={(e) => {
+          setSearchName(e.target.value);
+          handleSearchLocationByName(e.target.value);
+        }}
+        placeholder="Search for locations..."
+      />
+      <LocationsTable locations={searchedLocations} setLocations={setSearchLocations} />
     </main>
   );
 };
