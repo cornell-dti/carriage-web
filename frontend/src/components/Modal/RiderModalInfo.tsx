@@ -165,7 +165,7 @@ const RiderModalInfo = ({
             aria-required="true"
             ref={register({
               required: true,
-              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+              validate: (value) => value.trim() !== '',
             })}
           />
           {errors.address && (
