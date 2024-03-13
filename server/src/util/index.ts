@@ -11,28 +11,6 @@ export function createKeys(property: string, values: string[]) {
 }
 
 export function isAddress(address: string) {
-  // let parsedAddr;
-  // try {
-  //   parsedAddr = parseAddress(address);
-  // } catch {
-  //   return false;
-  // }
-  // const {
-  //   streetNumber,
-  //   streetName,
-  //   streetSuffix,
-  //   placeName,
-  //   stateName,
-  //   zipCode,
-  // } = parsedAddr;
-  // return Boolean(
-  //   streetNumber &&
-  //     streetName &&
-  //     streetSuffix &&
-  //     placeName &&
-  //     stateName &&
-  //     zipCode
-  // );
   return true;
 }
 
