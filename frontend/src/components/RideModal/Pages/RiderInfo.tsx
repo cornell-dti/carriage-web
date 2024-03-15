@@ -93,15 +93,12 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          <Label htmlFor={'dropoffLoc'} className={styles.label}>
+          <Label htmlFor="dropoffLoc" className={styles.label}>
             Dropoff Location
           </Label>
-          <Input
+          <select
             id="dropoffLoc"
             name="dropoffLoc"
-            type="text"
-            list="locations"
-            aria-required="true"
             ref={register({
               required: true,
               validate: (dropoffLoc) => {
@@ -109,18 +106,22 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
                 return pickupLoc !== dropoffLoc;
               },
             })}
-          />
+            className={cn(styles.select, { [styles.error]: errors.dropoffLoc })}
+            aria-required="true"
+          >
+            <option value="">Select a location</option>
+            {locations.map((l) => (
+              <option key={l.id} value={l.name}>
+                {l.name}
+              </option>
+            ))}
+          </select>
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>
           )}
           {errors.dropoffLoc?.type === 'validate' && (
             <p className={styles.error}>Locations cannot match</p>
           )}
-          <datalist id="locations">
-            {locations.map((l) => (
-              <option key={l.name}>{l.name}</option>
-            ))}
-          </datalist>
         </div>
       </div>
       <div className={styles.btnContainer}>
