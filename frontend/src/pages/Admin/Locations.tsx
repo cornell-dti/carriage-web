@@ -7,7 +7,6 @@ import LocationModal from '../../components/LocationModal/LocationModal';
 import { useLocations } from '../../context/LocationsContext';
 import SearchBar from '../../components/SearchBar/SearchBar';
 
-
 const Locations = () => {
   useEffect(() => {
     document.title = 'Locations - Carriage';
