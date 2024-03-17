@@ -5,10 +5,15 @@ type DropdownBoxProps = {
   placeHolderText: string;
   dataSource: Array<string>;
   isOpen: boolean;
-  confirmText : string;
+  confirmText: string;
 };
 
-const DropdownBox = ({ placeHolderText, dataSource, isOpen, confirmText }: DropdownBoxProps) => {
+const DropdownBox = ({
+  placeHolderText,
+  dataSource,
+  isOpen,
+  confirmText,
+}: DropdownBoxProps) => {
   const [isDropdownBoxOpen, setIsDropdownBoxOpen] = useState(isOpen);
   const [selectedItems, setSelectedItems] = useState(new Set<string>());
 
@@ -36,31 +41,39 @@ const DropdownBox = ({ placeHolderText, dataSource, isOpen, confirmText }: Dropd
         <div className="dropdown-header-contents">
           {placeHolderText}
           {'      '}
-          {isDropdownBoxOpen ? "⇈" : "⇊"}
+          {isDropdownBoxOpen ? '⇈' : '⇊'}
         </div>
       </button>
 
       {isDropdownBoxOpen && (
         <>
-        <div className="dropdown-list">
-          {dataSource.map((itemName) => (
-            <div
-              key={itemName}
-              className={`dropdown-list-item ${selectedItems.has(itemName) ? 'item-selected' : ''}`}
-              onClick={() => toggleSelectItem(itemName)}
+          <div className="dropdown-list">
+            {dataSource.map((itemName) => (
+              <div
+                key={itemName}
+                className={`dropdown-list-item ${
+                  selectedItems.has(itemName) ? 'item-selected' : ''
+                }`}
+                onClick={() => toggleSelectItem(itemName)}
+              >
+                <div
+                  className={`item-checkbox ${
+                    selectedItems.has(itemName) ? 'item-checkbox-selected' : ''
+                  }`}
+                />
+                <div className="item-name">{itemName}</div>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="dropdown-list-confirm"
+              onClick={toggleDropdownBox}
             >
-              <div className={`item-checkbox ${selectedItems.has(itemName) ? 'item-checkbox-selected' : ''}`} />
-              <div className="item-name">{itemName}</div>
-            </div>
-          ))
-          }
-          <button type = "button" className='dropdown-list-confirm' onClick = {toggleDropdownBox}>
-            {confirmText}
-          </button>
-        </div>
+              {confirmText}
+            </button>
+          </div>
         </>
-      )
-      }
+      )}
     </div>
   );
 };

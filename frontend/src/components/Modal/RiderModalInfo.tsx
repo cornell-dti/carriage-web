@@ -133,12 +133,14 @@ const RiderModalInfo = ({
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           Needs:
-          <DropdownBox 
-            placeHolderText="Select Your Needs" 
-            dataSource={Object.values(Accessibility).splice(1).map((value, _) => value.toString())} 
+          <DropdownBox
+            placeHolderText="Select Your Needs"
+            dataSource={Object.values(Accessibility)
+              .splice(1)
+              .map((value, _) => value.toString())}
             isOpen={false}
-            confirmText='Next'/>
-            
+            confirmText="Next"
+          />
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or

@@ -8,8 +8,8 @@
   padding: 8px;
   cursor: pointer;
   max-width: 200px; /* Adjust width as needed */
-  height : 31px;
-  border-radius: 0.25rem ;
+  height: 31px;
+  border-radius: 0.25rem;
 }
 
 .dropdown-list {
@@ -24,7 +24,6 @@
   z-index: 1000;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding drop shadow */
-
 }
 
 .dropdown-list-item {
@@ -40,18 +39,18 @@
   border: 1.5px solid #ccc;
   margin-right: 5px;
   border-radius: 3px;
-  position: relative; 
+  position: relative;
   background-color: white;
 }
 
 .item-checkbox-selected::after {
-  content: '✔'; 
+  content: '✔';
   font-size: xx-small;
-  position: absolute; 
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color : white
+  color: white;
 }
 
 .item-checkbox-selected {
@@ -62,9 +61,9 @@
   font-size: small;
 }
 .dropdown-list-confirm {
-  height : 30px;
-  width : 60px;
+  height: 30px;
+  width: 60px;
   border-radius: 20px;
-  border : 2px solid rgba(158, 158, 158);
+  border: 2px solid rgba(158, 158, 158);
   margin-left: 50%;
 }
