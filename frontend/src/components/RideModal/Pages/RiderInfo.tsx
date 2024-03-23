@@ -21,6 +21,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { locations } = useLocations();
   const { riders } = useRiders();
+  const filteredRiders = riders.filter((r) => r.active == true);
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
     const rider = nameToId[name.toLowerCase()];
@@ -30,7 +31,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    const nameToIdObj = riders.reduce((acc: ObjectType, r: Rider) => {
+    const nameToIdObj = filteredRiders.reduce((acc: ObjectType, r: Rider) => {
       const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
       acc[fullName] = r.id;
       return acc;
@@ -64,7 +65,13 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           />
           {errors.name && <p className={styles.error}>Rider not found</p>}
           <datalist id="names">
-            {riders.map((r) => (
+            {/* people.filter((person) => person.name !== 'John') */}
+            {/* {riders.filter((r) => (
+              <option key={r.id}>
+                {r.firstName} {r.lastName}
+              </option>
+            ))} */}
+            {filteredRiders.map((r) => (
               <option key={r.id}>
                 {r.firstName} {r.lastName}
               </option>
