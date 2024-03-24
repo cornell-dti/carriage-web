@@ -1,0 +1,49 @@
+.dropdown-wrapper {
+  position: relative;
+}
+
+.dropdown-header {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid #000000;
+  padding: 0.5rem;
+  cursor: pointer;
+  max-width: 20rem; /* Adjust width as needed */
+  height: 1.938rem;
+  border-radius: 0.25rem;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  background-color: rgba(234, 233, 233); /* Grey color with 30% opacity */
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  max-height: 25rem; /* Adjust max-height as needed */
+  overflow-y: auto;
+  z-index: 1000;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding drop shadow */
+}
+
+
+.item-checkbox {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 0.094rem solid #ccc;
+  margin-right: 0.313rem;
+  border-radius: 0.188rem;
+  background-color: white;
+}
+
+.item-name {
+  font-size: small;
+}
+
+.dropdown-text-input {
+  position : relative;
+  margin-left : 0.2rem;
+  border-radius : 6px;
+  height : 1.75rem;
+  border : 1px #808080 solid;
+}

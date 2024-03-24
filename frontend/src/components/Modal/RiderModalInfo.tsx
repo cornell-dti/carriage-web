@@ -5,7 +5,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 import { useState } from 'react';
-import DropdownBox from '../DropdownBox/DropdownBox';
+import DropdownBox from '../MultiselectBox/DropdownBox';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -136,10 +136,10 @@ const RiderModalInfo = ({
           <DropdownBox
             placeHolderText="Select Your Needs"
             dataSource={Object.values(Accessibility)
-              .splice(1)
               .map((value, _) => value.toString())}
             isOpen={false}
-            confirmText="Next"
+            optionWithTextInputBox = {"Other"}
+            placeHolderTextInputBox='Specify Your Other Needs'
           />
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
