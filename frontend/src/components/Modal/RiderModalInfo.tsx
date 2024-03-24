@@ -4,6 +4,8 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
+import { useState } from 'react';
+import MultiselectBox from '../MultiselectBox/MultiselectBox';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -63,7 +65,6 @@ const RiderModalInfo = ({
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
-
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
@@ -131,22 +132,16 @@ const RiderModalInfo = ({
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="needs">
-            Needs:{' '}
-          </Label>
-          <select
-            name="needs"
-            aria-required="true"
-            ref={register({ required: true })}
-          >
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
-            })}
-          </select>
+          <Label className={styles.label}>Needs:</Label>
+          <MultiselectBox
+            placeHolderText="Select Your Needs"
+            dataSource={Object.values(Accessibility).map((value, _) =>
+              value.toString()
+            )}
+            isOpen={false}
+            optionWithTextInputBox={'Other'}
+            placeHolderTextInputBox="Specify Your Other Needs"
+          />
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or
