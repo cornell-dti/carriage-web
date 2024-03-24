@@ -26,7 +26,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adding drop shadow */
 }
 
-
 .item-checkbox {
   width: 0.75rem;
   height: 0.75rem;
@@ -41,9 +40,9 @@
 }
 
 .dropdown-text-input {
-  position : relative;
-  margin-left : 0.2rem;
-  border-radius : 6px;
-  height : 1.75rem;
-  border : 1px #808080 solid;
+  position: relative;
+  margin-left: 0.2rem;
+  border-radius: 6px;
+  height: 1.75rem;
+  border: 1px #808080 solid;
 }
