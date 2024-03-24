@@ -135,11 +135,12 @@ const RiderModalInfo = ({
           Needs:
           <DropdownBox
             placeHolderText="Select Your Needs"
-            dataSource={Object.values(Accessibility)
-              .map((value, _) => value.toString())}
+            dataSource={Object.values(Accessibility).map((value, _) =>
+              value.toString()
+            )}
             isOpen={false}
-            optionWithTextInputBox = {"Other"}
-            placeHolderTextInputBox='Specify Your Other Needs'
+            optionWithTextInputBox={'Other'}
+            placeHolderTextInputBox="Specify Your Other Needs"
           />
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
