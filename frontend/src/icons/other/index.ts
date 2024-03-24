@@ -18,4 +18,4 @@ export { default as block } from './blocked.svg';
 export { default as red_trash } from './red-trash.svg';
 export { default as search_icon } from './search.svg';
 export { default as upArrow } from './upArrow.svg';
-export { default as downArrow } from './downArrow.svg'
+export { default as downArrow } from './downArrow.svg';

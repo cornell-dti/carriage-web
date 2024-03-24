@@ -132,7 +132,7 @@ const RiderModalInfo = ({
           )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-        <Label className={styles.label}>Needs:</Label>
+          <Label className={styles.label}>Needs:</Label>
           <DropdownBox
             placeHolderText="Select Your Needs"
             dataSource={Object.values(Accessibility).map((value, _) =>
