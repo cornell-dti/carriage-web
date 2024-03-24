@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './DropdownBox.css';
+import './Multiselectbox.css';
 import { upArrow, downArrow } from '../../icons/other';
 
 type DropdownBoxProps = {
