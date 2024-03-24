@@ -64,7 +64,7 @@ const MultiselectBox = ({
                   id={itemName}
                   name={itemName}
                   onChange={() => toggleSelectItem(itemName)}
-                  checked = {selectedItems.has(itemName)}
+                  checked={selectedItems.has(itemName)}
                 ></input>
                 <label htmlFor={itemName} className={'item-name'}>
                   {itemName}
