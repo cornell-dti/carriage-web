@@ -4,10 +4,23 @@
   margin-bottom: 0.5rem;
 }
 
+input[name='info'] {
+  height: 103px;
+}
+
+input[name='address'] {
+  width: 298px;
+}
+
+.label,
 .input {
-  font-size: 1.5rem;
-  min-height: 40px;
-  width: 280px;
+  border-radius: 6px;
+  border: 1px solid #808080;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  height: 31px;
+  width: 224px;
 }
 
 .errorMsg {
@@ -19,14 +32,35 @@
   padding: 0.2rem;
 }
 
+div > Button {
+  float: right;
+  margin-left: 10px;
+}
+
 .submit {
   float: right;
 }
 
 .inputContainer {
-  min-height: 40px;
-  width: 280px;
-  font-size: 1.5rem;
-  display: block;
+  font-size: 0.875rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+
+  row-gap: 30px;
+
+  grid-template-areas:
+    'name address'
+    'info tag'
+    'buttons buttons';
+
   margin-bottom: 0.75rem;
+}
+
+.inputContainer select {
+  width: 124px;
+  height: 31px;
+}
+
+.inputContainer > div:last-child {
+  grid-area: buttons;
 }

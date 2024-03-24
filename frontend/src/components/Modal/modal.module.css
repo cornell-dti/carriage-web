@@ -17,6 +17,8 @@
   padding: 2rem 2.25rem;
   border-radius: 1rem;
   z-index: 1010;
+  height: 386px;
+  width: 616px;
 }
 
 .title {
@@ -25,6 +27,7 @@
 }
 
 .closeBtn {
+  outline: none;
   border: none;
   cursor: pointer;
   background: none;
@@ -32,9 +35,10 @@
   margin-left: 0.75rem;
 }
 
-.closeBtn:focus {
+.closeBtn:active {
   outline: 3px solid black;
 }
+
 .topContainer {
   display: flex;
   justify-content: space-between;
