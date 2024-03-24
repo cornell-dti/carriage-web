@@ -59,7 +59,7 @@ const LocationModal = ({
   const { name, address, info } = errors;
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
-  const submitButtonText = existingLocation ? 'Save' : 'Add';
+  const submitButtonText = existingLocation ? 'Save' : 'Add Location';
 
   const openModal = () => {
     setIsOpen(true);
@@ -97,63 +97,83 @@ const LocationModal = ({
       <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className={styles.inputContainer}>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              name="name"
-              type="text"
-              id="name"
-              defaultValue={existingLocation?.name}
-              className={styles.input}
-              ref={register({ required: true })}
-              aria-required="true"
-            />
-            {name && <p className={styles.errorMsg}>Please enter a name</p>}
-            <Label htmlFor="address">Address</Label>
-            <Input
-              name="address"
-              type="text"
-              id="address"
-              defaultValue={existingLocation?.address}
-              className={styles.input}
-              aria-required="true"
-              ref={register({ required: true })}
-            />
-            {address && <p className={styles.errorMsg}>{address.message}</p>}
-            <Label htmlFor="info">Pickup/Dropoff Info</Label>
-            <Input
-              name="info"
-              type="text"
-              id="info"
-              defaultValue={existingLocation?.info}
-              className={styles.input}
-              ref={register({ required: true })}
-              aria-required="true"
-            />
-            {info && (
-              <p className={styles.errorMsg}>
-                Please enter pickup/dropoff info
-              </p>
-            )}
-            <Label htmlFor="tag">Tag</Label>
-            <select
-              name="tag"
-              id="tag"
-              defaultValue={existingLocation?.tag}
-              ref={register({ required: true })}
-              className={styles.inputContainer}
-              aria-required="true"
-            >
-              {Object.values(Tag).map((value) =>
-                value === 'custom' ? null : (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                )
+            <div style={{ gridArea: 'name' }}>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                name="name"
+                type="text"
+                id="name"
+                defaultValue={existingLocation?.name}
+                className={styles.input}
+                ref={register({ required: true })}
+                aria-required="true"
+              />
+              {name && <p className={styles.errorMsg}>Please enter a name</p>}
+            </div>
+
+            <div style={{ gridArea: 'address' }}>
+              <Label htmlFor="address">Address</Label>
+              <Input
+                name="address"
+                type="text"
+                id="address"
+                defaultValue={existingLocation?.address}
+                className={styles.input}
+                aria-required="true"
+                ref={register({ required: true })}
+              />
+              {address && <p className={styles.errorMsg}>{address.message}</p>}
+            </div>
+
+            <div style={{ gridArea: 'info' }}>
+              <Label htmlFor="info">Pickup / Dropoff Information</Label>
+              <Input
+                name="info"
+                type="text"
+                id="info"
+                defaultValue={existingLocation?.info}
+                className={styles.input}
+                ref={register({ required: true })}
+                aria-required="true"
+              />
+              {info && (
+                <p className={styles.errorMsg}>
+                  Please enter pickup/dropoff info
+                </p>
               )}
-            </select>
+            </div>
+
+            <div style={{ gridArea: 'tag' }}>
+              <Label htmlFor="tag">Tag</Label>
+              <select
+                name="tag"
+                id="tag"
+                defaultValue={existingLocation?.tag}
+                ref={register({ required: true })}
+                className={styles.inputContainer}
+                aria-required="true"
+              >
+                {Object.values(Tag).map((value) =>
+                  value === 'custom' ? null : (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
             <div>
               <Button className={styles.submit} type="submit">
                 {submitButtonText}
+              </Button>
+
+              <Button className={styles.clearButton} type="submit">
+                Clear All
+              </Button>
+
+              <Button className={styles.backButton} type="submit">
+                Back
               </Button>
             </div>
           </div>
