@@ -81,7 +81,9 @@ const MultiselectBox = ({
                 onChange={(newInputValue) => {
                   setInputValue(newInputValue.target.value);
                 }}
-                placeholder={placeHolderTextInputBox}
+                placeholder={
+                  placeHolderTextInputBox ? placeHolderTextInputBox : ''
+                }
               />
             )}
           </div>
