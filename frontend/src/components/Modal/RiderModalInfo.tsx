@@ -5,7 +5,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 import { useState } from 'react';
-import DropdownBox from '../MultiselectBox/MultiselectBox';
+import MultiselectBox from '../MultiselectBox/MultiselectBox';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -133,7 +133,7 @@ const RiderModalInfo = ({
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label}>Needs:</Label>
-          <DropdownBox
+          <MultiselectBox
             placeHolderText="Select Your Needs"
             dataSource={Object.values(Accessibility).map((value, _) =>
               value.toString()

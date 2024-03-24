@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Multiselectbox.css';
 import { upArrow, downArrow } from '../../icons/other';
 
-type DropdownBoxProps = {
+type MultiselectBoxProps = {
   placeHolderText: string;
   dataSource: Array<string>;
   isOpen: boolean;
@@ -10,13 +10,13 @@ type DropdownBoxProps = {
   placeHolderTextInputBox?: string;
 };
 
-const DropdownBox = ({
+const MultiselectBox = ({
   placeHolderText,
   dataSource,
   isOpen,
   optionWithTextInputBox,
   placeHolderTextInputBox,
-}: DropdownBoxProps) => {
+}: MultiselectBoxProps) => {
   const [isDropdownBoxOpen, setIsDropdownBoxOpen] = useState(isOpen);
   const [selectedItems, setSelectedItems] = useState(new Set<string>());
   const [inputValue, setInputValue] = useState('');
@@ -90,4 +90,4 @@ const DropdownBox = ({
   );
 };
 
-export default DropdownBox;
+export default MultiselectBox;
