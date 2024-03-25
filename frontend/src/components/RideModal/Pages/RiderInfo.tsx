@@ -3,7 +3,12 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, Label, SelectComponent } from '../../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
@@ -75,7 +80,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'pickupLoc'} className={styles.label}>
             Pickup Location
           </Label>
-          <SelectComponent datalist={locations} isSearchable={true}/>
+          <SelectComponent datalist={locations} isSearchable={true} />
 
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
@@ -87,11 +92,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-        <Label htmlFor="dropoffLoc">Dropoff Location</Label>
-          <SelectComponent
-            datalist={locations}
-            isSearchable={true}
-          />
+          <Label htmlFor="dropoffLoc">Dropoff Location</Label>
+          <SelectComponent datalist={locations} isSearchable={true} />
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>
           )}

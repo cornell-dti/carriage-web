@@ -1,7 +1,7 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
-import Select,{Props as SelectProps} from 'react-select';
+import Select, { Props as SelectProps } from 'react-select';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -80,7 +80,7 @@ type DataList = {
   name: string;
 };
 
-type SelectComponentProps =SelectProps & {
+type SelectComponentProps = SelectProps & {
   datalist: DataList[];
   className?: string;
 };
