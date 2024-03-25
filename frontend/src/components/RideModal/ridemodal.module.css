@@ -1,7 +1,12 @@
+.label {
+  display: block;
+}
+
 .form {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
+  /* padding-right: 10rem; */
 }
 
 .error {
@@ -13,12 +18,18 @@
   margin-bottom: 1.5rem;
 }
 
+.input {
+  border: 1px solid #808080;
+  border-radius: 0.25rem;
+}
+
 .btnContainer {
   display: flex;
+  justify-content: flex-end;
 }
 
 .btnContainer > button {
-  margin: 0 0.75rem;
+  margin-right: 0 0.75rem;
 }
 
 .rideTime {
@@ -29,23 +40,25 @@
 
 .col1 {
   grid-column: 1;
+  display: block;
 }
 
 .col2 {
   grid-column: 2;
+  display: block;
 }
 
 .colSpan {
   grid-column: 1/-1;
 }
 
-.select {
+/* .select {
   border: none;
   border-radius: 0.25rem;
   font-size: 1rem;
   padding: 0.25rem;
   background-color: #eae9e9;
-}
+} */
 
 .day {
   border-radius: 40%;
@@ -111,6 +124,43 @@
   width: 100%;
 }
 
-.label {
-  display: block;
+.clearAllBtn {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  min-width: 6.563rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  color: black;
+  margin-right: 1rem;
+  display: inline-block;
+  margin-left:3rem;
+}
+
+.nextBtn {
+  border-radius: 0.5rem;
+  min-width: 6.563rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.image {
+  width: .7rem;
+  height: .7rem;
+}
+
+.imgContainer {
+  display: flex;
+  align-items: center; 
+  border-radius: 6px;
+  border: 1px solid #808080;
+  padding-left: 5px;
+}
+
+.imgContainer > input {
+  border: 0px; 
 }
