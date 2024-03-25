@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, Label } from '../../FormElements/FormElements';
+import { Button, Input, Label, SelectComponent } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
@@ -75,14 +75,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'pickupLoc'} className={styles.label}>
             Pickup Location
           </Label>
-          <Input
-            id="pickupLoc"
-            name="pickupLoc"
-            type="text"
-            list="locations"
-            ref={register({ required: true })}
-            aria-required="true"
-          />
+          <SelectComponent datalist={locations} isSearchable={true}/>
+
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
           )}
@@ -93,29 +87,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          <Label htmlFor="dropoffLoc" className={styles.label}>
-            Dropoff Location
-          </Label>
-          <select
-            id="dropoffLoc"
-            name="dropoffLoc"
-            ref={register({
-              required: true,
-              validate: (dropoffLoc) => {
-                const pickupLoc = getValues('pickupLoc');
-                return pickupLoc !== dropoffLoc;
-              },
-            })}
-            className={cn(styles.select, { [styles.error]: errors.dropoffLoc })}
-            aria-required="true"
-          >
-            <option value="">Select a location</option>
-            {locations.map((l) => (
-              <option key={l.id} value={l.name}>
-                {l.name}
-              </option>
-            ))}
-          </select>
+        <Label htmlFor="dropoffLoc">Dropoff Location</Label>
+          <SelectComponent
+            datalist={locations}
+            isSearchable={true}
+          />
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>
           )}

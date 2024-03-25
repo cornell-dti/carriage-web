@@ -1,6 +1,7 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
+import Select,{Props as SelectProps} from 'react-select';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -73,3 +74,32 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
+type DataList = {
+  id: string;
+  name: string;
+};
+
+type SelectComponentProps =SelectProps & {
+  datalist: DataList[];
+  className?: string;
+};
+
+export const SelectComponent: React.FC<SelectComponentProps> = ({
+  datalist,
+  className,
+  ...rest
+}) => {
+  const transformedOptions = datalist.map((data) => ({
+    value: data.id,
+    label: data.name,
+  }));
+
+  return (
+    <Select
+      options={transformedOptions}
+      className={cn(styles.customSelect, className)}
+      {...rest}
+    />
+  );
+};
