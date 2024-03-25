@@ -8,6 +8,9 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
+import calendarIcon from '../../../icons/userInfo/calendar.svg';
+import clockIcon from '../../../icons/userInfo/clock.svg';
+import trashIcon from '../../../icons/other/trash.svg';
 
 // VERY TEMPORARY IMPLEMENTATION
 // We use this "day selector" component a few times throughout the codebase,
@@ -154,40 +157,48 @@ const RideTimesPage = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
-            <Label htmlFor="date">Day:</Label>
-            <Input
-              id="date"
-              type="date"
-              name="date"
-              aria-required="true"
-              ref={register({
-                required: true,
-                validate: (date) => {
-                  const fmtDate = format_date(date);
-                  const fmtCurr = format_date(curDate);
-                  const notWeekend =
-                    moment(date).day() !== 0 && moment(date).day() !== 6;
-                  return fmtDate >= fmtCurr && notWeekend;
-                },
-              })}
-            />
-            {errors.date?.type === 'required' && (
-              <p className={styles.error}>Please enter a date</p>
-            )}
-            {errors.date?.type === 'validate' && (
-              <p className={styles.error}>
-                Please enter a valid start date (No rides on weekends)
-              </p>
-            )}
+            <Label htmlFor="date" className={styles.label}>
+              Date
+            </Label>
+            <div className={styles.imgContainer}>
+              <img src={calendarIcon} className={styles.image}></img>
+              <Input
+                className={styles.input}
+                id="date"
+                type="date"
+                name="date"
+                aria-required="true"
+                ref={register({
+                  required: true,
+                  validate: (date) => {
+                    const fmtDate = format_date(date);
+                    const fmtCurr = format_date(curDate);
+                    const notWeekend =
+                      moment(date).day() !== 0 && moment(date).day() !== 6;
+                    return fmtDate >= fmtCurr && notWeekend;
+                  },
+                })}
+              />
+              {errors.date?.type === 'required' && (
+                <p className={styles.error}>Please enter a date</p>
+              )}
+              {errors.date?.type === 'validate' && (
+                <p className={styles.error}>
+                  Please enter a valid start date (No rides on weekends)
+                </p>
+              )}
+            </div>
           </div>
           <div className={styles.col2}>
-            <Label htmlFor="repeats">Repeats:</Label>
+            <Label htmlFor="repeats" className={styles.label}>
+              Repeats:
+            </Label>
             <select
               id="repeats"
               name="repeats"
               ref={register({ required: true })}
               aria-required="true"
-              className={styles.select}
+              className={styles.input}
             >
               {Object.values(RepeatValues).map((repeatValue) => (
                 <option key={repeatValue} value={repeatValue}>
@@ -201,54 +212,79 @@ const RideTimesPage = ({
           </div>
           {isRepeating && <RepeatSection repeatValue={watchRepeats} />}
           <div className={styles.col1}>
-            <Label htmlFor="pickupTime">Pickup time:</Label>
-            <Input
-              id="pickupTime"
-              type="time"
-              name="pickupTime"
-              aria-required="true"
-              ref={register({
-                required: true,
-                validate: (pickupTime) => {
-                  const date = getValues('date');
-                  const pickup = moment(`${date} ${pickupTime}`);
-                  return checkBounds(date, pickup);
-                },
-              })}
-            />
-            {errors.pickupTime?.type === 'required' && (
-              <p className={styles.error}>Please choose a valid pickup time</p>
-            )}
-            {errors.pickupTime?.type === 'validate' && (
-              <p className={styles.error}>Invalid time</p>
-            )}
+            <Label htmlFor="pickupTime" className={styles.label}>
+              Pickup time:
+            </Label>
+            <div className={styles.imgContainer}>
+              <img src={clockIcon} className={styles.image} />
+              <Input
+                className={styles.input}
+                id="pickupTime"
+                type="time"
+                name="pickupTime"
+                aria-required="true"
+                ref={register({
+                  required: true,
+                  validate: (pickupTime) => {
+                    const date = getValues('date');
+                    const pickup = moment(`${date} ${pickupTime}`);
+                    return checkBounds(date, pickup);
+                  },
+                })}
+              />{' '}
+              {errors.pickupTime?.type === 'required' && (
+                <p className={styles.error}>
+                  Please choose a valid pickup time
+                </p>
+              )}
+              {errors.pickupTime?.type === 'validate' && (
+                <p className={styles.error}>Invalid time</p>
+              )}
+            </div>
           </div>
           <div className={styles.col2}>
-            <Label htmlFor="dropoffTime">Dropoff time:</Label>
-            <Input
-              id="dropoffTime"
-              type="time"
-              name="dropoffTime"
-              aria-required="true"
-              ref={register({
-                required: true,
-                validate: (dropoffTime) => {
-                  const pickupTime = getValues('pickupTime');
-                  const date = getValues('date');
-                  const dropoff = moment(`${date} ${dropoffTime}`);
-                  return pickupTime < dropoffTime && checkBounds(date, dropoff);
-                },
-              })}
-            />
-            {errors.dropoffTime?.type === 'required' && (
-              <p className={styles.error}>Please choose a valid pickup time</p>
-            )}
-            {errors.dropoffTime?.type === 'validate' && (
-              <p className={styles.error}>Invalid time</p>
-            )}
+            <Label htmlFor="dropoffTime" className={styles.label}>
+              Dropoff time:
+            </Label>
+            <div className={styles.imgContainer}>
+              <img src={clockIcon} className={styles.image} />
+              <Input
+                className={styles.input}
+                id="dropoffTime"
+                type="time"
+                name="dropoffTime"
+                aria-required="true"
+                ref={register({
+                  required: true,
+                  validate: (dropoffTime) => {
+                    const pickupTime = getValues('pickupTime');
+                    const date = getValues('date');
+                    const dropoff = moment(`${date} ${dropoffTime}`);
+                    return (
+                      pickupTime < dropoffTime && checkBounds(date, dropoff)
+                    );
+                  },
+                })}
+              />
+              {errors.dropoffTime?.type === 'required' && (
+                <p className={styles.error}>
+                  Please choose a valid pickup time
+                </p>
+              )}
+              {errors.dropoffTime?.type === 'validate' && (
+                <p className={styles.error}>Invalid time</p>
+              )}
+            </div>
           </div>
         </div>
-        <Button type="submit">Next</Button>
+        <div className={styles.btnContainer}>
+          <Button type="reset" className={styles.clearAllBtn}>
+            <img src={trashIcon} className={styles.image} /> Clear All
+          </Button>
+          <Button type="submit" className={styles.nextBtn}>
+            Next
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );
