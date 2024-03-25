@@ -13,7 +13,7 @@
   color: #eb0023;
   font-size: 0.7rem;
 }
-
+/* This is a container for all inputs not to be mistaken for imageContainer*/
 .inputContainer {
   margin-bottom: 1.5rem;
 }
@@ -149,10 +149,11 @@
 }
 
 .image {
-  width: .7rem;
-  height: .7rem;
+  width: .8rem;
+  height: .8rem;
 }
-
+/* This is a container to group image and input together so that a border can be created 
+that includes the image, not to be mistaken with inputContainer */
 .imgContainer {
   display: flex;
   align-items: center; 
@@ -160,7 +161,8 @@
   border: 1px solid #808080;
   padding-left: 5px;
 }
-
+/* The default input adds a border, but since .imgContainer already adds a border, 
+this gets rid of the default border */
 .imgContainer > input {
   border: 0px; 
 }
