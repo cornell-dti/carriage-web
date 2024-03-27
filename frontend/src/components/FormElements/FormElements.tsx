@@ -2,6 +2,7 @@ import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
 import Select, { Props as SelectProps } from 'react-select';
+import { Control, useController } from 'react-hook-form';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -81,11 +82,15 @@ type DataList = {
 };
 
 type SelectComponentProps = SelectProps & {
+  control: Control;
+  name: string;
   datalist: DataList[];
   className?: string;
 };
 
 export const SelectComponent: React.FC<SelectComponentProps> = ({
+  control,
+  name,
   datalist,
   className,
   ...rest
@@ -95,10 +100,25 @@ export const SelectComponent: React.FC<SelectComponentProps> = ({
     label: data.name,
   }));
 
+  const {
+    field: { ref, onChange, value, ...inputProps },
+  } = useController({
+    name,
+    control,
+  });
+
+  const selectedOption = transformedOptions.find(
+    (option) => option.value === value
+  );
+
   return (
     <Select
+      {...inputProps}
       options={transformedOptions}
       className={cn(styles.customSelect, className)}
+      onChange={(option) => onChange(option)}
+      value={selectedOption}
+      ref={ref}
       {...rest}
     />
   );

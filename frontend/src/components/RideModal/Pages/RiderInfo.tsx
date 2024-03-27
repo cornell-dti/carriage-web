@@ -14,7 +14,7 @@ import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit, formState, getValues } = useForm({
+  const { control, register, handleSubmit, formState, getValues } = useForm({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
@@ -29,8 +29,15 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
 
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
     const rider = nameToId[name.toLowerCase()];
-    const startLocation = locationToId[pickupLoc] ?? pickupLoc;
-    const endLocation = locationToId[dropoffLoc] ?? dropoffLoc;
+    /**
+     * Currently pickupLoc and dropoffLoc are received from the useController as an object
+     * {value:id, label : name}
+     * Intended refactor should only send in value
+     */
+    const startLocation =
+      locationToId[pickupLoc[pickupLoc.label]] ?? pickupLoc.value;
+    const endLocation =
+      locationToId[dropoffLoc[dropoffLoc.label]] ?? dropoffLoc.value;
     onSubmit({ rider, startLocation, endLocation });
   };
 
@@ -47,7 +54,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       return acc;
     }, {});
     setLocationToId(locationToIdObj);
-  });
+  }, [riders, locations]);
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
@@ -80,26 +87,43 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'pickupLoc'} className={styles.label}>
             Pickup Location
           </Label>
-          <SelectComponent datalist={locations} isSearchable={true} />
+          <SelectComponent
+            name={'pickupLoc'}
+            datalist={locations}
+            isSearchable={true}
+            control={control}
+          />
 
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
           )}
           <datalist id="locations">
             {locations.map((l) => (
-              <option key={l.name}>{l.name}</option>
+              <option key={l.id}>{l.name}</option>
             ))}
           </datalist>
         </div>
         <div className={styles.dropoffLocation}>
-          <Label htmlFor="dropoffLoc">Dropoff Location</Label>
-          <SelectComponent datalist={locations} isSearchable={true} />
+          <Label htmlFor={'dropoffLoc'} className={styles.label}>
+            Dropoff Location
+          </Label>
+          <SelectComponent
+            name="dropoffLoc"
+            datalist={locations}
+            isSearchable={true}
+            control={control}
+          />
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>
           )}
           {errors.dropoffLoc?.type === 'validate' && (
             <p className={styles.error}>Locations cannot match</p>
           )}
+          <datalist id="locations">
+            {locations.map((l) => (
+              <option key={l.id}>{l.name}</option>
+            ))}
+          </datalist>
         </div>
       </div>
       <div className={styles.btnContainer}>
