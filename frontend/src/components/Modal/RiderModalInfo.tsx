@@ -1,7 +1,12 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label } from '../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 
@@ -18,7 +23,7 @@ const RiderModalInfo = ({
   setFormData,
   rider,
 }: ModalFormProps) => {
-  const { register, formState, handleSubmit, getValues } = useForm({
+  const { control, register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
       firstName: rider?.firstName ?? '',
       lastName: rider?.lastName ?? '',
@@ -134,19 +139,14 @@ const RiderModalInfo = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <select
-            name="needs"
-            aria-required="true"
-            ref={register({ required: true })}
-          >
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
+          <SelectComponent
+            name={'needsOptions'}
+            control={control}
+            datalist={Object.values(Accessibility).map((value, index) => {
+              return { id: index.toString(), name: value.toString() };
             })}
-          </select>
+            isMulti
+          />
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or
