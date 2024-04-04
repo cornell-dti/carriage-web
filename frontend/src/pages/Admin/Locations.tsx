@@ -32,7 +32,7 @@ const Locations = () => {
     );
   };
 
-  const checkLocationTag = (location: Location, tag : string) => {
+  const checkLocationTag = (location: Location, tag: string) => {
     if (tag.localeCompare('None') === 0) {
       return true;
     } else {
@@ -40,7 +40,7 @@ const Locations = () => {
     }
   };
 
-  const handleSearchLocationByName = (query: string, tag : string) => {
+  const handleSearchLocationByName = (query: string, tag: string) => {
     setSearchLocations(
       locations.filter((location: Location) => {
         return (
@@ -73,7 +73,7 @@ const Locations = () => {
         </Label>
         <select
           name="filterBox"
-          className = {styles.filterBox}
+          className={styles.filterBox}
           defaultValue={'None'}
           value={filterByTag}
           onChange={(e) => {
