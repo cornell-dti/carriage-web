@@ -96,4 +96,5 @@ const Locations = () => {
     </main>
   );
 };
+
 export default Locations;
