@@ -6,19 +6,22 @@ import Notification from '../../components/Notification/Notification';
 import LocationModal from '../../components/LocationModal/LocationModal';
 import { useLocations } from '../../context/LocationsContext';
 import SearchBar from '../../components/SearchBar/SearchBar';
+import { Tag } from '../../types';
+import { Label } from '../../components/FormElements/FormElements';
 
 const Locations = () => {
   useEffect(() => {
     document.title = 'Locations - Carriage';
   }, []);
   const [locations, setLocations] = useState<Location[]>([]);
-  const [searchedLocations, setSearchLocations] = useState(locations)
-  const [searchName, setSearchName] = useState('')
+  const [searchedLocations, setSearchLocations] = useState(locations);
+  const [searchName, setSearchName] = useState('');
+  const [filterByTag, setFilterByTag] = useState('None');
   const loc = useLocations().locations;
 
   useEffect(() => {
     setLocations(loc);
-    setSearchLocations(loc)
+    setSearchLocations(loc);
   }, [loc]);
 
   const handleAddLocation = (newLocation: Location) => {
@@ -28,17 +31,25 @@ const Locations = () => {
       })
     );
   };
-  
-  const handleSearchLocationByName = (query : string) => {
+
+  const checkLocationTag = (location: Location, tag : string) => {
+    if (tag.localeCompare('None') === 0) {
+      return true;
+    } else {
+      return location.tag.toLowerCase().localeCompare(tag.toLowerCase()) === 0;
+    }
+  };
+
+  const handleSearchLocationByName = (query: string, tag : string) => {
     setSearchLocations(
-      locations.filter(
-        (location : Location) => {
-          return location.name.toLowerCase().includes(query);
-        }
-      )
-    )
-  }
-  
+      locations.filter((location: Location) => {
+        return (
+          location.name.toLowerCase().includes(query.toLowerCase()) &&
+          checkLocationTag(location, tag)
+        );
+      })
+    );
+  };
   return (
     <main id="main">
       <div className={styles.pageTitle}>
@@ -52,11 +63,36 @@ const Locations = () => {
         value={searchName}
         onChange={(e) => {
           setSearchName(e.target.value);
-          handleSearchLocationByName(e.target.value);
+          handleSearchLocationByName(e.target.value, filterByTag);
         }}
         placeholder="Search for locations..."
       />
-      <LocationsTable locations={searchedLocations} setLocations={setSearchLocations} />
+      <div className={styles.filterTag}>
+        <Label className={styles.filterLabel} htmlFor="filterBox">
+          Filter by Tag:
+        </Label>
+        <select
+          name="filterBox"
+          className = {styles.filterBox}
+          defaultValue={'None'}
+          value={filterByTag}
+          onChange={(e) => {
+            handleSearchLocationByName(searchName, e.target.value);
+            setFilterByTag(e.target.value);
+          }}
+        >
+          <option value="None">None</option>
+          {Object.values(Tag).map((value, index) => (
+            <option key={index} value={value}>
+              {value.charAt(0).toUpperCase() + value.slice(1)}
+            </option>
+          ))}
+        </select>
+      </div>
+      <LocationsTable
+        locations={searchedLocations}
+        setLocations={setSearchLocations}
+      />
     </main>
   );
 };
