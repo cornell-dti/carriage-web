@@ -50,6 +50,7 @@ const Locations = () => {
       })
     );
   };
+
   return (
     <main id="main">
       <div className={styles.pageTitle}>
