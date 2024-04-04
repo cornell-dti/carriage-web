@@ -6,6 +6,8 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { useRiders } from '../../context/RidersContext';
 import styles from './table.module.css';
 import axios from '../../util/axios';
+import { Label } from '../FormElements/FormElements';
+import { Accessibility } from '../../types';
 
 type UsageData = {
   noShows: number;
@@ -34,6 +36,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   ];
   const [usage, setUsage] = useState<UsageType>({});
   const [showInactive, setShowInactive] = useState(false);
+  const [disabilityFilter, setDisabilityFilter] = useState('');
 
   useEffect(() => {
     axios
@@ -71,7 +74,8 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
       (r.firstName + ' ' + r.lastName)
         .toLowerCase()
         .includes((searchName + '').toLowerCase()) &&
-      (showInactive ? true : r.active)
+      (showInactive ? true : r.active) &&
+      (disabilityFilter === '' ? true : r.accessibility === disabilityFilter)
   );
 
   return (
@@ -95,6 +99,24 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         />
         Show inactive students
       </label>
+      <Label
+        className={styles.filterDisabilityHeader}
+        htmlFor="filterByDisability"
+      >
+        Filter by Disability:
+      </Label>
+      <select
+        className={styles.filterDisabilityBox}
+        name="filterByDisability"
+        value={disabilityFilter}
+        onChange={(e) => setDisabilityFilter(e.target.value)}
+      >
+        {Object.values(Accessibility).map((value, index) => (
+          <option value={value} key={index}>
+            {value}
+          </option>
+        ))}
+      </select>
       <Table>
         <Row header colSizes={colSizes} data={headers} />
 
