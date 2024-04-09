@@ -9,31 +9,43 @@
   margin-bottom: 1.5rem;
 }
 
+.inputContainer input[type='text'],
+.inputContainer input[type='tel'],
+.inputContainer input[type='date'],
+.inputContainer select {
+  border: 1px solid #808080;
+  width: 100%;
+  border-radius: 6px;
+  height: 1.75rem; /* Adjust height as needed */
+  font-size: 1rem; /* Adjust font size as needed */
+  /* Add any other relevant styling here */
+}
+
 .rideTime {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  column-gap: 1rem;
-  row-gap: 1rem;
+  column-gap: 2rem;
+  row-gap: 2rem;
 }
 
 .gridCSmall1 {
-  grid-column: 1 / span 2;
+  grid-column: 1 / 5;
 }
 
 .gridCSmall2 {
-  grid-column: 3 / span 2;
+  grid-column: 5 / 7;
 }
 
 .gridCSmall3 {
-  grid-column: 5 / span 2;
+  grid-column: 7 / 11;
 }
 
 .gridCBig1 {
-  grid-column: 1 / span 3;
+  grid-column: 1 / 5;
 }
 .gridCBig2 {
-  grid-column: 4 / span 3;
+  grid-column: 5 / 11;
 }
 .gridCAll {
   grid-column: 1 / span 6;
@@ -72,10 +84,11 @@
 
 .riderDate {
   font-size: 1rem !important;
+  color: #808080;
 }
 
 .firstRow {
-  max-width: 90%;
+  max-width: 100%;
 }
 
 .lastRow {
@@ -107,6 +120,11 @@
   padding: 0;
   background: none;
   cursor: pointer;
+}
+
+.label{
+  font-size: smaller;
+  color: #808080;
 }
 
 @media screen and (max-width: 1092px) {

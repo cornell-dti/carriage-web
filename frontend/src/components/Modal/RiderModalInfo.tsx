@@ -4,6 +4,7 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
+import { rightArrow } from '../../icons/other';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -20,8 +21,7 @@ const RiderModalInfo = ({
 }: ModalFormProps) => {
   const { register, formState, handleSubmit, getValues } = useForm({
     defaultValues: {
-      firstName: rider?.firstName ?? '',
-      lastName: rider?.lastName ?? '',
+      name: (rider?.firstName ?? '') + (rider?.lastName ?? ''),
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
       needs: rider?.accessibility ?? '', // if no needs, default is undefined
@@ -32,8 +32,7 @@ const RiderModalInfo = ({
   });
   const { errors } = formState;
   const beforeSubmit = ({
-    firstName,
-    lastName,
+    name,
     netid,
     phoneNumber,
     needs,
@@ -43,6 +42,10 @@ const RiderModalInfo = ({
   }: ObjectType) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
     const accessibility = needs;
+    const nameParts = name.trim().split(/\s+/);
+    const firstName =
+      nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(-1)[0] : '';
     onSubmit({
       firstName,
       lastName,
@@ -68,34 +71,18 @@ const RiderModalInfo = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
-            First Name:{' '}
+          <Label className={styles.label} htmlFor="name">
+            Name:{' '}
           </Label>
           <Input
-            id="firstName"
-            name="firstName"
+            id="name"
+            name="name"
             type="text"
             ref={register({ required: true })}
             aria-required="true"
             className={styles.firstRow}
           />
-          {errors.firstName && (
-            <p className={styles.error}>First name cannot be empty</p>
-          )}
-          <Label className={styles.label} htmlFor="lastName">
-            Last Name:{' '}
-          </Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            type="text"
-            ref={register({ required: true })}
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.lastName && (
-            <p className={styles.error}>Last name cannot be empty</p>
-          )}
+          {errors.name && <p className={styles.error}>Name cannot be empty</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="netid">
@@ -185,12 +172,11 @@ const RiderModalInfo = ({
           )}
         </div>
         <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <p>Duration</p>
-          <div className={styles.lastRow}>
+          <Label className={styles.label} htmlFor="duration">
+            Duration:{' '}
+          </Label>
+          <div className={styles.lastRow} id="duration">
             <div>
-              <Label className={styles.label} htmlFor="joinDate">
-                Join Date:{' '}
-              </Label>
               <Input
                 id="joinDate"
                 type="date"
@@ -204,11 +190,12 @@ const RiderModalInfo = ({
                 <p className={styles.error}>Please enter a join date</p>
               )}
             </div>
-            <p className={styles.to}>to</p>
+            <span>
+              &nbsp;
+              <img src={rightArrow} />
+              &nbsp;
+            </span>
             <div>
-              <Label className={styles.label} htmlFor="endDate">
-                End Date:{' '}
-              </Label>
               <Input
                 id="endDate"
                 type="date"
