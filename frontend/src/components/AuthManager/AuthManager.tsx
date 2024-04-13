@@ -195,7 +195,7 @@ const AuthManager = () => {
   );
 
   const SiteContent = () => {
-    const { visible, message, toastType } = useToast();
+    const { visible, message, toastType, setVisible } = useToast();
     const localUserType = localStorage.getItem('userType');
     return (
       <>
@@ -204,6 +204,7 @@ const AuthManager = () => {
             <Toast
               message={message}
               toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+              onClose={() => setVisible(false)}
             />,
             document.body
           )}
