@@ -9,6 +9,8 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import { Tag } from '../../types';
 import { Label } from '../../components/FormElements/FormElements';
 
+// fix prettier
+
 const Locations = () => {
   useEffect(() => {
     document.title = 'Locations - Carriage';
