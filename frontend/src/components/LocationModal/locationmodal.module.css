@@ -24,6 +24,7 @@ input[name='address'] {
 }
 
 .errorMsg {
+  position: absolute;
   color: #eb0023;
   font-size: 0.8rem;
 }
@@ -52,8 +53,6 @@ div > Button {
     'name address'
     'info tag'
     'buttons buttons';
-
-  margin-bottom: 0.75rem;
 }
 
 .inputContainer select {
@@ -63,4 +62,14 @@ div > Button {
 
 .inputContainer > div:last-child {
   grid-area: buttons;
+}
+
+.primaryBtnWhite {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1;
+}
+
+.textarea {
+  position: absolute;
 }

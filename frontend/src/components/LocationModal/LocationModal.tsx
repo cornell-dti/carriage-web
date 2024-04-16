@@ -14,40 +14,6 @@ type LocationModalProps = {
   onEditLocation?: (editedLocation: Location) => void;
 };
 
-const isAddress = (address: string) => {
-  let parsedAddr;
-  try {
-    if (address.includes(',')) {
-      parsedAddr = parseAddress(address);
-    } else {
-      parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`);
-    }
-  } catch {
-    return 'Invalid address';
-  }
-  const {
-    streetNumber,
-    streetName,
-    streetSuffix,
-    placeName,
-    stateName,
-    zipCode,
-  } = parsedAddr;
-  if (
-    !(
-      streetNumber &&
-      streetName &&
-      streetSuffix &&
-      placeName &&
-      stateName &&
-      zipCode
-    )
-  ) {
-    return 'Invalid address';
-  }
-  return true;
-};
-
 const LocationModal = ({
   existingLocation,
   onAddLocation,
@@ -55,7 +21,7 @@ const LocationModal = ({
 }: LocationModalProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, setValue } = useForm();
   const { name, address, info } = errors;
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
@@ -82,7 +48,20 @@ const LocationModal = ({
       onEditLocation(newLocation);
       showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
+
     closeModal();
+  };
+
+  /**
+   * Clears location modal's inputs by manually resetting name, address, and
+   * info to a blank input. The location's tag resets to 'central'. Avoid using
+   * reset() from react hook form because it will reset the form's functionality
+   * as well, like the appearance of error messages.
+   */
+  const onClearAll = () => {
+    setValue('name', '');
+    setValue('address', '');
+    setValue('info', '');
   };
 
   return (
@@ -108,7 +87,7 @@ const LocationModal = ({
                 ref={register({ required: true })}
                 aria-required="true"
               />
-              {name && <p className={styles.errorMsg}>Please enter a name</p>}
+              {name && <p className={styles.errorMsg}>Please input a name</p>}
             </div>
 
             <div style={{ gridArea: 'address' }}>
@@ -122,25 +101,22 @@ const LocationModal = ({
                 aria-required="true"
                 ref={register({ required: true })}
               />
-              {address && <p className={styles.errorMsg}>{address.message}</p>}
+              {address && (
+                <p className={styles.errorMsg}>Please input an address</p>
+              )}
             </div>
 
             <div style={{ gridArea: 'info' }}>
               <Label htmlFor="info">Pickup / Dropoff Information</Label>
-              <Input
+              <textarea
                 name="info"
-                type="text"
                 id="info"
                 defaultValue={existingLocation?.info}
                 className={styles.input}
-                ref={register({ required: true })}
-                aria-required="true"
+                ref={register({ required: false })}
+                aria-required="false"
+                style={{ width: '14rem', height: '6.438rem', resize: 'none' }}
               />
-              {info && (
-                <p className={styles.errorMsg}>
-                  Please enter pickup/dropoff info
-                </p>
-              )}
             </div>
 
             <div style={{ gridArea: 'tag' }}>
@@ -160,6 +136,7 @@ const LocationModal = ({
                     </option>
                   )
                 )}
+                {info && <p className={styles.errorMsg}>Please select a tag</p>}
               </select>
             </div>
 
@@ -168,12 +145,12 @@ const LocationModal = ({
                 {submitButtonText}
               </Button>
 
-              <Button className={styles.clearButton} type="submit">
-                Clear All
+              <Button type="button" outline={true}>
+                Back
               </Button>
 
-              <Button className={styles.backButton} type="submit">
-                Back
+              <Button type="reset" outline={true} onClick={onClearAll}>
+                Clear All
               </Button>
             </div>
           </div>
