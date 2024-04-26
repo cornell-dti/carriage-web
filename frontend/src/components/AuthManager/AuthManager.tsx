@@ -195,19 +195,19 @@ const AuthManager = () => {
   );
 
   const SiteContent = () => {
-    const { visible, message, toastType, setVisible } = useToast();
+    const { visible, message, toastType, hideToast } = useToast();
     const localUserType = localStorage.getItem('userType');
+
     return (
       <>
-        {visible &&
-          createPortal(
-            <Toast
-              message={message}
-              toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
-              onClose={() => setVisible(false)}
-            />,
-            document.body
-          )}
+        {
+          <Toast
+            message={message}
+            toastType={toastType}
+            onClose={hideToast}
+            isOpen={visible}
+          />
+        }
         <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
           <SubscribeWrapper userId={id}>
             <Switch>
