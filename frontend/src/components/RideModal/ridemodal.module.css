@@ -136,7 +136,7 @@
   color: black;
   margin-right: 1rem;
   display: inline-block;
-  margin-left:3rem;
+  margin-left: 3rem;
 }
 
 .nextBtn {
@@ -149,14 +149,14 @@
 }
 
 .image {
-  width: .8rem;
-  height: .8rem;
+  width: 0.8rem;
+  height: 0.8rem;
 }
 /* This is a container to group image and input together so that a border can be created 
 that includes the image, not to be mistaken with inputContainer */
 .imgContainer {
   display: flex;
-  align-items: center; 
+  align-items: center;
   border-radius: 6px;
   border: 1px solid #808080;
   padding-left: 5px;
@@ -164,5 +164,5 @@ that includes the image, not to be mistaken with inputContainer */
 /* The default input adds a border, but since .imgContainer already adds a border, 
 this gets rid of the default border */
 .imgContainer > input {
-  border: 0px; 
+  border: 0px;
 }
