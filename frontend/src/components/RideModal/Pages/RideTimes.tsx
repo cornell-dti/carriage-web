@@ -160,34 +160,31 @@ const RideTimesPage = ({
             <Label htmlFor="date" className={styles.label}>
               Date
             </Label>
-            <div className={styles.imgContainer}>
-              <img src={calendarIcon} className={styles.image}></img>
-              <Input
-                className={styles.input}
-                id="date"
-                type="date"
-                name="date"
-                aria-required="true"
-                ref={register({
-                  required: true,
-                  validate: (date) => {
-                    const fmtDate = format_date(date);
-                    const fmtCurr = format_date(curDate);
-                    const notWeekend =
-                      moment(date).day() !== 0 && moment(date).day() !== 6;
-                    return fmtDate >= fmtCurr && notWeekend;
-                  },
-                })}
-              />
-              {errors.date?.type === 'required' && (
-                <p className={styles.error}>Please enter a date</p>
-              )}
-              {errors.date?.type === 'validate' && (
-                <p className={styles.error}>
-                  Please enter a valid start date (No rides on weekends)
-                </p>
-              )}
-            </div>
+            <Input
+              className={styles.input}
+              id="date"
+              type="date"
+              name="date"
+              aria-required="true"
+              ref={register({
+                required: true,
+                validate: (date) => {
+                  const fmtDate = format_date(date);
+                  const fmtCurr = format_date(curDate);
+                  const notWeekend =
+                    moment(date).day() !== 0 && moment(date).day() !== 6;
+                  return fmtDate >= fmtCurr && notWeekend;
+                },
+              })}
+            />
+            {errors.date?.type === 'required' && (
+              <p className={styles.error}>Please enter a date</p>
+            )}
+            {errors.date?.type === 'validate' && (
+              <p className={styles.error}>
+                Please enter a valid start date (No rides on weekends)
+              </p>
+            )}
           </div>
           <div className={styles.col2}>
             <Label htmlFor="repeats" className={styles.label}>
@@ -215,66 +212,54 @@ const RideTimesPage = ({
             <Label htmlFor="pickupTime" className={styles.label}>
               Pickup time:
             </Label>
-            <div className={styles.imgContainer}>
-              <img src={clockIcon} className={styles.image} />
-              <Input
-                className={styles.input}
-                id="pickupTime"
-                type="time"
-                name="pickupTime"
-                aria-required="true"
-                ref={register({
-                  required: true,
-                  validate: (pickupTime) => {
-                    const date = getValues('date');
-                    const pickup = moment(`${date} ${pickupTime}`);
-                    return checkBounds(date, pickup);
-                  },
-                })}
-              />{' '}
-              {errors.pickupTime?.type === 'required' && (
-                <p className={styles.error}>
-                  Please choose a valid pickup time
-                </p>
-              )}
-              {errors.pickupTime?.type === 'validate' && (
-                <p className={styles.error}>Invalid time</p>
-              )}
-            </div>
+            <Input
+              className={styles.input}
+              id="pickupTime"
+              type="time"
+              name="pickupTime"
+              aria-required="true"
+              ref={register({
+                required: true,
+                validate: (pickupTime) => {
+                  const date = getValues('date');
+                  const pickup = moment(`${date} ${pickupTime}`);
+                  return checkBounds(date, pickup);
+                },
+              })}
+            />{' '}
+            {errors.pickupTime?.type === 'required' && (
+              <p className={styles.error}>Please choose a valid pickup time</p>
+            )}
+            {errors.pickupTime?.type === 'validate' && (
+              <p className={styles.error}>Invalid time</p>
+            )}
           </div>
           <div className={styles.col2}>
             <Label htmlFor="dropoffTime" className={styles.label}>
               Dropoff time:
             </Label>
-            <div className={styles.imgContainer}>
-              <img src={clockIcon} className={styles.image} />
-              <Input
-                className={styles.input}
-                id="dropoffTime"
-                type="time"
-                name="dropoffTime"
-                aria-required="true"
-                ref={register({
-                  required: true,
-                  validate: (dropoffTime) => {
-                    const pickupTime = getValues('pickupTime');
-                    const date = getValues('date');
-                    const dropoff = moment(`${date} ${dropoffTime}`);
-                    return (
-                      pickupTime < dropoffTime && checkBounds(date, dropoff)
-                    );
-                  },
-                })}
-              />
-              {errors.dropoffTime?.type === 'required' && (
-                <p className={styles.error}>
-                  Please choose a valid pickup time
-                </p>
-              )}
-              {errors.dropoffTime?.type === 'validate' && (
-                <p className={styles.error}>Invalid time</p>
-              )}
-            </div>
+            <Input
+              className={styles.input}
+              id="dropoffTime"
+              type="time"
+              name="dropoffTime"
+              aria-required="true"
+              ref={register({
+                required: true,
+                validate: (dropoffTime) => {
+                  const pickupTime = getValues('pickupTime');
+                  const date = getValues('date');
+                  const dropoff = moment(`${date} ${dropoffTime}`);
+                  return pickupTime < dropoffTime && checkBounds(date, dropoff);
+                },
+              })}
+            />
+            {errors.dropoffTime?.type === 'required' && (
+              <p className={styles.error}>Please choose a valid pickup time</p>
+            )}
+            {errors.dropoffTime?.type === 'validate' && (
+              <p className={styles.error}>Invalid time</p>
+            )}
           </div>
         </div>
         <div className={styles.btnContainer}>
