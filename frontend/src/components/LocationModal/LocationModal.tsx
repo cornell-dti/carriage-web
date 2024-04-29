@@ -7,6 +7,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 import axios from '../../util/axios';
+import { trash } from '../../icons/other';
 
 type LocationModalProps = {
   existingLocation?: Location;
@@ -150,7 +151,8 @@ const LocationModal = ({
               </Button>
 
               <Button type="reset" outline={true} onClick={onClearAll}>
-                Clear All
+                <img src={trash}></img>
+                <span> Clear All</span>
               </Button>
             </div>
           </div>
