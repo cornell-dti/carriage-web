@@ -6,6 +6,35 @@ import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 
+/**startDate is inclusive, endDate is exclusive */
+type Holiday = {
+  startDate: Date;
+  endDate: Date;
+  holidayName: string;
+};
+
+const holidays: Holiday[] = [
+  {
+    startDate: new Date('2024-2-24'),
+    endDate: new Date('2024-2-28'),
+    holidayName: 'Febuaray Break',
+  },
+  {
+    startDate: new Date('2024-3-30'),
+    endDate: new Date('2024-4-8'),
+    holidayName: 'Spring Break',
+  },
+];
+
+const isHoliday = (date: Date) => {
+  for (const holiday of holidays) {
+    if (holiday.startDate <= date && date < holiday.endDate) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const currentDate = new Date();
 const isToday = (date: Date) =>
   date.getDate() === currentDate.getDate() &&
@@ -77,17 +106,26 @@ const MiniCal = () => {
     window.scroll(x + 1, y);
     window.scroll(x, y);
   };
+  const isWeekday = (date: Date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
+  };
+
+  const filterDate = (date: Date) => {
+    return isWeekday(date) && !isHoliday(date);
+  };
 
   return (
     <div className={styles.root}>
       <DatePicker
-        adjustDateOnChange
+        //adjustDateOnChange
         selected={curDate}
         onChange={updateDate}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
         customInput={<CustomInput />}
+        filterDate={filterDate}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
           date,
