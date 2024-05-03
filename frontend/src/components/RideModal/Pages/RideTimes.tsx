@@ -236,7 +236,21 @@ const RideTimesPage = ({
                   const pickupTime = getValues('pickupTime');
                   const date = getValues('date');
                   const dropoff = moment(`${date} ${dropoffTime}`);
-                  return pickupTime < dropoffTime && checkBounds(date, dropoff);
+
+                  const duration = Math.abs(
+                    parseInt(
+                      dropoffTime.substring(dropoffTime.indexOf(':') + 1)
+                    ) -
+                      parseInt(
+                        pickupTime.substring(pickupTime.indexOf(':') + 1)
+                      )
+                  );
+
+                  return (
+                    pickupTime < dropoffTime &&
+                    duration >= 5 &&
+                    checkBounds(date, dropoff)
+                  );
                 },
               })}
             />
