@@ -7,11 +7,14 @@ import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
 import { Ride } from '../../types';
+import DisplayMessage from './Message';
 
 type Message = {
+  key: number;
   time: Date;
   title: string;
   body: string;
+  read: boolean;
 };
 
 type NotificationData = {
@@ -21,27 +24,29 @@ type NotificationData = {
   sentTime: string;
 };
 
-const truncate = (str: string, num: number) => {
-  if (str.length <= num) {
-    return str;
-  }
-  return `${str.slice(0, num)}...`;
-};
-
 const Notification = () => {
   const [newMessages, setNewMessages] = useState<Message[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
   const popupId = useId();
+  const markAsRead = (key: number) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((message) =>
+        message.key === key ? { ...message, read: true } : message
+      )
+    );
+  };
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
       const { body, ride, sentTime, title }: NotificationData = event.data;
       const newMsg = {
+        key: newMessages.length + 1,
         time: new Date(sentTime),
         title,
         body,
         day: ride.startTime,
+        read: false,
       };
       setNewMessages([newMsg, ...newMessages]);
       setNotify(true);
@@ -49,19 +54,8 @@ const Notification = () => {
   }, []);
 
   const mapMessages = (msgs: Message[]) =>
-    msgs.map(({ time, title, body }, i) => (
-      <div key={i} className={styles.body}>
-        <div className={styles.user}>
-          <div className={styles.avatar}>
-            <span className={styles.initials}>C</span>
-          </div>
-        </div>
-        <div className={styles.msg}>
-          <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
-          <p>{body}</p>
-        </div>
-        <div className={styles.link}>View</div>
-      </div>
+    msgs.map((message) => (
+      <DisplayMessage {...message} key={message.key} markAsRead={markAsRead} />
     ));
 
   useEffect(() => {
