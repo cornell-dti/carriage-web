@@ -17,13 +17,15 @@ const ScheduledTable = () => {
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
+    console.log(a.startTime, a.endTime);
     if (x < y) return -1;
     if (x > y) return 1;
     return 0;
   };
 
   useEffect(() => {
-    setRides(scheduledRides.sort(compRides));
+    const sortedRides = scheduledRides.sort(compRides);
+    setRides(sortedRides);
   }, [scheduledRides]);
 
   return rides.length ? (

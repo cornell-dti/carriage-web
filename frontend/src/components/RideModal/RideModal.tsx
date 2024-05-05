@@ -16,6 +16,11 @@ type RideModalProps = {
   editSingle?: boolean;
 };
 
+interface RideTime {
+  startTime: string;
+  endTime: string;
+}
+
 const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   const originalRideData = getRideData();
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
@@ -23,7 +28,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
-  const { refreshRides } = useRides();
+  const { scheduledRides, refreshRides } = useRides();
+  const [rideTimesList, setRideTimesList] = useState<RideTime[]>([]);
 
   // using function instead of const so the function can be hoisted and
   // not get in the way of the state and hooks
@@ -93,12 +99,32 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
     setIsOpen(false);
   }, [close, originalRideData]);
 
-  const saveDataThen = (next: () => void) => (data: ObjectType) => {
+  // This is a special saveDataThen constant that deals with RideTime data.
+  const saveRideTimeDataThen = (next: () => void) => (data: ObjectType) => {
     setFormData((prev) => ({ ...prev, ...data }));
+
+    const rideTimeData = {
+      startTime: moment(`${data.date} ${data.pickupTime}`).toISOString(),
+      endTime: moment(`${data.date} ${data.dropoffTime}`).toISOString(),
+    };
+    setRideTimesList([rideTimeData]);
+
     next();
   };
 
-  const submitData = () => setIsSubmitted(true);
+  const saveDataThen = (next: () => void) => (data: ObjectType) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+
+    // After the ride has been created, we set RideTimesList to be empty, which
+    // means there are no more impending rides to add.
+    setRideTimesList([]);
+
+    next();
+  };
+
+  const submitData = () => {
+    setIsSubmitted(true);
+  };
 
   const getRecurringDays = (
     date: string,
@@ -126,6 +152,20 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   };
 
   useEffect(() => {
+    if (rideTimesList.length == 1) {
+      console.log('ride we wanna add', rideTimesList[0]);
+
+      const inProgressRidePickup =
+        new Date(rideTimesList[0].startTime).getHours() * 60 +
+        new Date(rideTimesList[0].startTime).getMinutes();
+
+      const inProgressRideDropoff =
+        new Date(rideTimesList[0].endTime).getHours() * 60 +
+        new Date(rideTimesList[0].endTime).getMinutes();
+
+      checkOverlap(inProgressRidePickup, inProgressRideDropoff, scheduledRides);
+    }
+
     if (isSubmitted) {
       const {
         date,
@@ -162,8 +202,6 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           endDate: format_date(endDate),
         };
       }
-
-      console.log(rideData);
 
       if (ride) {
         // scheduled ride
@@ -208,7 +246,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         <RideTimesPage
           defaultRepeating={ride.recurring}
           formData={formData}
-          onSubmit={saveDataThen(goNextPage)}
+          onSubmit={saveRideTimeDataThen(goNextPage)}
         />
         <RiderInfoPage
           formData={formData}
@@ -230,7 +268,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       >
         <RideTimesPage
           formData={formData}
-          onSubmit={saveDataThen(goNextPage)}
+          onSubmit={saveRideTimeDataThen(goNextPage)}
         />
         <DriverPage
           formData={formData}
@@ -245,6 +283,33 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       </Modal>
     </>
   );
+};
+
+// Checks if the impending ride overlaps with any of the scheduled rides. This is
+// a WIP: after identifying which driver has an overlap, we want to remove their
+// ID from the list of drivers that can be scheduled to take on this impending ride.
+const checkOverlap = (
+  inProgressRidePickup: number,
+  inProgressRideDropoff: number,
+  rides: Ride[]
+) => {
+  for (let i = 0; i < rides.length; i++) {
+    const ridePickup =
+      new Date(rides[i].startTime).getHours() * 60 +
+      new Date(rides[i].startTime).getMinutes();
+    const rideDropoff =
+      new Date(rides[i].endTime).getHours() * 60 +
+      new Date(rides[i].endTime).getMinutes();
+
+    if (
+      inProgressRidePickup - 5 < rideDropoff &&
+      ridePickup - 5 < inProgressRideDropoff
+    ) {
+      console.log(rides[i].driver?.firstName, 'has an overlap!');
+    } else {
+      console.log(rides[i].driver?.firstName, "doesn't have an overlap!");
+    }
+  }
 };
 
 export default RideModal;
