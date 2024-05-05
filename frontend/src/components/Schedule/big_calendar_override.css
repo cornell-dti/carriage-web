@@ -64,7 +64,7 @@
   scroll-snap-type: both mandatory;
 }
 
-.rbc-time-column {
+.rbc-day-slot .rbc-time-column {
   scroll-snap-align: end;
 }
 
