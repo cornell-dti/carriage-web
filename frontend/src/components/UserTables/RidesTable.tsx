@@ -30,7 +30,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const isAvailableOnDay = (driver: DriverType, day: number) => {
     for (const [key, value] of Object.entries(driver.availability)) {
       if (key === dayAsString.at(day) && value != undefined) {
-        console.log('Availble on :', key);
         return true;
       }
     }
@@ -63,17 +62,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       ] as keyof typeof driver.availability;
       const driverStartDayAvailibility = driver.availability[startDay]; // hh:mm even for h <10
       const driverEndDayAvailibility = driver.availability[endDay];
-      console.log(
-        driver.firstName + driver.lastName,
-        ' start time is:',
-        driverStartDayAvailibility!.startTime
-      );
-      console.log(
-        driver.firstName + driver.lastName,
-        ' end time is: ',
-        driverStartDayAvailibility!.endTime
-      );
-      console.log('ride start time: ', startTime, ' ride end time: ', endTime);
       return (
         driverStartDayAvailibility!.startTime <=
           startTime.toLocaleTimeString([], {
