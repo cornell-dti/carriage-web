@@ -15,6 +15,7 @@
 .left {
   width: calc(100% - 3.125rem);
   height: 21.875rem;
+  scroll-snap-type: y mandatory;
 }
 
 .right {

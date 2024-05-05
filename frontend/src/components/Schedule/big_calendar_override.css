@@ -53,9 +53,21 @@
 }
 
 .rbc-today {
-  background-color: white;
+  background-color:white;
 }
 
 .rbc-header {
   font-weight: 400;
+}
+
+.rbc-time-content {
+  scroll-snap-type: both mandatory;
+}
+
+.rbc-time-column {
+  scroll-snap-align: end;
+}
+
+.rbc-timeslot-group {
+  scroll-snap-align: start;
 }
