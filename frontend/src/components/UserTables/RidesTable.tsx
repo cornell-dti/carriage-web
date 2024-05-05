@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ride } from '../../types/index';
+import { Driver, Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
@@ -8,6 +8,8 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import { DriverType } from '../../../../server/src/models/driver';
+import { start } from 'repl';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -22,6 +24,74 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+
+  const dayAsString = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const isAvailableOnDay = (driver: DriverType, day: number) => {
+    for (const [key, value] of Object.entries(driver.availability)) {
+      if (key === dayAsString.at(day) && value != undefined) {
+        console.log('Availble on :', key);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // You can add additional filters to filter our drivers to reassign here.
+  const reassignDriverFilters: ((driver: DriverType) => boolean)[] = [
+    // (driver: DriverType) => {
+    //   return driver.firstName != 'Bin laden';
+    // },
+  ];
+
+  const checkAdditionalFilters = (driver: DriverType) => {
+    return reassignDriverFilters.every((fn) => fn(driver));
+  };
+
+  const isAvailable = (driver: DriverType, startTime: Date, endTime: Date) => {
+    const startTimeDay = startTime.getDay();
+    const endTimeDay = endTime.getDay();
+    if (
+      isAvailableOnDay(driver, startTimeDay) &&
+      isAvailableOnDay(driver, endTimeDay)
+    ) {
+      const startDay = dayAsString[
+        startTimeDay
+      ] as keyof typeof driver.availability;
+      const endDay = dayAsString[
+        endTimeDay
+      ] as keyof typeof driver.availability;
+      const driverStartDayAvailibility = driver.availability[startDay]; // hh:mm even for h <10
+      const driverEndDayAvailibility = driver.availability[endDay];
+      console.log(
+        driver.firstName + driver.lastName,
+        ' start time is:',
+        driverStartDayAvailibility!.startTime
+      );
+      console.log(
+        driver.firstName + driver.lastName,
+        ' end time is: ',
+        driverStartDayAvailibility!.endTime
+      );
+      console.log('ride start time: ', startTime, ' ride end time: ', endTime);
+      return (
+        driverStartDayAvailibility!.startTime <=
+          startTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }) &&
+        driverEndDayAvailibility!.endTime >=
+          endTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }) &&
+        checkAdditionalFilters(driver)
+      );
+    }
+    return false;
+  };
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -194,7 +264,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 isOpen={openAssignModal === index}
                 close={() => setOpenAssignModal(-1)}
                 ride={rides[index]}
-                allDrivers={drivers}
+                allDrivers={drivers.filter((driver) => {
+                  return isAvailable(
+                    driver,
+                    new Date(ride.startTime),
+                    new Date(ride.endTime)
+                  );
+                })}
                 reassign={reassign}
               />
               <RideModal
