@@ -65,7 +65,7 @@
 }
 
 .rbc-time-column {
-  scroll-snap-align: start end;
+  scroll-snap-align: end;
 }
 
 .rbc-timeslot-group {
