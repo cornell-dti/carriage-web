@@ -39,7 +39,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   // You can add additional filters to filter our drivers to reassign here.
   const reassignDriverFilters: ((driver: DriverType) => boolean)[] = [
     // (driver: DriverType) => {
-    //   return driver.firstName != 'Bin laden';
+    //   return driver.firstName != 'Naoya';
     // },
   ];
 
