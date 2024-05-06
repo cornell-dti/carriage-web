@@ -69,18 +69,41 @@
 
 .drivers {
   display: flex;
-  flex-wrap: wrap;
-  max-width: 30rem;
-  justify-content: center;
+  flex-direction: column;
+  height: 15rem; 
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding: 0.5rem;
+  border-radius: 8px;
 }
+
 
 .driver {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  margin: 0 0.625rem;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+  height: 5rem; 
+  background-color: #F2F2F2;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding : 10px;
 }
 
+.driverPhoto {
+  height: 20px;
+  width: 20px;
+  border-radius: 100%;
+}
+.selectButton {
+  background-color: #00C48C;
+}
+.selectedButton {
+  background-color: #F2F2F2;
+  border: 1px solid black;
+  color: black;
+}
 .driverLabel {
   margin: 0;
 }
