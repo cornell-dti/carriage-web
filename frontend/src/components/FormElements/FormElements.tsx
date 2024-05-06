@@ -1,8 +1,8 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
-import Select, { Props as SelectProps } from 'react-select';
-import { Control, useController } from 'react-hook-form';
+import Select, { ActionMeta, Props as SelectProps } from 'react-select';
+import { Control, RegisterOptions, useController } from 'react-hook-form';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -76,16 +76,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-type DataList = {
+type Option = {
   id: string;
   name: string;
+};
+
+type SelectOption = {
+  value: string;
+  label: string;
 };
 
 type SelectComponentProps = SelectProps & {
   control: Control;
   name: string;
-  datalist: DataList[];
+  datalist: Option[];
   className?: string;
+  rules?: RegisterOptions;
 };
 
 export const SelectComponent: React.FC<SelectComponentProps> = ({
@@ -93,19 +99,21 @@ export const SelectComponent: React.FC<SelectComponentProps> = ({
   name,
   datalist,
   className,
+  rules,
   ...rest
 }) => {
+  const {
+    field: { onChange, value, ref, ...inputProps },
+  } = useController({
+    name,
+    control,
+    rules,
+  });
+
   const transformedOptions = datalist.map((data) => ({
     value: data.id,
     label: data.name,
   }));
-
-  const {
-    field: { ref, onChange, value, ...inputProps },
-  } = useController({
-    name,
-    control,
-  });
 
   const selectedOption = transformedOptions.find(
     (option) => option.value === value
@@ -116,9 +124,11 @@ export const SelectComponent: React.FC<SelectComponentProps> = ({
       {...inputProps}
       options={transformedOptions}
       className={cn(styles.customSelect, className)}
-      onChange={(option) => onChange(option)}
+      onChange={(newValue: unknown) => {
+        const option = newValue as SelectOption | null;
+        onChange(option?.value);
+      }}
       value={selectedOption}
-      ref={ref}
       {...rest}
     />
   );

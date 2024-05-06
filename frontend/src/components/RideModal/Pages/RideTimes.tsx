@@ -3,7 +3,12 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, Label } from '../../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
@@ -144,7 +149,10 @@ const RideTimesPage = ({
   });
   const { errors, handleSubmit, register, getValues, watch } = methods;
   const watchRepeats = watch('repeats');
-
+  const repeatOptions = Object.values(RepeatValues).map((value) => ({
+    id: value,
+    name: value,
+  }));
   useEffect(() => {
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
@@ -182,19 +190,13 @@ const RideTimesPage = ({
           </div>
           <div className={styles.col2}>
             <Label htmlFor="repeats">Repeats:</Label>
-            <select
-              id="repeats"
+            <SelectComponent
+              control={methods.control}
               name="repeats"
-              ref={register({ required: true })}
-              aria-required="true"
-              className={styles.select}
-            >
-              {Object.values(RepeatValues).map((repeatValue) => (
-                <option key={repeatValue} value={repeatValue}>
-                  {repeatValue}
-                </option>
-              ))}
-            </select>
+              datalist={repeatOptions}
+              className={styles.customSelect}
+              rules={{ required: 'Please enter a time' }}
+            />
             {errors.repeats?.type === 'required' && (
               <p className={styles.error}>Please enter a time</p>
             )}

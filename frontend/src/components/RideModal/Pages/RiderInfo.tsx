@@ -26,19 +26,20 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { locations } = useLocations();
   const { riders } = useRiders();
-
   const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
-    const rider = nameToId[name.toLowerCase()];
-    /**
-     * Currently pickupLoc and dropoffLoc are received from the useController as an object
-     * {value:id, label : name}
-     * Intended refactor should only send in value
+    const startLocation = locationToId[pickupLoc] ?? pickupLoc;
+    const endLocation = locationToId[dropoffLoc] ?? dropoffLoc;
+    /**Payload needed because the form is registered to expect rider instead of name
+     * If name passed straightaway it results in the database receiving an empty field for rider
+     *
      */
-    const startLocation =
-      locationToId[pickupLoc[pickupLoc.label]] ?? pickupLoc.value;
-    const endLocation =
-      locationToId[dropoffLoc[dropoffLoc.label]] ?? dropoffLoc.value;
-    onSubmit({ rider, startLocation, endLocation });
+    const payload = {
+      rider: name,
+      startLocation,
+      endLocation,
+    };
+    console.log(payload);
+    onSubmit(payload);
   };
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
           <Label htmlFor={'name'}>Name</Label>
-          <Input
+          {/* <Input
             id="name"
             name="name"
             type="text"
@@ -73,7 +74,18 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
               validate: (name: string) =>
                 nameToId[name.toLowerCase()] !== undefined,
             })}
+          /> */}
+          <SelectComponent
+            name="name"
+            datalist={Object.entries(nameToId).map(([name, id]) => ({
+              id,
+              name,
+            }))}
+            isSearchable={true}
+            control={control}
+            rules={{ required: 'Rider name is required' }}
           />
+
           {errors.name && <p className={styles.error}>Rider not found</p>}
           <datalist id="names">
             {riders.map((r) => (
@@ -92,6 +104,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             datalist={locations}
             isSearchable={true}
             control={control}
+            rules={{ required: 'Pickup Location is required' }}
           />
 
           {errors.pickupLoc && (
@@ -112,6 +125,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             datalist={locations}
             isSearchable={true}
             control={control}
+            rules={{ required: 'Dropoff Location is required' }}
           />
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>

@@ -163,8 +163,6 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         };
       }
 
-      console.log(rideData);
-
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
