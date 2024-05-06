@@ -16,7 +16,7 @@
 
 /* other seperating timeslots */
 .rbc-day-slot .rbc-time-slot {
-  border-top: 0.063rem solid rgba(0, 0, 0, 15%); 
+  border-top: 0.063rem solid rgba(0, 0, 0, 15%);
 }
 
 /* line below drivers */
@@ -53,7 +53,7 @@
 }
 
 .rbc-today {
-  background-color:white;
+  background-color: white;
 }
 
 .rbc-header {
