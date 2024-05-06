@@ -70,13 +70,12 @@
 .drivers {
   display: flex;
   flex-direction: column;
-  height: 15rem; 
+  height: 15rem;
   overflow-y: auto;
   justify-content: flex-start;
   padding: 0.5rem;
   border-radius: 8px;
 }
-
 
 .driver {
   display: flex;
@@ -84,11 +83,11 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.625rem;
-  height: 5rem; 
-  background-color: #F2F2F2;
+  height: 5rem;
+  background-color: #f2f2f2;
   border: 1px solid black;
   border-radius: 10px;
-  padding : 10px;
+  padding: 10px;
 }
 
 .driverPhoto {
@@ -97,10 +96,10 @@
   border-radius: 100%;
 }
 .selectButton {
-  background-color: #00C48C;
+  background-color: #00c48c;
 }
 .selectedButton {
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   border: 1px solid black;
   color: black;
 }
