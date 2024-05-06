@@ -64,8 +64,8 @@
   scroll-snap-type: both mandatory;
 }
 
-.rbc-day-slot .rbc-time-column {
-  scroll-snap-align: end;
+.rbc-time-column {
+  scroll-snap-align: start end;
 }
 
 .rbc-timeslot-group {
