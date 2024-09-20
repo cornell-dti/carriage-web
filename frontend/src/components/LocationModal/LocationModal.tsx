@@ -94,8 +94,16 @@ const LocationModal = ({
       ) : (
         <Button onClick={openModal}>+ Add a location</Button>
       )}
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <Modal
+        title={modalTitle}
+        isOpen={isOpen}
+        onClose={closeModal}
+        id="location-modal"
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          aria-labelledby="location-modal"
+        >
           <div className={styles.inputContainer}>
             <Label htmlFor="name">Name</Label>
             <Input

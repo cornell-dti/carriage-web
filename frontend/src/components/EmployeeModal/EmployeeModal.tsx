@@ -81,6 +81,15 @@ const EmployeeModal = ({
     setIsOpen(false);
   };
 
+  /**
+   * Converts availabilities expressed as an array of {starTime, endTime, days}
+   * objects into an object mapping the day to the start and end time of each
+   * availability period
+   *
+   * @param availability the availibity array to convert
+   * @returns the availibity array expressed as an object mapping the day to
+   * the start and end time of each availibility period
+   */
   const parseAvailability = (availability: ObjectType[]) => {
     const result: ObjectType = {};
     availability.forEach(({ startTime, endTime, days }) => {
@@ -306,13 +315,21 @@ const EmployeeModal = ({
   }
   return (
     <>
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
+      <Modal
+        title={modalTitle}
+        isOpen={isOpen}
+        onClose={closeModal}
+        id="employee-modal"
+      >
         <Upload
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            aria-labelledby="employee-modal"
+          >
             <EmployeeInfo
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
