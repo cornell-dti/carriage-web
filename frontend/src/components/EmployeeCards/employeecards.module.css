@@ -13,3 +13,11 @@
   color: inherit;
   display: inline-block;
 }
+
+.filtersContainer {
+  margin-left: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+}
