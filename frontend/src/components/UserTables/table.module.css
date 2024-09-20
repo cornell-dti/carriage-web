@@ -156,6 +156,16 @@
   border: #eb0023 1px solid;
 }
 
+.filterDisabilityHeader {
+  margin-left: 4rem;
+}
+
+.filterDisabilityBox {
+  height: 1.5rem;
+  border-radius: 4px;
+  border-width: 1.25px;
+}
+
 @media screen and (max-width: 700px) {
   .scheduleTableInner {
     min-width: initial;
