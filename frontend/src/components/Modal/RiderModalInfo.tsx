@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
@@ -63,7 +63,7 @@ const RiderModalInfo = ({
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
-
+  const [needsOption, setNeedsOption] = useState('');
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
@@ -139,6 +139,7 @@ const RiderModalInfo = ({
             name="needs"
             aria-required="true"
             ref={register({ required: true })}
+            onChange={(e) => setNeedsOption(e.target.value)}
           >
             {Object.values(Accessibility).map((value, index) => {
               return (
@@ -148,6 +149,16 @@ const RiderModalInfo = ({
               );
             })}
           </select>
+          {needsOption == 'Other' ? (
+            <Input
+              id="otherNeeds"
+              name="otherNeeds"
+              type="text"
+              placeholder="Please Specify Needs"
+            ></Input>
+          ) : (
+            <></>
+          )}
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
               Invalid needs. You can enter 'Assistant', 'Crutches', or
