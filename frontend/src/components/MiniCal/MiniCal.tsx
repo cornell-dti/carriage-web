@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -33,21 +33,32 @@ const Icon = () => (
 
 const MiniCal = () => {
   const { curDate, setCurDate } = useDate();
+  const [isExpanded, setExpanded] = useState('Collapsed');
 
   const updateDate = (d: Date) => {
     setCurDate(d);
   };
+
+  const updateExpanded = (s: string) => {
+    setExpanded(s);
+  };
+
   class CustomInput extends React.Component<any> {
     render() {
       return (
-        <button className={styles.customInput} onClick={this.props.onClick}>
-          <span className={styles.primary}>
-            {isToday(curDate) ? 'Today ' : ' '}
-            {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+        <>
+          <span aria-live="polite" className={styles.modal_state}>
+            Modal is{isExpanded}
           </span>
-          <span className={styles.space} /> <Icon />
-          <span className={styles.space} /> {this.props.value}
-        </button>
+          <button className={styles.customInput} onClick={this.props.onClick}>
+            <span className={styles.primary}>
+              {isToday(curDate) ? 'Today ' : ' '}
+              {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+            </span>
+            <span className={styles.space} /> <Icon />
+            <span className={styles.space} /> {this.props.value}
+          </button>
+        </>
       );
     }
   }
@@ -87,6 +98,8 @@ const MiniCal = () => {
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
+        onCalendarOpen={() => updateExpanded('Expanded')}
+        onCalendarClose={() => updateExpanded('Collapsed')}
         customInput={<CustomInput />}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({

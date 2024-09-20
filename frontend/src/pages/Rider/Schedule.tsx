@@ -22,7 +22,9 @@ const Schedule = () => {
   const [currRides, setCurrRides] = useState<Ride[]>([]);
   const [pastRides, setPastRides] = useState<Ride[]>([]);
   const { id, user } = useContext(AuthContext);
-  document.title = 'Schedule - Carriage';
+  useEffect(() => {
+    document.title = 'Schedule - Carriage';
+  }, []);
   const refreshRides = useCallback(() => {
     axios
       .get(`/api/rides?rider=${id}`)

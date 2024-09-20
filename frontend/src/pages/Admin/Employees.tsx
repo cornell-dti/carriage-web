@@ -4,13 +4,15 @@ import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import styles from './page.module.css';
 import Notification from '../../components/Notification/Notification';
 import { Button } from '../../components/FormElements/FormElements';
+import SearchBar from '../../components/SearchBar/SearchBar';
 
 const Employees = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     document.title = 'Employees - Carriage';
-  });
+  }, []);
 
   return (
     <main id="main">
@@ -22,7 +24,12 @@ const Employees = () => {
           <Notification />
         </div>
       </div>
-      <EmployeeCards />
+      <SearchBar
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for employees..."
+      />
+      <EmployeeCards query={query} />
     </main>
   );
 };
