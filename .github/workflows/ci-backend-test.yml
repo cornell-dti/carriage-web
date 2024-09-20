@@ -1,5 +1,5 @@
 name: CI Test
-on: 
+on:
   pull_request:
     paths: ['server/**']
 
