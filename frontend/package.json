@@ -37,7 +37,7 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",

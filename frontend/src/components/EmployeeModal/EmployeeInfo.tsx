@@ -11,6 +11,16 @@ type EmployeeInfoProps = {
   phone?: string;
 };
 
+/** The component accepts firstName, lastName, netId, and phone as optional props,
+The component uses the useFormContext hook to access the form methods and state from the parent form context.
+It retrieves the register function and formState object, which includes validation errors.
+The component renders input fields for First Name, Last Name, NetID, and Phone Number with its respective label using the htmlFor attribute.
+The defaultValue prop is used for the input fields if values are not provided.
+The register function is used to register each input field with form validation rules
+If validation errors occur, error messages are displayed below the corresponding input fields.
+Error messages are conditionally rendered based on the presence of errors in the formState.errors object.
+Styles are imported from the employeemodal.module.css file */
+
 const EmployeeInfo = ({
   firstName,
   lastName,
