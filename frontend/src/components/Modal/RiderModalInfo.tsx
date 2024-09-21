@@ -124,7 +124,7 @@ const RiderModalInfo = ({
             type="tel"
             ref={register({
               required: true,
-              pattern: /^\d{3}-?\d{3}-?\d{4}$/,
+              pattern: /^(?:\d{3}-\d{3}-\d{4}|\d{10})$/,
             })}
             className={styles.firstRow}
             aria-required="true"
