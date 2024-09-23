@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext, UseFormRegister, FieldErrors } from 'react-hook-form';
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
@@ -9,15 +9,20 @@ import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
 
-// VERY TEMPORARY IMPLEMENTATION
-// We use this "day selector" component a few times throughout the codebase,
-// each with their own unique implementation. Making a reusable component for
-// this is essential and needed, but would require a lot of refactoring.
-// So for now this will do, but should be replaced ASAP.
+type FormData = {
+  date: string;
+  pickupTime: string;
+  dropoffTime: string;
+  repeats: RepeatValues;
+  endDate: string;
+  days: {
+    [key: string]: string;
+  };
+};
+
 const DaySelector = () => {
   const [selected, setSelected] = useState<ObjectType>({});
-  const { register, getValues, formState } = useFormContext();
-  const { errors } = formState;
+  const { register, getValues, formState: { errors } } = useFormContext<FormData>();
   const dayLabels = {
     Mon: 'M',
     Tue: 'T',
@@ -42,7 +47,7 @@ const DaySelector = () => {
       if (isSelected(day)) {
         return { ...prev, [day]: undefined };
       }
-      return { ...prev, [day]: 1 };
+      return { ...prev, [day]: '1' };
     });
   };
 
@@ -53,21 +58,19 @@ const DaySelector = () => {
         toggle(day);
       }
     });
-  }, []);
+  }, [getValues]);
 
   return (
     <>
       {Object.entries(dayLabels).map(([day, label]) => (
         <button
           key={day}
-          name={`days.${day}`}
-          value={isSelected(day) ? 1 : undefined}
           type="button"
           className={cn(styles.day, {
             [styles.daySelected]: isSelected(day),
           })}
           onClick={() => toggle(day)}
-          ref={register({ validate })}
+          {...register(`days.${day}` as const, { validate })}
         >
           {label}
         </button>
@@ -83,9 +86,9 @@ type RepeatSectionProps = {
   repeatValue: RepeatValues;
 };
 
-const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
-  const { register, getValues, formState } = useFormContext();
-  const { errors } = formState;
+const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
+  const { register, getValues, formState: { errors } } = useFormContext<FormData>();
+
   return (
     <>
       {repeatValue === RepeatValues.Custom && (
@@ -99,11 +102,9 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
         <Input
           id="endDate"
           type="date"
-          name="endDate"
-          aria-required="true"
-          ref={register({
+          {...register("endDate", {
             required: true,
-            validate: (endDate) => {
+            validate: (endDate: string) => {
               const fmtEnd = format_date(endDate);
               const fmtStart = format_date(getValues('date'));
               const notWeekend =
@@ -111,6 +112,7 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
               return fmtEnd > fmtStart && notWeekend;
             },
           })}
+          aria-required="true"
         />
         {errors.endDate?.type === 'required' && (
           <p className={styles.error}>Please enter an end date</p>
@@ -125,14 +127,14 @@ const RepeatSection = ({ repeatValue }: RepeatSectionProps) => {
 
 type RideTimesProps = ModalPageProps & { defaultRepeating?: boolean };
 
-const RideTimesPage = ({
+const RideTimesPage: React.FC<RideTimesProps> = ({
   defaultRepeating = false,
   formData,
   onSubmit,
-}: RideTimesProps) => {
+}) => {
   const [isRepeating, setIsRepeating] = useState(defaultRepeating);
   const { curDate } = useDate();
-  const methods = useForm({
+  const methods = useForm<FormData>({
     defaultValues: {
       date: formData?.date ?? format_date(curDate),
       pickupTime: formData?.pickupTime ?? '',
@@ -142,7 +144,7 @@ const RideTimesPage = ({
       days: formData?.days ?? {},
     },
   });
-  const { errors, handleSubmit, register, getValues, watch } = methods;
+  const { formState: { errors }, handleSubmit, register, getValues, watch } = methods;
   const watchRepeats = watch('repeats');
 
   useEffect(() => {
@@ -158,11 +160,9 @@ const RideTimesPage = ({
             <Input
               id="date"
               type="date"
-              name="date"
-              aria-required="true"
-              ref={register({
+              {...register("date", {
                 required: true,
-                validate: (date) => {
+                validate: (date: string) => {
                   const fmtDate = format_date(date);
                   const fmtCurr = format_date(curDate);
                   const notWeekend =
@@ -170,6 +170,7 @@ const RideTimesPage = ({
                   return fmtDate >= fmtCurr && notWeekend;
                 },
               })}
+              aria-required="true"
             />
             {errors.date?.type === 'required' && (
               <p className={styles.error}>Please enter a date</p>
@@ -184,8 +185,7 @@ const RideTimesPage = ({
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
-              name="repeats"
-              ref={register({ required: true })}
+              {...register("repeats", { required: true })}
               aria-required="true"
               className={styles.select}
             >
@@ -205,16 +205,15 @@ const RideTimesPage = ({
             <Input
               id="pickupTime"
               type="time"
-              name="pickupTime"
-              aria-required="true"
-              ref={register({
+              {...register("pickupTime", {
                 required: true,
-                validate: (pickupTime) => {
+                validate: (pickupTime: string) => {
                   const date = getValues('date');
                   const pickup = moment(`${date} ${pickupTime}`);
                   return checkBounds(date, pickup);
                 },
               })}
+              aria-required="true"
             />
             {errors.pickupTime?.type === 'required' && (
               <p className={styles.error}>Please choose a valid pickup time</p>
@@ -228,11 +227,9 @@ const RideTimesPage = ({
             <Input
               id="dropoffTime"
               type="time"
-              name="dropoffTime"
-              aria-required="true"
-              ref={register({
+              {...register("dropoffTime", {
                 required: true,
-                validate: (dropoffTime) => {
+                validate: (dropoffTime: string) => {
                   const pickupTime = getValues('pickupTime');
                   const date = getValues('date');
                   const pickupMoment = moment(`${date} ${pickupTime}`);
@@ -241,6 +238,7 @@ const RideTimesPage = ({
                   return duration >= 5 && checkBounds(date, dropoffMoment);
                 },
               })}
+              aria-required="true"
             />
             {errors.dropoffTime?.type === 'required' && (
               <p className={styles.error}>Please choose a valid dropoff time</p>

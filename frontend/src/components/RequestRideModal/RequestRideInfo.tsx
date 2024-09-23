@@ -18,15 +18,31 @@ type RequestRideInfoProps = {
   modalType: RideModalType;
 };
 
-const RequestRideInfo = ({
+type FormData = {
+  startDate: string;
+  recurring: boolean;
+  whenRepeat: string;
+  endDate: string;
+  startLocation: string;
+  pickupTime: string;
+  customPickup?: string;
+  pickupCity?: string;
+  pickupZip?: string;
+  endLocation: string;
+  dropoffTime: string;
+  customDropoff?: string;
+  dropoffCity?: string;
+  dropoffZip?: string;
+};
+
+const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   ride,
   showRepeatingCheckbox,
   showRepeatingInfo,
   modalType,
-}: RequestRideInfoProps) => {
-  const { register, setError, formState, getValues, watch, setValue } =
-    useFormContext();
-  const { errors } = formState;
+}) => {
+  const { register, formState: { errors }, getValues, watch, setValue } =
+    useFormContext<FormData>();
   const [locations, setLocations] = useState<Location[]>([]);
   const [custom, setCustom] = useState(ride?.recurring || false);
   const watchRepeating = watch('recurring', ride?.recurring || false);
@@ -43,10 +59,8 @@ const RequestRideInfo = ({
 
   useEffect(() => {
     if (ride) {
-      const defaultStart =
-        ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id;
-      const defaultEnd =
-        ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id;
+      const defaultStart = ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id ?? '';
+      const defaultEnd = ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id ?? '';
       setValue('startLocation', defaultStart);
       setValue('endLocation', defaultEnd);
     }
@@ -55,13 +69,13 @@ const RequestRideInfo = ({
   useEffect(() => {
     if (ride) {
       if (watchPickupCustom === 'Other') {
-        const pickup = addresser.parseAddress(ride!.startLocation.address);
+        const pickup = addresser.parseAddress(ride.startLocation.address);
         setValue('customPickup', pickup.addressLine1);
         setValue('pickupCity', pickup.placeName);
         setValue('pickupZip', pickup.zipCode);
       }
       if (watchDropoffCustom === 'Other') {
-        const dropoff = addresser.parseAddress(ride!.endLocation.address);
+        const dropoff = addresser.parseAddress(ride.endLocation.address);
         setValue('customDropoff', dropoff.addressLine1);
         setValue('dropoffCity', dropoff.placeName);
         setValue('dropoffZip', dropoff.zipCode);
@@ -87,12 +101,11 @@ const RequestRideInfo = ({
         <div className={styles.errorBox}>
           <Input
             id="startDate"
-            name="startDate"
             type="date"
             disabled={shouldDisableStartDate}
             className={cn(styles.input)}
             aria-required="true"
-            ref={register({
+            {...register("startDate", {
               required: true,
               validate: (startDate) => {
                 const pickupTime = getValues('pickupTime');
@@ -126,8 +139,7 @@ const RequestRideInfo = ({
             className={styles.recurring}
             type="checkbox"
             id="recurring"
-            name="recurring"
-            ref={register({ required: false })}
+            {...register("recurring")}
           />
         )}
       </div>
@@ -140,9 +152,8 @@ const RequestRideInfo = ({
             <div className={styles.radioBox}>
               <Input
                 className={styles.whenRepeat}
-                name="whenRepeat"
                 id="daily"
-                ref={register({ required: watchRepeating })}
+                {...register("whenRepeat", { required: watchRepeating })}
                 type="radio"
                 value="daily"
                 onChange={() => setCustom(false)}
@@ -154,9 +165,8 @@ const RequestRideInfo = ({
             <div className={styles.radioBox}>
               <input
                 className={styles.whenRepeat}
-                name="whenRepeat"
                 id="weekly"
-                ref={register({ required: watchRepeating })}
+                {...register("whenRepeat", { required: watchRepeating })}
                 type="radio"
                 value="weekly"
                 onChange={() => setCustom(false)}
@@ -168,9 +178,8 @@ const RequestRideInfo = ({
             <div className={styles.radioBox}>
               <input
                 className={styles.whenRepeat}
-                name="whenRepeat"
                 id="custom"
-                ref={register({ required: watchRepeating })}
+                {...register("whenRepeat", { required: watchRepeating })}
                 type="radio"
                 value="custom"
                 onChange={() => setCustom(true)}
@@ -192,11 +201,10 @@ const RequestRideInfo = ({
           <Input
             className={styles.input}
             type={'date'}
-            name="endDate"
             id="endDate"
-            ref={register({
-              required: getValues('repeating'),
-              validate: (endDate: any) => {
+            {...register("endDate", {
+              required: getValues('recurring'),
+              validate: (endDate: string) => {
                 const startDate = getValues('startDate');
                 const notWeekend =
                   moment(endDate).day() !== 0 && moment(endDate).day() !== 6;
@@ -227,10 +235,9 @@ const RequestRideInfo = ({
           </Label>
           <select
             className={styles.input}
-            name="startLocation"
             aria-labelledby="pickupLabel pickupLocations"
             aria-required="true"
-            ref={register({
+            {...register("startLocation", {
               required: true,
               validate: (pickUpLocation: string) => {
                 const dropOffLocation = getValues('endLocation');
@@ -257,11 +264,10 @@ const RequestRideInfo = ({
           </Label>
           <Input
             type="time"
-            name="pickupTime"
             className={styles.input}
             aria-labelledby="pickupLabel pickupTime"
             aria-required="true"
-            ref={register({
+            {...register("pickupTime", {
               required: true,
               validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
@@ -290,9 +296,8 @@ const RequestRideInfo = ({
           <Input
             className={cn(styles.input, styles.flexGrow)}
             aria-labelledby="customPickup"
-            name="customPickup"
             type="text"
-            ref={register({ required: watchPickupCustom === 'Other' })}
+            {...register("customPickup", { required: watchPickupCustom === 'Other' })}
           />
           <Label className={styles.label} id="pickupCity">
             City
@@ -300,11 +305,10 @@ const RequestRideInfo = ({
           <Input
             className={styles.input}
             aria-labelledby="customPickup pickupCity"
-            name="pickupCity"
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            ref={register({ required: watchPickupCustom === 'Other' })}
+            {...register("pickupCity", { required: watchPickupCustom === 'Other' })}
           />
           <Label className={styles.label} id="pickupZip">
             Zip Code
@@ -312,12 +316,11 @@ const RequestRideInfo = ({
           <Input
             className={styles.input}
             aria-labelledby="customPickup pickupZip"
-            name="pickupZip"
             type="text"
             defaultValue="14853"
             pattern="[0-9]*"
             maxLength={10}
-            ref={register({ required: watchDropoffCustom === 'Other' })}
+            {...register("pickupZip", { required: watchDropoffCustom === 'Other' })}
           />
         </div>
       ) : null}
@@ -331,10 +334,9 @@ const RequestRideInfo = ({
           </Label>
           <select
             className={styles.input}
-            name="endLocation"
             aria-labelledby="dropoffLabel dropoffLocations"
             aria-required="true"
-            ref={register({
+            {...register("endLocation", {
               required: true,
               validate: (endLocation: string) => {
                 const startLoc = getValues('startLocation');
@@ -362,11 +364,10 @@ const RequestRideInfo = ({
           </Label>
           <Input
             type="time"
-            name="dropoffTime"
             className={styles.input}
             aria-labelledby="dropoffLabel dropoffTime"
             aria-required="true"
-            ref={register({
+            {...register("dropoffTime", {
               required: true,
               validate: (dropoffTime: string) => {
                 const pickupTi = getValues('pickupTime');
@@ -394,9 +395,8 @@ const RequestRideInfo = ({
           <Input
             className={cn(styles.input, styles.flexGrow)}
             aria-labelledby="customDropoff"
-            name="customDropoff"
             type="text"
-            ref={register({ required: watchDropoffCustom === 'Other' })}
+            {...register("customDropoff", { required: watchDropoffCustom === 'Other' })}
           />
           <Label className={styles.label} id="dropoffCity">
             City
@@ -404,11 +404,10 @@ const RequestRideInfo = ({
           <Input
             className={styles.input}
             aria-labelledby="customDropoff dropoffCity"
-            name="dropoffCity"
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            ref={register({ required: watchDropoffCustom === 'Other' })}
+            {...register("dropoffCity", { required: watchDropoffCustom === 'Other' })}
           />
           <Label className={styles.label} id="dropoffZip">
             Zip Code
@@ -416,12 +415,11 @@ const RequestRideInfo = ({
           <Input
             className={styles.input}
             aria-labelledby="customDropoff dropoffZip"
-            name="dropoffZip"
             type="text"
             defaultValue="14850"
             pattern="[0-9]*"
             maxLength={10}
-            ref={register({ required: watchDropoffCustom === 'Other' })}
+            {...register("dropoffZip", { required: watchDropoffCustom === 'Other' })}
           />
         </div>
       ) : null}

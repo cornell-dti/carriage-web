@@ -8,21 +8,26 @@ import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
 
+interface FormData {
+  name: string;
+  pickupLoc: string;
+  dropoffLoc: string;
+}
+
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit, formState, getValues } = useForm({
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
       dropoffLoc: formData?.dropoffLoc ?? '',
     },
   });
-  const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { locations } = useLocations();
   const { riders } = useRiders();
 
-  const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
+  const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: FormData) => {
     const rider = nameToId[name.toLowerCase()];
     const startLocation = locationToId[pickupLoc] ?? pickupLoc;
     const endLocation = locationToId[dropoffLoc] ?? dropoffLoc;
@@ -42,7 +47,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       return acc;
     }, {});
     setLocationToId(locationToIdObj);
-  });
+  }, [riders, locations]);
 
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
@@ -51,12 +56,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'name'}>Name</Label>
           <Input
             id="name"
-            name="name"
             type="text"
             className={styles.nameInput}
             list="names"
             aria-required="true"
-            ref={register({
+            {...register("name", {
               required: true,
               validate: (name: string) =>
                 nameToId[name.toLowerCase()] !== undefined,
@@ -77,11 +81,10 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </Label>
           <Input
             id="pickupLoc"
-            name="pickupLoc"
             type="text"
             list="locations"
-            ref={register({ required: true })}
             aria-required="true"
+            {...register("pickupLoc", { required: true })}
           />
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
@@ -98,13 +101,12 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </Label>
           <Input
             id="dropoffLoc"
-            name="dropoffLoc"
             type="text"
             list="locations"
             aria-required="true"
-            ref={register({
+            {...register("dropoffLoc", {
               required: true,
-              validate: (dropoffLoc) => {
+              validate: (dropoffLoc: string) => {
                 const pickupLoc = getValues('pickupLoc');
                 return pickupLoc !== dropoffLoc;
               },

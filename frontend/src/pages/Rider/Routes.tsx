@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
@@ -13,8 +8,7 @@ import Settings from './Settings';
 import DateContext from '../../context/date';
 import { RidesProvider } from '../../context/RidesContext';
 
-// Must be separate component, or else skip ref doesn't work.
-const Routes = () => {
+const RoutesComponent = () => {
   const skipRef = useSkipMain();
   return (
     <>
@@ -23,13 +17,12 @@ const Routes = () => {
         Skip to main content
       </HashLink>
       <Sidebar type="rider">
-        <Switch>
-          <Route path="/schedule" component={Schedule} />
-          <Route path="/settings" component={Settings} />
-          <Route path="*">
-            <Redirect to="/schedule" />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route index element={<Navigate to="schedule" replace />} />
+          <Route path="schedule" element={<Schedule />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="*" element={<Navigate to="schedule" replace />} />
+        </Routes>
       </Sidebar>
     </>
   );
@@ -42,9 +35,7 @@ const RiderRoutes = () => {
   return (
     <DateContext.Provider value={defaultVal}>
       <RidesProvider>
-        <Router basename="/rider">
-          <Routes />
-        </Router>
+        <RoutesComponent />
       </RidesProvider>
     </DateContext.Provider>
   );

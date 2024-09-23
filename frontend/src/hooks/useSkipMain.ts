@@ -1,17 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const useSkipMain = () => {
-  const history = useHistory();
+  const location = useLocation();
   const ref = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      if (ref) {
-        ref.current?.focus();
-      }
-    });
-    return unlisten;
-  }, [history]);
+    if (ref.current) {
+      ref.current.focus();
+    }
+  }, [location]);
+
   return ref;
 };
 

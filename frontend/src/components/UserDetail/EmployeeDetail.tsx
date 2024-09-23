@@ -262,8 +262,11 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
-    setEmployeeData(employeeId, userType);
+    if (employeeId && userType) {
+      setEmployeeData(employeeId, userType);
+    }
   }, [employeeId, userType]);
+
 
   if (employee) {
     const isAdmin = employee.isDriver !== undefined;

@@ -12,6 +12,7 @@ import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import { newDate } from 'react-datepicker/dist/date_utils';
 
 const colorMap = new Map<string, string[]>([
   ['red', ['FFA26B', 'FFC7A6']],
@@ -173,6 +174,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             localizer={localizer}
             toolbar={false}
             step={5}
+            defaultDate={scheduleDay}
             timeslots={12}
             showMultiDayTimes={true}
             events={events}
@@ -180,7 +182,6 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             onSelectEvent={onSelectEvent}
             min={minTime}
             max={maxTime}
-            date={scheduleDay}
             resources={calDrivers}
             resourceIdAccessor="resourceId"
             resourceTitleAccessor="resourceTitle"

@@ -5,18 +5,21 @@ import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 import axios from '../../../util/axios';
 
+interface FormData {
+  driver: string;
+}
+
 const DriverPage = ({
   onBack,
   onSubmit,
   formData,
   labelid,
 }: ModalPageProps & { labelid?: string }) => {
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       driver: formData?.driver ?? '',
     },
   });
-  const { errors } = formState;
   const [loaded, setLoaded] = useState(false);
 
   const { date, pickupTime: startTime, dropoffTime: endTime } = formData!;
@@ -50,7 +53,7 @@ const DriverPage = ({
           aria-labelledby={labelid}
         >
           {loaded ? (
-            availableDrivers.map((d, index) => (
+            availableDrivers.map((d) => (
               <div className={styles.driver} key={d.id}>
                 <Label
                   htmlFor={d.firstName + d.lastName}
@@ -61,10 +64,9 @@ const DriverPage = ({
                 <Input
                   id={d.firstName + d.lastName}
                   className={styles.driverRadio}
-                  name="driver"
                   type="radio"
                   value={d.id}
-                  ref={register({ required: true })}
+                  {...register("driver", { required: true })}
                 />
               </div>
             ))

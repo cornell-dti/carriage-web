@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect,
-} from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
@@ -22,8 +17,7 @@ import { RidersProvider } from '../../context/RidersContext';
 import { LocationsProvider } from '../../context/LocationsContext';
 import { RidesProvider } from '../../context/RidesContext';
 
-// Must be separate component, or else skip ref doesn't work.
-const Routes = () => {
+const RoutesComponent = () => {
   const skipRef = useSkipMain();
   return (
     <>
@@ -32,34 +26,22 @@ const Routes = () => {
         Skip to main content
       </HashLink>
       <Sidebar type="admin">
-        <Switch>
-          <Route
-            path="/home"
-            render={({ match: { url } }) => (
-              <>
-                <Route path={`${url}/`} component={Home} exact />
-                <Route path={`${url}/export`} component={ExportPreview} />
-              </>
-            )}
-          />
-          <Route path="/employees" component={Employees} />
-          <Route path="/admins/:id" component={EmployeeDetail} />
-          <Route path="/drivers/:id" component={EmployeeDetail} />
-          <Route
-            path="/riders"
-            render={({ match: { url } }) => (
-              <>
-                <Route path={`${url}/`} component={Students} exact />
-                <Route path={`${url}/:id`} component={RiderDetail} />
-              </>
-            )}
-          />
-          <Route path="/locations" component={Locations} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="*">
-            <Redirect to="/home" />
+        <Routes>
+          <Route path="/" element={<Navigate to="home" replace />} />
+          <Route path="home" element={<Outlet />}>
+            <Route index element={<Home />} />
+            <Route path="export" element={<ExportPreview />} />
           </Route>
-        </Switch>
+          <Route path="employees" element={<Employees />} />
+          <Route path="admins/:id" element={<EmployeeDetail />} />
+          <Route path="drivers/:id" element={<EmployeeDetail />} />
+          <Route path="riders" element={<Outlet />}>
+            <Route index element={<Students />} />
+            <Route path=":id" element={<RiderDetail />} />
+          </Route>
+          <Route path="locations" element={<Locations />} />
+          <Route path="analytics" element={<Analytics />} />
+        </Routes>
       </Sidebar>
     </>
   );
@@ -75,9 +57,7 @@ const AdminRoutes = () => {
         <RidersProvider>
           <RidesProvider>
             <LocationsProvider>
-              <Router basename="/admin">
-                <Routes />
-              </Router>
+              <RoutesComponent />
             </LocationsProvider>
           </RidesProvider>
         </RidersProvider>
