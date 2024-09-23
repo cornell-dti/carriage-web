@@ -5,10 +5,9 @@ import authorize from './utils/auth';
 import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
-import { DriverType } from '../src/models/driver';
 import { AdminType } from '../src/models/admin';
 import { Organization, Rider, RiderType } from '../src/models/rider';
-import { Ride, RideType, Status, Type } from '../src/models/ride';
+import { Ride, Status, Type } from '../src/models/ride';
 import { Location, LocationType, Tag } from '../src/models/location';
 import moment from 'moment';
 

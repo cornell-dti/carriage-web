@@ -58,82 +58,86 @@ const addSub = (sub: SubscriptionType) =>
     });
   });
 
-const sendMsg = (
-  sub: SubscriptionType,
-  title: string,
-  body: string,
-  notifEvent: NotificationEvent,
-  ride: RideType
-) => {
-  if (sub.platform === PlatformType.WEB) {
-    const webSub = {
-      endpoint: sub.endpoint!,
-      keys: sub.keys!,
-    };
-    const payload = {
-      title,
-      body,
-      ride,
-      sentTime: new Date().toISOString(),
-    };
-    return new Promise((resolve, reject) => {
-      webpush
-        .sendNotification(webSub, JSON.stringify(payload))
-        .then(() => resolve('success'))
-        .catch((err) => {
-          if (err.statusCode === 404 || err.statusCode === 410) {
-            Subscription.get(sub.id, (err2, data) => {
-              if (err2 || !data) {
-                reject();
-              } else {
-                data.delete().then(() => resolve('success'));
-              }
-            });
-          } else {
-            reject(err);
-          }
-        });
-    });
-  }
-
-  const payload = JSON.stringify({
-    default: 'Default message.',
-    GCM: JSON.stringify({
-      priority: 'high',
-      content_available: true,
-      data: {
-        id: uuid(),
-        notifEvent,
-        ride,
-        sentTime: new Date().toISOString(),
-      },
-      notification: {
+  const sendMsg = (
+    sub: SubscriptionType,
+    title: string,
+    body: string,
+    notifEvent: NotificationEvent,
+    ride: RideType
+  ) => {
+    if (sub.platform === PlatformType.WEB) {
+      const webSub = {
+        endpoint: sub.endpoint!,
+        keys: sub.keys!,
+      };
+      const payload = {
         title,
         body,
-      },
-    }),
-    APNS: JSON.stringify({
-      payload: {
-        aps: {
-          sound: 'default',
+        ride,
+        sentTime: new Date().toISOString(),
+      };
+      return new Promise((resolve, reject) => {
+        webpush
+          .sendNotification(webSub, JSON.stringify(payload))
+          .then(() => resolve('success'))
+          .catch((err) => {
+            if (err.statusCode === 404 || err.statusCode === 410) {
+              Subscription.get(sub.id, (err2, data) => {
+                if (err2 || !data) {
+                  reject();
+                } else {
+                  data.delete().then(() => resolve('success'));
+                }
+              });
+            } else {
+              reject(err);
+            }
+          });
+      });
+    }
+  
+    const payload = JSON.stringify({
+      default: 'Default message.',
+      GCM: JSON.stringify({
+        priority: 'high',
+        content_available: true,
+        data: {
+          id: uuid(),
+          notifEvent,
+          ride,
+          sentTime: new Date().toISOString(),
         },
-      },
-    }),
-  });
-
-  const snsParams: PublishCommandInput = {
-    Message: payload,
-    MessageStructure: 'json',
-    TargetArn: sub.endpoint,
-  };
-
-  return new Promise((resolve, reject) => {
-    snsClient.publish(snsParams, (err, data) => {
-      err ? reject(err) : resolve(data); // TODO if error remove? which errors?
+        notification: {
+          title,
+          body,
+        },
+      }),
+      APNS: JSON.stringify({
+        payload: {
+          aps: {
+            sound: 'default',
+          },
+        },
+      }),
     });
-  });
-};
-
+  
+    const snsParams: PublishCommandInput = {
+      Message: payload,
+      MessageStructure: 'json',
+      TargetArn: sub.endpoint,
+    };
+  
+    return new Promise((resolve, reject) => {
+      snsClient.publish(snsParams, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+  };
+  
 export const deleteAll = () =>
   new Promise((resolve, reject) => {
     Subscription.scan().exec((err, data) => {

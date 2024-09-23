@@ -1,5 +1,5 @@
 import express from 'express';
-import { S3, ObjectCannedACL, PutObjectCommandOutput } from '@aws-sdk/client-s3';  // Import required types
+import { S3, ObjectCannedACL } from '@aws-sdk/client-s3';  // Import required types
 import * as db from './common';
 import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
@@ -33,7 +33,7 @@ router.post('/', validateUser('User'), (req, res) => {
     };
 
     // Put object into S3 bucket
-    s3bucket.putObject(params, (s3Err : any, data: PutObjectCommandOutput | undefined) => {
+    s3bucket.putObject(params, (s3Err : any) => {
       if (s3Err) {
         res.status(s3Err || 500).send({ err: s3Err.message });
       } else {

@@ -7,8 +7,6 @@ import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
 import { ModelType } from 'dynamoose/dist/General';
 import { Item } from 'dynamoose/dist/Item';
-import * as db from './common'; // Import db utilities to interact with DynamoDB
-
 
 const router = express.Router();
 
