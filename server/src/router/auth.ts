@@ -1,12 +1,14 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import { ModelType } from 'dynamoose/dist/General';
-import { Document } from 'dynamoose/dist/Document';
 import { Rider } from '../models/rider';
 import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
 import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
+import { ModelType } from 'dynamoose/dist/General';
+import { Item } from 'dynamoose/dist/Item';
+import * as db from './common'; // Import db utilities to interact with DynamoDB
+
 
 const router = express.Router();
 
@@ -22,7 +24,7 @@ const audience = [
 ];
 
 function getModel(table: string) {
-  const tableToModel: { [table: string]: ModelType<Document> } = {
+  const tableToModel: { [table: string]: ModelType<Item> } = {
     Riders: Rider,
     Drivers: Driver,
     Admins: Admin,
@@ -36,7 +38,7 @@ function getUserType(table: string) {
 
 function findUserAndSendToken(
   res: express.Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   table: string,
   email: string
 ) {
@@ -119,6 +121,7 @@ router.post('/', async (req, res) => {
     res.status(500).send({ err });
   }
 });
+
 
 if (process.env.NODE_ENV === 'test') {
   router.post('/dummy', async (req, res) => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import * as AWS from 'aws-sdk';
+import { S3, ObjectCannedACL, PutObjectCommandOutput } from '@aws-sdk/client-s3';  // Import required types
 import * as db from './common';
 import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
@@ -9,7 +9,7 @@ import { validateUser } from '../util';
 const router = express.Router();
 
 const BUCKET_NAME = 'dti-carriage-staging-public';
-const s3bucket = new AWS.S3();
+const s3bucket = new S3();
 
 // Uploads base64-encoded fileBuffer to S3 in the folder {tableName}
 // Sets the user's DB photoLink field to the url of the uploaded image, if not set
@@ -27,14 +27,15 @@ router.post('/', validateUser('User'), (req, res) => {
       Bucket: BUCKET_NAME,
       Key: objectKey,
       Body: Buffer.from(fileBuffer, 'base64'),
-      ACL: 'public-read',
+      ACL: ObjectCannedACL.public_read,  // Use the enum for ACL here
       ContentEncoding: 'base64',
       ContentType: 'image/jpeg',
     };
 
-    s3bucket.putObject(params, (s3Err, _) => {
+    // Put object into S3 bucket
+    s3bucket.putObject(params, (s3Err : any, data: PutObjectCommandOutput | undefined) => {
       if (s3Err) {
-        res.status(s3Err.statusCode || 500).send({ err: s3Err.message });
+        res.status(s3Err || 500).send({ err: s3Err.message });
       } else {
         const photoLink = `https://${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
         const operation = { $SET: { photoLink } };
