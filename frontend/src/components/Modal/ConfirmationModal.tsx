@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
-import { Rider, User } from '../../types/index';
-import { useHistory } from 'react-router-dom';
+import { User } from '../../types/index';
+import { useNavigate } from 'react-router-dom';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { useEmployees } from '../../context/EmployeesContext';
 import axios from '../../util/axios';
@@ -24,8 +24,8 @@ const ConfirmationModal = ({
 }: ConfirmationProps) => {
   const { refreshRiders } = useRiders();
   const { refreshDrivers, refreshAdmins } = useEmployees();
-  const history = useHistory();
-  const { showToast } = useToast(); // do this
+  const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const closeModal = () => {
     onClose();
@@ -42,7 +42,8 @@ const ConfirmationModal = ({
       .delete(`/api/${userGroup}/${userId ? userId : ''}`)
       .then(refreshFunc)
       .then(() => {
-        // history.push(`/${userType === 'rider' ? 'riders' : 'employees'}`);
+        // Navigate to the appropriate page after deletion
+        navigate(`/${userType === 'rider' ? 'riders' : 'employees'}`);
         showToast(`The ${userType} has been deleted.`, ToastStatus.SUCCESS);
         closeModal();
       });
@@ -54,9 +55,7 @@ const ConfirmationModal = ({
     } else if (role === 'driver') {
       deleteAPICall(role, user.id, refreshDrivers);
     } else if (role === 'both') {
-      // Delete from both drivers & admins; delete manually from drivers to avoid multiple toasts
-      //PROBLEM: Since ids are different in drivers and admins db, need to find the corresponding
-      // id of this user in the admins db; ids not guranteed to be identical in both dbs
+      // Delete from both drivers & admins
       deleteAPICall('driver', user.id, refreshDrivers);
       axios.delete(`/api/admins/${user.id ? user.id : ''}`).then(refreshAdmins);
     } else {
@@ -66,7 +65,7 @@ const ConfirmationModal = ({
 
   return (
     <Modal
-      title={''}
+      title=""
       isOpen={open}
       onClose={closeModal}
       displayClose={true}

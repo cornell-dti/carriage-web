@@ -1,7 +1,7 @@
 import { parseAddress } from 'addresser';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Location, ObjectType, Tag } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
@@ -12,6 +12,13 @@ type LocationModalProps = {
   existingLocation?: Location;
   onAddLocation?: (newLocation: Location) => void;
   onEditLocation?: (editedLocation: Location) => void;
+};
+
+type FormData = {
+  name: string;
+  address: string;
+  info: string;
+  tag: Tag;
 };
 
 const isAddress = (address: string) => {
@@ -48,15 +55,18 @@ const isAddress = (address: string) => {
   return true;
 };
 
-const LocationModal = ({
+const LocationModal: React.FC<LocationModalProps> = ({
   existingLocation,
   onAddLocation,
   onEditLocation,
-}: LocationModalProps) => {
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const { register, handleSubmit, errors } = useForm();
-  const { name, address, info } = errors;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
   const submitButtonText = existingLocation ? 'Save' : 'Add';
@@ -67,9 +77,9 @@ const LocationModal = ({
 
   const closeModal = () => setIsOpen(false);
 
-  const onSubmit = async (data: ObjectType) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     const url = existingLocation
-      ? `/api/locations/${existingLocation!.id}`
+      ? `/api/locations/${existingLocation.id}`
       : '/api/locations';
     const method = existingLocation ? axios.put : axios.post;
 
@@ -107,47 +117,50 @@ const LocationModal = ({
           <div className={styles.inputContainer}>
             <Label htmlFor="name">Name</Label>
             <Input
-              name="name"
+              {...register('name', { required: true })}
               type="text"
               id="name"
               defaultValue={existingLocation?.name}
               className={styles.input}
-              ref={register({ required: true })}
               aria-required="true"
             />
-            {name && <p className={styles.errorMsg}>Please enter a name</p>}
+            {errors.name && (
+              <p className={styles.errorMsg}>Please enter a name</p>
+            )}
+
             <Label htmlFor="address">Address</Label>
             <Input
-              name="address"
+              {...register('address', { required: true, validate: isAddress })}
               type="text"
               id="address"
               defaultValue={existingLocation?.address}
               className={styles.input}
               aria-required="true"
-              ref={register({ required: true })}
             />
-            {address && <p className={styles.errorMsg}>{address.message}</p>}
+            {errors.address && (
+              <p className={styles.errorMsg}>{errors.address.message}</p>
+            )}
+
             <Label htmlFor="info">Pickup/Dropoff Info</Label>
             <Input
-              name="info"
+              {...register('info', { required: true })}
               type="text"
               id="info"
               defaultValue={existingLocation?.info}
               className={styles.input}
-              ref={register({ required: true })}
               aria-required="true"
             />
-            {info && (
+            {errors.info && (
               <p className={styles.errorMsg}>
                 Please enter pickup/dropoff info
               </p>
             )}
+
             <Label htmlFor="tag">Tag</Label>
             <select
-              name="tag"
+              {...register('tag', { required: true })}
               id="tag"
               defaultValue={existingLocation?.tag}
-              ref={register({ required: true })}
               className={styles.inputContainer}
               aria-required="true"
             >
@@ -159,6 +172,7 @@ const LocationModal = ({
                 )
               )}
             </select>
+
             <div>
               <Button className={styles.submit} type="submit">
                 {submitButtonText}

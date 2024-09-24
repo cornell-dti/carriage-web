@@ -17,8 +17,6 @@ const convertedVapidKey = urlBase64ToUint8Array(
   process.env.REACT_APP_PUBLIC_VAPID_KEY!
 );
 
-type WithDefaultsType = (options?: RequestInit) => RequestInit;
-
 const sendSubscription = (
   userType: string,
   userId: string,
@@ -59,6 +57,7 @@ const subscribeUser = (userType: string, userId: string) => {
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
                     // 'Permission was not granted.'
+                    console.log(e);
                   }
                 });
             } else {
@@ -70,6 +69,7 @@ const subscribeUser = (userType: string, userId: string) => {
       })
       .catch((e) => {
         // 'An error ocurred during Service Worker registration.'
+        console.log(e);
       });
   }
 };

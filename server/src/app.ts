@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import express from 'express';
-import dynamoose from 'dynamoose';
 import path from 'path';
 import cors from 'cors';
 
@@ -8,7 +7,6 @@ import cors from 'cors';
 import moment from 'moment-timezone';
 moment.tz.setDefault('America/New_York');
 
-import config from './config';
 import rider from './router/rider';
 import driver from './router/driver';
 import admin from './router/admin';

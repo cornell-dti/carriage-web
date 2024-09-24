@@ -64,8 +64,10 @@ const MiniCal = () => {
   const { curDate, setCurDate } = useDate();
   const [isExpanded, setExpanded] = useState('Collapsed');
 
-  const updateDate = (d: Date) => {
-    setCurDate(d);
+  const updateDate = (d: Date | null) => {
+    if (d) {
+      setCurDate(d);
+    }
   };
 
   const updateExpanded = (s: string) => {

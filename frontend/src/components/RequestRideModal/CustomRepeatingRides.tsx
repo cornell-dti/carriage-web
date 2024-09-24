@@ -14,8 +14,10 @@ type CustomRepeatingRidesProps = {
 };
 
 const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
-  const { register, formState } = useFormContext();
-  const { errors } = formState;
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   const [week, setWeek] = useState<WeekType>({
     Mon: false,
     Tue: false,
@@ -45,7 +47,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
         handleClick(days[day - 1]);
       });
     }
-  }, [ride]);
+  }, [ride, handleClick, dayLabels]);
 
   const dayClicked = () =>
     week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
@@ -60,10 +62,9 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
           <SRLabel id={label[0]}>{day}</SRLabel>
           <button
             aria-labelledby={`${label[0]} repeatDays`}
-            name={day}
             type="button"
             aria-required="true"
-            ref={register({
+            {...register(day, {
               required: true,
               validate: () => dayClicked(),
             })}

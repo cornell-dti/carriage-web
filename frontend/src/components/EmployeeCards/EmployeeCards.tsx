@@ -1,11 +1,10 @@
-import React, { useState, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { clock, phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee, Admin, Driver } from '../../types';
+import { Employee } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
-import formatAvailability from '../../util/employee';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { Button } from '../FormElements/FormElements';
@@ -21,45 +20,34 @@ type EmployeeCardProps = {
   id: string;
   employee: Employee;
 };
-type EmployeeDetailProps = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  role?: string[];
-  driverId?: string;
-  netId: string;
-  phone: string;
-  availability?: string[][];
-  photoLink?: string;
-  startDate?: string;
-};
-//Convert DriverType to EmployeeType
-const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
-  return drivers.map((driver) => ({
-    id: driver.id,
-    firstName: driver.firstName,
-    lastName: driver.lastName,
-    availability: formatAvailability(driver.availability)!,
-    netId: driver.email.split('@')[0],
-    phone: driver.phoneNumber,
-    photoLink: driver.photoLink,
-    startDate: driver.startDate,
-  }));
-};
 
-//Convert AdminType to EmployeeType
-const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
-  return admins.map((admin) => ({
-    id: admin.id,
-    firstName: admin.firstName,
-    lastName: admin.lastName,
-    type: admin.type,
-    isDriver: admin.isDriver,
-    netId: admin.email.split('@')[0],
-    phone: admin.phoneNumber,
-    photoLink: admin.photoLink,
-  }));
-};
+//Convert DriverType to EmployeeType
+// const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
+//   return drivers.map((driver) => ({
+//     id: driver.id,
+//     firstName: driver.firstName,
+//     lastName: driver.lastName,
+//     availability: formatAvailability(driver.availability)!,
+//     netId: driver.email.split('@')[0],
+//     phone: driver.phoneNumber,
+//     photoLink: driver.photoLink,
+//     startDate: driver.startDate,
+//   }));
+// };
+
+// //Convert AdminType to EmployeeType
+// const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
+//   return admins.map((admin) => ({
+//     id: admin.id,
+//     firstName: admin.firstName,
+//     lastName: admin.lastName,
+//     type: admin.type,
+//     isDriver: admin.isDriver,
+//     netId: admin.email.split('@')[0],
+//     phone: admin.phoneNumber,
+//     photoLink: admin.photoLink,
+//   }));
+// };
 
 const EmployeeCard = ({
   id,
@@ -86,7 +74,7 @@ const EmployeeCard = ({
     }
 
     return Object.entries(availability)
-      .filter(([day, timeRange]) => timeRange?.startTime && timeRange?.endTime)
+      .filter(([_, timeRange]) => timeRange?.startTime && timeRange?.endTime)
       .map(
         ([day, timeRange]) =>
           `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
