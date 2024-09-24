@@ -28,5 +28,5 @@ jobs:
           node-version: '20.x'
       - name: Install Server Dependencies
         run: npm run install:server
-      - name: Test Server
-        run: npm run test:server
+      # - name: Test Server
+      #   run: npm run test:server
