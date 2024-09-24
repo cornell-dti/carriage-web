@@ -15,7 +15,11 @@ const DriverPage = ({
   formData,
   labelid,
 }: ModalPageProps & { labelid?: string }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
     defaultValues: {
       driver: formData?.driver ?? '',
     },
@@ -66,7 +70,7 @@ const DriverPage = ({
                   className={styles.driverRadio}
                   type="radio"
                   value={d.id}
-                  {...register("driver", { required: true })}
+                  {...register('driver', { required: true })}
                 />
               </div>
             ))

@@ -15,7 +15,9 @@ export const setAuthToken = (token: string) => {
 
 instance.interceptors.request.use(
   (config) => {
-    const jwtCookie = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
+    const jwtCookie = document.cookie
+      .split(';')
+      .find((c) => c.trim().startsWith('jwt='));
     if (jwtCookie) {
       const encryptedJwt = jwtCookie.split('=')[1];
       const decryptedJwt = decrypt(encryptedJwt);

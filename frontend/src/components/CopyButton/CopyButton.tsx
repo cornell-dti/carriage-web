@@ -20,9 +20,9 @@ const CopyButton = () => {
   };
 
   return (
-      <Button onClick={handleClick} outline className={styles.copyButton}>
-        Copy Emails
-      </Button>
+    <Button onClick={handleClick} outline className={styles.copyButton}>
+      Copy Emails
+    </Button>
   );
 };
 

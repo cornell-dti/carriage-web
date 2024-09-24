@@ -57,7 +57,7 @@ const subscribeUser = (userType: string, userId: string) => {
                 .catch((e) => {
                   if (Notification.permission !== 'granted') {
                     // 'Permission was not granted.'
-                    console.log(e)
+                    console.log(e);
                   }
                 });
             } else {
@@ -69,7 +69,7 @@ const subscribeUser = (userType: string, userId: string) => {
       })
       .catch((e) => {
         // 'An error ocurred during Service Worker registration.'
-        console.log(e)
+        console.log(e);
       });
   }
 };

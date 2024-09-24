@@ -268,7 +268,6 @@ const EmployeeDetail = () => {
     }
   }, [employeeId, userType]);
 
-
   if (employee) {
     const isAdmin = employee.isDriver !== undefined;
     const isBoth = employee.isDriver ?? false; // isDriver is only for admins + also driver if true

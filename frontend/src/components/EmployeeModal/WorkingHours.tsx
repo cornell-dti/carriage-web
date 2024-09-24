@@ -34,7 +34,12 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
     isDaySelectedByInstance,
     getSelectedDays,
   } = useWeek();
-  const { register, setValue, getValues, formState: { errors } } = useFormContext<FormData>();
+  const {
+    register,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = useFormContext<FormData>();
   const dayLabels = {
     Mon: 'M',
     Tue: 'T',
@@ -146,9 +151,16 @@ type WorkingHoursProps = {
   hide: boolean;
 };
 
-const WorkingHours: React.FC<WorkingHoursProps> = ({ existingAvailability, hide }) => {
-  const [numAvailability, setNumAvailability] = useState(existingAvailability ? 0 : 1);
-  const [availabilityArray, setAvailabilityArray] = useState<[string, string[]][]>([]);
+const WorkingHours: React.FC<WorkingHoursProps> = ({
+  existingAvailability,
+  hide,
+}) => {
+  const [numAvailability, setNumAvailability] = useState(
+    existingAvailability ? 0 : 1
+  );
+  const [availabilityArray, setAvailabilityArray] = useState<
+    [string, string[]][]
+  >([]);
 
   const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
 
@@ -164,7 +176,10 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({ existingAvailability, hide 
   }, [existingAvailability]);
 
   const availabilityMapToArray = useCallback((map: Map<string, string[]>) => {
-    const newAvailabilityArray: [string, string[]][] = Array.from(map, ([timeRange, dayArray]) => [timeRange, dayArray]);
+    const newAvailabilityArray: [string, string[]][] = Array.from(
+      map,
+      ([timeRange, dayArray]) => [timeRange, dayArray]
+    );
     setAvailabilityArray(newAvailabilityArray);
   }, []);
 

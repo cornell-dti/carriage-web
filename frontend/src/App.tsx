@@ -7,7 +7,9 @@ import { setAuthToken } from './util/axios';
 
 const App = () => {
   useEffect(() => {
-    const jwtCookie = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
+    const jwtCookie = document.cookie
+      .split(';')
+      .find((c) => c.trim().startsWith('jwt='));
     if (jwtCookie) {
       const token = jwtCookie.split('=')[1];
       setAuthToken(token);

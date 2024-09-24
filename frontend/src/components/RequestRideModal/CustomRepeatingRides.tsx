@@ -14,7 +14,10 @@ type CustomRepeatingRidesProps = {
 };
 
 const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
-  const { register, formState: { errors } } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
   const [week, setWeek] = useState<WeekType>({
     Mon: false,
     Tue: false,

@@ -44,7 +44,6 @@ const unscheduledRide: RideType = {
   recurring: false,
 };
 
-
 // Surpress warnings
 // process.on('unhandledRejection', () => {});
 

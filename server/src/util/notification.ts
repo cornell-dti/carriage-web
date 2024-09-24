@@ -1,5 +1,9 @@
 import webpush from 'web-push';
-import { PublishCommandInput, SNS, CreatePlatformEndpointCommandOutput } from '@aws-sdk/client-sns';
+import {
+  PublishCommandInput,
+  SNS,
+  CreatePlatformEndpointCommandOutput,
+} from '@aws-sdk/client-sns';
 import { Condition } from 'dynamoose';
 import { v4 as uuid } from 'uuid';
 import config, { webpushValues, snsValues } from '../config';
@@ -14,13 +18,12 @@ import { Change, NotificationEvent } from './types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';
 
-
 const snsClient = new SNS({
   credentials: {
-    accessKeyId : config.accessKeyId as string,
-    secretAccessKey : config.secretAccessKey as string,
+    accessKeyId: config.accessKeyId as string,
+    secretAccessKey: config.secretAccessKey as string,
   },
-  region : 'us-east-1',
+  region: 'us-east-1',
 });
 
 webpush.setVapidDetails(
@@ -58,86 +61,86 @@ const addSub = (sub: SubscriptionType) =>
     });
   });
 
-  const sendMsg = (
-    sub: SubscriptionType,
-    title: string,
-    body: string,
-    notifEvent: NotificationEvent,
-    ride: RideType
-  ) => {
-    if (sub.platform === PlatformType.WEB) {
-      const webSub = {
-        endpoint: sub.endpoint!,
-        keys: sub.keys!,
-      };
-      const payload = {
-        title,
-        body,
+const sendMsg = (
+  sub: SubscriptionType,
+  title: string,
+  body: string,
+  notifEvent: NotificationEvent,
+  ride: RideType
+) => {
+  if (sub.platform === PlatformType.WEB) {
+    const webSub = {
+      endpoint: sub.endpoint!,
+      keys: sub.keys!,
+    };
+    const payload = {
+      title,
+      body,
+      ride,
+      sentTime: new Date().toISOString(),
+    };
+    return new Promise((resolve, reject) => {
+      webpush
+        .sendNotification(webSub, JSON.stringify(payload))
+        .then(() => resolve('success'))
+        .catch((err) => {
+          if (err.statusCode === 404 || err.statusCode === 410) {
+            Subscription.get(sub.id, (err2, data) => {
+              if (err2 || !data) {
+                reject();
+              } else {
+                data.delete().then(() => resolve('success'));
+              }
+            });
+          } else {
+            reject(err);
+          }
+        });
+    });
+  }
+
+  const payload = JSON.stringify({
+    default: 'Default message.',
+    GCM: JSON.stringify({
+      priority: 'high',
+      content_available: true,
+      data: {
+        id: uuid(),
+        notifEvent,
         ride,
         sentTime: new Date().toISOString(),
-      };
-      return new Promise((resolve, reject) => {
-        webpush
-          .sendNotification(webSub, JSON.stringify(payload))
-          .then(() => resolve('success'))
-          .catch((err) => {
-            if (err.statusCode === 404 || err.statusCode === 410) {
-              Subscription.get(sub.id, (err2, data) => {
-                if (err2 || !data) {
-                  reject();
-                } else {
-                  data.delete().then(() => resolve('success'));
-                }
-              });
-            } else {
-              reject(err);
-            }
-          });
-      });
-    }
-  
-    const payload = JSON.stringify({
-      default: 'Default message.',
-      GCM: JSON.stringify({
-        priority: 'high',
-        content_available: true,
-        data: {
-          id: uuid(),
-          notifEvent,
-          ride,
-          sentTime: new Date().toISOString(),
+      },
+      notification: {
+        title,
+        body,
+      },
+    }),
+    APNS: JSON.stringify({
+      payload: {
+        aps: {
+          sound: 'default',
         },
-        notification: {
-          title,
-          body,
-        },
-      }),
-      APNS: JSON.stringify({
-        payload: {
-          aps: {
-            sound: 'default',
-          },
-        },
-      }),
-    });
-  
-    const snsParams: PublishCommandInput = {
-      Message: payload,
-      MessageStructure: 'json',
-      TargetArn: sub.endpoint,
-    };
-  
-    return new Promise((resolve, reject) => {
-      snsClient.publish(snsParams, (err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
+      },
+    }),
+  });
+
+  const snsParams: PublishCommandInput = {
+    Message: payload,
+    MessageStructure: 'json',
+    TargetArn: sub.endpoint,
   };
-  
+
+  return new Promise((resolve, reject) => {
+    snsClient.publish(snsParams, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+};
+
 export const deleteAll = () =>
   new Promise((resolve, reject) => {
     Subscription.scan().exec((err, data) => {
@@ -311,14 +314,13 @@ export const notify = (
 //     }
 //   });
 
-
 export const subscribe = (req: SubscriptionRequest) =>
   new Promise((resolve, reject) => {
     const userType = req.userType as UserType;
     const { userId } = req;
     const platform = req.platform as PlatformType;
     const timeAdded = new Date().toISOString();
-    
+
     if (platform === PlatformType.WEB) {
       const subscription = {
         id: req.webSub!.endpoint + userType + platform,
@@ -338,24 +340,30 @@ export const subscribe = (req: SubscriptionRequest) =>
         Token: req.token!,
         PlatformApplicationArn: snsValues.android,
       };
-      
-      snsClient.createPlatformEndpoint(snsParams, (err: Error | null, data: CreatePlatformEndpointCommandOutput | undefined) => {
-        if (err || !data) {
-          reject(err);
-        } else {
-          const subscription = {
-            id: data.EndpointArn + userType + platform,
-            endpoint: data.EndpointArn!,
-            userType,
-            userId,
-            platform,
-            timeAdded,
-            preferences: [],
-          };
-          addSub(subscription)
-            .then(() => resolve('success'))
-            .catch(reject);
+
+      snsClient.createPlatformEndpoint(
+        snsParams,
+        (
+          err: Error | null,
+          data: CreatePlatformEndpointCommandOutput | undefined
+        ) => {
+          if (err || !data) {
+            reject(err);
+          } else {
+            const subscription = {
+              id: data.EndpointArn + userType + platform,
+              endpoint: data.EndpointArn!,
+              userType,
+              userId,
+              platform,
+              timeAdded,
+              preferences: [],
+            };
+            addSub(subscription)
+              .then(() => resolve('success'))
+              .catch(reject);
+          }
         }
-      });
+      );
     }
   });

@@ -3,12 +3,7 @@ import {
   useGoogleLogin as googleAuth,
   googleLogout,
 } from '@react-oauth/google';
-import {
-  useNavigate,
-  Navigate,
-  Route,
-  Routes,
-} from 'react-router-dom';
+import { useNavigate, Navigate, Route, Routes } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
@@ -51,7 +46,7 @@ const AuthManager = () => {
   const [refreshUser, setRefreshUser] = useState(() =>
     createRefresh(id, localStorage.getItem('userType') || '', jwtValue())
   );
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +64,9 @@ const AuthManager = () => {
 
   function jwtValue() {
     try {
-      const jwtCookie = document.cookie.split(';').find(c => c.trim().startsWith('jwt='));
+      const jwtCookie = document.cookie
+        .split(';')
+        .find((c) => c.trim().startsWith('jwt='));
       if (jwtCookie) {
         const encryptedJwt = jwtCookie.split('=')[1];
         const decryptedJwt = decrypt(encryptedJwt);
@@ -83,7 +80,8 @@ const AuthManager = () => {
 
   function deleteCookie(name: string) {
     if (getCookie(name)) {
-      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';
+      document.cookie =
+        name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';
     }
   }
 
@@ -96,9 +94,10 @@ const AuthManager = () => {
     const table = `${userType}s`;
     const localUserType = localStorage.getItem('userType');
     if (!localUserType || localUserType === userType) {
-      axios.post('/api/auth', { code, table })
-        .then(res => res.data.jwt)
-        .then(serverJWT => {
+      axios
+        .post('/api/auth', { code, table })
+        .then((res) => res.data.jwt)
+        .then((serverJWT) => {
           if (serverJWT) {
             setCookie('jwt', serverJWT);
             const decoded: any = jwtDecode(serverJWT);
@@ -106,17 +105,19 @@ const AuthManager = () => {
             localStorage.setItem('userId', decoded.id);
             localStorage.setItem('userType', decoded.userType);
             setAuthToken(serverJWT);
-            console.log("Auth Token : " ,serverJWT)
+            console.log('Auth Token : ', serverJWT);
             const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
             refreshFunc();
             setRefreshUser(() => refreshFunc);
             setSignedIn(true);
-            navigate(isAdmin ? '/admin/home' : '/rider/home', { replace: true });
+            navigate(isAdmin ? '/admin/home' : '/rider/home', {
+              replace: true,
+            });
           } else {
             logout();
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Login error:', error);
           logout();
         });
@@ -165,24 +166,35 @@ const AuthManager = () => {
   if (!signedIn) {
     return (
       <Routes>
-        <Route path="/" element={
-          <LandingPage
-            students={
-              <button onClick={() => studentLogin()} className={styles.btn}>
-                <img src={googleLogin} className={styles.icon} alt="google logo" />
-                <div className={styles.heading}>Students</div>
-                Sign in with Google
-              </button>
-            }
-            admins={
-              <button onClick={() => adminLogin()} className={styles.btn}>
-                <img src={googleLogin} className={styles.icon} alt="google logo" />
-                <div className={styles.heading}>Admins</div>
-                Sign in with Google
-              </button>
-            }
-          />
-        } />
+        <Route
+          path="/"
+          element={
+            <LandingPage
+              students={
+                <button onClick={() => studentLogin()} className={styles.btn}>
+                  <img
+                    src={googleLogin}
+                    className={styles.icon}
+                    alt="google logo"
+                  />
+                  <div className={styles.heading}>Students</div>
+                  Sign in with Google
+                </button>
+              }
+              admins={
+                <button onClick={() => adminLogin()} className={styles.btn}>
+                  <img
+                    src={googleLogin}
+                    className={styles.icon}
+                    alt="google logo"
+                  />
+                  <div className={styles.heading}>Admins</div>
+                  Sign in with Google
+                </button>
+              }
+            />
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -190,19 +202,32 @@ const AuthManager = () => {
 
   return (
     <>
-      {visible && createPortal(
-        <Toast
-          message={message}
-          toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
-        />,
-        document.body
-      )}
+      {visible &&
+        createPortal(
+          <Toast
+            message={message}
+            toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+          />,
+          document.body
+        )}
       <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
         <SubscribeWrapper userId={id}>
           <Routes>
             <Route path="/admin/*" element={<AdminRoutes />} />
             <Route path="/rider/*" element={<RiderRoutes />} />
-            <Route path="/" element={<Navigate to={localStorage.getItem('userType') === 'Admin' ? "/admin/home" : "/rider/home"} replace />} />
+            <Route
+              path="/"
+              element={
+                <Navigate
+                  to={
+                    localStorage.getItem('userType') === 'Admin'
+                      ? '/admin/home'
+                      : '/rider/home'
+                  }
+                  replace
+                />
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </SubscribeWrapper>

@@ -41,8 +41,13 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   showRepeatingInfo,
   modalType,
 }) => {
-  const { register, formState: { errors }, getValues, watch, setValue } =
-    useFormContext<FormData>();
+  const {
+    register,
+    formState: { errors },
+    getValues,
+    watch,
+    setValue,
+  } = useFormContext<FormData>();
   const [locations, setLocations] = useState<Location[]>([]);
   const [custom, setCustom] = useState(ride?.recurring || false);
   const watchRepeating = watch('recurring', ride?.recurring || false);
@@ -59,8 +64,12 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
 
   useEffect(() => {
     if (ride) {
-      const defaultStart = ride.startLocation.tag === 'custom' ? 'Other' : ride.startLocation.id ?? '';
-      const defaultEnd = ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id ?? '';
+      const defaultStart =
+        ride.startLocation.tag === 'custom'
+          ? 'Other'
+          : ride.startLocation.id ?? '';
+      const defaultEnd =
+        ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id ?? '';
       setValue('startLocation', defaultStart);
       setValue('endLocation', defaultEnd);
     }
@@ -105,7 +114,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             disabled={shouldDisableStartDate}
             className={cn(styles.input)}
             aria-required="true"
-            {...register("startDate", {
+            {...register('startDate', {
               required: true,
               validate: (startDate) => {
                 const pickupTime = getValues('pickupTime');
@@ -139,7 +148,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.recurring}
             type="checkbox"
             id="recurring"
-            {...register("recurring")}
+            {...register('recurring')}
           />
         )}
       </div>
@@ -153,7 +162,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
               <Input
                 className={styles.whenRepeat}
                 id="daily"
-                {...register("whenRepeat", { required: watchRepeating })}
+                {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="daily"
                 onChange={() => setCustom(false)}
@@ -166,7 +175,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
               <input
                 className={styles.whenRepeat}
                 id="weekly"
-                {...register("whenRepeat", { required: watchRepeating })}
+                {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="weekly"
                 onChange={() => setCustom(false)}
@@ -179,7 +188,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
               <input
                 className={styles.whenRepeat}
                 id="custom"
-                {...register("whenRepeat", { required: watchRepeating })}
+                {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="custom"
                 onChange={() => setCustom(true)}
@@ -202,7 +211,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.input}
             type={'date'}
             id="endDate"
-            {...register("endDate", {
+            {...register('endDate', {
               required: getValues('recurring'),
               validate: (endDate: string) => {
                 const startDate = getValues('startDate');
@@ -237,7 +246,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.input}
             aria-labelledby="pickupLabel pickupLocations"
             aria-required="true"
-            {...register("startLocation", {
+            {...register('startLocation', {
               required: true,
               validate: (pickUpLocation: string) => {
                 const dropOffLocation = getValues('endLocation');
@@ -267,7 +276,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.input}
             aria-labelledby="pickupLabel pickupTime"
             aria-required="true"
-            {...register("pickupTime", {
+            {...register('pickupTime', {
               required: true,
               validate: (pickupTime: string) => {
                 const startDate = getValues('startDate');
@@ -297,7 +306,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={cn(styles.input, styles.flexGrow)}
             aria-labelledby="customPickup"
             type="text"
-            {...register("customPickup", { required: watchPickupCustom === 'Other' })}
+            {...register('customPickup', {
+              required: watchPickupCustom === 'Other',
+            })}
           />
           <Label className={styles.label} id="pickupCity">
             City
@@ -308,7 +319,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            {...register("pickupCity", { required: watchPickupCustom === 'Other' })}
+            {...register('pickupCity', {
+              required: watchPickupCustom === 'Other',
+            })}
           />
           <Label className={styles.label} id="pickupZip">
             Zip Code
@@ -320,7 +333,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             defaultValue="14853"
             pattern="[0-9]*"
             maxLength={10}
-            {...register("pickupZip", { required: watchDropoffCustom === 'Other' })}
+            {...register('pickupZip', {
+              required: watchDropoffCustom === 'Other',
+            })}
           />
         </div>
       ) : null}
@@ -336,7 +351,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.input}
             aria-labelledby="dropoffLabel dropoffLocations"
             aria-required="true"
-            {...register("endLocation", {
+            {...register('endLocation', {
               required: true,
               validate: (endLocation: string) => {
                 const startLoc = getValues('startLocation');
@@ -367,7 +382,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={styles.input}
             aria-labelledby="dropoffLabel dropoffTime"
             aria-required="true"
-            {...register("dropoffTime", {
+            {...register('dropoffTime', {
               required: true,
               validate: (dropoffTime: string) => {
                 const pickupTi = getValues('pickupTime');
@@ -396,7 +411,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             className={cn(styles.input, styles.flexGrow)}
             aria-labelledby="customDropoff"
             type="text"
-            {...register("customDropoff", { required: watchDropoffCustom === 'Other' })}
+            {...register('customDropoff', {
+              required: watchDropoffCustom === 'Other',
+            })}
           />
           <Label className={styles.label} id="dropoffCity">
             City
@@ -407,7 +424,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             type="text"
             defaultValue="Ithaca"
             maxLength={32}
-            {...register("dropoffCity", { required: watchDropoffCustom === 'Other' })}
+            {...register('dropoffCity', {
+              required: watchDropoffCustom === 'Other',
+            })}
           />
           <Label className={styles.label} id="dropoffZip">
             Zip Code
@@ -419,7 +438,9 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             defaultValue="14850"
             pattern="[0-9]*"
             maxLength={10}
-            {...register("dropoffZip", { required: watchDropoffCustom === 'Other' })}
+            {...register('dropoffZip', {
+              required: watchDropoffCustom === 'Other',
+            })}
           />
         </div>
       ) : null}

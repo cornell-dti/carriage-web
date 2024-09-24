@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { FormProvider, useForm, useFormContext, UseFormRegister, FieldErrors } from 'react-hook-form';
+import {
+  FormProvider,
+  useForm,
+  useFormContext,
+  UseFormRegister,
+  FieldErrors,
+} from 'react-hook-form';
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
@@ -22,7 +28,11 @@ type FormData = {
 
 const DaySelector = () => {
   const [selected, setSelected] = useState<ObjectType>({});
-  const { register, getValues, formState: { errors } } = useFormContext<FormData>();
+  const {
+    register,
+    getValues,
+    formState: { errors },
+  } = useFormContext<FormData>();
   const dayLabels = {
     Mon: 'M',
     Tue: 'T',
@@ -87,7 +97,11 @@ type RepeatSectionProps = {
 };
 
 const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
-  const { register, getValues, formState: { errors } } = useFormContext<FormData>();
+  const {
+    register,
+    getValues,
+    formState: { errors },
+  } = useFormContext<FormData>();
 
   return (
     <>
@@ -102,7 +116,7 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
         <Input
           id="endDate"
           type="date"
-          {...register("endDate", {
+          {...register('endDate', {
             required: true,
             validate: (endDate: string) => {
               const fmtEnd = format_date(endDate);
@@ -144,7 +158,13 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
       days: formData?.days ?? {},
     },
   });
-  const { formState: { errors }, handleSubmit, register, getValues, watch } = methods;
+  const {
+    formState: { errors },
+    handleSubmit,
+    register,
+    getValues,
+    watch,
+  } = methods;
   const watchRepeats = watch('repeats');
 
   useEffect(() => {
@@ -160,7 +180,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="date"
               type="date"
-              {...register("date", {
+              {...register('date', {
                 required: true,
                 validate: (date: string) => {
                   const fmtDate = format_date(date);
@@ -185,7 +205,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
-              {...register("repeats", { required: true })}
+              {...register('repeats', { required: true })}
               aria-required="true"
               className={styles.select}
             >
@@ -205,7 +225,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="pickupTime"
               type="time"
-              {...register("pickupTime", {
+              {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
                   const date = getValues('date');
@@ -227,7 +247,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="dropoffTime"
               type="time"
-              {...register("dropoffTime", {
+              {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {
                   const pickupTime = getValues('pickupTime');

@@ -30,7 +30,12 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   setFormData,
   rider,
 }) => {
-  const { register, formState: { errors }, handleSubmit, getValues } = useForm<FormData>({
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+  } = useForm<FormData>({
     defaultValues: {
       firstName: rider?.firstName ?? '',
       lastName: rider?.lastName ?? '',
@@ -86,7 +91,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="firstName"
-            {...register("firstName", { required: true })}
+            {...register('firstName', { required: true })}
             type="text"
             aria-required="true"
             className={styles.firstRow}
@@ -99,7 +104,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="lastName"
-            {...register("lastName", { required: true })}
+            {...register('lastName', { required: true })}
             type="text"
             className={styles.firstRow}
             aria-required="true"
@@ -114,7 +119,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="netid"
-            {...register("netid", { required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
+            {...register('netid', {
+              required: true,
+              pattern: /^[a-zA-Z]+[0-9]+$/,
+            })}
             type="text"
             disabled={isStudentEditing}
             className={styles.firstRow}
@@ -130,7 +138,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="phoneNumber"
-            {...register("phoneNumber", { required: true, pattern: /^[0-9]{10}$/ })}
+            {...register('phoneNumber', {
+              required: true,
+              pattern: /^[0-9]{10}$/,
+            })}
             type="tel"
             className={styles.firstRow}
             aria-required="true"
@@ -145,7 +156,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <select
             id="needs"
-            {...register("needs", { required: true })}
+            {...register('needs', { required: true })}
             aria-required="true"
             onChange={(e) => setNeedsOption(e.target.value)}
           >
@@ -158,7 +169,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           {needsOption === 'Other' && (
             <Input
               id="otherNeeds"
-              {...register("otherNeeds")}
+              {...register('otherNeeds')}
               type="text"
               placeholder="Please Specify Needs"
             />
@@ -176,7 +187,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="address"
-            {...register("address", {
+            {...register('address', {
               required: true,
               pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
             })}
@@ -196,7 +207,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               </Label>
               <Input
                 id="joinDate"
-                {...register("joinDate", { required: true })}
+                {...register('joinDate', { required: true })}
                 type="date"
                 aria-required="true"
                 disabled={isStudentEditing}
@@ -213,7 +224,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               </Label>
               <Input
                 id="endDate"
-                {...register("endDate", {
+                {...register('endDate', {
                   required: true,
                   validate: (endDate) => {
                     const joinDate = getValues('joinDate');

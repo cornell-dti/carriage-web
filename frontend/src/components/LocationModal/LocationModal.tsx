@@ -62,7 +62,11 @@ const LocationModal: React.FC<LocationModalProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
   const submitButtonText = existingLocation ? 'Save' : 'Add';
@@ -113,29 +117,33 @@ const LocationModal: React.FC<LocationModalProps> = ({
           <div className={styles.inputContainer}>
             <Label htmlFor="name">Name</Label>
             <Input
-              {...register("name", { required: true })}
+              {...register('name', { required: true })}
               type="text"
               id="name"
               defaultValue={existingLocation?.name}
               className={styles.input}
               aria-required="true"
             />
-            {errors.name && <p className={styles.errorMsg}>Please enter a name</p>}
-            
+            {errors.name && (
+              <p className={styles.errorMsg}>Please enter a name</p>
+            )}
+
             <Label htmlFor="address">Address</Label>
             <Input
-              {...register("address", { required: true, validate: isAddress })}
+              {...register('address', { required: true, validate: isAddress })}
               type="text"
               id="address"
               defaultValue={existingLocation?.address}
               className={styles.input}
               aria-required="true"
             />
-            {errors.address && <p className={styles.errorMsg}>{errors.address.message}</p>}
-            
+            {errors.address && (
+              <p className={styles.errorMsg}>{errors.address.message}</p>
+            )}
+
             <Label htmlFor="info">Pickup/Dropoff Info</Label>
             <Input
-              {...register("info", { required: true })}
+              {...register('info', { required: true })}
               type="text"
               id="info"
               defaultValue={existingLocation?.info}
@@ -147,10 +155,10 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 Please enter pickup/dropoff info
               </p>
             )}
-            
+
             <Label htmlFor="tag">Tag</Label>
             <select
-              {...register("tag", { required: true })}
+              {...register('tag', { required: true })}
               id="tag"
               defaultValue={existingLocation?.tag}
               className={styles.inputContainer}
@@ -164,7 +172,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 )
               )}
             </select>
-            
+
             <div>
               <Button className={styles.submit} type="submit">
                 {submitButtonText}

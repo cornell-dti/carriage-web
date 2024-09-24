@@ -15,7 +15,12 @@ interface FormData {
 }
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<FormData>({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
@@ -60,7 +65,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             className={styles.nameInput}
             list="names"
             aria-required="true"
-            {...register("name", {
+            {...register('name', {
               required: true,
               validate: (name: string) =>
                 nameToId[name.toLowerCase()] !== undefined,
@@ -84,7 +89,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             list="locations"
             aria-required="true"
-            {...register("pickupLoc", { required: true })}
+            {...register('pickupLoc', { required: true })}
           />
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
@@ -104,7 +109,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             type="text"
             list="locations"
             aria-required="true"
-            {...register("dropoffLoc", {
+            {...register('dropoffLoc', {
               required: true,
               validate: (dropoffLoc: string) => {
                 const pickupLoc = getValues('pickupLoc');

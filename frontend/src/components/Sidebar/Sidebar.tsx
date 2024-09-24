@@ -113,7 +113,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
               alt="profile_picture"
               className={styles.profile}
               src={profile === '' || !profile ? blank : `${profile}`}
-            /> 
+            />
           )}
           {/* Remove the profile condition */}
           <button className={styles.logoutLink} onClick={authContext.logout}>

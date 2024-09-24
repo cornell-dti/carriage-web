@@ -28,16 +28,16 @@ const ScheduledTable = () => {
 
   return rides.length ? (
     <>
-    {drivers.map(({ id, firstName, lastName }) => {
-      const name = `${firstName} ${lastName}`;
-      const driverRides = rides.filter((r) => r.driver?.id === id);
-      return driverRides.length ? (
-        <React.Fragment key={id}>
-          <h1 className={styles.formHeader}>{name}</h1>
-          <RidesTable rides={driverRides} hasButtons={false} />
-        </React.Fragment>
-      ) : null;
-    })}
+      {drivers.map(({ id, firstName, lastName }) => {
+        const name = `${firstName} ${lastName}`;
+        const driverRides = rides.filter((r) => r.driver?.id === id);
+        return driverRides.length ? (
+          <React.Fragment key={id}>
+            <h1 className={styles.formHeader}>{name}</h1>
+            <RidesTable rides={driverRides} hasButtons={false} />
+          </React.Fragment>
+        ) : null;
+      })}
     </>
   ) : null;
 };

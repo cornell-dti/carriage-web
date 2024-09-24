@@ -1,5 +1,5 @@
 import express from 'express';
-import { S3, ObjectCannedACL } from '@aws-sdk/client-s3';  // Import required types
+import { S3, ObjectCannedACL } from '@aws-sdk/client-s3'; // Import required types
 import * as db from './common';
 import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
@@ -27,13 +27,13 @@ router.post('/', validateUser('User'), (req, res) => {
       Bucket: BUCKET_NAME,
       Key: objectKey,
       Body: Buffer.from(fileBuffer, 'base64'),
-      ACL: ObjectCannedACL.public_read,  // Use the enum for ACL here
+      ACL: ObjectCannedACL.public_read, // Use the enum for ACL here
       ContentEncoding: 'base64',
       ContentType: 'image/jpeg',
     };
 
     // Put object into S3 bucket
-    s3bucket.putObject(params, (s3Err : any) => {
+    s3bucket.putObject(params, (s3Err: any) => {
       if (s3Err) {
         res.status(s3Err || 500).send({ err: s3Err.message });
       } else {

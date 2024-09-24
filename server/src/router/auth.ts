@@ -120,7 +120,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-
 if (process.env.NODE_ENV === 'test') {
   router.post('/dummy', async (req, res) => {
     const { email, table } = req.body;
