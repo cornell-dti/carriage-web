@@ -21,30 +21,50 @@
   /* Add any other relevant styling here */
 }
 
+.inputContainer input[type='text'],
+.inputContainer input[type='tel'],
+.inputContainer input[type='date'],
+.inputContainer select {
+  border: 1px solid #808080;
+  width: 100%;
+  border-radius: 6px;
+  height: 1.75rem; /* Adjust height as needed */
+  font-size: 1rem; /* Adjust font size as needed */
+  /* Add any other relevant styling here */
+}
+
 .rideTime {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(3, 1fr);
+  column-gap: 2rem;
+  row-gap: 2rem;
   column-gap: 2rem;
   row-gap: 2rem;
 }
 
 .gridCSmall1 {
   grid-column: 1 / 5;
+  grid-column: 1 / 5;
 }
 
 .gridCSmall2 {
+  grid-column: 5 / 7;
   grid-column: 5 / 7;
 }
 
 .gridCSmall3 {
   grid-column: 7 / 11;
+  grid-column: 7 / 11;
 }
 
 .gridCBig1 {
   grid-column: 1 / 5;
+  grid-column: 1 / 5;
 }
 .gridCBig2 {
+  grid-column: 5 / 11;
   grid-column: 5 / 11;
 }
 .gridCAll {
@@ -85,9 +105,11 @@
 .riderDate {
   font-size: 1rem !important;
   color: #808080;
+  color: #808080;
 }
 
 .firstRow {
+  max-width: 100%;
   max-width: 100%;
 }
 
