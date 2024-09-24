@@ -39,18 +39,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
-    "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cornell-dti/carriage-web.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/cornell-dti/carriage-web/issues"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -65,7 +63,12 @@
     ]
   },
   "devDependencies": {
-    "eslint-config-prettier": "^9.1.0",
-    "typescript": "^4.9.5"
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "2.8.8"
   }
 }

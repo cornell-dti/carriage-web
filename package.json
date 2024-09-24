@@ -4,21 +4,20 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@typescript-eslint/parser": "^8.6.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-promise": "^7.1.0",
-    "react-scripts":"^5.0.1"
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "typescript": "^4.9.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@babel/core": "^7.22.20",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-import": "^2.30.0",
-    "eslint-plugin-react": "^7.36.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "prettier": "3.3.3",
-    "typescript": "^4.9.5"
+    "eslint": "^8.56.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "2.8.8"
   },
   "scripts": {
     "heroku-postbuild": "npm run build:frontend && npm run build:server",
@@ -29,8 +28,8 @@
     "install:frontend": "cd frontend && npm install",
     "install:server": "cd server && npm install",
     "postinstall": "npm run install:frontend && npm run install:server",
-    "quiet-lint": "npx eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix --quiet",
-    "lint": "npx eslint . --ignore-path .eslintignore --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
+    "quiet-lint": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix --quiet",
+    "lint": "npx eslint . --ignore-path .eslintignore --ext .js,.jsx,.ts,.tsx --fix",
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
     "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
