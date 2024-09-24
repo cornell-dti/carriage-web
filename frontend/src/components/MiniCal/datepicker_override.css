@@ -69,7 +69,7 @@
 .react-datepicker__year-text--in-selecting-range,
 .react-datepicker__year-text--in-range {
   border-radius: 0.3rem;
-  background-color: #000000;
+  background-color: black;
   color: #fff;
 }
 
@@ -78,7 +78,7 @@
 .react-datepicker__quarter-text--keyboard-selected,
 .react-datepicker__year-text--keyboard-selected {
   border-radius: 0.3rem;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0.25);
   color: #fff;
 }
 

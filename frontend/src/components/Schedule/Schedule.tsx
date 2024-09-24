@@ -1,6 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import React, {
+  ComponentType,
+  JSXElementConstructor,
+  PropsWithChildren,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Calendar,
+  EventWrapperProps,
+  momentLocalizer,
+} from 'react-big-calendar';
 import cn from 'classnames';
 import moment from 'moment';
 import { Ride, Driver } from '../../types';
@@ -153,6 +164,36 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
     setCurrentRide(event.ride);
   };
 
+  const TabbableEventWrapper: ComponentType<
+    PropsWithChildren<EventWrapperProps<CalEvent>>
+  > = useMemo(
+    () => (props) => {
+      const child = React.Children.only(props.children) as ReactElement<
+        any,
+        string | JSXElementConstructor<any>
+      >;
+      return (
+        <div>
+          {React.cloneElement(child, {
+            tabIndex: 0,
+            onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>): void => {
+              if (
+                event.key === 'Enter' ||
+                event.key === ' ' ||
+                event.key === 'Spacebar'
+              ) {
+                // Prevents spacebar from scroll event
+                event.preventDefault();
+                onSelectEvent(props.event);
+              }
+            },
+          })}
+        </div>
+      );
+    },
+    []
+  );
+
   const handleChangeViewState = () => setViewMore(!viewMore);
 
   return (
@@ -187,6 +228,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             resourceTitleAccessor="resourceTitle"
             eventPropGetter={eventStyle}
             slotPropGetter={slotStyle}
+            components={{ eventWrapper: TabbableEventWrapper }}
           />
         </div>
       </div>
