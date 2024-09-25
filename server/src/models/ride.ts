@@ -1,10 +1,9 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { ValueType } from 'dynamoose/dist/Schema';
-import { Location, Tag } from './location';
+import { Tag } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
-import { formatAddress, getRideLocation, isAddress } from '../util';
+import { getRideLocation } from '../util';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Type {

@@ -1,10 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
+
+/**startDate is inclusive, endDate is exclusive */
+type Holiday = {
+  startDate: Date;
+  endDate: Date;
+  holidayName: string;
+};
+
+const holidays: Holiday[] = [
+  {
+    startDate: new Date('2024-2-24'),
+    endDate: new Date('2024-2-28'),
+    holidayName: 'Febuaray Break',
+  },
+  {
+    startDate: new Date('2024-3-30'),
+    endDate: new Date('2024-4-8'),
+    holidayName: 'Spring Break',
+  },
+];
+
+const isHoliday = (date: Date) => {
+  for (const holiday of holidays) {
+    if (holiday.startDate <= date && date < holiday.endDate) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const currentDate = new Date();
 const isToday = (date: Date) =>
@@ -33,21 +62,34 @@ const Icon = () => (
 
 const MiniCal = () => {
   const { curDate, setCurDate } = useDate();
+  const [isExpanded, setExpanded] = useState('Collapsed');
 
-  const updateDate = (d: Date) => {
-    setCurDate(d);
+  const updateDate = (d: Date | null) => {
+    if (d) {
+      setCurDate(d);
+    }
   };
+
+  const updateExpanded = (s: string) => {
+    setExpanded(s);
+  };
+
   class CustomInput extends React.Component<any> {
     render() {
       return (
-        <button className={styles.customInput} onClick={this.props.onClick}>
-          <span className={styles.primary}>
-            {isToday(curDate) ? 'Today ' : ' '}
-            {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+        <>
+          <span aria-live="polite" className={styles.modal_state}>
+            Modal is{isExpanded}
           </span>
-          <span className={styles.space} /> <Icon />
-          <span className={styles.space} /> {this.props.value}
-        </button>
+          <button className={styles.customInput} onClick={this.props.onClick}>
+            <span className={styles.primary}>
+              {isToday(curDate) ? 'Today ' : ' '}
+              {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
+            </span>
+            <span className={styles.space} /> <Icon />
+            <span className={styles.space} /> {this.props.value}
+          </button>
+        </>
       );
     }
   }
@@ -77,17 +119,28 @@ const MiniCal = () => {
     window.scroll(x + 1, y);
     window.scroll(x, y);
   };
+  const isWeekday = (date: Date) => {
+    const day = date.getDay();
+    return day !== 0 && day !== 6;
+  };
+
+  const filterDate = (date: Date) => {
+    return isWeekday(date) && !isHoliday(date);
+  };
 
   return (
     <div className={styles.root}>
       <DatePicker
-        adjustDateOnChange
+        //adjustDateOnChange
         selected={curDate}
         onChange={updateDate}
         closeOnScroll={true}
         dateFormat="MMM dd, yyyy"
         showPopperArrow={false}
+        onCalendarOpen={() => updateExpanded('Expanded')}
+        onCalendarClose={() => updateExpanded('Collapsed')}
         customInput={<CustomInput />}
+        filterDate={filterDate}
         highlightDates={[{ 'custom--today': [new Date()] }]}
         renderCustomHeader={({
           date,

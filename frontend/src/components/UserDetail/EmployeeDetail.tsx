@@ -159,6 +159,7 @@ const Header = () => {
 const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<EmployeeDetailProps>();
+  const location = useLocation();
   const pathArr = location.pathname.split('/');
   const [userType, setUserType] = useState<string>(pathArr[2]);
 
@@ -262,7 +263,9 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
-    setEmployeeData(employeeId, userType);
+    if (employeeId && userType) {
+      setEmployeeData(employeeId, userType);
+    }
   }, [employeeId, userType]);
 
   if (employee) {

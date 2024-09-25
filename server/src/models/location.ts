@@ -1,8 +1,8 @@
 import dynamoose from 'dynamoose';
-import { formatAddress, isAddress } from '../util';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Tag {
+  EAST = 'east',
   WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',

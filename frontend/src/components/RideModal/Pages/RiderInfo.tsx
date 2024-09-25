@@ -13,6 +13,12 @@ import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
 
+interface FormData {
+  name: string;
+  pickupLoc: string;
+  dropoffLoc: string;
+}
+
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const { control, register, handleSubmit, formState, getValues } = useForm({
     defaultValues: {
@@ -21,7 +27,6 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       dropoffLoc: formData?.dropoffLoc ?? '',
     },
   });
-  const { errors } = formState;
   const [nameToId, setNameToId] = useState<ObjectType>({});
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { locations } = useLocations();
@@ -64,12 +69,11 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'name'}>Name</Label>
           {/* <Input
             id="name"
-            name="name"
             type="text"
             className={styles.nameInput}
             list="names"
             aria-required="true"
-            ref={register({
+            {...register('name', {
               required: true,
               validate: (name: string) =>
                 nameToId[name.toLowerCase()] !== undefined,
