@@ -14,10 +14,9 @@ export const getReceivers = (
       case Change.EDITED:
       case Status.CANCELLED:
         receivers.push(UserType.ADMIN);
-        hasDriver && receivers.push(UserType.DRIVER);
+        if (hasDriver) receivers.push(UserType.DRIVER);
         break;
       default:
-        // debug
         console.log('no notif', sender, notifEvent);
         break;
     }
@@ -34,7 +33,6 @@ export const getReceivers = (
         receivers.push(UserType.RIDER);
         break;
       default:
-        // debug
         console.log('no notif', sender, notifEvent);
         break;
     }
@@ -46,10 +44,9 @@ export const getReceivers = (
       case Change.EDITED:
       case Status.CANCELLED:
         receivers.push(UserType.RIDER);
-        hasDriver && receivers.push(UserType.DRIVER);
+        if (hasDriver) receivers.push(UserType.DRIVER);
         break;
       default:
-        // debug
         console.log('no notif', sender, notifEvent);
         break;
     }
