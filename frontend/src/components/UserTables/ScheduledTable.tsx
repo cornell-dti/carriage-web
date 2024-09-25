@@ -32,10 +32,10 @@ const ScheduledTable = () => {
         const name = `${firstName} ${lastName}`;
         const driverRides = rides.filter((r) => r.driver?.id === id);
         return driverRides.length ? (
-          <>
+          <React.Fragment key={id}>
             <h1 className={styles.formHeader}>{name}</h1>
             <RidesTable rides={driverRides} hasButtons={false} />
-          </>
+          </React.Fragment>
         ) : null;
       })}
     </>

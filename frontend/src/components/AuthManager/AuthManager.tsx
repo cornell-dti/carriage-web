@@ -2,20 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   useGoogleLogin as googleAuth,
   googleLogout,
-  TokenResponse,
 } from '@react-oauth/google';
-import {
-  useHistory,
-  useLocation,
-  Redirect,
-  Route,
-  Switch,
-} from 'react-router-dom';
-import jwtDecode from 'jwt-decode';
+import { useNavigate, Navigate, Route, Routes } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
-import Home from '../../pages/Admin/Home';
 import styles from './authmanager.module.css';
 import { googleLogin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
@@ -23,7 +15,6 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import PrivateRoute from '../PrivateRoute';
 import { Admin, Rider } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
@@ -40,7 +31,7 @@ const encrypt = (data: string) => {
   return encrypted;
 };
 
-const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
+export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
   const bytes = CryptoJS.AES.decrypt(hash, secretKey);
   const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
   return decryptedData;
@@ -48,26 +39,22 @@ const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
-  const [id, setId] = useState(localStorage.getItem('userId')!);
-  const [initPath, setInitPath] = useState('');
+  const [id, setId] = useState(localStorage.getItem('userId') || '');
   const [user, setUser] = useState<Rider | Admin>(
-    JSON.parse(localStorage.getItem('user')!)
+    JSON.parse(localStorage.getItem('user') || '{}')
   );
-  // useState can take a function that returns the new state value, so need to
-  // supply a function that returns another function
   const [refreshUser, setRefreshUser] = useState(() =>
-    createRefresh(id, localStorage.getItem('userType')!, jwtValue())
+    createRefresh(id, localStorage.getItem('userType') || '', jwtValue())
   );
-  const history = useHistory();
-  const { pathname } = useLocation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setAuthToken(jwtValue());
+    const token = jwtValue();
+    if (token) {
+      setAuthToken(token);
+    }
   }, []);
-
-  useEffect(() => {
-    setInitPath(pathname);
-  }, [pathname]);
 
   function getCookie(name: string) {
     return document.cookie.split(';').some((c) => {
@@ -77,37 +64,29 @@ const AuthManager = () => {
 
   function jwtValue() {
     try {
-      const jwtIndex = document.cookie.indexOf('jwt=') + 4;
-      const jwtEndString = document.cookie.slice(jwtIndex);
-      const jwtEndIndex = jwtEndString.indexOf(';');
-      const encrypted_jwt =
-        jwtEndIndex != -1
-          ? document.cookie.slice(jwtIndex, jwtIndex + jwtEndIndex)
-          : document.cookie.slice(jwtIndex);
-      return decrypt(encrypted_jwt);
-    } catch {
-      return '';
+      const jwtCookie = document.cookie
+        .split(';')
+        .find((c) => c.trim().startsWith('jwt='));
+      if (jwtCookie) {
+        const encryptedJwt = jwtCookie.split('=')[1];
+        const decryptedJwt = decrypt(encryptedJwt);
+        return decryptedJwt;
+      }
+    } catch (error) {
+      console.error('Error decrypting JWT:', error);
     }
+    return '';
   }
 
   function deleteCookie(name: string) {
     if (getCookie(name)) {
-      document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+      document.cookie =
+        name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/;';
     }
   }
 
   function setCookie(cookieName: string, value: string) {
-    document.cookie = cookieName + '=' + encrypt(value) + ';secure=true;';
-  }
-
-  function GoogleAuth(isAdmin: boolean) {
-    return googleAuth({
-      flow: 'auth-code',
-      onSuccess: async (res) => {
-        signIn(isAdmin, res.code);
-      },
-      onError: (errorResponse: any) => console.error(errorResponse),
-    });
+    document.cookie = `${cookieName}=${encrypt(value)};secure=true;path=/;`;
   }
 
   function signIn(isAdmin: boolean, code: string) {
@@ -115,40 +94,48 @@ const AuthManager = () => {
     const table = `${userType}s`;
     const localUserType = localStorage.getItem('userType');
     if (!localUserType || localUserType === userType) {
-      (async () => {
-        const serverJWT = await axios
-          .post('/api/auth', {
-            code,
-            table,
-          })
-          .then((res) => res.data)
-          .then((json) => json.jwt);
-
-        if (serverJWT) {
-          setCookie('jwt', serverJWT);
-          const decoded: any = jwtDecode(serverJWT);
-          setId(decoded.id);
-          localStorage.setItem('userId', decoded.id);
-          localStorage.setItem('userType', decoded.userType);
-          setAuthToken(serverJWT);
-          const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
-          refreshFunc();
-          setRefreshUser(() => refreshFunc);
-          setSignedIn(true);
-          if (initPath === '/') {
-            history.push(isAdmin ? '/admin/home' : '/rider/home');
+      axios
+        .post('/api/auth', { code, table })
+        .then((res) => res.data.jwt)
+        .then((serverJWT) => {
+          if (serverJWT) {
+            setCookie('jwt', serverJWT);
+            const decoded: any = jwtDecode(serverJWT);
+            setId(decoded.id);
+            localStorage.setItem('userId', decoded.id);
+            localStorage.setItem('userType', decoded.userType);
+            setAuthToken(serverJWT);
+            console.log('Auth Token : ', serverJWT);
+            const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
+            refreshFunc();
+            setRefreshUser(() => refreshFunc);
+            setSignedIn(true);
+            navigate(isAdmin ? '/admin/home' : '/rider/home', {
+              replace: true,
+            });
           } else {
-            history.push(initPath);
+            logout();
           }
-        } else {
+        })
+        .catch((error) => {
+          console.error('Login error:', error);
           logout();
-        }
-      })();
+        });
     }
   }
 
-  const adminLogin = GoogleAuth(true);
-  const studentLogin = GoogleAuth(false);
+  const adminLogin = googleAuth({
+    flow: 'auth-code',
+    onSuccess: async (res) => signIn(true, res.code),
+    onError: (errorResponse) => console.error(errorResponse),
+  });
+
+  const studentLogin = googleAuth({
+    flow: 'auth-code',
+    onSuccess: async (res) => signIn(false, res.code),
+    onError: (errorResponse) => console.error(errorResponse),
+  });
+
   function logout() {
     googleLogout();
     localStorage.removeItem('userType');
@@ -157,9 +144,7 @@ const AuthManager = () => {
     deleteCookie('jwt');
     setAuthToken('');
     setSignedIn(false);
-    if (pathname !== '/') {
-      history.push('/');
-    }
+    navigate('/', { replace: true });
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
@@ -175,68 +160,80 @@ const AuthManager = () => {
         });
     };
   }
-  const LoginPage = () => (
-    <LandingPage
-      students={
-        <button onClick={() => studentLogin()} className={styles.btn}>
-          <img src={googleLogin} className={styles.icon} alt="google logo" />
-          <div className={styles.heading}>Students</div>
-          Sign in with Google
-        </button>
-      }
-      admins={
-        <button onClick={() => adminLogin()} className={styles.btn}>
-          <img src={googleLogin} className={styles.icon} alt="google logo" />
-          <div className={styles.heading}>Admins</div>
-          Sign in with Google
-        </button>
-      }
-    />
-  );
 
-  const SiteContent = () => {
-    const { visible, message, toastType } = useToast();
-    const localUserType = localStorage.getItem('userType');
+  const { visible, message, toastType } = useToast();
+
+  if (!signedIn) {
     return (
-      <>
-        {visible &&
-          createPortal(
-            <Toast
-              message={message}
-              toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
-            />,
-            document.body
-          )}
-        <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-          <SubscribeWrapper userId={id}>
-            <Switch>
-              {localUserType === 'Admin' ? (
-                <PrivateRoute exact path="/" component={AdminRoutes} />
-              ) : (
-                <PrivateRoute forRider path="/" component={RiderRoutes} />
-              )}
-              <PrivateRoute path="/admin" component={AdminRoutes} />
-              <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-              <Route path="*">
-                <Redirect to="" />
-              </Route>
-            </Switch>
-          </SubscribeWrapper>
-        </AuthContext.Provider>
-      </>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <LandingPage
+              students={
+                <button onClick={() => studentLogin()} className={styles.btn}>
+                  <img
+                    src={googleLogin}
+                    className={styles.icon}
+                    alt="google logo"
+                  />
+                  <div className={styles.heading}>Students</div>
+                  Sign in with Google
+                </button>
+              }
+              admins={
+                <button onClick={() => adminLogin()} className={styles.btn}>
+                  <img
+                    src={googleLogin}
+                    className={styles.icon}
+                    alt="google logo"
+                  />
+                  <div className={styles.heading}>Admins</div>
+                  Sign in with Google
+                </button>
+              }
+            />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     );
-  };
+  }
 
-  const AuthBarrier = () => (
-    <Switch>
-      <Route exact path="/" component={LoginPage} />
-      <Route path="*">
-        <Redirect to="" />
-      </Route>
-    </Switch>
+  return (
+    <>
+      {visible &&
+        createPortal(
+          <Toast
+            message={message}
+            toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+          />,
+          document.body
+        )}
+      <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
+        <SubscribeWrapper userId={id}>
+          <Routes>
+            <Route path="/admin/*" element={<AdminRoutes />} />
+            <Route path="/rider/*" element={<RiderRoutes />} />
+            <Route
+              path="/"
+              element={
+                <Navigate
+                  to={
+                    localStorage.getItem('userType') === 'Admin'
+                      ? '/admin/home'
+                      : '/rider/home'
+                  }
+                  replace
+                />
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </SubscribeWrapper>
+      </AuthContext.Provider>
+    </>
   );
-
-  return signedIn ? <SiteContent /> : <AuthBarrier />;
 };
 
 export default AuthManager;
