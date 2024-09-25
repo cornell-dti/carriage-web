@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
-import { Link, Redirect, Route, Switch, useHistory } from 'react-router-dom';
-import { Button } from '../FormElements/FormElements';
 import { ObjectType, Rider } from '../../types/index';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';

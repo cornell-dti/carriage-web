@@ -4,10 +4,7 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Location } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { AdminType } from '../src/models/admin';
 import { LocationType, Tag } from '../src/models/location';
-import { DriverType } from '../src/models/driver';
-import { RiderType } from '../src/models/rider';
 
 const testAdmin = {
   firstName: 'Test-Admin',

@@ -12,7 +12,7 @@ const Employees = () => {
 
   useEffect(() => {
     document.title = 'Employees - Carriage';
-  });
+  }, []);
 
   return (
     <main id="main">

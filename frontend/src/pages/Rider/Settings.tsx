@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import UserDetail, {
   UserContactInfo,
 } from '../../components/UserDetail/UserDetail';
@@ -44,7 +44,10 @@ const NotifPreferences = () => (
 const Settings = () => {
   const { user } = useContext(AuthContext);
   const netId = user?.email.split('@')[0] || '';
-  document.title = 'Settings - Carriage';
+
+  useEffect(() => {
+    document.title = 'Settings - Carriage';
+  }, []);
 
   return (
     <main id="main">

@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import styles from './copyButton.module.css';
@@ -21,11 +20,9 @@ const CopyButton = () => {
   };
 
   return (
-    <>
-      <Button onClick={handleClick} outline className={styles.copyButton}>
-        Copy Emails
-      </Button>
-    </>
+    <Button onClick={handleClick} outline className={styles.copyButton}>
+      Copy Emails
+    </Button>
   );
 };
 

@@ -1,33 +1,25 @@
 import React from 'react';
-import { Redirect, Route, RouteProps } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-interface PrivateRouteProps extends RouteProps {
+interface PrivateRouteProps {
   forRider?: boolean;
 }
 
-const PrivateRoute = ({
-  forRider = false,
-  component: Component,
-  ...rest
-}: PrivateRouteProps) => {
-  if (!Component) return null;
-  const redirectPath = forRider ? '' : '';
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        const localUserType = localStorage.getItem('userType');
-        if (localUserType) {
-          return forRider === (localUserType === 'Rider') ? (
-            <Component {...props} />
-          ) : (
-            <Redirect to={{ pathname: redirectPath }} />
-          );
-        }
-        return <Redirect to={{ pathname: '/' }} />;
-      }}
-    />
-  );
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ forRider = false }) => {
+  const location = useLocation();
+  const redirectPath = forRider ? '/driver' : '/rider';
+
+  const localUserType = localStorage.getItem('userType');
+
+  if (!localUserType) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (forRider === (localUserType === 'Rider')) {
+    return <Outlet />;
+  }
+
+  return <Navigate to={redirectPath} state={{ from: location }} replace />;
 };
 
 export default PrivateRoute;
