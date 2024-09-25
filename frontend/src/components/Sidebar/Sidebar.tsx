@@ -64,16 +64,16 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   }, [authContext, authContext.id]);
 
   const adminMenu: MenuItem[] = [
-    { icon: home, caption: 'Home', path: '/home' },
-    { icon: drivers, caption: 'Employees', path: '/employees' },
-    { icon: riders, caption: 'Students', path: '/riders' },
-    { icon: locations, caption: 'Locations', path: '/locations' },
-    { icon: analytics, caption: 'Analytics', path: '/analytics' },
+    { icon: home, caption: 'Home', path: 'home' },
+    { icon: drivers, caption: 'Employees', path: 'employees' },
+    { icon: riders, caption: 'Students', path: 'riders' },
+    { icon: locations, caption: 'Locations', path: 'locations' },
+    { icon: analytics, caption: 'Analytics', path: 'analytics' },
   ];
 
   const riderMenu: MenuItem[] = [
-    { icon: home, caption: 'Schedule', path: '/schedule' },
-    { icon: settings, caption: 'Settings', path: '/settings' },
+    { icon: home, caption: 'Schedule', path: 'schedule' },
+    { icon: settings, caption: 'Settings', path: 'settings' },
   ];
 
   const menuItems = type === 'admin' ? adminMenu : riderMenu;
@@ -84,12 +84,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         <div className={styles.menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
             <div key={path} className={styles.sidebarLinks}>
-              <p className={styles.caption}>
+              <div className={styles.caption} id={path}>
                 <Link
                   key={path}
                   onClick={() => setSelected(path)}
                   className={styles.icon}
                   to={path}
+                  aria-labelledby={path}
                 >
                   <div
                     className={
@@ -98,15 +99,11 @@ const Sidebar = ({ type, children }: SidebarProps) => {
                         : styles.circle
                     }
                   >
-                    <a
-                      href={path}
-                      aria-current={path === selected ? 'page' : undefined}
-                    ></a>
-                    <img alt={''} src={icon} />
+                    <img alt={`Go to ${caption}`} src={icon} />
                   </div>
                 </Link>
                 {caption}
-              </p>
+              </div>
             </div>
           ))}
         </div>
@@ -118,11 +115,10 @@ const Sidebar = ({ type, children }: SidebarProps) => {
               src={profile === '' || !profile ? blank : `${profile}`}
             />
           )}
-          {profile !== '' && (
-            <button className={styles.logoutLink} onClick={authContext.logout}>
-              Log out
-            </button>
-          )}
+          {/* Remove the profile condition */}
+          <button className={styles.logoutLink} onClick={authContext.logout}>
+            Log out
+          </button>
         </div>
       </nav>
       <div className={styles.content}>

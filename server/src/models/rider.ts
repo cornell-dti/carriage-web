@@ -11,7 +11,7 @@ export enum Accessibility {
   MOTOR_SCOOTER = 'Motorized Scooter',
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
-  SERVICE_ANIMALS = 'Service Animals',
+  SERVICE_ANIMALS = 'Service Animal',
   OTHER = 'Other',
 }
 

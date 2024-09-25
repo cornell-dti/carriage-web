@@ -18,10 +18,9 @@ const StartDate = ({ existingDate }: StartDateProps) => {
       <Input
         id="startDate"
         type="date"
-        name="startDate"
         defaultValue={existingDate}
-        ref={register({ required: true })}
         aria-required="true"
+        {...register('startDate', { required: true })}
       />
     </div>
   );
