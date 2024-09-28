@@ -16,10 +16,9 @@ type RidesTableProps = {
   hasButtons: boolean;
 };
 
-
 /**
- * Summary: check if a driver is available on a certain day  based on their availability property. 
- * @param driver 
+ * Summary: check if a driver is available on a certain day  based on their availability property.
+ * @param driver
  * @param day : is a number from 0 to 6 representing 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
  * @returns whether driver is available on that day.
  */
@@ -33,7 +32,6 @@ const isAvailableOnDay = (driver: DriverType, day: number) => {
   return false;
 };
 
-
 // You can add additional filters to filter our drivers to reassign here.
 const driverFilters: ((driver: DriverType) => boolean)[] = [
   // (driver: DriverType) => {
@@ -41,17 +39,15 @@ const driverFilters: ((driver: DriverType) => boolean)[] = [
   // },
 ];
 
-
 const checkAdditionalFilters = (driver: DriverType) => {
   return driverFilters.every((fn) => fn(driver));
 };
 
-
 /**
  * summary: checks if a driver is availble between startTime and endTime based on their availability property.
- * @param driver 
- * @param startTime 
- * @param endTime 
+ * @param driver
+ * @param startTime
+ * @param endTime
  * @returns whether driver is available between these 2 times.
  */
 const isAvailable = (driver: DriverType, startTime: Date, endTime: Date) => {
@@ -65,9 +61,7 @@ const isAvailable = (driver: DriverType, startTime: Date, endTime: Date) => {
     const startDay = dayAsString[
       startTimeDay
     ] as keyof typeof driver.availability;
-    const endDay = dayAsString[
-      endTimeDay
-    ] as keyof typeof driver.availability;
+    const endDay = dayAsString[endTimeDay] as keyof typeof driver.availability;
     const driverStartDayAvailibility = driver.availability[startDay]; // hh:mm even for h <10
     const driverEndDayAvailibility = driver.availability[endDay];
     return (
@@ -96,7 +90,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
-
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
