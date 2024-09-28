@@ -16,6 +16,78 @@ type RidesTableProps = {
   hasButtons: boolean;
 };
 
+
+/**
+ * Summary: check if a driver is available on a certain day  based on their availability property. 
+ * @param driver 
+ * @param day : is a number from 0 to 6 representing 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+ * @returns whether driver is available on that day.
+ */
+const isAvailableOnDay = (driver: DriverType, day: number) => {
+  const dayAsString = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  for (const [key, value] of Object.entries(driver.availability)) {
+    if (key === dayAsString.at(day) && value != undefined) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
+// You can add additional filters to filter our drivers to reassign here.
+const driverFilters: ((driver: DriverType) => boolean)[] = [
+  // (driver: DriverType) => {
+  //   return driver.firstName != 'Naoya';
+  // },
+];
+
+
+const checkAdditionalFilters = (driver: DriverType) => {
+  return driverFilters.every((fn) => fn(driver));
+};
+
+
+/**
+ * summary: checks if a driver is availble between startTime and endTime based on their availability property.
+ * @param driver 
+ * @param startTime 
+ * @param endTime 
+ * @returns whether driver is available between these 2 times.
+ */
+const isAvailable = (driver: DriverType, startTime: Date, endTime: Date) => {
+  const dayAsString = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const startTimeDay = startTime.getDay();
+  const endTimeDay = endTime.getDay();
+  if (
+    isAvailableOnDay(driver, startTimeDay) &&
+    isAvailableOnDay(driver, endTimeDay)
+  ) {
+    const startDay = dayAsString[
+      startTimeDay
+    ] as keyof typeof driver.availability;
+    const endDay = dayAsString[
+      endTimeDay
+    ] as keyof typeof driver.availability;
+    const driverStartDayAvailibility = driver.availability[startDay]; // hh:mm even for h <10
+    const driverEndDayAvailibility = driver.availability[endDay];
+    return (
+      driverStartDayAvailibility!.startTime <=
+        startTime.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }) &&
+      driverEndDayAvailibility!.endTime >=
+        endTime.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        })
+    );
+  }
+  return false;
+};
+
 const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
@@ -25,61 +97,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
 
-  const dayAsString = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-  const isAvailableOnDay = (driver: DriverType, day: number) => {
-    for (const [key, value] of Object.entries(driver.availability)) {
-      if (key === dayAsString.at(day) && value != undefined) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  // You can add additional filters to filter our drivers to reassign here.
-  const reassignDriverFilters: ((driver: DriverType) => boolean)[] = [
-    // (driver: DriverType) => {
-    //   return driver.firstName != 'Naoya';
-    // },
-  ];
-
-  const checkAdditionalFilters = (driver: DriverType) => {
-    return reassignDriverFilters.every((fn) => fn(driver));
-  };
-
-  const isAvailable = (driver: DriverType, startTime: Date, endTime: Date) => {
-    const startTimeDay = startTime.getDay();
-    const endTimeDay = endTime.getDay();
-    if (
-      isAvailableOnDay(driver, startTimeDay) &&
-      isAvailableOnDay(driver, endTimeDay)
-    ) {
-      const startDay = dayAsString[
-        startTimeDay
-      ] as keyof typeof driver.availability;
-      const endDay = dayAsString[
-        endTimeDay
-      ] as keyof typeof driver.availability;
-      const driverStartDayAvailibility = driver.availability[startDay]; // hh:mm even for h <10
-      const driverEndDayAvailibility = driver.availability[endDay];
-      return (
-        driverStartDayAvailibility!.startTime <=
-          startTime.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          }) &&
-        driverEndDayAvailibility!.endTime >=
-          endTime.toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          }) &&
-        checkAdditionalFilters(driver)
-      );
-    }
-    return false;
-  };
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
