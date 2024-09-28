@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
@@ -13,18 +13,35 @@ type ModalFormProps = {
   rider?: Rider;
 };
 
-const RiderModalInfo = ({
+type FormData = {
+  firstName: string;
+  lastName: string;
+  netid: string;
+  phoneNumber: string;
+  needs: string;
+  address: string;
+  joinDate: string;
+  endDate: string;
+  otherNeeds?: string;
+};
+
+const RiderModalInfo: React.FC<ModalFormProps> = ({
   onSubmit,
   setIsOpen,
   setFormData,
   rider,
-}: ModalFormProps) => {
-  const { register, formState, handleSubmit, getValues } = useForm({
+}) => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    getValues,
+  } = useForm<FormData>({
     defaultValues: {
       name: (rider?.firstName ?? '') + (rider?.lastName ?? ''),
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility ?? '', // if no needs, default is undefined
+      needs: rider?.accessibility ?? '',
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
@@ -39,7 +56,7 @@ const RiderModalInfo = ({
     address,
     joinDate,
     endDate,
-  }: ObjectType) => {
+  }) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
     const accessibility = needs;
     const nameParts = name.trim().split(/\s+/);
@@ -67,6 +84,7 @@ const RiderModalInfo = ({
   const isEditing = rider !== undefined;
   const isStudentEditing = isEditing && localUserType === 'Rider';
   const [needsOption, setNeedsOption] = useState('');
+
   return (
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
@@ -78,7 +96,6 @@ const RiderModalInfo = ({
             id="name"
             name="name"
             type="text"
-            ref={register({ required: true })}
             aria-required="true"
             className={styles.firstRow}
           />
@@ -90,9 +107,11 @@ const RiderModalInfo = ({
           </Label>
           <Input
             id="netid"
-            name="netid"
+            {...register('netid', {
+              required: true,
+              pattern: /^[a-zA-Z]+[0-9]+$/,
+            })}
             type="text"
-            ref={register({ required: true, pattern: /^[a-zA-Z]+[0-9]+$/ })}
             disabled={isStudentEditing}
             className={styles.firstRow}
             aria-required="true"
@@ -107,9 +126,11 @@ const RiderModalInfo = ({
           </Label>
           <Input
             id="phoneNumber"
-            name="phoneNumber"
+            {...register('phoneNumber', {
+              required: true,
+              pattern: /^[0-9]{10}$/,
+            })}
             type="tel"
-            ref={register({ required: true, pattern: /^[0-9]{10}$/ })}
             className={styles.firstRow}
             aria-required="true"
           />
@@ -123,28 +144,23 @@ const RiderModalInfo = ({
           </Label>
           <select
             id="needs"
-            name="needs"
+            {...register('needs', { required: true })}
             aria-required="true"
-            ref={register({ required: true })}
             onChange={(e) => setNeedsOption(e.target.value)}
           >
-            {Object.values(Accessibility).map((value, index) => {
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
-            })}
+            {Object.values(Accessibility).map((value, index) => (
+              <option key={index} value={value}>
+                {value}
+              </option>
+            ))}
           </select>
-          {needsOption == 'Other' ? (
+          {needsOption === 'Other' && (
             <Input
               id="otherNeeds"
-              name="otherNeeds"
+              {...register('otherNeeds')}
               type="text"
               placeholder="Please Specify Needs"
-            ></Input>
-          ) : (
-            <></>
+            />
           )}
           {errors.needs?.type === 'validate' && (
             <p className={styles.error}>
@@ -159,13 +175,12 @@ const RiderModalInfo = ({
           </Label>
           <Input
             id="address"
-            name="address"
-            type="text"
-            aria-required="true"
-            ref={register({
+            {...register('address', {
               required: true,
               pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
             })}
+            type="text"
+            aria-required="true"
           />
           {errors.address && (
             <p className={styles.error}>Please enter an address</p>
@@ -179,10 +194,9 @@ const RiderModalInfo = ({
             <div>
               <Input
                 id="joinDate"
+                {...register('joinDate', { required: true })}
                 type="date"
-                name="joinDate"
                 aria-required="true"
-                ref={register({ required: true })}
                 disabled={isStudentEditing}
                 className={styles.riderDate}
               />
@@ -198,16 +212,15 @@ const RiderModalInfo = ({
             <div>
               <Input
                 id="endDate"
-                type="date"
-                name="endDate"
-                aria-required="true"
-                ref={register({
+                {...register('endDate', {
                   required: true,
                   validate: (endDate) => {
                     const joinDate = getValues('joinDate');
                     return joinDate < endDate;
                   },
                 })}
+                type="date"
+                aria-required="true"
                 disabled={isStudentEditing}
                 className={styles.riderDate}
               />

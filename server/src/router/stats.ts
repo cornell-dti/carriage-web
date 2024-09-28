@@ -10,7 +10,6 @@ import { validateUser } from '../util';
 import { Driver } from '../models/driver';
 
 const router = express.Router();
-const tableName = 'Stats';
 
 router.get('/download', validateUser('Admin'), (req, res) => {
   const {

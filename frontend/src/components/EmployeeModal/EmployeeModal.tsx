@@ -10,7 +10,6 @@ import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
-import { edit } from '../../icons/other/index';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 

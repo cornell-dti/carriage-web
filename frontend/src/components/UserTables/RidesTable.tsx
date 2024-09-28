@@ -41,6 +41,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     'Dropoff Location',
     'Needs',
     'Rider',
+    '',
   ];
 
   return (
@@ -164,11 +165,16 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           ];
 
           const scheduledRow = () => (
-            <Row data={scheduledRideData} colSizes={scheduledColSizes} />
+            <Row
+              key={ride.id}
+              data={scheduledRideData}
+              colSizes={scheduledColSizes}
+            />
           );
 
           const unscheduledRow = () => (
             <Row
+              key={ride.id}
               data={unscheduledRideData}
               colSizes={unscheduledColSizes}
               groupStart={2}
@@ -176,9 +182,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           );
 
           return (
-            <>
+            <React.Fragment key={ride.id}>
               {hasButtons ? unscheduledRow() : scheduledRow()}
               <DeleteOrEditTypeModal
+                key={`delete-edit-modal-${ride.id}`}
                 open={deleteOpen === index}
                 onClose={() => setDeleteOpen(-1)}
                 ride={rides[index]}
@@ -191,6 +198,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 isRider={false}
               />
               <AssignDriverModal
+                key={`assign-driver-modal-${ride.id}`}
                 isOpen={openAssignModal === index}
                 close={() => setOpenAssignModal(-1)}
                 ride={rides[index]}
@@ -198,12 +206,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 reassign={reassign}
               />
               <RideModal
+                key={`ride-modal-${ride.id}`}
                 open={openEditModal === index}
                 close={() => setOpenEditModal(-1)}
                 ride={rides[index]}
                 editSingle={editSingle}
               />
-            </>
+            </React.Fragment>
           );
         })}
       </Table>
