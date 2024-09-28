@@ -6,7 +6,6 @@
   display: flex;
   flex-direction: column;
   align-items: left;
-  /* padding-right: 10rem; */
 }
 
 .error {
@@ -161,8 +160,7 @@ that includes the image, not to be mistaken with inputContainer */
   border: 1px solid #808080;
   padding-left: 5px;
 }
-/* The default input adds a border, but since .imgContainer already adds a border, 
-this gets rid of the default border */
+/* This gets rid of a double border since the parent, .imgContainer, already has a border */
 .imgContainer > input {
   border: 0px;
 }
