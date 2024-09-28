@@ -237,7 +237,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       <div className={styles.buttonContainer}>
         <Button
           type="button"
-          className={styles.cancel}
+          className={styles.scancel}
           outline={true}
           onClick={() => cancel()}
         >
