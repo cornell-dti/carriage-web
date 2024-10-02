@@ -66,19 +66,15 @@ const Modal = ({
     <>
       {isOpen &&
         createPortal(
-          <FocusTrap
-            focusTrapOptions={{
-              onDeactivate: onClose,
-              returnFocusOnDeactivate: true,
-            }}
-          >
-            <div className={styles.background}>
-              <div
-                className={styles.modal}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby={arialabelledby ?? id}
-              >
+          <div className={styles.background}>
+            <FocusTrap
+              focusTrapOptions={{
+                onDeactivate: onClose,
+                returnFocusOnDeactivate: true,
+                clickOutsideDeactivates: true,
+              }}
+            >
+              <div className={styles.modal}>
                 <div className={styles.topContainer}>
                   {isRider ? (
                     <h1 className={styles.title} id={id}>
@@ -101,8 +97,8 @@ const Modal = ({
                 </div>
                 <div className={styles.page}>{pages[currentPage]}</div>
               </div>
-            </div>
-          </FocusTrap>,
+            </FocusTrap>
+          </div>,
           document.body
         )}
     </>
