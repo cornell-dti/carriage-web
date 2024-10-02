@@ -4,7 +4,6 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
-import { rightArrow } from '../../icons/other';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;
@@ -14,8 +13,7 @@ type ModalFormProps = {
 };
 
 type FormData = {
-  firstName: string;
-  lastName: string;
+  name: string;
   netid: string;
   phoneNumber: string;
   needs: string;
@@ -47,8 +45,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       endDate: rider?.endDate ?? '',
     },
   });
-  const { errors } = formState;
-  const beforeSubmit = ({
+
+  const beforeSubmit: SubmitHandler<FormData> = ({
     name,
     netid,
     phoneNumber,
@@ -94,8 +92,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </Label>
           <Input
             id="name"
-            name="name"
             type="text"
+            {...register('name', {
+              required: true,
+            })}
             aria-required="true"
             className={styles.firstRow}
           />
@@ -187,11 +187,12 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           )}
         </div>
         <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <Label className={styles.label} htmlFor="duration">
-            Duration:{' '}
-          </Label>
-          <div className={styles.lastRow} id="duration">
+          <p>Duration</p>
+          <div className={styles.lastRow}>
             <div>
+              <Label className={styles.label} htmlFor="joinDate">
+                Join Date:{' '}
+              </Label>
               <Input
                 id="joinDate"
                 {...register('joinDate', { required: true })}
@@ -204,12 +205,11 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 <p className={styles.error}>Please enter a join date</p>
               )}
             </div>
-            <span>
-              &nbsp;
-              <img src={rightArrow} />
-              &nbsp;
-            </span>
+            <p className={styles.to}>to</p>
             <div>
+              <Label className={styles.label} htmlFor="endDate">
+                End Date:{' '}
+              </Label>
               <Input
                 id="endDate"
                 {...register('endDate', {
@@ -237,7 +237,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       <div className={styles.buttonContainer}>
         <Button
           type="button"
-          className={styles.scancel}
+          className={styles.cancel}
           outline={true}
           onClick={() => cancel()}
         >
