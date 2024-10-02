@@ -3,7 +3,6 @@ import {
   FormProvider,
   useForm,
   useFormContext,
-  UseFormRegister,
   FieldErrors,
 } from 'react-hook-form';
 import cn from 'classnames';
@@ -14,6 +13,9 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
+import calendarIcon from '../../../icons/userInfo/calendar.svg';
+import clockIcon from '../../../icons/userInfo/clock.svg';
+import trashIcon from '../../../icons/other/trash.svg';
 
 type FormData = {
   date: string;
@@ -176,8 +178,11 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={cn(styles.inputContainer, styles.rideTime)}>
           <div className={styles.col1}>
-            <Label htmlFor="date">Day:</Label>
+            <Label htmlFor="date" className={styles.label}>
+              Date
+            </Label>
             <Input
+              className={styles.input}
               id="date"
               type="date"
               {...register('date', {
@@ -202,12 +207,14 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             )}
           </div>
           <div className={styles.col2}>
-            <Label htmlFor="repeats">Repeats:</Label>
+            <Label htmlFor="repeats" className={styles.label}>
+              Repeats:
+            </Label>
             <select
               id="repeats"
               {...register('repeats', { required: true })}
               aria-required="true"
-              className={styles.select}
+              className={styles.input}
             >
               {Object.values(RepeatValues).map((repeatValue) => (
                 <option key={repeatValue} value={repeatValue}>
@@ -221,8 +228,11 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
           </div>
           {isRepeating && <RepeatSection repeatValue={watchRepeats} />}
           <div className={styles.col1}>
-            <Label htmlFor="pickupTime">Pickup time:</Label>
+            <Label htmlFor="pickupTime" className={styles.label}>
+              Pickup time:
+            </Label>
             <Input
+              className={styles.input}
               id="pickupTime"
               type="time"
               {...register('pickupTime', {
@@ -243,8 +253,11 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             )}
           </div>
           <div className={styles.col2}>
-            <Label htmlFor="dropoffTime">Dropoff time:</Label>
+            <Label htmlFor="dropoffTime" className={styles.label}>
+              Dropoff time:
+            </Label>
             <Input
+              className={styles.input}
               id="dropoffTime"
               type="time"
               {...register('dropoffTime', {
@@ -270,7 +283,14 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             )}
           </div>
         </div>
-        <Button type="submit">Next</Button>
+        <div className={styles.btnContainer}>
+          <Button type="reset" className={styles.clearAllBtn}>
+            <img src={trashIcon} className={styles.image} /> Clear All
+          </Button>
+          <Button type="submit" className={styles.nextBtn}>
+            Next
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );
