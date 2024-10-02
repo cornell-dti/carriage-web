@@ -208,7 +208,7 @@ const AuthManager = () => {
             message={message}
             toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
             onClose={() => setVisible(false)}
-            isOpen = {visible}
+            isOpen={visible}
           />,
           document.body
         )}
