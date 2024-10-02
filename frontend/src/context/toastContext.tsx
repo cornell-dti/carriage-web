@@ -11,16 +11,16 @@ type toastStat = {
   visible: boolean;
   message: string;
   showToast: (message: string, currentToastType: ToastStatus) => void;
-  toastType: ToastStatus;
-  hideToast: () => void;
+  toastType: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const initalState: toastStat = {
   visible: false,
   message: '',
   showToast: function () {},
-  toastType: ToastStatus.ERROR,
-  hideToast: function () {},
+  toastType: false,
+  setVisible: function () {},
 };
 
 const ToastContext = React.createContext(initalState);
@@ -32,16 +32,32 @@ type ToastProviderProps = {
 
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [message, setMessage] = useState<string>('');
-  const [visible, setVisible] = useState<boolean>(false);
-  const [toastType, setToastType] = useState<ToastStatus>(ToastStatus.ERROR);
+  const [visible, setVisible] = useState(false);
+  const [toastType, setToastType] = useState(true);
   const showToast = (inputMessage: string, currentToastType: ToastStatus) => {
     setMessage(inputMessage);
     setVisible(true);
-    setToastType(currentToastType);
-  };
 
-  const hideToast = () => {
-    setVisible(false);
+    if (currentToastType == ToastStatus.ERROR) {
+      setToastType(false);
+      setTimeout(() => {
+        setVisible(false);
+      }, 2000);
+    } else {
+      if (currentToastType == ToastStatus.SUCCESS) {
+        setToastType(true);
+      } else {
+        new Error('Invalid Toast type');
+      }
+    }
+    currentToastType == ToastStatus.ERROR
+      ? setToastType(false)
+      : currentToastType == ToastStatus.SUCCESS
+      ? setToastType(true)
+      : new Error('Invalid Toast type');
+    // setTimeout(() => {
+    //   setVisible(false);
+    // }, 2000);
   };
 
   return (
@@ -51,7 +67,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         message,
         showToast,
         toastType,
-        hideToast,
+        setVisible,
       }}
     >
       {children}

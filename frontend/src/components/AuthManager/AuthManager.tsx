@@ -161,7 +161,7 @@ const AuthManager = () => {
     };
   }
 
-  const { visible, message, toastType } = useToast();
+  const { visible, message, toastType, setVisible } = useToast();
 
   if (!signedIn) {
     return (
@@ -200,50 +200,42 @@ const AuthManager = () => {
     );
   }
 
-  const SiteContent = () => {
-    const { visible, message, toastType, hideToast } = useToast();
-    const localUserType = localStorage.getItem('userType');
-
-    return (
-      <>
-        {
+  return (
+    <>
+      {visible &&
+        createPortal(
           <Toast
             message={message}
-            toastType={toastType}
-            onClose={hideToast}
-            isOpen={visible}
-          />
-        }
-        <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-          <SubscribeWrapper userId={id}>
-            <Switch>
-              {localUserType === 'Admin' ? (
-                <PrivateRoute exact path="/" component={AdminRoutes} />
-              ) : (
-                <PrivateRoute forRider path="/" component={RiderRoutes} />
-              )}
-              <PrivateRoute path="/admin" component={AdminRoutes} />
-              <PrivateRoute forRider path="/rider" component={RiderRoutes} />
-              <Route path="*">
-                <Redirect to="" />
-              </Route>
-            </Switch>
-          </SubscribeWrapper>
-        </AuthContext.Provider>
-      </>
-    );
-  };
-
-  const AuthBarrier = () => (
-    <Switch>
-      <Route exact path="/" component={LoginPage} />
-      <Route path="*">
-        <Redirect to="" />
-      </Route>
-    </Switch>
+            toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+            onClose={() => setVisible(false)}
+            isOpen = {visible}
+          />,
+          document.body
+        )}
+      <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
+        <SubscribeWrapper userId={id}>
+          <Routes>
+            <Route path="/admin/*" element={<AdminRoutes />} />
+            <Route path="/rider/*" element={<RiderRoutes />} />
+            <Route
+              path="/"
+              element={
+                <Navigate
+                  to={
+                    localStorage.getItem('userType') === 'Admin'
+                      ? '/admin/home'
+                      : '/rider/home'
+                  }
+                  replace
+                />
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </SubscribeWrapper>
+      </AuthContext.Provider>
+    </>
   );
-
-  return signedIn ? <SiteContent /> : <AuthBarrier />;
 };
 
 export default AuthManager;
