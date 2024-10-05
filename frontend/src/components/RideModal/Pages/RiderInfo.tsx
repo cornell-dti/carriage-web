@@ -20,7 +20,13 @@ interface FormData {
 }
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const { control, register, handleSubmit, formState, getValues } = useForm({
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<FormData>({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
@@ -79,7 +85,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
                 nameToId[name.toLowerCase()] !== undefined,
             })}
           /> */}
-          <SelectComponent
+          <SelectComponent<FormData>
             name="name"
             datalist={Object.entries(nameToId).map(([name, id]) => ({
               id,

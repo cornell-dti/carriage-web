@@ -2,7 +2,7 @@ import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
 import Select, { ActionMeta, Props as SelectProps } from 'react-select';
-import { Control, RegisterOptions, useController } from 'react-hook-form';
+import { Control, RegisterOptions, useController, Path, FieldValues } from 'react-hook-form';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -86,25 +86,25 @@ type SelectOption = {
   label: string;
 };
 
-type SelectComponentProps = SelectProps & {
-  control: Control;
-  name: string;
+type SelectComponentProps<TFieldValues extends FieldValues> = SelectProps & {
+  control: Control<TFieldValues>;
+  name: Path<TFieldValues>;
   datalist: Option[];
   className?: string;
-  rules?: RegisterOptions;
+  rules?: RegisterOptions<TFieldValues>;
 };
 
-export const SelectComponent: React.FC<SelectComponentProps> = ({
+export const SelectComponent = <TFieldValues extends FieldValues>({
   control,
   name,
   datalist,
   className,
   rules,
   ...rest
-}) => {
+}: SelectComponentProps<TFieldValues>) => {
   const {
     field: { onChange, value, ref, ...inputProps },
-  } = useController({
+  } = useController<TFieldValues>({
     name,
     control,
     rules,
