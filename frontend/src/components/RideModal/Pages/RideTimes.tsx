@@ -194,6 +194,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                 },
               })}
               aria-required="true"
+              className={cn(styles.dateStyle)}
             />
             {errors.date?.type === 'required' && (
               <p className={styles.error}>Please enter a date</p>
@@ -211,6 +212,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               {...register('repeats', {
                 required: 'Please select a repeat option',
               })}
+              className={cn(styles.selectInputContainer, styles.selectInput)}
             >
               {repeatOptions.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -228,6 +230,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="pickupTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
@@ -250,6 +253,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="dropoffTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {
