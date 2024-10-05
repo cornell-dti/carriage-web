@@ -212,7 +212,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               {...register('repeats', {
                 required: 'Please select a repeat option',
               })}
-              className={cn(styles.selectInputContainer,styles.selectInput)}
+              className={cn(styles.selectInputContainer, styles.selectInput)}
             >
               {repeatOptions.map((option) => (
                 <option key={option.id} value={option.id}>
