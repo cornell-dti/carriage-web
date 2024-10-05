@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import cn from 'classnames';
-import { Button, Input, Label } from '../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 
@@ -30,6 +35,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   rider,
 }) => {
   const {
+    control,
     register,
     formState: { errors },
     handleSubmit,
@@ -168,6 +174,20 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               'Wheelchair'
             </p>
           )}
+        </div>
+
+        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+          <SelectComponent<FormData>
+            name="needs"
+            datalist={Object.entries(Accessibility).map(([key, value]) => ({
+              id: key,
+              name: value,
+            }))}
+            isSearchable={true}
+            control={control}
+            isMulti={true}
+            rules={{ required: 'Rider name is required' }}
+          />
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <Label className={styles.label} htmlFor="address">

@@ -9,12 +9,7 @@ import {
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
-import {
-  Button,
-  Input,
-  Label,
-  SelectComponent,
-} from '../../FormElements/FormElements';
+import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
@@ -211,13 +206,18 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
           </div>
           <div className={styles.col2}>
             <Label htmlFor="repeats">Repeats:</Label>
-            <SelectComponent
-              control={methods.control}
-              name="repeats"
-              datalist={repeatOptions}
-              className={styles.customSelect}
-              rules={{ required: 'Please enter a time' }}
-            />
+            <select
+              id="repeats"
+              {...register('repeats', {
+                required: 'Please select a repeat option',
+              })}
+            >
+              {repeatOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </select>
             {errors.repeats?.type === 'required' && (
               <p className={styles.error}>Please enter a time</p>
             )}
