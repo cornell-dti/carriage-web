@@ -148,7 +148,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <select
+          {/* <select
             id="needs"
             {...register('needs', { required: true })}
             aria-required="true"
@@ -159,7 +159,18 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 {value}
               </option>
             ))}
-          </select>
+          </select> */}
+          <SelectComponent<FormData>
+            name="needs"
+            datalist={Object.entries(Accessibility).map(([key, value]) => ({
+              id: key,
+              name: value,
+            }))}
+            isSearchable={true}
+            control={control}
+            isMulti={true}
+            rules={{ required: 'Has to choose one' }}
+          />
           {needsOption === 'Other' && (
             <Input
               id="otherNeeds"
@@ -176,7 +187,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           )}
         </div>
 
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+        {/* <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <SelectComponent<FormData>
             name="needs"
             datalist={Object.entries(Accessibility).map(([key, value]) => ({
@@ -188,7 +199,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             isMulti={true}
             rules={{ required: 'Rider name is required' }}
           />
-        </div>
+        </div> */}
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <Label className={styles.label} htmlFor="address">
             Address:{' '}
