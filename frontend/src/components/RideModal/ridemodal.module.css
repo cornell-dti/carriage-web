@@ -25,9 +25,9 @@
 }
 
 /* Input styles */
-input[type='date'],
-input[type='time'],
-select {
+.dateStyle,
+.timeStyle,
+.selectInputContainer {
   width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
@@ -37,16 +37,8 @@ select {
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-input[type='date']:focus,
-input[type='time']:focus,
-select:focus {
-  outline: none;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
 /* Styled select */
-select {
+.selectInput {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
