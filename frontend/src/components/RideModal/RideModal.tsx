@@ -188,7 +188,15 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       closeModal();
       showToast(ride ? 'Ride edited.' : 'Ride added.', ToastStatus.SUCCESS);
     }
-  }, [closeModal, formData, isSubmitted, ride, editSingle, refreshRides, showToast]);
+  }, [
+    closeModal,
+    formData,
+    isSubmitted,
+    ride,
+    editSingle,
+    refreshRides,
+    showToast,
+  ]);
 
   return ride ? (
     <>

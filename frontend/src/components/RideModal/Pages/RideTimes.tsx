@@ -9,11 +9,7 @@ import {
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
-import {
-  Button,
-  Input,
-  Label,
-} from '../../FormElements/FormElements';
+import { Button, Input, Label } from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
