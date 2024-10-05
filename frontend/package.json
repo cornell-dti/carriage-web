@@ -36,7 +36,7 @@
     "reactjs-popup": "^2.0.6"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",

@@ -1,6 +1,8 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
 import styles from './formelements.module.css';
+import Select, { ActionMeta, Props as SelectProps } from 'react-select';
+import { Control, RegisterOptions, useController } from 'react-hook-form';
 
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
@@ -73,3 +75,61 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
+type Option = {
+  id: string;
+  name: string;
+};
+
+type SelectOption = {
+  value: string;
+  label: string;
+};
+
+type SelectComponentProps = SelectProps & {
+  control: Control;
+  name: string;
+  datalist: Option[];
+  className?: string;
+  rules?: RegisterOptions;
+};
+
+export const SelectComponent: React.FC<SelectComponentProps> = ({
+  control,
+  name,
+  datalist,
+  className,
+  rules,
+  ...rest
+}) => {
+  const {
+    field: { onChange, value, ref, ...inputProps },
+  } = useController({
+    name,
+    control,
+    rules,
+  });
+
+  const transformedOptions = datalist.map((data) => ({
+    value: data.id,
+    label: data.name,
+  }));
+
+  const selectedOption = transformedOptions.find(
+    (option) => option.value === value
+  );
+
+  return (
+    <Select
+      {...inputProps}
+      options={transformedOptions}
+      className={cn(styles.customSelect, className)}
+      onChange={(newValue: unknown) => {
+        const option = newValue as SelectOption | null;
+        onChange(option?.value);
+      }}
+      value={selectedOption}
+      {...rest}
+    />
+  );
+};

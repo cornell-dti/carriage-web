@@ -3,7 +3,12 @@ import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType, Location, Rider } from '../../../types';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, Label } from '../../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
@@ -15,12 +20,7 @@ interface FormData {
 }
 
 const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    getValues,
-  } = useForm<FormData>({
+  const { control, register, handleSubmit, formState, getValues } = useForm({
     defaultValues: {
       name: formData?.rider ?? '',
       pickupLoc: formData?.pickupLoc ?? '',
@@ -31,12 +31,20 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   const [locationToId, setLocationToId] = useState<ObjectType>({});
   const { locations } = useLocations();
   const { riders } = useRiders();
-
-  const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: FormData) => {
-    const rider = nameToId[name.toLowerCase()];
+  const beforeSubmit = ({ name, pickupLoc, dropoffLoc }: ObjectType) => {
     const startLocation = locationToId[pickupLoc] ?? pickupLoc;
     const endLocation = locationToId[dropoffLoc] ?? dropoffLoc;
-    onSubmit({ rider, startLocation, endLocation });
+    /**Payload needed because the form is registered to expect rider instead of name
+     * If name passed straightaway it results in the database receiving an empty field for rider
+     *
+     */
+    const payload = {
+      rider: name,
+      startLocation,
+      endLocation,
+    };
+    console.log(payload);
+    onSubmit(payload);
   };
 
   useEffect(() => {
@@ -59,7 +67,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
       <div className={cn(styles.inputContainer, styles.rider)}>
         <div className={styles.name}>
           <Label htmlFor={'name'}>Name</Label>
-          <Input
+          {/* <Input
             id="name"
             type="text"
             className={styles.nameInput}
@@ -70,7 +78,18 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
               validate: (name: string) =>
                 nameToId[name.toLowerCase()] !== undefined,
             })}
+          /> */}
+          <SelectComponent
+            name="name"
+            datalist={Object.entries(nameToId).map(([name, id]) => ({
+              id,
+              name,
+            }))}
+            isSearchable={true}
+            control={control}
+            rules={{ required: 'Rider name is required' }}
           />
+
           {errors.name && <p className={styles.error}>Rider not found</p>}
           <datalist id="names">
             {riders.map((r) => (
@@ -84,13 +103,14 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'pickupLoc'} className={styles.label}>
             Pickup Location
           </Label>
-          <Input
-            id="pickupLoc"
-            type="text"
-            list="locations"
-            aria-required="true"
-            {...register('pickupLoc', { required: true })}
+          <SelectComponent
+            name={'pickupLoc'}
+            datalist={locations}
+            isSearchable={true}
+            control={control}
+            rules={{ required: 'Pickup Location is required' }}
           />
+
           {errors.pickupLoc && (
             <p className={styles.error}>Please enter a location</p>
           )}
@@ -104,18 +124,12 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           <Label htmlFor={'dropoffLoc'} className={styles.label}>
             Dropoff Location
           </Label>
-          <Input
-            id="dropoffLoc"
-            type="text"
-            list="locations"
-            aria-required="true"
-            {...register('dropoffLoc', {
-              required: true,
-              validate: (dropoffLoc: string) => {
-                const pickupLoc = getValues('pickupLoc');
-                return pickupLoc !== dropoffLoc;
-              },
-            })}
+          <SelectComponent
+            name="dropoffLoc"
+            datalist={locations}
+            isSearchable={true}
+            control={control}
+            rules={{ required: 'Dropoff Location is required' }}
           />
           {errors.dropoffLoc?.type === 'required' && (
             <p className={styles.error}>Please enter a location</p>

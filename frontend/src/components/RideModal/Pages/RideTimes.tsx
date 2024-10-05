@@ -9,7 +9,12 @@ import {
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
-import { Button, Input, Label } from '../../FormElements/FormElements';
+import {
+  Button,
+  Input,
+  Label,
+  SelectComponent,
+} from '../../FormElements/FormElements';
 import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
@@ -166,7 +171,10 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
     watch,
   } = methods;
   const watchRepeats = watch('repeats');
-
+  const repeatOptions = Object.values(RepeatValues).map((value) => ({
+    id: value,
+    name: value,
+  }));
   useEffect(() => {
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
@@ -203,18 +211,13 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
           </div>
           <div className={styles.col2}>
             <Label htmlFor="repeats">Repeats:</Label>
-            <select
-              id="repeats"
-              {...register('repeats', { required: true })}
-              aria-required="true"
-              className={styles.select}
-            >
-              {Object.values(RepeatValues).map((repeatValue) => (
-                <option key={repeatValue} value={repeatValue}>
-                  {repeatValue}
-                </option>
-              ))}
-            </select>
+            <SelectComponent
+              control={methods.control}
+              name="repeats"
+              datalist={repeatOptions}
+              className={styles.customSelect}
+              rules={{ required: 'Please enter a time' }}
+            />
             {errors.repeats?.type === 'required' && (
               <p className={styles.error}>Please enter a time</p>
             )}
