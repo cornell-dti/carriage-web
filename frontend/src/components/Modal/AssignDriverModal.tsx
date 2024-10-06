@@ -43,16 +43,10 @@ const AssignDriverModal = ({
   function useOutsideAlerter(wrapperRef: any, buttonRef: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
-        console.log("Button ref:", buttonRef.current); // Debugging statement
-        console.log("T1 WORK");
-        if (buttonRef.current === null) {
-          console.log("Button reference is null");
-        }
         event.stopPropagation();
         const isClickOutsideButton = buttonRef.current && !buttonRef.current.contains(event.target);
         const isClickOutsideModal = wrapperRef.current && !wrapperRef.current.contains(event.target);
         if (isClickOutsideModal && isClickOutsideButton) {
-          console.log("T2 (INTERRUPT) WORK");
           close();
         }
       }
