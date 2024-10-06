@@ -10,6 +10,7 @@ type AssignModalProps = {
   ride: Ride;
   allDrivers: Driver[];
   reassign: boolean;
+  buttonRef: any
 };
 
 type DriverRowProps = {
@@ -35,13 +36,23 @@ const AssignDriverModal = ({
   ride,
   allDrivers,
   reassign = false,
+  buttonRef,
 }: AssignModalProps) => {
   const { refreshRides } = useRides();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
-  function useOutsideAlerter(ref: any) {
+  function useOutsideAlerter(wrapperRef: any, buttonRef: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
+        console.log("Button ref:", buttonRef.current); // Debugging statement
+        console.log("T1 WORK");
+        if (buttonRef.current === null) {
+          console.log("Button reference is null");
+        }
+        event.stopPropagation();
+        const isClickOutsideButton = buttonRef.current && !buttonRef.current.contains(event.target);
+        const isClickOutsideModal = wrapperRef.current && !wrapperRef.current.contains(event.target);
+        if (isClickOutsideModal && isClickOutsideButton) {
+          console.log("T2 (INTERRUPT) WORK");
           close();
         }
       }
@@ -50,8 +61,9 @@ const AssignDriverModal = ({
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
-    }, [ref]);
+    }, [wrapperRef, buttonRef]);
   }
+
   const wrapperRef = useRef(null);
   const addDriver = (driver: Driver) => {
     axios
@@ -62,8 +74,10 @@ const AssignDriverModal = ({
       .then(() => refreshRides());
     close();
   };
-  useOutsideAlerter(wrapperRef);
 
+
+  useOutsideAlerter(wrapperRef, buttonRef);
+ 
   return (
     <>
       {isOpen && (
