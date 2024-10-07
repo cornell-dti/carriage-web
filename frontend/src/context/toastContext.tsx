@@ -12,6 +12,7 @@ type toastStat = {
   message: string;
   showToast: (message: string, currentToastType: ToastStatus) => void;
   toastType: boolean;
+  setVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const initalState: toastStat = {
@@ -19,6 +20,7 @@ const initalState: toastStat = {
   message: '',
   showToast: function () {},
   toastType: false,
+  setVisible: function () {},
 };
 
 const ToastContext = React.createContext(initalState);
@@ -35,14 +37,27 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
   const showToast = (inputMessage: string, currentToastType: ToastStatus) => {
     setMessage(inputMessage);
     setVisible(true);
+
+    if (currentToastType == ToastStatus.ERROR) {
+      setToastType(false);
+      setTimeout(() => {
+        setVisible(false);
+      }, 2000);
+    } else {
+      if (currentToastType == ToastStatus.SUCCESS) {
+        setToastType(true);
+      } else {
+        new Error('Invalid Toast type');
+      }
+    }
     currentToastType == ToastStatus.ERROR
       ? setToastType(false)
       : currentToastType == ToastStatus.SUCCESS
       ? setToastType(true)
       : new Error('Invalid Toast type');
-    setTimeout(() => {
-      setVisible(false);
-    }, 2000);
+    // setTimeout(() => {
+    //   setVisible(false);
+    // }, 2000);
   };
 
   return (
@@ -52,6 +67,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
         message,
         showToast,
         toastType,
+        setVisible,
       }}
     >
       {children}
