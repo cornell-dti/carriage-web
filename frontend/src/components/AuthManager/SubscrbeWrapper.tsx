@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactFragment, ReactElement } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import subscribeUser from './subscribeUser';
 
 interface Props {
