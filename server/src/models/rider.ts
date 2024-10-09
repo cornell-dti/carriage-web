@@ -26,6 +26,7 @@ export type RiderType = {
   lastName: string;
   phoneNumber: string;
   email: string;
+  // accessibility?: Accessibility[];
   accessibility?: string;
   organization?: Organization;
   description?: string;
@@ -65,6 +66,7 @@ const schema = new dynamoose.Schema({
   accessibility: {
     type: String,
     enum: Object.values(Accessibility),
+    // type : [Array],
     required: false,
   },
   organization: {

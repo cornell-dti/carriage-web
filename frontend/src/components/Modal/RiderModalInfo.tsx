@@ -17,12 +17,14 @@ type ModalFormProps = {
   rider?: Rider;
 };
 
+//Note that the backend in AWS still has needs as a string so in a future commit
+//I'll delete all the data in the AWS and change the typing on RiderTypes.
+
 type FormData = {
-  firstName: string;
-  lastName: string;
+  name: string;
   netid: string;
   phoneNumber: string;
-  needs: string;
+  needs: Accessibility[];
   address: string;
   joinDate: string;
   endDate: string;
@@ -43,11 +45,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     getValues,
   } = useForm<FormData>({
     defaultValues: {
-      firstName: rider?.firstName ?? '',
-      lastName: rider?.lastName ?? '',
+      name: (rider?.firstName ?? '') + (rider?.lastName ?? ''),
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility ?? '',
+      needs: [],
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
@@ -55,8 +56,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   });
 
   const beforeSubmit: SubmitHandler<FormData> = ({
-    firstName,
-    lastName,
+    name,
     netid,
     phoneNumber,
     needs,
@@ -66,6 +66,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   }) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
     const accessibility = needs;
+    const nameParts = name.trim().split(/\s+/);
+    const firstName =
+      nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(-1)[0] : '';
     onSubmit({
       firstName,
       lastName,
@@ -92,32 +96,19 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
-            First Name:{' '}
+          <Label className={styles.label} htmlFor="name">
+            Name:{' '}
           </Label>
           <Input
-            id="firstName"
-            {...register('firstName', { required: true })}
+            id="name"
             type="text"
+            {...register('name', {
+              required: true,
+            })}
             aria-required="true"
             className={styles.firstRow}
           />
-          {errors.firstName && (
-            <p className={styles.error}>First name cannot be empty</p>
-          )}
-          <Label className={styles.label} htmlFor="lastName">
-            Last Name:{' '}
-          </Label>
-          <Input
-            id="lastName"
-            {...register('lastName', { required: true })}
-            type="text"
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.lastName && (
-            <p className={styles.error}>Last name cannot be empty</p>
-          )}
+          {errors.name && <p className={styles.error}>Name cannot be empty</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="netid">
@@ -160,18 +151,18 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <select
-            id="needs"
-            {...register('needs', { required: true })}
-            aria-required="true"
-            onChange={(e) => setNeedsOption(e.target.value)}
-          >
-            {Object.values(Accessibility).map((value, index) => (
-              <option key={index} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
+          /** The dropdown box now can do multiselect. */
+          <SelectComponent<FormData>
+            name="needs"
+            datalist={Object.entries(Accessibility).map(([key, value]) => ({
+              id: key,
+              name: value,
+            }))}
+            isSearchable={true}
+            control={control}
+            isMulti={true}
+            rules={{ required: 'Has to choose one' }}
+          />
           {needsOption === 'Other' && (
             <Input
               id="otherNeeds"
@@ -188,7 +179,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           )}
         </div>
 
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
+        {/* <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <SelectComponent<FormData>
             name="needs"
             datalist={Object.entries(Accessibility).map(([key, value]) => ({
@@ -200,7 +191,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             isMulti={true}
             rules={{ required: 'Rider name is required' }}
           />
-        </div>
+        </div> */}
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <Label className={styles.label} htmlFor="address">
             Address:{' '}
