@@ -17,6 +17,9 @@ type ModalFormProps = {
   rider?: Rider;
 };
 
+//Note that the backend in AWS still has needs as a string so in a future commit
+//I'll delete all the data in the AWS and change the typing on RiderTypes.
+
 type FormData = {
   name: string;
   netid: string;
@@ -148,18 +151,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          {/* <select
-            id="needs"
-            {...register('needs', { required: true })}
-            aria-required="true"
-            onChange={(e) => setNeedsOption(e.target.value)}
-          >
-            {Object.values(Accessibility).map((value, index) => (
-              <option key={index} value={value}>
-                {value}
-              </option>
-            ))}
-          </select> */}
+          /** The dropdown box now can do multiselect. */
           <SelectComponent<FormData>
             name="needs"
             datalist={Object.entries(Accessibility).map(([key, value]) => ({
