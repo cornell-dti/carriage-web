@@ -21,7 +21,7 @@ type FormData = {
   name: string;
   netid: string;
   phoneNumber: string;
-  needs: string;
+  needs: Accessibility[];
   address: string;
   joinDate: string;
   endDate: string;
@@ -45,7 +45,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       name: (rider?.firstName ?? '') + (rider?.lastName ?? ''),
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility ?? '',
+      needs: [],
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
