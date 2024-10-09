@@ -1,9 +1,9 @@
 import { ModelType } from 'dynamoose/dist/General';
-import { Document } from 'dynamoose/dist/Document';
 import * as models from '../../src/models';
 import { v4 as uuid } from 'uuid';
+import { Item } from 'dynamoose/dist/Item';
 
-export const populateDB = async <T extends Document>(
+export const populateDB = async <T extends Item>(
   table: ModelType<T>,
   data: any
 ) => {
@@ -13,7 +13,7 @@ export const populateDB = async <T extends Document>(
   });
 };
 
-export const clearTableContent = async (table: ModelType<Document>) => {
+export const clearTableContent = async (table: ModelType<Item>) => {
   const items = await table.scan().exec();
   await Promise.allSettled(items.map((item) => item.delete()));
 };

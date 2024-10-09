@@ -1,11 +1,11 @@
 import { Response } from 'express';
-import { Document } from 'dynamoose/dist/Document';
 import { ModelType, ObjectType } from 'dynamoose/dist/General';
 import { Condition } from 'dynamoose/dist/Condition';
+import { Item } from 'dynamoose/dist/Item';
 
 export function getById(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   id: string | ObjectType | undefined,
   table: string,
   callback?: (value: any) => void
@@ -25,7 +25,7 @@ export function getById(
 
 export function batchGet(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   keys: ObjectType[],
   table: string,
   callback?: (value: any) => void
@@ -49,7 +49,7 @@ export function batchGet(
 
 export function getAll(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   table: string,
   callback?: (value: any) => void
 ) {
@@ -68,7 +68,7 @@ export function getAll(
 
 export function create(
   res: Response,
-  document: Document,
+  document: Item,
   callback?: (value: any) => void
 ) {
   document.save(async (err, data) => {
@@ -86,7 +86,7 @@ export function create(
 
 export function update(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   key: ObjectType,
   operation: ObjectType,
   table: string,
@@ -107,7 +107,7 @@ export function update(
 
 export function conditionalUpdate(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   key: ObjectType,
   operation: ObjectType,
   condition: Condition,
@@ -117,7 +117,7 @@ export function conditionalUpdate(
   model.update(
     key,
     operation,
-    { condition, return: 'document' },
+    { condition, return: 'item' },
     async (err, data) => {
       if (err) {
         res.status(err.statusCode || 500).send({ err: err.message });
@@ -134,7 +134,7 @@ export function conditionalUpdate(
 
 export function deleteById(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   id: string | ObjectType | undefined,
   table: string
 ) {
@@ -151,7 +151,7 @@ export function deleteById(
 
 export function query(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   condition: Condition,
   index: string,
   callback?: (value: any) => void
@@ -172,7 +172,7 @@ export function query(
 
 export function scan(
   res: Response,
-  model: ModelType<Document>,
+  model: ModelType<Item>,
   condition: Condition,
   callback?: (value: any) => void
 ) {

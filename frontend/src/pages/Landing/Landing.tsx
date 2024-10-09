@@ -19,7 +19,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
         <div className={styles.main}>
           <div className={styles.left}>
             <img src={logo} className={styles.badge} alt="Carriage logo" />
-            <span className={styles.title}>Carriage</span>
+            <span className={styles.title}>Raissa Carriage</span>
           </div>
           <div className={styles.right}>
             <div className={styles.spacing_container}>

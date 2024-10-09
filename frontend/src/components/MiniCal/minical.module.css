@@ -70,3 +70,12 @@
 .space {
   width: 0.5em;
 }
+
+.modal_state {
+  top: 0;
+  left: -2px;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  overflow: hidden;
+}

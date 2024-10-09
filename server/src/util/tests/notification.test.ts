@@ -1,8 +1,6 @@
 import { RideType, Status, Type } from '../../models/ride';
-import { Change } from '../types';
 import { UserType } from '../../models/subscription';
 import { Tag } from '../../models/location';
-import { DriverType } from '../../models/driver';
 import { RiderType } from '../../models/rider';
 import initDynamoose from '../dynamoose';
 import { notify } from '../notification';
@@ -44,34 +42,6 @@ const unscheduledRide: RideType = {
   late: false,
   rider,
   recurring: false,
-};
-
-const driver1: DriverType = {
-  id: 'driver1',
-  firstName: 'First',
-  lastName: 'Driver',
-  availability: {},
-  vehicle: {
-    id: '',
-    name: '',
-    capacity: 0,
-  },
-  phoneNumber: '',
-  startDate: '',
-  email: '',
-};
-
-const driver2: DriverType = {
-  ...driver1,
-  id: 'driver2',
-  firstName: 'Second',
-  lastName: 'Driver',
-};
-
-const scheduledRide: RideType = {
-  ...unscheduledRide,
-  type: Type.ACTIVE,
-  driver: driver1,
 };
 
 // Surpress warnings

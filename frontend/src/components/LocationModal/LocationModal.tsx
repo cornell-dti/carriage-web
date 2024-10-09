@@ -1,7 +1,7 @@
 import { parseAddress } from 'addresser';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { Location, ObjectType, Tag } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
@@ -15,15 +15,60 @@ type LocationModalProps = {
   onEditLocation?: (editedLocation: Location) => void;
 };
 
-const LocationModal = ({
+type FormData = {
+  name: string;
+  address: string;
+  info: string;
+  tag: Tag;
+};
+
+const isAddress = (address: string) => {
+  let parsedAddr;
+  try {
+    if (address.includes(',')) {
+      parsedAddr = parseAddress(address);
+    } else {
+      parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`);
+    }
+  } catch {
+    return 'Invalid address';
+  }
+  const {
+    streetNumber,
+    streetName,
+    streetSuffix,
+    placeName,
+    stateName,
+    zipCode,
+  } = parsedAddr;
+  if (
+    !(
+      streetNumber &&
+      streetName &&
+      streetSuffix &&
+      placeName &&
+      stateName &&
+      zipCode
+    )
+  ) {
+    return 'Invalid address';
+  }
+  return true;
+};
+
+const LocationModal: React.FC<LocationModalProps> = ({
   existingLocation,
   onAddLocation,
   onEditLocation,
-}: LocationModalProps) => {
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const { register, handleSubmit, errors, setValue } = useForm();
-  const { name, address, info } = errors;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<FormData>();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
   const submitButtonText = existingLocation ? 'Save' : 'Add Location';
@@ -34,9 +79,9 @@ const LocationModal = ({
 
   const closeModal = () => setIsOpen(false);
 
-  const onSubmit = async (data: ObjectType) => {
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     const url = existingLocation
-      ? `/api/locations/${existingLocation!.id}`
+      ? `/api/locations/${existingLocation.id}`
       : '/api/locations';
     const method = existingLocation ? axios.put : axios.post;
 
@@ -49,20 +94,7 @@ const LocationModal = ({
       onEditLocation(newLocation);
       showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
-
     closeModal();
-  };
-
-  /**
-   * Clears location modal's inputs by manually resetting name, address, and
-   * info to a blank input. The location's tag resets to 'central'. Avoid using
-   * reset() from react hook form because it will reset the form's functionality
-   * as well, like the appearance of error messages.
-   */
-  const onClearAll = () => {
-    setValue('name', '');
-    setValue('address', '');
-    setValue('info', '');
   };
 
   return (
@@ -74,59 +106,67 @@ const LocationModal = ({
       ) : (
         <Button onClick={openModal}>+ Add a location</Button>
       )}
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <Modal
+        title={modalTitle}
+        isOpen={isOpen}
+        onClose={closeModal}
+        id="location-modal"
+      >
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          aria-labelledby="location-modal"
+        >
           <div className={styles.inputContainer}>
             <div style={{ gridArea: 'name' }}>
               <Label htmlFor="name">Name</Label>
               <Input
-                name="name"
+                {...register('name', { required: true })}
                 type="text"
                 id="name"
                 defaultValue={existingLocation?.name}
                 className={styles.input}
-                ref={register({ required: true })}
                 aria-required="true"
               />
-              {name && <p className={styles.errorMsg}>Please input a name</p>}
-            </div>
+              {errors.name && (
+                <p className={styles.errorMsg}>Please enter a name</p>
+              )}
 
-            <div style={{ gridArea: 'address' }}>
               <Label htmlFor="address">Address</Label>
               <Input
-                name="address"
+                {...register('address', {
+                  required: true,
+                  validate: isAddress,
+                })}
                 type="text"
                 id="address"
                 defaultValue={existingLocation?.address}
                 className={styles.input}
                 aria-required="true"
-                ref={register({ required: true })}
               />
-              {address && (
-                <p className={styles.errorMsg}>Please input an address</p>
+              {errors.address && (
+                <p className={styles.errorMsg}>{errors.address.message}</p>
               )}
-            </div>
 
-            <div style={{ gridArea: 'info' }}>
-              <Label htmlFor="info">Pickup / Dropoff Information</Label>
-              <textarea
-                name="info"
+              <Label htmlFor="info">Pickup/Dropoff Info</Label>
+              <Input
+                {...register('info', { required: true })}
+                type="text"
                 id="info"
                 defaultValue={existingLocation?.info}
                 className={styles.input}
-                ref={register({ required: false })}
-                aria-required="false"
-                style={{ width: '14rem', height: '6.438rem', resize: 'none' }}
+                aria-required="true"
               />
-            </div>
+              {errors.info && (
+                <p className={styles.errorMsg}>
+                  Please enter pickup/dropoff info
+                </p>
+              )}
 
-            <div style={{ gridArea: 'tag' }}>
               <Label htmlFor="tag">Tag</Label>
               <select
-                name="tag"
+                {...register('tag', { required: true })}
                 id="tag"
                 defaultValue={existingLocation?.tag}
-                ref={register({ required: true })}
                 className={styles.inputContainer}
                 aria-required="true"
               >
@@ -137,23 +177,13 @@ const LocationModal = ({
                     </option>
                   )
                 )}
-                {info && <p className={styles.errorMsg}>Please select a tag</p>}
               </select>
-            </div>
 
-            <div>
-              <Button className={styles.submit} type="submit">
-                {submitButtonText}
-              </Button>
-
-              <Button type="button" outline={true}>
-                Back
-              </Button>
-
-              <Button type="reset" outline={true} onClick={onClearAll}>
-                <img src={trash}></img>
-                <span> Clear All</span>
-              </Button>
+              <div>
+                <Button className={styles.submit} type="submit">
+                  {submitButtonText}
+                </Button>
+              </div>
             </div>
           </div>
         </form>
