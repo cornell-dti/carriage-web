@@ -7,6 +7,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 import axios from '../../util/axios';
+import { trash } from '../../icons/other';
 
 type LocationModalProps = {
   existingLocation?: Location;
@@ -66,10 +67,11 @@ const LocationModal: React.FC<LocationModalProps> = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<FormData>();
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
-  const submitButtonText = existingLocation ? 'Save' : 'Add';
+  const submitButtonText = existingLocation ? 'Save' : 'Add Location';
 
   const openModal = () => {
     setIsOpen(true);
@@ -115,68 +117,73 @@ const LocationModal: React.FC<LocationModalProps> = ({
           aria-labelledby="location-modal"
         >
           <div className={styles.inputContainer}>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              {...register('name', { required: true })}
-              type="text"
-              id="name"
-              defaultValue={existingLocation?.name}
-              className={styles.input}
-              aria-required="true"
-            />
-            {errors.name && (
-              <p className={styles.errorMsg}>Please enter a name</p>
-            )}
-
-            <Label htmlFor="address">Address</Label>
-            <Input
-              {...register('address', { required: true, validate: isAddress })}
-              type="text"
-              id="address"
-              defaultValue={existingLocation?.address}
-              className={styles.input}
-              aria-required="true"
-            />
-            {errors.address && (
-              <p className={styles.errorMsg}>{errors.address.message}</p>
-            )}
-
-            <Label htmlFor="info">Pickup/Dropoff Info</Label>
-            <Input
-              {...register('info', { required: true })}
-              type="text"
-              id="info"
-              defaultValue={existingLocation?.info}
-              className={styles.input}
-              aria-required="true"
-            />
-            {errors.info && (
-              <p className={styles.errorMsg}>
-                Please enter pickup/dropoff info
-              </p>
-            )}
-
-            <Label htmlFor="tag">Tag</Label>
-            <select
-              {...register('tag', { required: true })}
-              id="tag"
-              defaultValue={existingLocation?.tag}
-              className={styles.inputContainer}
-              aria-required="true"
-            >
-              {Object.values(Tag).map((value) =>
-                value === 'custom' ? null : (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                )
+            <div style={{ gridArea: 'name' }}>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                {...register('name', { required: true })}
+                type="text"
+                id="name"
+                defaultValue={existingLocation?.name}
+                className={styles.input}
+                aria-required="true"
+              />
+              {errors.name && (
+                <p className={styles.errorMsg}>Please enter a name</p>
               )}
-            </select>
 
-            <div>
-              <Button className={styles.submit} type="submit">
-                {submitButtonText}
-              </Button>
+              <Label htmlFor="address">Address</Label>
+              <Input
+                {...register('address', {
+                  required: true,
+                  validate: isAddress,
+                })}
+                type="text"
+                id="address"
+                defaultValue={existingLocation?.address}
+                className={styles.input}
+                aria-required="true"
+              />
+              {errors.address && (
+                <p className={styles.errorMsg}>{errors.address.message}</p>
+              )}
+
+              <Label htmlFor="info">Pickup/Dropoff Info</Label>
+              <Input
+                {...register('info', { required: true })}
+                type="text"
+                id="info"
+                defaultValue={existingLocation?.info}
+                className={styles.input}
+                aria-required="true"
+              />
+              {errors.info && (
+                <p className={styles.errorMsg}>
+                  Please enter pickup/dropoff info
+                </p>
+              )}
+
+              <Label htmlFor="tag">Tag</Label>
+              <select
+                {...register('tag', { required: true })}
+                id="tag"
+                defaultValue={existingLocation?.tag}
+                className={styles.inputContainer}
+                aria-required="true"
+              >
+                {Object.values(Tag).map((value) =>
+                  value === 'custom' ? null : (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
+              </select>
+
+              <div>
+                <Button className={styles.submit} type="submit">
+                  {submitButtonText}
+                </Button>
+              </div>
             </div>
           </div>
         </form>
