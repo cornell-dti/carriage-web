@@ -185,7 +185,6 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               Date
             </Label>
             <Input
-              className={styles.input}
               id="date"
               type="date"
               {...register('date', {
@@ -237,7 +236,6 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               Pickup time:
             </Label>
             <Input
-              className={styles.input}
               id="pickupTime"
               type="time"
               className={cn(styles.timeStyle)}
@@ -263,7 +261,6 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               Dropoff time:
             </Label>
             <Input
-              className={styles.input}
               id="dropoffTime"
               type="time"
               className={cn(styles.timeStyle)}
