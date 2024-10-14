@@ -1,92 +1,112 @@
-.home {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(./campus.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  height: 100vh;
+.header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 62px 100px;
+  background-color: black;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.headerLogoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  height: 40px;
+}
+
+.headerLogo {
+  height: 50px;
+}
+
+.headerTitle {
+  color: white;
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.tosButton {
+  width: 200px;
+  height: 50px;
+  border: 0;
+  background-color: #ff647c;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-family: -apple-system, BlinkMacSystemFont;
+}
+
+.home {
+  background: black;
+  display: flex;
   align-items: center;
   text-align: center;
-  padding: 0 1.25rem;
-}
-.main {
-  border: 1px solid black;
-  border-radius: 16px;
-  max-width: 850px;
-  min-height: 550px;
-  display: flex;
-  flex-grow: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.left {
-  border-radius: 16px 0 0 16px;
-  background: #191919;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-}
-
-.spacing_container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-}
-
-.dti_container {
+.firstPage {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
-.dti_logo {
-  width: 145px;
-  height: 30px;
-  left: 46px;
-  top: 14px;
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.container_item_left {
-  margin-right: 33px;
-}
-
-.container_item_right {
-  margin-left: 33px;
-}
-
-.title {
-  font-size: 42px;
-  font-weight: 600;
-  color: white;
-  margin-top: 16px;
-}
-
-.right {
-  border-radius: 0 16px 16px 0;
-  background: white;
-  flex-grow: 1;
+.main {
+  /* max-width: 850px;
+  min-height: 550px; */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: flex-start;
+  margin-left: 190px;
+  flex-shrink: 1;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.mainTitle {
+  font-size: 96px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: -10px;
+  font-family: -apple-system, BlinkMacSystemFont;
+}
+
+.mainSubtext {
+  font-size: 24px;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 32px;
+  font-family: -apple-system, BlinkMacSystemFont;
+}
+
+.loginContainer {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 8px;
+}
+
+.ctownGraphicContainer {
+  display: flex;
   position: relative;
+  flex-shrink: 1;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  /* height: auto; */
+  /* overflow: hidden; */
+}
+
+.ctownGraphic {
+  position: relative;
+  width: 100%;
+  height: auto;
+  margin-top: 20%;
+  transform: scale(1.15);
+  left: 13%;
 }
 
 @media (max-width: 400px) {
