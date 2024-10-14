@@ -10,7 +10,6 @@ import WorkingHours from './WorkingHours';
 import Upload from './Upload';
 import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
-import { edit } from '../../icons/other/index';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 
@@ -82,12 +81,13 @@ const EmployeeModal = ({
   };
 
   /**
-   * The function `parseAvailability` takes an array of objects containing `startTime`, `endTime`, and
-   * `days` properties, and returns an object where each day is a key and the value is an object
-   * containing the `startTime` and `endTime` for that day.
-   * @param {ObjectType[]} availability - The `availability` parameter is an array of objects. Each
-   * object in the array represents a time slot with the following properties:
-   * @returns The function `parseAvailability` is returning an object of type `ObjectType`.
+   * Converts availabilities expressed as an array of {starTime, endTime, days}
+   * objects into an object mapping the day to the start and end time of each
+   * availability period
+   *
+   * @param availability the availibity array to convert
+   * @returns the availibity array expressed as an object mapping the day to
+   * the start and end time of each availibility period
    */
   const parseAvailability = (availability: ObjectType[]) => {
     const result: ObjectType = {};
@@ -103,12 +103,10 @@ const EmployeeModal = ({
    * The function `uploadPhotoForEmployee` uploads a photo for an employee by sending a POST request to
    * the `/api/upload` endpoint with the employee's ID, table name, and image file buffer, and then calls
    * the `refresh` function to update the data.
-   * @param {string} employeeId - The employeeId parameter is a string that represents the unique
-   * identifier of the employee for whom the photo is being uploaded.
-   * @param {string} table - The `table` parameter is a string that represents the name of the table
-   * where the photo will be uploaded.
-   * @param refresh - The `refresh` parameter is a function that is called after the photo is
-   * successfully uploaded. It is used to refresh the data or UI after the upload is complete.
+   * @param employeeId - unique identifier of the employee for whom the photo is being uploaded
+   * @param table - represents the table where the photo will be uploaded
+   * @param refresh - a function that is called after the photo is successfully uploaded.
+   * It is used to refresh the data or UI after the upload is complete.
    */
   const uploadPhotoForEmployee = async (
     employeeId: string,
@@ -133,16 +131,12 @@ const EmployeeModal = ({
   /**
    * The function creates a new employee by sending a POST request to an endpoint, and if an image has
    * been uploaded, it also uploads the photo for the employee.
-   * @param {AdminData | DriverData} employeeData - The `employeeData` parameter is an object that
-   * contains the data for the new employee. It can be of type `AdminData` or `DriverData`, which are
-   * likely interfaces or types defined elsewhere in the codebase. The specific properties and structure
-   * of `employeeData` would depend on these types
-   * @param {string} endpoint - The `endpoint` parameter is the URL where the request will be sent to
-   * create a new employee.
-   * @param refresh - The `refresh` parameter is a function that is called after the employee has been
-   * added or updated. It is used to refresh the data or UI to reflect the changes made to the employee.
-   * @param {string} table - The `table` parameter is a string that represents the table or collection in
-   * the database where the employee data will be stored.
+   * @param employeeData - an object that contains the data for the new employee. It can be of type `AdminData`
+   * or `DriverData`. The specific properties and structure of `employeeData` would depend on these types
+   * @param endpoint - The URL where the request will be sent to create a new employee.
+   * @param refresh - called after the employee has been added or updated. It is used to refresh the data
+   *  or UI to reflect the changes made to the employee.
+   * @param table - represents the table or collection in the database where the employee data will be stored.
    * @returns a Promise that resolves to the response object from the axios post request.
    */
   const createNewEmployee = async (
@@ -167,18 +161,14 @@ const EmployeeModal = ({
    * The function `updateExistingEmployee` updates an existing employee's data, sends a PUT request to
    * the specified endpoint, refreshes the data, displays a success toast message, and uploads a photo if
    * provided.
-   * @param {AdminData | DriverData} employeeData - The `employeeData` parameter is an object that
-   * contains the updated data for an employee. It can be of type `AdminData` or `DriverData`, which are
-   * likely interfaces or types defined elsewhere in the codebase. The specific properties and structure
-   * of `employeeData` would depend on these types
-   * @param {string} endpoint - The `endpoint` parameter is a string that represents the URL endpoint
-   * where the API request will be sent to update the existing employee data.
-   * @param refresh - The `refresh` parameter is a function that is called after the employee data is
-   * updated. It is used to refresh the data or update the UI to reflect the changes made to the
-   * employee.
-   * @param {string} table - The `table` parameter is a string that represents the table or collection in
-   * the database where the employee data is stored. It is used in the `uploadPhotoForEmployee` function
-   * to specify the table where the employee's photo should be uploaded.
+   * @param employeeData - an object that contains the updated data for an employee. It can be of type `AdminData`
+   *  or `DriverData`. The specific properties and structure of `employeeData` would depend on these types
+   * @param endpoint - the URL endpoint where the API request will be sent to update the existing employee data.
+   * @param refresh - a function that is called after the employee data is updated. It is used to refresh the data
+   * or update the UI to reflect the changes made to the employee.
+   * @param table - a string that represents the table or collection in the database where the employee data
+   * is stored. It is used in the `uploadPhotoForEmployee` function to specify the table where the employee's
+   * photo should be uploaded.
    * @returns the updated employee data.
    */
   const updateExistingEmployee = async (
@@ -204,21 +194,15 @@ const EmployeeModal = ({
   /**
    * The function `createOrUpdateEmployee` is a TypeScript React function that creates or updates an
    * employee based on the provided data and parameters.
-   * @param {AdminData | DriverData} employee - The `employee` parameter is an object that contains the
-   * data of the employee. It can be of type `AdminData` or `DriverData`, which are specific types for
-   * admin and driver employees respectively. The specific properties and structure of these types are
-   * not provided in the code snippet.
-   * @param {boolean} isNewEmployee - A boolean value indicating whether the employee is new or existing.
-   * If it is true, it means the employee is new and needs to be created. If it is false, it means the
-   * employee already exists and needs to be updated.
-   * @param {string} apiEndpoint - The `apiEndpoint` parameter is a string that represents the API
-   * endpoint where the employee data will be sent. It should be in the format of '/api/drivers' or
-   * '/api/admins', depending on the type of employee being created or updated.
-   * @param refreshFunction - The `refreshFunction` parameter is a function that is responsible for
-   * refreshing the data after creating or updating an employee. It should be a function that returns a
-   * promise, indicating when the data has been refreshed.
-   * @param {string} employeeType - The `employeeType` parameter is a string that represents the type of
-   * employee. It can be either "admin" or "driver".
+   * @param employee - an object that contains the data of the employee.
+   * @param isNewEmployee - A boolean value indicating whether the employee is new or existing.
+   * @param apiEndpoint - A string that represents the API endpoint where the employee data will be sent.
+   * It should be in the format of '/api/drivers' or '/api/admins', depending on the type of employee being
+   * created or updated.
+   * @param refreshFunction - A function that is responsible for refreshing the data after creating or
+   * updating an employee. It should be a function that returns a promise, indicating when the data has
+   * been refreshed.
+   * @param employeeType - the type of employee. It can be either "admin" or "driver".
    * @returns the result of either the `createNewEmployee` or `updateExistingEmployee` function,
    * depending on the value of `isNewEmployee`.
    */
@@ -461,13 +445,21 @@ const EmployeeModal = ({
   }
   return (
     <>
-      <Modal title={modalTitle} isOpen={isOpen} onClose={closeModal}>
+      <Modal
+        title={modalTitle}
+        isOpen={isOpen}
+        onClose={closeModal}
+        id="employee-modal"
+      >
         <Upload
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            aria-labelledby="employee-modal"
+          >
             <EmployeeInfo
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
