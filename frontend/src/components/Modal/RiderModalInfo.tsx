@@ -151,7 +151,6 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          /** The dropdown box now can do multiselect. */
           <SelectComponent<FormData>
             name="needs"
             datalist={Object.entries(Accessibility).map(([key, value]) => ({
