@@ -234,6 +234,7 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
             employee={employee}
           />
         ))}
+        Hello
       </div>
     </>
   );
