@@ -36,7 +36,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   ];
   const [usage, setUsage] = useState<UsageType>({});
   const [showInactive, setShowInactive] = useState(false);
-  const [disabilityFilter, setDisabilityFilter] = useState('');
+  const [disabilityFilter, setDisabilityFilter] = useState('No Filter');
 
   useEffect(() => {
     axios
@@ -75,7 +75,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         .toLowerCase()
         .includes((searchName + '').toLowerCase()) &&
       (showInactive ? true : r.active) &&
-      (disabilityFilter === '' ? true : r.accessibility === disabilityFilter)
+      (disabilityFilter === 'No Filter' ? true : r.accessibility === disabilityFilter)
   );
 
   return (
@@ -116,6 +116,9 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             {value}
           </option>
         ))}
+        <option value={"No Filter"} key={Object.values(Accessibility).length}>
+            {"No Filter"}
+          </option>
       </select>
       <Table>
         <Row header colSizes={colSizes} data={headers} />
