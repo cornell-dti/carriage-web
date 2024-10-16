@@ -75,7 +75,9 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         .toLowerCase()
         .includes((searchName + '').toLowerCase()) &&
       (showInactive ? true : r.active) &&
-      (disabilityFilter === 'No Filter' ? true : r.accessibility === disabilityFilter)
+      (disabilityFilter === 'No Filter'
+        ? true
+        : r.accessibility === disabilityFilter)
   );
 
   return (
@@ -116,9 +118,9 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             {value}
           </option>
         ))}
-        <option value={"No Filter"} key={Object.values(Accessibility).length}>
-            {"No Filter"}
-          </option>
+        <option value={'No Filter'} key={Object.values(Accessibility).length}>
+          {'No Filter'}
+        </option>
       </select>
       <Table>
         <Row header colSizes={colSizes} data={headers} />
