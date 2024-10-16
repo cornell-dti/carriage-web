@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
-import { clock, phone, wheel, user } from '../../icons/userInfo/index';
+import { phone, wheel, user } from '../../icons/userInfo/index'; // clock,
 import { Employee } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
@@ -90,7 +90,7 @@ const EmployeeCard = ({
       .join('\n ');
   };
 
-  const parsedAvail = formatAvail(availability!);
+  //Avail = formatAvail(availability!);
   const isAdmin = isDriver !== undefined;
   const isBoth = isDriver && isDriver == true;
   const roles = (): string => {
@@ -106,7 +106,7 @@ const EmployeeCard = ({
     netId,
     type,
     phone: fmtPhone,
-    availability: parsedAvail,
+    // availability: parsedAvail,
     photoLink,
     startDate,
   };
@@ -130,15 +130,6 @@ const EmployeeCard = ({
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
         </CardInfo>
-
-        <CardInfo icon={clock} alt="clock">
-          {parsedAvail ? (
-            <p className={styles.timeText}>{parsedAvail}</p>
-          ) : (
-            <p>N/A</p>
-          )}
-        </CardInfo>
-
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
           alt={isAdmin || isBoth ? 'admin' : 'wheel'}
@@ -150,6 +141,13 @@ const EmployeeCard = ({
   );
 };
 
+/* <CardInfo icon={clock} alt="clock">
+          {parsedAvail ? (
+            <p className={styles.timeText}>{parsedAvail}</p>
+          ) : (
+            <p>N/A</p>
+          )}
+        </CardInfo> */
 const searchableFields = (employee: DriverType | AdminType) => {
   const fields = [
     employee.firstName,
