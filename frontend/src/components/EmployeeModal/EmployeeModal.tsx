@@ -99,6 +99,15 @@ const EmployeeModal = ({
     return result;
   };
 
+  /**
+   * The function `uploadPhotoForEmployee` uploads a photo for an employee by sending a POST request to
+   * the `/api/upload` endpoint with the employee's ID, table name, and image file buffer, and then calls
+   * the `refresh` function to update the data.
+   * @param employeeId - unique identifier of the employee for whom the photo is being uploaded
+   * @param table - represents the table where the photo will be uploaded
+   * @param refresh - a function that is called after the photo is successfully uploaded.
+   * It is used to refresh the data or UI after the upload is complete.
+   */
   const uploadPhotoForEmployee = async (
     employeeId: string,
     table: string,
@@ -119,6 +128,17 @@ const EmployeeModal = ({
       .catch((err) => console.log(err));
   };
 
+  /**
+   * The function creates a new employee by sending a POST request to an endpoint, and if an image has
+   * been uploaded, it also uploads the photo for the employee.
+   * @param employeeData - an object that contains the data for the new employee. It can be of type `AdminData`
+   * or `DriverData`. The specific properties and structure of `employeeData` would depend on these types
+   * @param endpoint - The URL where the request will be sent to create a new employee.
+   * @param refresh - called after the employee has been added or updated. It is used to refresh the data
+   *  or UI to reflect the changes made to the employee.
+   * @param table - represents the table or collection in the database where the employee data will be stored.
+   * @returns a Promise that resolves to the response object from the axios post request.
+   */
   const createNewEmployee = async (
     employeeData: AdminData | DriverData,
     endpoint: string,
@@ -134,9 +154,23 @@ const EmployeeModal = ({
       const { data: createdEmployee } = await res.data;
       uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
     }
-    return res;
+    return res.data;
   };
 
+  /**
+   * The function `updateExistingEmployee` updates an existing employee's data, sends a PUT request to
+   * the specified endpoint, refreshes the data, displays a success toast message, and uploads a photo if
+   * provided.
+   * @param employeeData - an object that contains the updated data for an employee. It can be of type `AdminData`
+   *  or `DriverData`. The specific properties and structure of `employeeData` would depend on these types
+   * @param endpoint - the URL endpoint where the API request will be sent to update the existing employee data.
+   * @param refresh - a function that is called after the employee data is updated. It is used to refresh the data
+   * or update the UI to reflect the changes made to the employee.
+   * @param table - a string that represents the table or collection in the database where the employee data
+   * is stored. It is used in the `uploadPhotoForEmployee` function to specify the table where the employee's
+   * photo should be uploaded.
+   * @returns the updated employee data.
+   */
   const updateExistingEmployee = async (
     employeeData: AdminData | DriverData,
     endpoint: string,
@@ -150,55 +184,68 @@ const EmployeeModal = ({
         showToast('The employee has been edited.', ToastStatus.SUCCESS);
         return res.data;
       });
+    const updatedEmployeeData = updatedEmployee.data;
     if (imageBase64 !== '') {
-      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+      uploadPhotoForEmployee(updatedEmployeeData.id, table, refresh, false);
     }
-    return updatedEmployee;
+    return updatedEmployeeData;
   };
 
-  const createOrUpdateDriver = async (
-    driver: AdminData | DriverData,
-    isNewDriver = false
+  /**
+   * The function `createOrUpdateEmployee` is a TypeScript React function that creates or updates an
+   * employee based on the provided data and parameters.
+   * @param employee - an object that contains the data of the employee.
+   * @param isNewEmployee - A boolean value indicating whether the employee is new or existing.
+   * @param apiEndpoint - A string that represents the API endpoint where the employee data will be sent.
+   * It should be in the format of '/api/drivers' or '/api/admins', depending on the type of employee being
+   * created or updated.
+   * @param refreshFunction - A function that is responsible for refreshing the data after creating or
+   * updating an employee. It should be a function that returns a promise, indicating when the data has
+   * been refreshed.
+   * @param employeeType - the type of employee. It can be either "admin" or "driver".
+   * @returns the result of either the `createNewEmployee` or `updateExistingEmployee` function,
+   * depending on the value of `isNewEmployee`.
+   */
+  const createOrUpdateEmployee = async (
+    employee: AdminData | DriverData, // Employee data
+    isNewEmployee: boolean,
+    apiEndpoint: string, // API endpoint as a string, e.g., '/api/drivers' or '/api/admins'
+    refreshFunction: () => Promise<void>, // Function to refresh the data
+    employeeType: string // Employee type as a string, e.g., 'Drivers' or 'Admins'
   ) => {
-    if (isNewDriver) {
+    if (isNewEmployee) {
       return await createNewEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
+        employee,
+        apiEndpoint,
+        refreshFunction,
+        employeeType
       );
     } else {
       return await updateExistingEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
+        employee,
+        apiEndpoint,
+        refreshFunction,
+        employeeType
       );
     }
   };
 
-  const createOrUpdateAdmin = async (admin: AdminData, isNewAdmin = false) => {
-    if (isNewAdmin) {
-      await createNewEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    } else {
-      await updateExistingEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    }
-  };
-
+  /**
+   * The function `deleteDriver` is an asynchronous function that sends a DELETE request to the
+   * `/api/drivers/` endpoint using axios.
+   * @param {string | undefined} id - The `id` parameter is a string that represents the unique
+   * identifier of a driver.
+   */
   const deleteDriver = async (id: string | undefined) => {
     await axios.delete(`/api/drivers/${id}`);
   };
 
+  /**
+   * The deleteAdmin function is used to delete an admin by making a DELETE request to the
+   * /api/admins/{id} endpoint.
+   * @param {string | undefined} id - The `id` parameter is a string that represents the unique
+   * identifier of the admin that you want to delete.
+   */
   const deleteAdmin = async (id: string | undefined) => {
     await axios.delete(`/api/admins/${id}`);
   };
@@ -233,31 +280,79 @@ const EmployeeModal = ({
       if (selectedRole.includes('driver')) {
         if (selectedRole.some((role) => role.includes('admin'))) {
           if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(admin, false);
+            await createOrUpdateEmployee(
+              driver,
+              false,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
+            );
+            await createOrUpdateEmployee(
+              admin,
+              false,
+              '/api/admins',
+              refreshAdmins,
+              'Admins'
+            );
           } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(
-              { ...admin, id: existingEmployee.id },
-              true
+            await createOrUpdateEmployee(
+              driver,
+              false,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
+            );
+            const adminData = { ...admin, id: existingEmployee.id };
+            await createOrUpdateEmployee(
+              adminData,
+              true,
+              '/api/admins',
+              refreshAdmins,
+              'Admins'
             );
           } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
+            const driverData = { ...driver, id: existingEmployee.id };
+            await createOrUpdateEmployee(
+              driverData,
+              true,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
             );
-            await createOrUpdateAdmin(admin, false);
+            await createOrUpdateEmployee(
+              admin,
+              false,
+              '/api/admins',
+              refreshAdmins,
+              'Admins'
+            );
           }
         } else {
           if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
+            await createOrUpdateEmployee(
+              driver,
+              false,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
+            );
             await deleteAdmin(existingEmployee.id);
           } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
+            await createOrUpdateEmployee(
+              driver,
+              false,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
+            );
           } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
+            const driverData = { ...driver, id: existingEmployee.id };
+            await createOrUpdateEmployee(
+              driverData,
+              true,
+              '/api/drivers',
+              refreshDrivers,
+              'Drivers'
             );
             await deleteAdmin(existingEmployee.id);
           }
@@ -265,25 +360,61 @@ const EmployeeModal = ({
       } else {
         if (existingDriver && existingAdmin) {
           await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(admin, false);
+          await createOrUpdateEmployee(
+            admin,
+            false,
+            '/api/admins',
+            refreshAdmins,
+            'Admins'
+          );
         } else if (existingDriver) {
           await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(
-            { ...admin, id: existingEmployee.id },
-            true
+          const adminData = { ...admin, id: existingEmployee.id };
+          await createOrUpdateEmployee(
+            adminData,
+            true,
+            '/api/admins',
+            refreshAdmins,
+            'Admins'
           );
         }
       }
     } else {
       if (selectedRole.includes('driver')) {
         if (selectedRole.some((role) => role.includes('admin'))) {
-          const id = (await createOrUpdateDriver(driver, true)).data.data.id;
-          await createOrUpdateAdmin({ ...admin, id: id }, true);
+          // const id = (await createOrUpdateDriver(driver, true)).data.data.id;
+          const updatedDriver = await createOrUpdateEmployee(
+            driver,
+            true,
+            '/api/drivers',
+            refreshDrivers,
+            'Drivers'
+          );
+          const id = updatedDriver.data.id;
+          await createOrUpdateEmployee(
+            { ...admin, id },
+            true,
+            '/api/admins',
+            refreshAdmins,
+            'Admins'
+          );
         } else {
-          await createOrUpdateDriver(driver, true);
+          await createOrUpdateEmployee(
+            driver,
+            true,
+            '/api/drivers',
+            refreshDrivers,
+            'Drivers'
+          );
         }
       } else {
-        await createOrUpdateAdmin(admin, true);
+        await createOrUpdateEmployee(
+          admin,
+          true,
+          '/api/admins',
+          refreshAdmins,
+          'Admins'
+        );
       }
     }
     closeModal();

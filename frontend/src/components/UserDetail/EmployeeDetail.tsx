@@ -299,7 +299,11 @@ const EmployeeDetail = () => {
             netId={employee.netId}
             employee={employee}
             role={roleValue()}
-            photoLink={employee.photoLink}
+            photoLink={
+              employee.photoLink
+                ? employee.photoLink + '?v=' + new Date().getTime()
+                : ''
+            }
           >
             <UserContactInfo
               icon={phone}
