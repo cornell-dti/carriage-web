@@ -215,7 +215,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
             localizer={localizer}
             toolbar={false}
             step={5}
-            defaultDate={scheduleDay}
+            date={scheduleDay}
             timeslots={12}
             showMultiDayTimes={true}
             events={events}
