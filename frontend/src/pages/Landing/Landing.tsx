@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect } from 'react';
 import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
@@ -10,7 +10,9 @@ type LandingPropType = {
 };
 
 const Landing = ({ students, admins }: LandingPropType) => {
-  document.title = 'Login - Carriage';
+  useEffect(() => {
+    document.title = 'Login - Carriage';
+  }, []);
   return (
     <main id="main">
       <div className={styles.home}>

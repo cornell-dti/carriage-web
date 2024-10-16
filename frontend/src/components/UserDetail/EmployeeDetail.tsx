@@ -145,7 +145,11 @@ const Header = () => {
         }}
         className={styles.header}
       >
-        <img className={styles.chevronLeft} src={chevronLeft} />
+        <img
+          className={styles.chevronLeft}
+          src={chevronLeft}
+          alt="Back to Employees List"
+        />
         Employees
       </Link>
     </div>
@@ -155,6 +159,7 @@ const Header = () => {
 const EmployeeDetail = () => {
   const { id: employeeId } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<EmployeeDetailProps>();
+  const location = useLocation();
   const pathArr = location.pathname.split('/');
   const [userType, setUserType] = useState<string>(pathArr[2]);
 
@@ -162,6 +167,15 @@ const EmployeeDetail = () => {
   const [rideCount, setRideCount] = useState(-1);
   const [workingHours, setWorkingHours] = useState(-1);
 
+  /**
+   * Compares ride [a] with ride [b] based on their start time. Returns a
+   * negative number if [a] starts before [b], a positive number if [a] starts
+   * after [b], and 0 otherwise
+   *
+   * @param a the first ride to compare
+   * @param b the second ride to compare
+   * @returns -1, 1, or 0 if the start time of [a] is before, after, or the same as [b]
+   */
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -249,7 +263,9 @@ const EmployeeDetail = () => {
   };
 
   useEffect(() => {
-    setEmployeeData(employeeId, userType);
+    if (employeeId && userType) {
+      setEmployeeData(employeeId, userType);
+    }
   }, [employeeId, userType]);
 
   if (employee) {

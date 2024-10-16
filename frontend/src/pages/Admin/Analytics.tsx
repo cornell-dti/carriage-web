@@ -19,7 +19,7 @@ const Analytics = () => {
 
   React.useEffect(() => {
     document.title = 'Analytics - Carriage';
-  });
+  }, []);
 
   const refreshTable = (start = startDate, end = endDate) => {
     axios

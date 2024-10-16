@@ -16,62 +16,60 @@ type RideModalProps = {
   editSingle?: boolean;
 };
 
+const getRideData = (ride: Ride | undefined) => {
+  if (ride) {
+    let rideData: ObjectType = {
+      date: format_date(ride.startTime),
+      pickupTime: moment(ride.startTime).format('kk:mm'),
+      dropoffTime: moment(ride.endTime).format('kk:mm'),
+      rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+      pickupLoc: ride.startLocation.id
+        ? ride.startLocation.name
+        : ride.startLocation.address,
+      dropoffLoc: ride.endLocation.id
+        ? ride.endLocation.name
+        : ride.endLocation.address,
+    };
+    if (ride.recurring) {
+      let repeats;
+      let days;
+      const startDay = moment(ride.startTime).weekday();
+
+      if (ride.recurringDays!.length === 5) {
+        repeats = RepeatValues.Daily;
+      } else if (
+        ride.recurringDays!.length === 1 &&
+        ride.recurringDays![0] === startDay
+      ) {
+        repeats = RepeatValues.Weekly;
+      } else {
+        repeats = RepeatValues.Custom;
+        const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+        days = ride.recurringDays!.reduce((prev, curr) => {
+          return { ...prev, [numToDay[curr]]: '1' };
+        }, {} as ObjectType);
+      }
+
+      rideData = {
+        ...rideData,
+        repeats,
+        days,
+        endDate: format_date(ride.endDate),
+      };
+    }
+    return rideData;
+  }
+  return {};
+};
+
 const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
-  const originalRideData = getRideData();
+  const originalRideData = getRideData(ride);
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
   const { refreshRides } = useRides();
-
-  // using function instead of const so the function can be hoisted and
-  // not get in the way of the state and hooks
-  function getRideData() {
-    if (ride) {
-      let rideData: ObjectType = {
-        date: format_date(ride.startTime),
-        pickupTime: moment(ride.startTime).format('kk:mm'),
-        dropoffTime: moment(ride.endTime).format('kk:mm'),
-        rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
-        pickupLoc: ride.startLocation.id
-          ? ride.startLocation.name
-          : ride.startLocation.address,
-        dropoffLoc: ride.endLocation.id
-          ? ride.endLocation.name
-          : ride.endLocation.address,
-      };
-      if (ride.recurring) {
-        let repeats;
-        let days;
-        const startDay = moment(ride.startTime).weekday();
-
-        if (ride.recurringDays!.length === 5) {
-          repeats = RepeatValues.Daily;
-        } else if (
-          ride.recurringDays!.length === 1 &&
-          ride.recurringDays![0] === startDay
-        ) {
-          repeats = RepeatValues.Weekly;
-        } else {
-          repeats = RepeatValues.Custom;
-          const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-          days = ride.recurringDays!.reduce((prev, curr) => {
-            return { ...prev, [numToDay[curr]]: '1' };
-          }, {} as ObjectType);
-        }
-
-        rideData = {
-          ...rideData,
-          repeats,
-          days,
-          endDate: format_date(ride.endDate),
-        };
-      }
-      return rideData;
-    }
-    return {};
-  }
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -104,7 +102,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
     date: string,
     repeats: RepeatValues,
     days: ObjectType
-  ) => {
+  ): number[] => {
     switch (repeats) {
       case RepeatValues.Daily:
         return [1, 2, 3, 4, 5];
@@ -163,8 +161,6 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         };
       }
 
-      console.log(rideData);
-
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
@@ -192,10 +188,16 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       closeModal();
       showToast(ride ? 'Ride edited.' : 'Ride added.', ToastStatus.SUCCESS);
     }
-  }, [closeModal, formData, isSubmitted, ride]);
+  }, [
+    closeModal,
+    formData,
+    isSubmitted,
+    ride,
+    editSingle,
+    refreshRides,
+    showToast,
+  ]);
 
-  // have to do a ternary operator on the entire modal
-  // because otherwise the pages would show up wrongly
   return ride ? (
     <>
       <Modal
@@ -219,7 +221,6 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
     </>
   ) : (
     <>
-      {/* only have a button if this modal is not controlled by a table */}
       {!open && <Button onClick={openModal}>+ Add ride</Button>}
       <Modal
         paginate
@@ -227,6 +228,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         isOpen={isOpen}
         currentPage={currentPage}
         onClose={closeModal}
+        id="ride-modal"
       >
         <RideTimesPage
           formData={formData}
@@ -236,6 +238,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           formData={formData}
           onBack={goPrevPage}
           onSubmit={saveDataThen(goNextPage)}
+          labelid="ride-modal"
         />
         <RiderInfoPage
           formData={formData}

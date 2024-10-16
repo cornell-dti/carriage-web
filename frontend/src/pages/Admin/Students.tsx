@@ -12,7 +12,7 @@ const Riders = () => {
 
   React.useEffect(() => {
     document.title = 'Students - Carriage';
-  });
+  }, []);
 
   const [searchName, setSearchName] = useState<string>('');
   return (
@@ -31,7 +31,11 @@ const Riders = () => {
           <Notification />
         </div>
       </div>
-      <SearchBar enteredName={searchName} setEnteredName={setSearchName} />
+      <SearchBar
+        value={searchName}
+        onChange={(e) => setSearchName(e.target.value)}
+        placeholder="Search for students..."
+      />
       <div className={styles.studentTable}>
         <StudentsTable searchName={searchName} />
       </div>

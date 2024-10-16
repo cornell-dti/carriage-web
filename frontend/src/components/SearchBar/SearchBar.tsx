@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEventHandler } from 'react';
 import styles from './searchbar.module.css';
 import { search_icon } from '../../icons/other/index';
 
 type SearchBarProps = {
-  enteredName: string;
-  setEnteredName: React.Dispatch<React.SetStateAction<string>>;
+  value: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  placeholder?: string;
 };
 
-const SearchBar = ({ enteredName, setEnteredName }: SearchBarProps) => {
+const SearchBar = ({ value, onChange, placeholder }: SearchBarProps) => {
   return (
     <div className={styles.search}>
       <div className={styles.searchIcon}>
-        <img alt="trash" src={search_icon} />
+        <img alt="search-icon" src={search_icon} />
       </div>
       <div className={styles.searchInputs}>
         <input
           type="text"
           className={styles.searchBar}
-          placeholder="Search for students..."
-          onChange={(e) => setEnteredName(e.target.value)}
-          value={enteredName}
+          placeholder={placeholder}
+          onChange={onChange}
+          value={value}
         />
       </div>
     </div>
