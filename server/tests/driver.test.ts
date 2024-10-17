@@ -6,7 +6,12 @@ import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
 import { AdminType } from '../src/models/admin';
-import { Accessibility, Organization, Rider, RiderType } from '../src/models/rider';
+import {
+  Accessibility,
+  Organization,
+  Rider,
+  RiderType,
+} from '../src/models/rider';
 import { Ride, Status, Type } from '../src/models/ride';
 import { Location, LocationType, Tag } from '../src/models/location';
 import moment from 'moment';
@@ -26,7 +31,7 @@ const testRider: Omit<RiderType, 'id'> = {
   firstName: 'TestRider',
   lastName: 'Testing',
   pronouns: 'he/him/his',
-  accessibility: [Accessibility.CRUTCHES,Accessibility.ASSISTANT],
+  accessibility: [Accessibility.CRUTCHES, Accessibility.ASSISTANT],
   description: '',
   joinDate: '2023-03-09',
   endDate: '2024-03-09',
