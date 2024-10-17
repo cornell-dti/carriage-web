@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   Label,
-  SelectComponent,
 } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
@@ -16,9 +15,6 @@ type ModalFormProps = {
   setFormData: React.Dispatch<React.SetStateAction<ObjectType>>;
   rider?: Rider;
 };
-
-//Note that the backend in AWS still has needs as a string so in a future commit
-//I'll delete all the data in the AWS and change the typing on RiderTypes.
 
 type FormData = {
   name: string;
@@ -38,7 +34,6 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   rider,
 }) => {
   const {
-    control,
     register,
     formState: { errors },
     handleSubmit,
@@ -70,7 +65,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     const firstName =
       nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
     const lastName = nameParts.length > 1 ? nameParts.slice(-1)[0] : '';
-    onSubmit({
+
+    const payload = {
       firstName,
       lastName,
       email,
@@ -79,7 +75,11 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       address,
       joinDate,
       endDate,
-    });
+    };
+
+    console.log('Form payload:', payload);
+
+    onSubmit(payload);
   };
 
   const cancel = () => {
@@ -147,50 +147,29 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             <p className={styles.error}>Phone number is not valid</p>
           )}
         </div>
+
+        {/* Replacing SelectComponent with native <select> */}
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <SelectComponent<FormData>
-            name="needs"
-            datalist={Object.entries(Accessibility).map(([key, value]) => ({
-              id: key,
-              name: value,
-            }))}
-            isSearchable={true}
-            control={control}
-            isMulti={true}
-            rules={{ required: 'Has to choose one' }}
-          />
-          {needsOption === 'Other' && (
-            <Input
-              id="otherNeeds"
-              {...register('otherNeeds')}
-              type="text"
-              placeholder="Please Specify Needs"
-            />
-          )}
-          {errors.needs?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid needs. You can enter 'Assistant', 'Crutches', or
-              'Wheelchair'
-            </p>
+          <select
+            id="needs"
+            {...register('needs', { required: true })}
+            multiple
+            className={styles.firstRow}
+          >
+            {Object.entries(Accessibility).map(([key, value]) => (
+              <option key={key} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+          {errors.needs && (
+            <p className={styles.error}>Please select at least one need</p>
           )}
         </div>
 
-        {/* <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <SelectComponent<FormData>
-            name="needs"
-            datalist={Object.entries(Accessibility).map(([key, value]) => ({
-              id: key,
-              name: value,
-            }))}
-            isSearchable={true}
-            control={control}
-            isMulti={true}
-            rules={{ required: 'Rider name is required' }}
-          />
-        </div> */}
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <Label className={styles.label} htmlFor="address">
             Address:{' '}

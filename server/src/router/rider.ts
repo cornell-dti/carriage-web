@@ -157,14 +157,21 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
 });
 
 // Create a rider in Riders table
-router.post('/', validateUser('Admin'), (req, res) => {
-  const { body } = req;
-  const rider = new Rider({
-    ...body,
-    id: uuid(),
-  });
-  db.create(res, rider);
+router.post('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const { body } = req;
+    const rider = new Rider({
+      ...body,
+      id: uuid(),
+    });
+    await rider.save();  // Ensure save is awaited for Dynamoose models
+    res.status(201).json(rider);  // Send response after successful creation
+  } catch (error) {
+    console.error('Error creating rider:', error);  // Log the error
+    res.status(500).json({ error: 'Failed to create rider' });  // Return error response
+  }
 });
+
 
 // Update a rider in Riders table
 router.put('/:id', validateUser('Rider'), (req, res) => {

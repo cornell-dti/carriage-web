@@ -3,12 +3,12 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Ride } from '../../types';
 import styles from './userDetail.module.css';
 
-type pastRideProps = {
+type PastRideProps = {
   isStudent: boolean;
   rides: Ride[];
 };
 
-const PastRides = ({ isStudent, rides }: pastRideProps) => {
+const PastRides = ({ isStudent, rides }: PastRideProps) => {
   const colSizes = [1, 1, 1, 1, 1];
   const headers = [
     isStudent ? 'Date' : 'Name',
@@ -38,7 +38,13 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
               .toLowerCase();
             const { rider } = ride;
             const name = `${rider.firstName} ${rider.lastName}`;
-            const needs = rider.accessibility || '';
+
+            // Convert accessibility array to string
+            const needs =
+              rider.accessibility && rider.accessibility.length > 0
+                ? rider.accessibility.join(', ')
+                : 'None';
+
             const pickupLocation = ride.startLocation.name;
             const pickupTag = ride.startLocation.tag;
             const dropoffLocation = ride.endLocation.name;
@@ -46,7 +52,7 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
 
             const valueNameDate = isStudent ? date : name;
             const valueDateTime = isStudent
-              ? `${startTime}${' - '}${endTime}`
+              ? `${startTime} - ${endTime}`
               : date;
             const valuePickup = { data: pickupLocation, tag: pickupTag };
             const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
@@ -56,10 +62,16 @@ const PastRides = ({ isStudent, rides }: pastRideProps) => {
               valueDateTime,
               valuePickup,
               valueDropoff,
-              needs,
+              needs, // Now needs is a string
             ];
 
-            return <Row data={inputValues} colSizes={colSizes} key={index} />;
+            return (
+              <Row
+                data={inputValues}
+                colSizes={colSizes}
+                key={index}
+              />
+            );
           })}
         </Table>
       ) : (
