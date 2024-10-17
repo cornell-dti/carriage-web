@@ -7,7 +7,7 @@ import styles from './table.module.css';
 import { Rider } from 'types';
 
 type StudentsTableProps = {
-  students: Rider[];  // Now receives the filtered list of students as a prop
+  students: Rider[]; // Now receives the filtered list of students as a prop
 };
 
 const StudentsTable = ({ students }: StudentsTableProps) => {
@@ -80,7 +80,7 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
           phone,
           shortAddress,
           joinEndDate,
-          '0 Rides / 0 No Shows',  // You can add real usage data here
+          '0 Rides / 0 No Shows', // You can add real usage data here
           disability,
           isActive,
           'Edit',

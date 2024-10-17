@@ -16,8 +16,8 @@ const Riders = () => {
 
   useEffect(() => {
     document.title = 'Students - Carriage';
-    setFilteredStudents(riders); 
-  }, [riders]); 
+    setFilteredStudents(riders);
+  }, [riders]);
 
   const handleFilterApply = (filteredItems: Rider[]) => {
     setFilteredStudents(filteredItems);
@@ -41,11 +41,11 @@ const Riders = () => {
       </div>
 
       <SearchAndFilter
-        items={riders} 
-        searchFields={['firstName', 'lastName']} 
+        items={riders}
+        searchFields={['firstName', 'lastName']}
         filterOptions={[
           {
-            field: 'active', 
+            field: 'active',
             label: 'Status',
             options: [
               { value: 'true', label: 'Active' },
@@ -55,10 +55,13 @@ const Riders = () => {
           {
             field: 'accessibility',
             label: 'Disability',
-            options: Object.values(Accessibility).map(value => ({ value, label: value })),
+            options: Object.values(Accessibility).map((value) => ({
+              value,
+              label: value,
+            })),
           },
         ]}
-        onFilterApply={handleFilterApply} 
+        onFilterApply={handleFilterApply}
       />
 
       <div className={styles.studentTable}>

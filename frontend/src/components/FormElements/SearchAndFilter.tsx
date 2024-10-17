@@ -4,7 +4,7 @@ import styles from './searchandfilter.module.css';
 interface FilterOption {
   field: string;
   label: string;
-  options: { value: string, label: string }[];
+  options: { value: string; label: string }[];
 }
 
 interface SearchAndFilterProps<T> {
@@ -33,12 +33,14 @@ export default function SearchAndFilter<T extends Record<string, any>>({
 
   // Log when a filter is toggled and what filters are active
   const toggleFilter = (field: string, value: string) => {
-    setFilters(prevFilters => {
+    setFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters };
       if (!updatedFilters[field]) {
         updatedFilters[field] = [value];
       } else if (updatedFilters[field].includes(value)) {
-        updatedFilters[field] = updatedFilters[field].filter(v => v !== value);
+        updatedFilters[field] = updatedFilters[field].filter(
+          (v) => v !== value
+        );
         if (updatedFilters[field].length === 0) {
           delete updatedFilters[field];
         }
@@ -51,7 +53,7 @@ export default function SearchAndFilter<T extends Record<string, any>>({
   };
 
   const toggleFilterOption = (field: string) => {
-    setOpenFilterOption(prevOpen => (prevOpen === field ? null : field));
+    setOpenFilterOption((prevOpen) => (prevOpen === field ? null : field));
   };
 
   // Log the filtered items after applying search and filters
@@ -62,12 +64,14 @@ export default function SearchAndFilter<T extends Record<string, any>>({
         return String(value).toLowerCase().includes(searchTerm.toLowerCase());
       });
 
-      const matchesFilters = Object.entries(filters).every(([field, values]) => {
-        const fieldValue = item[field];
-        return values.some(filterValue =>
-          String(fieldValue).toLowerCase().includes(filterValue.toLowerCase())
-        );
-      });
+      const matchesFilters = Object.entries(filters).every(
+        ([field, values]) => {
+          const fieldValue = item[field];
+          return values.some((filterValue) =>
+            String(fieldValue).toLowerCase().includes(filterValue.toLowerCase())
+          );
+        }
+      );
 
       return matchesSearch && matchesFilters;
     });
@@ -117,8 +121,20 @@ export default function SearchAndFilter<T extends Record<string, any>>({
           className={styles.button}
         >
           {/* Generic SVG for Filter */}
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 5H17M5 10H15M7 15H13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 5H17M5 10H15M7 15H13"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
 
@@ -151,7 +167,10 @@ export default function SearchAndFilter<T extends Record<string, any>>({
               ))}
             </div>
 
-            <button onClick={clearAllFilters} className={styles.clearFiltersButton}>
+            <button
+              onClick={clearAllFilters}
+              className={styles.clearFiltersButton}
+            >
               Clear Filters
             </button>
           </div>
