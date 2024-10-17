@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StudentsTable from '../../components/UserTables/StudentsTable';
-import SearchBar from '../../components/SearchBar/SearchBar';
 import RiderModal from '../../components/Modal/RiderModal';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
+import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
+import { useRiders } from '../../context/RidersContext';
+import { Rider, Accessibility } from '../../types';
 
 const Riders = () => {
+  const { riders } = useRiders();
   const [isOpen, setIsOpen] = useState(false);
+  const [filteredStudents, setFilteredStudents] = useState<Rider[]>(riders);
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'Students - Carriage';
-  }, []);
+    setFilteredStudents(riders); 
+  }, [riders]); 
 
-  const [searchName, setSearchName] = useState<string>('');
+  const handleFilterApply = (filteredItems: Rider[]) => {
+    setFilteredStudents(filteredItems);
+  };
+
   return (
     <main id="main">
       <div className={styles.pageTitle}>
@@ -31,13 +39,30 @@ const Riders = () => {
           <Notification />
         </div>
       </div>
-      <SearchBar
-        value={searchName}
-        onChange={(e) => setSearchName(e.target.value)}
-        placeholder="Search for students..."
+
+      <SearchAndFilter
+        items={riders} 
+        searchFields={['firstName', 'lastName']} 
+        filterOptions={[
+          {
+            field: 'active', 
+            label: 'Status',
+            options: [
+              { value: 'true', label: 'Active' },
+              { value: 'false', label: 'Inactive' },
+            ],
+          },
+          {
+            field: 'accessibility',
+            label: 'Disability',
+            options: Object.values(Accessibility).map(value => ({ value, label: value })),
+          },
+        ]}
+        onFilterApply={handleFilterApply} 
       />
+
       <div className={styles.studentTable}>
-        <StudentsTable searchName={searchName} />
+        <StudentsTable students={filteredStudents} />
       </div>
     </main>
   );
