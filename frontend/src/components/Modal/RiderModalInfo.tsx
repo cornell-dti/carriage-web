@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import cn from 'classnames';
-import {
-  Button,
-  Input,
-  Label,
-} from '../FormElements/FormElements';
+import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 

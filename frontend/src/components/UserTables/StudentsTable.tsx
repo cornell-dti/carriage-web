@@ -72,8 +72,13 @@ const StudentsTable = ({ searchName }: StudentTableProps) => {
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
-  const handleDisabilityFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(event.target.selectedOptions, option => option.value as Accessibility);
+  const handleDisabilityFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value as Accessibility
+    );
     setDisabilityFilter(selectedOptions);
   };
 
@@ -122,7 +127,7 @@ const StudentsTable = ({ searchName }: StudentTableProps) => {
         >
           Filter by Disability:
         </Label>
-        <select 
+        <select
           id="filterByDisability"
           multiple
           value={disabilityFilter}
@@ -177,8 +182,7 @@ const StudentsTable = ({ searchName }: StudentTableProps) => {
             endDate
           )}`;
           const usageData = getUsageData(id);
-          const isStudentInvalid =
-            moment().isAfter(moment(endDate)) && active;
+          const isStudentInvalid = moment().isAfter(moment(endDate)) && active;
           const location = {
             pathname: `/riders/${r.id}`,
           };

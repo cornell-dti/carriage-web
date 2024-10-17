@@ -164,14 +164,13 @@ router.post('/', validateUser('Admin'), async (req, res) => {
       ...body,
       id: uuid(),
     });
-    await rider.save();  // Ensure save is awaited for Dynamoose models
-    res.status(201).json(rider);  // Send response after successful creation
+    await rider.save(); // Ensure save is awaited for Dynamoose models
+    res.status(201).json(rider); // Send response after successful creation
   } catch (error) {
-    console.error('Error creating rider:', error);  // Log the error
-    res.status(500).json({ error: 'Failed to create rider' });  // Return error response
+    console.error('Error creating rider:', error); // Log the error
+    res.status(500).json({ error: 'Failed to create rider' }); // Return error response
   }
 });
-
 
 // Update a rider in Riders table
 router.put('/:id', validateUser('Rider'), (req, res) => {

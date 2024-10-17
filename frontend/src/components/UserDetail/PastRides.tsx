@@ -65,13 +65,7 @@ const PastRides = ({ isStudent, rides }: PastRideProps) => {
               needs, // Now needs is a string
             ];
 
-            return (
-              <Row
-                data={inputValues}
-                colSizes={colSizes}
-                key={index}
-              />
-            );
+            return <Row data={inputValues} colSizes={colSizes} key={index} />;
           })}
         </Table>
       ) : (
