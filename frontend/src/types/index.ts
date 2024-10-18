@@ -8,7 +8,6 @@ import { VehicleType } from '../../../server/src/models/vehicle';
 export type Rider = RiderType;
 
 export enum Accessibility {
-  NONE = 'None',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',

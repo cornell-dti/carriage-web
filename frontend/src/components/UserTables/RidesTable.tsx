@@ -63,7 +63,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           });
           const { rider } = ride;
           const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
-          const needs = rider ? rider.accessibility || '' : '';
+
+          // Convert accessibility array to string
+          const needs =
+            rider && rider.accessibility && rider.accessibility.length > 0
+              ? rider.accessibility.join(', ')
+              : 'None';
+
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
