@@ -2,10 +2,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 62px 100px;
+  padding: 3% 6%;
   background-color: black;
-  position: sticky;
-  top: 0;
   z-index: 10;
 }
 
@@ -14,11 +12,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 40px;
 }
 
 .headerLogo {
-  height: 50px;
+  height: 42%;
+  width: 42%;
 }
 
 .headerTitle {
@@ -39,31 +37,32 @@
   font-family: -apple-system, BlinkMacSystemFont;
 }
 
-.home {
+.firstPage {
   background: black;
   display: flex;
-  align-items: center;
-  text-align: center;
+  flex-direction: row;
+  /* flex-wrap: wrap; */
+  justify-content: center;
+  align-items: flex-start;
   width: 100%;
   box-sizing: border-box;
+  padding: 0% 5%;
 }
 
-.firstPage {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
+.secondPage {
+  background-color: yellow;
+  width: 100%;
+  /* padding-top: 150px; */
 }
 
-.main {
-  /* max-width: 850px;
-  min-height: 550px; */
+.main,
+.ctownGraphicContainer {
   display: flex;
+  flex: 1 1 50%;
   flex-direction: column;
   align-items: flex-start;
-  margin-left: 190px;
-  flex-shrink: 1;
-  width: 50%;
+  padding: 0% 5%;
+  /* flex-shrink: 1; */
   box-sizing: border-box;
 }
 
@@ -85,46 +84,41 @@
 
 .loginContainer {
   display: flex;
+  /* flex-wrap: wrap; */
   justify-content: center;
   align-items: center;
 }
 
-.ctownGraphicContainer {
-  display: flex;
-  position: relative;
-  flex-shrink: 1;
-  align-items: flex-start;
-  justify-content: center;
-  width: 100%;
-  /* height: auto; */
-  /* overflow: hidden; */
-}
-
 .ctownGraphic {
-  position: relative;
-  width: 100%;
   height: auto;
   margin-top: 20%;
-  transform: scale(1.15);
-  left: 13%;
+  transform: scale(1.2);
+}
+
+.secondPageGraphicsContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
 }
 
 @media (max-width: 400px) {
-  .container {
+  .firstPage {
     flex-direction: column;
   }
 }
 
 @media (max-width: 550px) {
-  .main {
+  .firstPage {
     flex-direction: column;
   }
-  .left {
+  /* .left {
     border-radius: 16px 16px 0 0;
   }
   .right {
     border-radius: 0 0 16px 16px;
-  }
+  } */
 }
 
 @media (max-height: 600px) {
@@ -133,7 +127,7 @@
   }
 }
 
-.heading {
+.header {
   width: 100%;
   font-size: 32;
   font-weight: bold;
