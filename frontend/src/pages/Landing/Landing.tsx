@@ -56,6 +56,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
       </div>
 
       <div className={styles.secondPage}>
+        {/* add text */}
         <div className={styles.secondPageGraphicsContainer}>
           <img
             src={clocktower}
@@ -63,9 +64,11 @@ const Landing = ({ students, admins }: LandingPropType) => {
             className={styles.clocktower}
           />
           <img src={car} alt="car" className={styles.car} />
-          <img src={human1} alt="human1" className={styles.human1} />
-          <img src={human2} alt="human2" className={styles.human2} />
-          <img src={human3} alt="human3" className={styles.human3} />
+          <div className={styles.humans}>
+            <img src={human3} alt="human3" className={styles.human3} />
+            <img src={human1} alt="human1" className={styles.human1} />
+            <img src={human2} alt="human2" className={styles.human2} />
+          </div>
         </div>
       </div>
     </main>
