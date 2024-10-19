@@ -18,7 +18,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
   const [openEditModal, setOpenEditModal] = useState(-1);
-  const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(-1);
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
@@ -109,11 +108,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               outline
               small
               onClick={() => {
-                if (rides[index].recurring) {
-                  setOpenDeleteOrEditModal(index);
-                } else {
-                  setOpenEditModal(index);
-                }
+                setOpenEditModal(index);
               }}
             >
               Edit
@@ -197,7 +192,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 ride={rides[index]}
                 deleting={true}
                 onNext={(single) => {
-                  setOpenDeleteOrEditModal(-1);
                   setOpenEditModal(index);
                   setEditSingle(single);
                 }}
