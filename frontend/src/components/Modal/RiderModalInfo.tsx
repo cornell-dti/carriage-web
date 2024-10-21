@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import cn from 'classnames';
-import {
-  Button,
-  Input,
-  Label,
-  SelectComponent,
-} from '../FormElements/FormElements';
+import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility, Rider } from '../../types/index';
 
@@ -18,11 +13,10 @@ type ModalFormProps = {
 };
 
 type FormData = {
-  firstName: string;
-  lastName: string;
+  name: string;
   netid: string;
   phoneNumber: string;
-  needs: string;
+  needs: Accessibility[];
   address: string;
   joinDate: string;
   endDate: string;
@@ -36,18 +30,16 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   rider,
 }) => {
   const {
-    control,
     register,
     formState: { errors },
     handleSubmit,
     getValues,
   } = useForm<FormData>({
     defaultValues: {
-      firstName: rider?.firstName ?? '',
-      lastName: rider?.lastName ?? '',
+      name: (rider?.firstName ?? '') + (rider?.lastName ?? ''),
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
-      needs: rider?.accessibility ?? '',
+      needs: [],
       address: rider?.address ?? '',
       joinDate: rider?.joinDate ?? '',
       endDate: rider?.endDate ?? '',
@@ -55,8 +47,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   });
 
   const beforeSubmit: SubmitHandler<FormData> = ({
-    firstName,
-    lastName,
+    name,
     netid,
     phoneNumber,
     needs,
@@ -66,7 +57,12 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   }) => {
     const email = netid ? `${netid}@cornell.edu` : undefined;
     const accessibility = needs;
-    onSubmit({
+    const nameParts = name.trim().split(/\s+/);
+    const firstName =
+      nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : nameParts[0];
+    const lastName = nameParts.length > 1 ? nameParts.slice(-1)[0] : '';
+
+    const payload = {
       firstName,
       lastName,
       email,
@@ -75,7 +71,11 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       address,
       joinDate,
       endDate,
-    });
+    };
+
+    console.log('Form payload:', payload);
+
+    onSubmit(payload);
   };
 
   const cancel = () => {
@@ -92,32 +92,19 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
-            First Name:{' '}
+          <Label className={styles.label} htmlFor="name">
+            Name:{' '}
           </Label>
           <Input
-            id="firstName"
-            {...register('firstName', { required: true })}
+            id="name"
             type="text"
+            {...register('name', {
+              required: true,
+            })}
             aria-required="true"
             className={styles.firstRow}
           />
-          {errors.firstName && (
-            <p className={styles.error}>First name cannot be empty</p>
-          )}
-          <Label className={styles.label} htmlFor="lastName">
-            Last Name:{' '}
-          </Label>
-          <Input
-            id="lastName"
-            {...register('lastName', { required: true })}
-            type="text"
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.lastName && (
-            <p className={styles.error}>Last name cannot be empty</p>
-          )}
+          {errors.name && <p className={styles.error}>Name cannot be empty</p>}
         </div>
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
           <Label className={styles.label} htmlFor="netid">
@@ -156,6 +143,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             <p className={styles.error}>Phone number is not valid</p>
           )}
         </div>
+
+        {/* Replacing SelectComponent with native <select> */}
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
@@ -163,44 +152,20 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <select
             id="needs"
             {...register('needs', { required: true })}
-            aria-required="true"
-            onChange={(e) => setNeedsOption(e.target.value)}
+            multiple
+            className={styles.firstRow}
           >
-            {Object.values(Accessibility).map((value, index) => (
-              <option key={index} value={value}>
+            {Object.entries(Accessibility).map(([key, value]) => (
+              <option key={key} value={value}>
                 {value}
               </option>
             ))}
           </select>
-          {needsOption === 'Other' && (
-            <Input
-              id="otherNeeds"
-              {...register('otherNeeds')}
-              type="text"
-              placeholder="Please Specify Needs"
-            />
-          )}
-          {errors.needs?.type === 'validate' && (
-            <p className={styles.error}>
-              Invalid needs. You can enter 'Assistant', 'Crutches', or
-              'Wheelchair'
-            </p>
+          {errors.needs && (
+            <p className={styles.error}>Please select at least one need</p>
           )}
         </div>
 
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <SelectComponent<FormData>
-            name="needs"
-            datalist={Object.entries(Accessibility).map(([key, value]) => ({
-              id: key,
-              name: value,
-            }))}
-            isSearchable={true}
-            control={control}
-            isMulti={true}
-            rules={{ required: 'Rider name is required' }}
-          />
-        </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
           <Label className={styles.label} htmlFor="address">
             Address:{' '}
