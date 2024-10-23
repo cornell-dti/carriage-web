@@ -210,7 +210,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 open={openEditModal === index}
                 close={() => setOpenEditModal(-1)}
                 ride={rides[index]}
-                editSingle={editSingle}
               />
             </React.Fragment>
           );

@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import Modal from '../Modal/Modal';
-import { Button } from '../FormElements/FormElements';
+import { Input, Label, Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, RepeatValues, Ride } from '../../types/index';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
+import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
+import { isOutOfBounds } from 'react-datepicker/dist/date_utils';
 
 type RideModalProps = {
   open?: boolean;
   close?: () => void;
   ride?: Ride;
-  editSingle?: boolean;
 };
 
 const getRideData = (ride: Ride | undefined) => {
@@ -62,14 +63,65 @@ const getRideData = (ride: Ride | undefined) => {
   return {};
 };
 
-const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
+type EditRecurringProps = {
+  onSubmit: (recurring : boolean) => void;
+};
+
+const EditRecurring = ({ onSubmit }: EditRecurringProps) => {
+  const [single, setSingle] = useState(true);
+  const changeSelection = (e: any) => {
+    setSingle(e.target.value === 'single');
+  };
+  return (
+    <>
+      <div>
+        <Input
+          type="radio"
+          id="single"
+          name="rideType"
+          value="single"
+          onClick={(e) => changeSelection(e)}
+          defaultChecked={true}
+        />
+        <Label htmlFor="single">
+          This Ride Only
+        </Label>
+      </div>
+      <div>
+        <Input
+          type="radio"
+          id="recurring"
+          name="rideType"
+          value="recurring"
+          onClick={(e) => changeSelection(e)}
+        />
+        <Label htmlFor="recurring">
+          All Repeating Rides
+        </Label>
+      </div>
+      <div>
+        <Button
+          type="submit"
+          onClick={() => {onSubmit(single)}}
+        >
+          {"OK"}
+        </Button>
+      </div>
+    </>
+  );
+};
+
+//need to add option to this to select whether to editsingle or not, shoulnd't be a prop passed in
+const RideModal = ({ open, close, ride }: RideModalProps) => {
   const originalRideData = getRideData(ride);
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [editSingle, setEditSingle] = useState(true);
   const { showToast } = useToast();
   const { refreshRides } = useRides();
+  const [showRest, setShowRest] = useState(false);
 
   const goNextPage = () => setCurrentPage((p) => p + 1);
 
@@ -80,6 +132,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
     setIsOpen(true);
   };
 
+  // console.log("HELLO MATEW");
   const closeModal = useCallback(() => {
     if (close) {
       setFormData(originalRideData);
@@ -167,17 +220,22 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
           rideData.type = 'unscheduled';
         }
         if (editSingle) {
-          // edit single instance of repeating ride
+          const daysWithEdits: string[] =
+            ride!.parentRide!.edits === undefined
+              ? []
+              : ride!.parentRide!.edits;
+          daysWithEdits.push(new Date(ride.startTime).toISOString());
           axios
-            .put(`/api/rides/${ride.id}/edits`, {
-              deleteOnly: false,
-              origDate: format_date(ride.startTime),
-              ...rideData,
+            .put(`/api/rides/${ride!.parentRide!.id!}`, {
+              edits: daysWithEdits,
             })
             .then(refreshRides);
+          // create new ride with no relation to parent ride
+          rideData = { ...rideData, parentRide: undefined };
+          axios.post('/api/rides', rideData).then(refreshRides);
         } else {
           // edit ride or all instances of repeating ride
-          axios.put(`/api/rides/${ride.id}`, rideData).then(refreshRides);
+          axios.put(`/api/rides/${ride!.parentRide!.id}`, rideData).then(refreshRides);
         }
       } else {
         // unscheduled ride
@@ -199,26 +257,52 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
   ]);
 
   return ride ? (
-    <>
-      <Modal
-        paginate
-        title={['Edit Ride', 'Edit Ride']}
-        isOpen={open || isOpen}
-        currentPage={currentPage}
-        onClose={closeModal}
-      >
-        <RideTimesPage
-          defaultRepeating={ride.recurring}
-          formData={formData}
-          onSubmit={saveDataThen(goNextPage)}
-        />
-        <RiderInfoPage
-          formData={formData}
-          onBack={goPrevPage}
-          onSubmit={saveDataThen(submitData)}
-        />
-      </Modal>
-    </>
+    ride.recurring ? (
+      <>
+        {true && (
+          <Modal
+            paginate
+            title={['Edit Repeating Ride', 'Edit Ride', 'Edit Ride']}
+            isOpen={open || isOpen}
+            currentPage={currentPage}
+            onClose={closeModal}
+          >
+            <EditRecurring onSubmit={(recurring) => {setEditSingle(recurring); goNextPage()}}/>
+            <RideTimesPage
+              defaultRepeating={ride.recurring}
+              formData={formData}
+              onSubmit={saveDataThen(goNextPage)}
+            />
+            <RiderInfoPage
+              formData={formData}
+              onBack={goPrevPage}
+              onSubmit={saveDataThen(submitData)}
+            />
+          </Modal>
+        )}
+      </>
+    ) : (
+      <>
+        <Modal
+          paginate
+          title={['Edit Ride', 'Edit Ride']}
+          isOpen={open || isOpen}
+          currentPage={currentPage}
+          onClose={closeModal}
+        >
+          <RideTimesPage
+            defaultRepeating={ride.recurring}
+            formData={formData}
+            onSubmit={saveDataThen(goNextPage)}
+          />
+          <RiderInfoPage
+            formData={formData}
+            onBack={goPrevPage}
+            onSubmit={saveDataThen(submitData)}
+          />
+        </Modal>
+      </>
+    )
   ) : (
     <>
       {!open && <Button onClick={openModal}>+ Add ride</Button>}

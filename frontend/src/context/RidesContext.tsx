@@ -29,15 +29,6 @@ type RidesProviderProps = {
   children: React.ReactNode;
 };
 
-function uuidv4() {
-  return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) =>
-    (
-      +c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))
-    ).toString(16)
-  );
-}
-
 export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [unscheduledRides, setUnscheduledRides] = useState<Ride[]>([]);
   const [scheduledRides, setScheduledRides] = useState<Ride[]>([]);
@@ -48,7 +39,8 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     const ridesDataToday: Ride[] = await axios
       .get(`/api/rides?date=${date}`)
       .then((res) => res.data)
-      .then((data) => data.data);
+      .then((data) => data.data)
+      .then((data : Ride[]) => data.filter((ride : Ride) => !(ride.recurring && ride.parentRide === undefined)));
 
     const newRecurringRides: Ride[] = await axios
       .get(`/api/rides?recurring=true`)
@@ -61,33 +53,18 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       .then((data: Ride[]) =>
         data.filter((ride) => {
           let endDate = new Date(ride!.endDate!);
+          console.log(ride);
+          let startDate = new Date(ride.startTime);
+          startDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0);
+          let deletedDateList = ride.deleted === undefined ? [] : ride.deleted.map((d) => new Date(d));
+          let editedDateList = ride.edits === undefined ? [] : ride.edits.map((d) => new Date(d));
+          console.log(deletedDateList);
           return (
+            curDate >= startDate && 
             curDate <= endDate &&
-            ride!.recurringDays?.includes(curDate.getDay())
-          );
-        })
-      )
-      .then((recurringParentRides: Ride[]) =>
-        recurringParentRides.filter((parentRide) => {
-          const startTimeRecurringRide = new Date(parentRide.startTime);
-          startTimeRecurringRide.setFullYear(curDate.getFullYear());
-          startTimeRecurringRide.setMonth(curDate.getMonth());
-          startTimeRecurringRide.setDate(curDate.getDate());
-
-          const endTimeRecurringRide = new Date(parentRide.endTime);
-          endTimeRecurringRide.setFullYear(curDate.getFullYear());
-          endTimeRecurringRide.setMonth(curDate.getMonth());
-          endTimeRecurringRide.setDate(curDate.getDate());
-
-          return !ridesDataToday.some(
-            (rideToday) =>
-              new Date(rideToday.startTime).getTime() ===
-                startTimeRecurringRide.getTime() &&
-              new Date(rideToday.endTime).getTime() ===
-                endTimeRecurringRide.getTime() &&
-              rideToday.startLocation.name === parentRide.startLocation.name &&
-              rideToday.endLocation.name === parentRide.endLocation.name &&
-              rideToday.rider.id === parentRide.rider.id
+            ride!.recurringDays?.includes(curDate.getDay()) &&
+            !deletedDateList.some((d) => d.getDate() === curDate.getDate() && d.getMonth() === curDate.getMonth() && d.getFullYear() === curDate.getFullYear()) &&
+            !editedDateList.some((d) => d.getDate() === curDate.getDate() && d.getMonth() === curDate.getMonth() && d.getFullYear() === curDate.getFullYear())
           );
         })
       )
@@ -117,12 +94,13 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
             endTime: endTimeRecurringRide.toISOString(),
             type: Type.UNSCHEDULED,
             parentRide: parentRide,
+            id : ""
           };
         })
       );
 
     console.log('current date is ', curDate.getDate());
-
+    // const ridesDataTodayNoParentRec = ridesDataToday.filter((ride : Ride) => !(ride.recurring && ride.parentRide === undefined));
     const combinedRidesData = ridesDataToday.concat(newRecurringRides);
     if (combinedRidesData) {
       setUnscheduledRides(
