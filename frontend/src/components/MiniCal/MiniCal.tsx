@@ -7,17 +7,18 @@ import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 import { holidaysList } from 'util/holidays';
 
-
-const isWeekday = (date: Date) => { 
+const isWeekday = (date: Date) => {
   return 0 < date.getDay() && date.getDay() < 6;
 };
 
 const isHoliday = (date: Date) => {
-  return holidaysList.some(h => (h.startDate <= date && date < h.endDate));
+  return holidaysList.some(
+    (holiday) => holiday.startDate <= date && date < holiday.endDate
+  );
 };
 
 const filterDate = (date: Date) => {
-  return isWeekday(date) && !(isHoliday(date));
+  return isWeekday(date) && !isHoliday(date);
 };
 
 const currentDate = new Date();
@@ -104,7 +105,6 @@ const MiniCal = () => {
     window.scroll(x + 1, y);
     window.scroll(x, y);
   };
-
 
   return (
     <div className={styles.root}>
