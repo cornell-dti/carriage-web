@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState }from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -8,6 +8,8 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import { useEffect } from 'react';
+import { useRef } from 'react';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -22,6 +24,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  let buttonRef = useRef(null);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -91,11 +94,14 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             ),
           };
 
+     
           const assignButton = (shouldReassign: boolean) => (
-            <Button
+            <Button 
               className={styles.assignButton}
-              onClick={() => {
-                setOpenAssignModal(index);
+              ref={buttonRef}
+              onClick={(e) =>  {
+                e.stopPropagation();
+                setOpenAssignModal((openAssignModal === index ? -1 : index));
                 setReassign(shouldReassign);
               }}
               small
@@ -124,6 +130,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             <button
               className={styles.deleteIcon}
               onClick={() => {
+                //buttonRef = null;
                 setDeleteOpen(index);
               }}
             >
@@ -210,6 +217,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 ride={rides[index]}
                 allDrivers={drivers}
                 reassign={reassign}
+                buttonRef={buttonRef}
               />
               <RideModal
                 key={`ride-modal-${ride.id}`}
