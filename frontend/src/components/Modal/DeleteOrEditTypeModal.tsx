@@ -35,16 +35,25 @@ const DeleteOrEditTypeModal = ({
   };
 
   const confirmCancel = () => {
-    if (ride.recurring && single) {
-      const startDate = format_date(ride.startTime);
-      axios
-        .put(`/api/rides/${ride.id}/edits`, {
-          deleteOnly: true,
-          origDate: startDate,
-        })
+    if (ride.recurring) {
+      if (single) {
+        let startDate = new Date(ride.startTime);
+        startDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0);
+        let parentDeletedDates : string[] = ride?.parentRide?.deleted === undefined ? [] : ride!.parentRide!.deleted;
+        parentDeletedDates.push(startDate.toISOString());
+        axios
+          .put(`/api/rides/${ride!.parentRide!.id}`, {deleted: parentDeletedDates})
+          .then(() => closeModal())
+          .then(refreshRides);
+      } else {
+        console.log("hellow, del", ride!.parentRide!.id);
+        axios
+        .delete(`/api/rides/${ride!.parentRide!.id}`)
         .then(() => closeModal())
         .then(refreshRides);
+      }
     } else {
+      // console.log("hellow, del", ride!.id);
       axios
         .delete(`/api/rides/${ride.id}`)
         .then(() => closeModal())

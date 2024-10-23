@@ -12,6 +12,9 @@ import { format_date } from '../../util/index';
 import { LocationsProvider } from '../../context/LocationsContext';
 import axios from '../../util/axios';
 
+//this is for rider????
+
+
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
   modalType: RideModalType;
@@ -27,6 +30,7 @@ const CreateOrEditRideModal = ({
   onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
+  // console.log("FUCKKKK");
   const defaultStartDate = () => {
     if (ride) {
       if (
