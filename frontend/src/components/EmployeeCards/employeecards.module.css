@@ -21,3 +21,10 @@
   display: flex;
   gap: 1rem;
 }
+
+.paginationContainer {
+  display: flex;
+  justify-content: center; /* Centers the pagination horizontally */
+  margin-top: 20px; /* Adds space above the pagination */
+  margin-bottom: 20px;
+}

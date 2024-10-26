@@ -8,6 +8,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { Button } from '../FormElements/FormElements';
+import Pagination from '@mui/material/Pagination';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -74,21 +75,21 @@ const EmployeeCard = ({
    * @param availability the driver's availability, represented as an object map of days to start and end times
    * @returns a string representation of a driver's availibility
    */
-  const formatAvail = (availability: {
-    [key: string]: { startTime: string; endTime: string };
-  }) => {
-    if (!availability) {
-      return 'N/A';
-    }
+  // const formatAvail = (availability: {
+  //   [key: string]: { startTime: string; endTime: string };
+  // }) => {
+  //   if (!availability) {
+  //     return 'N/A';
+  //   }
 
-    return Object.entries(availability)
-      .filter(([_, timeRange]) => timeRange?.startTime && timeRange?.endTime)
-      .map(
-        ([day, timeRange]) =>
-          `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
-      )
-      .join('\n ');
-  };
+  //   return Object.entries(availability)
+  //     .filter(([_, timeRange]) => timeRange?.startTime && timeRange?.endTime)
+  //     .map(
+  //       ([day, timeRange]) =>
+  //         `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
+  //     )
+  //     .join('\n ');
+  // };
 
   //Avail = formatAvail(availability!);
   const isAdmin = isDriver !== undefined;
@@ -181,6 +182,10 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
   const [filterAdmin, setFilterAdmin] = useState(false);
   const [filterDriver, setFilterDriver] = useState(false);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(4);
+
   const employees = useMemo(() => {
     const allEmployees = [...admins, ...drivers];
     const employeeSet: Record<string, DriverType | AdminType> = {};
@@ -208,6 +213,18 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
     return sortedEmployees.filter(matchesQuery(query));
   }, [admins, drivers, query, filterAdmin, filterDriver]);
 
+  // Calculate total pages and get the employees on given page
+  const totalPages = Math.ceil(employees.length / pageSize);
+  const paginatedEmployees = employees.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
   return (
     <>
       <div className={styles.filtersContainer}>
@@ -227,7 +244,7 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
         </Button>
       </div>
       <div className={styles.cardsContainer}>
-        {employees.map((employee) => (
+        {paginatedEmployees.map((employee) => (
           <EmployeeCard
             key={employee.id}
             id={employee.id}
@@ -235,6 +252,19 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
           />
         ))}
       </div>
+      {totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+            size="large"
+            showFirstButton
+            showLastButton
+          />
+        </div>
+      )}
     </>
   );
 };
