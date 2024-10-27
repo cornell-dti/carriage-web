@@ -18,7 +18,7 @@
   border: 1px solid black;
   border-radius: 16px;
   max-width: 850px;
-  min-height: 550px;
+  height: 550px;
   display: flex;
   flex-grow: 1;
   margin-top: 7.5rem;
@@ -113,17 +113,6 @@
   position: relative;
 }
 
-.thirdPage {
-  background: black;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0% 3% 0% 3%;
-}
-
 .loginContainer {
   display: flex;
   justify-content: center;
@@ -153,7 +142,7 @@
 }
 
 .information {
-  height: 100vh;
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -161,57 +150,60 @@
 }
 
 .adminInfo {
+  padding: 15rem 8rem 15rem 8rem;
   display: flex;
-  height: 100vh;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  column-gap: 13rem;
   justify-content: center;
-  align-items: center;
 }
 
-.thirdPageTopHalf {
+.adminInfo p {
+  font-size: 40px;
+  min-width: 30%;
+}
+
+.studentInfo {
+  background: rgb(49, 49, 49);
+  padding: 15rem 8rem 15rem 8rem;
   display: flex;
+  flex-direction: row;
+  column-gap: 9rem;
   align-items: center;
-  justify-content: space-between;
-  padding: 0px 100px 70px 100px;
 }
 
-.thirdPageTopHalf p {
+.studentInfo p {
   color: white;
-  font-size: 48px;
-  width: 45%;
-  font-family: -apple-system, BlinkMacSystemFont;
+  font-size: 40px;
+  min-width: 30%;
 }
 
-.thirdPageBottomHalf {
+.studentImgContainer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 5%;
+  justify-content: center;
+  flex-direction: row;
+  column-gap: 4rem;
 }
 
 .bottomLaptop {
-  transform: scale(0.8);
+  width: 550px;
+  height: auto;
 }
 
 .phone {
-  transform: scale(1.2);
-}
-
-.thirdPageBottomHalf p {
-  margin-left: 4%;
-  color: white;
-  font-size: 48px;
-  font-family: -apple-system, BlinkMacSystemFont;
+  width: 200px;
+  height: 100%;
 }
 
 @media (max-width: 400px) {
-  .firstPage {
+  .container {
     flex-direction: column;
   }
 }
 
 @media (max-width: 550px) {
-  .firstPage {
+  .main {
     flex-direction: column;
   }
   .left {
@@ -222,16 +214,80 @@
   }
 }
 
-@media (max-height: 600px) {
+@media (max-width: 600px) {
   .main {
     min-height: 0px;
   }
 }
 
-.header {
-  width: 100%;
-  font-size: 32;
-  font-weight: bold;
+@media (max-width: 1425px) {
+  .studentInfo {
+    flex-direction: column;
+    row-gap: 3rem;
+    padding: 10rem 6rem 10rem 6rem;
+  }
+
+  .studentInfo p {
+    margin-top: 5rem;
+  }
+}
+
+@media (max-width: 1230px) {
+  .adminInfo {
+    flex-direction: column;
+    row-gap: 3rem;
+    padding: 6rem 6rem 6rem 6rem;
+  }
+
+  .adminInfo p {
+    max-width: 70%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .studentInfo {
+    padding: 6rem 3rem 6rem 3rem;
+  }
+
+  .studentImgContainer {
+    column-gap: 1rem;
+  }
+
+  .studentInfo p {
+    font-size: 20px;
+    max-width: 80%;
+  }
+
+  .bottomLaptop {
+    width: 320px;
+    height: auto;
+  }
+
+  .phone {
+    width: 120px;
+    height: auto;
+  }
+
+  .studentInfo p {
+    font-size: 30px;
+    margin-top: 2rem;
+  }
+
+  .topLaptop {
+    width: 470px;
+    height: auto;
+  }
+
+  .main {
+    /* max-width: 10%; */
+    /* height: 300px; */
+  }
+}
+
+@media (max-height: 600px) {
+  .main {
+    min-height: 0px;
+  }
 }
 
 .input {

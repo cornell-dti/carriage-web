@@ -3,9 +3,9 @@ import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
-import topLaptop from './landing-images/top-laptop.png';
-import bottomLaptop from './landing-images/bottom-laptop.png';
-import phone from './landing-images/phone.png';
+import topLaptop from './landing-images/laptop1.svg';
+import bottomLaptop from './landing-images/laptop2.svg';
+import phone from './landing-images/iPhone.svg';
 
 type LandingPropType = {
   students: ReactElement;
@@ -69,12 +69,15 @@ const Landing = ({ students, admins }: LandingPropType) => {
       </div>
 
       <div className={styles.studentInfo}>
-        <img
-          src={bottomLaptop}
-          alt="bottom laptop"
-          className={styles.bottomLaptop}
-        />
-        <img src={phone} alt="phone" className={styles.phone} />
+        <div className={styles.studentImgContainer}>
+          <img
+            src={bottomLaptop}
+            alt="bottom laptop"
+            className={styles.bottomLaptop}
+          />
+          <img src={phone} alt="phone" className={styles.phone} />
+        </div>
+
         <p>
           Students schedule, edit, and cancel rides on Rider Web and Mobile.
         </p>
