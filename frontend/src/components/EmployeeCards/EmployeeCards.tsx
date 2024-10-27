@@ -184,7 +184,7 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
 
   // Pagination state
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(4);
+  const [pageSize] = useState(8);
 
   const employees = useMemo(() => {
     const allEmployees = [...admins, ...drivers];
@@ -258,7 +258,6 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
             count={totalPages}
             page={page}
             onChange={handlePageChange}
-            color="primary"
             size="large"
             showFirstButton
             showLastButton

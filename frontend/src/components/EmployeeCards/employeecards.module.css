@@ -1,4 +1,7 @@
 .cardsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  height: 38rem; /* Fix the cards to a certain height so that pagination component stays fixed */
   margin-top: 1rem;
 }
 
@@ -24,7 +27,7 @@
 
 .paginationContainer {
   display: flex;
-  justify-content: center; /* Centers the pagination horizontally */
-  margin-top: 20px; /* Adds space above the pagination */
-  margin-bottom: 20px;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 1rem;
 }
