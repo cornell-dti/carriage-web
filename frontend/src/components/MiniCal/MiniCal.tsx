@@ -13,7 +13,7 @@ const isWeekday = (date: Date) => {
 
 const isHoliday = (date: Date) => {
   return holidaysList.some(
-    (holiday) => holiday.startDate <= date && date < holiday.endDate
+    (holiday) => holiday.startDate <= date && date <= holiday.endDate
   );
 };
 

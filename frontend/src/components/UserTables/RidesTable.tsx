@@ -8,13 +8,14 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
-import { useEffect } from 'react';
+import { DriverType } from '../../../../server/src/models/driver';
 import { useRef } from 'react';
 
 type RidesTableProps = {
   rides: Ride[];
   hasButtons: boolean;
 };
+
 
 const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
@@ -93,6 +94,9 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
+          
+  
+          // Task1
 
           const assignButton = (shouldReassign: boolean) => (
             <Button
@@ -105,6 +109,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               }}
               small
             >
+              
               {shouldReassign ? 'Reassign' : 'Assign'}
             </Button>
           );
