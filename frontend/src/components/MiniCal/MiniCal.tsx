@@ -12,9 +12,24 @@ const isWeekday = (date: Date) => {
 };
 
 const isHoliday = (date: Date) => {
-  return holidaysList.some(
-    (holiday) => holiday.startDate <= date && date <= holiday.endDate
-  );
+  return holidaysList.some((holiday) => {
+    const holidayStart = new Date(
+      holiday.startDate.getFullYear(),
+      holiday.startDate.getMonth(),
+      holiday.startDate.getDate()
+    );
+    const holidayEnd = new Date(
+      holiday.endDate.getFullYear(),
+      holiday.endDate.getMonth(),
+      holiday.endDate.getDate()
+    );
+    const checkDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+    return holidayStart <= checkDate && checkDate <= holidayEnd;
+  });
 };
 
 const filterDate = (date: Date) => {
