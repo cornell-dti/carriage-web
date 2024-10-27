@@ -14,7 +14,6 @@ type RidesTableProps = {
   hasButtons: boolean;
 };
 
-
 const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
@@ -92,8 +91,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
-          
-  
+
           // Task1
 
           const assignButton = (shouldReassign: boolean) => (
@@ -107,7 +105,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               }}
               small
             >
-              
               {shouldReassign ? 'Reassign' : 'Assign'}
             </Button>
           );
