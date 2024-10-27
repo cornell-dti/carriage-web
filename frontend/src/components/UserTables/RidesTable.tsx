@@ -8,11 +8,21 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import { DriverType } from '../../../../server/src/models/driver';
 
 type RidesTableProps = {
   rides: Ride[];
   hasButtons: boolean;
 };
+
+function hasConflict (rides: Ride[], driver: DriverType): boolean {
+  //if driver has a ride at that specific time 
+
+  return rides.some(ride => (ride.driver === driver))
+
+}
+
+
 
 const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
@@ -90,6 +100,9 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
+          
+  
+          // Task1
 
           const assignButton = (shouldReassign: boolean) => (
             <Button
@@ -100,6 +113,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               }}
               small
             >
+              
               {shouldReassign ? 'Reassign' : 'Assign'}
             </Button>
           );
