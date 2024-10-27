@@ -3,12 +3,9 @@ import styles from './landing.module.css';
 import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
-import ctownGraphic from './landing-images/ctown.png';
-import clocktower from './landing-images/clocktower.png';
-import car from './landing-images/car.png';
-import human1 from './landing-images/human1.png';
-import human2 from './landing-images/human2.png';
-import human3 from './landing-images/human3.png';
+import topLaptop from './landing-images/top-laptop.png';
+import bottomLaptop from './landing-images/bottom-laptop.png';
+import phone from './landing-images/phone.png';
 
 type LandingPropType = {
   students: ReactElement;
@@ -21,54 +18,73 @@ const Landing = ({ students, admins }: LandingPropType) => {
   }, []);
   return (
     <main id="main">
-      <header className={styles.header}>
-        <div className={styles.headerLogoContainer}>
-          <img src={logo} className={styles.headerLogo} alt="Carriage logo" />
-          <span className={styles.headerTitle}>Carriage</span>
+      <div className={styles.home}>
+        <div className={styles.tosButtonContainer}>
+          <a
+            href="https://sds.cornell.edu/accommodations-services/transportation/culift-guidelines"
+            target="_blank"
+          >
+            <button className={styles.tosButton}>Terms of Service</button>
+          </a>
         </div>
-        <button className={styles.tosButton}>Terms of Service</button>
-      </header>
-
-      {/* <div className={styles.home}> */}
-      {/* I am approaching the landing page HTML by creating divs based on the
-        Figma's "pages." For example, the first page consists of the login and the
-        car driving in Ctown. The second page consists of the clocktower, the
-        text, and the students in wheelchairs. WIP: still need to implement
-        payload for first time users and continue with implementing designs. The
-        resizing is also a bit problematic. */}
-      <div className={styles.firstPage}>
         <div className={styles.main}>
-          <h1 className={styles.mainTitle}>Carriage</h1>
-          <p className={styles.mainSubtext}>Efficient transit for CULift</p>
-          <div className={styles.loginContainer}>
-            <div className={styles.login_left}>{students}</div>
-            <div className={styles.login_right}>{admins}</div>
+          <div className={styles.left}>
+            <img src={logo} className={styles.badge} alt="Carriage logo" />
+            <span className={styles.title}>Carriage</span>
+          </div>
+          <div className={styles.right}>
+            <div className={styles.spacing_container}>
+              <h1 className={styles.heading}>Login</h1>
+              <div className={styles.container}>
+                <div className={styles.container_item_left}>{students}</div>
+                <div className={styles.container_item_right}>{admins}</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className={styles.ctownGraphicContainer}>
-          <img
-            src={ctownGraphic}
-            alt="ctownGraphic"
-            className={styles.ctownGraphic}
-          />
+        <div className={styles.customShape}>
+          <svg
+            data-name="Layer 1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+              className={styles.shapeFill}
+            ></path>
+          </svg>
         </div>
       </div>
 
-      <div className={styles.secondPage}>
-        {/* add text */}
-        <div className={styles.secondPageGraphicsContainer}>
-          <img
-            src={clocktower}
-            alt="clocktower"
-            className={styles.clocktower}
-          />
-          <img src={car} alt="car" className={styles.car} />
-          <div className={styles.humans}>
-            <img src={human3} alt="human3" className={styles.human3} />
-            <img src={human1} alt="human1" className={styles.human1} />
-            <img src={human2} alt="human2" className={styles.human2} />
-          </div>
+      <div className={styles.information}>
+        <div className={styles.adminInfo}>
+          <p>
+            Administrators add students and employees and assign rides on Admin
+            Web.
+          </p>
+          <img src={topLaptop} alt="top laptop" className={styles.topLaptop} />
+        </div>
+      </div>
+
+      <div className={styles.studentInfo}>
+        <img
+          src={bottomLaptop}
+          alt="bottom laptop"
+          className={styles.bottomLaptop}
+        />
+        <img src={phone} alt="phone" className={styles.phone} />
+        <p>
+          Students schedule, edit, and cancel rides on Rider Web and Mobile.
+        </p>
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.dti_container}>
+          <a href="https://www.cornelldti.org/" target="_blank">
+            <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
+          </a>
         </div>
       </div>
     </main>
