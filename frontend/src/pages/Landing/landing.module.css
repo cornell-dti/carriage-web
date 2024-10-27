@@ -152,6 +152,22 @@
   fill: white;
 }
 
+.information {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.adminInfo {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .thirdPageTopHalf {
   display: flex;
   align-items: center;
