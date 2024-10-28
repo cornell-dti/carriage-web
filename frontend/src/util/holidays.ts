@@ -6,14 +6,13 @@
  * holiday data from an external API, ideally updating this file once per academic year release.
  */
 
-
- /**
-  * @enum Holidays
-  * @description An enumeration of holidays observed within the academic year. Each holiday
-  * is represented as a string with its name and date range in the format:
-  * "HolidayName: startDate to endDate".
-  */
- export enum Holidays {
+/**
+ * @enum Holidays
+ * @description An enumeration of holidays observed within the academic year. Each holiday
+ * is represented as a string with its name and date range in the format:
+ * "HolidayName: startDate to endDate".
+ */
+export enum Holidays {
   MartinLutherKingJrDay = 'MartinLutherKingJrDay: 2024-01-15 to 2024-01-15',
   MemorialDay = 'MemorialDay: 2024-05-27 to 2024-05-27',
   Juneteenth = 'Juneteenth: 2024-06-19 to 2024-06-19',
