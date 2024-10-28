@@ -196,6 +196,8 @@
   height: 100%;
 }
 
+/* Landing page is almost fully responsive. It still needs to vertical media queries. */
+
 @media (max-width: 400px) {
   .container {
     flex-direction: column;
