@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.5",
+    "@mui/material": "^6.1.5",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-promise": "^6.1.1",
