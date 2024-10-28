@@ -150,7 +150,7 @@
 }
 
 .adminInfo {
-  padding: 15rem 8rem 15rem 8rem;
+  padding: 9rem 8rem 9rem 8rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -164,12 +164,13 @@
 }
 
 .studentInfo {
-  background: rgb(49, 49, 49);
-  padding: 15rem 8rem 15rem 8rem;
+  background: rgb(25, 25, 25);
+  padding: 5rem 8rem 9rem 8rem;
   display: flex;
   flex-direction: row;
   column-gap: 9rem;
   align-items: center;
+  justify-content: center;
 }
 
 .studentInfo p {
@@ -187,12 +188,12 @@
 }
 
 .bottomLaptop {
-  width: 550px;
+  width: 670px;
   height: auto;
 }
 
 .phone {
-  width: 200px;
+  width: 220px;
   height: 100%;
 }
 
@@ -226,7 +227,7 @@
   .studentInfo {
     flex-direction: column;
     row-gap: 3rem;
-    padding: 10rem 6rem 10rem 6rem;
+    padding: 5rem 6rem 5rem 6rem;
   }
 
   .studentInfo p {
@@ -279,11 +280,6 @@
     width: 470px;
     height: auto;
   }
-
-  .main {
-    /* max-width: 10%; */
-    /* height: 300px; */
-  }
 }
 
 @media (max-height: 600px) {
@@ -306,7 +302,7 @@
   align-items: center;
   justify-content: center;
   gap: 1px;
-  /* padding: 4% 0% 1% 0%; */
+  padding: 0.8% 0% 0.8% 0%;
 }
 
 .dti {
