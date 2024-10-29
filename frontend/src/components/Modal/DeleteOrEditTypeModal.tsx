@@ -7,6 +7,8 @@ import { format_date } from '../../util/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import { useDate } from '../../context/date';
+
 
 type DeleteOrEditTypeModalProps = {
   open: boolean;
@@ -26,6 +28,7 @@ const DeleteOrEditTypeModal = ({
   isRider,
 }: DeleteOrEditTypeModalProps) => {
   const [single, setSingle] = useState(true);
+  const [allOrFollowing, setAllOrFollowing] = useState(true); // true means for all.
   const { showToast } = useToast();
   const { refreshRides } = useRides();
 
@@ -34,23 +37,78 @@ const DeleteOrEditTypeModal = ({
     setSingle(true);
   };
 
+  //delete logic for normal rides and recurring rides (delete single, all, or from this ride and all following rides)
   const confirmCancel = () => {
     if (ride.recurring) {
+      //Need to fix the logic for this
+      const {curDate} = useDate();
       if (single) {
-        let startDate = new Date(ride.startTime);
-        startDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0);
-        let parentDeletedDates : string[] = ride?.parentRide?.deleted === undefined ? [] : ride!.parentRide!.deleted;
-        parentDeletedDates.push(startDate.toISOString());
-        axios
-          .put(`/api/rides/${ride!.parentRide!.id}`, {deleted: parentDeletedDates})
-          .then(() => closeModal())
-          .then(refreshRides);
+        /**
+         * trim end date of immediate parent to before this day.
+         * delete all children rides of the immediate parent.
+         * create a new ride on the date + 1 with data similar to parent if the parent’s original endTime allow for it. Add the id of the parent ride as the id of this ride’s parentId.
+         */
+        const parentOriginalEndDate = new Date(ride.immediateParentRide!.endDate!);
+
+        let trimmedEndDateImmPar = curDate;
+        trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
+
+        axios.put(`/api/rides/${ride.immediateParentRideId}`, {...ride.immediateParentRide, endDate : trimmedEndDateImmPar.toISOString()});
+        let currentRide = (ride.immediateParentRide)!.children;
+        while (currentRide !== undefined) {
+          axios
+          .delete(`/api/rides/${currentRide.id}`);
+          currentRide = currentRide.children;
+        }
+        
+        if (parentOriginalEndDate > curDate) {
+          let newChildRideStartTime = new Date(ride.startTime)
+          newChildRideStartTime.setDate(newChildRideStartTime.getDate() + 1);
+          let {id, ...rideNoId} = ride;
+          const newChildRide = {
+            ...rideNoId, 
+            startTime : newChildRideStartTime,
+            endDate : parentOriginalEndDate.toISOString(), 
+            type : 
+            'unscheduled'
+          }
+          // axios.post('/api/rides', newChildRide).then((response) => response.data).then((data));
+        }
+
+
+
       } else {
-        console.log("hellow, del", ride!.parentRide!.id);
-        axios
-        .delete(`/api/rides/${ride!.parentRide!.id}`)
-        .then(() => closeModal())
-        .then(refreshRides);
+        if (allOrFollowing) {
+          /**
+          * 1. go to source ride, delete itself all children rides
+          * 2. refreshRides
+          */
+          let currentRide = ride.sourceRide;
+          while (currentRide !== undefined) {
+            axios
+            .delete(`/api/rides/${currentRide.id}`)
+            currentRide = currentRide.children;
+          }
+          closeModal();
+          refreshRides();
+        } else {
+          /**
+           * go to parent ride, trim enddate to before today, delete all children rides (not including itself)
+           * refreshRides
+           */
+          let trimmedEndDateImmPar = (new Date(ride.immediateParentRide!.endDate!));
+          trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
+          axios.put(`/api/rides/${ride.immediateParentRideId}`, {...ride.immediateParentRide, endDate : trimmedEndDateImmPar.toISOString()});
+          
+          let currentRide = (ride.immediateParentRide)!.children;
+          while (currentRide !== undefined) {
+            axios
+            .delete(`/api/rides/${currentRide.id}`);
+            currentRide = currentRide.children;
+          }
+          closeModal();
+          refreshRides();
+        }
       }
     } else {
       // console.log("hellow, del", ride!.id);
@@ -69,6 +127,7 @@ const DeleteOrEditTypeModal = ({
     setSingle(e.target.value === 'single');
   };
 
+  //bruh the fuck is onnext?
   const onButtonClick = () => {
     if (deleting) {
       confirmCancel();
@@ -128,13 +187,25 @@ const DeleteOrEditTypeModal = ({
           <div>
             <Input
               type="radio"
-              id="recurring"
+              id="allRecurring"
               name="rideType"
-              value="recurring"
-              onClick={(e) => changeSelection(e)}
+              value="allRecurring"
+              onClick={(e) => {changeSelection(e); setAllOrFollowing(true)}}
             />
-            <Label htmlFor="recurring" className={styles.modalText}>
+            <Label htmlFor="allRecurring" className={styles.modalText}>
               All Repeating Rides
+            </Label>
+          </div>
+          <div>
+            <Input
+              type="radio"
+              id="followingRecurring"
+              name="rideType"
+              value="followingRecurring"
+              onClick={(e) => {changeSelection(e); setAllOrFollowing(false)}}
+            />
+            <Label htmlFor="followingRecurring" className={styles.modalText}>
+              This and Following Rides.
             </Label>
           </div>
           <div className={styles.buttonContainer}>

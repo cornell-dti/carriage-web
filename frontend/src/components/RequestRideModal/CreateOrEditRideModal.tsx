@@ -12,8 +12,6 @@ import { format_date } from '../../util/index';
 import { LocationsProvider } from '../../context/LocationsContext';
 import axios from '../../util/axios';
 
-//this is for rider????
-
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -30,7 +28,6 @@ const CreateOrEditRideModal = ({
   onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
-  // console.log("FUCKKKK");
   const defaultStartDate = () => {
     if (ride) {
       if (
@@ -40,7 +37,7 @@ const CreateOrEditRideModal = ({
         return format_date(ride.startTime);
       }
       if (modalType === 'EDIT_ALL_RECURRING') {
-        return format_date(ride.parentRide?.startTime);
+        return format_date(ride.sourceRide?.startTime);
       }
     }
     return format_date();
@@ -180,8 +177,8 @@ const CreateOrEditRideModal = ({
     } else {
       // edit regular ride or all recurring rides by editing parent ride
       if (
-        !ride.parentRide ||
-        (ride.parentRide && ride.parentRide.type === 'active')
+        !ride.sourceRide ||
+        (ride.sourceRide && ride.sourceRide.type === 'active')
       ) {
         rideData.type = 'unscheduled';
       }
