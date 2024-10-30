@@ -36,18 +36,19 @@ const DeleteOrEditTypeModal = ({
     onClose();
     setSingle(true);
   };
+  const {curDate} = useDate();
 
   //delete logic for normal rides and recurring rides (delete single, all, or from this ride and all following rides)
   const confirmCancel = () => {
     if (ride.recurring) {
       //Need to fix the logic for this
-      const {curDate} = useDate();
       if (single) {
         /**
          * trim end date of immediate parent to before this day.
          * delete all children rides of the immediate parent.
          * create a new ride on the date + 1 with data similar to parent if the parent’s original endTime allow for it. Add the id of the parent ride as the id of this ride’s parentId.
-         */
+         * add childrenId to parent ride.
+        */
         const parentOriginalEndDate = new Date(ride.immediateParentRide!.endDate!);
 
         let trimmedEndDateImmPar = curDate;
@@ -72,11 +73,15 @@ const DeleteOrEditTypeModal = ({
             type : 
             'unscheduled'
           }
-          // axios.post('/api/rides', newChildRide).then((response) => response.data).then((data));
+          axios
+            .post('/api/rides', newChildRide)
+            .then((response) => response.data)
+            .then((rideData) => 
+              axios.put(`/api/rides/${ride.immediateParentRideId}`, {...ride.immediateParentRide, children : rideData, childrenId: rideData.id})
+          );
+          closeModal();
+          refreshRides();
         }
-
-
-
       } else {
         if (allOrFollowing) {
           /**
@@ -96,7 +101,7 @@ const DeleteOrEditTypeModal = ({
            * go to parent ride, trim enddate to before today, delete all children rides (not including itself)
            * refreshRides
            */
-          let trimmedEndDateImmPar = (new Date(ride.immediateParentRide!.endDate!));
+          let trimmedEndDateImmPar = curDate;
           trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
           axios.put(`/api/rides/${ride.immediateParentRideId}`, {...ride.immediateParentRide, endDate : trimmedEndDateImmPar.toISOString()});
           

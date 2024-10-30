@@ -6,6 +6,7 @@ import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, RepeatValues, Ride } from '../../types/index';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
+import { useDate } from '../../context/date';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
 import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
@@ -16,6 +17,12 @@ type RideModalProps = {
   close?: () => void;
   ride?: Ride;
 };
+
+enum EditAddRideType {
+  SINGLE,
+  ALL,
+  THIS_AND_FOLLOWING,
+}
 
 const getRideData = (ride: Ride | undefined) => {
   if (ride) {
@@ -64,14 +71,12 @@ const getRideData = (ride: Ride | undefined) => {
 };
 
 type EditRecurringProps = {
-  onSubmit: (recurring : boolean) => void;
+  onSubmit: (recurring: EditAddRideType) => void;
 };
 
 const EditRecurring = ({ onSubmit }: EditRecurringProps) => {
-  const [single, setSingle] = useState(true);
-  const changeSelection = (e: any) => {
-    setSingle(e.target.value === 'single');
-  };
+  const [editAddType, setEditAddType] = useState(EditAddRideType.SINGLE);
+
   return (
     <>
       <div>
@@ -80,45 +85,62 @@ const EditRecurring = ({ onSubmit }: EditRecurringProps) => {
           id="single"
           name="rideType"
           value="single"
-          onClick={(e) => changeSelection(e)}
+          onClick={(e) => {
+            setEditAddType(EditAddRideType.SINGLE);
+          }}
           defaultChecked={true}
         />
-        <Label htmlFor="single">
-          This Ride Only
-        </Label>
+        <Label htmlFor="single">This Ride Only</Label>
       </div>
       <div>
         <Input
           type="radio"
-          id="recurring"
+          id="allRecurring"
           name="rideType"
-          value="recurring"
-          onClick={(e) => changeSelection(e)}
+          value="allRecurring"
+          onClick={(e) => {
+            setEditAddType(EditAddRideType.ALL);
+          }}
         />
-        <Label htmlFor="recurring">
-          All Repeating Rides
-        </Label>
+        <Label htmlFor="allRecurring">All Repeating Rides</Label>
+      </div>
+      <div>
+        <Input
+          type="radio"
+          id="followingRecurring"
+          name="rideType"
+          value="followingRecurring"
+          onClick={(e) => {
+            setEditAddType(EditAddRideType.THIS_AND_FOLLOWING);
+          }}
+        />
+        <Label htmlFor="followingRecurring">This and Following Rides.</Label>
       </div>
       <div>
         <Button
           type="submit"
-          onClick={() => {onSubmit(single)}}
+          onClick={() => {
+            onSubmit(editAddType);
+          }}
         >
-          {"OK"}
+          {'OK'}
         </Button>
       </div>
     </>
   );
 };
 
-//need to add option to this to select whether to editsingle or not, shoulnd't be a prop passed in
 const RideModal = ({ open, close, ride }: RideModalProps) => {
   const originalRideData = getRideData(ride);
   const [formData, setFormData] = useState<ObjectType>(originalRideData);
   const [isOpen, setIsOpen] = useState(open !== undefined ? open : false);
   const [currentPage, setCurrentPage] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [editSingle, setEditSingle] = useState(true);
+
+  const [editAddType, setEditAddType] = useState(EditAddRideType.SINGLE);
+  const {curDate} = useDate();
+
+
   const { showToast } = useToast();
   const { refreshRides } = useRides();
   const [showRest, setShowRest] = useState(false);
@@ -214,28 +236,88 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         };
       }
 
+
+      //shittttt, the new form data is in form data, should use that to get latest data about ride.
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
           rideData.type = 'unscheduled';
         }
-        if (editSingle) {
-          const daysWithEdits: string[] =
-            ride!.parentRide!.edits === undefined
-              ? []
-              : ride!.parentRide!.edits;
-          daysWithEdits.push(new Date(ride.startTime).toISOString());
-          axios
-            .put(`/api/rides/${ride!.parentRide!.id!}`, {
-              edits: daysWithEdits,
-            })
-            .then(refreshRides);
-          // create new ride with no relation to parent ride
-          rideData = { ...rideData, parentRide: undefined };
-          axios.post('/api/rides', rideData).then(refreshRides);
+        if (ride.recurring) {
+          if (editAddType == EditAddRideType.ALL) {
+            /**
+             * Go to the source ride, delete all children ride by recursing down the children’s id.
+             * apply edit to original
+             */
+            let currentRide = ride.sourceRide?.children;
+            while (currentRide !== undefined) {
+              axios.delete(`/api/rides/${currentRide.id}`);
+              currentRide = currentRide.children;
+            }
+            axios
+              .put(`/api/rides/${ride.sourceRideId}`, rideData)
+              .then(refreshRides);
+          } else if (editAddType == EditAddRideType.THIS_AND_FOLLOWING) {
+            //ill finish this shit later bruh
+            //fuckkkk in this case we would need to lock the date. 
+            /**
+             * trim the end date of the immediate parent to before today
+             * go down the tree of all children rides and delete all of them
+             * create a new ride with the edited data which has the parent and parentId be the immediate parent.
+             * refreshRides
+             */
+            let trimmedEndDateImmPar = curDate;
+            trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
+            axios.put(`/api/rides/${ride.immediateParentRideId}`, {
+              ...ride.immediateParentRide,
+              endDate: trimmedEndDateImmPar.toISOString(),
+            });
+
+            let currentRide = ride.immediateParentRide!.children;
+            while (currentRide !== undefined) {
+              axios.delete(`/api/rides/${currentRide.id}`);
+              currentRide = currentRide.children;
+            }
+            //now we create a recurring ride starting from today to the en 
+
+
+            
+
+
+
+          } else { 
+            //edit single ride
+            /**
+             * Note: should also lock the date for simplicity.
+             * trim end date of immediate parent to before this day.
+             * add a new ride with the edited data on that date with immediateParent and immediateParentId being from the immediate parent.
+             * The children of the immediate parent is this ride.
+             * create a new recurring ride on the date + 1 with data similar to parent if the parent’s endTime allow for it. Add the id of the parent ride as the id of the newly created ride.
+             * refreshRides
+             */
+            //dont need to lock the date.
+            let trimmedEndDateImmPar = curDate;
+            trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1); 
+            axios.put(`/api/rides/${ride.immediateParentRideId}`, {
+              ...ride.immediateParentRide,
+              endDate: trimmedEndDateImmPar.toISOString(),
+            });
+
+            // here i create a single ride linking back to the trimmed parent ride. it is a one off ride and should not be recurring. Should prob change/remove recurring days.
+            rideData = {
+              ...rideData, 
+              immediateParentRideId : ride.immediateParentRideId, 
+              sourceRideId : ride.sourceRideId, 
+              recurring : false, 
+              recurringDays: undefined, 
+              endDate : undefined, 
+              id : undefined
+            };
+            axios.post(`/api/rides/`, rideData);
+            
+          }
         } else {
-          // edit ride or all instances of repeating ride
-          axios.put(`/api/rides/${ride!.parentRide!.id}`, rideData).then(refreshRides);
+          axios.put(`/api/rides/${ride.id}`, rideData).then(refreshRides);
         }
       } else {
         // unscheduled ride
@@ -251,7 +333,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
     formData,
     isSubmitted,
     ride,
-    editSingle,
+    editAddType,
     refreshRides,
     showToast,
   ]);
@@ -267,7 +349,11 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             currentPage={currentPage}
             onClose={closeModal}
           >
-            <EditRecurring onSubmit={(recurring) => {setEditSingle(recurring); goNextPage()}}/>
+            <EditRecurring
+              onSubmit={(e) => {
+                setEditAddType(e);
+              }}
+            />
             <RideTimesPage
               defaultRepeating={ride.recurring}
               formData={formData}
