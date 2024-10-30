@@ -1,3 +1,6 @@
+// import * as moment from "moment-timezone";
+
+// moment.tz.setDefault("EST");
 /**
  * @file holidays.ts [WIP]
  * @description This file contains an enumeration of test holidays along with
@@ -48,8 +51,12 @@ type holiday = {
 function parseHoliday(holiday: Holidays): holiday {
   const [name, dates] = holiday.split(': ');
   const [start, end] = dates.split(' to ');
-
-  return { name, startDate: new Date(start), endDate: new Date(end) };
+  const startD = new Date(start); 
+  const endD = new Date(end);
+  startD.setHours(24,0,0,0); // The date is originally initialized to a day before, presumably because of UTC time difference
+  endD.setHours(24,0,0,0);
+  console.log(startD, endD);
+  return { name, startDate: startD, endDate: endD };
 }
 
 /**
