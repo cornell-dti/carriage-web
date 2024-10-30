@@ -11,6 +11,8 @@
     "@typescript-eslint/parser": "^5.62.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-promise": "^6.1.1",
+    "pagination": "^0.4.6",
+    "react-paginate": "^8.2.0",
     "typescript": "^4.9.5"
   },
   "devDependencies": {
