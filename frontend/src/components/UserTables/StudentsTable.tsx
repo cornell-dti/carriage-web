@@ -13,15 +13,16 @@ type UsageData = {
   noShows: number;
   totalRides: number;
 };
+
 type UsageType = {
   [id: string]: UsageData;
 };
 
-type studentTableProps = {
+type StudentTableProps = {
   searchName: string;
 };
 
-const StudentsTable = ({ searchName }: studentTableProps) => {
+const StudentsTable = ({ searchName }: StudentTableProps) => {
   const { riders } = useRiders();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1, 1, 1];
   const headers = [
@@ -36,7 +37,8 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
   ];
   const [usage, setUsage] = useState<UsageType>({});
   const [showInactive, setShowInactive] = useState(false);
-  const [disabilityFilter, setDisabilityFilter] = useState('');
+
+  const [disabilityFilter, setDisabilityFilter] = useState<Accessibility[]>([]);
 
   useEffect(() => {
     axios
@@ -66,17 +68,36 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
     const secondPart = number.slice(6);
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
+
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
-  const filteredStudents = riders.filter(
-    (r) =>
-      (r.firstName + ' ' + r.lastName)
-        .toLowerCase()
-        .includes((searchName + '').toLowerCase()) &&
-      (showInactive ? true : r.active) &&
-      (disabilityFilter === '' ? true : r.accessibility === disabilityFilter)
-  );
+  const handleDisabilityFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value as Accessibility
+    );
+    setDisabilityFilter(selectedOptions);
+  };
+
+  const filteredStudents = riders.filter((r) => {
+    const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
+    const searchLower = searchName.toLowerCase();
+
+    const matchesName = fullName.includes(searchLower);
+    const matchesActive = showInactive ? true : r.active;
+
+    const matchesDisability =
+      disabilityFilter.length === 0
+        ? true
+        : (r.accessibility || []).some((disability) =>
+            disabilityFilter.includes(disability)
+          );
+
+    return matchesName && matchesActive && matchesDisability;
+  });
 
   return (
     <>
@@ -99,24 +120,27 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
         />
         Show inactive students
       </label>
-      <Label
-        className={styles.filterDisabilityHeader}
-        htmlFor="filterByDisability"
-      >
-        Filter by Disability:
-      </Label>
-      <select
-        className={styles.filterDisabilityBox}
-        name="filterByDisability"
-        value={disabilityFilter}
-        onChange={(e) => setDisabilityFilter(e.target.value)}
-      >
-        {Object.values(Accessibility).map((value, index) => (
-          <option value={value} key={index}>
-            {value}
-          </option>
-        ))}
-      </select>
+      <div>
+        <Label
+          className={styles.filterDisabilityHeader}
+          htmlFor="filterByDisability"
+        >
+          Filter by Disability:
+        </Label>
+        <select
+          id="filterByDisability"
+          multiple
+          value={disabilityFilter}
+          onChange={handleDisabilityFilterChange}
+          className={styles.filterDisabilityDropdown}
+        >
+          {Object.values(Accessibility).map((value, index) => (
+            <option key={index} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+      </div>
       <Table>
         <Row header colSizes={colSizes} data={headers} />
 
@@ -133,6 +157,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             endDate,
             active,
           } = r;
+
           const netId = email.split('@')[0];
           const nameNetId = {
             data: (
@@ -144,7 +169,13 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
               </span>
             ),
           };
-          const disability = accessibility || '';
+
+          // Displaying disabilities as a comma-separated string
+          const disability =
+            accessibility && accessibility.length > 0
+              ? accessibility.join(', ')
+              : 'None';
+
           const phone = fmtPhone(phoneNumber);
           const shortAddress = address.split(',')[0];
           const joinEndDate = `${formatDate(joinDate)} - ${formatDate(
@@ -166,6 +197,7 @@ const StudentsTable = ({ searchName }: studentTableProps) => {
             isActive,
             'Edit',
           ];
+
           return (
             <Link
               key={id}

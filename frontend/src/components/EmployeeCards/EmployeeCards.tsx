@@ -2,12 +2,13 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
-import { clock, phone, wheel, user } from '../../icons/userInfo/index';
+import { phone, wheel, user } from '../../icons/userInfo/index'; // clock,
 import { Employee } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { Button } from '../FormElements/FormElements';
+import Pagination from '@mui/material/Pagination';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -65,32 +66,6 @@ const EmployeeCard = ({
 }: EmployeeCardProps) => {
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-
-  /**
-   * Formats availability, represented by an object that maps available days to
-   * start and end times, into a printable string with availabilities formatted as '[day]: [start] - [end]'.
-   * Ignores malformed availabilities, e.g. missing start or end times, from being printed.
-   *
-   * @param availability the driver's availability, represented as an object map of days to start and end times
-   * @returns a string representation of a driver's availibility
-   */
-  const formatAvail = (availability: {
-    [key: string]: { startTime: string; endTime: string };
-  }) => {
-    if (!availability) {
-      return 'N/A';
-    }
-
-    return Object.entries(availability)
-      .filter(([_, timeRange]) => timeRange?.startTime && timeRange?.endTime)
-      .map(
-        ([day, timeRange]) =>
-          `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
-      )
-      .join('\n ');
-  };
-
-  const parsedAvail = formatAvail(availability!);
   const isAdmin = isDriver !== undefined;
   const isBoth = isDriver && isDriver == true;
   const roles = (): string => {
@@ -106,7 +81,7 @@ const EmployeeCard = ({
     netId,
     type,
     phone: fmtPhone,
-    availability: parsedAvail,
+    // availability: parsedAvail,
     photoLink,
     startDate,
   };
@@ -130,15 +105,6 @@ const EmployeeCard = ({
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
         </CardInfo>
-
-        <CardInfo icon={clock} alt="clock">
-          {parsedAvail ? (
-            <p className={styles.timeText}>{parsedAvail}</p>
-          ) : (
-            <p>N/A</p>
-          )}
-        </CardInfo>
-
         <CardInfo
           icon={isAdmin || isBoth ? user : wheel}
           alt={isAdmin || isBoth ? 'admin' : 'wheel'}
@@ -150,6 +116,13 @@ const EmployeeCard = ({
   );
 };
 
+/* <CardInfo icon={clock} alt="clock">
+          {parsedAvail ? (
+            <p className={styles.timeText}>{parsedAvail}</p>
+          ) : (
+            <p>N/A</p>
+          )}
+        </CardInfo> */
 const searchableFields = (employee: DriverType | AdminType) => {
   const fields = [
     employee.firstName,
@@ -183,6 +156,10 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
   const [filterAdmin, setFilterAdmin] = useState(false);
   const [filterDriver, setFilterDriver] = useState(false);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(8);
+
   const employees = useMemo(() => {
     const allEmployees = [...admins, ...drivers];
     const employeeSet: Record<string, DriverType | AdminType> = {};
@@ -210,6 +187,18 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
     return sortedEmployees.filter(matchesQuery(query));
   }, [admins, drivers, query, filterAdmin, filterDriver]);
 
+  // Calculate total pages and get the employees on given page
+  const totalPages = Math.ceil(employees.length / pageSize);
+  const paginatedEmployees = employees.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setPage(value);
+  };
   return (
     <>
       <div className={styles.filtersContainer}>
@@ -229,7 +218,7 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
         </Button>
       </div>
       <div className={styles.cardsContainer}>
-        {employees.map((employee) => (
+        {paginatedEmployees.map((employee) => (
           <EmployeeCard
             key={employee.id}
             id={employee.id}
@@ -237,6 +226,18 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
           />
         ))}
       </div>
+      {totalPages > 1 && (
+        <div className={styles.paginationContainer}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+            size="large"
+            showFirstButton
+            showLastButton
+          />
+        </div>
+      )}
     </>
   );
 };

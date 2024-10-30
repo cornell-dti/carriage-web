@@ -59,12 +59,6 @@ const DriverPage = ({
           {loaded ? (
             availableDrivers.map((d) => (
               <div className={styles.driver} key={d.id}>
-                <Label
-                  htmlFor={d.firstName + d.lastName}
-                  className={styles.driverLabel}
-                >
-                  {d.firstName}
-                </Label>
                 <Input
                   id={d.firstName + d.lastName}
                   className={styles.driverRadio}
@@ -72,16 +66,20 @@ const DriverPage = ({
                   value={d.id}
                   {...register('driver', { required: true })}
                 />
+                <Label
+                  htmlFor={d.firstName + d.lastName}
+                  className={styles.driverLabel}
+                >
+                  {d.firstName} {d.lastName}
+                </Label>
               </div>
             ))
           ) : (
-            <p>Loading...</p>
+            <p className={styles.loading}>Loading...</p>
           )}
         </div>
         {errors.driver?.type === 'required' && (
-          <p className={styles.error} style={{ textAlign: 'center' }}>
-            Please select a driver
-          </p>
+          <p className={styles.error}>Please select a driver</p>
         )}
       </div>
       <div className={styles.btnContainer}>
