@@ -43,13 +43,13 @@ export type RideType = {
   recurring: boolean;
   recurringDays?: number[];
   endDate?: string;
-  deleted?: string[];
-  edits?: string[];
+  //ride data should be as similar to sourceRide as possible
+  
   sourceRide? : RideType;
   parentRide? : RideType; 
   parentRideId? : string;
-  childrenRide? : RideType; 
-  childrenRideId? : string;
+  childRide? : RideType; 
+  childRideId? : string;
 };
 
 const locationSchema = {
