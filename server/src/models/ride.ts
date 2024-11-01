@@ -46,11 +46,10 @@ export type RideType = {
   deleted?: string[];
   edits?: string[];
   sourceRide? : RideType;
-  immediateParentRide?: RideType;
-  children? : RideType; // id of the children ride. Used for recurring rides.
-  sourceRideId? : string; 
-  immediateParentRideId? : string; 
-  childrenId? : string;
+  parentRide? : RideType; 
+  parentRideId? : string;
+  childrenRide? : RideType; 
+  childrenRideId? : string;
 };
 
 const locationSchema = {
@@ -128,21 +127,16 @@ const schema = new dynamoose.Schema({
     required: false,
     validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
-  immediateParentRideId : {
-    type: String,
-    required: false,
-    hashKey: true,  
+  parentRideId : {
+    type : String, 
+    required : false,
+    hashKey: true
   }, 
-  sourceRideId : {
-    type: String,
-    required: false,
-    hashKey: true,
+  childrenRideId : {
+    type : String, 
+    required : false,
+    hashKey: true
   }, 
-  childrenId : {
-    type: String,
-    required: false,
-    hashKey: true,
-  }
 });
 
 export const Ride = dynamoose.model('Rides', schema, defaultModelConfig);

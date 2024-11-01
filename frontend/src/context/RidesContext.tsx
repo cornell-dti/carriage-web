@@ -71,46 +71,41 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         );
       })
       //here, i am creating repeating ride objects (that doesn't exist in the database) that link back to some ride in the database. 
-      .map((parentRide) => {
-        const startTimeRecurringRide = new Date(parentRide.startTime);
+      .map((filteredSourceRide) => {
+        const startTimeRecurringRide = new Date(filteredSourceRide.startTime);
         startTimeRecurringRide.setFullYear(curDate.getFullYear());
         startTimeRecurringRide.setMonth(curDate.getMonth());
         startTimeRecurringRide.setDate(curDate.getDate());
 
-        const endTimeRecurringRide = new Date(parentRide.endTime);
+        const endTimeRecurringRide = new Date(filteredSourceRide.endTime);
         endTimeRecurringRide.setFullYear(curDate.getFullYear());
         endTimeRecurringRide.setMonth(curDate.getMonth());
         endTimeRecurringRide.setDate(curDate.getDate());
 
         const schedule =
-          new Date(parentRide.startTime).getDay() == curDate.getDay() &&
-          new Date(parentRide.startTime).getMonth() == curDate.getMonth() &&
-          new Date(parentRide.startTime).getFullYear() == curDate.getFullYear()
+          new Date(filteredSourceRide.startTime).getDay() == curDate.getDay() &&
+          new Date(filteredSourceRide.startTime).getMonth() == curDate.getMonth() &&
+          new Date(filteredSourceRide.startTime).getFullYear() == curDate.getFullYear()
             ? Type.ACTIVE
             : Type.UNSCHEDULED;
-        
-        const immediateParentRideId = parentRide.id;
-        const sourceRideId = parentRide.sourceRideId;
-
-        const immediateParentRide = recurringRides.find((ride) => ride.id === immediateParentRideId);
-        const sourceRide = recurringRides.find((ride) => ride.id === sourceRideId);
+                
+        const parentRide = recurringRides.find((ride) => ride.id === filteredSourceRide.parentRideId);
+        const childrenRide = recurringRides.find((ride) => ride.id === filteredSourceRide.childRideId);
 
 
         return {
-          ...parentRide,
+          ...filteredSourceRide, // id should be the same as the sourceRide 
           startTime: startTimeRecurringRide.toISOString(),
           endTime: endTimeRecurringRide.toISOString(),
           type: schedule,
-          immediateParentRideId: immediateParentRideId,
-          sourceRideId : sourceRideId,
-          immediateParentRide,
-          sourceRide,
-          id: '',
+          parentRide: parentRide,
+          parentRideId: parentRide?.id,
+          childrenRide : childrenRide,
+          childrenRideId : childrenRide?.id,
+          sourceRide : filteredSourceRide
         };
       });
 
-    console.log('current date is ', curDate.getDate());
-    // const ridesDataTodayNoParentRec = ridesDataToday.filter((ride : Ride) => !(ride.recurring && ride.parentRide === undefined));
     const combinedRidesData =
       nonRecurringRidesDataToday.concat(recurringRidesToday);
     if (combinedRidesData) {

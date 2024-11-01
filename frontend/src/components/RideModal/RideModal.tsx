@@ -37,6 +37,7 @@ const getRideData = (ride: Ride | undefined) => {
       dropoffLoc: ride.endLocation.id
         ? ride.endLocation.name
         : ride.endLocation.address,
+      
     };
     if (ride.recurring) {
       let repeats;
@@ -63,6 +64,12 @@ const getRideData = (ride: Ride | undefined) => {
         repeats,
         days,
         endDate: format_date(ride.endDate),
+        immediateParentRide : ride.immediateParentRide, 
+        immediateParentRideId : ride.immediateParentRideId, 
+        sourceRide : ride.sourceRide, 
+        sourceRideId : ride.sourceRideId, 
+        children: ride.children, 
+        childrenId : ride.childrenId
       };
     }
     return rideData;
@@ -211,6 +218,12 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
+        immediateParentRide,
+        immediateParentRideId,
+        sourceRide, 
+        sourceRideId, 
+        children, 
+        childrenId,
       } = formData;
 
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
@@ -225,8 +238,16 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
+        immediateParentRide,
+        immediateParentRideId,
+        sourceRide, 
+        sourceRideId, 
+        children, 
+        childrenId,
       };
+      
 
+      //if the ride repeats
       if (repeats !== RepeatValues.DoesNotRepeat) {
         rideData = {
           ...rideData,
@@ -237,7 +258,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
       }
 
 
-      //shittttt, the new form data is in form data, should use that to get latest data about ride.
+      //shittttt, the new form data is in formData, should use that to get latest data about ride.
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
@@ -260,6 +281,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           } else if (editAddType == EditAddRideType.THIS_AND_FOLLOWING) {
             //ill finish this shit later bruh
             //fuckkkk in this case we would need to lock the date. 
+            //here I don't think we need to lock recurring to false/true because if we edit this and following and just 
+            //set it as a non recurring ride then it ends right there.
             /**
              * trim the end date of the immediate parent to before today
              * go down the tree of all children rides and delete all of them
@@ -272,21 +295,41 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
               ...ride.immediateParentRide,
               endDate: trimmedEndDateImmPar.toISOString(),
             });
+            
 
+            //delete all children ride 
             let currentRide = ride.immediateParentRide!.children;
             while (currentRide !== undefined) {
               axios.delete(`/api/rides/${currentRide.id}`);
               currentRide = currentRide.children;
             }
-            //now we create a recurring ride starting from today to the en 
+            //now we create a new ride starting from today to with the data in formData, but have it link back to the parent ride and the source ride.
+            // we also have to update the parentRide to have this ride as its children.
+            rideData = {
+              ...rideData, 
+              immediateParentRide : ride.immediateParentRide, 
+              immediateParentRideId : ride.immediateParentRideId, 
+              sourceRide : ride.sourceRide, 
+              sourceRideId : ride.sourceRideId, 
+              children : undefined, 
+              childrenId : undefined
+            }
 
-
-            
-
-
-
+            //adds the new ride to the database and updates the parent ride to have it as the child.
+            axios
+              .post(`/api/rides`, rideData)
+              .then((response) => response.data)
+              
+              .then(data => axios.put(`/api/rides/${ride.immediateParentRideId}`, {
+                ...ride.immediateParentRide,
+                children: data, 
+                childrenId : data.id
+              }))
+              .then(refreshRides);
           } else { 
-            //edit single ride
+            //edit single ride, meaning that we should also lock the recurring to false, can't repeat.
+            //otherwise, you can do a thing where you add the new recurring ride and then another ride to continoue 
+            //where that ride ended and resume with the parent ride's data. IDK yet, gotta ask desmond
             /**
              * Note: should also lock the date for simplicity.
              * trim end date of immediate parent to before this day.
