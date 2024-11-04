@@ -64,12 +64,12 @@ const getRideData = (ride: Ride | undefined) => {
         repeats,
         days,
         endDate: format_date(ride.endDate),
-        immediateParentRide : ride.immediateParentRide, 
-        immediateParentRideId : ride.immediateParentRideId, 
+        parentRide : ride.parentRide, 
+        parentRideId : ride.parentRideId, 
         sourceRide : ride.sourceRide, 
-        sourceRideId : ride.sourceRideId, 
-        children: ride.children, 
-        childrenId : ride.childrenId
+        sourceRideId : ride.sourceRide, 
+        childRide: ride.childRide, 
+        childRideId : ride.childRideId
       };
     }
     return rideData;
@@ -266,35 +266,53 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         }
         if (ride.recurring) {
           if (editAddType == EditAddRideType.ALL) {
+            //need to show them the data of the sourceRide to edit.
             /**
-             * Go to the source ride, delete all children ride by recursing down the children’s id.
-             * apply edit to original
+             * go up the chain to the ancestor ride
+             * delete all children by going down the linked list 
+             * apply edit to the ancestor. 
              */
-            let currentRide = ride.sourceRide?.children;
-            while (currentRide !== undefined) {
+            let currentRide = ride.sourceRide!;
+            while (currentRide.parentRide !== undefined) {
               axios.delete(`/api/rides/${currentRide.id}`);
-              currentRide = currentRide.children;
+              currentRide = currentRide.parentRide;
             }
             axios
-              .put(`/api/rides/${ride.sourceRideId}`, rideData)
+              .put(`/api/rides/${ride.id}`, rideData)
               .then(refreshRides);
           } else if (editAddType == EditAddRideType.THIS_AND_FOLLOWING) {
-            //ill finish this shit later bruh
-            //fuckkkk in this case we would need to lock the date. 
-            //here I don't think we need to lock recurring to false/true because if we edit this and following and just 
-            //set it as a non recurring ride then it ends right there.
+            //need to show them the data of the current ride, so don't need to change anything.
             /**
-             * trim the end date of the immediate parent to before today
-             * go down the tree of all children rides and delete all of them
-             * create a new ride with the edited data which has the parent and parentId be the immediate parent.
-             * refreshRides
+             * Note: lock the day and recurring (recurring must be false).
+             * trim its end date: change its end date then axios put with id and with sourceRide end date changed.
+             * Create a new ride on that day, have the ride above as its parent and parentId, axios.post. Also axios put the parent ride above to have children as this new ride.
+             * After this, add another recurring ride with the original ride end date and information (if the end date is larger than today).
+             * Link this ride to the single non recurring ride you just created: axios put appropriate parent and children field.
              */
+            
+            //delete ride if enddate is before startdate. also have to axios put children's parent to undefined.
             let trimmedEndDateImmPar = curDate;
             trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
-            axios.put(`/api/rides/${ride.immediateParentRideId}`, {
-              ...ride.immediateParentRide,
-              endDate: trimmedEndDateImmPar.toISOString(),
-            });
+
+            let sourceRideStartDate = new Date(ride.sourceRide!.startTime);
+            sourceRideStartDate.setHours(0, 0, 0);
+            if (trimmedEndDateImmPar >= sourceRideStartDate)
+              axios.put(`/api/rides/${ride.id}`, {
+                ...ride.sourceRide,
+                endDate: trimmedEndDateImmPar.toISOString(),
+              });
+            else {
+              axios
+                .delete(`/api/rides/${ride.id}`)
+                .then((response) => {
+                  axios.put(`/api/rides/${ride.childRideId}`, {
+                    ...ride.childRide, 
+                    parentRideId : undefined
+                  });
+                });
+
+
+            }
             
 
             //delete all children ride 

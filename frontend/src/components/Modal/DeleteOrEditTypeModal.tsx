@@ -93,31 +93,33 @@ const DeleteOrEditTypeModal = ({
       } else {
         if (allOrFollowing) {
           /**
-          * 1. go to source ride, delete itself all children rides
+          * 1. Go up to find the ancestor ride and delete all descendants, including itself.
           * 2. refreshRides
           */
+
+          //traverse to the ancestor and delete all rides along the way.
           let currentRide = ride.sourceRide;
           while (currentRide !== undefined) {
             axios
             .delete(`/api/rides/${currentRide.id}`)
-            currentRide = currentRide.children;
+            currentRide = currentRide.parentRide;
           }
           closeModal();
           refreshRides();
         } else {
           /**
-           * go to parent ride, trim enddate to before today, delete all children rides (not including itself)
-           * refreshRides
+           * trim the ride’s parent date to before today, axios put
+           * delete all descendants of the parent’s ride., axios delete
            */
           let trimmedEndDateImmPar = curDate;
           trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
-          axios.put(`/api/rides/${ride.immediateParentRideId}`, {...ride.immediateParentRide, endDate : trimmedEndDateImmPar.toISOString()});
+          axios.put(`/api/rides/${ride.sourceRide}`, {...ride.sourceRide, endDate : trimmedEndDateImmPar.toISOString()});
           
-          let currentRide = (ride.immediateParentRide)!.children;
+          let currentRide = ride.childRide;
           while (currentRide !== undefined) {
             axios
             .delete(`/api/rides/${currentRide.id}`);
-            currentRide = currentRide.children;
+            currentRide = currentRide.childRide;
           }
           closeModal();
           refreshRides();
