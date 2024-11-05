@@ -64,11 +64,8 @@ const getRideData = (ride: Ride | undefined) => {
         repeats,
         days,
         endDate: format_date(ride.endDate),
-        parentRide : ride.parentRide, 
         parentRideId : ride.parentRideId, 
-        sourceRide : ride.sourceRide, 
         sourceRideId : ride.sourceRide, 
-        childRide: ride.childRide, 
         childRideId : ride.childRideId
       };
     }
@@ -161,7 +158,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
     setIsOpen(true);
   };
 
-  // console.log("HELLO MATEW");
   const closeModal = useCallback(() => {
     if (close) {
       setFormData(originalRideData);
@@ -218,12 +214,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
-        immediateParentRide,
-        immediateParentRideId,
-        sourceRide, 
-        sourceRideId, 
-        children, 
-        childrenId,
+        parentRideId,
+        childRideId,
       } = formData;
 
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
@@ -238,12 +230,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
-        immediateParentRide,
-        immediateParentRideId,
-        sourceRide, 
-        sourceRideId, 
-        children, 
-        childrenId,
+        parentRideId,
+        childRideId
       };
       
 
@@ -267,114 +255,148 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         if (ride.recurring) {
           if (editAddType == EditAddRideType.ALL) {
             //need to show them the data of the sourceRide to edit.
+            //have to ask desmond
             /**
              * go up the chain to the ancestor ride
              * delete all children by going down the linked list 
              * apply edit to the ancestor. 
              */
-            let currentRide = ride.sourceRide!;
-            while (currentRide.parentRide !== undefined) {
-              axios.delete(`/api/rides/${currentRide.id}`);
+            let currentRide = ride.sourceRide;
+            while (currentRide?.parentRide !== undefined) {
               currentRide = currentRide.parentRide;
             }
+            //now currentRides is at the beginning of linked list
+            currentRide = currentRide?.childRide;
+            while (currentRide !== undefined) {
+              axios.delete(`/api/rides/${currentRide.id}`);
+              currentRide = currentRide.childRide;
+            }
+            //now all elements except the beginning has been deleted.
+
             axios
               .put(`/api/rides/${ride.id}`, rideData)
               .then(refreshRides);
           } else if (editAddType == EditAddRideType.THIS_AND_FOLLOWING) {
             //need to show them the data of the current ride, so don't need to change anything.
-            /**
-             * Note: lock the day and recurring (recurring must be false).
-             * trim its end date: change its end date then axios put with id and with sourceRide end date changed.
-             * Create a new ride on that day, have the ride above as its parent and parentId, axios.post. Also axios put the parent ride above to have children as this new ride.
-             * After this, add another recurring ride with the original ride end date and information (if the end date is larger than today).
-             * Link this ride to the single non recurring ride you just created: axios put appropriate parent and children field.
-             */
+            
+            // lock the start date (date)
+            // trim the date of this ride, axios.put
+            // create a new ride, do whatever, can be a single non repeating ride.
+            // should not link back to parent (gcal does this)
+            
             
             //delete ride if enddate is before startdate. also have to axios put children's parent to undefined.
             let trimmedEndDateImmPar = curDate;
             trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
+            trimmedEndDateImmPar.setHours(0, 0, 0);
 
             let sourceRideStartDate = new Date(ride.sourceRide!.startTime);
             sourceRideStartDate.setHours(0, 0, 0);
-            if (trimmedEndDateImmPar >= sourceRideStartDate)
+
+            if (trimmedEndDateImmPar >= sourceRideStartDate) {
+              const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
+
               axios.put(`/api/rides/${ride.id}`, {
-                ...ride.sourceRide,
+                ...sourceRidewithoutRideTypes,
                 endDate: trimmedEndDateImmPar.toISOString(),
               });
-            else {
-              axios
-                .delete(`/api/rides/${ride.id}`)
-                .then((response) => {
-                  axios.put(`/api/rides/${ride.childRideId}`, {
-                    ...ride.childRide, 
-                    parentRideId : undefined
-                  });
-                });
-
-
+              console.log(sourceRideStartDate);
+              ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
+            } else {
+              axios.delete(`/api/rides/${ride.id}`)
             }
             
 
-            //delete all children ride 
-            let currentRide = ride.immediateParentRide!.children;
+            //delete all descendants ride of sourceRide.
+            let currentRide = ride.sourceRide?.childRide;
             while (currentRide !== undefined) {
               axios.delete(`/api/rides/${currentRide.id}`);
-              currentRide = currentRide.children;
+              currentRide = currentRide.childRide;
             }
-            //now we create a new ride starting from today to with the data in formData, but have it link back to the parent ride and the source ride.
-            // we also have to update the parentRide to have this ride as its children.
+            //now we create a new ride starting from today to with the data in formData, but have it doesn't link back
             rideData = {
               ...rideData, 
-              immediateParentRide : ride.immediateParentRide, 
-              immediateParentRideId : ride.immediateParentRideId, 
-              sourceRide : ride.sourceRide, 
-              sourceRideId : ride.sourceRideId, 
-              children : undefined, 
-              childrenId : undefined
+              parentRideId : undefined, 
+              childRideId : undefined
             }
 
             //adds the new ride to the database and updates the parent ride to have it as the child.
             axios
               .post(`/api/rides`, rideData)
               .then((response) => response.data)
-              
-              .then(data => axios.put(`/api/rides/${ride.immediateParentRideId}`, {
-                ...ride.immediateParentRide,
-                children: data, 
-                childrenId : data.id
-              }))
               .then(refreshRides);
           } else { 
-            //edit single ride, meaning that we should also lock the recurring to false, can't repeat.
-            //otherwise, you can do a thing where you add the new recurring ride and then another ride to continoue 
-            //where that ride ended and resume with the parent ride's data. IDK yet, gotta ask desmond
-            /**
-             * Note: should also lock the date for simplicity.
-             * trim end date of immediate parent to before this day.
-             * add a new ride with the edited data on that date with immediateParent and immediateParentId being from the immediate parent.
-             * The children of the immediate parent is this ride.
-             * create a new recurring ride on the date + 1 with data similar to parent if the parent’s endTime allow for it. Add the id of the parent ride as the id of the newly created ride.
-             * refreshRides
-             */
-            //dont need to lock the date.
-            let trimmedEndDateImmPar = curDate;
-            trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1); 
-            axios.put(`/api/rides/${ride.immediateParentRideId}`, {
-              ...ride.immediateParentRide,
-              endDate: trimmedEndDateImmPar.toISOString(),
-            });
 
-            // here i create a single ride linking back to the trimmed parent ride. it is a one off ride and should not be recurring. Should prob change/remove recurring days.
+            // Note: lock the day and recurring (recurring must be false).
+            // trim its end date: change its end date then axios put with id and with sourceRide end date changed.
+            // Create a new ride on that day, have the ride above as its parent and parentId, axios.post. Also axios put the parent ride above to have children as this new ride.
+            // After this, add another recurring ride with the original ride end date and information (if the end date is larger than today).
+            // Link this ride to the single non recurring ride you just created: axios put appropriate parent and children field.
+            
+            let trimmedEndDateImmPar = curDate;
+            trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
+            trimmedEndDateImmPar.setHours(0, 0, 0);
+
+            let sourceRideStartDate = new Date(ride.sourceRide!.startTime);
+            sourceRideStartDate.setHours(0, 0, 0);
+            let deletedSourceRide = false;
+
+
+            if (trimmedEndDateImmPar >= sourceRideStartDate) {
+              const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
+              console.log(sourceRidewithoutRideTypes);
+
+              axios.put(`/api/rides/${ride.id}`, {
+                ...sourceRidewithoutRideTypes,
+                endDate: trimmedEndDateImmPar.toISOString(),
+              });
+              ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
+              deletedSourceRide = true;
+            } else {
+              axios.delete(`/api/rides/${ride.id}`)
+            }
+
             rideData = {
               ...rideData, 
-              immediateParentRideId : ride.immediateParentRideId, 
-              sourceRideId : ride.sourceRideId, 
+              parentRideId : deletedSourceRide ? undefined: ride.id, 
+              sourceRideId : undefined, 
               recurring : false, 
               recurringDays: undefined, 
               endDate : undefined, 
               id : undefined
             };
-            axios.post(`/api/rides/`, rideData);
+            //here, we add the new ride with the changed data and then add 
+            //another recurring ride after with the same data as sourceRide
+
+            const originalEndDate = new Date(ride.sourceRide!.endDate!);
+
+            axios
+              .post(`/api/rides/`, rideData)
+              .then((response) => response.data)
+              .then((data) => {
+                console.log(originalEndDate);
+                if (originalEndDate > curDate) {
+                  //create a new recurring ride with same data as the old one but with start date = curDate + 1.
+                  let newRideStartTime = new Date(ride.sourceRide!.startTime);
+                  newRideStartTime.setDate(curDate.getDate() + 1);
+                  let newRideEndTime = new Date(ride.sourceRide!.endTime);
+                  newRideEndTime.setDate(curDate.getDate() + 1);
+                  
+        
+                  const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
+                  
+                  axios.post(`/api/rides/`, {
+                    ...sourceRidewithoutRideTypes, 
+                    startTime : newRideStartTime.toISOString(),
+                    endTime : newRideEndTime.toISOString(),
+                    endDate : format_date(originalEndDate), 
+                    parentRideId : data.id,
+                    childRideId: ride.sourceRide!.childRideId, 
+                    recurring : true,
+                    type : 'unscheduled'
+                  });
+                } 
+              });
             
           }
         } else {
@@ -413,6 +435,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             <EditRecurring
               onSubmit={(e) => {
                 setEditAddType(e);
+                goNextPage();
               }}
             />
             <RideTimesPage

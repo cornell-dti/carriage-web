@@ -130,12 +130,10 @@ const schema = new dynamoose.Schema({
   parentRideId : {
     type : String, 
     required : false,
-    hashKey: true
   }, 
   childrenRideId : {
     type : String, 
     required : false,
-    hashKey: true
   }, 
 });
 

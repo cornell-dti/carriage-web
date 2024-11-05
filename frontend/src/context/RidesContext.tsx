@@ -83,7 +83,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         endTimeRecurringRide.setDate(curDate.getDate());
 
         const schedule =
-          new Date(filteredSourceRide.startTime).getDay() == curDate.getDay() &&
+          new Date(filteredSourceRide.startTime).getDate() == curDate.getDate() &&
           new Date(filteredSourceRide.startTime).getMonth() == curDate.getMonth() &&
           new Date(filteredSourceRide.startTime).getFullYear() == curDate.getFullYear()
             ? Type.ACTIVE

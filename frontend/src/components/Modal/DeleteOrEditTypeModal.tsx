@@ -48,13 +48,25 @@ const DeleteOrEditTypeModal = ({
         * create a new recurring ride with the parent’s original end date (if that endate is > today) starting from today + 1
         * link that ride back to the parent, fill in parent and children fields. 
         */
-       //need to look at sourceride not ride.
         const originalEndDate = new Date(ride.sourceRide!.endDate!);
 
         let newEndDate = curDate;
         newEndDate.setDate(newEndDate.getDate() - 1);
+        newEndDate.setHours(0, 0, 0);
 
-        axios.put(`/api/rides/${ride.id}`, {...ride.sourceRide!, endDate : newEndDate.toISOString()});
+        let sourceRideStartDate = new Date(ride.sourceRide!.startTime);
+        sourceRideStartDate.setHours(0, 0, 0);
+        let deletedSourceRide = false;
+
+        if (sourceRideStartDate <= newEndDate) {
+          const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
+          axios.put(`/api/rides/${ride.id}`, {...sourceRidewithoutRideTypes, endDate : newEndDate.toISOString()});
+          ride.sourceRide! = {...ride.sourceRide!, endDate : newEndDate.toISOString()};
+        } else {
+          // if enddate is a day before the sourceRide start date then delete
+          deletedSourceRide = true;
+          axios.delete(`/api/rides/${ride.id}`);
+        }
         
         if (originalEndDate > curDate) {
           //create a new recurring ride with same data as the old one but with start date = curDate + 1.
@@ -79,17 +91,19 @@ const DeleteOrEditTypeModal = ({
             .post('/api/rides', newChildRide)
             .then((response) => response.data)
             .then((rideData) => {
-              axios.put(`/api/rides/${ride.id}`, {...ride.sourceRide!, childrenId: rideData.id});
+              if (!deletedSourceRide) {  
+                const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
+                axios.put(`/api/rides/${ride.id}`, {...sourceRidewithoutRideTypes, childRideId: rideData.id});
+              }
               if (ride.sourceRide!.childRideId !== undefined)   {
-                axios.put(`/api/rides/${ride.sourceRide!.childRideId}`, {...ride.sourceRide!.childRide, parentRideId : rideData.id});
+                const {id, parentRide, childRide, sourceRide, ...childRidewithoutRideTypes} = ride.sourceRide!.childRide!;
+                axios.put(`/api/rides/${ride.sourceRide!.childRide!.id}`, {...childRidewithoutRideTypes, parentRideId : rideData.id});
               }
             }
           ); 
-        }
+        } 
         closeModal();
         refreshRides();
-
-
       } else {
         if (allOrFollowing) {
           /**
@@ -99,11 +113,15 @@ const DeleteOrEditTypeModal = ({
 
           //traverse to the ancestor and delete all rides along the way.
           let currentRide = ride.sourceRide;
-          while (currentRide !== undefined) {
-            axios
-            .delete(`/api/rides/${currentRide.id}`)
+          while (currentRide?.parentRide !== undefined) {
             currentRide = currentRide.parentRide;
           }
+          // now current ride is at the beginning of linked list
+          while (currentRide !== undefined) {
+            axios.delete(`/api/rides/${currentRide.id}`);
+            currentRide = currentRide.childRide;
+          }
+
           closeModal();
           refreshRides();
         } else {
@@ -111,10 +129,19 @@ const DeleteOrEditTypeModal = ({
            * trim the ride’s parent date to before today, axios put
            * delete all descendants of the parent’s ride., axios delete
            */
-          let trimmedEndDateImmPar = curDate;
-          trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
-          axios.put(`/api/rides/${ride.sourceRide}`, {...ride.sourceRide, endDate : trimmedEndDateImmPar.toISOString()});
-          
+          let newEndDate = curDate;
+          newEndDate.setDate(newEndDate.getDate() - 1);
+          newEndDate.setHours(0, 0, 0);
+
+          let sourceRideStartDate = new Date(ride.sourceRide!.startTime);
+          sourceRideStartDate.setHours(0, 0, 0);
+
+          //if start date of source ride > trimmedEndate then need to delete
+          if (sourceRideStartDate <= newEndDate) {
+            axios.put(`/api/rides/${ride.id}`, {...ride.sourceRide, endDate : newEndDate.toISOString()});
+          } else {
+            axios.delete(`/api/rides/${ride.id}`)
+          }
           let currentRide = ride.childRide;
           while (currentRide !== undefined) {
             axios

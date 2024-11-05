@@ -39,7 +39,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   const refreshDrivers = useCallback(async () => {
     const driversData: Array<Driver> = await axios
-      .get('//drivers')
+      .get('/api/drivers')
       .then((res) => res.data)
       .then((data) => data.data);
 
