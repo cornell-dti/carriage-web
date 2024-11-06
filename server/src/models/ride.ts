@@ -114,14 +114,6 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [Number],
   },
-  deleted: {
-    type: Array,
-    schema: [String],
-  },
-  edits: {
-    type: Array,
-    schema: [String],
-  },
   endDate: {
     type: String,
     required: false,

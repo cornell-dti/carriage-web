@@ -3,14 +3,12 @@ import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Input, Label, Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType, RepeatValues, Ride } from '../../types/index';
+import { ObjectType, RepeatValues, Ride, Type } from '../../types/index';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
-import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
-import { isOutOfBounds } from 'react-datepicker/dist/date_utils';
 
 type RideModalProps = {
   open?: boolean;
@@ -294,14 +292,9 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             sourceRideStartDate.setHours(0, 0, 0);
 
             if (trimmedEndDateImmPar >= sourceRideStartDate) {
-              const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
-
-              axios.put(`/api/rides/${ride.id}`, {
-                ...sourceRidewithoutRideTypes,
-                endDate: trimmedEndDateImmPar.toISOString(),
-              });
-              console.log(sourceRideStartDate);
               ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
+              axios.put(`/api/rides/${ride.id}`, getRideData(ride.sourceRide!));
+              console.log(sourceRideStartDate);
             } else {
               axios.delete(`/api/rides/${ride.id}`)
             }
@@ -343,14 +336,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
 
 
             if (trimmedEndDateImmPar >= sourceRideStartDate) {
-              const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
-              console.log(sourceRidewithoutRideTypes);
-
-              axios.put(`/api/rides/${ride.id}`, {
-                ...sourceRidewithoutRideTypes,
-                endDate: trimmedEndDateImmPar.toISOString(),
-              });
               ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
+              axios.put(`/api/rides/${ride.id}`, getRideData(ride.sourceRide!));
               deletedSourceRide = true;
             } else {
               axios.delete(`/api/rides/${ride.id}`)
@@ -382,19 +369,18 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
                   let newRideEndTime = new Date(ride.sourceRide!.endTime);
                   newRideEndTime.setDate(curDate.getDate() + 1);
                   
-        
-                  const {id, parentRide, childRide, sourceRide, ...sourceRidewithoutRideTypes} = ride.sourceRide!;
-                  
-                  axios.post(`/api/rides/`, {
-                    ...sourceRidewithoutRideTypes, 
+                  ride.sourceRide! = {
+                    ...ride.sourceRide!, 
                     startTime : newRideStartTime.toISOString(),
                     endTime : newRideEndTime.toISOString(),
                     endDate : format_date(originalEndDate), 
                     parentRideId : data.id,
                     childRideId: ride.sourceRide!.childRideId, 
                     recurring : true,
-                    type : 'unscheduled'
-                  });
+                    type : Type.UNSCHEDULED
+                  };
+                  
+                  axios.post(`/api/rides/`, getRideData(ride.sourceRide!));
                 } 
               });
             
