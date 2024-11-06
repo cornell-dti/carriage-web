@@ -42,9 +42,7 @@ export type RideType = {
   driver?: DriverType;
   recurring: boolean;
   recurringDays?: number[];
-  endDate?: string;
-  //ride data should be as similar to sourceRide as possible
-  
+  endDate?: string;  
   sourceRide? : RideType;
   parentRide? : RideType; 
   parentRideId? : string;

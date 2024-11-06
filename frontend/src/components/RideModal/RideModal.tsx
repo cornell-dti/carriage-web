@@ -212,8 +212,6 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
-        parentRideId,
-        childRideId,
       } = formData;
 
       const startTime = moment(`${date} ${pickupTime}`).toISOString();
@@ -228,8 +226,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
         rider,
         startLocation,
         endLocation,
-        parentRideId,
-        childRideId
+        parentRideId : ride!.parentRideId,
+        childRideId: ride!.childRideId
       };
       
 
