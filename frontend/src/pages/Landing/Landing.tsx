@@ -80,7 +80,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
         </div>
 
         <p>
-          Students schedule, edit, and cancel rides on Rider Web and Mobile.
+          Students Schedule, Edit, and Cancel rides on Rider Web and Mobile.
         </p>
       </div>
 
