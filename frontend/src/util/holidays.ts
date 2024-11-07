@@ -48,10 +48,10 @@ type holiday = {
 function parseHoliday(holiday: Holidays): holiday {
   const [name, dates] = holiday.split(': ');
   const [start, end] = dates.split(' to ');
-  const startDate = new Date(start); 
+  const startDate = new Date(start);
   const endDate = new Date(end);
-  startDate.setHours(24,0,0,0); // The date is originally initialized to a day before, presumably because of UTC time difference
-  endDate.setHours(24,0,0,0);
+  startDate.setHours(24, 0, 0, 0); // The date is originally initialized to a day before, presumably because of UTC time difference
+  endDate.setHours(24, 0, 0, 0);
   return { name, startDate: startDate, endDate: endDate };
 }
 
