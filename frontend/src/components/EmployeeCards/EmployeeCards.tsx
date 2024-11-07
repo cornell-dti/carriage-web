@@ -225,6 +225,7 @@ const EmployeeCards = ({ query }: EmployeeCardsProps) => {
             employee={employee}
           />
         ))}
+        Hello
       </div>
       {totalPages > 1 && (
         <div className={styles.paginationContainer}>
