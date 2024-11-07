@@ -13,16 +13,7 @@ const isWeekday = (date: Date) => {
 
 const isHoliday = (date: Date) => {
   return holidaysList.some((holiday) => {
-    console.log(holiday, date, date.getDate());
-    return (
-      holiday.startDate <= date && holiday.endDate >= date
-      // holiday.startDate.getFullYear() === date.getFullYear() &&
-      // holiday.startDate.getMonth() === date.getMonth() &&
-      // holiday.startDate.getDate() <= date.getDate() &&
-      // holiday.endDate.getFullYear() === date.getFullYear() &&
-      // holiday.endDate.getMonth() === date.getMonth() &&
-      // holiday.endDate.getDate() >= date.getDate()
-    );
+    return holiday.startDate <= date && holiday.endDate >= date;
   });
 };
 
