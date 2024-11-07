@@ -1,11 +1,11 @@
-import React, { ReactElement, useEffect } from "react";
-import styles from "./landing.module.css";
-import Footer from "../../components/Footer/Footer";
-import { logo } from "../../icons/other";
-import dti from "./dti.png";
-import topLaptop from "./landing-images/laptop1.svg";
-import bottomLaptop from "./landing-images/laptop2.svg";
-import phone from "./landing-images/iPhone.svg";
+import React, { ReactElement, useEffect } from 'react';
+import styles from './landing.module.css';
+import Footer from '../../components/Footer/Footer';
+import { logo } from '../../icons/other';
+import dti from './dti.png';
+import topLaptop from './landing-images/laptop1.svg';
+import bottomLaptop from './landing-images/laptop2.svg';
+import phone from './landing-images/iPhone.svg';
 
 const cuLiftTerms = `https://sds.cornell.edu/accommodations-services
 /transportation/culift-guidelines`;
@@ -21,7 +21,7 @@ type LandingPropType = {
 
 const Landing = ({ students, admins }: LandingPropType) => {
   useEffect(() => {
-    document.title = "Login - Carriage";
+    document.title = 'Login - Carriage';
   }, []);
   return (
     <main id="main">
