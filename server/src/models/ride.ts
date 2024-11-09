@@ -42,6 +42,11 @@ export type RideType = {
   driver?: DriverType;
   recurring: boolean;
   recurringDays?: number[];
+  /**
+   * endDate means that the recurring rides should end on this date (inclusive) in UTC.
+   * Ex: 2024-12-31 : recurring rides should end on the 31 of dec 
+   * Note: should change to timestamp in the future.
+   */
   endDate?: string;  
   sourceRide? : RideType;
   parentRide? : RideType; 

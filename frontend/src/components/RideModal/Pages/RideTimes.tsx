@@ -119,7 +119,7 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
           {...register('endDate', {
             required: true,
             validate: (endDate: string) => {
-              const fmtEnd = format_date(endDate);
+              const fmtEnd = (endDate);
               const fmtStart = format_date(getValues('date'));
               const notWeekend =
                 moment(fmtEnd).day() !== 0 && moment(fmtEnd).day() !== 6;

@@ -56,7 +56,7 @@ router.get('/download', (req, res) => {
 });
 
 // Get and query all master repeating rides in table
-router.get('/repeating', validateUser('User'), (req, res) => {
+router.get('/recurring', validateUser('User'), (req, res) => {
   const {
     query: { rider },
   } = req;

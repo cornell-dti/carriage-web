@@ -9,6 +9,7 @@ import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { format } from 'crypto-js';
 
 type RideModalProps = {
   open?: boolean;
@@ -61,7 +62,7 @@ const getRideData = (ride: Ride | undefined) => {
         ...rideData,
         repeats,
         days,
-        endDate: format_date(ride.endDate),
+        endDate: (ride.endDate),
         parentRideId : ride.parentRideId, 
         sourceRideId : ride.sourceRide, 
         childRideId : ride.childRideId
@@ -141,7 +142,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
 
   const [editAddType, setEditAddType] = useState(EditAddRideType.SINGLE);
   const {curDate} = useDate();
-
+  console.log(curDate);
 
   const { showToast } = useToast();
   const { refreshRides } = useRides();
@@ -218,16 +219,22 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
       const endTime = moment(`${date} ${dropoffTime}`).toISOString();
       const hasDriver = Boolean(driver) && driver !== 'None';
 
+      //in the case of recurring rides, 
+      //rideData should also have 
+      // 1. recurring = true
+      // 2. recurringDays
+      // 3. endDate
+      
+      console.log("start end time", startTime, endTime);
+
       let rideData: ObjectType = {
         type: hasDriver ? 'active' : 'unscheduled',
         startTime,
         endTime,
         driver: hasDriver ? driver : undefined,
         rider,
-        startLocation,
-        endLocation,
-        parentRideId : ride!.parentRideId,
-        childRideId: ride!.childRideId
+        startLocation, // id to location entry in dynamo table
+        endLocation, // id to location entry in dynamo table
       };
       
 
@@ -237,7 +244,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
           ...rideData,
           recurring: true,
           recurringDays: getRecurringDays(date, repeats, days),
-          endDate: format_date(endDate),
+          endDate: (endDate),
         };
       }
 
@@ -282,7 +289,7 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             
             
             //delete ride if enddate is before startdate. also have to axios put children's parent to undefined.
-            let trimmedEndDateImmPar = curDate;
+            let trimmedEndDateImmPar = new Date(startTime);
             trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
             trimmedEndDateImmPar.setHours(0, 0, 0);
 
@@ -290,9 +297,24 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
             sourceRideStartDate.setHours(0, 0, 0);
 
             if (trimmedEndDateImmPar >= sourceRideStartDate) {
-              ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
-              axios.put(`/api/rides/${ride.id}`, getRideData(ride.sourceRide!));
-              console.log(sourceRideStartDate);
+              ride.sourceRide! = {...ride.sourceRide!, endDate: format_date(trimmedEndDateImmPar.toISOString())}
+              
+              console.log(ride.sourceRide!);
+              axios.put(`/api/rides/${ride.id}`, {
+                type : 'unscheduled', 
+                startTime : ride.sourceRide!.startTime,
+                endTime : ride.sourceRide!.endTime, 
+                driver : undefined, 
+                rider : ride.sourceRide.rider, 
+                startLocation : ride.sourceRide!.startLocation.id,
+                endLocation : ride.sourceRide!.endLocation.id,
+                parentRideId : ride!.parentRideId, 
+                childRideId : ride!.childRideId,
+                recurring : true,
+                recurringDays : ride!.sourceRide!.recurringDays!, 
+                endDate : format_date(ride!.sourceRide.endDate!)
+              });
+
             } else {
               axios.delete(`/api/rides/${ride.id}`)
             }
@@ -311,20 +333,20 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
               childRideId : undefined
             }
 
-            //adds the new ride to the database and updates the parent ride to have it as the child.
             axios
               .post(`/api/rides`, rideData)
               .then((response) => response.data)
               .then(refreshRides);
           } else { 
 
-            // Note: lock the day and recurring (recurring must be false).
+            // Note: lock the day and recurring (recurring must be true).
             // trim its end date: change its end date then axios put with id and with sourceRide end date changed.
             // Create a new ride on that day, have the ride above as its parent and parentId, axios.post. Also axios put the parent ride above to have children as this new ride.
             // After this, add another recurring ride with the original ride end date and information (if the end date is larger than today).
             // Link this ride to the single non recurring ride you just created: axios put appropriate parent and children field.
-            
-            let trimmedEndDateImmPar = curDate;
+            const originalEndDate = new Date(ride.sourceRide!.endDate!);
+            console.log("og end date", originalEndDate);
+            let trimmedEndDateImmPar = new Date(startTime);
             trimmedEndDateImmPar.setDate(trimmedEndDateImmPar.getDate() - 1);
             trimmedEndDateImmPar.setHours(0, 0, 0);
 
@@ -334,54 +356,116 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
 
 
             if (trimmedEndDateImmPar >= sourceRideStartDate) {
-              ride.sourceRide! = {...ride.sourceRide!, endDate: trimmedEndDateImmPar.toISOString()}
-              axios.put(`/api/rides/${ride.id}`, getRideData(ride.sourceRide!));
-              deletedSourceRide = true;
+              console.log("trimmed end date is", trimmedEndDateImmPar, sourceRideStartDate, trimmedEndDateImmPar.toISOString());
+              //updates the source ride.
+              ride.sourceRide! = {...ride.sourceRide!, endDate: format_date(trimmedEndDateImmPar.toISOString())}
+              console.log(ride.sourceRide!);
+              axios.put(`/api/rides/${ride.id}`, {
+                type : ride.sourceRide!.type, 
+                startTime : ride.sourceRide!.startTime,
+                endTime : ride.sourceRide!.endTime, 
+                driver : ride.sourceRide!.driver, 
+                rider : ride.sourceRide!.rider, 
+                startLocation : ride.sourceRide!.startLocation.id,
+                endLocation : ride.sourceRide!.endLocation.id,
+                parentRideId : ride!.parentRideId, 
+                childRideId : ride!.childRideId,
+                recurring : true,
+                recurringDays : ride!.sourceRide!.recurringDays!, 
+                endDate : ride!.sourceRide.endDate!
+              });
             } else {
               axios.delete(`/api/rides/${ride.id}`)
+              deletedSourceRide = true;
             }
+
+            let singleRideEndDate = new Date(startTime);
+            singleRideEndDate.setHours(0, 0, 0);
 
             rideData = {
               ...rideData, 
               parentRideId : deletedSourceRide ? undefined: ride.id, 
-              sourceRideId : undefined, 
-              recurring : false, 
-              recurringDays: undefined, 
-              endDate : undefined, 
-              id : undefined
+              childRideId : undefined, 
+              recurring : true, 
+              recurringDays: [1, 2, 3, 4, 5], 
+              endDate : format_date(singleRideEndDate),
+              driver : ride.sourceRide?.driver 
             };
-            //here, we add the new ride with the changed data and then add 
-            //another recurring ride after with the same data as sourceRide
 
-            const originalEndDate = new Date(ride.sourceRide!.endDate!);
 
+            //here, we need to add new ride (non recurring ride) to database axios.post
+            //then we need to update its parent ride's children ride field axios.put (if the parent ride still exists)
+            //then we need to create a new recurring ride with the parent rides's same data axios.post (if the end date of the parent is > than the current date)
+            
+
+
+            //TODO : NEED TO FIX CHILDRIDEID 
+            console.log(originalEndDate, curDate);
             axios
               .post(`/api/rides/`, rideData)
               .then((response) => response.data)
-              .then((data) => {
-                console.log(originalEndDate);
-                if (originalEndDate > curDate) {
+              .then((newSingleRideData : Ride) => {
+                if (!deletedSourceRide) {
+                  ride.sourceRide! = {
+                    ...ride.sourceRide!, 
+                    childRideId : newSingleRideData.id, 
+                    childRide : newSingleRideData
+                  }
+                  axios.put(`/api/rides/${ride.id}`, {
+                    type : ride.sourceRide!.type, 
+                    startTime : ride.sourceRide!.startTime,
+                    endTime : ride.sourceRide!.endTime, 
+                    driver : ride.sourceRide!.driver, 
+                    rider : ride.sourceRide!.rider, 
+                    startLocation : ride.sourceRide!.startLocation.id,
+                    endLocation : ride.sourceRide!.endLocation.id,
+                    parentRideId : ride!.parentRideId, 
+                    childRideId : ride!.childRideId,
+                    recurring : true,
+                    recurringDays : ride!.sourceRide!.recurringDays!, 
+                    endDate : (format_date(ride!.sourceRide.endDate!))
+                  });
+
+                }
+                let today = new Date(startTime);
+                today.setHours(0, 0, 0);
+                if (originalEndDate > today) {
                   //create a new recurring ride with same data as the old one but with start date = curDate + 1.
                   let newRideStartTime = new Date(ride.sourceRide!.startTime);
-                  newRideStartTime.setDate(curDate.getDate() + 1);
+                  newRideStartTime.setDate(today.getDate() + 1);
                   let newRideEndTime = new Date(ride.sourceRide!.endTime);
-                  newRideEndTime.setDate(curDate.getDate() + 1);
-                  
-                  ride.sourceRide! = {
+                  newRideEndTime.setDate(today.getDate() + 1);
+                  console.log("current date", today);
+                  console.log("newRideStartTime, newRideEndTime", newRideStartTime, newRideEndTime);
+                  const newRecurringRideData : Ride = {
                     ...ride.sourceRide!, 
                     startTime : newRideStartTime.toISOString(),
                     endTime : newRideEndTime.toISOString(),
                     endDate : format_date(originalEndDate), 
-                    parentRideId : data.id,
+                    parentRideId : newSingleRideData.id,
                     childRideId: ride.sourceRide!.childRideId, 
                     recurring : true,
                     type : Type.UNSCHEDULED
                   };
                   
-                  axios.post(`/api/rides/`, getRideData(ride.sourceRide!));
-                } 
+                  axios.post(`/api/rides/`, {
+                    type : newRecurringRideData.type, 
+                    startTime : newRecurringRideData.startTime,
+                    endTime : newRecurringRideData.endTime, 
+                    driver : newRecurringRideData.driver, 
+                    rider : newRecurringRideData.rider, 
+                    startLocation : newRecurringRideData.startLocation.id,
+                    endLocation : newRecurringRideData.endLocation.id,
+                    parentRideId : newRecurringRideData.parentRideId, 
+                    childRideId : newRecurringRideData.childRideId,
+                    recurring : true,
+                    recurringDays : newRecurringRideData.recurringDays!, 
+                    endDate : format_date(newRecurringRideData.endDate)
+                  });
+                } else {
+
+                }
               });
-            
           }
         } else {
           axios.put(`/api/rides/${ride.id}`, rideData).then(refreshRides);

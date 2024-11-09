@@ -113,11 +113,12 @@ const DeleteOrEditTypeModal = ({
 
           //traverse to the ancestor and delete all rides along the way.
           let currentRide = ride.sourceRide;
-          while (currentRide?.parentRide !== undefined) {
-            currentRide = currentRide.parentRide;
+          while (currentRide!.parentRide !== undefined) {
+            currentRide = currentRide!.parentRide;
           }
           // now current ride is at the beginning of linked list
           while (currentRide !== undefined) {
+            console.log("hello, deleting all, current Ride is", currentRide);
             axios.delete(`/api/rides/${currentRide.id}`);
             currentRide = currentRide.childRide;
           }
