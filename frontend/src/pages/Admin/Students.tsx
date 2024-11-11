@@ -35,15 +35,15 @@ const Riders = () => {
       alt: 'active',
       stats: activeStudents,
       description: 'Active Students',
-      variant: 'green' as const
+      variant: 'green' as const,
     },
     {
       icon: inactive,
       alt: 'inactive',
       stats: inactiveStudents,
       description: 'Inactive Students',
-      variant: 'red' as const
-    }
+      variant: 'red' as const,
+    },
   ];
 
   return (

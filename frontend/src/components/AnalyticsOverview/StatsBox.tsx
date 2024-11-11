@@ -12,28 +12,31 @@ export interface StatsBoxProps {
   variant?: ColorVariant;
 }
 
-const StatsBox: React.FC<StatsBoxProps> = ({ 
-  icon, 
-  alt, 
-  stats, 
+const StatsBox: React.FC<StatsBoxProps> = ({
+  icon,
+  alt,
+  stats,
   description,
   className = '',
-  variant = 'default'
+  variant = 'default',
 }) => (
   <div className={`${styles.statsbox} ${styles[variant]} ${className}`}>
     <div className={styles.left}>
       {icon ? (
         <div className={`${styles.iconWrapper} ${styles[`icon-${variant}`]}`}>
-          <img 
-            className={styles.icon} 
-            src={icon} 
+          <img
+            className={styles.icon}
+            src={icon}
             alt={alt}
             width={40}
             height={40}
           />
         </div>
       ) : (
-        <div className={`${styles.iconWrapper} ${styles[`icon-${variant}`]}`} aria-hidden="true" />
+        <div
+          className={`${styles.iconWrapper} ${styles[`icon-${variant}`]}`}
+          aria-hidden="true"
+        />
       )}
     </div>
     <div className={styles.right}>

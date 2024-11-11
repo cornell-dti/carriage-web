@@ -103,7 +103,6 @@ export default function SearchAndFilter<T extends Record<string, any>>({
     setFilters({});
     setActiveSection(null);
 
-  
     const searchFilteredItems = items.filter((item) => {
       const matchesSearch = searchFields.some((field) => {
         const value = item[field];

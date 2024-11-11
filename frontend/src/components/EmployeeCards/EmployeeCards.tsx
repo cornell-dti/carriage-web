@@ -108,11 +108,7 @@ const EmployeeCards = ({ employees }: EmployeeCardsProps) => {
   return (
     <div className={styles.cardsContainer}>
       {employees.map((employee) => (
-        <EmployeeCard
-          key={employee.id}
-          id={employee.id}
-          employee={employee}
-        />
+        <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
       ))}
     </div>
   );

@@ -13,18 +13,20 @@ import { AdminType, DriverType } from '../../types';
 const Employees = () => {
   const { admins, drivers } = useEmployees();
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredEmployees, setFilteredEmployees] = useState<(AdminType | DriverType)[]>([]);
+  const [filteredEmployees, setFilteredEmployees] = useState<
+    (AdminType | DriverType)[]
+  >([]);
 
   // Combine admins and drivers, using `roleType` as a list
   const displayEmployees = useMemo(() => {
     const employeeMap = new Map();
 
-    admins.forEach(admin => {
+    admins.forEach((admin) => {
       const roleType = admin.isDriver ? ['admin', 'driver'] : ['admin'];
       employeeMap.set(admin.id, { ...admin, roleType });
     });
 
-    drivers.forEach(driver => {
+    drivers.forEach((driver) => {
       if (!employeeMap.has(driver.id)) {
         employeeMap.set(driver.id, { ...driver, roleType: ['driver'] });
       }
@@ -51,15 +53,15 @@ const Employees = () => {
       alt: 'admin',
       stats: adminCount,
       description: 'Administrators',
-      variant: 'green' as const
+      variant: 'green' as const,
     },
     {
       icon: inactive,
       alt: 'driver',
       stats: driverCount,
       description: 'Drivers',
-      variant: 'red' as const
-    }
+      variant: 'red' as const,
+    },
   ];
 
   return (
@@ -76,7 +78,7 @@ const Employees = () => {
       <div className={styles.statsAndSearch}>
         <div className={styles.searchFilter}>
           <SearchAndFilter
-            items={displayEmployees} 
+            items={displayEmployees}
             searchFields={['firstName', 'lastName']}
             filterOptions={[
               {
@@ -86,7 +88,7 @@ const Employees = () => {
                   { value: 'admin', label: 'Admin' },
                   { value: 'driver', label: 'Driver' },
                 ],
-              }
+              },
             ]}
             onFilterApply={handleFilterApply}
           />
@@ -106,4 +108,3 @@ const Employees = () => {
 };
 
 export default Employees;
-
