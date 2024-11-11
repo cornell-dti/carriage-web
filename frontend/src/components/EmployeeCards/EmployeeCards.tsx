@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
@@ -31,6 +31,7 @@ const EmployeeCard = ({
     startDate,
   },
 }: EmployeeCardProps) => {
+  const navigate = useNavigate();
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
 
@@ -69,15 +70,16 @@ const EmployeeCard = ({
     startDate,
   };
 
+  const handleClick = () => {
+    const path =
+      isAdmin || isBoth ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
+    navigate(path);
+  };
+
   return (
-    <Link
-      to={{
-        pathname:
-          isAdmin || isBoth
-            ? `/admins/${userInfo.id}`
-            : `/drivers/${userInfo.id}`,
-      }}
-      style={{ textDecoration: 'none', color: 'inherit' }}
+    <div
+      onClick={handleClick}
+      style={{ cursor: 'pointer' }}
       className={styles.link}
     >
       <Card
@@ -96,7 +98,7 @@ const EmployeeCard = ({
           <p>{roles()}</p>
         </CardInfo>
       </Card>
-    </Link>
+    </div>
   );
 };
 
