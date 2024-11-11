@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useState } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -94,14 +94,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             ),
           };
 
-     
           const assignButton = (shouldReassign: boolean) => (
-            <Button 
+            <Button
               className={styles.assignButton}
               ref={buttonRef}
-              onClick={(e) =>  {
+              onClick={(e) => {
                 e.stopPropagation();
-                setOpenAssignModal((openAssignModal === index ? -1 : index));
+                setOpenAssignModal(openAssignModal === index ? -1 : index);
                 setReassign(shouldReassign);
               }}
               small

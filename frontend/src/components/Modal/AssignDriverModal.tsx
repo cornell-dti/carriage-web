@@ -10,7 +10,7 @@ type AssignModalProps = {
   ride: Ride;
   allDrivers: Driver[];
   reassign: boolean;
-  buttonRef: any
+  buttonRef: any;
 };
 
 type DriverRowProps = {
@@ -44,8 +44,10 @@ const AssignDriverModal = ({
     useEffect(() => {
       function handleClickOutside(event: any) {
         event.stopPropagation();
-        const isClickOutsideButton = buttonRef.current && !buttonRef.current.contains(event.target);
-        const isClickOutsideModal = wrapperRef.current && !wrapperRef.current.contains(event.target);
+        const isClickOutsideButton =
+          buttonRef.current && !buttonRef.current.contains(event.target);
+        const isClickOutsideModal =
+          wrapperRef.current && !wrapperRef.current.contains(event.target);
         if (isClickOutsideModal && isClickOutsideButton) {
           close();
         }
@@ -69,9 +71,8 @@ const AssignDriverModal = ({
     close();
   };
 
-
   useOutsideAlerter(wrapperRef, buttonRef);
- 
+
   return (
     <>
       {isOpen && (
