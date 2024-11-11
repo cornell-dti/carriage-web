@@ -6,6 +6,7 @@ import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
+import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { active, inactive } from '../../icons/other/index';
 import { AdminType, DriverType } from '../../types';
@@ -16,8 +17,9 @@ const Employees = () => {
   const [filteredEmployees, setFilteredEmployees] = useState<
     (AdminType | DriverType)[]
   >([]);
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
 
-  // Combine admins and drivers, using `roleType` as a list
   const displayEmployees = useMemo(() => {
     const employeeMap = new Map();
 
@@ -42,9 +44,16 @@ const Employees = () => {
 
   const handleFilterApply = (filteredItems: (AdminType | DriverType)[]) => {
     setFilteredEmployees(filteredItems);
+    setPage(1); 
   };
 
-  // Employee statistics
+  
+  const paginatedEmployees = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return filteredEmployees.slice(startIndex, startIndex + pageSize);
+  }, [filteredEmployees, page, pageSize]);
+
+
   const adminCount = admins.length;
   const driverCount = drivers.length;
   const employeeStats = [
@@ -63,6 +72,10 @@ const Employees = () => {
       variant: 'red' as const,
     },
   ];
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   return (
     <main id="main">
@@ -101,7 +114,18 @@ const Employees = () => {
       </div>
 
       <div className={styles.employeeCards}>
-        <EmployeeCards employees={filteredEmployees} />
+        <EmployeeCards employees={paginatedEmployees} />
+      </div>
+
+      <div className={styles.paginationContainer}>
+        <Pagination
+          count={Math.ceil(filteredEmployees.length / pageSize)}
+          page={page}
+          onChange={handlePageChange}
+          size="large"
+          showFirstButton
+          showLastButton
+        />
       </div>
     </main>
   );
