@@ -1,16 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import cn from 'classnames';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { Row, Table } from '../TableComponents/TableComponents';
 import styles from './table.module.css';
 import { Rider } from 'types';
 
 type StudentsTableProps = {
-  students: Rider[]; // Now receives the filtered list of students as a prop
+  students: Rider[];
 };
 
 const StudentsTable = ({ students }: StudentsTableProps) => {
+  const navigate = useNavigate();
   const colSizes = [1, 0.75, 0.75, 1, 1.25, 1, 1, 1];
   const headers = [
     'Name / NetId',
@@ -32,6 +32,10 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
 
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
+
+  const handleRowClick = (id: string) => {
+    navigate(`/admin/riders/${id}`);
+  };
 
   return (
     <Table>
@@ -71,33 +75,26 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
         const shortAddress = address.split(',')[0];
         const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
         const isActive = active ? 'Active' : 'Inactive';
-        const location = {
-          pathname: `/riders/${r.id}`,
-        };
 
         const data = [
           nameNetId,
           phone,
           shortAddress,
           joinEndDate,
-          '0 Rides / 0 No Shows', // You can add real usage data here
+          '0 Rides / 0 No Shows',
           disability,
           isActive,
           'Edit',
         ];
 
         return (
-          <Link
+          <div
             key={id}
-            to={location}
-            style={{
-              display: 'block',
-              textDecoration: 'none',
-              color: 'inherit',
-            }}
+            onClick={() => handleRowClick(id)}
+            style={{ cursor: 'pointer' }}
           >
             <Row data={data} colSizes={colSizes} />
-          </Link>
+          </div>
         );
       })}
     </Table>
