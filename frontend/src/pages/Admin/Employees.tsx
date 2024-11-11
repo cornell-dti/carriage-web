@@ -44,15 +44,13 @@ const Employees = () => {
 
   const handleFilterApply = (filteredItems: (AdminType | DriverType)[]) => {
     setFilteredEmployees(filteredItems);
-    setPage(1); 
+    setPage(1);
   };
 
-  
   const paginatedEmployees = useMemo(() => {
     const startIndex = (page - 1) * pageSize;
     return filteredEmployees.slice(startIndex, startIndex + pageSize);
   }, [filteredEmployees, page, pageSize]);
-
 
   const adminCount = admins.length;
   const driverCount = drivers.length;
@@ -73,7 +71,10 @@ const Employees = () => {
     },
   ];
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
     setPage(value);
   };
 
