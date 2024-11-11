@@ -8,7 +8,7 @@ import { Button } from '../../components/FormElements/FormElements';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
-import { active, inactive } from '../../icons/other/index';
+import { wheel, user } from '../../icons/userInfo/index';
 import { AdminType, DriverType } from '../../types';
 
 const Employees = () => {
@@ -56,14 +56,14 @@ const Employees = () => {
   const driverCount = drivers.length;
   const employeeStats = [
     {
-      icon: active,
+      icon: user,
       alt: 'admin',
       stats: adminCount,
       description: 'Administrators',
       variant: 'green' as const,
     },
     {
-      icon: inactive,
+      icon: wheel,
       alt: 'driver',
       stats: driverCount,
       description: 'Drivers',
