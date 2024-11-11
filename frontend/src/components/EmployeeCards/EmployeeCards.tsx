@@ -1,13 +1,9 @@
-import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
-import { phone, wheel, user } from '../../icons/userInfo/index'; // clock,
+import { phone, wheel, user } from '../../icons/userInfo/index';
 import { Employee } from '../../types';
-import { useEmployees } from '../../context/EmployeesContext';
-import { AdminType } from '../../../../server/src/models/admin';
-import { DriverType } from '../../../../server/src/models/driver';
-import { Button } from '../FormElements/FormElements';
+import { AdminType, DriverType } from '../../types';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -20,34 +16,6 @@ type EmployeeCardProps = {
   id: string;
   employee: Employee;
 };
-
-//Convert DriverType to EmployeeType
-// const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
-//   return drivers.map((driver) => ({
-//     id: driver.id,
-//     firstName: driver.firstName,
-//     lastName: driver.lastName,
-//     availability: formatAvailability(driver.availability)!,
-//     netId: driver.email.split('@')[0],
-//     phone: driver.phoneNumber,
-//     photoLink: driver.photoLink,
-//     startDate: driver.startDate,
-//   }));
-// };
-
-// //Convert AdminType to EmployeeType
-// const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
-//   return admins.map((admin) => ({
-//     id: admin.id,
-//     firstName: admin.firstName,
-//     lastName: admin.lastName,
-//     type: admin.type,
-//     isDriver: admin.isDriver,
-//     netId: admin.email.split('@')[0],
-//     phone: admin.phoneNumber,
-//     photoLink: admin.photoLink,
-//   }));
-// };
 
 const EmployeeCard = ({
   id,
@@ -66,14 +34,6 @@ const EmployeeCard = ({
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
 
-  /**
-   * Formats availability, represented by an object that maps available days to
-   * start and end times, into a printable string with availabilities formatted as '[day]: [start] - [end]'.
-   * Ignores malformed availabilities, e.g. missing start or end times, from being printed.
-   *
-   * @param availability the driver's availability, represented as an object map of days to start and end times
-   * @returns a string representation of a driver's availibility
-   */
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
   }) => {
@@ -90,7 +50,6 @@ const EmployeeCard = ({
       .join('\n ');
   };
 
-  //Avail = formatAvail(availability!);
   const isAdmin = isDriver !== undefined;
   const isBoth = isDriver && isDriver == true;
   const roles = (): string => {
@@ -106,10 +65,10 @@ const EmployeeCard = ({
     netId,
     type,
     phone: fmtPhone,
-    // availability: parsedAvail,
     photoLink,
     startDate,
   };
+
   return (
     <Link
       to={{
@@ -141,101 +100,21 @@ const EmployeeCard = ({
   );
 };
 
-/* <CardInfo icon={clock} alt="clock">
-          {parsedAvail ? (
-            <p className={styles.timeText}>{parsedAvail}</p>
-          ) : (
-            <p>N/A</p>
-          )}
-        </CardInfo> */
-const searchableFields = (employee: DriverType | AdminType) => {
-  const fields = [
-    employee.firstName,
-    employee.lastName,
-    employee.email,
-    employee.phoneNumber,
-  ];
-  if ('vehicle' in employee && employee.vehicle) {
-    fields.push(employee.vehicle.name);
-  }
-  if ('type' in employee && employee.type) {
-    fields.push(...employee.type);
-  }
-  return fields;
-};
-
-const matchesQuery = (rawQuery: string) => {
-  const query = rawQuery.toLowerCase();
-  return (employee: DriverType | AdminType) =>
-    searchableFields(employee).some((field) =>
-      field.toLowerCase().includes(query)
-    );
-};
-
 type EmployeeCardsProps = {
-  query: string;
+  employees: (AdminType | DriverType)[];
 };
 
-const EmployeeCards = ({ query }: EmployeeCardsProps) => {
-  const { admins, drivers } = useEmployees();
-  const [filterAdmin, setFilterAdmin] = useState(false);
-  const [filterDriver, setFilterDriver] = useState(false);
-
-  const employees = useMemo(() => {
-    const allEmployees = [...admins, ...drivers];
-    const employeeSet: Record<string, DriverType | AdminType> = {};
-    allEmployees.forEach((employee) => {
-      employeeSet[employee.id] = { ...employeeSet[employee.id], ...employee };
-    });
-    const sortedEmployees = Object.values(employeeSet)
-      .filter((employee) => {
-        // if both or neither filters are selected, show all employees
-        if (filterAdmin == filterDriver) {
-          return true;
-        }
-        if (filterDriver) {
-          return 'availability' in employee;
-        }
-        if (filterAdmin) {
-          return 'type' in employee;
-        }
-      })
-      .sort((a, b) => a.firstName.localeCompare(b.firstName));
-    if (!query) {
-      return sortedEmployees;
-    }
-    // By filtering after coalescing step, we keep role info intact
-    return sortedEmployees.filter(matchesQuery(query));
-  }, [admins, drivers, query, filterAdmin, filterDriver]);
-
+const EmployeeCards = ({ employees }: EmployeeCardsProps) => {
   return (
-    <>
-      <div className={styles.filtersContainer}>
-        <Button
-          type="button"
-          onClick={() => setFilterDriver((v) => !v)}
-          outline={!filterDriver}
-        >
-          Drivers
-        </Button>
-        <Button
-          type="button"
-          onClick={() => setFilterAdmin((v) => !v)}
-          outline={!filterAdmin}
-        >
-          Admins
-        </Button>
-      </div>
-      <div className={styles.cardsContainer}>
-        {employees.map((employee) => (
-          <EmployeeCard
-            key={employee.id}
-            id={employee.id}
-            employee={employee}
-          />
-        ))}
-      </div>
-    </>
+    <div className={styles.cardsContainer}>
+      {employees.map((employee) => (
+        <EmployeeCard
+          key={employee.id}
+          id={employee.id}
+          employee={employee}
+        />
+      ))}
+    </div>
   );
 };
 

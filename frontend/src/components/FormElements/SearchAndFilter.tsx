@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styles from './searchandfilter.module.css';
+import { search_icon, filter, check, down, x } from 'icons/other';
 
 interface FilterOption {
   field: string;
@@ -22,18 +23,60 @@ export default function SearchAndFilter<T extends Record<string, any>>({
 }: SearchAndFilterProps<T>) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string[]>>({});
+  const [pendingFilters, setPendingFilters] = useState<
+    Record<string, string[]>
+  >({});
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [openFilterOption, setOpenFilterOption] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
-  // Log the search term whenever it changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    console.log('Search term:', e.target.value);
+    const newSearchTerm = e.target.value;
+    setSearchTerm(newSearchTerm);
+
+    const searchFilteredItems = items.filter((item) => {
+      const matchesSearch = searchFields.some((field) => {
+        const value = item[field];
+        return String(value)
+          .toLowerCase()
+          .includes(newSearchTerm.toLowerCase());
+      });
+
+      const matchesFilters = Object.entries(filters).every(
+        ([field, values]) => {
+          const fieldValue = item[field];
+
+          if (Array.isArray(fieldValue)) {
+            return values.some((filterValue) =>
+              fieldValue.some(
+                (itemValue) =>
+                  String(itemValue).toLowerCase() ===
+                  String(filterValue).toLowerCase()
+              )
+            );
+          }
+
+          if (typeof fieldValue === 'boolean') {
+            return values.some(
+              (filterValue) => String(fieldValue) === filterValue
+            );
+          }
+
+          return values.some(
+            (filterValue) =>
+              String(fieldValue).toLowerCase() ===
+              String(filterValue).toLowerCase()
+          );
+        }
+      );
+
+      return matchesSearch && matchesFilters;
+    });
+
+    onFilterApply(searchFilteredItems);
   };
 
-  // Log when a filter is toggled and what filters are active
   const toggleFilter = (field: string, value: string) => {
-    setFilters((prevFilters) => {
+    setPendingFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters };
       if (!updatedFilters[field]) {
         updatedFilters[field] = [value];
@@ -47,28 +90,65 @@ export default function SearchAndFilter<T extends Record<string, any>>({
       } else {
         updatedFilters[field] = [...updatedFilters[field], value];
       }
-      console.log('Filters applied:', updatedFilters);
       return updatedFilters;
     });
   };
 
-  const toggleFilterOption = (field: string) => {
-    setOpenFilterOption((prevOpen) => (prevOpen === field ? null : field));
+  const getActiveFilterCount = () => {
+    return Object.values(filters).reduce((acc, curr) => acc + curr.length, 0);
   };
 
-  // Log the filtered items after applying search and filters
-  const filteredItems = useMemo(() => {
-    const filtered = items.filter((item) => {
+  const clearFilters = () => {
+    setPendingFilters({});
+    setFilters({});
+    setActiveSection(null);
+
+  
+    const searchFilteredItems = items.filter((item) => {
       const matchesSearch = searchFields.some((field) => {
         const value = item[field];
         return String(value).toLowerCase().includes(searchTerm.toLowerCase());
       });
 
-      const matchesFilters = Object.entries(filters).every(
+      return matchesSearch;
+    });
+
+    onFilterApply(searchFilteredItems);
+  };
+
+  const applyFilters = () => {
+    setFilters(pendingFilters);
+
+    const filteredItems = items.filter((item) => {
+      const matchesSearch = searchFields.some((field) => {
+        const value = item[field];
+        return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+      });
+
+      const matchesFilters = Object.entries(pendingFilters).every(
         ([field, values]) => {
           const fieldValue = item[field];
-          return values.some((filterValue) =>
-            String(fieldValue).toLowerCase().includes(filterValue.toLowerCase())
+
+          if (Array.isArray(fieldValue)) {
+            return values.some((filterValue) =>
+              fieldValue.some(
+                (itemValue) =>
+                  String(itemValue).toLowerCase() ===
+                  String(filterValue).toLowerCase()
+              )
+            );
+          }
+
+          if (typeof fieldValue === 'boolean') {
+            return values.some(
+              (filterValue) => String(fieldValue) === filterValue
+            );
+          }
+
+          return values.some(
+            (filterValue) =>
+              String(fieldValue).toLowerCase() ===
+              String(filterValue).toLowerCase()
           );
         }
       );
@@ -76,90 +156,116 @@ export default function SearchAndFilter<T extends Record<string, any>>({
       return matchesSearch && matchesFilters;
     });
 
-    console.log('Filtered items:', filtered);
-    return filtered;
-  }, [items, searchTerm, filters, searchFields]);
-
-  // Log when the apply button is clicked and what filtered items are sent to the parent
-  const applyFilters = () => {
-    console.log('Applying filters with the following items:', filteredItems);
     onFilterApply(filteredItems);
     setIsFilterOpen(false);
   };
 
-  const clearAllFilters = () => {
-    setFilters({});
-    console.log('Cleared all filters');
-  };
-
   const clearAll = () => {
-    setFilters({});
     setSearchTerm('');
-    console.log('Cleared all filters and search');
+    setFilters({});
+    setPendingFilters({});
+    setActiveSection(null);
     onFilterApply(items);
-    setIsFilterOpen(false);
-    setOpenFilterOption(null);
   };
 
   return (
     <div className={styles.container}>
-      {/* Search Bar */}
       <div className={styles.searchInputContainer}>
         <input
           type="text"
-          placeholder="Search..."
           value={searchTerm}
           onChange={handleSearchChange}
+          placeholder="Search..."
           className={styles.searchInput}
         />
+        <img src={search_icon} alt="search" className={styles.searchIcon} />
       </div>
 
-      {/* Filter Button */}
       <div className={styles.buttonContainer}>
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className={styles.button}
+          className={styles.filterButton}
         >
-          {/* Generic SVG for Filter */}
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3 5H17M5 10H15M7 15H13"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className={styles.filterIconWrapper}>
+            <img src={filter} alt="filter" className={styles.filterIcon} />
+            <span className={styles.filterLabel}>Filters</span>
+            {getActiveFilterCount() > 0 && (
+              <span className={styles.filterCount}>
+                {getActiveFilterCount()}
+              </span>
+            )}
+            <img
+              src={down}
+              alt="expand"
+              className={`${styles.chevronIcon} ${
+                isFilterOpen ? styles.chevronRotate : ''
+              }`}
             />
-          </svg>
+          </div>
         </button>
 
         {isFilterOpen && (
           <div className={styles.filterDropdown}>
-            <h3 className={styles.filterHeader}>Filters</h3>
-            <div>
+            <div className={styles.filterHeader}>
+              <h3>Filters</h3>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className={styles.closeButton}
+              >
+                <img src={x} alt="close" className={styles.closeIcon} />
+              </button>
+            </div>
+
+            <div className={styles.filterSections}>
               {filterOptions.map((option) => (
-                <div key={option.field} className={styles.filterOption}>
+                <div key={option.field} className={styles.filterSection}>
                   <button
-                    className={styles.filterHeader}
-                    onClick={() => toggleFilterOption(option.field)}
+                    className={styles.sectionHeader}
+                    onClick={() =>
+                      setActiveSection(
+                        activeSection === option.field ? null : option.field
+                      )
+                    }
                   >
-                    {option.label}
+                    <span>{option.label}</span>
+                    <img
+                      src={down}
+                      alt="expand"
+                      className={`${styles.chevronIcon} ${
+                        activeSection === option.field
+                          ? styles.chevronRotate
+                          : ''
+                      }`}
+                    />
                   </button>
-                  {openFilterOption === option.field && (
-                    <div className={styles.filterOptions}>
+
+                  {activeSection === option.field && (
+                    <div className={styles.optionsList}>
                       {option.options.map((opt) => (
-                        <button
+                        <label
                           key={opt.value}
-                          className={styles.button}
+                          className={styles.optionLabel}
                           onClick={() => toggleFilter(option.field, opt.value)}
                         >
-                          {opt.label}
-                        </button>
+                          <div
+                            className={`${styles.checkbox} ${
+                              pendingFilters[option.field]?.includes(opt.value)
+                                ? styles.checkboxChecked
+                                : ''
+                            }`}
+                          >
+                            {pendingFilters[option.field]?.includes(
+                              opt.value
+                            ) && (
+                              <img
+                                src={check}
+                                alt="selected"
+                                className={styles.checkIcon}
+                              />
+                            )}
+                          </div>
+                          <span>{opt.label}</span>
+                        </label>
                       ))}
                     </div>
                   )}
@@ -167,23 +273,20 @@ export default function SearchAndFilter<T extends Record<string, any>>({
               ))}
             </div>
 
-            <button
-              onClick={clearAllFilters}
-              className={styles.clearFiltersButton}
-            >
-              Clear Filters
-            </button>
+            <div className={styles.filterActions}>
+              <button
+                onClick={clearFilters}
+                className={styles.clearFiltersButton}
+              >
+                Clear Filters
+              </button>
+              <button onClick={applyFilters} className={styles.applyButton}>
+                Apply Filters
+              </button>
+            </div>
           </div>
         )}
       </div>
-
-      {/* Reset & Apply Buttons */}
-      <button onClick={clearAll} className={styles.resetButton}>
-        Reset
-      </button>
-      <button onClick={applyFilters} className={styles.applyButton}>
-        Apply
-      </button>
     </div>
   );
 }
