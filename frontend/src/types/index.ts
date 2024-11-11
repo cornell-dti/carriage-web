@@ -107,3 +107,5 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
+
+export type { DriverType, AdminType };

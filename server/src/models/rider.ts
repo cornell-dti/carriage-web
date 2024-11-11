@@ -26,7 +26,6 @@ export type RiderType = {
   phoneNumber: string;
   email: string;
   accessibility?: Accessibility[];
-  // accessibility?: string;
   organization?: Organization;
   description?: string;
   joinDate: string;
