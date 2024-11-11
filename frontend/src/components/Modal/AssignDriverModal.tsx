@@ -10,6 +10,7 @@ type AssignModalProps = {
   ride: Ride;
   allDrivers: Driver[];
   reassign: boolean;
+  buttonRef: any
 };
 
 type DriverRowProps = {
@@ -35,13 +36,17 @@ const AssignDriverModal = ({
   ride,
   allDrivers,
   reassign = false,
+  buttonRef,
 }: AssignModalProps) => {
   const { refreshRides } = useRides();
   // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
-  function useOutsideAlerter(ref: any) {
+  function useOutsideAlerter(wrapperRef: any, buttonRef: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
-        if (ref.current && !ref.current.contains(event.target)) {
+        event.stopPropagation();
+        const isClickOutsideButton = buttonRef.current && !buttonRef.current.contains(event.target);
+        const isClickOutsideModal = wrapperRef.current && !wrapperRef.current.contains(event.target);
+        if (isClickOutsideModal && isClickOutsideButton) {
           close();
         }
       }
@@ -50,8 +55,9 @@ const AssignDriverModal = ({
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
-    }, [ref]);
+    }, [wrapperRef, buttonRef]);
   }
+
   const wrapperRef = useRef(null);
   const addDriver = (driver: Driver) => {
     axios
@@ -62,8 +68,10 @@ const AssignDriverModal = ({
       .then(() => refreshRides());
     close();
   };
-  useOutsideAlerter(wrapperRef);
 
+
+  useOutsideAlerter(wrapperRef, buttonRef);
+ 
   return (
     <>
       {isOpen && (
