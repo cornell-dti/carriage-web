@@ -117,6 +117,7 @@ const DeleteOrEditTypeModal = ({
             currentRide = currentRide!.parentRide;
           }
           // now current ride is at the beginning of linked list
+          console.log(currentRide);
           while (currentRide !== undefined) {
             console.log("hello, deleting all, current Ride is", currentRide);
             axios.delete(`/api/rides/${currentRide.id}`);

@@ -368,8 +368,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
                 rider : ride.sourceRide!.rider, 
                 startLocation : ride.sourceRide!.startLocation.id,
                 endLocation : ride.sourceRide!.endLocation.id,
-                parentRideId : ride!.parentRideId, 
-                childRideId : ride!.childRideId,
+                parentRideId : ride!.sourceRide.parentRideId, 
+                childRideId : ride!.sourceRide.childRideId,
                 recurring : true,
                 recurringDays : ride!.sourceRide!.recurringDays!, 
                 endDate : ride!.sourceRide.endDate!
@@ -411,7 +411,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
                     childRideId : newSingleRideData.id, 
                     childRide : newSingleRideData
                   }
-                  axios.put(`/api/rides/${ride.id}`, {
+                  console.log("Child ride id is", ride.sourceRide!.childRideId, "source ride id is ", ride.sourceRide.id)
+                  axios.put(`/api/rides/${ride.sourceRide.id}`, {
                     type : ride.sourceRide!.type, 
                     startTime : ride.sourceRide!.startTime,
                     endTime : ride.sourceRide!.endTime, 
@@ -419,8 +420,8 @@ const RideModal = ({ open, close, ride }: RideModalProps) => {
                     rider : ride.sourceRide!.rider, 
                     startLocation : ride.sourceRide!.startLocation.id,
                     endLocation : ride.sourceRide!.endLocation.id,
-                    parentRideId : ride!.parentRideId, 
-                    childRideId : ride!.childRideId,
+                    parentRideId : ride!.sourceRide.parentRideId, 
+                    childRideId : ride!.sourceRide.childRideId,
                     recurring : true,
                     recurringDays : ride!.sourceRide!.recurringDays!, 
                     endDate : (format_date(ride!.sourceRide.endDate!))

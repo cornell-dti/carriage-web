@@ -126,7 +126,7 @@ const schema = new dynamoose.Schema({
     type : String, 
     required : false,
   }, 
-  childrenRideId : {
+  childRideId : {
     type : String, 
     required : false,
   }, 
