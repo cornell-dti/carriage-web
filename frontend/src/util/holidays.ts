@@ -49,8 +49,8 @@ function parseHoliday(holiday: Holidays): holiday {
   const [name, dates] = holiday.split(': ');
   const [start, end] = dates.split(' to ');
   const startDate = new Date(`${start}T00:00:00`);
-  const endDate = new Date(`${end}T23:59:59`); 
-  console.log(name, startDate, endDate );
+  const endDate = new Date(`${end}T23:59:59`);
+  console.log(name, startDate, endDate);
   return { name, startDate, endDate };
 }
 
