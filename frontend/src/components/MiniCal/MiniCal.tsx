@@ -5,16 +5,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
-import { holidaysList } from 'util/holidays';
+import { isHoliday } from 'util/holidays';
 
 const isWeekday = (date: Date) => {
   return 0 < date.getDay() && date.getDay() < 6;
-};
-
-const isHoliday = (date: Date) => {
-  return holidaysList.some((holiday) => {
-    return holiday.startDate <= date && holiday.endDate >= date;
-  });
 };
 
 const filterDate = (date: Date) => {

@@ -48,11 +48,10 @@ type holiday = {
 function parseHoliday(holiday: Holidays): holiday {
   const [name, dates] = holiday.split(': ');
   const [start, end] = dates.split(' to ');
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  startDate.setHours(24, 0, 0, 0); // The date is originally initialized to a day before, presumably because of UTC time difference
-  endDate.setHours(24, 0, 0, 0);
-  return { name, startDate: startDate, endDate: endDate };
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T23:59:59`); 
+  console.log(name, startDate, endDate );
+  return { name, startDate, endDate };
 }
 
 /**
@@ -63,3 +62,9 @@ function parseHoliday(holiday: Holidays): holiday {
 export const holidaysList: holiday[] = Object.values(Holidays).map((h) =>
   parseHoliday(h)
 );
+
+export const isHoliday = (date: Date) => {
+  return holidaysList.some((holiday) => {
+    return holiday.startDate <= date && holiday.endDate >= date;
+  });
+};
