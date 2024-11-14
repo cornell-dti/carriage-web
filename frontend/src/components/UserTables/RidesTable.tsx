@@ -8,6 +8,7 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import { DriverType } from '../../../../server/src/models/driver';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -42,7 +43,21 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     'Needs',
     'Rider',
     '',
-  ];
+  ];  
+
+  function hasConflict(rides: Ride[], newRide: Ride): boolean {
+    return rides.some((ride) => {
+        return (
+            ride.driver === newRide.driver &&
+            (
+                (new Date(newRide.startTime) >= new Date(ride.startTime) &&
+                    new Date(newRide.startTime) < new Date(ride.endTime)) ||
+                (new Date(newRide.endTime) > new Date(ride.startTime) &&
+                    new Date(newRide.endTime) <= new Date(ride.endTime))
+            )
+        );
+    });
+  }
 
   return (
     <>
@@ -84,19 +99,26 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
-
-          const assignButton = (shouldReassign: boolean) => (
-            <Button
-              className={styles.assignButton}
-              onClick={() => {
-                setOpenAssignModal(index);
-                setReassign(shouldReassign);
-              }}
-              small
-            >
-              {shouldReassign ? 'Reassign' : 'Assign'}
-            </Button>
-          );
+          function assignButton(shouldReassign: boolean, newRide: Ride) {
+            return (
+                <Button
+                    className={styles.assignButton}
+                    onClick={() => {
+                        // If shouldReassign is false, || short-circuits and evaluates to the expression to True,
+                        // so we don't perform the linear scan for checking conflicts.
+                        if (!shouldReassign || !hasConflict(rides, newRide)) {
+                            setOpenAssignModal(index);
+                            setReassign(shouldReassign);
+                        } else {
+                            // Change this later most likely.
+                            alert('Driver has a scheduling conflict.');
+                        }
+                    }}
+                >
+                    Assign Ride
+                </Button>
+            );
+        }        
 
           const editButton = (
             <Button
@@ -129,7 +151,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             data: (
               <div className={styles.dataValues}>
                 {editButton}
-                {assignButton(false)}
+                {assignButton(false,ride )}
                 {deleteButton}
               </div>
             ),
@@ -139,7 +161,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             data: (
               <div className={styles.dataValues}>
                 {editButton}
-                {assignButton(true)}
+                {assignButton(true, ride)}
                 {deleteButton}
               </div>
             ),
