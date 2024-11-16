@@ -137,6 +137,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
               <Label htmlFor="address">Address</Label>
               <Input
                 {...register('address', {
+                  // error message if there's no input in address
                   required: 'Please enter an address',
                   validate: isAddress,
                 })}
@@ -147,6 +148,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 aria-required="true"
               />
               {errors.address && (
+                // error message is triggered from enterting something in address
                 <p className={styles.errorMsg}>{errors.address.message}</p>
               )}
             </div>
@@ -175,6 +177,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
                   required: 'Select a Tag',
                 })}
                 id="tag"
+                // tag's default value is "Select a tag" unless it already has a tag set
                 defaultValue={existingLocation?.tag || ''}
                 className={styles.inputContainer}
                 aria-required="true"
