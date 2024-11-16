@@ -1,0 +1,177 @@
+/* Container */
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content area */
+.mainContent {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 1rem;
+  padding: 0 2rem 2rem;
+  position: relative;
+}
+
+/* Left panel - adjust to fit parent */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Search and filter wrapper */
+.searchFilterWrapper {
+  height: 38px;
+  min-height: 38px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 4px;
+  padding: 0 0.5rem;
+}
+
+/* Locations list */
+.locationsList {
+  flex: 1;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 0; 
+  max-height: calc(100vh - 300px);
+}
+
+
+/* Scrollbar styling */
+.locationsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.locationsList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.locationsList::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.locationsList::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Location items */
+.locationItem {
+  background: white;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.locationItem:last-child {
+  margin-bottom: 0;
+}
+
+.locationItem:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.locationItemSelected {
+  border: 2px solid #1976d2;
+}
+
+.locationContent {
+  display: flex;
+}
+
+.locationInfo {
+  flex: 1;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+}
+
+.locationName {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.locationDetails {
+  margin: 0.5rem 0 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Map container */
+.mapContainer {
+  position: relative;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Dialog/Modal styling */
+.dialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.inputLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+}
+
+/* Places autocomplete */
+.placesAutocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.addressInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+:global(.suggestions-container) {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+:global(.suggestion-item) {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+:global(.suggestion-item:hover) {
+  background-color: rgba(0, 0, 0, 0.04);
+}
