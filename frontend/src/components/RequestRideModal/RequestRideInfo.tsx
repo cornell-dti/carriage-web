@@ -65,11 +65,11 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   useEffect(() => {
     if (ride) {
       const defaultStart =
-        ride.startLocation.tag === 'custom'
+        ride.startLocation.tag === 'Custom'
           ? 'Other'
           : ride.startLocation.id ?? '';
       const defaultEnd =
-        ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id ?? '';
+        ride.endLocation.tag === 'Custom' ? 'Other' : ride.endLocation.id ?? '';
       setValue('startLocation', defaultStart);
       setValue('endLocation', defaultEnd);
     }

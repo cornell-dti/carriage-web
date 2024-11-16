@@ -26,6 +26,7 @@
 }
 
 .closeBtn {
+  outline: none;
   border: none;
   cursor: pointer;
   background: none;
@@ -33,7 +34,7 @@
   margin-left: 0.75rem;
 }
 
-.closeBtn:focus {
+.closeBtn:active {
   outline: 3px solid black;
 }
 

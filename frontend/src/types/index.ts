@@ -56,14 +56,14 @@ export type ObjectType = {
 export type Vehicle = VehicleType;
 
 export enum Tag {
-  EAST = 'east',
-  CENTRAL = 'central',
-  NORTH = 'north',
-  WEST = 'west',
-  CTOWN = 'ctown',
-  DTOWN = 'dtown',
-  INACTIVE = 'inactive',
-  CUSTOM = 'custom',
+  EAST = 'East',
+  CENTRAL = 'Central',
+  NORTH = 'North',
+  WEST = 'West',
+  CTOWN = 'C-Town',
+  DTOWN = 'Downtown',
+  INACTIVE = 'Inactive',
+  CUSTOM = 'Custom',
 }
 
 export type Location = LocationType;
