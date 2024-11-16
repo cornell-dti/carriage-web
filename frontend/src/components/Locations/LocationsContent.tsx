@@ -5,7 +5,6 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 
-
 // TODO : Move to the index.ts file cleaner code = better code
 interface Location {
   id: number;
@@ -22,8 +21,11 @@ interface LocationsContentProps {
 }
 
 const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
-  const [filteredLocations, setFilteredLocations] = useState<Location[]>(locations);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
+  const [filteredLocations, setFilteredLocations] =
+    useState<Location[]>(locations);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
 
   // Update filtered locations whenever locations prop changes
   useEffect(() => {
@@ -31,8 +33,8 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
     setFilteredLocations(locations);
   }, [locations]);
 
-  const uniqueTags = useMemo(() => 
-    Array.from(new Set(locations.map(location => location.tag))),
+  const uniqueTags = useMemo(
+    () => Array.from(new Set(locations.map((location) => location.tag))),
     [locations]
   );
 
@@ -53,11 +55,11 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
               {
                 field: 'tag',
                 label: 'Type',
-                options: uniqueTags.map(tag => ({
+                options: uniqueTags.map((tag) => ({
                   value: tag,
-                  label: tag.charAt(0).toUpperCase() + tag.slice(1)
-                }))
-              }
+                  label: tag.charAt(0).toUpperCase() + tag.slice(1),
+                })),
+              },
             ]}
             onFilterApply={handleFilterApply}
           />

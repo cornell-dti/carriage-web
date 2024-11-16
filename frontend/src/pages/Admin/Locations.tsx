@@ -7,7 +7,7 @@ import LocationsContent from 'components/Locations/LocationsContent';
 import { AddLocationModal } from 'components/Locations/AddLocationModal';
 import styles from './page.module.css';
 
-// TODO : Move interface to index.ts 
+// TODO : Move interface to index.ts
 
 interface Location {
   id: number;

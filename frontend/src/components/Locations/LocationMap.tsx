@@ -2,8 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
 import styles from './locations.module.css';
 
-
-// TODO : Move interface description into the index.ts and import cleaner code = better code 
+// TODO : Move interface description into the index.ts and import cleaner code = better code
 interface Location {
   id: number;
   name: string;
@@ -27,36 +26,48 @@ export const LocationMap: React.FC<LocationMapProps> = ({
 }) => {
   const map = useMap();
 
-  const handleMarkerClick = useCallback((location: Location): void => {
-    onLocationSelect(location);
-  }, [onLocationSelect]);
+  const handleMarkerClick = useCallback(
+    (location: Location): void => {
+      onLocationSelect(location);
+    },
+    [onLocationSelect]
+  );
 
   // Check if a location is within the current viewport
-  const isLocationInBounds = useCallback((map: google.maps.Map, location: Location): boolean => {
-    const bounds = map.getBounds();
-    if (!bounds) return false;
-    return bounds.contains({ lat: location.lat, lng: location.lng });
-  }, []);
+  const isLocationInBounds = useCallback(
+    (map: google.maps.Map, location: Location): boolean => {
+      const bounds = map.getBounds();
+      if (!bounds) return false;
+      return bounds.contains({ lat: location.lat, lng: location.lng });
+    },
+    []
+  );
 
   // Simple animation based on whether location is in bounds or not
-  const animateToLocation = useCallback((map: google.maps.Map, location: Location): void => {
-    const isInBounds = isLocationInBounds(map, location);
-    const targetPosition: google.maps.LatLngLiteral = { lat: location.lat, lng: location.lng };
-    const defaultZoom = 13;
+  const animateToLocation = useCallback(
+    (map: google.maps.Map, location: Location): void => {
+      const isInBounds = isLocationInBounds(map, location);
+      const targetPosition: google.maps.LatLngLiteral = {
+        lat: location.lat,
+        lng: location.lng,
+      };
+      const defaultZoom = 13;
 
-    if (!isInBounds) {
-      // If out of bounds, zoom out first then pan
-      map.setZoom(11); // Zoom out
-      setTimeout(() => {
-        map.panTo(targetPosition);
+      if (!isInBounds) {
+        // If out of bounds, zoom out first then pan
+        map.setZoom(11); // Zoom out
         setTimeout(() => {
-          map.setZoom(defaultZoom);
+          map.panTo(targetPosition);
+          setTimeout(() => {
+            map.setZoom(defaultZoom);
+          }, 300);
         }, 300);
-      }, 300);
-    } else {
-      map.panTo(targetPosition);
-    }
-  }, [isLocationInBounds]);
+      } else {
+        map.panTo(targetPosition);
+      }
+    },
+    [isLocationInBounds]
+  );
 
   useEffect(() => {
     if (map && selectedLocation) {
@@ -82,9 +93,7 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         >
           <Pin
             background={
-              selectedLocation?.id === location.id
-                ? '#1976d2'
-                : '#FBBC04'
+              selectedLocation?.id === location.id ? '#1976d2' : '#FBBC04'
             }
             glyphColor="#000"
             borderColor="#000"
