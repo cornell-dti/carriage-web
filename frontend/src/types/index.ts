@@ -15,7 +15,6 @@ export enum Accessibility {
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
   SERVICE_ANIMALS = 'Service Animal',
-  OTHER = 'Other',
 }
 
 export type Availability = {
@@ -107,3 +106,5 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
+
+export type { DriverType, AdminType };

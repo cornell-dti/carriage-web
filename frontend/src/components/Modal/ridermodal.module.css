@@ -1,89 +1,76 @@
 .form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .inputContainer {
   margin-bottom: 1.5rem;
+  width: 100%;
 }
 
+.error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Input styles */
 .inputContainer input[type='text'],
 .inputContainer input[type='tel'],
-.inputContainer input[type='date'],
-.inputContainer select {
-  border: 1px solid #808080;
+.inputContainer input[type='date'] {
   width: 100%;
-  border-radius: 6px;
-  height: 1.75rem; /* Adjust height as needed */
-  font-size: 1rem; /* Adjust font size as needed */
-  /* Add any other relevant styling here */
+  height: 42px;
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.inputContainer input[type='text'],
-.inputContainer input[type='tel'],
-.inputContainer input[type='date'],
-.inputContainer select {
-  border: 1px solid #808080;
-  width: 100%;
-  border-radius: 6px;
-  height: 1.75rem; /* Adjust height as needed */
-  font-size: 1rem; /* Adjust font size as needed */
-  /* Add any other relevant styling here */
+.inputContainer input[type='text']:focus,
+.inputContainer input[type='tel']:focus,
+.inputContainer input[type='date']:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+  outline: none;
 }
 
+/* Grid Layout */
 .rideTime {
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  column-gap: 2rem;
-  row-gap: 2rem;
-  column-gap: 2rem;
-  row-gap: 2rem;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 1.25rem;
 }
 
+/* Grid positioning classes */
 .gridCSmall1 {
   grid-column: 1 / 5;
-  grid-column: 1 / 5;
 }
-
 .gridCSmall2 {
-  grid-column: 5 / 7;
-  grid-column: 5 / 7;
+  grid-column: 5 / 8;
 }
-
 .gridCSmall3 {
-  grid-column: 7 / 11;
-  grid-column: 7 / 11;
+  grid-column: 8 / 13;
 }
-
 .gridCBig1 {
-  grid-column: 1 / 5;
-  grid-column: 1 / 5;
+  grid-column: 1 / 7;
 }
 .gridCBig2 {
-  grid-column: 5 / 11;
-  grid-column: 5 / 11;
+  grid-column: 7 / 13;
 }
 .gridCAll {
-  grid-column: 1 / span 6;
-}
-
-.duration {
-  font-size: 0.9rem;
-}
-
-.to {
-  font-size: 0.9rem;
-  grid-column: 3 / span 1;
-  margin-left: 70%;
-  margin-top: 5%;
-}
-
-.end {
-  grid-column: 4 / span 2;
+  grid-column: 1 / span 7;
 }
 
 .gridR1 {
@@ -96,72 +83,186 @@
   grid-row: 3;
 }
 
-.error {
-  color: #eb0023;
-  font-size: 0.8rem;
-  padding: 0.25rem;
-}
-
-.riderDate {
-  font-size: 1rem !important;
-  color: #808080;
-  color: #808080;
-}
-
-.firstRow {
-  max-width: 100%;
-  max-width: 100%;
-}
-
+/* Duration section */
 .lastRow {
   display: flex;
+  gap: 1.25rem;
+  align-items: center;
 }
 
 .to {
-  margin: 0 1rem;
+  font-size: 1.5rem;
+  height: 100%;
 }
 
-.buttonContainer {
-  display: flex;
-  justify-content: flex-end;
+/* Select input styles */
+.customSelect {
   width: 100%;
 }
 
-.submit {
-  margin-left: 1.5rem;
+.customSelect :global(.customSelectValueContainer__control) {
+  max-height: 60px;
+  min-height: 60px;
+  overflow-y: auto;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.editIcon {
-  width: 4rem;
-  height: auto;
+.customSelect :global(.customSelectValueContainer__value-container) {
+  max-height: 55px;
+  overflow-y: auto;
+  padding: 0 8px;
 }
 
-.editRiderButton {
-  margin: 0;
-  border: 0;
-  padding: 0;
-  background: none;
+.customSelect :global(.customSelectValueContainer__input-container input) {
+  box-shadow: none !important;
+}
+
+.needsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customNeedInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.customNeedField {
+  flex: 1;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.customNeedField:focus {
+  outline: none;
+  border-color: #000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+.customNeedActions {
+  display: flex;
+  gap: 4px;
+}
+
+.customNeedButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: white;
   cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
 }
 
-.label {
-  font-size: smaller;
-  color: #000000;
+/* Green confirm button */
+.customNeedButton:first-child {
+  color: #28a745;
+  border-color: #28a745;
 }
 
-@media screen and (max-width: 1092px) {
+.customNeedButton:first-child:hover {
+  background: #28a745;
+  color: white;
+}
+
+/* Red cancel button */
+.customNeedButton:last-child {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.customNeedButton:last-child:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* Button container */
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.buttonContainer button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.submit:hover {
+  background-color: #333;
+}
+
+.cancel {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.cancel:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Responsive styles */
+@media (max-width: 1092px) {
   .form {
     display: block;
-    max-width: 100%;
   }
 
   .rideTime {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
+
   .label {
     font-weight: bold;
   }
+
   .lastRow {
-    display: block;
+    flex-direction: column;
+    gap: 1rem;
   }
+
+  .buttonContainer {
+    flex-direction: column;
+  }
+
+  .buttonContainer button {
+    width: 100%;
+  }
+}
+
+/* Date input specific styles */
+.riderDate {
+  width: 100%;
+  min-width: 200px;
+}
+
+/* First row inputs */
+.firstRow {
+  width: 100%;
 }
