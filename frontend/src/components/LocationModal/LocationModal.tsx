@@ -173,13 +173,16 @@ const LocationModal: React.FC<LocationModalProps> = ({
               <select
                 {...register('tag', { required: true })}
                 id="tag"
-                defaultValue={existingLocation?.tag}
+                defaultValue={''}
                 className={styles.inputContainer}
                 aria-required="true"
                 style={{ height: '40px' }}
               >
+                <option value="" disabled>
+                  Select a tag
+                </option>
                 {Object.values(Tag).map((value) =>
-                  value === 'custom' ? null : (
+                  value === Tag.CUSTOM ? null : (
                     <option key={value} value={value}>
                       {value}
                     </option>

@@ -48,10 +48,6 @@ input[name='address'] {
   font-size: 0.8rem;
 }
 
-.styledSelect {
-  padding: 0.2rem;
-}
-
 .locationButtons {
   float: right;
   justify-content: space-between;
