@@ -21,7 +21,7 @@
 .inputContainer select {
   width: 124px;
   height: 31px;
-  border-radius: 8px;
+  border-radius: 6px;
 }
 
 textarea[name='info'] {
@@ -33,14 +33,14 @@ input[name='address'] {
 }
 
 .input {
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #808080;
   display: flex;
   flex-direction: column;
   font-size: 0.875rem;
   height: 40px;
   width: 224px;
-  margin-top: 0.1rem;
+  margin-top: 0.3rem;
 }
 
 .errorMsg {
