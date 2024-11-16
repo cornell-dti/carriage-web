@@ -73,23 +73,16 @@ const LocationModal: React.FC<LocationModalProps> = ({
     setIsOpen(true);
   };
 
-  const methods = useForm();
-
   const closeModal = () => {
-    methods.clearErrors();
+    reset();
     setIsOpen(false);
   };
-
-  useEffect(() => {
-    if (!isOpen) {
-      reset();
-    }
-  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const url = existingLocation
       ? `/api/locations/${existingLocation.id}`
       : '/api/locations';
+
     const method = existingLocation ? axios.put : axios.post;
 
     const newLocation = await method(url, data).then((res) => res.data);
@@ -98,9 +91,10 @@ const LocationModal: React.FC<LocationModalProps> = ({
       onAddLocation(newLocation.data);
       showToast('Location has been added.', ToastStatus.SUCCESS);
     } else if (existingLocation && onEditLocation) {
-      onEditLocation(newLocation);
+      onEditLocation(newLocation.data);
       showToast('Location has been updated.', ToastStatus.SUCCESS);
     }
+
     closeModal();
   };
 
