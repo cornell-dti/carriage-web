@@ -17,10 +17,6 @@
   padding: 2rem 2.25rem;
   border-radius: 1rem;
   z-index: 1010;
-
-  /* This fixes the height and width of every modal, which may be necessary. However, location, rider, employee modals have different dimensions, which wil pose a problem later. */
-  height: 386px;
-  width: 616px;
 }
 
 .title {

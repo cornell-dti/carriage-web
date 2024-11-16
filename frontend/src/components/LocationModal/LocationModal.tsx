@@ -117,7 +117,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
           aria-labelledby="location-modal"
         >
           <div className={styles.inputContainer}>
-            <div style={{ gridArea: 'name' }}>
+            <div className={styles.col1}>
               <Label htmlFor="name">Name</Label>
               <Input
                 {...register('name', { required: true })}
@@ -130,7 +130,9 @@ const LocationModal: React.FC<LocationModalProps> = ({
               {errors.name && (
                 <p className={styles.errorMsg}>Please enter a name</p>
               )}
+            </div>
 
+            <div className={styles.col2}>
               <Label htmlFor="address">Address</Label>
               <Input
                 {...register('address', {
@@ -146,22 +148,26 @@ const LocationModal: React.FC<LocationModalProps> = ({
               {errors.address && (
                 <p className={styles.errorMsg}>{errors.address.message}</p>
               )}
+            </div>
 
+            <div className={styles.col1}>
               <Label htmlFor="info">Pickup/Dropoff Info</Label>
-              <Input
+              <textarea
                 {...register('info', { required: true })}
-                type="text"
                 id="info"
                 defaultValue={existingLocation?.info}
                 className={styles.input}
                 aria-required="true"
-              />
+              ></textarea>
+
               {errors.info && (
                 <p className={styles.errorMsg}>
                   Please enter pickup/dropoff info
                 </p>
               )}
+            </div>
 
+            <div className={styles.col2}>
               <Label htmlFor="tag">Tag</Label>
               <select
                 {...register('tag', { required: true })}
@@ -169,6 +175,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 defaultValue={existingLocation?.tag}
                 className={styles.inputContainer}
                 aria-required="true"
+                style={{ height: '40px' }}
               >
                 {Object.values(Tag).map((value) =>
                   value === 'custom' ? null : (
@@ -178,13 +185,15 @@ const LocationModal: React.FC<LocationModalProps> = ({
                   )
                 )}
               </select>
-
-              <div>
-                <Button className={styles.submit} type="submit">
-                  {submitButtonText}
-                </Button>
-              </div>
             </div>
+          </div>
+          <div className={styles.locationButtons}>
+            <Button className={styles.submit} type="submit">
+              {submitButtonText}
+            </Button>
+            <Button className={styles.submit} type="submit">
+              {submitButtonText}
+            </Button>
           </div>
         </form>
       </Modal>
