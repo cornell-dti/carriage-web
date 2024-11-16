@@ -44,7 +44,6 @@ input[name='address'] {
 }
 
 .errorMsg {
-  position: absolute;
   color: #eb0023;
   font-size: 0.8rem;
 }

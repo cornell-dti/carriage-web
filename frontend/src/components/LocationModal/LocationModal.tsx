@@ -1,6 +1,6 @@
 import { parseAddress } from 'addresser';
 import { ToastStatus, useToast } from '../../context/toastContext';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Location, ObjectType, Tag } from '../../types/index';
 import { Button, Input, Label } from '../FormElements/FormElements';
@@ -63,21 +63,28 @@ const LocationModal: React.FC<LocationModalProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { showToast } = useToast();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<FormData>();
+  const { register, handleSubmit, reset, formState } = useForm<FormData>();
+  const { errors } = formState;
 
   const modalTitle = existingLocation ? 'Edit Location' : 'Add a Location';
-  const submitButtonText = existingLocation ? 'Save' : 'Add Location';
+  const submitButtonText = existingLocation ? 'Save Locaation' : 'Add Location';
 
   const openModal = () => {
     setIsOpen(true);
   };
 
-  const closeModal = () => setIsOpen(false);
+  const methods = useForm();
+
+  const closeModal = () => {
+    methods.clearErrors();
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+    }
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const url = existingLocation
@@ -188,9 +195,6 @@ const LocationModal: React.FC<LocationModalProps> = ({
             </div>
           </div>
           <div className={styles.locationButtons}>
-            <Button className={styles.submit} type="submit">
-              {submitButtonText}
-            </Button>
             <Button className={styles.submit} type="submit">
               {submitButtonText}
             </Button>
