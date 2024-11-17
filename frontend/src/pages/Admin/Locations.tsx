@@ -4,8 +4,8 @@ import { Button } from '../../components/FormElements/FormElements';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
 import LocationsContent from 'components/Locations/LocationsContent';
-import { AddLocationModal } from 'components/Locations/AddLocationModal';
 import styles from './page.module.css';
+import { LocationFormModal } from 'components/Locations/LocationFormModal';
 
 // TODO : Move interface to index.ts
 
@@ -69,6 +69,14 @@ const Locations = () => {
     setIsAddDialogOpen(false);
   };
 
+  const handleUpdateLocation = (updatedLocation: Location) => {
+    setLocations((prevLocations) =>
+      prevLocations.map((location) =>
+        location.id === updatedLocation.id ? updatedLocation : location
+      )
+    );
+  };
+
   return (
     <APIProvider
       apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
@@ -86,12 +94,16 @@ const Locations = () => {
           </div>
         </div>
 
-        <LocationsContent locations={locations} />
+        <LocationsContent
+          locations={locations}
+          onUpdateLocation={handleUpdateLocation}
+        />
 
-        <AddLocationModal
+        <LocationFormModal
           open={isAddDialogOpen}
           onClose={() => setIsAddDialogOpen(false)}
-          onAdd={handleAddLocation}
+          onSubmit={handleAddLocation}
+          mode="add"
         />
       </main>
     </APIProvider>

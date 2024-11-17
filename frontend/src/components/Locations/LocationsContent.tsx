@@ -18,9 +18,13 @@ interface Location {
 
 interface LocationsContentProps {
   locations: Location[];
+  onUpdateLocation?: (updatedLocation: Location) => void;
 }
 
-const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
+const LocationsContent: React.FC<LocationsContentProps> = ({
+  locations,
+  onUpdateLocation,
+}) => {
   const [filteredLocations, setFilteredLocations] =
     useState<Location[]>(locations);
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
@@ -42,10 +46,26 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
     setFilteredLocations(filteredItems);
   };
 
-  // Handle list item click - opens dialog directly
   const handleListItemClick = (location: Location) => {
-    setSelectedLocation(location); // For map centering
-    setSelectedLocationForDialog(location); // Opens dialog
+    setSelectedLocation(location);
+    setSelectedLocationForDialog(location);
+  };
+
+  const handleLocationUpdate = (updatedLocation: Location) => {
+    if (onUpdateLocation) {
+      onUpdateLocation(updatedLocation);
+
+      // Update the selected location with new data
+      setSelectedLocation(updatedLocation);
+      setSelectedLocationForDialog(updatedLocation);
+
+      // Update the filtered locations list
+      setFilteredLocations((prev) =>
+        prev.map((loc) =>
+          loc.id === updatedLocation.id ? updatedLocation : loc
+        )
+      );
+    }
   };
 
   return (
@@ -118,6 +138,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
       <LocationDialog
         location={selectedLocationForDialog}
         onClose={() => setSelectedLocationForDialog(null)}
+        onSave={handleLocationUpdate}
       />
     </div>
   );

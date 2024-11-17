@@ -131,13 +131,6 @@
   padding-top: 1rem;
 }
 
-.inputLabel {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 0.9rem;
-}
-
 /* Places autocomplete */
 .placesAutocomplete {
   position: relative;
@@ -175,6 +168,7 @@
   background-color: rgba(0, 0, 0, 0.04);
 }
 
+/* Map popup styling */
 .mapPopup {
   padding: 0.5rem;
   min-width: 200px;
@@ -190,18 +184,4 @@
   margin: 0.5rem 0;
   font-size: 0.9rem;
   color: #666;
-}
-
-.dialogContent {
-  padding: 1rem 0;
-}
-
-.dialogContent h6 {
-  color: #1976d2;
-  margin-bottom: 0.5rem;
-}
-
-.dialogContent p {
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
 }
