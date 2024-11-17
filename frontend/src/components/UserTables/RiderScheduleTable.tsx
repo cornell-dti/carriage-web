@@ -51,70 +51,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   };
 
   // returns a list of dummy recurring rides
-  const generateRecurringRides = useCallback(
-    (rides: Ride[]): Ride[] => {
-      const recurringRides: Ride[] = [];
-      rides.forEach((originalRide) => {
-        let origEndDate;
-        if (originalRide.recurring) {
-          origEndDate = moment(originalRide.endDate!);
-        }
-        // create dummy rides only for active recurring rides
-        if (origEndDate && origEndDate >= moment(curDate)) {
-          const origStartTime = moment(originalRide.startTime);
-          const rideStart = origStartTime;
-          const days = originalRide.recurringDays!;
-          let dayIndex = days.indexOf(rideStart.day());
-          while (rideStart <= origEndDate) {
-            // find the next occurrence
-            dayIndex = dayIndex === days.length - 1 ? 0 : dayIndex + 1;
-            const daysUntilNextOccurrence = daysUntilWeekday(
-              rideStart,
-              days[dayIndex]
-            );
-            rideStart.date(rideStart.date() + daysUntilNextOccurrence);
-            const now = moment();
-            const rideGenerationTime = moment().hour(10).minute(5);
-            const tomorrow = moment().add(1, 'day').startOf('day');
-            const rideHasOccurred = now.isAfter(rideStart);
-            const rideHasBeenGenerated =
-              now.isAfter(rideGenerationTime) &&
-              rideStart.isSame(tomorrow, 'day');
-            const shouldRideDisplay = !(
-              rideHasOccurred || rideHasBeenGenerated
-            );
-
-            // add to list if ride's start date is not in list of deleted dates
-            if (
-              !originalRide.deleted?.includes(rideStart.format('YYYY-MM-DD')) &&
-              rideStart.isSameOrBefore(origEndDate, 'day') &&
-              shouldRideDisplay
-            ) {
-              const rideInstance: Ride = {
-                id: originalRide.id,
-                parentRide: originalRide,
-                type: Type.UNSCHEDULED,
-                status: Status.NOT_STARTED,
-                startLocation: originalRide.startLocation,
-                endLocation: originalRide.endLocation,
-                startTime: rideStart.toISOString(),
-                endTime: originalRide.endTime,
-                rider: originalRide.rider,
-                driver: originalRide.driver,
-                recurring: true,
-                late: false,
-                recurringDays: originalRide.recurringDays,
-                endDate: originalRide.endDate,
-              };
-              recurringRides.push(rideInstance);
-            }
-          }
-        }
-      });
-      return recurringRides;
-    },
-    [curDate]
-  );
+  
 
   // returns a map with date as keys and a list of rides as values
   const getRideMap = useCallback((rides: Ride[]): ObjectType => {
@@ -135,10 +72,10 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   }, []);
 
   useEffect(() => {
-    let allRides = generateRecurringRides(data).concat(data);
+    let allRides = (data);
     allRides = allRides.filter(filterRides).sort(compRides);
     rideMapToArray(getRideMap(allRides));
-  }, [compRides, data, filterRides, generateRecurringRides, getRideMap]);
+  }, [compRides, data, filterRides, getRideMap]);
 
   // returns date in the format "MM/DD/YYYY"
   const formatDate = (date: string): string =>
