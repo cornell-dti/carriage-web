@@ -2,10 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import { LocationMap } from './LocationMap';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { Chip } from '@mui/material';
+import { Chip, Button } from '@mui/material';
 import styles from './locations.module.css';
+import LocationDialog from './LocationDialog';
 
-// TODO : Move to the index.ts file cleaner code = better code
 interface Location {
   id: number;
   name: string;
@@ -26,10 +26,10 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
+  const [selectedLocationForDialog, setSelectedLocationForDialog] =
+    useState<Location | null>(null);
 
-  // Update filtered locations whenever locations prop changes
   useEffect(() => {
-    console.log('Locations updated in LocationsContent:', locations);
     setFilteredLocations(locations);
   }, [locations]);
 
@@ -39,13 +39,17 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
   );
 
   const handleFilterApply = (filteredItems: Location[]) => {
-    console.log('Filter applied:', filteredItems);
     setFilteredLocations(filteredItems);
+  };
+
+  // Handle list item click - opens dialog directly
+  const handleListItemClick = (location: Location) => {
+    setSelectedLocation(location); // For map centering
+    setSelectedLocationForDialog(location); // Opens dialog
   };
 
   return (
     <div className={styles.mainContent}>
-      {/* Left Panel */}
       <div className={styles.leftPanel}>
         <div className={styles.searchFilterWrapper}>
           <SearchAndFilter
@@ -69,7 +73,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
           {filteredLocations.map((location) => (
             <div
               key={location.id}
-              onClick={() => setSelectedLocation(location)}
+              onClick={() => handleListItemClick(location)}
               className={`${styles.locationItem} ${
                 selectedLocation?.id === location.id
                   ? styles.locationItemSelected
@@ -102,14 +106,19 @@ const LocationsContent: React.FC<LocationsContentProps> = ({ locations }) => {
         </div>
       </div>
 
-      {/* Map */}
       <div className={styles.mapContainer}>
         <LocationMap
           locations={filteredLocations}
           selectedLocation={selectedLocation}
           onLocationSelect={setSelectedLocation}
+          onViewDetails={setSelectedLocationForDialog}
         />
       </div>
+
+      <LocationDialog
+        location={selectedLocationForDialog}
+        onClose={() => setSelectedLocationForDialog(null)}
+      />
     </div>
   );
 };

@@ -1,8 +1,14 @@
-import React, { useCallback, useEffect } from 'react';
-import { Map, AdvancedMarker, Pin, useMap } from '@vis.gl/react-google-maps';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Map,
+  AdvancedMarker,
+  Pin,
+  useMap,
+  InfoWindow,
+} from '@vis.gl/react-google-maps';
+import { Button, Chip } from '@mui/material';
 import styles from './locations.module.css';
 
-// TODO : Move interface description into the index.ts and import cleaner code = better code
 interface Location {
   id: number;
   name: string;
@@ -16,64 +22,47 @@ interface Location {
 interface LocationMapProps {
   locations: Location[];
   selectedLocation: Location | null;
-  onLocationSelect: (location: Location) => void;
+  onLocationSelect: (location: Location | null) => void;
+  onViewDetails: (location: Location) => void;
 }
 
 export const LocationMap: React.FC<LocationMapProps> = ({
   locations,
   selectedLocation,
   onLocationSelect,
+  onViewDetails,
 }) => {
   const map = useMap();
+  const [markerWithPopup, setMarkerWithPopup] = useState<Location | null>(null);
 
   const handleMarkerClick = useCallback(
     (location: Location): void => {
-      onLocationSelect(location);
-    },
-    [onLocationSelect]
-  );
-
-  // Check if a location is within the current viewport
-  const isLocationInBounds = useCallback(
-    (map: google.maps.Map, location: Location): boolean => {
-      const bounds = map.getBounds();
-      if (!bounds) return false;
-      return bounds.contains({ lat: location.lat, lng: location.lng });
-    },
-    []
-  );
-
-  // Simple animation based on whether location is in bounds or not
-  const animateToLocation = useCallback(
-    (map: google.maps.Map, location: Location): void => {
-      const isInBounds = isLocationInBounds(map, location);
-      const targetPosition: google.maps.LatLngLiteral = {
-        lat: location.lat,
-        lng: location.lng,
-      };
-      const defaultZoom = 13;
-
-      if (!isInBounds) {
-        // If out of bounds, zoom out first then pan
-        map.setZoom(11); // Zoom out
-        setTimeout(() => {
-          map.panTo(targetPosition);
-          setTimeout(() => {
-            map.setZoom(defaultZoom);
-          }, 300);
-        }, 300);
+      if (markerWithPopup?.id === location.id) {
+        // If clicking the same marker, close popup
+        setMarkerWithPopup(null);
+        onLocationSelect(null);
       } else {
-        map.panTo(targetPosition);
+        // If clicking a new marker, show its popup
+        setMarkerWithPopup(location);
+        onLocationSelect(location);
       }
     },
-    [isLocationInBounds]
+    [markerWithPopup, onLocationSelect]
   );
 
+  // Center map on selection (from either list or marker)
   useEffect(() => {
     if (map && selectedLocation) {
-      animateToLocation(map, selectedLocation);
+      map.panTo({ lat: selectedLocation.lat, lng: selectedLocation.lng });
     }
-  }, [map, selectedLocation, animateToLocation]);
+  }, [map, selectedLocation]);
+
+  // Close popup when selection is cleared
+  useEffect(() => {
+    if (!selectedLocation) {
+      setMarkerWithPopup(null);
+    }
+  }, [selectedLocation]);
 
   return (
     <Map
@@ -101,6 +90,33 @@ export const LocationMap: React.FC<LocationMapProps> = ({
           />
         </AdvancedMarker>
       ))}
+
+      {markerWithPopup && (
+        <InfoWindow
+          position={{
+            lat: markerWithPopup.lat + 0.005,
+            lng: markerWithPopup.lng,
+          }}
+          onCloseClick={() => {
+            setMarkerWithPopup(null);
+            onLocationSelect(null);
+          }}
+        >
+          <div className={styles.mapPopup}>
+            <h4>{markerWithPopup.name}</h4>
+            <Chip label={markerWithPopup.tag} size="small" sx={{ mb: 1 }} />
+            <p>{markerWithPopup.address}</p>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => onViewDetails(markerWithPopup)}
+              sx={{ mt: 1 }}
+            >
+              View Details
+            </Button>
+          </div>
+        </InfoWindow>
+      )}
     </Map>
   );
 };
