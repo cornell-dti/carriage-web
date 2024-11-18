@@ -45,6 +45,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     '',
   ];
 
+  // hasConflict(rides, newRide) is true if and only if the driver of the new ride has a conflict (Date object time-overlap)
+  // with an existing ride in the table (which is represented as array of rides).
   function hasConflict(rides: Ride[], newRide: Ride): boolean {
     return rides.some((ride) => {
       return (
@@ -97,7 +99,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
-          function assignButton(shouldReassign: boolean, newRide: Ride) {
+
+          const assignButton = (shouldReassign: boolean, newRide: Ride) => {
             return (
               <Button
                 className={styles.assignButton}
@@ -108,7 +111,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                     setOpenAssignModal(index);
                     setReassign(shouldReassign);
                   } else {
-                    // Change this later most likely.
+                    // To be changed with a UI update later, most likely.
                     alert('Driver has a scheduling conflict.');
                   }
                 }}
@@ -116,7 +119,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 Assign Ride
               </Button>
             );
-          }
+          };
 
           const editButton = (
             <Button
