@@ -26,9 +26,46 @@
 .rightSection > div {
   margin-left: 14px;
 }
+
 .hidden {
   display: none;
 }
+
 .studentTable {
   margin-top: 1rem;
+}
+
+.statsAndSearch {
+  padding: 0 2rem 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  height: 48px;
+}
+
+.statsBoxContainer {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.searchFilter {
+  flex-grow: 1;
+  height: 80%;
+  display: flex;
+}
+
+.searchFilter > div {
+  width: 100%;
+  height: 80%;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 1rem;
 }

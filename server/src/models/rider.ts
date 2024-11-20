@@ -11,7 +11,6 @@ export enum Accessibility {
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
   SERVICE_ANIMALS = 'Service Animal',
-  OTHER = 'Other',
 }
 
 export enum Organization {
@@ -26,7 +25,6 @@ export type RiderType = {
   phoneNumber: string;
   email: string;
   accessibility?: Accessibility[];
-  // accessibility?: string;
   organization?: Organization;
   description?: string;
   joinDate: string;

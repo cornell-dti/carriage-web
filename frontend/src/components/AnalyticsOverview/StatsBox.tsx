@@ -1,24 +1,46 @@
 import React from 'react';
-import styles from './AnalyticsOverview.module.css';
+import styles from './StatsBox.module.css';
 
-export type StatsBoxProps = {
+export type ColorVariant = 'green' | 'gray' | 'red' | 'default';
+
+export interface StatsBoxProps {
   icon: string;
   alt: string;
   stats: string | number;
   description: string;
-};
+  className?: string;
+  variant?: ColorVariant;
+}
 
-const StatsBox = ({ icon, alt, stats, description }: StatsBoxProps) => (
-  <div className={styles.statsbox}>
+const StatsBox: React.FC<StatsBoxProps> = ({
+  icon,
+  alt,
+  stats,
+  description,
+  className = '',
+  variant = 'default',
+}) => (
+  <div className={`${styles.statsbox} ${styles[variant]} ${className}`}>
     <div className={styles.left}>
-      {icon !== '' ? (
-        <img className={styles.icon} src={icon} alt={alt} />
+      {icon ? (
+        <div className={`${styles.iconWrapper} ${styles[`icon-${variant}`]}`}>
+          <img
+            className={styles.icon}
+            src={icon}
+            alt={alt}
+            width={40}
+            height={40}
+          />
+        </div>
       ) : (
-        <span className={styles.icon} />
+        <div
+          className={`${styles.iconWrapper} ${styles[`icon-${variant}`]}`}
+          aria-hidden="true"
+        />
       )}
     </div>
     <div className={styles.right}>
-      <p className={styles.stats}>{stats}</p>
+      <p className={`${styles.stats} ${styles[`stats-${variant}`]}`}>{stats}</p>
       <p className={styles.description}>{description}</p>
     </div>
   </div>

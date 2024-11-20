@@ -35,10 +35,8 @@ const RoutesComponent = () => {
           <Route path="employees" element={<Employees />} />
           <Route path="admins/:id" element={<EmployeeDetail />} />
           <Route path="drivers/:id" element={<EmployeeDetail />} />
-          <Route path="riders" element={<Outlet />}>
-            <Route index element={<Students />} />
-            <Route path=":id" element={<RiderDetail />} />
-          </Route>
+          <Route path="riders" element={<Students />} />
+          <Route path="riders/:id" element={<RiderDetail />} />
           <Route path="locations" element={<Locations />} />
           <Route path="analytics" element={<Analytics />} />
         </Routes>
