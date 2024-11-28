@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file (if available)
 dotenv.config();
 
-//const BUCKET_NAME = 'dti-carriage-staging-public'; old bucket
+// const BUCKET_NAME = 'dti-carriage-staging-public'; old bucket
 const BUCKET_NAME = 'carriage-images';
 const router = express.Router();
 const s3Bucket = new S3({ region: 'us-east-2' });
@@ -60,10 +60,10 @@ router.post('/', validateUser('User'), (req, res) => {
           break;
         default:
           res.status(400).send({ err: 'Invalid table.' });
-          console.error('Invalid table.')
+          console.error('Invalid table.');
           break;
       }
-      console.log('Success upload.')
+      console.log('Success upload.');
     }
   });
 });
