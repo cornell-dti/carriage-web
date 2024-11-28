@@ -72,9 +72,6 @@ const EmployeeModal = ({
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
-  const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
-  const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
   const closeModal = () => {
     methods.clearErrors();
     setIsOpen(false);
@@ -99,118 +96,131 @@ const EmployeeModal = ({
     return result;
   };
 
-  const uploadPhotoForEmployee = async (
+  async function uploadEmployeePhoto(
     employeeId: string,
     table: string,
     refresh: () => Promise<void>,
-    isCreate: boolean // show toast if new employee is created
-  ) => {
-    const photo = {
+    imageBase64: string
+  ): Promise<void> {
+    const photoData = {
       id: employeeId,
       tableName: table,
       fileBuffer: imageBase64,
     };
-    // Upload image
-    await axios
-      .post('/api/upload', photo)
-      .then(() => {
-        refresh();
-      })
-      .catch((err) => console.log(err));
-  };
 
-  const createNewEmployee = async (
+    try {
+      console.log('Uploading photo for employee:', employeeId);
+
+      // Make the photo upload request
+      await axios.post('/api/upload', photoData);
+
+      console.log('Photo uploaded successfully.');
+
+      // Refresh after the upload is complete
+      //await refresh();
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+
+      // Show a toast notification for the failure (optional)
+      showToast('Failed to upload the photo.', ToastStatus.ERROR);
+
+      // Optionally throw the error to propagate it if needed
+      throw error;
+    }
+  }
+
+  async function createEmployee(
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
     table: string
-  ) => {
-    const res = await axios.post(endpoint, employeeData);
-    if (imageBase64 === '') {
-      // If no image has been uploaded, create new employee
-      refresh();
+  ): Promise<any> {
+    try {
+      // Create the employee
+      const { data: createdEmployee } = await axios.post(
+        endpoint,
+        employeeData
+      );
+
+      // Upload the photo if provided
+      if (imageBase64) {
+        await uploadEmployeePhoto(
+          createdEmployee.id || '',
+          table,
+          refresh,
+          imageBase64
+        );
+        console.log('Photo uploaded successfully.');
+      }
+
+      // Refresh after successful creation and photo upload
+      //await refresh();
+
       showToast('The employee has been added.', ToastStatus.SUCCESS);
-    } else {
-      const { data: createdEmployee } = await res.data;
-      uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
-    }
-    return res;
-  };
 
-  const updateExistingEmployee = async (
+      return createdEmployee;
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      showToast('Failed to add the employee.', ToastStatus.ERROR);
+      throw error;
+    }
+  }
+
+  async function updateEmployee(
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
     table: string
-  ) => {
-    const updatedEmployee = await axios
-      .put(`${endpoint}/${existingEmployee!.id}`, employeeData)
-      .then((res) => {
-        refresh();
-        showToast('The employee has been edited.', ToastStatus.SUCCESS);
-        return res.data;
-      });
-    if (imageBase64 !== '') {
-      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
-    }
-    return updatedEmployee;
-  };
-
-  const createOrUpdateDriver = async (
-    driver: AdminData | DriverData,
-    isNewDriver = false
-  ) => {
-    if (isNewDriver) {
-      return await createNewEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
+  ): Promise<any> {
+    try {
+      // Update the employee
+      const { data: updatedEmployee } = await axios.put(
+        `${endpoint}/${existingEmployee!.id}`,
+        employeeData
       );
+
+      // Upload the photo if provided
+      if (imageBase64) {
+        await uploadEmployeePhoto(
+          employeeData?.id || '',
+          table,
+          refresh,
+          imageBase64
+        );
+        console.log('Photo uploaded successfully.');
+      }
+
+      //await refresh();
+      showToast('The employee has been edited.', ToastStatus.SUCCESS);
+      return updatedEmployee;
+    } catch (error) {
+      console.error('Error updating employee:', error);
+      showToast('Failed to edit the employee.', ToastStatus.ERROR);
+      throw error;
+    }
+  }
+
+  async function deleteEmployee(
+    id: string | undefined,
+    emptype: 'drivers' | 'admins'
+  ) {
+    if (id === undefined) {
+      console.log('Invalid/Null ID: deleteEmployee');
     } else {
-      return await updateExistingEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
-      );
+      await axios.delete(`/api/${emptype}/${id}`);
     }
-  };
+  }
 
-  const createOrUpdateAdmin = async (admin: AdminData, isNewAdmin = false) => {
-    if (isNewAdmin) {
-      await createNewEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    } else {
-      await updateExistingEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    }
-  };
-
-  const deleteDriver = async (id: string | undefined) => {
-    await axios.delete(`/api/drivers/${id}`);
-  };
-
-  const deleteAdmin = async (id: string | undefined) => {
-    await axios.delete(`/api/admins/${id}`);
-  };
-
-  const onSubmit = async (data: ObjectType) => {
+  async function onSubmit(data: ObjectType) {
+    console.log(selectedRole)
+    console.log("console log is here")
     const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
 
     const driver = {
       firstName,
       lastName,
-      email: netid + '@cornell.edu',
+      email: `${netid}@cornell.edu`,
       phoneNumber,
       startDate,
       availability: parseAvailability(availability),
@@ -219,103 +229,162 @@ const EmployeeModal = ({
     const admin = {
       firstName,
       lastName,
-      email: netid + '@cornell.edu',
-      type: selectedRole.filter((role) => !(role === 'driver')),
+      email: `${netid}@cornell.edu`,
+      type: selectedRole.filter((role) => role !== 'driver'),
       phoneNumber,
       availability: parseAvailability(availability),
       isDriver: selectedRole.includes('driver'),
     };
 
-    const existingDriver = existingEmployee?.isDriver === undefined;
-    const existingAdmin = existingEmployee?.isDriver !== undefined;
-
-    if (existingEmployee) {
-      if (selectedRole.includes('driver')) {
-        if (selectedRole.some((role) => role.includes('admin'))) {
-          if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(admin, false);
-          } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(
-              { ...admin, id: existingEmployee.id },
-              true
-            );
-          } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
-            );
-            await createOrUpdateAdmin(admin, false);
-          }
-        } else {
-          if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
-            await deleteAdmin(existingEmployee.id);
-          } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
-          } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
-            );
-            await deleteAdmin(existingEmployee.id);
-          }
-        }
-      } else {
+    const existingDriver = existingEmployee?.isDriver === true;
+    const existingAdmin = existingEmployee?.isDriver === false;
+    
+    switch (true) {
+      case existingEmployee &&
+        selectedRole.includes('driver') &&
+        selectedRole.includes('admins'):
         if (existingDriver && existingAdmin) {
-          await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(admin, false);
+          await updateEmployee(
+            driver,
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+          await updateEmployee(admin, '/api/admins', refreshAdmins, 'admins');
         } else if (existingDriver) {
-          await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(
+          await updateEmployee(
+            driver,
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+          await createEmployee(
             { ...admin, id: existingEmployee.id },
-            true
+            '/api/admins',
+            refreshAdmins,
+            'admins'
+          );
+        } else if (existingAdmin) {
+          await createEmployee(
+            { ...driver, id: existingEmployee.id },
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+          await updateEmployee(admin, '/api/admins', refreshAdmins, 'admins');
+        }
+        break;
+
+      case existingEmployee && selectedRole.includes('driver'):
+        if (existingDriver && existingAdmin) {
+          await updateEmployee(
+            driver,
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+          await deleteEmployee(existingEmployee?.id, 'admins');
+        } else if (existingDriver) {
+          await updateEmployee(
+            driver,
+            '/api/Drivers',
+            refreshDrivers,
+            'drivers'
+          );
+        } else if (existingAdmin) {
+          await createEmployee(
+            { ...driver, id: existingEmployee.id },
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+          await deleteEmployee(existingEmployee?.id, 'admins');
+        }
+        break;
+
+      case existingEmployee && selectedRole.includes('admin'):
+        if (existingDriver && existingAdmin) {
+          await deleteEmployee(existingEmployee?.id, 'drivers');
+          await updateEmployee(admin, '/api/admins', refreshAdmins, 'admins');
+        } else if (existingDriver) {
+          await deleteEmployee(existingEmployee?.id, 'drivers');
+          await createEmployee(
+            { ...admin, id: existingEmployee.id },
+            '/api/admins',
+            refreshAdmins,
+            'admins'
           );
         }
-      }
-    } else {
-      if (selectedRole.includes('driver')) {
-        if (selectedRole.some((role) => role.includes('admin'))) {
-          const id = (await createOrUpdateDriver(driver, true)).data.data.id;
-          await createOrUpdateAdmin({ ...admin, id: id }, true);
-        } else {
-          await createOrUpdateDriver(driver, true);
+        break;
+
+      default:
+        if (selectedRole.includes('driver') && selectedRole.includes('admin')) {
+          const id = (
+            await createEmployee(
+              driver,
+              '/api/drivers',
+              refreshDrivers,
+              'drivers'
+            )
+          ).id;
+          await createEmployee(
+            { ...admin, id },
+            '/api/admins',
+            refreshAdmins,
+            'admins'
+          );
+        } else if (selectedRole.includes('driver')) {
+          await createEmployee(
+            driver,
+            '/api/drivers',
+            refreshDrivers,
+            'drivers'
+          );
+        } else if (selectedRole.includes('admin')) {
+          await createEmployee(admin, '/api/admins', refreshAdmins, 'admins');
         }
-      } else {
-        await createOrUpdateAdmin(admin, true);
-      }
+        break;
     }
     closeModal();
-  };
+  }
 
-  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+  async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
 
-    if (e.target.files && e.target.files[0]) {
+    const { files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
       const reader = new FileReader();
-      const file = e.target.files[0];
+
+      console.log('Starting to read the file:', file.name);
       reader.readAsDataURL(file);
-      reader.onload = function () {
-        let res = reader.result;
-        if (res) {
-          res = res.toString();
-          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
-          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
-          setImageBase64(strBase64);
+
+      reader.onload = async () => {
+        const base64 = reader.result?.toString().split(',')[1]; // Extract base64
+        console.log(
+          'File read successfully. Base64 extracted:',
+          base64 ? base64.substring(0, 20) + '...' : 'No base64 data'
+        );
+
+        if (base64) {
+          setImageBase64(base64); // Save the base64 string
+          console.error('Set base64 data.');
         }
       };
-      reader.onerror = function (error) {
-        console.log('Error reading file: ', error);
+
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
       };
     } else {
-      console.log('Undefined file upload');
+      console.error('No file selected.');
+      alert('No file selected');
     }
   }
+
   return (
     <>
       <Modal
-        title={modalTitle}
+        title={existingEmployee ? 'Edit Profile' : 'Add an Employee'}
         isOpen={isOpen}
         onClose={closeModal}
         id="employee-modal"
@@ -324,9 +393,13 @@ const EmployeeModal = ({
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
+
         <FormProvider {...methods}>
           <form
-            onSubmit={methods.handleSubmit(onSubmit)}
+            onSubmit={(e) => {
+              console.log('Form Event:', e);
+              methods.handleSubmit(onSubmit);
+            }}
             aria-labelledby="employee-modal"
           >
             <EmployeeInfo
@@ -346,8 +419,12 @@ const EmployeeModal = ({
               selectedRoles={selectedRole}
               setSelectedRoles={setSelectedRole}
             />
-            <Button className={styles.submit} type="submit">
-              {submitButtonText}
+            <Button
+              className={styles.submit}
+              type="submit"
+              onClick={(e) => console.log(e)}
+            >
+              {existingEmployee ? 'Save' : 'Add'}
             </Button>
           </form>
         </FormProvider>

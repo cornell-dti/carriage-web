@@ -36,7 +36,17 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '500kb' }));
 app.use(express.urlencoded({ extended: false }));
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
 
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body); // Requires body-parser or express.json()
+  next();
+});
 app.use('/api/riders', rider);
 app.use('/api/drivers', driver);
 app.use('/api/admins', admin);

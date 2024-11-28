@@ -2,6 +2,8 @@ import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 
+const IMAGE_SIZE_LIMIT = 10000000;
+
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   existingPhoto?: string;
@@ -12,23 +14,23 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
     existingPhoto ? `${existingPhoto}` : ''
   );
   const inputRef = createRef<HTMLInputElement>();
+
   /* This is for accessibility purposes only */
   const handleKeyboardPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       inputRef.current && inputRef.current.click();
     }
   };
+
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     const { files } = e.target;
-    if (files && files[0] && files[0].size < 500000) {
-      const file = files[0];
-      const photoURL = URL.createObjectURL(file);
-      setImageURL(photoURL);
+    if (files && files[0] && files[0].size < IMAGE_SIZE_LIMIT) {
+      setImageURL(URL.createObjectURL(files[0]));
+      imageChange(e);
     } else {
-      console.log('invalid file');
+      alert('File is too large');
     }
-    imageChange(e);
   }
 
   return (
