@@ -119,7 +119,6 @@ const EmployeeModal = ({
     }
     refresh();
   }
-  
 
   async function createEmployee(
     id: string,
@@ -195,25 +194,44 @@ const EmployeeModal = ({
     const apiEndpoint = type === 'admins' ? '/api/admins' : '/api/drivers';
     const refreshFunction = type === 'admins' ? refreshAdmins : refreshDrivers;
     const entityType = type === 'admins' ? 'Admins' : 'Drivers';
-  
+
     if (isNewEmployee) {
-      return await createEmployee(uid, employee, apiEndpoint, refreshFunction, entityType);
+      return await createEmployee(
+        uid,
+        employee,
+        apiEndpoint,
+        refreshFunction,
+        entityType
+      );
     } else {
-      return await updateEmployee(uid, employee, apiEndpoint, refreshFunction, entityType);
+      return await updateEmployee(
+        uid,
+        employee,
+        apiEndpoint,
+        refreshFunction,
+        entityType
+      );
     }
   };
-  
-  async function processRoles(selectedRole: any, existingEmployee: any , admin: any , driver: any) {
+
+  async function processRoles(
+    selectedRole: any,
+    existingEmployee: any,
+    admin: any,
+    driver: any
+  ) {
     const containsDriver = selectedRole.includes('driver');
-    const containsAdmin = (containsDriver && selectedRole.length > 1) || (!containsDriver && selectedRole.length > 1);
+    const containsAdmin =
+      (containsDriver && selectedRole.length > 1) ||
+      (!containsDriver && selectedRole.length > 1);
     const acc = [];
-  
+
     if (containsAdmin) acc.push('admins');
     if (containsDriver) acc.push('drivers');
-  
+
     // Process roles in acc
     let iteration = 0;
-  
+
     for (const role of acc) {
       switch (role) {
         case 'admins':
@@ -224,42 +242,68 @@ const EmployeeModal = ({
               await deleteEmployee(existingEmployee.id, 'drivers');
             }
             // Update or create admin
-            await createOrUpdateEmployee(admin, existingEmployee.id || '', false, 'admins');
+            await createOrUpdateEmployee(
+              admin,
+              existingEmployee.id || '',
+              false,
+              'admins'
+            );
           } else {
             // Create new admin
-            await createOrUpdateEmployee(admin, '', true && iteration === 0, 'admins');
+            await createOrUpdateEmployee(
+              admin,
+              '',
+              true && iteration === 0,
+              'admins'
+            );
           }
           break;
-  
+
         case 'drivers':
           console.log('Processing driver role...');
           if (existingEmployee) {
             if (existingEmployee.isDriver) {
               // Update driver
-              await createOrUpdateEmployee(driver, existingEmployee.id || '', false, 'drivers');
+              await createOrUpdateEmployee(
+                driver,
+                existingEmployee.id || '',
+                false,
+                'drivers'
+              );
             } else if (existingEmployee.isAdmin && !containsAdmin) {
               // Transition from admin to driver
               await deleteEmployee(existingEmployee.id, 'admins');
-              await createOrUpdateEmployee(driver, existingEmployee.id || '', false , 'drivers');
+              await createOrUpdateEmployee(
+                driver,
+                existingEmployee.id || '',
+                false,
+                'drivers'
+              );
             }
           } else {
-            await createOrUpdateEmployee(driver, '', true && iteration === 0, 'drivers');
+            await createOrUpdateEmployee(
+              driver,
+              '',
+              true && iteration === 0,
+              'drivers'
+            );
           }
           break;
-  
+
         default:
           console.warn(`Unhandled role in acc: ${role}`);
           break;
       }
-  
+
       // Increment iteration to ensure no duplicate creation
       iteration += 1;
     }
   }
-  
+
   async function onSubmit(data: ObjectType) {
-    const { firstName, lastName, netid, phoneNumber, startDate, availability } = data;
-  
+    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
+      data;
+
     const driver = {
       firstName,
       lastName,
@@ -268,7 +312,7 @@ const EmployeeModal = ({
       startDate,
       availability: parseAvailability(availability),
     };
-  
+
     const admin = {
       firstName,
       lastName,
@@ -278,7 +322,7 @@ const EmployeeModal = ({
       availability: parseAvailability(availability),
       isDriver: selectedRole.includes('driver'),
     };
-  
+
     try {
       await processRoles(selectedRole, existingEmployee, admin, driver);
     } catch (error) {
@@ -287,7 +331,7 @@ const EmployeeModal = ({
       closeModal();
     }
   }
-  
+
   async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
 
