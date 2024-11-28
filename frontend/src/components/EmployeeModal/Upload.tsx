@@ -2,7 +2,7 @@ import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 
-const IMAGE_SIZE_LIMIT = 10000000;
+const IMAGE_SIZE_LIMIT = 50000;
 
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

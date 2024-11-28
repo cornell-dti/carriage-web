@@ -86,7 +86,8 @@ const EmployeeCard = ({
         firstName={firstName}
         lastName={lastName}
         netId={netId}
-        photoLink={photoLink ? photoLink : 'frontend/public/logo512.png'}
+        photoLink={
+          photoLink }
       >
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
