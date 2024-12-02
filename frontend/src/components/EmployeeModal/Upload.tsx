@@ -3,7 +3,6 @@ import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 //import { useToast, ToastStatus } from '../../context/toastContext';
 
-
 const IMAGE_SIZE_LIMIT = 50000;
 
 type UploadProps = {
@@ -31,8 +30,8 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       setImageURL(URL.createObjectURL(files[0]));
       imageChange(e);
     } else {
-      alert(`Images must be under ${IMAGE_SIZE_LIMIT} MB`) // works but not preferred.
-      //showToast(`Images must be under ${IMAGE_SIZE_LIMIT} MB`, ToastStatus.ERROR) : The ideal version but does not work. 
+      alert(`Images must be under ${IMAGE_SIZE_LIMIT} MB`); // works but not preferred.
+      //showToast(`Images must be under ${IMAGE_SIZE_LIMIT} MB`, ToastStatus.ERROR) : The ideal version but does not work.
     }
   }
 
