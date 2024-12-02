@@ -207,7 +207,6 @@ const EmployeeModal = ({
                 newEmployee?.id || existingEmployee.id,
                 'drivers'
               );
-              
             }
 
             if (!existingEmployee.isAdmin) {
@@ -220,7 +219,6 @@ const EmployeeModal = ({
                 entityType,
                 iteration
               );
-              
             } else {
               // Update admin
               await updateEmployee(
@@ -231,7 +229,6 @@ const EmployeeModal = ({
                 entityType,
                 iteration
               );
-             
             }
             break;
 
@@ -254,8 +251,6 @@ const EmployeeModal = ({
                 entityType,
                 iteration
               );
-            
-              
             } else {
               // Update driver
               await updateEmployee(
@@ -266,7 +261,6 @@ const EmployeeModal = ({
                 entityType,
                 iteration
               );
-             
             }
             break;
         }
@@ -281,7 +275,10 @@ const EmployeeModal = ({
           iteration
         );
         existingEmployee = newEmployee;
-        showToast(`Created a new employee with the role of ${role} based on your provided data`, ToastStatus.SUCCESS)
+        showToast(
+          `Created a new employee with the role of ${role} based on your provided data`,
+          ToastStatus.SUCCESS
+        );
       }
       iteration += 1;
     }
@@ -312,9 +309,9 @@ const EmployeeModal = ({
 
     try {
       await processRoles(selectedRole, existingEmployee, admin, driver);
-      showToast(`Employee information proccessed`, ToastStatus.SUCCESS)
+      showToast(`Employee information proccessed`, ToastStatus.SUCCESS);
     } catch (error) {
-      showToast("An error occured: ",ToastStatus.ERROR)
+      showToast('An error occured: ', ToastStatus.ERROR);
     } finally {
       closeModal();
     }
