@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import * as db from './common';
 import { Admin } from '../models/admin';
 import { validateUser } from '../util';
+import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Admins';
@@ -23,8 +24,9 @@ router.get('/', validateUser('Admin'), (req, res) => {
 // Put a driver in Admins table
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
+  const id = body.id || uuid();
   const admin = new Admin({
-    id: uuid(),
+    id: id,
     ...body,
   });
   db.create(res, admin);
@@ -36,6 +38,7 @@ router.put('/:id', validateUser('Admin'), (req, res) => {
     params: { id },
     body,
   } = req;
+
   db.update(res, Admin, { id }, body, tableName);
 });
 

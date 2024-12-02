@@ -1,13 +1,10 @@
 import express from 'express';
 import { S3, ObjectCannedACL } from '@aws-sdk/client-s3'; // Import required types
 import * as db from './common';
-import { Rider } from '../models/rider';
 import { Driver } from '../models/driver';
 import { Admin } from '../models/admin';
 import { validateUser } from '../util';
 import dotenv from 'dotenv';
-
-// Load environment variables from .env file (if available)
 dotenv.config();
 
 // const BUCKET_NAME = 'dti-carriage-staging-public'; old bucket
@@ -15,23 +12,26 @@ const BUCKET_NAME = 'carriage-images';
 const router = express.Router();
 const s3Bucket = new S3({ region: 'us-east-2' });
 
-router.post('/', validateUser('User'), (req, res) => {
+router.post('/', validateUser('User'), (request, response) => {
   const {
     body: { id, tableName, fileBuffer },
-  } = req;
+  } = request;
 
   if (!id || typeof id !== 'string' || id.trim() === '') {
-    return res.status(400).json({ err: 'Invalid ID: empty or missing' });
+    return response.status(400).json({ err: 'Invalid ID: empty or missing' });
   }
 
-  if (!fileBuffer) {
-    return res
+  if (!fileBuffer || typeof fileBuffer !== 'string') {
+    return response
       .status(400)
       .json({ err: 'Invalid file buffer: empty or missing' });
   }
 
-  if (!['Riders', 'Drivers', 'Admins'].includes(tableName)) {
-    return res.status(400).json({ err: 'Invalid table name' });
+  // Only Drivers and Admins can upload images.
+  if (tableName != 'Drivers' && tableName != 'Admins') {
+    return response
+      .status(400)
+      .json({ err: `Invalid table name: ${tableName}` });
   }
 
   const objectKey = `${tableName}/${id}`;
@@ -42,28 +42,21 @@ router.post('/', validateUser('User'), (req, res) => {
     ObjectCannedACL: 'public-read',
     ContentEncoding: 'base64',
   };
+
   s3Bucket.putObject(params, (s3Err: any) => {
     if (s3Err) {
-      res.status(s3Err.statusCode || 400).send({ err: s3Err.message });
+      response.status(s3Err.statusCode || 400).send({ err: s3Err.message });
     } else {
       const photoLink = `https://${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
-      const operation = { $SET: { photoLink } };
+      const databaseOperation = { $SET: { photoLink } };
       switch (tableName) {
         case 'Drivers':
-          db.update(res, Driver, { id }, operation, tableName);
-          break;
-        case 'Riders':
-          db.update(res, Rider, { id }, operation, tableName);
+          db.update(response, Driver, { id }, databaseOperation, tableName);
           break;
         case 'Admins':
-          db.update(res, Admin, { id }, operation, tableName);
-          break;
-        default:
-          res.status(400).send({ err: 'Invalid table.' });
-          console.error('Invalid table.');
+          db.update(response, Admin, { id }, databaseOperation, tableName);
           break;
       }
-      console.log('Success upload.');
     }
   });
 });

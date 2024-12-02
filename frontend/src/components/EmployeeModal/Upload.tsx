@@ -1,6 +1,8 @@
 import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
+//import { useToast, ToastStatus } from '../../context/toastContext';
+
 
 const IMAGE_SIZE_LIMIT = 50000;
 
@@ -10,6 +12,7 @@ type UploadProps = {
 };
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
+  //const { showToast } = useToast();
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}` : ''
   );
@@ -23,13 +26,13 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   };
 
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
     const { files } = e.target;
     if (files && files[0] && files[0].size < IMAGE_SIZE_LIMIT) {
       setImageURL(URL.createObjectURL(files[0]));
       imageChange(e);
     } else {
-      alert('File is too large');
+      alert(`Images must be under ${IMAGE_SIZE_LIMIT} MB`) // works but not preferred.
+      //showToast(`Images must be under ${IMAGE_SIZE_LIMIT} MB`, ToastStatus.ERROR) : The ideal version but does not work. 
     }
   }
 
