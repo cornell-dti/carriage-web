@@ -37,12 +37,12 @@ app.use(cors());
 app.use(express.json({ limit: '500kb' }));
 app.use(express.urlencoded({ extended: false }));
 
-// Very useful API Debugger Method. 
+// Very useful API Debugger Method.
 //app.use((req, res, next) => {
-  //console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  //console.log('Headers:', req.headers);
-  //console.log('Body:', req.body); // Requires body-parser or express.json()
-  //next();
+//console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+//console.log('Headers:', req.headers);
+//console.log('Body:', req.body); // Requires body-parser or express.json()
+//next();
 //});
 
 app.use('/api/riders', rider);
