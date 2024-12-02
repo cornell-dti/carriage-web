@@ -122,8 +122,9 @@ router.get('/:id/stats', validateUser('Admin'), (req, res) => {
 // Put a driver in Drivers table
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
+  const id = body.id || uuid();
   const driver = new Driver({
-    id: uuid(),
+    id: id,
     ...body,
   });
   db.create(res, driver);

@@ -12,6 +12,7 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
+import Toast from 'components/ConfirmationToast/ConfirmationToast';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -125,33 +126,25 @@ const EmployeeModal = ({
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string
+    table: string,
+    iteration: number
   ): Promise<any> {
-    try {
-      // Create the employee
-      // HERE
-      const { data: createdEmployee } = await axios.post(
-        endpoint,
-        employeeData
-      );
-
-      // Upload the photo if provided
-      if (imageBase64 !== '') {
-        await uploadEmployeePhoto(id || '', table, refresh, imageBase64);
-
-        console.log('Photo uploaded successfully.');
-      }
-
-      // Refresh after successful creation and photo upload
-      await refresh();
-
-      showToast('The employee has been added.', ToastStatus.SUCCESS);
-      return createdEmployee;
-    } catch (error) {
-      console.error('Error creating employee:', error);
-      showToast('Failed to add the employee.', ToastStatus.ERROR);
-      throw error;
+    if (Boolean(id) && id !== '') {
+      (employeeData as any).id = id;
     }
+    const {
+      data: { data: createdEmployee },
+    } = await axios.post(endpoint, employeeData);
+    if (iteration === 0 && imageBase64 !== '') {
+      await uploadEmployeePhoto(
+        createdEmployee.id,
+        table,
+        refresh,
+        imageBase64
+      );
+    }
+    await refresh();
+    return createdEmployee;
   }
 
   async function updateEmployee(
@@ -159,20 +152,15 @@ const EmployeeModal = ({
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string
+    table: string,
+    iteration: number
   ): Promise<any> {
-    try {
-      await axios.put(`${endpoint}/${id}`, employeeData);
-      uploadEmployeePhoto(id || '', table, refresh, imageBase64);
-      console.log('Photo uploaded successfully.');
-
-      refresh();
-      showToast('The employee has been edited.', ToastStatus.SUCCESS);
-    } catch (error) {
-      console.error('Error updating employee:', error);
-      showToast('Failed to edit the employee.', ToastStatus.ERROR);
-      throw error;
+    await axios.put(`${endpoint}/${id}`, employeeData);
+    // iteration count prevents a second write to S3
+    if (iteration === 0 && imageBase64 !== '') {
+      uploadEmployeePhoto(id, table, refresh, imageBase64);
     }
+    refresh();
   }
 
   async function deleteEmployee(
@@ -185,34 +173,6 @@ const EmployeeModal = ({
       await axios.delete(`/api/${emptype}/${id}`);
     }
   }
-  const createOrUpdateEmployee = async (
-    employee: AdminData | DriverData,
-    uid: string | '',
-    isNewEmployee: boolean,
-    type: 'admins' | 'drivers'
-  ) => {
-    const apiEndpoint = type === 'admins' ? '/api/admins' : '/api/drivers';
-    const refreshFunction = type === 'admins' ? refreshAdmins : refreshDrivers;
-    const entityType = type === 'admins' ? 'Admins' : 'Drivers';
-
-    if (isNewEmployee) {
-      return await createEmployee(
-        uid,
-        employee,
-        apiEndpoint,
-        refreshFunction,
-        entityType
-      );
-    } else {
-      return await updateEmployee(
-        uid,
-        employee,
-        apiEndpoint,
-        refreshFunction,
-        entityType
-      );
-    }
-  };
 
   async function processRoles(
     selectedRole: any,
@@ -222,80 +182,107 @@ const EmployeeModal = ({
   ) {
     const containsDriver = selectedRole.includes('driver');
     const containsAdmin =
-      (containsDriver && selectedRole.length > 1) ||
-      (!containsDriver && selectedRole.length > 1);
-    const acc = [];
+      selectedRole.includes('sds-admin') ||
+      selectedRole.includes('redrunner-admin');
 
-    if (containsAdmin) acc.push('admins');
-    if (containsDriver) acc.push('drivers');
+    const rolesToProcess = [];
+    if (containsAdmin) rolesToProcess.push('admins');
+    if (containsDriver) rolesToProcess.push('drivers');
 
-    // Process roles in acc
+    let newEmployee = null; // To track new employee creation
     let iteration = 0;
 
-    for (const role of acc) {
-      switch (role) {
-        case 'admins':
-          console.log('Processing admin role...');
-          if (existingEmployee) {
+    for (const role of rolesToProcess) {
+      const apiEndpoint = role === 'admins' ? '/api/admins' : '/api/drivers';
+      const refreshFunction =
+        role === 'admins' ? refreshAdmins : refreshDrivers;
+      const entityType = role === 'admins' ? 'Admins' : 'Drivers';
+
+      if (Boolean(existingEmployee)) {
+        switch (role) {
+          case 'admins':
             if (existingEmployee.isDriver && !containsDriver) {
               // Transition from driver to admin
-              await deleteEmployee(existingEmployee.id, 'drivers');
-            }
-            // Update or create admin
-            await createOrUpdateEmployee(
-              admin,
-              existingEmployee.id || '',
-              false,
-              'admins'
-            );
-          } else {
-            // Create new admin
-            await createOrUpdateEmployee(
-              admin,
-              '',
-              true && iteration === 0,
-              'admins'
-            );
-          }
-          break;
-
-        case 'drivers':
-          console.log('Processing driver role...');
-          if (existingEmployee) {
-            if (existingEmployee.isDriver) {
-              // Update driver
-              await createOrUpdateEmployee(
-                driver,
-                existingEmployee.id || '',
-                false,
+              await deleteEmployee(
+                newEmployee?.id || existingEmployee.id,
                 'drivers'
               );
-            } else if (existingEmployee.isAdmin && !containsAdmin) {
+              
+            }
+
+            if (!existingEmployee.isAdmin) {
+              // Create admin
+              await createEmployee(
+                newEmployee?.id || existingEmployee.id,
+                admin,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+              
+            } else {
+              // Update admin
+              await updateEmployee(
+                newEmployee?.id || existingEmployee.id,
+                admin,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+             
+            }
+            break;
+
+          case 'drivers':
+            if (existingEmployee.isAdmin && !containsAdmin) {
               // Transition from admin to driver
-              await deleteEmployee(existingEmployee.id, 'admins');
-              await createOrUpdateEmployee(
-                driver,
-                existingEmployee.id || '',
-                false,
-                'drivers'
+              await deleteEmployee(
+                newEmployee?.id || existingEmployee.id,
+                'admins'
               );
             }
-          } else {
-            await createOrUpdateEmployee(
-              driver,
-              '',
-              true && iteration === 0,
-              'drivers'
-            );
-          }
-          break;
 
-        default:
-          console.warn(`Unhandled role in acc: ${role}`);
-          break;
+            if (!existingEmployee.isDriver) {
+              // Create driver
+              await createEmployee(
+                newEmployee?.id || existingEmployee.id,
+                driver,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+            
+              
+            } else {
+              // Update driver
+              await updateEmployee(
+                newEmployee?.id || existingEmployee.id,
+                driver,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+             
+            }
+            break;
+        }
+      } else if (!newEmployee) {
+        // Create a new employee if no existing employee is present
+        newEmployee = await createEmployee(
+          '',
+          role === 'admins' ? admin : driver,
+          apiEndpoint,
+          refreshFunction,
+          entityType,
+          iteration
+        );
+        existingEmployee = newEmployee;
+        showToast(`Created a new employee with the role of ${role} based on your provided data`, ToastStatus.SUCCESS)
       }
-
-      // Increment iteration to ensure no duplicate creation
       iteration += 1;
     }
   }
@@ -325,8 +312,9 @@ const EmployeeModal = ({
 
     try {
       await processRoles(selectedRole, existingEmployee, admin, driver);
+      showToast(`Employee information proccessed`, ToastStatus.SUCCESS)
     } catch (error) {
-      console.error('Error processing roles:', error);
+      showToast("An error occured: ",ToastStatus.ERROR)
     } finally {
       closeModal();
     }
@@ -339,29 +327,13 @@ const EmployeeModal = ({
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
-
-      console.log('Starting to read the file:', file.name);
       reader.readAsDataURL(file);
-
       reader.onload = async () => {
         const base64 = reader.result?.toString().split(',')[1]; // Extract base64
-        console.log(
-          'File read successfully. Base64 extracted:',
-          base64 ? base64.substring(0, 20) + '...' : 'No base64 data'
-        );
-
         if (base64) {
           setImageBase64(base64); // Save the base64 string
-          console.log('Set base64 data.');
         }
       };
-
-      reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-      };
-    } else {
-      console.error('No file selected.');
-      alert('No file selected');
     }
   }
 
@@ -382,7 +354,6 @@ const EmployeeModal = ({
           <form
             onSubmit={(e) => {
               methods.handleSubmit(onSubmit)(e);
-              console.log(e);
             }}
             aria-labelledby="employee-modal"
           >
