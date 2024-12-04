@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Ride } from '../../types';
 import { RideModalType } from './types';
-import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { Button } from '../FormElements/FormElements';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import CreateOrEditRideModal from './CreateOrEditRideModal';
 import { useToast, ToastStatus } from '../../context/toastContext';
-import styles from './requestridemodal.module.css';
 
 type RequestRideModalProps = {
   onSubmit?: () => void;
@@ -56,15 +54,16 @@ const RequestRideModal = ({
     <>
       {!ride ? (
         <Button
-          className={styles.btn}
+          variant="contained"
+          color="primary"
           onClick={() => openCreateOrEditModal('CREATE')}
         >
           + Request a ride
         </Button>
       ) : (
         <Button
-          outline
-          small
+          variant="outlined"
+          size="small"
           onClick={
             ride.recurring
               ? openTypeModal
@@ -75,18 +74,30 @@ const RequestRideModal = ({
         </Button>
       )}
       {ride && ride.recurring && (
-        <DeleteOrEditTypeModal
-          open={typeModalIsOpen}
-          onClose={closeTypeModal}
-          ride={ride}
-          deleting={false}
-          onNext={(single) => {
-            closeTypeModal();
-            openCreateOrEditModal(
-              single ? 'EDIT_SINGLE_RECURRING' : 'EDIT_ALL_RECURRING'
-            );
-          }}
-        />
+        <Dialog open={typeModalIsOpen} onClose={closeTypeModal}>
+          <DialogTitle>Choose Edit Type</DialogTitle>
+          <DialogContent>
+            {}
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                closeTypeModal();
+                openCreateOrEditModal('EDIT_SINGLE_RECURRING');
+              }}
+            >
+              Edit Single
+            </Button>
+            <Button
+              onClick={() => {
+                closeTypeModal();
+                openCreateOrEditModal('EDIT_ALL_RECURRING');
+              }}
+            >
+              Edit All
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
       {modalType && (
         <CreateOrEditRideModal
