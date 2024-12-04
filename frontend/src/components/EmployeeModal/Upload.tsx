@@ -15,6 +15,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}` : ''
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = createRef<HTMLInputElement>();
 
   /* This is for accessibility purposes only */
@@ -30,8 +31,8 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       setImageURL(URL.createObjectURL(files[0]));
       imageChange(e);
     } else {
-      alert(`Images must be under ${IMAGE_SIZE_LIMIT} MB`); // works but not preferred.
-      //showToast(`Images must be under ${IMAGE_SIZE_LIMIT} MB`, ToastStatus.ERROR) : The ideal version but does not work.
+      setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
+      console.log(errorMessage); // placeholder for MUI chane.
     }
   }
 
@@ -52,7 +53,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         accept="image/png, image/jpeg"
         ref={inputRef}
         style={{ display: 'none' }}
-        onChange={(e) => previewImage(e)}
+        onChange={previewImage}
       />
       <label htmlFor="driverPhotoInput" className={styles.uploadText}>
         <span
@@ -63,6 +64,8 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         >
           Upload a picture
         </span>
+
+        
       </label>
     </div>
   );
