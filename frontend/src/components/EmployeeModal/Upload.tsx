@@ -64,8 +64,6 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         >
           Upload a picture
         </span>
-
-        
       </label>
     </div>
   );
