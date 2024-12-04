@@ -12,7 +12,6 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
-import Toast from 'components/ConfirmationToast/ConfirmationToast';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -163,15 +162,8 @@ const EmployeeModal = ({
     refresh();
   }
 
-  async function deleteEmployee(
-    id: string | undefined,
-    emptype: 'drivers' | 'admins'
-  ) {
-    if (id === undefined) {
-      console.log('Invalid/Null ID: deleteEmployee');
-    } else {
-      await axios.delete(`/api/${emptype}/${id}`);
-    }
+  async function deleteEmployee(id: string, emptype: 'drivers' | 'admins') {
+    await axios.delete(`/api/${emptype}/${id}`);
   }
 
   async function processRoles(
