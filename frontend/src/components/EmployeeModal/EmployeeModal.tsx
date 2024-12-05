@@ -72,9 +72,6 @@ const EmployeeModal = ({
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
 
-  const modalTitle = existingEmployee ? 'Edit Profile' : 'Add an Employee';
-  const submitButtonText = existingEmployee ? 'Save' : 'Add';
-
   const closeModal = () => {
     methods.clearErrors();
     setIsOpen(false);
@@ -90,127 +87,247 @@ const EmployeeModal = ({
    * the start and end time of each availibility period
    */
   const parseAvailability = (availability: ObjectType[]) => {
-    const result: ObjectType = {};
-    availability.forEach(({ startTime, endTime, days }) => {
-      days.forEach((day: string) => {
-        result[day] = { startTime, endTime };
+    if (availability === null || availability === undefined) {
+      console.error('Null ptr: Availablity');
+      return []; // placeholder
+    } else {
+      const result: ObjectType = {};
+      availability.forEach(({ startTime, endTime, days }) => {
+        days.forEach((day: string) => {
+          result[day] = { startTime, endTime };
+        });
       });
-    });
-    return result;
+      return result;
+    }
   };
 
-  const uploadPhotoForEmployee = async (
+  async function uploadEmployeePhoto(
     employeeId: string,
     table: string,
     refresh: () => Promise<void>,
-    isCreate: boolean // show toast if new employee is created
-  ) => {
-    const photo = {
+    imageBase64: string
+  ): Promise<void> {
+    const photoData = {
       id: employeeId,
       tableName: table,
       fileBuffer: imageBase64,
     };
-    // Upload image
-    await axios
-      .post('/api/upload', photo)
-      .then(() => {
-        refresh();
-      })
-      .catch((err) => console.log(err));
-  };
+    try {
+      await axios.post('/api/upload/', photoData);
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+    }
+    refresh();
+  }
 
-  const createNewEmployee = async (
+  /**
+   * [createEmployee id employeeData endpoint refresh table iteration] creates a new employee
+   * using the provided data and endpoint. Optionally uploads a photo if [iteration] is 0 and
+   * [imageBase64] is non-empty.
+   * Requires: [id] to be a valid string or empty, [employeeData] to be a valid object,
+   * [endpoint] to be a valid API endpoint string, [refresh] to be a function, and [iteration]
+   * to be a non-negative integer.
+   * Returns: the created employee data.
+   */
+  async function createEmployee(
+    id: string,
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string
-  ) => {
-    const res = await axios.post(endpoint, employeeData);
-    if (imageBase64 === '') {
-      // If no image has been uploaded, create new employee
-      refresh();
-      showToast('The employee has been added.', ToastStatus.SUCCESS);
-    } else {
-      const { data: createdEmployee } = await res.data;
-      uploadPhotoForEmployee(createdEmployee.id, table, refresh, true);
+    table: string,
+    iteration: number
+  ): Promise<any> {
+    if (Boolean(id) && id !== '') {
+      (employeeData as any).id = id;
     }
-    return res;
-  };
+    const {
+      data: { data: createdEmployee },
+    } = await axios.post(endpoint, employeeData);
+    if (iteration === 0 && imageBase64 !== '') {
+      await uploadEmployeePhoto(
+        createdEmployee.id,
+        table,
+        refresh,
+        imageBase64
+      );
+    }
+    await refresh();
+    return createdEmployee;
+  }
 
-  const updateExistingEmployee = async (
+  /**
+   * [updateEmployee id employeeData endpoint refresh table iteration] updates an existing
+   * employee's data using the specified endpoint. Optionally uploads a photo if [iteration]
+   * is 0 and [imageBase64] is non-empty.
+   * Requires: [id] to be a valid string, [employeeData] to be a valid object, [endpoint] to
+   * be a valid API endpoint string, [refresh] to be a function, and [iteration] to be a
+   * non-negative integer.
+   * Returns: a promise that resolves after successfully updating the employee and refreshing
+   * the data.
+   */
+
+  async function updateEmployee(
+    id: string,
     employeeData: AdminData | DriverData,
     endpoint: string,
     refresh: () => Promise<void>,
-    table: string
-  ) => {
-    const updatedEmployee = await axios
-      .put(`${endpoint}/${existingEmployee!.id}`, employeeData)
-      .then((res) => {
-        refresh();
-        showToast('The employee has been edited.', ToastStatus.SUCCESS);
-        return res.data;
-      });
-    if (imageBase64 !== '') {
-      uploadPhotoForEmployee(updatedEmployee.id, table, refresh, false);
+    table: string,
+    iteration: number
+  ): Promise<any> {
+    await axios.put(`${endpoint}/${id}`, employeeData);
+    // iteration count prevents a second write to S3
+    if (iteration === 0 && imageBase64 !== '') {
+      uploadEmployeePhoto(id, table, refresh, imageBase64);
     }
-    return updatedEmployee;
-  };
+    refresh();
+  }
 
-  const createOrUpdateDriver = async (
-    driver: AdminData | DriverData,
-    isNewDriver = false
-  ) => {
-    if (isNewDriver) {
-      return await createNewEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
-      );
-    } else {
-      return await updateExistingEmployee(
-        driver,
-        '/api/drivers',
-        () => refreshDrivers(),
-        'Drivers'
-      );
+  /**
+   * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
+   * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
+   * Requires: [id] to be a valid string, [emptype] to be either 'drivers' or 'admins'.
+   * Returns: a promise that resolves after successfully deleting the employee.
+   */
+
+  async function deleteEmployee(id: string, emptype: 'drivers' | 'admins') {
+    await axios.delete(`/api/${emptype}/${id}`);
+  }
+
+  /**
+   * [processRoles selectedRole existingEmployee admin driver] processes and assigns roles
+   * ('driver', 'admin') for the given employee, creating, updating, or deleting their
+   * information as necessary.
+   * Requires: [selectedRole] to be a valid array of roles, [existingEmployee] to be an object
+   * or null, and [admin] and [driver] to be valid employee data objects.
+   * Returns: a promise that resolves after processing all roles.
+   */
+
+  async function processRoles(
+    selectedRole: any,
+    existingEmployee: any,
+    admin: any,
+    driver: any
+  ) {
+    const containsDriver = selectedRole.includes('driver');
+    const containsAdmin =
+      selectedRole.includes('sds-admin') ||
+      selectedRole.includes('redrunner-admin');
+
+    const rolesToProcess = [];
+    if (containsAdmin) rolesToProcess.push('admins');
+    if (containsDriver) rolesToProcess.push('drivers');
+
+    let newEmployee = null; // To track new employee creation
+    let iteration = 0;
+
+    for (const role of rolesToProcess) {
+      const apiEndpoint = role === 'admins' ? '/api/admins' : '/api/drivers';
+      const refreshFunction =
+        role === 'admins' ? refreshAdmins : refreshDrivers;
+      const entityType = role === 'admins' ? 'Admins' : 'Drivers';
+
+      if (Boolean(existingEmployee)) {
+        switch (role) {
+          case 'admins':
+            if (existingEmployee.isDriver && !containsDriver) {
+              // Transition from driver to admin
+              await deleteEmployee(
+                newEmployee?.id || existingEmployee.id,
+                'drivers'
+              );
+            }
+
+            if (!existingEmployee.isAdmin) {
+              // Create admin
+              await createEmployee(
+                newEmployee?.id || existingEmployee.id,
+                admin,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+            } else {
+              // Update admin
+              await updateEmployee(
+                newEmployee?.id || existingEmployee.id,
+                admin,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+            }
+            break;
+
+          case 'drivers':
+            if (existingEmployee.isAdmin && !containsAdmin) {
+              // Transition from admin to driver
+              await deleteEmployee(
+                newEmployee?.id || existingEmployee.id,
+                'admins'
+              );
+            }
+
+            if (!existingEmployee.isDriver) {
+              // Create driver
+              await createEmployee(
+                newEmployee?.id || existingEmployee.id,
+                driver,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+            } else {
+              // Update driver
+              await updateEmployee(
+                newEmployee?.id || existingEmployee.id,
+                driver,
+                apiEndpoint,
+                refreshFunction,
+                entityType,
+                iteration
+              );
+            }
+            break;
+        }
+      } else if (!newEmployee) {
+        // Create a new employee if no existing employee is present
+        newEmployee = await createEmployee(
+          '',
+          role === 'admins' ? admin : driver,
+          apiEndpoint,
+          refreshFunction,
+          entityType,
+          iteration
+        );
+        existingEmployee = newEmployee;
+        showToast(
+          `Created a new employee with the role of ${role} based on your provided data`,
+          ToastStatus.SUCCESS
+        );
+      }
+      iteration += 1;
     }
-  };
+  }
 
-  const createOrUpdateAdmin = async (admin: AdminData, isNewAdmin = false) => {
-    if (isNewAdmin) {
-      await createNewEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    } else {
-      await updateExistingEmployee(
-        admin,
-        '/api/admins',
-        () => refreshAdmins(),
-        'Admins'
-      );
-    }
-  };
+  /**
+   * [onSubmit data] handles form submission, processes employee data, and invokes role
+   * processing.
+   * Requires: [data] to be an object containing valid employee form fields, including
+   * [firstName], [lastName], [netid], [phoneNumber], [startDate], and [availability].
+   * Returns: a promise that resolves after successfully processing the form data.
+   */
 
-  const deleteDriver = async (id: string | undefined) => {
-    await axios.delete(`/api/drivers/${id}`);
-  };
-
-  const deleteAdmin = async (id: string | undefined) => {
-    await axios.delete(`/api/admins/${id}`);
-  };
-
-  const onSubmit = async (data: ObjectType) => {
+  async function onSubmit(data: ObjectType) {
     const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
 
     const driver = {
       firstName,
       lastName,
-      email: netid + '@cornell.edu',
+      email: `${netid}@cornell.edu`,
       phoneNumber,
       startDate,
       availability: parseAvailability(availability),
@@ -219,103 +336,50 @@ const EmployeeModal = ({
     const admin = {
       firstName,
       lastName,
-      email: netid + '@cornell.edu',
-      type: selectedRole.filter((role) => !(role === 'driver')),
+      email: `${netid}@cornell.edu`,
+      type: selectedRole.filter((role) => role !== 'driver'),
       phoneNumber,
       availability: parseAvailability(availability),
       isDriver: selectedRole.includes('driver'),
     };
 
-    const existingDriver = existingEmployee?.isDriver === undefined;
-    const existingAdmin = existingEmployee?.isDriver !== undefined;
-
-    if (existingEmployee) {
-      if (selectedRole.includes('driver')) {
-        if (selectedRole.some((role) => role.includes('admin'))) {
-          if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(admin, false);
-          } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
-            await createOrUpdateAdmin(
-              { ...admin, id: existingEmployee.id },
-              true
-            );
-          } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
-            );
-            await createOrUpdateAdmin(admin, false);
-          }
-        } else {
-          if (existingDriver && existingAdmin) {
-            await createOrUpdateDriver(driver, false);
-            await deleteAdmin(existingEmployee.id);
-          } else if (existingDriver) {
-            await createOrUpdateDriver(driver, false);
-          } else if (existingAdmin) {
-            await createOrUpdateDriver(
-              { ...driver, id: existingEmployee.id },
-              true
-            );
-            await deleteAdmin(existingEmployee.id);
-          }
-        }
-      } else {
-        if (existingDriver && existingAdmin) {
-          await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(admin, false);
-        } else if (existingDriver) {
-          await deleteDriver(existingEmployee.id);
-          await createOrUpdateAdmin(
-            { ...admin, id: existingEmployee.id },
-            true
-          );
-        }
-      }
-    } else {
-      if (selectedRole.includes('driver')) {
-        if (selectedRole.some((role) => role.includes('admin'))) {
-          const id = (await createOrUpdateDriver(driver, true)).data.data.id;
-          await createOrUpdateAdmin({ ...admin, id: id }, true);
-        } else {
-          await createOrUpdateDriver(driver, true);
-        }
-      } else {
-        await createOrUpdateAdmin(admin, true);
-      }
-    }
-    closeModal();
-  };
-
-  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
-
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      const file = e.target.files[0];
-      reader.readAsDataURL(file);
-      reader.onload = function () {
-        let res = reader.result;
-        if (res) {
-          res = res.toString();
-          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
-          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
-          setImageBase64(strBase64);
-        }
-      };
-      reader.onerror = function (error) {
-        console.log('Error reading file: ', error);
-      };
-    } else {
-      console.log('Undefined file upload');
+    try {
+      await processRoles(selectedRole, existingEmployee, admin, driver);
+      showToast(`Employee information proccessed`, ToastStatus.SUCCESS);
+    } catch (error) {
+      showToast('An error occured: ', ToastStatus.ERROR);
+    } finally {
+      closeModal();
     }
   }
+
+  /**
+   * [updateBase64 e] updates the [imageBase64] state by converting the selected file from the
+   * input event [e] into a base64-encoded string.
+   * Requires: [e] to be a valid React change event containing file input data.
+   * Returns: a promise that resolves after successfully updating the [imageBase64] state.
+   */
+  async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    const { files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64 = reader.result?.toString().split(',')[1]; // Extract base64
+        if (base64) {
+          setImageBase64(base64); // Save the base64 string
+        }
+      };
+    }
+  }
+
   return (
     <>
       <Modal
-        title={modalTitle}
+        title={existingEmployee ? 'Edit Profile' : 'Add an Employee'}
         isOpen={isOpen}
         onClose={closeModal}
         id="employee-modal"
@@ -324,9 +388,12 @@ const EmployeeModal = ({
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
         />
+
         <FormProvider {...methods}>
           <form
-            onSubmit={methods.handleSubmit(onSubmit)}
+            onSubmit={(e) => {
+              methods.handleSubmit(onSubmit)(e);
+            }}
             aria-labelledby="employee-modal"
           >
             <EmployeeInfo
@@ -347,7 +414,7 @@ const EmployeeModal = ({
               setSelectedRoles={setSelectedRole}
             />
             <Button className={styles.submit} type="submit">
-              {submitButtonText}
+              {existingEmployee ? 'Save' : 'Add'}
             </Button>
           </form>
         </FormProvider>

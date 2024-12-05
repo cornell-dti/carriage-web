@@ -33,7 +33,12 @@ const EmployeeCard = ({
 }: EmployeeCardProps) => {
   const navigate = useNavigate();
   const netId = email.split('@')[0];
-  const fmtPhone = formatPhone(phoneNumber);
+  const fmtPhone = '';
+  if (phoneNumber !== undefined) {
+    const fmtPhone = formatPhone(phoneNumber);
+  } else {
+    const fmtPhone = '';
+  }
 
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
@@ -57,17 +62,6 @@ const EmployeeCard = ({
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
-  };
-
-  const userInfo = {
-    id,
-    firstName,
-    lastName,
-    netId,
-    type,
-    phone: fmtPhone,
-    photoLink,
-    startDate,
   };
 
   const handleClick = () => {
