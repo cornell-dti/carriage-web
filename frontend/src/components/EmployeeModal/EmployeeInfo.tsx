@@ -1,8 +1,6 @@
 import React from 'react';
-import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import styles from './employeemodal.module.css';
-import { Input, Label } from '../FormElements/FormElements';
+import { TextField, Grid } from '@mui/material';
 
 type EmployeeInfoProps = {
   firstName?: string;
@@ -19,72 +17,71 @@ const EmployeeInfo = ({
 }: EmployeeInfoProps) => {
   const { register, formState } = useFormContext();
   const { errors } = formState;
+
   return (
-    <div className={styles.inputContainer}>
-      <div className={styles.col1}>
-        <Label htmlFor="firstName">First Name</Label>
-        <Input
+    <Grid container spacing={2} justifyContent="flex-start" sx={{ mt: 1 }}>
+      <Grid item>
+        <TextField
           id="firstName"
-          type="text"
+          label="First Name"
+          variant="outlined"
           defaultValue={firstName}
-          className={cn(styles.input)}
-          aria-required="true"
+          size="small" // Reduces height
+          sx={{ width: '175px' }} // Limits the width
           {...register('firstName', { required: true })}
+          error={!!errors.firstName}
+          helperText={errors.firstName ? 'Please enter a valid name' : ''}
         />
-        {errors.firstName && (
-          <p className={styles.error}>Please enter a valid name</p>
-        )}
-      </div>
-      <div className={styles.col2}>
-        <Label htmlFor="lastName">Last Name</Label>
-        <Input
+      </Grid>
+      <Grid item>
+        <TextField
           id="lastName"
-          type="text"
+          label="Last Name"
+          variant="outlined"
           defaultValue={lastName}
-          className={cn(styles.input)}
-          aria-required="true"
+          size="small"
+          sx={{ width: '175px' }}
           {...register('lastName', { required: true })}
+          error={!!errors.lastName}
+          helperText={errors.lastName ? 'Please enter a valid name' : ''}
         />
-        {errors.lastName && (
-          <p className={styles.error}>Please enter a valid name</p>
-        )}
-      </div>
-      <div className={styles.col1}>
-        <Label htmlFor="netid">NetID</Label>
-        <Input
-          id="netid"
-          type="text"
+      </Grid>
+      <Grid item>
+        <TextField
+          id="netId"
+          label="NetID"
+          variant="outlined"
           defaultValue={netId}
-          className={cn(styles.input)}
-          aria-required="true"
+          size="small"
+          sx={{ width: '175px' }}
           {...register('netid', { required: true })}
+          error={!!errors.netid}
+          helperText={errors.netid ? 'Please enter a valid NetID' : ''}
         />
-        {errors.netid && (
-          <p className={styles.error}>Please enter a valid NetID</p>
-        )}
-      </div>
-      <div className={styles.col2}>
-        <Label htmlFor="phoneNumber">Phone Number</Label>
-        <Input
+      </Grid>
+      <Grid item>
+        <TextField
           id="phoneNumber"
-          type="tel"
+          label="Phone Number"
+          variant="outlined"
           defaultValue={phone}
-          min={10}
-          max={10}
-          aria-required="true"
-          className={cn(styles.input)}
+          size="small"
+          sx={{ width: '175px' }}
           {...register('phoneNumber', {
             required: true,
             pattern: /^[0-9]{10}$/,
             maxLength: 10,
             minLength: 10,
           })}
+          error={!!errors.phoneNumber}
+          helperText={
+            errors.phoneNumber
+              ? 'Please enter a valid 10-digit phone number'
+              : ''
+          }
         />
-        {errors.phoneNumber && (
-          <p className={styles.error}>Please enter a valid phone number</p>
-        )}
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
 

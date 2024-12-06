@@ -1,9 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import cn from 'classnames';
-import moment from 'moment';
-import { useFormContext, UseFormRegister } from 'react-hook-form';
-import styles from './employeemodal.module.css';
-import { Input, Label } from '../FormElements/FormElements';
+import { useFormContext } from 'react-hook-form';
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  IconButton,
+  Chip,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { WeekProvider, useWeek } from './WeekContext';
 
 type FormData = {
@@ -19,6 +24,8 @@ type AvailabilityInputProps = {
   existingTimeRange?: string;
   existingDayArray?: string[];
   hide: boolean;
+  onRemove?: () => void;
+  totalCount: number;
 };
 
 const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
@@ -26,35 +33,26 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
   existingTimeRange,
   existingDayArray,
   hide,
+  onRemove,
+  totalCount,
 }) => {
-  const {
-    selectDay,
-    deselectDay,
-    isDayOpen,
-    isDaySelectedByInstance,
-    getSelectedDays,
-  } = useWeek();
+  const { selectDay, deselectDay, isDaySelectedByInstance, getSelectedDays } =
+    useWeek();
   const {
     register,
     setValue,
     getValues,
     formState: { errors },
   } = useFormContext<FormData>();
-  const dayLabels = {
-    Mon: 'M',
-    Tue: 'T',
-    Wed: 'W',
-    Thu: 'T',
-    Fri: 'F',
-  };
+  const dayLabels = { Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'T', Fri: 'F' };
   const [existingTime, setExistingTime] = useState<string[]>();
   const instance = `availability.${index}` as const;
   const days = getSelectedDays(index);
 
   const handleClick = (day: string) => {
     if (isDaySelectedByInstance(day, index)) {
-      deselectDay(day);
-    } else if (isDayOpen(day)) {
+      deselectDay(day, index);
+    } else {
       selectDay(day, index);
     }
   };
@@ -67,9 +65,7 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
 
   const prefillTimeRange = useCallback(() => {
     if (existingTimeRange) {
-      let [startTime, endTime] = existingTimeRange.split('-');
-      startTime = formatTime(startTime);
-      endTime = formatTime(endTime);
+      const [startTime, endTime] = existingTimeRange.split('-');
       setExistingTime([startTime, endTime]);
     }
   }, [existingTimeRange]);
@@ -83,32 +79,58 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
     setValue(`${instance}.days`, days);
   }, [instance, days, setValue]);
 
-  const formatTime = (time: string): string =>
-    moment(time, 'ha').format('HH:mm');
-
   return (
-    <div className={styles.availabilityInput}>
-      <div className={styles.timeFlexbox}>
-        <Label htmlFor={`${instance}.startTime`}>Start Time</Label>
-        <Input
-          id={`${instance}.startTime`}
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        flexWrap: 'wrap',
+        mb: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          width: '135px',
+        }}
+      >
+        <TextField
+          label="Start Time"
           type="time"
-          className={styles.timeInput}
+          size="small"
           defaultValue={existingTime?.[0]}
+          error={!!errors.availability?.[index]?.startTime}
+          helperText={
+            errors.availability?.[index]?.startTime
+              ? 'Please enter a valid start time'
+              : ''
+          }
           {...register(`${instance}.startTime` as const, { required: !hide })}
         />
-        {errors.availability?.[index]?.startTime && (
-          <p className={styles.error}>Please enter a valid start time</p>
-        )}
-      </div>
-      <p className={styles.toText}>to</p>
-      <div className={styles.timeFlexbox}>
-        <Label htmlFor={`${instance}.endTime`}>End Time</Label>
-        <Input
-          id={`${instance}.endTime`}
+      </Box>
+      <Typography>to</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1,
+          width: '135px',
+        }}
+      >
+        <TextField
+          label="End Time"
           type="time"
-          className={styles.timeInput}
+          size="small"
           defaultValue={existingTime?.[1]}
+          error={!!errors.availability?.[index]?.endTime}
+          helperText={
+            errors.availability?.[index]?.endTime
+              ? 'Please enter a valid end time'
+              : ''
+          }
           {...register(`${instance}.endTime` as const, {
             required: !hide,
             validate: (endTime: string) => {
@@ -117,32 +139,40 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
             },
           })}
         />
-        {errors.availability?.[index]?.endTime && (
-          <p className={styles.error}>Please enter a valid end time</p>
-        )}
-      </div>
-      <p className={styles.repeatText}>Repeat on</p>
-      <div className={styles.timeFlexbox}>
-        <div className={styles.daysBox}>
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: -1 }}>
+        <Typography>Repeat on</Typography>
+        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           {Object.entries(dayLabels).map(([day, label]) => (
-            <Input
+            <Chip
               key={day}
-              type="button"
-              value={label}
-              className={cn(styles.day, {
-                [styles.daySelected]: isDaySelectedByInstance(day, index),
-              })}
+              label={label}
+              color={
+                isDaySelectedByInstance(day, index) ? 'primary' : 'default'
+              }
               onClick={() => handleClick(day)}
+              clickable
+              size="small"
             />
           ))}
-        </div>
+        </Box>
         {errors.availability?.[index]?.days && (
-          <p className={cn(styles.error, styles.dayError)}>
+          <Typography variant="caption" color="error">
             Please select at least one day
-          </p>
+          </Typography>
         )}
-      </div>
-    </div>
+      </Box>
+      {onRemove && (
+        <IconButton
+          onClick={onRemove}
+          aria-label="Remove working hours"
+          size="small"
+          color="error"
+        >
+          {totalCount > 1 && <DeleteIcon />}
+        </IconButton>
+      )}
+    </Box>
   );
 };
 
@@ -163,6 +193,10 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
   >([]);
 
   const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
+  const removeAvailabilityInput = (indexToRemove: number) => {
+    setNumAvailability((n) => Math.max(1, n - 1));
+    setAvailabilityArray((prev) => prev.filter((_, i) => i !== indexToRemove));
+  };
 
   const getAvailabilityMap = useCallback((): Map<string, string[]> => {
     const availabilityMap = new Map();
@@ -188,8 +222,10 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
   }, [getAvailabilityMap, availabilityMapToArray]);
 
   return (
-    <div className={cn(styles.workingHours, { [styles.hidden]: hide })}>
-      <p className={styles.workingHoursTitle}>Working Hours</p>
+    <Box sx={{ display: hide ? 'none' : 'block', mt: 2 }}>
+      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+        Working Hours
+      </Typography>
       <WeekProvider>
         {existingAvailability
           ? availabilityArray.map(([timeRange, dayArray], index) => (
@@ -199,20 +235,29 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
                 existingTimeRange={timeRange}
                 existingDayArray={dayArray}
                 hide={hide}
+                onRemove={() => removeAvailabilityInput(index)}
+                totalCount={availabilityArray.length}
               />
             ))
           : [...Array(numAvailability)].map((_, index) => (
-              <AvailabilityInput key={index} index={index} hide={hide} />
+              <AvailabilityInput
+                key={index}
+                index={index}
+                hide={hide}
+                onRemove={() => removeAvailabilityInput(index)}
+                totalCount={numAvailability}
+              />
             ))}
       </WeekProvider>
-      <button
-        type="button"
-        className={styles.addAvailabilityInput}
+      <Button
+        variant="text"
+        color="primary"
         onClick={addAvailabilityInput}
+        sx={{ mt: 1 }}
       >
         + Add more
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 };
 

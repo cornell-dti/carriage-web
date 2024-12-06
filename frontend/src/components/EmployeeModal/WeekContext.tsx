@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 
 type WeekState = {
   selectDay: (day: string, index: number) => void;
-  deselectDay: (day: string) => void;
-  isDayOpen: (day: string) => boolean;
+  deselectDay: (day: string, index: number) => void;
   isDaySelectedByInstance: (day: string, index: number) => boolean;
   getSelectedDays: (index: number) => string[];
 };
@@ -15,7 +14,6 @@ const initialState: WeekState = {
   deselectDay: () => {
     // do nothing
   },
-  isDayOpen: () => false,
   isDaySelectedByInstance: () => false,
   getSelectedDays: () => [],
 };
@@ -29,45 +27,47 @@ type WeekProviderProps = {
 };
 
 type WeekType = {
-  [day: string]: number;
+  [day: string]: number[]; // Allow multiple indices for each day
 };
 
 export const WeekProvider = ({ children }: WeekProviderProps) => {
-  // week keeps track of which AvailabilityInput has what days selected, based
-  // on its index number. if a day is not selected in any AvailabilityInput
-  // instance, the value is -1.
   const [week, setWeek] = useState<WeekType>({
-    Sun: -1,
-    Mon: -1,
-    Tue: -1,
-    Wed: -1,
-    Thu: -1,
-    Fri: -1,
-    Sat: -1,
+    Sun: [],
+    Mon: [],
+    Tue: [],
+    Wed: [],
+    Thu: [],
+    Fri: [],
+    Sat: [],
   });
 
-  const setDay = (day: string, value: number) => {
-    setWeek((prev) => ({ ...prev, [day]: value }));
+  const selectDay = (day: string, index: number) => {
+    setWeek((prev) => ({
+      ...prev,
+      [day]: [...prev[day], index], // Add index to the day's list
+    }));
   };
 
-  const selectDay = (day: string, index: number) => setDay(day, index);
+  const deselectDay = (day: string, index: number) => {
+    setWeek((prev) => ({
+      ...prev,
+      [day]: prev[day].filter((i) => i !== index), // Remove the index from the day's list
+    }));
+  };
 
-  const deselectDay = (day: string) => setDay(day, -1);
+  const isDaySelectedByInstance = (day: string, index: number) => {
+    return week[day]?.includes(index);
+  };
 
-  const isDayOpen = (day: string) => week[day] === -1;
-
-  const isDaySelectedByInstance = (day: string, index: number) =>
-    week[day] === index;
-
-  const getSelectedDays = (index: number) =>
-    Object.keys(week).filter((day) => week[day] === index);
+  const getSelectedDays = (index: number) => {
+    return Object.keys(week).filter((day) => week[day].includes(index));
+  };
 
   return (
     <WeekContext.Provider
       value={{
         selectDay,
         deselectDay,
-        isDayOpen,
         isDaySelectedByInstance,
         getSelectedDays,
       }}
