@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { WeekProvider, useWeek } from './WeekContext';
+import moment from 'moment';
 
 type FormData = {
   availability: {
@@ -65,7 +66,10 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
 
   const prefillTimeRange = useCallback(() => {
     if (existingTimeRange) {
-      const [startTime, endTime] = existingTimeRange.split('-');
+      // const [startTime, endTime] = existingTimeRange.split('-');
+      let [startTime, endTime] = existingTimeRange.split('-');
+      startTime = formatTime(startTime);
+      endTime = formatTime(endTime);
       setExistingTime([startTime, endTime]);
     }
   }, [existingTimeRange]);
@@ -79,6 +83,8 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
     setValue(`${instance}.days`, days);
   }, [instance, days, setValue]);
 
+  const formatTime = (time: string): string =>
+    moment(time, 'ha').format('HH:mm');
   return (
     <Box
       sx={{

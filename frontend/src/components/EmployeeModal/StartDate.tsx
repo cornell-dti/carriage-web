@@ -20,8 +20,8 @@ const StartDate = ({ existingDate }: StartDateProps) => {
         InputLabelProps={{
           shrink: true, // Keeps the label visible even when a value is set
         }}
-        size="small" // Reduces height of the field
-        sx={{ width: '150px' }} // Optional: Adjust width if needed
+        size="small"
+        sx={{ width: '150px' }}
         {...register('startDate', { required: true })}
         error={!!errors.startDate}
         helperText={errors.startDate ? 'Start date is required' : ''}
