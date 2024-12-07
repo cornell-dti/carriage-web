@@ -24,9 +24,9 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
   ];
 
   const fmtPhone = (number: string) => {
-    const areaCode = number.slice(0, 3);
-    const firstPart = number.slice(3, 6);
-    const secondPart = number.slice(6);
+    const areaCode = number?.slice(0, 3);
+    const firstPart = number?.slice(3, 6);
+    const secondPart = number?.slice(6);
     return `(${areaCode}) ${firstPart} ${secondPart}`;
   };
 
