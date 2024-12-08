@@ -18,6 +18,15 @@ type RidersProviderProps = {
   children: React.ReactNode;
 };
 
+const sortByName = (
+  a: { firstName: string; lastName: string },
+  b: { firstName: string; lastName: string }
+) => {
+  const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
+  const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
+  return aFull < bFull ? -1 : 1;
+};
+
 export const RidersProvider = ({ children }: RidersProviderProps) => {
   const componentMounted = useRef(true);
   const [riders, setRiders] = useState<Array<Rider>>([]);
@@ -26,12 +35,8 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
       .get('/api/riders')
       .then((res) => res.data)
       .then((data) => data.data);
-    ridersData &&
-      ridersData.sort((a: Rider, b: Rider) => {
-        const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
-        const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
-        return aFull < bFull ? -1 : 1;
-      });
+
+    ridersData && ridersData.sort(sortByName);
     ridersData && componentMounted.current && setRiders(ridersData);
   }, []);
 

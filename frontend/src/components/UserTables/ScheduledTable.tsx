@@ -4,15 +4,18 @@ import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
+import { useRiders } from '../../context/RidersContext';
 
 type ScheduledTableProp = {
-  query: string; // either 'rider' or 'driver'
+  riderId?: string;
 };
 
-const ScheduledTable = () => {
+const ScheduledTable = ({ riderId }: ScheduledTableProp) => {
   const { drivers } = useEmployees();
+  const { riders } = useRiders();
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
+  const filteredRides = rides.filter((ride) => ride.rider?.id === riderId); // the rides for the user with the specific riderId
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -28,16 +31,20 @@ const ScheduledTable = () => {
 
   return rides.length ? (
     <>
-      {drivers.map(({ id, firstName, lastName }) => {
-        const name = `${firstName} ${lastName}`;
-        const driverRides = rides.filter((r) => r.driver?.id === id);
-        return driverRides.length ? (
-          <React.Fragment key={id}>
-            <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={false} />
-          </React.Fragment>
-        ) : null;
-      })}
+      {riderId ? (
+        <RidesTable rides={filteredRides} hasButtons={false} />
+      ) : (
+        drivers.map(({ id, firstName, lastName }) => {
+          const name = `${firstName} ${lastName}`;
+          const driverRides = rides.filter((r) => r.driver?.id === id);
+          return driverRides.length ? (
+            <React.Fragment key={id}>
+              <h1 className={styles.formHeader}>{name}</h1>
+              <RidesTable rides={driverRides} hasButtons={false} />
+            </React.Fragment>
+          ) : null;
+        })
+      )}
     </>
   ) : null;
 };
