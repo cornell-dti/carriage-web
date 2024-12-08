@@ -39,6 +39,7 @@ const ExportPreview = () => {
       <p className={styles.date}>{format_date(curDate)}</p>
       <h1 className={styles.header}>Scheduled Rides</h1>
       <div id="exportTable">
+        {/* TODO: download csv option for driver and student */}
         <ScheduledTable />
       </div>
       <div className={styles.exportButtonContainer}>

@@ -6,13 +6,19 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 
 type ScheduledTableProp = {
-  query: string; // either 'rider' or 'driver'
+  riderId?: string;
 };
 
-const ScheduledTable = () => {
+const ScheduledTable = ({ riderId }: ScheduledTableProp) => {
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
+
+  // the ride(s) for the student with the specific riderId
+  const filteredRides = rides.filter((ride) => ride.rider?.id === riderId);
+
+  // check that the rides displayed are associated with this student
+  filteredRides.forEach((ride) => console.log(ride.rider?.firstName));
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -28,16 +34,21 @@ const ScheduledTable = () => {
 
   return rides.length ? (
     <>
-      {drivers.map(({ id, firstName, lastName }) => {
-        const name = `${firstName} ${lastName}`;
-        const driverRides = rides.filter((r) => r.driver?.id === id);
-        return driverRides.length ? (
-          <React.Fragment key={id}>
-            <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={false} />
-          </React.Fragment>
-        ) : null;
-      })}
+      {/* if there is a riderId prop it means we want to display all of their rides. otherwise, we display each driver's rides */}
+      {riderId ? (
+        <RidesTable rides={filteredRides} hasButtons={false} />
+      ) : (
+        drivers.map(({ id, firstName, lastName }) => {
+          const name = `${firstName} ${lastName}`;
+          const driverRides = rides.filter((r) => r.driver?.id === id);
+          return driverRides.length ? (
+            <React.Fragment key={id}>
+              <h1 className={styles.formHeader}>{name}</h1>
+              <RidesTable rides={driverRides} hasButtons={false} />
+            </React.Fragment>
+          ) : null;
+        })
+      )}
     </>
   ) : null;
 };

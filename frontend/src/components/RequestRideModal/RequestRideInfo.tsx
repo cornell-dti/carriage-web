@@ -10,6 +10,7 @@ import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
 import { checkBounds, isTimeValid } from '../../util/index';
 import { useLocations } from '../../context/LocationsContext';
+import { Tag } from '../../types/index';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -65,11 +66,13 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   useEffect(() => {
     if (ride) {
       const defaultStart =
-        ride.startLocation.tag === 'custom'
+        ride.startLocation.tag.valueOf() === Tag.CUSTOM.valueOf()
           ? 'Other'
           : ride.startLocation.id ?? '';
       const defaultEnd =
-        ride.endLocation.tag === 'custom' ? 'Other' : ride.endLocation.id ?? '';
+        ride.endLocation.tag.valueOf() === Tag.CUSTOM.valueOf()
+          ? 'Other'
+          : ride.endLocation.id ?? '';
       setValue('startLocation', defaultStart);
       setValue('endLocation', defaultEnd);
     }

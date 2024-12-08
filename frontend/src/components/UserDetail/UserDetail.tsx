@@ -12,6 +12,7 @@ import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import AuthContext from '../../context/auth';
 import axios from '../../util/axios';
+import AllRidesTable from './AllRidesTable';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
@@ -97,6 +98,7 @@ const UserDetail = ({
       });
     }
   };
+
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
