@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import Modal from '../Modal/Modal';
-import { Button } from '../FormElements/FormElements';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from '@mui/material';
+import { useForm, FormProvider } from 'react-hook-form';
 import { ObjectType } from '../../types/index';
-import EmployeeInfo from './EmployeeInfo';
-import RoleSelector from './RoleSelector';
+import { useEmployees } from '../../context/EmployeesContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
-import styles from './employeemodal.module.css';
-import { useEmployees } from '../../context/EmployeesContext';
-import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
+import RoleSelector from './RoleSelector';
+import EmployeeInfo from './EmployeeInfo';
 
 type EmployeeModalProps = {
   existingEmployee?: {
@@ -313,13 +317,14 @@ const EmployeeModal = ({
     }
   }
   return (
-    <>
-      <Modal
-        title={modalTitle}
-        isOpen={isOpen}
-        onClose={closeModal}
-        id="employee-modal"
-      >
+    <Dialog open={isOpen} onClose={closeModal} fullWidth>
+      <DialogTitle>
+        {modalTitle}
+        {/* <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+          
+        </Typography> */}
+      </DialogTitle>
+      <DialogContent>
         <Upload
           imageChange={updateBase64}
           existingPhoto={existingEmployee?.photoLink}
@@ -346,13 +351,22 @@ const EmployeeModal = ({
               selectedRoles={selectedRole}
               setSelectedRoles={setSelectedRole}
             />
-            <Button className={styles.submit} type="submit">
-              {submitButtonText}
-            </Button>
           </form>
         </FormProvider>
-      </Modal>
-    </>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeModal} color="secondary">
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          onClick={methods.handleSubmit(onSubmit)}
+          color="primary"
+        >
+          {submitButtonText}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
