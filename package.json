@@ -4,16 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
-    "@mui/icons-material": "^6.1.5",
-    "@mui/material": "^6.1.5",
     "@typescript-eslint/parser": "^5.62.0",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "pagination": "^0.4.6",
-    "react-paginate": "^8.2.0",
-    "server": "^1.0.41",
     "typescript": "^4.9.5"
   },
   "devDependencies": {
@@ -21,7 +12,9 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.56.0",
+    "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.8"

@@ -4,7 +4,6 @@ import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
-import { useRiders } from '../../context/RidersContext';
 
 type ScheduledTableProp = {
   riderId?: string;
@@ -12,12 +11,14 @@ type ScheduledTableProp = {
 
 const ScheduledTable = ({ riderId }: ScheduledTableProp) => {
   const { drivers } = useEmployees();
-  const { riders } = useRiders();
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
 
   // the ride(s) for the student with the specific riderId
   const filteredRides = rides.filter((ride) => ride.rider?.id === riderId);
+
+  // check that the rides displayed are associated with this student
+  filteredRides.forEach((ride) => console.log(ride.rider?.firstName));
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
