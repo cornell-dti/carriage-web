@@ -110,7 +110,6 @@ const RiderDetail = () => {
           </div>
         </UserDetail>
         <AllRidesTable riderId={riderId} />
-        <PastRides isStudent={true} rides={rides} />
       </div>
     </main>
   ) : null;

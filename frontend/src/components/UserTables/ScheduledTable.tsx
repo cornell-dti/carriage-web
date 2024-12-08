@@ -15,7 +15,9 @@ const ScheduledTable = ({ riderId }: ScheduledTableProp) => {
   const { riders } = useRiders();
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
-  const filteredRides = rides.filter((ride) => ride.rider?.id === riderId); // the rides for the user with the specific riderId
+
+  // the ride(s) for the student with the specific riderId
+  const filteredRides = rides.filter((ride) => ride.rider?.id === riderId);
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -31,6 +33,7 @@ const ScheduledTable = ({ riderId }: ScheduledTableProp) => {
 
   return rides.length ? (
     <>
+      {/* if there is a riderId prop it means we want to display all of their rides. otherwise, we display each driver's rides */}
       {riderId ? (
         <RidesTable rides={filteredRides} hasButtons={false} />
       ) : (

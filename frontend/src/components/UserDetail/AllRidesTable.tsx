@@ -75,11 +75,12 @@ function RidesTable({ riderId }: RidesTableProps) {
         <ScheduledTable riderId={riderId} />
       </TabPanel>
       <TabPanel value={value} index={1} dir={theme.direction}>
+        {/* TODO: need to display unscheduled rides per rider */}
         <UnscheduledTable />
       </TabPanel>
       <TabPanel value={value} index={2} dir={theme.direction}>
-        {/* <PastRides isStudent={true} rides={rides} /> */}
-        Past Rides Here
+        {/* TODO: need to display rider's ride history */}
+        Past Rides
       </TabPanel>
     </Box>
   );
