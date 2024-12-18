@@ -33,13 +33,7 @@ const EmployeeCard = ({
 }: EmployeeCardProps) => {
   const navigate = useNavigate();
   const netId = email.split('@')[0];
-  const fmtPhone = '';
-  if (phoneNumber !== undefined) {
-    const fmtPhone = formatPhone(phoneNumber);
-  } else {
-    const fmtPhone = '';
-  }
-
+  const fmtPhone = formatPhone(phoneNumber);
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
   }) => {
