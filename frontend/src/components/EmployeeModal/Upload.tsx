@@ -1,6 +1,9 @@
 import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
+//import { useToast, ToastStatus } from '../../context/toastContext';
+
+const IMAGE_SIZE_LIMIT = 50000;
 
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -8,27 +11,29 @@ type UploadProps = {
 };
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
+  //const { showToast } = useToast();
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}` : ''
   );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = createRef<HTMLInputElement>();
+
   /* This is for accessibility purposes only */
   const handleKeyboardPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       inputRef.current && inputRef.current.click();
     }
   };
+
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
     const { files } = e.target;
-    if (files && files[0] && files[0].size < 500000) {
-      const file = files[0];
-      const photoURL = URL.createObjectURL(file);
-      setImageURL(photoURL);
+    if (files && files[0] && files[0].size < IMAGE_SIZE_LIMIT) {
+      setImageURL(URL.createObjectURL(files[0]));
+      imageChange(e);
     } else {
-      console.log('invalid file');
+      setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
+      console.log(errorMessage); // placeholder for MUI chane.
     }
-    imageChange(e);
   }
 
   return (
@@ -48,7 +53,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         accept="image/png, image/jpeg"
         ref={inputRef}
         style={{ display: 'none' }}
-        onChange={(e) => previewImage(e)}
+        onChange={previewImage}
       />
       <label htmlFor="driverPhotoInput" className={styles.uploadText}>
         <span

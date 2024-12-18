@@ -34,7 +34,6 @@ const EmployeeCard = ({
   const navigate = useNavigate();
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
   }) => {
@@ -57,17 +56,6 @@ const EmployeeCard = ({
     if (isBoth) return 'Admin • Driver';
     if (isAdmin) return 'Admin';
     return 'Driver';
-  };
-
-  const userInfo = {
-    id,
-    firstName,
-    lastName,
-    netId,
-    type,
-    phone: fmtPhone,
-    photoLink,
-    startDate,
   };
 
   const handleClick = () => {
