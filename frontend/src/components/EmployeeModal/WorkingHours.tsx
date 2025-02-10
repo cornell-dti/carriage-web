@@ -1,16 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import {
   TextField,
   Button,
   Box,
   Typography,
   IconButton,
-  Chip,
+  FormHelperText,
+  FormGroup,
+  Checkbox,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { WeekProvider, useWeek } from './WeekContext';
 import moment from 'moment';
+import { FormControlLabel } from '@mui/material';
 
 type FormData = {
   availability: {
@@ -37,36 +39,27 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
   onRemove,
   totalCount,
 }) => {
-  const { selectDay, deselectDay, isDaySelectedByInstance, getSelectedDays } =
-    useWeek();
   const {
+    control,
     register,
     setValue,
     getValues,
     formState: { errors },
   } = useFormContext<FormData>();
-  const dayLabels = { Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'T', Fri: 'F' };
+
+  const dayLabels = { Mon: 'M', Tue: 'T', Wed: 'W', Thu: 'Th', Fri: 'F' };
   const [existingTime, setExistingTime] = useState<string[]>();
   const instance = `availability.${index}` as const;
-  const days = getSelectedDays(index);
 
-  const handleClick = (day: string) => {
-    if (isDaySelectedByInstance(day, index)) {
-      deselectDay(day, index);
-    } else {
-      selectDay(day, index);
+  // Initialize days state from existingDayArray
+  useEffect(() => {
+    if (existingDayArray) {
+      setValue(`${instance}.days`, existingDayArray);
     }
-  };
-
-  const prefillDays = useCallback(() => {
-    existingDayArray?.forEach((day) => {
-      selectDay(day, index);
-    });
-  }, [existingDayArray, index, selectDay]);
+  }, [existingDayArray, instance, setValue]);
 
   const prefillTimeRange = useCallback(() => {
     if (existingTimeRange) {
-      // const [startTime, endTime] = existingTimeRange.split('-');
       let [startTime, endTime] = existingTimeRange.split('-');
       startTime = formatTime(startTime);
       endTime = formatTime(endTime);
@@ -75,16 +68,12 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
   }, [existingTimeRange]);
 
   useEffect(() => {
-    prefillDays();
     prefillTimeRange();
-  }, [prefillDays, prefillTimeRange]);
-
-  useEffect(() => {
-    setValue(`${instance}.days`, days);
-  }, [instance, days, setValue]);
+  }, [prefillTimeRange]);
 
   const formatTime = (time: string): string =>
     moment(time, 'ha').format('HH:mm');
+
   return (
     <Box
       sx={{
@@ -146,28 +135,52 @@ const AvailabilityInput: React.FC<AvailabilityInputProps> = ({
           })}
         />
       </Box>
+
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: -1 }}>
         <Typography>Repeat on</Typography>
-        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-          {Object.entries(dayLabels).map(([day, label]) => (
-            <Chip
-              key={day}
-              label={label}
-              color={
-                isDaySelectedByInstance(day, index) ? 'primary' : 'default'
-              }
-              onClick={() => handleClick(day)}
-              clickable
-              size="small"
-            />
-          ))}
-        </Box>
-        {errors.availability?.[index]?.days && (
-          <Typography variant="caption" color="error">
-            Please select at least one day
-          </Typography>
-        )}
+        <Controller
+          name={`${instance}.days`}
+          control={control}
+          defaultValue={existingDayArray || []}
+          rules={{
+            validate: (value) =>
+              hide ||
+              (value && value.length > 0) ||
+              'Please select at least one day',
+          }}
+          render={({ field }) => (
+            <>
+              <FormGroup row>
+                {Object.entries(dayLabels).map(([day, label]) => (
+                  <FormControlLabel
+                    key={day}
+                    control={
+                      <Checkbox
+                        checked={field.value?.includes(day) || false}
+                        onChange={(event) => {
+                          const currentValue = field.value || [];
+                          const newValue = event.target.checked
+                            ? [...currentValue, day]
+                            : currentValue.filter((d) => d !== day);
+                          field.onChange(newValue);
+                        }}
+                      />
+                    }
+                    label={label}
+                  />
+                ))}
+              </FormGroup>
+              {errors.availability?.[index]?.days && (
+                <FormHelperText error>
+                  {errors.availability?.[index]?.days?.message ||
+                    'Please select at least one day'}
+                </FormHelperText>
+              )}
+            </>
+          )}
+        />
       </Box>
+
       {onRemove && (
         <IconButton
           onClick={onRemove}
@@ -191,17 +204,17 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
   existingAvailability,
   hide,
 }) => {
-  const [numAvailability, setNumAvailability] = useState(
-    existingAvailability ? 0 : 1
-  );
+  const [availabilityInputs, setAvailabilityInputs] = useState<number[]>([0]);
   const [availabilityArray, setAvailabilityArray] = useState<
     [string, string[]][]
   >([]);
 
-  const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
+  const addAvailabilityInput = () => {
+    setAvailabilityInputs((prev) => [...prev, prev.length]);
+  };
+
   const removeAvailabilityInput = (indexToRemove: number) => {
-    setNumAvailability((n) => Math.max(1, n - 1));
-    setAvailabilityArray((prev) => prev.filter((_, i) => i !== indexToRemove));
+    setAvailabilityInputs((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
 
   const getAvailabilityMap = useCallback((): Map<string, string[]> => {
@@ -215,46 +228,36 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
     return availabilityMap;
   }, [existingAvailability]);
 
-  const availabilityMapToArray = useCallback((map: Map<string, string[]>) => {
-    const newAvailabilityArray: [string, string[]][] = Array.from(
-      map,
-      ([timeRange, dayArray]) => [timeRange, dayArray]
-    );
-    setAvailabilityArray(newAvailabilityArray);
-  }, []);
-
   useEffect(() => {
-    availabilityMapToArray(getAvailabilityMap());
-  }, [getAvailabilityMap, availabilityMapToArray]);
+    if (existingAvailability) {
+      const map = getAvailabilityMap();
+      const newAvailabilityArray: [string, string[]][] = Array.from(
+        map,
+        ([timeRange, dayArray]) => [timeRange, dayArray]
+      );
+      setAvailabilityArray(newAvailabilityArray);
+      setAvailabilityInputs(
+        Array.from({ length: newAvailabilityArray.length }, (_, i) => i)
+      );
+    }
+  }, [existingAvailability, getAvailabilityMap]);
 
   return (
     <Box sx={{ display: hide ? 'none' : 'block', mt: 2 }}>
       <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
         Working Hours
       </Typography>
-      <WeekProvider>
-        {existingAvailability
-          ? availabilityArray.map(([timeRange, dayArray], index) => (
-              <AvailabilityInput
-                key={index}
-                index={index}
-                existingTimeRange={timeRange}
-                existingDayArray={dayArray}
-                hide={hide}
-                onRemove={() => removeAvailabilityInput(index)}
-                totalCount={availabilityArray.length}
-              />
-            ))
-          : [...Array(numAvailability)].map((_, index) => (
-              <AvailabilityInput
-                key={index}
-                index={index}
-                hide={hide}
-                onRemove={() => removeAvailabilityInput(index)}
-                totalCount={numAvailability}
-              />
-            ))}
-      </WeekProvider>
+      {availabilityInputs.map((_, index) => (
+        <AvailabilityInput
+          key={index}
+          index={index}
+          existingTimeRange={availabilityArray[index]?.[0]}
+          existingDayArray={availabilityArray[index]?.[1]}
+          hide={hide}
+          onRemove={() => removeAvailabilityInput(index)}
+          totalCount={availabilityInputs.length}
+        />
+      ))}
       <Button
         variant="text"
         color="primary"
