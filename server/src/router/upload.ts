@@ -1,5 +1,10 @@
 import express from 'express';
-import { S3, ObjectCannedACL } from '@aws-sdk/client-s3'; // Import required types
+import {
+  S3,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+} from '@aws-sdk/client-s3';
 import * as db from './common';
 import { Driver } from '../models/driver';
 import { Admin } from '../models/admin';

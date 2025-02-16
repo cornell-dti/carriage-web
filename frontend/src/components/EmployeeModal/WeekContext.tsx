@@ -40,7 +40,7 @@ export const WeekProvider = ({ children }: WeekProviderProps) => {
   });
 
   const setDay = useCallback((day: string, value: number) => {
-    setWeek(prev => {
+    setWeek((prev) => {
       if (prev[day] === value) return prev;
       return { ...prev, [day]: value };
     });
@@ -51,15 +51,9 @@ export const WeekProvider = ({ children }: WeekProviderProps) => {
     [setDay]
   );
 
-  const deselectDay = useCallback(
-    (day: string) => setDay(day, -1),
-    [setDay]
-  );
+  const deselectDay = useCallback((day: string) => setDay(day, -1), [setDay]);
 
-  const isDayOpen = useCallback(
-    (day: string) => week[day] === -1,
-    [week]
-  );
+  const isDayOpen = useCallback((day: string) => week[day] === -1, [week]);
 
   const isDaySelectedByInstance = useCallback(
     (day: string, index: number) => week[day] === index,
@@ -67,7 +61,7 @@ export const WeekProvider = ({ children }: WeekProviderProps) => {
   );
 
   const getSelectedDays = useCallback(
-    (index: number) => Object.keys(week).filter(day => week[day] === index),
+    (index: number) => Object.keys(week).filter((day) => week[day] === index),
     [week]
   );
 
