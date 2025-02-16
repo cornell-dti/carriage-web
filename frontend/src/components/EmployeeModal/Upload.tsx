@@ -3,7 +3,9 @@ import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 //import { useToast, ToastStatus } from '../../context/toastContext';
 
-const IMAGE_SIZE_LIMIT = 50000;
+
+const IMAGE_SIZE_LIMIT = 500000000;
+
 
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -31,7 +33,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       setImageURL(URL.createObjectURL(files[0]));
       imageChange(e);
     } else {
-      setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
+      setErrorMessage(`Images must be under ${ IMAGE_SIZE_LIMIT  / 1000} KB`);
       console.log(errorMessage); // placeholder for MUI chane.
     }
   }
@@ -50,7 +52,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       <input
         id="driverPhotoInput"
         type="file"
-        accept="image/png, image/jpeg"
+        accept="image/png, image/jpeg, image/heic, image/heif"
         ref={inputRef}
         style={{ display: 'none' }}
         onChange={previewImage}
