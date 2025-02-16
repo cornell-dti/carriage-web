@@ -67,3 +67,18 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
 };
 
 export default Upload;
+
+/**
+ * This component, `Upload`, provides an interface for users to upload a profile picture. It accepts
+ * an image file, validates its size, and previews the selected image. If the file size exceeds the
+ * pre- specified limit, an error message is displayed. The component supports both drag-and-drop and keyboard
+ * interactions to trigger the image upload.
+ *
+ * Props:
+ * - `imageChange`: A callback function that is invoked when the image is successfully selected or changed.
+ * - `existingPhoto` (optional): A URL for an existing profile photo to be displayed as the default.
+ *
+ * Features:
+ * - Displays an image preview after selection.
+ * - Validates that the selected image is under a defined size limit (500MB).
+ */
