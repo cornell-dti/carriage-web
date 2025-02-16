@@ -1,10 +1,5 @@
 import express from 'express';
-import {
-  S3,
-  PutObjectCommand,
-  DeleteObjectCommand,
-  HeadObjectCommand,
-} from '@aws-sdk/client-s3';
+import { S3 } from '@aws-sdk/client-s3';
 import * as db from './common';
 import { Driver } from '../models/driver';
 import { Admin } from '../models/admin';
@@ -67,3 +62,19 @@ router.post('/', validateUser('User'), (request, response) => {
 });
 
 export default router;
+
+/**
+ * This file handles image uploads to an S3 bucket.
+ * The image upload allows for the replacement of an existing image for drivers and admins,
+ * and updates the corresponding user's photo URL in the database. The uploaded image is
+ * stored in the 'carriage-images' S3 bucket and is made publicly accessible. The route
+ * validates the user, checks required fields, uploads the image to S3, and then updates
+ * the relevant user record with the new image URL in the database.
+ * This route performs the following actions:
+ * 1. Validates the user via the `validateUser` middleware.
+ * 2. Ensures that the `id`, `tableName`, and `fileBuffer` parameters are valid.
+ * 3. Uploads the image to the S3 bucket using AWS SDK.
+ * 4. Updates the corresponding driver's or admin's record in the database with the new
+ * photo URL.
+ * 5. Handles success and error responses, including S3 upload errors.
+ */
