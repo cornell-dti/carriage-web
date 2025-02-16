@@ -39,10 +39,10 @@ app.use(express.urlencoded({ limit: '500mb', extended: true }));
 
 // Very useful API Debugger Method.
 app.use((req, res, next) => {
-console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-console.log('Headers:', req.headers);
-console.log('Body:', req.body); // Requires body-parser or express.json()
-next();
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log('Headers:', req.headers);
+  console.log('Body:', req.body); // Requires body-parser or express.json()
+  next();
 });
 
 app.use('/api/riders', rider);
