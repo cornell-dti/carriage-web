@@ -1,7 +1,6 @@
 import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
-//import { useToast, ToastStatus } from '../../context/toastContext';
 
 const IMAGE_SIZE_LIMIT = 500000000;
 
@@ -11,14 +10,13 @@ type UploadProps = {
 };
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
-  //const { showToast } = useToast();
+
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}` : ''
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = createRef<HTMLInputElement>();
 
-  /* This is for accessibility purposes only */
   const handleKeyboardPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       inputRef.current && inputRef.current.click();
@@ -32,7 +30,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       imageChange(e);
     } else {
       setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
-      console.log(errorMessage); // placeholder for MUI chane.
+      console.log(errorMessage); 
     }
   }
 

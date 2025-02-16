@@ -120,15 +120,21 @@ const EmployeeModal = ({
     refresh();
   }
 
-  /**
-   * [createEmployee id employeeData endpoint refresh table iteration] creates a new employee
-   * using the provided data and endpoint. Optionally uploads a photo if [iteration] is 0 and
-   * [imageBase64] is non-empty.
-   * Requires: [id] to be a valid string or empty, [employeeData] to be a valid object,
-   * [endpoint] to be a valid API endpoint string, [refresh] to be a function, and [iteration]
-   * to be a non-negative integer.
-   * Returns: the created employee data.
-   */
+/**
+ * Creates a new employee using the provided data and endpoint. Optionally uploads a photo if
+ * [iteration] is 0 and [imageBase64] is non-empty.
+ * 
+ * @param id - The unique identifier of the employee to create, or an empty string if not provided.
+ * @param employeeData - The data to create the new employee with. This should be a valid object.
+ * @param endpoint - The API endpoint to which the employee data will be sent.
+ * @param refresh - A function that refreshes the employee data or table after the creation.
+ * @param iteration - A non-negative integer used to conditionally upload a photo.
+ * @param imageBase64 - A base64 encoded string representing the employee's photo (optional).
+ * 
+ * @returns A promise that resolves to the created employee data.
+ * 
+ * @throws {Error} Throws an error if any of the parameters are invalid or if the creation fails.
+ */
   async function createEmployee(
     id: string,
     employeeData: AdminData | DriverData,
@@ -155,16 +161,23 @@ const EmployeeModal = ({
     return createdEmployee;
   }
 
-  /**
-   * [updateEmployee id employeeData endpoint refresh table iteration] updates an existing
-   * employee's data using the specified endpoint. Optionally uploads a photo if [iteration]
-   * is 0 and [imageBase64] is non-empty.
-   * Requires: [id] to be a valid string, [employeeData] to be a valid object, [endpoint] to
-   * be a valid API endpoint string, [refresh] to be a function, and [iteration] to be a
-   * non-negative integer.
-   * Returns: a promise that resolves after successfully updating the employee and refreshing
-   * the data.
-   */
+
+/**
+ * Updates an existing employee's data using the specified endpoint. Optionally uploads a photo
+ * if [iteration] is 0 and [imageBase64] is non-empty.
+ * 
+ * @param  id - The unique identifier of the employee to update.
+ * @param  employeeData - The data to update the employee with. This should be a valid object.
+ * @param  endpoint - The API endpoint to which the employee data will be sent.
+ * @param  refresh - A function that refreshes the employee data or table after the update.
+ * @param  iteration - A non-negative integer used to conditionally upload a photo.
+ * @param  imageBase64 - A base64 encoded string representing the employee's photo (optional).
+ * 
+ * @returns  A promise that resolves after successfully updating the employee and refreshing
+ * the data.
+ * 
+ * @throws {Error} Throws an error if any of the parameters are invalid or if the update fails.
+ */
 
   async function updateEmployee(
     id: string,
@@ -183,25 +196,32 @@ const EmployeeModal = ({
   }
 
   /**
-   * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
-   * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
-   * Requires: [id] to be a valid string, [emptype] to be either 'drivers' or 'admins'.
-   * Returns: a promise that resolves after successfully deleting the employee.
-   */
-
+ * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
+ * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
+ * 
+ * @param id - The unique identifier of the employee to delete.
+ * @param emptype - The type of employee, either 'drivers' or 'admins'.
+ * 
+ * @returns A promise that resolves after successfully deleting the employee.
+ * 
+ * @throws {Error} Throws an error if the id is not a valid string or the emptype is not 'drivers' or 'admins'.
+ */
   async function deleteEmployee(id: string, emptype: 'drivers' | 'admins') {
     await axios.delete(`/api/${emptype}/${id}`);
   }
 
-  /**
-   * [processRoles selectedRole existingEmployee admin driver] processes and assigns roles
-   * ('driver', 'admin') for the given employee, creating, updating, or deleting their
-   * information as necessary.
-   * Requires: [selectedRole] to be a valid array of roles, [existingEmployee] to be an object
-   * or null, and [admin] and [driver] to be valid employee data objects.
-   * Returns: a promise that resolves after processing all roles.
-   */
-
+/**
+ * Processes and assigns roles ('driver', 'admin') for an employee, handling creation, 
+ * updating, or deletion of their information as needed.
+ * 
+ * @param selectedRole - Valid array of roles to assign.
+ * @param existingEmployee - Existing employee data object or `null` (if new).
+ * @param admin - Valid employee data object for the 'admin' role.
+ * @param driver - Valid employee data object for the 'driver' role.
+ * @returns A promise that resolves when all role processing is complete.
+ * @throws {Error} If input parameters fail validation (invalid types or structure).
+ * 
+ */
   async function processRoles(
     selectedRole: any,
     existingEmployee: any,
@@ -312,14 +332,6 @@ const EmployeeModal = ({
     }
   }
 
-  /**
-   * [onSubmit data] handles form submission, processes employee data, and invokes role
-   * processing.
-   * Requires: [data] to be an object containing valid employee form fields, including
-   * [firstName], [lastName], [netid], [phoneNumber], [startDate], and [availability].
-   * Returns: a promise that resolves after successfully processing the form data.
-   */
-
   async function onSubmit(data: ObjectType) {
     const { firstName, lastName, netid, phoneNumber, startDate, availability } =
       data;
@@ -353,12 +365,7 @@ const EmployeeModal = ({
     }
   }
 
-  /**
-   * [updateBase64 e] updates the [imageBase64] state by converting the selected file from the
-   * input event [e] into a base64-encoded string.
-   * Requires: [e] to be a valid React change event containing file input data.
-   * Returns: a promise that resolves after successfully updating the [imageBase64] state.
-   */
+
   async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
 
