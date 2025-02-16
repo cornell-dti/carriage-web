@@ -120,21 +120,21 @@ const EmployeeModal = ({
     refresh();
   }
 
-/**
- * Creates a new employee using the provided data and endpoint. Optionally uploads a photo if
- * [iteration] is 0 and [imageBase64] is non-empty.
- * 
- * @param id - The unique identifier of the employee to create, or an empty string if not provided.
- * @param employeeData - The data to create the new employee with. This should be a valid object.
- * @param endpoint - The API endpoint to which the employee data will be sent.
- * @param refresh - A function that refreshes the employee data or table after the creation.
- * @param iteration - A non-negative integer used to conditionally upload a photo.
- * @param imageBase64 - A base64 encoded string representing the employee's photo (optional).
- * 
- * @returns A promise that resolves to the created employee data.
- * 
- * @throws {Error} Throws an error if any of the parameters are invalid or if the creation fails.
- */
+  /**
+   * Creates a new employee using the provided data and endpoint. Optionally uploads a photo if
+   * [iteration] is 0 and [imageBase64] is non-empty.
+   *
+   * @param id - The unique identifier of the employee to create, or an empty string if not provided.
+   * @param employeeData - The data to create the new employee with. This should be a valid object.
+   * @param endpoint - The API endpoint to which the employee data will be sent.
+   * @param refresh - A function that refreshes the employee data or table after the creation.
+   * @param iteration - A non-negative integer used to conditionally upload a photo.
+   * @param imageBase64 - A base64 encoded string representing the employee's photo (optional).
+   *
+   * @returns A promise that resolves to the created employee data.
+   *
+   * @throws {Error} Throws an error if any of the parameters are invalid or if the creation fails.
+   */
   async function createEmployee(
     id: string,
     employeeData: AdminData | DriverData,
@@ -161,23 +161,22 @@ const EmployeeModal = ({
     return createdEmployee;
   }
 
-
-/**
- * Updates an existing employee's data using the specified endpoint. Optionally uploads a photo
- * if [iteration] is 0 and [imageBase64] is non-empty.
- * 
- * @param  id - The unique identifier of the employee to update.
- * @param  employeeData - The data to update the employee with. This should be a valid object.
- * @param  endpoint - The API endpoint to which the employee data will be sent.
- * @param  refresh - A function that refreshes the employee data or table after the update.
- * @param  iteration - A non-negative integer used to conditionally upload a photo.
- * @param  imageBase64 - A base64 encoded string representing the employee's photo (optional).
- * 
- * @returns  A promise that resolves after successfully updating the employee and refreshing
- * the data.
- * 
- * @throws {Error} Throws an error if any of the parameters are invalid or if the update fails.
- */
+  /**
+   * Updates an existing employee's data using the specified endpoint. Optionally uploads a photo
+   * if [iteration] is 0 and [imageBase64] is non-empty.
+   *
+   * @param  id - The unique identifier of the employee to update.
+   * @param  employeeData - The data to update the employee with. This should be a valid object.
+   * @param  endpoint - The API endpoint to which the employee data will be sent.
+   * @param  refresh - A function that refreshes the employee data or table after the update.
+   * @param  iteration - A non-negative integer used to conditionally upload a photo.
+   * @param  imageBase64 - A base64 encoded string representing the employee's photo (optional).
+   *
+   * @returns  A promise that resolves after successfully updating the employee and refreshing
+   * the data.
+   *
+   * @throws {Error} Throws an error if any of the parameters are invalid or if the update fails.
+   */
 
   async function updateEmployee(
     id: string,
@@ -196,32 +195,32 @@ const EmployeeModal = ({
   }
 
   /**
- * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
- * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
- * 
- * @param id - The unique identifier of the employee to delete.
- * @param emptype - The type of employee, either 'drivers' or 'admins'.
- * 
- * @returns A promise that resolves after successfully deleting the employee.
- * 
- * @throws {Error} Throws an error if the id is not a valid string or the emptype is not 'drivers' or 'admins'.
- */
+   * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
+   * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
+   *
+   * @param id - The unique identifier of the employee to delete.
+   * @param emptype - The type of employee, either 'drivers' or 'admins'.
+   *
+   * @returns A promise that resolves after successfully deleting the employee.
+   *
+   * @throws {Error} Throws an error if the id is not a valid string or the emptype is not 'drivers' or 'admins'.
+   */
   async function deleteEmployee(id: string, emptype: 'drivers' | 'admins') {
     await axios.delete(`/api/${emptype}/${id}`);
   }
 
-/**
- * Processes and assigns roles ('driver', 'admin') for an employee, handling creation, 
- * updating, or deletion of their information as needed.
- * 
- * @param selectedRole - Valid array of roles to assign.
- * @param existingEmployee - Existing employee data object or `null` (if new).
- * @param admin - Valid employee data object for the 'admin' role.
- * @param driver - Valid employee data object for the 'driver' role.
- * @returns A promise that resolves when all role processing is complete.
- * @throws {Error} If input parameters fail validation (invalid types or structure).
- * 
- */
+  /**
+   * Processes and assigns roles ('driver', 'admin') for an employee, handling creation,
+   * updating, or deletion of their information as needed.
+   *
+   * @param selectedRole - Valid array of roles to assign.
+   * @param existingEmployee - Existing employee data object or `null` (if new).
+   * @param admin - Valid employee data object for the 'admin' role.
+   * @param driver - Valid employee data object for the 'driver' role.
+   * @returns A promise that resolves when all role processing is complete.
+   * @throws {Error} If input parameters fail validation (invalid types or structure).
+   *
+   */
   async function processRoles(
     selectedRole: any,
     existingEmployee: any,
@@ -364,7 +363,6 @@ const EmployeeModal = ({
       closeModal();
     }
   }
-
 
   async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();

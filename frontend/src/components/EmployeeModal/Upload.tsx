@@ -10,7 +10,6 @@ type UploadProps = {
 };
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
-
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}` : ''
   );
@@ -30,7 +29,7 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
       imageChange(e);
     } else {
       setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
-      console.log(errorMessage); 
+      console.log(errorMessage);
     }
   }
 
