@@ -82,7 +82,7 @@ router.get('/:id', validateUser('User'), (req, res) => {
   db.getById(res, Ride, id, tableName);
 });
 
-//Get all rides for a rider by Rider ID
+// Get all rides for a rider by Rider ID
 router.get('/rider/:id', validateUser('User'), (req, res) => {
   const {
     params: { id },
