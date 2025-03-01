@@ -82,6 +82,15 @@ router.get('/:id', validateUser('User'), (req, res) => {
   db.getById(res, Ride, id, tableName);
 });
 
+//Get all rides for a rider by Rider ID
+router.get('/rider/:id', validateUser('User'), (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const condition = new Condition('rider').eq(id);
+  db.scan(res, Ride, condition);
+});
+
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { type, status, rider, driver, date, scheduled } = req.query;
@@ -231,6 +240,7 @@ router.put('/:id/edits', validateUser('User'), (req, res) => {
     },
   } = req;
 
+  // Get master ride and create replace edit
   db.getById(res, Ride, id, tableName, (masterRide: RideType) => {
     const masterStartDate = moment(masterRide.startTime).format('YYYY-MM-DD');
     const origStartTimeOnly = moment(masterRide.startTime).format('HH:mm:ss');

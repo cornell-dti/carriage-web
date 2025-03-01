@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import { useParams, useNavigate } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
@@ -9,8 +9,7 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
-import RidesTable from 'components/UserTables/RidesTable';
-import RideTable from 'components/RiderComponents/RideTable';
+import StudentRidesTable from 'components/UserTables/StudentRidesTable';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
@@ -41,8 +40,10 @@ const RiderDetail = () => {
   const [rider, setRider] = useState(
     riders.find((rider) => rider.id === riderId)
   );
+  const now = new Date().toISOString();
   const [rides, setRides] = useState<Ride[]>([]);
   const netid = rider?.email.split('@')[0];
+  const componentMounted = useRef(true);
 
   const handleBack = () => {
     navigate('/admin/riders');
@@ -67,6 +68,30 @@ const RiderDetail = () => {
     }
   }, [rider]);
 
+  const refreshRides = useCallback(() => {
+    axios
+      .get(`/api/rides/rider/${riderId}`)
+      .then((res) => res.data)
+      .then(({ data }) => {
+        if (componentMounted.current) {
+          setRides([...data]);
+        }
+      })
+      .catch(() => {
+        if (componentMounted.current) {
+          setRides([]); // Return nothing instead of showing an error
+        }
+      });
+  }, [riderId]);
+
+  useEffect(() => {
+    refreshRides();
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, [refreshRides, rides]);
+
   useEffect(() => {
     if (riderId) {
       if (!rider) {
@@ -75,10 +100,10 @@ const RiderDetail = () => {
           .then((res) => res.data)
           .then(({ data }) => setRider(data));
       }
-      axios
-        .get(`/api/rides?type=past&rider=${riderId}`)
-        .then((res) => res.data)
-        .then(({ data }) => setRides(data.sort(compRides)));
+      // axios
+      //   .get(`/api/rides?type=past&rider=${riderId}`)
+      //   .then((res) => res.data)
+      //   .then(({ data }) => setRides(data.sort(compRides)));
     }
     setRider(riders.find((rider) => rider.id === riderId));
   }, [rider, riders, riderId]);
@@ -110,8 +135,7 @@ const RiderDetail = () => {
             />
           </div>
         </UserDetail>
-        <RideTable rides={rides} />
-        <PastRides isStudent={true} rides={rides} />
+        <StudentRidesTable rides={rides} />
       </div>
     </main>
   ) : null;
