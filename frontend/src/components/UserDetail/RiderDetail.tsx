@@ -100,10 +100,6 @@ const RiderDetail = () => {
           .then((res) => res.data)
           .then(({ data }) => setRider(data));
       }
-      // axios
-      //   .get(`/api/rides?type=past&rider=${riderId}`)
-      //   .then((res) => res.data)
-      //   .then(({ data }) => setRides(data.sort(compRides)));
     }
     setRider(riders.find((rider) => rider.id === riderId));
   }, [rider, riders, riderId]);
