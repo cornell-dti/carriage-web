@@ -16,46 +16,59 @@
 
 .statsContainer {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  gap: 1.5rem;
   align-items: center;
-  box-shadow: 0.25rem 0.25rem 1rem rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  max-width: 100%;
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Individual stat box */
 .statsbox {
-  flex-direction: row;
-  min-width: 25%;
   display: flex;
-  flex-flow: row;
   align-items: center;
+  padding: 0.5rem 1rem;
+  min-width: 180px;
 }
 
 .left {
   display: flex;
-  width: 35%;
-  margin: 0.5rem;
-}
-
-.right {
-  width: 65%;
-  margin: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
 }
 
 .icon {
-  border-radius: 100%;
+  border-radius: 50%;
   width: 2.5rem;
   height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the content */
+  text-align: center; /* Center the text */
+  width: 100%; /* Take full width for proper centering */
 }
 
 .stats {
-  font-size: 1.35rem;
-  font-weight: bold;
-  margin-bottom: -5%;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .description {
-  font-size: 0.75rem;
-  margin-top: -5%;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  margin-top: 0.25rem;
 }
