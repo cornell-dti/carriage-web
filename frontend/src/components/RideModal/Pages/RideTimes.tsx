@@ -166,7 +166,10 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
     watch,
   } = methods;
   const watchRepeats = watch('repeats');
-
+  const repeatOptions = Object.values(RepeatValues).map((value) => ({
+    id: value,
+    name: value,
+  }));
   useEffect(() => {
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
@@ -191,6 +194,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                 },
               })}
               aria-required="true"
+              className={cn(styles.dateStyle)}
             />
             {errors.date?.type === 'required' && (
               <p className={styles.error}>Please enter a date</p>
@@ -205,13 +209,14 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
-              {...register('repeats', { required: true })}
-              aria-required="true"
-              className={styles.select}
+              {...register('repeats', {
+                required: 'Please select a repeat option',
+              })}
+              className={cn(styles.selectInputContainer, styles.selectInput)}
             >
-              {Object.values(RepeatValues).map((repeatValue) => (
-                <option key={repeatValue} value={repeatValue}>
-                  {repeatValue}
+              {repeatOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
                 </option>
               ))}
             </select>
@@ -225,6 +230,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="pickupTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
@@ -247,6 +253,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="dropoffTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {

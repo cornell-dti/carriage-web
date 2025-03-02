@@ -26,49 +26,72 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 
 ## Contributors:
 
-**Current Contributors**
+## Contributors
 
-- Harrison Chin - Software Developer
-- Andrew Choi - Product Manager
-- Rohit Valiveti - Software Developer
-- Pratyush Sudhakar - Technical Project Manager
-- Enoch Chen - Software Developer
-- Desmond Atikpui - Software Developer
-- Stuti Gupta - Software Developer
-- Kevin Lin - Software Developer
-- Colin Wu - Software Developer
-- Raissa Ji - Software Developer
-- Nam Anh Dang - Software Developer
-- Selena Liu - Software Developer
+### Current Contributors
 
-**Past Contributors**
+#### Product Manager
+- Matthias Choi
 
-- Daniel Wei - Technical Project Manager
-- Bryan Graeser - Product Manager
-- Nina Xie - Product Manager
-- Matthew Guo - Technical Project Manager
-- Aaron Kang - Software Developer
-- Zack Ashen - Software Developer
-- Tucker Stanley - Software Developer
-- Justin Kang - Software Developer
-- Michael Torku - Technical Project Manager
-- Austin Wu - Software Developer
-- Li Fengyu - Software Developer
-- Sam Steinberg - Product Manager
-- Laura Sizemore - Technical Project Manager, Software Developer
-- Christopher Hansen - Technical Project Manager
-- Jessica Chen - Software Developer
-- Bryan Graeser - Software Developer
-- Matthew Guo - Software Developer
-- Ishika Jain - Software Developer
-- Lucy Wang - Software Developer
-- Michael Ye - Software Developer
-- Becky Hu - Software Developer
-- Laura Sizemore - Software Developer
-- Pinxuan Huang - Software Developer
-- Jay Joo - Software Developer
-- Simran Puri - Software Developer
-- Aiden Kim - Designer
-- Yisu Zheng - Designer
-- Chelsea Wang - Designer
-- Joanne Lee - Designer
+#### Technical Project Manager
+- Desmond Atikpui
+
+#### Software Developers
+- Dwain Anderson
+- Nam Anh Dang
+- Raissa Ji
+- Selena Liu
+
+---
+
+### Past Contributors
+
+#### Product Managers
+- Andrew Choi
+- Bryan Graeser
+- Nina Xie
+- Sam Steinberg
+- Stephy Chen
+
+#### Technical Project Managers
+- Christopher Hansen
+- Daniel Wei
+- Laura Sizemore
+- Matthew Guo
+- Michael Torku
+- Pratyush Sudhakar
+
+#### Software Developers
+- Aaron Kang
+- Aiden Kim
+- Andrew Choi
+- Becky Hu
+- Bryan Graeser
+- Chelsea Wang
+- Colin Wu
+- Enoch Chen
+- Harrison Chin
+- Ishika Jain
+- Jay Joo
+- Jessica Chen
+- Joanne Lee
+- Justin Kang
+- Kevin Lin
+- Laura Sizemore
+- Li Fengyu
+- Lucy Wang
+- Matthew Guo
+- Michael Ye
+- Pinxuan Huang
+- Rohit Valiveti
+- Simran Puri
+- Stuti Gupta
+- Tucker Stanley
+- Zack Ashen
+
+#### Designers
+- Aiden Kim
+- Chelsea Wang
+- Joanne Lee
+- Yisu Zheng
+

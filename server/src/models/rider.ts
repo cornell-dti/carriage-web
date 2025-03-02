@@ -4,7 +4,6 @@ import { formatAddress, isAddress } from '../util';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Accessibility {
-  NONE = '',
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
   WHEELCHAIR = 'Wheelchair',
@@ -12,7 +11,6 @@ export enum Accessibility {
   KNEE_SCOOTER = 'Knee Scooter',
   LOW_VISION = 'Low Vision/Blind',
   SERVICE_ANIMALS = 'Service Animal',
-  OTHER = 'Other',
 }
 
 export enum Organization {
@@ -26,7 +24,7 @@ export type RiderType = {
   lastName: string;
   phoneNumber: string;
   email: string;
-  accessibility?: string;
+  accessibility?: Accessibility[];
   organization?: Organization;
   description?: string;
   joinDate: string;
@@ -63,8 +61,8 @@ const schema = new dynamoose.Schema({
     validate: (email) => isEmail(email as string),
   },
   accessibility: {
-    type: String,
-    enum: Object.values(Accessibility),
+    type: Array,
+    schema: [String],
     required: false,
   },
   organization: {
