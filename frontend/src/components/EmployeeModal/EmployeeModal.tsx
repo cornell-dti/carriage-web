@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { Employee, ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
@@ -13,41 +13,58 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 
-type EmployeeModalProps = {
-  existingEmployee?: {
-    id?: string;
-    firstName?: string;
-    lastName?: string;
-    type?: string[];
-    isDriver?: boolean;
-    netId?: string;
-    email?: string;
-    phone?: string;
-    availability?: string[][];
-    startDate?: string;
-    photoLink?: string;
-  };
-  isOpen: boolean;
-  setIsOpen: any;
-};
-
 type AdminData = {
-  id?: string;
-  firstName: any;
-  lastName: any;
   type: string[];
   isDriver: boolean;
-  email: any;
-  phoneNumber: any;
 };
 
 type DriverData = {
-  id?: string;
-  firstName: any;
-  lastName: any;
-  email: any;
-  phoneNumber: any;
-  availability: ObjectType;
+  availability: any;
+  startDate: string;
+};
+
+//normalized type
+type EmployeeEntity = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  netId: string;
+  email: string;
+  driver?: DriverData;
+  admin?: AdminData;
+  photoLink?: string;
+};
+
+// both for formating to current api data expections
+function extractAdminData(employeeData: EmployeeEntity) {
+  return {
+    firstName: employeeData.firstName,
+    lastName: employeeData.lastName,
+    type: employeeData.admin?.type,
+    isDriver: employeeData.admin?.isDriver,
+    phoneNumber: employeeData.phoneNumber,
+    email: employeeData.email,
+    photoLink: employeeData.photoLink,
+  };
+}
+
+function extractDriverData(employeeData: EmployeeEntity) {
+  return {
+    firstName: employeeData.firstName,
+    lastName: employeeData.lastName,
+    availability: employeeData.driver?.availability,
+    phoneNumber: employeeData.phoneNumber,
+    startDate: employeeData.driver?.startDate,
+    email: employeeData.email,
+    photoLink: employeeData.photoLink,
+  };
+}
+
+type EmployeeModalProps = {
+  existingEmployee: EmployeeEntity | null;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
 };
 
 const EmployeeModal = ({
@@ -56,20 +73,9 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
-
-  if (existingEmployee?.isDriver !== undefined) {
-    if (existingEmployee.isDriver) {
-      existingEmployee?.type?.push('driver');
-    }
-  } else if (existingEmployee) {
-    existingEmployee.type = existingEmployee?.type || ['driver'];
-  }
-
-  const [selectedRole, setSelectedRole] = useState<string[]>(
-    existingEmployee?.type || []
-  );
-  const [imageBase64, setImageBase64] = useState('');
   const { refreshAdmins, refreshDrivers } = useEmployees();
+  const [selectedRoles, setSelectedRole] = useState<string[]>([]);
+  const [imageBase64, setImageBase64] = useState('');
   const methods = useForm();
 
   const closeModal = () => {
@@ -77,305 +83,286 @@ const EmployeeModal = ({
     setIsOpen(false);
   };
 
-  /**
-   * Converts availabilities expressed as an array of {starTime, endTime, days}
-   * objects into an object mapping the day to the start and end time of each
-   * availability period
-   *
-   * @param availability the availibity array to convert
-   * @returns the availibity array expressed as an object mapping the day to
-   * the start and end time of each availibility period
-   */
-  const parseAvailability = (availability: ObjectType[]) => {
+  function parseAvailability(availability: ObjectType[]) {
+    const result: ObjectType = {};
     if (availability === null || availability === undefined) {
-      console.error('Null ptr: Availablity');
-      return []; // placeholder
-    } else {
-      const result: ObjectType = {};
-      availability.forEach(({ startTime, endTime, days }) => {
-        days.forEach((day: string) => {
-          result[day] = { startTime, endTime };
-        });
-      });
       return result;
     }
-  };
+    availability.forEach(({ startTime, endTime, days }) => {
+      days.forEach((day: string) => {
+        result[day] = { startTime, endTime };
+      });
+    });
+    return result;
+  }
+
+  /**
+   * Uploads an employee's photo (in base64 format) to the backend.
+   *
+   * @param employeeId - The ID of the employee whose photo is being uploaded.
+   * @param table - The name of the table (used for determining where to store the photo).
+   * @param imageBase64 - The photo image data in base64 format.
+   * @returns A promise that resolves when the photo is successfully uploaded.
+   */
 
   async function uploadEmployeePhoto(
     employeeId: string,
     table: string,
-    refresh: () => Promise<void>,
     imageBase64: string
   ): Promise<void> {
-    const photoData = {
-      id: employeeId,
-      tableName: table,
-      fileBuffer: imageBase64,
-    };
     try {
-      await axios.post('/api/upload/', photoData);
+      await axios.post('/api/upload/', {
+        id: employeeId,
+        tableName: table,
+        fileBuffer: imageBase64,
+      });
     } catch (error) {
       console.error('Error uploading photo:', error);
     }
-    refresh();
   }
 
   /**
-   * Creates a new employee using the provided data and endpoint. Optionally uploads a photo if
-   * [iteration] is 0 and [imageBase64] is non-empty.
+   * Sends the employee role data to the backend for creation and returns the new employee ID.
    *
-   * @param id - The unique identifier of the employee to create, or an empty string if not provided.
-   * @param employeeData - The data to create the new employee with. This should be a valid object.
-   * @param endpoint - The API endpoint to which the employee data will be sent.
-   * @param refresh - A function that refreshes the employee data or table after the creation.
-   * @param iteration - A non-negative integer used to conditionally upload a photo.
-   * @param imageBase64 - A base64 encoded string representing the employee's photo (optional).
-   *
-   * @returns A promise that resolves to the created employee data.
-   *
-   * @throws {Error} Throws an error if any of the parameters are invalid or if the creation fails.
+   * @param employeeData - The employee entity containing the details to be created.
+   * @param endpoint - The API endpoint, either `/api/admins` or `/api/drivers`.
+   * @returns A promise resolving to the newly created employee ID.
    */
+
   async function createEmployee(
-    id: string,
-    employeeData: AdminData | DriverData,
-    endpoint: string,
-    refresh: () => Promise<void>,
-    table: string,
-    iteration: number
-  ): Promise<any> {
-    if (Boolean(id) && id !== '') {
-      (employeeData as any).id = id;
+    employeeData: EmployeeEntity,
+    endpoint: '/api/admins' | '/api/drivers'
+  ): Promise<EmployeeEntity> {
+    let res: any;
+    console.log(employeeData);
+    switch (endpoint) {
+      case '/api/drivers':
+        const {
+          data: { data: createdDriver },
+        } = await axios.post(endpoint, {
+          ...extractDriverData(employeeData),
+          eid: employeeData.id || '',
+        });
+        res = createdDriver;
+        break;
+      case '/api/admins':
+        const {
+          data: { data: createdAdmin },
+        } = await axios.post(endpoint, {
+          ...extractAdminData(employeeData),
+          eid: employeeData.id || '',
+        });
+        res = createdAdmin;
+        break;
+      default:
+        break;
     }
-    const {
-      data: { data: createdEmployee },
-    } = await axios.post(endpoint, employeeData);
-    if (iteration === 0 && imageBase64 !== '') {
-      await uploadEmployeePhoto(
-        createdEmployee.id,
-        table,
-        refresh,
-        imageBase64
-      );
-    }
-    await refresh();
-    return createdEmployee;
+    return res;
   }
 
   /**
-   * Updates an existing employee's data using the specified endpoint. Optionally uploads a photo
-   * if [iteration] is 0 and [imageBase64] is non-empty.
+   * Sends the updated employee role data to the backend and returns the updated employee.
    *
-   * @param  id - The unique identifier of the employee to update.
-   * @param  employeeData - The data to update the employee with. This should be a valid object.
-   * @param  endpoint - The API endpoint to which the employee data will be sent.
-   * @param  refresh - A function that refreshes the employee data or table after the update.
-   * @param  iteration - A non-negative integer used to conditionally upload a photo.
-   * @param  imageBase64 - A base64 encoded string representing the employee's photo (optional).
-   *
-   * @returns  A promise that resolves after successfully updating the employee and refreshing
-   * the data.
-   *
-   * @throws {Error} Throws an error if any of the parameters are invalid or if the update fails.
+   * @param employeeData - The employee entity containing updated data.
+   * @param endpoint - The API endpoint, either `/api/admins` or `/api/drivers`.
+   * @returns A promise resolving to the updated employee entity.
    */
-
   async function updateEmployee(
-    id: string,
-    employeeData: AdminData | DriverData,
-    endpoint: string,
-    refresh: () => Promise<void>,
-    table: string,
-    iteration: number
-  ): Promise<any> {
-    await axios.put(`${endpoint}/${id}`, employeeData);
-    // iteration count prevents a second write to S3
-    if (iteration === 0 && imageBase64 !== '') {
-      uploadEmployeePhoto(id, table, refresh, imageBase64);
+    employeeData: EmployeeEntity,
+    endpoint: '/api/admins' | '/api/drivers'
+  ): Promise<EmployeeEntity> {
+    let res: any;
+    console.log(employeeData);
+    switch (endpoint) {
+      case '/api/drivers':
+        const {
+          data: { data: updatedDriver },
+        } = await axios.put(
+          `${endpoint}/${employeeData.id}`,
+          extractDriverData(employeeData)
+        );
+        res = updatedDriver;
+        break;
+      case '/api/admins':
+        const {
+          data: { data: updatedAdmin },
+        } = await axios.put(
+          `${endpoint}/${employeeData.id}`,
+          extractDriverData(employeeData)
+        );
+        res = updatedAdmin;
+        break;
+      default:
+        break;
     }
-    refresh();
+    console.log(res);
+    return res; // Return the updated employee data, remove double nested later
   }
 
   /**
-   * [deleteEmployee id emptype] removes an employee with the specified [id] from the backend,
-   * using the employee type [emptype] ('drivers' or 'admins') to determine the endpoint.
+   * Deletes an employee role entry from the backend.
    *
-   * @param id - The unique identifier of the employee to delete.
-   * @param emptype - The type of employee, either 'drivers' or 'admins'.
-   *
-   * @returns A promise that resolves after successfully deleting the employee.
-   *
-   * @throws {Error} Throws an error if the id is not a valid string or the emptype is not 'drivers' or 'admins'.
+   * @param id - The ID of the employee to be deleted.
+   * @param endpoint - The API endpoint to delete from.
+   * @returns A promise that resolves when the deletion is complete.
    */
-  async function deleteEmployee(id: string, emptype: 'drivers' | 'admins') {
-    await axios.delete(`/api/${emptype}/${id}`);
+  async function deleteEmployee(id: string, endpoint: string): Promise<void> {
+    await axios.delete(`${endpoint}/${id}`);
   }
 
   /**
-   * Processes and assigns roles ('driver', 'admin') for an employee, handling creation,
-   * updating, or deletion of their information as needed.
+   * Processes the selected roles:
+   * - If no employee exists, creates one using the primary selected role.
+   * - If the employee exists, updates or adds the appropriate roles.
+   * - Deletes roles if they are no longer selected.
    *
-   * @param selectedRole - Valid array of roles to assign.
-   * @param existingEmployee - Existing employee data object or `null` (if new).
-   * @param admin - Valid employee data object for the 'admin' role.
-   * @param driver - Valid employee data object for the 'driver' role.
-   * @returns A promise that resolves when all role processing is complete.
-   * @throws {Error} If input parameters fail validation (invalid types or structure).
-   *
+   * @param selectedRoles - Array of roles from the form.
+   * @param existingEmployee - Existing employee data or null.
+   * @returns The updated or newly created employee entity.
    */
   async function processRoles(
-    selectedRole: any,
-    existingEmployee: any,
-    admin: any,
-    driver: any
-  ) {
-    const containsDriver = selectedRole.includes('driver');
-    const containsAdmin =
-      selectedRole.includes('sds-admin') ||
-      selectedRole.includes('redrunner-admin');
+    selectedRoles: string[],
+    employeeData: EmployeeEntity
+  ): Promise<string> {
+    const hasAdmin =
+      selectedRoles.includes('sds-admin') ||
+      selectedRoles.includes('redrunner-admin');
+    const hasDriver = selectedRoles.includes('driver');
 
-    const rolesToProcess = [];
-    if (containsAdmin) rolesToProcess.push('admins');
-    if (containsDriver) rolesToProcess.push('drivers');
-
-    let newEmployee = null; // To track new employee creation
-    let iteration = 0;
-
-    for (const role of rolesToProcess) {
-      const apiEndpoint = role === 'admins' ? '/api/admins' : '/api/drivers';
-      const refreshFunction =
-        role === 'admins' ? refreshAdmins : refreshDrivers;
-      const entityType = role === 'admins' ? 'Admins' : 'Drivers';
-
-      if (Boolean(existingEmployee)) {
-        switch (role) {
-          case 'admins':
-            if (existingEmployee.isDriver && !containsDriver) {
-              // Transition from driver to admin
-              await deleteEmployee(
-                newEmployee?.id || existingEmployee.id,
-                'drivers'
-              );
-            }
-
-            if (!existingEmployee.isAdmin) {
-              // Create admin
-              await createEmployee(
-                newEmployee?.id || existingEmployee.id,
-                admin,
-                apiEndpoint,
-                refreshFunction,
-                entityType,
-                iteration
-              );
-            } else {
-              // Update admin
-              await updateEmployee(
-                newEmployee?.id || existingEmployee.id,
-                admin,
-                apiEndpoint,
-                refreshFunction,
-                entityType,
-                iteration
-              );
-            }
-            break;
-
-          case 'drivers':
-            if (existingEmployee.isAdmin && !containsAdmin) {
-              // Transition from admin to driver
-              await deleteEmployee(
-                newEmployee?.id || existingEmployee.id,
-                'admins'
-              );
-            }
-
-            if (!existingEmployee.isDriver) {
-              // Create driver
-              await createEmployee(
-                newEmployee?.id || existingEmployee.id,
-                driver,
-                apiEndpoint,
-                refreshFunction,
-                entityType,
-                iteration
-              );
-            } else {
-              // Update driver
-              await updateEmployee(
-                newEmployee?.id || existingEmployee.id,
-                driver,
-                apiEndpoint,
-                refreshFunction,
-                entityType,
-                iteration
-              );
-            }
-            break;
-        }
-      } else if (!newEmployee) {
-        // Create a new employee if no existing employee is present
-        newEmployee = await createEmployee(
-          '',
-          role === 'admins' ? admin : driver,
-          apiEndpoint,
-          refreshFunction,
-          entityType,
-          iteration
-        );
-        existingEmployee = newEmployee;
+    let currentId = employeeData.id;
+    // If no employee exists, create one using a primary role.
+    if (!currentId || currentId === '') {
+      if (hasAdmin) {
+        employeeData.id = (
+          await createEmployee(employeeData, '/api/admins')
+        ).id;
         showToast(
-          `Created a new employee with the role of ${role} based on your provided data`,
+          `Created a new employee with the admin role`,
           ToastStatus.SUCCESS
         );
       }
-      iteration += 1;
+      if (hasDriver) {
+        employeeData.id = (
+          await createEmployee(employeeData, '/api/drivers')
+        ).id;
+        showToast(
+          `Created a new employee with the driver role`,
+          ToastStatus.SUCCESS
+        );
+      }
+    } else {
+      if (hasAdmin) {
+        if (employeeData.admin) {
+          await updateEmployee(employeeData, '/api/admins');
+        } else {
+          await createEmployee(employeeData, '/api/admins');
+        }
+      } else if (employeeData.admin) {
+        await deleteEmployee(employeeData.id, '/api/admins');
+      }
+
+      if (hasDriver) {
+        if (employeeData.driver) {
+          await updateEmployee(employeeData, '/api/drivers');
+        } else {
+          await createEmployee(employeeData, '/api/drivers');
+        }
+      } else if (employeeData.driver) {
+        await deleteEmployee(employeeData.id, '/api/drivers');
+      }
     }
+    let id = employeeData.id;
+    if (!hasAdmin && !hasDriver) {
+      return '';
+    }
+    return id;
   }
 
-  async function onSubmit(data: ObjectType) {
-    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
-      data;
+  /**
+   * Handles form submission.
+   *
+   * - Constructs payloads for both driver and admin roles.
+   * - Sends the data to the backend via processRoles().
+   * - If a photo was uploaded, sends the photo to the backend afterward.
+   *
+   * @param formData - The data received from the form/modal.
+   * @param photo - The optional photo file uploaded by the user.
+   */
+  async function onSubmit(formData: any) {
+    // Data entered from the form/modal.
+    console.log(formData);
+    const hasAdmin =
+      selectedRoles.includes('sds-admin') ||
+      selectedRoles.includes('redrunner-admin');
+    const hasDriver = selectedRoles.includes('driver');
 
-    const driver = {
-      firstName,
-      lastName,
-      email: `${netid}@cornell.edu`,
-      phoneNumber,
-      startDate,
-      availability: parseAvailability(availability),
+    let admin_data: AdminData | null = null;
+    let driver_data: DriverData | null = null;
+
+    if (hasAdmin) {
+      admin_data = {
+        type: selectedRoles.filter((role) => role !== 'driver'),
+        isDriver: hasDriver,
+      };
+    }
+
+    if (hasDriver) {
+      driver_data = {
+        availability: parseAvailability(formData.availability),
+        startDate: formData.startDate,
+      };
+    }
+
+    const employeeData: EmployeeEntity = {
+      id: existingEmployee?.id || '',
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phoneNumber: formData.phoneNumber,
+      netId: formData.netid,
+      email: `${formData.netid}@cornell.edu`,
+      driver: driver_data || undefined,
+      admin: admin_data || undefined,
     };
-
-    const admin = {
-      firstName,
-      lastName,
-      email: `${netid}@cornell.edu`,
-      type: selectedRole.filter((role) => role !== 'driver'),
-      phoneNumber,
-      availability: parseAvailability(availability),
-      isDriver: selectedRole.includes('driver'),
-    };
-
     try {
-      await processRoles(selectedRole, existingEmployee, admin, driver);
-      showToast(`Employee information proccessed`, ToastStatus.SUCCESS);
+      // Process roles: data is sent to the backend endpoints here.
+      const id = await processRoles(selectedRoles, employeeData);
+      // If a photo was uploaded, send it to the backend.
+      if (imageBase64 && id !== '') {
+        // Decide which table to update based on role selection (to be changed at a later date.)
+        const targetTable =
+          selectedRoles.includes('sds-admin') ||
+          selectedRoles.includes('redrunner-admin')
+            ? 'Admins'
+            : 'Drivers';
+        await uploadEmployeePhoto(id, targetTable, imageBase64);
+      }
+
+      // Refresh both admin and driver data once after processing.
+      await refreshAdmins();
+      await refreshDrivers();
+
+      showToast(`Employee information processed`, ToastStatus.SUCCESS);
     } catch (error) {
-      showToast('An error occured: ', ToastStatus.ERROR);
+      showToast('An error occurred: ', ToastStatus.ERROR);
     } finally {
       closeModal();
     }
   }
-
+  // -------------------------------
+  // PHOTO FILE INPUT HANDLER
+  // -------------------------------
+  // This function handles the photo file input change event.
   async function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
-
     const { files } = e.target;
     if (files && files[0]) {
       const file = files[0];
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const base64 = reader.result?.toString().split(',')[1]; // Extract base64
+      reader.onload = () => {
+        const base64 = reader.result?.toString().split(',')[1];
         if (base64) {
-          setImageBase64(base64); // Save the base64 string
+          setImageBase64(base64);
         }
       };
     }
@@ -389,35 +376,44 @@ const EmployeeModal = ({
         onClose={closeModal}
         id="employee-modal"
       >
+        {/* Photo upload component – data enters here */}
         <Upload
           imageChange={updateBase64}
-          existingPhoto={existingEmployee?.photoLink}
+          existingPhoto={
+            existingEmployee?.photoLink
+              ? `${existingEmployee?.photoLink}?t=${new Date().getTime()}`
+              : ''
+          }
         />
 
         <FormProvider {...methods}>
           <form
-            onSubmit={(e) => {
-              methods.handleSubmit(onSubmit)(e);
-            }}
+            onSubmit={(e) => methods.handleSubmit(onSubmit)(e)}
             aria-labelledby="employee-modal"
           >
             <EmployeeInfo
               firstName={existingEmployee?.firstName}
               lastName={existingEmployee?.lastName}
               netId={existingEmployee?.netId}
-              phone={existingEmployee?.phone}
+              phone={existingEmployee?.phoneNumber}
             />
 
-            <StartDate existingDate={existingEmployee?.startDate} />
+            {(selectedRoles.includes('driver') ||
+              existingEmployee?.driver?.availability) && (
+              <>
+                <StartDate existingDate={existingEmployee?.driver?.startDate} />
+                <WorkingHours
+                  existingAvailability={existingEmployee?.driver?.availability}
+                  hide={false}
+                />
+              </>
+            )}
 
-            <WorkingHours
-              existingAvailability={existingEmployee?.availability}
-              hide={false}
-            />
             <RoleSelector
-              selectedRoles={selectedRole}
+              selectedRoles={selectedRoles}
               setSelectedRoles={setSelectedRole}
             />
+
             <Button className={styles.submit} type="submit">
               {existingEmployee ? 'Save' : 'Add'}
             </Button>

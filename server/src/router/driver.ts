@@ -45,12 +45,21 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 // Put a driver in Drivers table
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
-  const id = body.id || uuid();
-  const driver = new Driver({
-    id: id,
-    ...body,
+
+  const admin = new Driver({
+    id: !body.eid || body.eid === '' ? uuid() : body.eid,
+    firstName: body.firstName,
+    lastName: body.lastName,
+    availability: body.availability,
+    phoneNumber: body.phoneNumber,
+    startDate: body.startDate,
+    email: body.email,
   });
-  db.create(res, driver);
+  if (typeof body.availability !== 'object') {
+    res.status(469).send({ err: 'availability must be an object' });
+  } else {
+    db.create(res, admin);
+  }
 });
 
 // Update an existing driver

@@ -74,7 +74,7 @@ const EmployeeCard = ({
         firstName={firstName}
         lastName={lastName}
         netId={netId}
-        photoLink={photoLink}
+        photoLink={photoLink ? `${photoLink}?t=${new Date().getTime()}` : ''}
       >
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>

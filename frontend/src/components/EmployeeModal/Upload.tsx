@@ -11,7 +11,7 @@ type UploadProps = {
 
 const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const [imageURL, setImageURL] = useState(
-    existingPhoto ? `${existingPhoto}` : ''
+    existingPhoto ? `${existingPhoto}?${new Date().getTime()}` : ''
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = createRef<HTMLInputElement>();
