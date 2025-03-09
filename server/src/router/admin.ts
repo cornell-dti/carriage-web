@@ -24,11 +24,17 @@ router.get('/', validateUser('Admin'), (req, res) => {
 // Put a driver in Admins table
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
-  const id = body.id || uuid();
+
   const admin = new Admin({
-    id: id,
-    ...body,
+    id: !body.eid || body.eid === '' ? uuid() : body.eid,
+    firstName: body.firstName,
+    lastName: body.lastName,
+    type: body.type,
+    isDriver: body.isDriver,
+    phoneNumber: body.phoneNumber,
+    email: body.email,
   });
+
   db.create(res, admin);
 });
 
@@ -38,7 +44,6 @@ router.put('/:id', validateUser('Admin'), (req, res) => {
     params: { id },
     body,
   } = req;
-
   db.update(res, Admin, { id }, body, tableName);
 });
 
