@@ -134,7 +134,6 @@ const EmployeeModal = ({
     endpoint: '/api/admins' | '/api/drivers'
   ): Promise<EmployeeEntity> {
     let res: any;
-    console.log(employeeData);
     switch (endpoint) {
       case '/api/drivers':
         const {
@@ -172,7 +171,6 @@ const EmployeeModal = ({
     endpoint: '/api/admins' | '/api/drivers'
   ): Promise<EmployeeEntity> {
     let res: any;
-    console.log(employeeData);
     switch (endpoint) {
       case '/api/drivers':
         const {
@@ -195,7 +193,6 @@ const EmployeeModal = ({
       default:
         break;
     }
-    console.log(res);
     return res; // Return the updated employee data, remove double nested later
   }
 
@@ -290,7 +287,6 @@ const EmployeeModal = ({
    */
   async function onSubmit(formData: any) {
     // Data entered from the form/modal.
-    console.log(formData);
     const hasAdmin =
       selectedRoles.includes('sds-admin') ||
       selectedRoles.includes('redrunner-admin');
