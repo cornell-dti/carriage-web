@@ -65,6 +65,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Aaron Kang
 - Aiden Kim
 - Andrew Choi
+- Anika Chandra
 - Becky Hu
 - Bryan Graeser
 - Chelsea Wang
