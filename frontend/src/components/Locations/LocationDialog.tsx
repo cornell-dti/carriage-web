@@ -16,6 +16,7 @@ import styles from './locations.module.css';
 interface Location {
   id: number;
   name: string;
+  shortName: string;
   address: string;
   info: string;
   tag: string;

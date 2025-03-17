@@ -1,15 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import { LocationMap } from './LocationMap';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { Chip, Button } from '@mui/material';
+import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
+import { OpenInFull, LocationOn } from '@mui/icons-material';
 
 interface Location {
   id: number;
   name: string;
   address: string;
+  shortName: string;
   info: string;
   tag: string;
   lat: number;
@@ -48,7 +49,6 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
 
   const handleListItemClick = (location: Location) => {
     setSelectedLocation(location);
-    setSelectedLocationForDialog(location);
   };
 
   const handleLocationUpdate = (updatedLocation: Location) => {
@@ -101,7 +101,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
               }`}
             >
               <div className={styles.locationContent}>
-                <LocationOnIcon
+                <LocationOn
                   sx={{
                     color: '#1976d2',
                     marginRight: '0.75rem',
@@ -118,7 +118,16 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
                     />
                   </div>
                   <p className={styles.locationDetails}>{location.address}</p>
+                  <div className={styles.locationFooter}>
                   <p className={styles.locationDetails}>{location.info}</p>
+                    <OpenInFull
+                      className={styles.expandIcon}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedLocationForDialog(location);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

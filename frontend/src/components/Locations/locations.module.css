@@ -169,19 +169,49 @@
 }
 
 /* Map popup styling */
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
 .mapPopup {
-  padding: 0.5rem;
-  min-width: 200px;
+  padding: 0.25rem;
+  min-width: 160px;
 }
 
 .mapPopup h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  color: #1976d2;
+  margin: 0;
+  font-size: 1rem;
+  white-space: nowrap;
 }
 
-.mapPopup p {
-  margin: 0.5rem 0;
-  font-size: 0.9rem;
+.locationFooter {
   color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.expandIcon {
+  transform: scaleX(-1);
+}
+
+/* locations.module.css */
+:global(.gm-style .cluster) {
+  background: #1976d2;
+  border-radius: 50%;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:global(.cluster span) {
+  position: relative;
+  top: -2px;
 }

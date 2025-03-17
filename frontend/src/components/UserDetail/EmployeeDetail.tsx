@@ -70,7 +70,7 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
   return (
     <div className={styles.statisticsContainer}>
-      <h3 className={styles.userDetailHeader}>Statistics</h3>
+      <h3 className={styles.userDetailHeader}>CHANGE HERE</h3>
       <div className={styles.employeeStatistics}>
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>

@@ -25,6 +25,7 @@ const CAMPUS_OPTIONS = [
 interface Location {
   id: number;
   name: string;
+  shortName: string; 
   address: string;
   info: string;
   tag: string;
@@ -51,6 +52,7 @@ export const LocationFormModal = ({
     id: initialData?.id ?? 0,
     name: '',
     address: '',
+    shortName : '',
     info: '',
     tag: 'Other',
     lat: 0,
@@ -65,6 +67,7 @@ export const LocationFormModal = ({
         id: 0,
         name: '',
         address: '',
+        shortName: '',
         info: '',
         tag: 'Other',
         lat: 0,

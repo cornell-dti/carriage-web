@@ -9,6 +9,8 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
+import RidesTable from 'components/UserTables/RidesTable';
+import RideTable from 'components/RiderComponents/RideTable';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
@@ -96,7 +98,7 @@ const RiderDetail = () => {
             <UserContactInfo
               icon={phone}
               alt="phone number"
-              text={rider.phoneNumber}
+              text={rider.phoneNumber ?? ''}
             />
             <UserContactInfo icon={home} alt="address" text={rider.address} />
             <UserContactInfo
@@ -108,6 +110,7 @@ const RiderDetail = () => {
             />
           </div>
         </UserDetail>
+        <RideTable rides={rides} />
         <PastRides isStudent={true} rides={rides} />
       </div>
     </main>

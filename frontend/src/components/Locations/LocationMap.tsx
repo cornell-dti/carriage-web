@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Map,
   AdvancedMarker,
@@ -6,12 +6,15 @@ import {
   useMap,
   InfoWindow,
 } from '@vis.gl/react-google-maps';
-import { Button, Chip } from '@mui/material';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './locations.module.css';
+import { OpenInFull } from '@mui/icons-material';
 
 interface Location {
   id: number;
   name: string;
+  shortName: string;
   address: string;
   info: string;
   tag: string;
@@ -33,36 +36,47 @@ export const LocationMap: React.FC<LocationMapProps> = ({
   onViewDetails,
 }) => {
   const map = useMap();
-  const [markerWithPopup, setMarkerWithPopup] = useState<Location | null>(null);
+  const clusterer = useRef<MarkerClusterer | null>(null);
+  const markers = useRef<Record<string, Marker>>({});
 
-  const handleMarkerClick = useCallback(
-    (location: Location): void => {
-      if (markerWithPopup?.id === location.id) {
-        // If clicking the same marker, close popup
-        setMarkerWithPopup(null);
-        onLocationSelect(null);
-      } else {
-        // If clicking a new marker, show its popup
-        setMarkerWithPopup(location);
-        onLocationSelect(location);
+  // Initialize clusterer once when map is available
+  useEffect(() => {
+    if (!map || clusterer.current) return;
+    clusterer.current = new MarkerClusterer({ map });
+    return () => {
+      if (clusterer.current) {
+        clusterer.current.clearMarkers();
+        clusterer.current = null;
       }
+    };
+  }, [map]);
+
+  // Handle marker references and clusterer updates
+  const handleMarkerRef = useCallback(
+    (marker: Marker | null, locationId: string) => {
+      if (marker) {
+        markers.current[locationId] = marker;
+      } else {
+        delete markers.current[locationId];
+      }
+
+      // Schedule cluster update after React's DOM updates
+      setTimeout(() => {
+        if (clusterer.current) {
+          clusterer.current.clearMarkers();
+          clusterer.current.addMarkers(Object.values(markers.current));
+        }
+      }, 0);
     },
-    [markerWithPopup, onLocationSelect]
+    []
   );
 
-  // Center map on selection (from either list or marker)
   useEffect(() => {
     if (map && selectedLocation) {
+      map.setZoom(15);
       map.panTo({ lat: selectedLocation.lat, lng: selectedLocation.lng });
     }
   }, [map, selectedLocation]);
-
-  // Close popup when selection is cleared
-  useEffect(() => {
-    if (!selectedLocation) {
-      setMarkerWithPopup(null);
-    }
-  }, [selectedLocation]);
 
   return (
     <Map
@@ -77,8 +91,15 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         <AdvancedMarker
           key={location.id}
           position={{ lat: location.lat, lng: location.lng }}
-          onClick={() => handleMarkerClick(location)}
+          onClick={() =>
+            onLocationSelect(
+              selectedLocation?.id === location.id ? null : location
+            )
+          }
           clickable={true}
+          ref={(marker: Marker | null) =>
+            handleMarkerRef(marker, location.id.toString())
+          }
         >
           <Pin
             background={
@@ -91,29 +112,30 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         </AdvancedMarker>
       ))}
 
-      {markerWithPopup && (
+      {selectedLocation && (
         <InfoWindow
-          position={{
-            lat: markerWithPopup.lat + 0.005,
-            lng: markerWithPopup.lng,
-          }}
-          onCloseClick={() => {
-            setMarkerWithPopup(null);
-            onLocationSelect(null);
-          }}
+          position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
+          pixelOffset={[0, -40]}
+          onCloseClick={() => onLocationSelect(null)}
         >
           <div className={styles.mapPopup}>
-            <h4>{markerWithPopup.name}</h4>
-            <Chip label={markerWithPopup.tag} size="small" sx={{ mb: 1 }} />
-            <p>{markerWithPopup.address}</p>
-            <Button
-              size="small"
-              variant="contained"
-              onClick={() => onViewDetails(markerWithPopup)}
-              sx={{ mt: 1 }}
-            >
-              View Details
-            </Button>
+            <div className={styles.popupHeader}>
+              <h4>{selectedLocation.shortName}</h4>
+              <OpenInFull
+                className={styles.expandIcon}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewDetails(selectedLocation);
+                }}
+                sx={{
+                  cursor: 'pointer',
+                  color: 'action.active',
+                  '&:hover': {
+                    color: 'primary.main',
+                  },
+                }}
+              />
+            </div>
           </div>
         </InfoWindow>
       )}

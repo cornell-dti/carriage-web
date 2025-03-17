@@ -12,7 +12,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2.25rem 2.5rem;
+  padding: 1rem;
 }
 
 .rightSection {
@@ -24,11 +24,75 @@
   margin-left: 14px;
 }
 
+/* Layout classes for the schedule page */
+.schedulePage {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.topRow {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  height: 200px; /* Match the height we set for the cards */
+}
+
+.mainCardContainer,
+.favoritesCardContainer {
+  flex: 1;
+  height: 100%; /* Take full height of parent */
+}
+
+.mainCardContainer > div,
+.favoritesCardContainer > div {
+  width: 100%;
+  height: 100%; /* Ensure cards take full height */
+}
+
+/* Table Section Styles */
+.tableSection {
+  flex: 1; /* Take remaining space */
+  margin-top: 1rem;
+  min-height: 400px; /* Ensure table has good vertical space */
+}
+
+.tableSectionHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.tableSectionHeader h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+.requestButton{
+  color: black;
+}
 @media screen and (max-width: 768px) {
   .header {
     font-size: 1.5rem;
   }
+  
   .pageTitle {
     padding: 1rem 1.5rem;
   }
+
+  .topRow {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .mainCardContainer,
+  .favoritesCardContainer {
+    height: 200px; /* Maintain card height on mobile */
+  }
+
+  .tableSection {
+    padding: 1rem;
+  }
 }
+
