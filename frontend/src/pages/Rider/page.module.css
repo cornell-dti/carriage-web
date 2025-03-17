@@ -69,14 +69,14 @@
   font-size: 1.4rem;
   color: #333;
 }
-.requestButton{
+.requestButton {
   color: black;
 }
 @media screen and (max-width: 768px) {
   .header {
     font-size: 1.5rem;
   }
-  
+
   .pageTitle {
     padding: 1rem 1.5rem;
   }
@@ -95,4 +95,3 @@
     padding: 1rem;
   }
 }
-

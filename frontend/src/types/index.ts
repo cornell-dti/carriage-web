@@ -107,4 +107,4 @@ export enum RepeatValues {
   Custom = 'Custom',
 }
 
-export type { DriverType, AdminType, RideType};
+export type { DriverType, AdminType, RideType };

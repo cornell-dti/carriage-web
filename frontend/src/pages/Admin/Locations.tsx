@@ -13,7 +13,7 @@ interface Location {
   id: number;
   name: string;
   address: string;
-  shortName:string;
+  shortName: string;
   info: string;
   tag: string;
   lat: number;
@@ -25,7 +25,7 @@ const INITIAL_LOCATIONS: Location[] = [
     id: 1,
     name: 'Noyes Fitness Center',
     address: '306 West Ave, Ithaca, NY 14850',
-    shortName:'Noyes',
+    shortName: 'Noyes',
     info: 'Gym',
     tag: 'West Campus',
     lat: 42.4473817,
@@ -35,7 +35,7 @@ const INITIAL_LOCATIONS: Location[] = [
     id: 2,
     name: 'Robert Purcell Community Center',
     address: '107 Jessup Rd, Ithaca, NY 14850',
-    shortName:'RPCC',
+    shortName: 'RPCC',
     info: 'RPCC',
     tag: 'North Campus',
     lat: 42.451896,
@@ -45,7 +45,7 @@ const INITIAL_LOCATIONS: Location[] = [
     id: 3,
     name: 'The Statler Hotel at Cornell University',
     address: '130 Statler Dr Ithaca, NY 14853',
-    shortName:'Statler',
+    shortName: 'Statler',
     info: 'Statler Hotel',
     tag: 'Central Campus',
     lat: 42.4462031,

@@ -57,7 +57,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   let aVal = a[orderBy];
   let bVal = b[orderBy];
-  
+
   if (typeof aVal === 'string' && typeof bVal === 'string') {
     return bVal.localeCompare(aVal);
   }
@@ -73,7 +73,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 function getComparator<Key extends keyof Data>(
   order: Order,
-  orderBy: Key,
+  orderBy: Key
 ): (a: Data, b: Data) => number {
   return (a, b) => {
     let sortField = orderBy;
@@ -96,23 +96,37 @@ interface HeadCell {
 const headCells: readonly HeadCell[] = [
   { id: 'date', numeric: false, disablePadding: false, label: 'Date' },
   { id: 'time', numeric: false, disablePadding: false, label: 'Time' },
-  { id: 'startLocationName', numeric: false, disablePadding: false, label: 'Pick up' },
-  { id: 'endLocationName', numeric: false, disablePadding: false, label: 'Drop off' },
+  {
+    id: 'startLocationName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Pick up',
+  },
+  {
+    id: 'endLocationName',
+    numeric: false,
+    disablePadding: false,
+    label: 'Drop off',
+  },
   { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
   { id: 'type', numeric: false, disablePadding: false, label: 'Type' },
 ];
 
 interface EnhancedTableProps {
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
+  onRequestSort: (
+    event: React.MouseEvent<unknown>,
+    property: keyof Data
+  ) => void;
   order: Order;
   orderBy: string;
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, onRequestSort } = props;
-  const createSortHandler = (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-    onRequestSort(event, property);
-  };
+  const createSortHandler =
+    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+      onRequestSort(event, property);
+    };
 
   return (
     <TableHead>
@@ -176,10 +190,14 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           id="status-filter"
           value={statusFilter}
           label="Status"
-          onChange={(e) => onStatusFilterChange(e.target.value as Status | 'All')}
+          onChange={(e) =>
+            onStatusFilterChange(e.target.value as Status | 'All')
+          }
         >
           {availableStatuses.map((st) => (
-            <MenuItem key={st} value={st}>{st}</MenuItem>
+            <MenuItem key={st} value={st}>
+              {st}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -193,7 +211,7 @@ interface EnhancedTableComponentProps {
 
 export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   const rows = React.useMemo(() => mapRidesToData(rides), [rides]);
-  
+
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('date');
   const [page, setPage] = React.useState(0);
@@ -202,7 +220,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof Data,
+    property: keyof Data
   ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -212,8 +230,10 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
-  
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -231,13 +251,18 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   );
 
   const visibleRows = React.useMemo(
-    () => sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [sortedRows, page, rowsPerPage],
+    () =>
+      sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+    [sortedRows, page, rowsPerPage]
   );
 
-  const availableStatuses: (Status | 'All')[] = ['All', ...Array.from(new Set(rows.map(r => r.status)))];
+  const availableStatuses: (Status | 'All')[] = [
+    'All',
+    ...Array.from(new Set(rows.map((r) => r.status))),
+  ];
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sortedRows.length) : 0;
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sortedRows.length) : 0;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -248,10 +273,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
           availableStatuses={availableStatuses}
         />
         <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-          >
+          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
@@ -261,13 +283,10 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-row-${index}`;
                 return (
-                  <TableRow
-                    hover
-                    role="row"
-                    tabIndex={-1}
-                    key={index}
-                  >
-                    <TableCell component="th" id={labelId} scope="row">{row.date}</TableCell>
+                  <TableRow hover role="row" tabIndex={-1} key={index}>
+                    <TableCell component="th" id={labelId} scope="row">
+                      {row.date}
+                    </TableCell>
                     <TableCell>{row.time}</TableCell>
                     <TableCell>{row.startLocationName}</TableCell>
                     <TableCell>{row.endLocationName}</TableCell>

@@ -119,7 +119,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
                   </div>
                   <p className={styles.locationDetails}>{location.address}</p>
                   <div className={styles.locationFooter}>
-                  <p className={styles.locationDetails}>{location.info}</p>
+                    <p className={styles.locationDetails}>{location.info}</p>
                     <OpenInFull
                       className={styles.expandIcon}
                       onClick={(e) => {

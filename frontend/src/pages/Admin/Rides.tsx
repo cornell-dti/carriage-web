@@ -9,7 +9,7 @@ import {
   Grid,
   Chip,
   ToggleButton,
-  ToggleButtonGroup
+  ToggleButtonGroup,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
@@ -52,15 +52,20 @@ const NextRideCard = ({ nextRide }: { nextRide: RideType | undefined }) => {
       </Card>
     );
   }
-  
+
   return (
     <Card sx={{ mb: 3, width: '100%' }}>
       <CardContent>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-          <Typography variant="h6">
-            Your Next Ride
-          </Typography>
-          <Chip 
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            mb: 2,
+          }}
+        >
+          <Typography variant="h6">Your Next Ride</Typography>
+          <Chip
             label={nextRide.status.replace('_', ' ')}
             color={getStatusColor(nextRide.status)}
             size="small"
@@ -90,9 +95,7 @@ const NextRideCard = ({ nextRide }: { nextRide: RideType | undefined }) => {
             <Typography color="textSecondary" variant="subtitle2">
               Drop off
             </Typography>
-            <Typography variant="body1">
-              {nextRide.endLocation.name}
-            </Typography>
+            <Typography variant="body1">{nextRide.endLocation.name}</Typography>
             <Typography variant="caption" color="textSecondary">
               {nextRide.endLocation.address}
             </Typography>
@@ -102,9 +105,9 @@ const NextRideCard = ({ nextRide }: { nextRide: RideType | undefined }) => {
               Time
             </Typography>
             <Typography variant="body1">
-              {new Date(nextRide.startTime).toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+              {new Date(nextRide.startTime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
               })}
             </Typography>
             {nextRide.recurring && (
@@ -124,19 +127,24 @@ const Rides = () => {
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
   const [viewFilter, setViewFilter] = useState<'all' | 'my-rides'>('all');
-  
+
   // Filter rides based on view selection
-  const filteredRides = viewFilter === 'all' 
-    ? todaysRides 
-    : todaysRides.filter(ride => ride.driver?.id === authContext.id);
+  const filteredRides =
+    viewFilter === 'all'
+      ? todaysRides
+      : todaysRides.filter((ride) => ride.driver?.id === authContext.id);
 
   // Find the next ride for the logged-in driver
   const nextDriverRide = todaysRides
-    .filter(ride => 
-      ride.driver?.id === authContext.id && 
-      new Date(ride.startTime) > new Date()
+    .filter(
+      (ride) =>
+        ride.driver?.id === authContext.id &&
+        new Date(ride.startTime) > new Date()
     )
-    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())[0];
+    .sort(
+      (a, b) =>
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+    )[0];
 
   const handleViewChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -158,12 +166,14 @@ const Rides = () => {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        mb: 3
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" component="h1">
           Today's Rides
         </Typography>

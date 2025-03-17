@@ -122,7 +122,7 @@ const Schedule: React.FC = () => {
 
   const handleRideSubmit = (formData: FormData) => {
     if (!formData.pickupLocation || !formData.dropoffLocation) return;
-  
+
     const newRide: Ride = {
       id: `ride_${Date.now()}`,
       type: Type.UNSCHEDULED,
@@ -143,7 +143,7 @@ const Schedule: React.FC = () => {
       rider: riderData,
       recurring: formData.repeatType !== 'none',
     };
-  
+
     setRides((prevRides) => [...prevRides, newRide]);
     setFilteredRides((prevFiltered) => [...prevFiltered, newRide]);
   };
@@ -160,86 +160,85 @@ const Schedule: React.FC = () => {
 
   return (
     <APIProvider
-    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
-    libraries={['places']}
-  >
-    <main id="main" className={styles.schedulePage}>
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>{riderData.firstName}'s Schedule</h1>
-        <div className={styles.rightSection}>
-          <Button
-            variant="contained"
-            color="secondary" // Changed color from 'primary' to 'secondary'
-            onClick={handleDialogOpen}
-            sx={{
-              backgroundColor: 'black',
-              '&:hover': {
+      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      libraries={['places']}
+    >
+      <main id="main" className={styles.schedulePage}>
+        <div className={styles.pageTitle}>
+          <h1 className={styles.header}>{riderData.firstName}'s Schedule</h1>
+          <div className={styles.rightSection}>
+            <Button
+              variant="contained"
+              color="secondary" // Changed color from 'primary' to 'secondary'
+              onClick={handleDialogOpen}
+              sx={{
                 backgroundColor: 'black',
-              },
-            }}
-          >
-            Request Ride
-          </Button>
-          <Notification />
+                '&:hover': {
+                  backgroundColor: 'black',
+                },
+              }}
+            >
+              Request Ride
+            </Button>
+            <Notification />
+          </div>
         </div>
-      </div>
-      <div className={styles.topRow}>
-        <div className={styles.mainCardContainer}>
-          {rides.length > 0 && mostRecentRide && (
-            <MainCard ride={mostRecentRide} />
-          )}
-          {rides.length === 0 && <NoRidesView />}
+        <div className={styles.topRow}>
+          <div className={styles.mainCardContainer}>
+            {rides.length > 0 && mostRecentRide && (
+              <MainCard ride={mostRecentRide} />
+            )}
+            {rides.length === 0 && <NoRidesView />}
+          </div>
+          <div className={styles.favoritesCardContainer}>
+            <FavoritesCard
+              favorites={favoriteRides}
+              onAddNew={() => {}}
+              onQuickRequest={() => {}}
+            />
+          </div>
         </div>
-        <div className={styles.favoritesCardContainer}>
-          <FavoritesCard
-            favorites={favoriteRides}
-            onAddNew={() => {}}
-            onQuickRequest={() => {}}
-          />
+        <div className={styles.tableSection}>
+          <RideTable rides={filteredRides} />
         </div>
-      </div>
-      <div className={styles.tableSection}>
-        <RideTable rides={filteredRides} />
-      </div>
 
-      <RequestRideDialog
-        open={isDialogOpen}
-        onClose={handleDialogClose}
-        onSubmit={handleRideSubmit}  // Use the actual handler instead of console.log
-        supportedLocations={[
-          {
-            id: 1,
-            name: 'Campus Center',
-            address: '123 Campus Drive',
-            info: 'Main campus center',
-            tag: 'Central',
-            lat: 42.4534531,
-            lng: -76.4760776,
-          },
-          {
-            id: 2,
-            name: 'North Campus',
-            address: '456 North Drive',
-            info: 'North campus area',
-            tag: 'North',
-            lat: 42.4534531,
-            lng: -76.4760776,
-          },
-          {
-            id: 3,
-            name: 'West Campus',
-            address: '789 West Drive',
-            info: 'West campus area',
-            tag: 'West',
-            lat: 42.4534531,
-            lng: -76.4760776,
-          },
-          // Add more locations as needed
-        ]}
-      />
-    </main>
+        <RequestRideDialog
+          open={isDialogOpen}
+          onClose={handleDialogClose}
+          onSubmit={handleRideSubmit} // Use the actual handler instead of console.log
+          supportedLocations={[
+            {
+              id: 1,
+              name: 'Campus Center',
+              address: '123 Campus Drive',
+              info: 'Main campus center',
+              tag: 'Central',
+              lat: 42.4534531,
+              lng: -76.4760776,
+            },
+            {
+              id: 2,
+              name: 'North Campus',
+              address: '456 North Drive',
+              info: 'North campus area',
+              tag: 'North',
+              lat: 42.4534531,
+              lng: -76.4760776,
+            },
+            {
+              id: 3,
+              name: 'West Campus',
+              address: '789 West Drive',
+              info: 'West campus area',
+              tag: 'West',
+              lat: 42.4534531,
+              lng: -76.4760776,
+            },
+            // Add more locations as needed
+          ]}
+        />
+      </main>
     </APIProvider>
-
   );
 };
 

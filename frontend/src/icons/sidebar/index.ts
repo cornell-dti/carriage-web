@@ -5,4 +5,4 @@ export { default as locations } from './locations.svg';
 export { default as analytics } from './analytics.svg';
 export { default as settings } from './settings.svg';
 export { default as blank } from './blank.svg';
-export {default as car } from './car.svg';
+export { default as car } from './car.svg';
