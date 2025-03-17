@@ -9,7 +9,7 @@ import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
 import styles from './authmanager.module.css';
-import { googleLogin } from '../../icons/other';
+import { studentLanding, car, admin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 
@@ -173,9 +173,9 @@ const AuthManager = () => {
               students={
                 <button onClick={() => studentLogin()} className={styles.btn}>
                   <img
-                    src={googleLogin}
+                    src={studentLanding} 
                     className={styles.icon}
-                    alt="google logo"
+                    alt="student logo"
                   />
                   <div className={styles.heading}>Students</div>
                   Sign in with Google
@@ -184,14 +184,26 @@ const AuthManager = () => {
               admins={
                 <button onClick={() => adminLogin()} className={styles.btn}>
                   <img
-                    src={googleLogin}
+                    src={admin}
                     className={styles.icon}
-                    alt="google logo"
+                    alt="admin logo"
                   />
                   <div className={styles.heading}>Admins</div>
                   Sign in with Google
                 </button>
               }
+              drivers={
+                <button className={styles.btn}>
+                  <img
+                    src={car}
+                    className={styles.icon}
+                    alt="car logo"
+                  />
+                  <div className={styles.heading}>Drivers</div>
+                  Sign in with Google
+                </button>
+              }
+
             />
           }
         />

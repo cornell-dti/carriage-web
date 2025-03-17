@@ -21,3 +21,7 @@ export { default as rightArrow } from './rightArrow.svg';
 export { default as active } from './active.svg';
 export { default as inactive } from './inactive.svg';
 export { default as filter } from './filter.svg';
+export { default as car } from './car-front.svg';
+export { default as studentLanding } from './student.svg';
+export { default as admin } from './admin.svg';
+
