@@ -17,9 +17,10 @@ const wavePath = `M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,
 type LandingPropType = {
   students: ReactElement;
   admins: ReactElement;
+  drivers: ReactElement;
 };
 
-const Landing = ({ students, admins }: LandingPropType) => {
+const Landing = ({students, admins, drivers}: LandingPropType) => {
   useEffect(() => {
     document.title = 'Login - Carriage';
   }, []);
@@ -40,8 +41,9 @@ const Landing = ({ students, admins }: LandingPropType) => {
             <div className={styles.spacing_container}>
               <h1 className={styles.heading}>Login</h1>
               <div className={styles.container}>
-                <div className={styles.container_item_left}>{students}</div>
-                <div className={styles.container_item_right}>{admins}</div>
+                <div className={styles.container_item}>{students}</div>
+                <div className={styles.container_item}>{admins}</div>
+                <div className={styles.container_item}>{drivers}</div>
               </div>
             </div>
           </div>
