@@ -20,7 +20,7 @@ type LandingPropType = {
   drivers: ReactElement;
 };
 
-const Landing = ({students, admins, drivers}: LandingPropType) => {
+const Landing = ({ students, admins, drivers }: LandingPropType) => {
   useEffect(() => {
     document.title = 'Login - Carriage';
   }, []);
