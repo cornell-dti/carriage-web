@@ -17,6 +17,10 @@ const Employees = () => {
   const [filteredEmployees, setFilteredEmployees] = useState<
     (AdminType | DriverType)[]
   >([]);
+  const [selectedEmployee, setSelectedEmployee] = useState<
+    AdminType | DriverType | null
+  >(null);
+
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
@@ -41,6 +45,19 @@ const Employees = () => {
     document.title = 'Employees - Carriage';
     setFilteredEmployees(displayEmployees);
   }, [displayEmployees]);
+
+  function convertToEmployeeEntity(employee: AdminType | DriverType): any {
+    const data = {
+      id: employee.id,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      email: employee.email,
+      admin: {},
+      driver: {},
+      photoLink: employee.photoLink,
+    };
+    return data;
+  }
 
   const handleFilterApply = (filteredItems: (AdminType | DriverType)[]) => {
     setFilteredEmployees(filteredItems);
@@ -84,7 +101,15 @@ const Employees = () => {
         <h1 className={styles.header}>Employees</h1>
         <div className={styles.rightSection}>
           <Button onClick={() => setIsOpen(true)}>+ Add Employee</Button>
-          <EmployeeModal isOpen={isOpen} setIsOpen={setIsOpen} />
+          <EmployeeModal
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            existingEmployee={
+              selectedEmployee
+                ? convertToEmployeeEntity(selectedEmployee)
+                : null
+            }
+          />
           <Notification />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 type WeekState = {
   selectDay: (day: string, index: number) => void;
@@ -9,12 +9,8 @@ type WeekState = {
 };
 
 const initialState: WeekState = {
-  selectDay: () => {
-    // do nothing
-  },
-  deselectDay: () => {
-    // do nothing
-  },
+  selectDay: () => {},
+  deselectDay: () => {},
   isDayOpen: () => false,
   isDaySelectedByInstance: () => false,
   getSelectedDays: () => [],
@@ -33,9 +29,6 @@ type WeekType = {
 };
 
 export const WeekProvider = ({ children }: WeekProviderProps) => {
-  // week keeps track of which AvailabilityInput has what days selected, based
-  // on its index number. if a day is not selected in any AvailabilityInput
-  // instance, the value is -1.
   const [week, setWeek] = useState<WeekType>({
     Sun: -1,
     Mon: -1,
@@ -46,21 +39,31 @@ export const WeekProvider = ({ children }: WeekProviderProps) => {
     Sat: -1,
   });
 
-  const setDay = (day: string, value: number) => {
-    setWeek((prev) => ({ ...prev, [day]: value }));
-  };
+  const setDay = useCallback((day: string, value: number) => {
+    setWeek((prev) => {
+      if (prev[day] === value) return prev;
+      return { ...prev, [day]: value };
+    });
+  }, []);
 
-  const selectDay = (day: string, index: number) => setDay(day, index);
+  const selectDay = useCallback(
+    (day: string, index: number) => setDay(day, index),
+    [setDay]
+  );
 
-  const deselectDay = (day: string) => setDay(day, -1);
+  const deselectDay = useCallback((day: string) => setDay(day, -1), [setDay]);
 
-  const isDayOpen = (day: string) => week[day] === -1;
+  const isDayOpen = useCallback((day: string) => week[day] === -1, [week]);
 
-  const isDaySelectedByInstance = (day: string, index: number) =>
-    week[day] === index;
+  const isDaySelectedByInstance = useCallback(
+    (day: string, index: number) => week[day] === index,
+    [week]
+  );
 
-  const getSelectedDays = (index: number) =>
-    Object.keys(week).filter((day) => week[day] === index);
+  const getSelectedDays = useCallback(
+    (index: number) => Object.keys(week).filter((day) => week[day] === index),
+    [week]
+  );
 
   return (
     <WeekContext.Provider

@@ -150,23 +150,37 @@ type WorkingHoursProps = {
   existingAvailability?: string[][];
   hide: boolean;
 };
-
 const WorkingHours: React.FC<WorkingHoursProps> = ({
   existingAvailability,
   hide,
 }) => {
+  // Determine if we have existing availability (a non-empty array)
+  const hasExisting = existingAvailability && existingAvailability.length > 0;
+
+  // If there is existing availability, use its length; otherwise, start at 1.
   const [numAvailability, setNumAvailability] = useState(
-    existingAvailability ? 0 : 1
+    hasExisting ? existingAvailability!.length : 1
   );
+
+  // This array will be built from the existingAvailability data (if any)
   const [availabilityArray, setAvailabilityArray] = useState<
     [string, string[]][]
   >([]);
 
-  const addAvailabilityInput = () => setNumAvailability((n) => n + 1);
+  // When the "Add more" button is clicked, increment the number of availability inputs.
+  const addAvailabilityInput = () => {
+    setNumAvailability((n) => {
+      const newValue = n + 1;
+      console.log('New numAvailability:', newValue);
+      return newValue;
+    });
+  };
 
+  // Map the existingAvailability (an array of [day, timeRange] pairs)
+  // into a Map where the key is the timeRange and the value is an array of days.
   const getAvailabilityMap = useCallback((): Map<string, string[]> => {
-    const availabilityMap = new Map();
-    existingAvailability?.forEach((availability) => {
+    const availabilityMap = new Map<string, string[]>();
+    (existingAvailability || []).forEach((availability) => {
       const [day, timeRange] = availability;
       const dayArray = availabilityMap.get(timeRange) || [];
       dayArray.push(day);
@@ -175,6 +189,7 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
     return availabilityMap;
   }, [existingAvailability]);
 
+  // Convert the Map into an array for easier mapping.
   const availabilityMapToArray = useCallback((map: Map<string, string[]>) => {
     const newAvailabilityArray: [string, string[]][] = Array.from(
       map,
@@ -184,14 +199,16 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
   }, []);
 
   useEffect(() => {
-    availabilityMapToArray(getAvailabilityMap());
-  }, [getAvailabilityMap, availabilityMapToArray]);
+    if (hasExisting) {
+      availabilityMapToArray(getAvailabilityMap());
+    }
+  }, [hasExisting, getAvailabilityMap, availabilityMapToArray]);
 
   return (
     <div className={cn(styles.workingHours, { [styles.hidden]: hide })}>
       <p className={styles.workingHoursTitle}>Working Hours</p>
       <WeekProvider>
-        {existingAvailability
+        {hasExisting
           ? availabilityArray.map(([timeRange, dayArray], index) => (
               <AvailabilityInput
                 key={index}
@@ -201,7 +218,8 @@ const WorkingHours: React.FC<WorkingHoursProps> = ({
                 hide={hide}
               />
             ))
-          : [...Array(numAvailability)].map((_, index) => (
+          : // If no existing availability, use fallback: create an array based on numAvailability.
+            [...Array(numAvailability)].map((_, index) => (
               <AvailabilityInput key={index} index={index} hide={hide} />
             ))}
       </WeekProvider>

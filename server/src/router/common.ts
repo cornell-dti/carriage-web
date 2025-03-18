@@ -71,9 +71,11 @@ export function create(
   document: Item,
   callback?: (value: any) => void
 ) {
+  //here
   document.save(async (err, data) => {
     if (err) {
-      res.status(err.statusCode || 500).send({ err: err.message });
+      console.log(err);
+      res.status(err.statusCode || 450).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: 'error when saving document' });
     } else if (callback) {
