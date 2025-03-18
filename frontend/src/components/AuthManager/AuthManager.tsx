@@ -173,7 +173,7 @@ const AuthManager = () => {
               students={
                 <button onClick={() => studentLogin()} className={styles.btn}>
                   <img
-                    src={studentLanding} 
+                    src={studentLanding}
                     className={styles.icon}
                     alt="student logo"
                   />
@@ -183,27 +183,18 @@ const AuthManager = () => {
               }
               admins={
                 <button onClick={() => adminLogin()} className={styles.btn}>
-                  <img
-                    src={admin}
-                    className={styles.icon}
-                    alt="admin logo"
-                  />
+                  <img src={admin} className={styles.icon} alt="admin logo" />
                   <div className={styles.heading}>Admins</div>
                   Sign in with Google
                 </button>
               }
               drivers={
                 <button className={styles.btn}>
-                  <img
-                    src={car}
-                    className={styles.icon}
-                    alt="car logo"
-                  />
+                  <img src={car} className={styles.icon} alt="car logo" />
                   <div className={styles.heading}>Drivers</div>
                   Sign in with Google
                 </button>
               }
-
             />
           }
         />
