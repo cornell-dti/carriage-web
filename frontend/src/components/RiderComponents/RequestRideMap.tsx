@@ -52,12 +52,10 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       });
 
       if (result && result.routes[0]?.overview_path) {
-        // Remove existing polyline if it exists
         if (polylineRef.current) {
           polylineRef.current.setMap(null);
         }
 
-        // Create new polyline
         polylineRef.current = new google.maps.Polyline({
           path: result.routes[0].overview_path,
           geodesic: true,
@@ -67,7 +65,6 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
           map: map,
         });
 
-        // Fit bounds
         const bounds = new google.maps.LatLngBounds();
         result.routes[0].overview_path.forEach((point) => {
           bounds.extend(point);
@@ -95,6 +92,21 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     };
   }, [fetchAndDrawRoute]);
 
+  const getMapCenter = () => {
+    if (pickupLocation && dropoffLocation) {
+      return {
+        lat: (pickupLocation.lat + dropoffLocation.lat) / 2,
+        lng: (pickupLocation.lng + dropoffLocation.lng) / 2,
+      };
+    } else if (pickupLocation) {
+      return { lat: pickupLocation.lat, lng: pickupLocation.lng };
+    } else if (dropoffLocation) {
+      return { lat: dropoffLocation.lat, lng: dropoffLocation.lng };
+    } else {
+      return { lat: 42.4534531, lng: -76.4760776 }; // TODO : Move this to Index.ts as a CENTER constant
+    }
+  };
+
   const handleMarkerClick = (location: Location) => {
     if (markerWithPopup?.address === location.address) {
       setMarkerWithPopup(null);
@@ -106,7 +118,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   return (
     <Map
       defaultZoom={13}
-      defaultCenter={{ lat: 42.4534531, lng: -76.4760776 }}
+      center={getMapCenter()}
       mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
       gestureHandling={'greedy'}
       disableDefaultUI={false}

@@ -26,9 +26,10 @@ import {
   DatePicker,
   TimePicker,
 } from '@mui/x-date-pickers';
+import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
+import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import styles from './requestridedialog.module.css';
-import { PlacesSearch } from 'components/Locations/PlacesSearch';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -187,163 +188,152 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>Request a Ride</DialogTitle>
       <DialogContent>
-        <Stack
-          direction="row"
-          spacing={3}
-          sx={{ width: '100%', height: '600px' }}
+        {/* Wrap everything in a single APIProvider */}
+        <APIProvider
+          apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+          libraries={['places']}
         >
-          <Box sx={{ flex: 7 }}>
-            <Stack spacing={2} className={styles.formSection}>
-              <div>
-                <label className={styles.fieldLabel}>Pickup Location</label>
-                <PlacesSearch onAddressSelect={handlePickupSelect} />
-              </div>
-
-              <FormControl fullWidth>
-                <InputLabel>Drop-off Location</InputLabel>
-                <Select<number>
-                  value={formData.dropoffLocation?.id || ''}
-                  onChange={handleDropoffChange}
-                  label="Drop-off Location"
-                >
-                  {supportedLocations.map((location) => (
-                    <MenuItem key={location.id} value={location.id}>
-                      {location.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Stack direction="row" spacing={2}>
-                  <DatePicker
-                    label="Date"
-                    value={formData.date}
-                    onChange={handleDateChange('date')}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
+          <div className={styles.formContainer}>
+            <div className={styles.formColumn}>
+              <div className={styles.formSection}>
+                <div>
+                  <label className={styles.fieldLabel}>Pickup Location</label>
+                  <RequestRidePlacesSearch
+                    onAddressSelect={handlePickupSelect}
                   />
-                  <TimePicker
-                    label="Time"
-                    value={formData.time}
-                    onChange={handleDateChange('time')}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                  />
-                </Stack>
-              </LocalizationProvider>
+                </div>
 
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Repeat Options</FormLabel>
-                <RadioGroup
-                  value={formData.repeatType}
-                  onChange={handleRepeatTypeChange}
-                >
-                  {repeatOptions.map((option) => (
-                    <FormControlLabel
-                      key={option.value}
-                      value={option.value}
-                      control={<Radio />}
-                      label={option.label}
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-
-              {formData.repeatType !== 'none' && (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <DatePicker
-                    label="Repeat End Date"
-                    value={formData.repeatEndDate}
-                    onChange={handleDateChange('repeatEndDate')}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
-              )}
-
-              {formData.repeatType === 'custom' && (
-                <Box>
-                  <FormLabel component="legend" sx={{ mb: 1 }}>
-                    Select Days
-                  </FormLabel>
-                  <ToggleButtonGroup
-                    value={formData.selectedDays.map(getShortDay)}
-                    onChange={handleDaysChange}
-                    aria-label="select days"
-                    sx={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: 1,
-                      '& .MuiToggleButton-root': {
-                        flex: '1 0 auto',
-                        minWidth: '48px',
-                        bgcolor: 'background.paper',
-                        borderRadius: '4px !important',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        '&.Mui-selected': {
-                          bgcolor: 'primary.main',
-                          color: 'primary.contrastText',
-                          '&:hover': {
-                            bgcolor: 'primary.dark',
-                          },
-                        },
-                      },
-                    }}
+                <FormControl fullWidth>
+                  <InputLabel>Drop-off Location</InputLabel>
+                  <Select<number>
+                    value={formData.dropoffLocation?.id || ''}
+                    onChange={handleDropoffChange}
+                    label="Drop-off Location"
                   >
-                    {daysOfWeek.map((day) => (
-                      <ToggleButton
-                        key={day}
-                        value={day}
-                        aria-label={fullDayNames[day]}
-                      >
-                        {day}
-                      </ToggleButton>
+                    {supportedLocations.map((location) => (
+                      <MenuItem key={location.id} value={location.id}>
+                        {location.name}
+                      </MenuItem>
                     ))}
-                  </ToggleButtonGroup>
-                </Box>
-              )}
-            </Stack>
-          </Box>
-          <Box sx={{ flex: 5 }} className={styles.mapSection}>
-            <RequestRideMap
-              pickupLocation={
-                formData.pickupLocation
-                  ? {
-                      lat: formData.pickupLocation.lat,
-                      lng: formData.pickupLocation.lng,
-                      name: formData.pickupLocation.address,
-                      address: formData.pickupLocation.address,
-                      type: 'pickup',
-                    }
-                  : null
-              }
-              dropoffLocation={
-                formData.dropoffLocation
-                  ? {
-                      lat: formData.dropoffLocation.lat,
-                      lng: formData.dropoffLocation.lng,
-                      name: formData.dropoffLocation.name,
-                      address: formData.dropoffLocation.address,
-                      type: 'dropoff',
-                    }
-                  : null
-              }
-              onPickupSelect={() => {}}
-              onDropoffSelect={() => {}}
-            />
-          </Box>
-        </Stack>
+                  </Select>
+                </FormControl>
+
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Stack direction="row" spacing={2}>
+                    <DatePicker
+                      label="Date"
+                      value={formData.date}
+                      onChange={handleDateChange('date')}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                    <TimePicker
+                      label="Time"
+                      value={formData.time}
+                      onChange={handleDateChange('time')}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </Stack>
+                </LocalizationProvider>
+
+                <FormControl component="fieldset">
+                  <FormLabel component="legend">Repeat Options</FormLabel>
+                  <RadioGroup
+                    value={formData.repeatType}
+                    onChange={handleRepeatTypeChange}
+                  >
+                    {repeatOptions.map((option) => (
+                      <FormControlLabel
+                        key={option.value}
+                        value={option.value}
+                        control={<Radio />}
+                        label={option.label}
+                      />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+
+                {formData.repeatType !== 'none' && (
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <DatePicker
+                      label="Repeat End Date"
+                      value={formData.repeatEndDate}
+                      onChange={handleDateChange('repeatEndDate')}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
+                )}
+
+                {formData.repeatType === 'custom' && (
+                  <div className={styles.daySelectionContainer}>
+                    <FormLabel
+                      component="legend"
+                      className={styles.daySelectionLabel}
+                    >
+                      Select Days
+                    </FormLabel>
+                    <ToggleButtonGroup
+                      value={formData.selectedDays.map(getShortDay)}
+                      onChange={handleDaysChange}
+                      aria-label="select days"
+                      className={styles.toggleButtonGroup}
+                    >
+                      {daysOfWeek.map((day) => (
+                        <ToggleButton
+                          key={day}
+                          value={day}
+                          aria-label={fullDayNames[day]}
+                          className={styles.dayToggleButton}
+                        >
+                          {day}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className={styles.mapColumn}>
+              <RequestRideMap
+                pickupLocation={
+                  formData.pickupLocation
+                    ? {
+                        lat: formData.pickupLocation.lat,
+                        lng: formData.pickupLocation.lng,
+                        name: formData.pickupLocation.address,
+                        address: formData.pickupLocation.address,
+                        type: 'pickup',
+                      }
+                    : null
+                }
+                dropoffLocation={
+                  formData.dropoffLocation
+                    ? {
+                        lat: formData.dropoffLocation.lat,
+                        lng: formData.dropoffLocation.lng,
+                        name: formData.dropoffLocation.name,
+                        address: formData.dropoffLocation.address,
+                        type: 'dropoff',
+                      }
+                    : null
+                }
+                onPickupSelect={() => {}}
+                onDropoffSelect={() => {}}
+              />
+            </div>
+          </div>
+        </APIProvider>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

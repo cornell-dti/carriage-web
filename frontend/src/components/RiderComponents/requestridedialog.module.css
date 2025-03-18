@@ -1,28 +1,118 @@
+/* Request Ride Dialog Styles */
+.formContainer {
+  width: 100%;
+  height: 600px;
+  display: flex;
+  gap: 24px;
+}
+
+.formColumn {
+  flex: 7;
+  min-width: 0;
+}
+
+.mapColumn {
+  flex: 5;
+  height: 100%;
+  min-width: 0;
+  position: relative;
+}
+
 .formSection {
-  padding: 24px 0;
-}
-
-.mapSection {
-  min-height: 500px;
-  background-color: #f5f5f5;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-/* Add spacing between form elements */
-.formSection > * {
-  margin-bottom: 16px;
-}
-
-/* Style for the repeat options section */
-.repeatOptions {
-  margin-top: 24px;
-}
-
-/* Style for custom days selection */
-.daysSelection {
+  padding: 0;
+  height: 100%;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 16px;
+}
+
+/* Map container */
+.mapContainer {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5f5f5;
+}
+
+/* Label styles */
+.fieldLabel {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Places search styles */
+.placesSearch {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.resultsContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.resultItem {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.resultItem:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Map popup styles */
+.mapPopup {
+  padding: 0.5rem;
+  min-width: 180px;
+}
+
+.mapPopup h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.mapPopup p {
+  margin: 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+/* Day selection styles */
+.daySelectionContainer {
+  margin-top: 1rem;
+}
+
+.daySelectionLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.toggleButtonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dayToggleButton {
+  flex: 1 0 auto;
+  min-width: 48px;
+  background-color: #fff;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 0, 0, 0.12);
 }

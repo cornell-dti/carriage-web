@@ -1,29 +1,27 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
-import { useMap, Map } from '@vis.gl/react-google-maps';
-import styles from './locations.module.css';
+import { useMap } from '@vis.gl/react-google-maps';
+import styles from './requestridedialog.module.css';
 
-interface PlacesSearchProps {
+interface RequestRidePlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
-  value: string;
-  onChange: (value: string) => void;
 }
 
-const PlacesSearch = ({
+const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   onAddressSelect,
-  value,
-  onChange,
-}: PlacesSearchProps) => {
+}) => {
+  const [value, setValue] = useState('');
   const [results, setResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
   const map = useMap();
 
   const searchPlace = useCallback(
     async (query: string) => {
       if (!map || !query) {
         setResults([]);
-        setError('');
+        setError('Map not initialized or empty query');
         return;
       }
 
@@ -76,12 +74,14 @@ const PlacesSearch = ({
         const lng = place.geometry.location.lng();
         const address = place.formatted_address || place.name || '';
         onAddressSelect(address, lat, lng);
-        onChange(address);
+
+        setValue(address);
+
         setResults([]);
         setError('');
       }
     },
-    [onAddressSelect, onChange]
+    [onAddressSelect]
   );
 
   return (
@@ -91,10 +91,10 @@ const PlacesSearch = ({
           fullWidth
           value={value}
           onChange={(e) => {
-            onChange(e.target.value);
+            setValue(e.target.value);
             setError('');
           }}
-          placeholder="Enter address and press Enter to search"
+          placeholder="Enter pickup address and press Enter to search"
           helperText={error || 'Press Enter to search for an address'}
           error={!!error}
           variant="outlined"
@@ -122,4 +122,4 @@ const PlacesSearch = ({
   );
 };
 
-export default PlacesSearch;
+export default RequestRidePlacesSearch;

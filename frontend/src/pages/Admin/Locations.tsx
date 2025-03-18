@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { APIProvider } from '@vis.gl/react-google-maps';
 import { Button } from '../../components/FormElements/FormElements';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
@@ -82,35 +81,30 @@ const Locations = () => {
   };
 
   return (
-    <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
-      libraries={['places']}
-    >
-      <main id="main">
-        <div className={styles.pageTitle}>
-          <h1 className={styles.header}>Locations</h1>
-          <div className={styles.rightSection}>
-            <CopyButton />
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              + Add Location
-            </Button>
-            <Notification />
-          </div>
+    <main id="main">
+      <div className={styles.pageTitle}>
+        <h1 className={styles.header}>Locations</h1>
+        <div className={styles.rightSection}>
+          <CopyButton />
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            + Add Location
+          </Button>
+          <Notification />
         </div>
+      </div>
 
-        <LocationsContent
-          locations={locations}
-          onUpdateLocation={handleUpdateLocation}
-        />
+      <LocationsContent
+        locations={locations}
+        onUpdateLocation={handleUpdateLocation}
+      />
 
-        <LocationFormModal
-          open={isAddDialogOpen}
-          onClose={() => setIsAddDialogOpen(false)}
-          onSubmit={handleAddLocation}
-          mode="add"
-        />
-      </main>
-    </APIProvider>
+      <LocationFormModal
+        open={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onSubmit={handleAddLocation}
+        mode="add"
+      />
+    </main>
   );
 };
 

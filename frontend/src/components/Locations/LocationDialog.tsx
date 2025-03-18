@@ -38,7 +38,6 @@ const LocationDialog: React.FC<LocationDialogProps> = ({
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
 
-  // Update currentLocation when location prop changes
   useEffect(() => {
     setCurrentLocation(location);
   }, [location]);
@@ -73,7 +72,7 @@ const LocationDialog: React.FC<LocationDialogProps> = ({
             p: 3,
             m: 2,
           }}
-          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+          onClick={(e) => e.stopPropagation()}
         >
           <IconButton
             onClick={onClose}
