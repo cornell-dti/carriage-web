@@ -94,6 +94,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             ),
           };
 
+          // Task1
+
           const assignButton = (shouldReassign: boolean) => (
             <Button
               className={styles.assignButton}
