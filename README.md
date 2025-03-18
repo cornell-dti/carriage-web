@@ -31,12 +31,19 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 ### Current Contributors
 
 #### Product Manager
+
 - Matthias Choi
 
 #### Technical Project Manager
+
 - Desmond Atikpui
 
+### Designer
+
+- Ryan Qiu
+
 #### Software Developers
+
 - Dwain Anderson
 - Nam Anh Dang
 - Raissa Ji
@@ -47,6 +54,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 ### Past Contributors
 
 #### Product Managers
+
 - Andrew Choi
 - Bryan Graeser
 - Nina Xie
@@ -54,6 +62,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Stephy Chen
 
 #### Technical Project Managers
+
 - Christopher Hansen
 - Daniel Wei
 - Laura Sizemore
@@ -62,6 +71,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Pratyush Sudhakar
 
 #### Software Developers
+
 - Aaron Kang
 - Aiden Kim
 - Andrew Choi
@@ -91,8 +101,8 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Zack Ashen
 
 #### Designers
+
 - Aiden Kim
 - Chelsea Wang
 - Joanne Lee
 - Yisu Zheng
-
