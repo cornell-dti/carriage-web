@@ -12,6 +12,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import { PlacesSearch } from './PlacesSearch';
+import { Location, Tag } from 'types';
 
 const CAMPUS_OPTIONS = [
   'North Campus',
@@ -21,17 +22,6 @@ const CAMPUS_OPTIONS = [
   'Commons',
   'Other',
 ] as const;
-
-interface Location {
-  id: number;
-  name: string;
-  shortName: string;
-  address: string;
-  info: string;
-  tag: string;
-  lat: number;
-  lng: number;
-}
 
 interface LocationFormModalProps {
   open: boolean;
@@ -49,29 +39,31 @@ export const LocationFormModal = ({
   mode,
 }: LocationFormModalProps) => {
   const [formData, setFormData] = useState<Location>({
-    id: initialData?.id ?? 0,
-    name: '',
-    address: '',
-    shortName: '',
-    info: '',
-    tag: 'Other',
-    lat: 0,
-    lng: 0,
-  });
+    id: initialData?.id ?? '',
+    name: initialData?.name || '',
+    address: initialData?.address || '',
+    shortName: initialData?.shortName || '',
+    info: initialData?.info || '',
+    tag: initialData?.tag || Tag.WEST,
+    lat: initialData?.lat || 0,
+    lng: initialData?.lng || 0,
+    photoLink: initialData?.photoLink || '',
+  } as Location);
 
   useEffect(() => {
     if (open && initialData && mode === 'edit') {
       setFormData(initialData);
     } else if (!open) {
       setFormData({
-        id: 0,
+        id: '',
         name: '',
         address: '',
         shortName: '',
         info: '',
-        tag: 'Other',
+        tag: Tag.WEST,
         lat: 0,
         lng: 0,
+        photoLink: '',
       });
     }
   }, [open, initialData, mode]);
@@ -153,7 +145,10 @@ export const LocationFormModal = ({
               value={formData.tag}
               label="Campus"
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, tag: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  tag: e.target.value as Tag,
+                }))
               }
             >
               {CAMPUS_OPTIONS.map((campus) => (
@@ -175,7 +170,7 @@ export const LocationFormModal = ({
             !formData.name ||
             !formData.info ||
             (mode === 'add' &&
-              (!formData.address || !formData.lat || !formData.lng))
+              (!formData.lat || !formData.lng || !formData.address))
           }
         >
           {mode === 'add' ? 'Add Location' : 'Save Changes'}

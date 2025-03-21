@@ -5,17 +5,7 @@ import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
-
-interface Location {
-  id: number;
-  name: string;
-  address: string;
-  shortName: string;
-  info: string;
-  tag: string;
-  lat: number;
-  lng: number;
-}
+import { Location } from 'types';
 
 interface LocationsContentProps {
   locations: Location[];

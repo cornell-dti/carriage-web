@@ -3,11 +3,11 @@ import defaultModelConfig from '../util/modelConfig';
 
 export enum Tag {
   EAST = 'east',
-  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  CTOWN = 'ctown', // college town
-  DTOWN = 'dtown', // downtown
+  WEST = 'west',
+  CTOWN = 'ctown',
+  DTOWN = 'dtown',
   INACTIVE = 'inactive',
   CUSTOM = 'custom',
 }
@@ -16,8 +16,12 @@ export type LocationType = {
   id: string;
   name: string;
   address: string;
-  tag: Tag;
+  shortName: string;
   info?: string;
+  tag: Tag;
+  lat: number;
+  lng: number;
+  photoLink?: string;
 };
 
 const schema = new dynamoose.Schema({
@@ -34,15 +38,31 @@ const schema = new dynamoose.Schema({
     type: String,
     required: true,
   },
+  info: {
+    type: String,
+    // required: true,
+  },
+  shortName: {
+    type: String,
+    required: true,
+  },
   tag: {
     type: String,
     required: true,
     enum: Object.values(Tag),
   },
-  info: {
-    type: String,
+  lat: {
+    type: Number,
     required: true,
   },
+  lng: {
+    type: Number,
+    required: true,
+  },
+  photoLink: {
+    type: String,
+  },
+  
 });
 
 export const Location = dynamoose.model(
