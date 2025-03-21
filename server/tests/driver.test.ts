@@ -158,7 +158,7 @@ const testLocations: LocationType[] = [
     tag: Tag.NORTH,
     info: 'Test Info 2',
     shortName: 'Test-2',
-    lat:45.123456,
+    lat: 45.123456,
     lng: -77.123456,
   },
 ];
