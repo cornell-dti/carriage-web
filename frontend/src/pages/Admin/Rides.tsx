@@ -16,7 +16,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
-import { RideType, Status } from '../../types';
+import { Ride, Status } from '../../types';
 import EnhancedTable from '../../components/Table/EnhancedTable';
 import { todaysRides } from './todaysRides';
 
@@ -40,7 +40,7 @@ const getStatusColor = (status: Status) => {
   }
 };
 
-const NextRideCard = ({ nextRide }: { nextRide: RideType | undefined }) => {
+const NextRideCard = ({ nextRide }: { nextRide: Ride | undefined }) => {
   if (!nextRide) {
     return (
       <Card sx={{ mb: 3, width: '100%' }}>

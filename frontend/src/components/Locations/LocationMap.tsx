@@ -10,17 +10,7 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './locations.module.css';
 import { OpenInFull } from '@mui/icons-material';
-
-interface Location {
-  id: number;
-  name: string;
-  shortName: string;
-  address: string;
-  info: string;
-  tag: string;
-  lat: number;
-  lng: number;
-}
+import { Location } from 'types';
 
 interface LocationMapProps {
   locations: Location[];

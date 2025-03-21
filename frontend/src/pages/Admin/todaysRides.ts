@@ -1,4 +1,4 @@
-import { AvailabilityType, RideType, Type, Status, Tag } from 'types';
+import { AvailabilityType, Ride, Type, Status, Tag } from 'types';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
@@ -14,7 +14,7 @@ const defaultAvailability: AvailabilityType = {
   Fri: { startTime: '09:00', endTime: '17:00' },
 };
 
-export const todaysRides: RideType[] = [
+export const todaysRides: Ride[] = [
   {
     id: 'r1',
     type: Type.ACTIVE,

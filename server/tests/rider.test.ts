@@ -17,6 +17,9 @@ const testLocations: LocationType[] = [
     address: '123 Test Location',
     tag: Tag.WEST,
     info: 'Test Info 1',
+    shortName: 'Test-1',
+    lat: 44.123456,
+    lng: -76.123456,
   },
   {
     id: '2',
@@ -24,6 +27,9 @@ const testLocations: LocationType[] = [
     address: '321 Test Drive',
     tag: Tag.NORTH,
     info: 'Test Info 2',
+    shortName: 'Test-2',
+    lat: 45.123456,
+    lng: -77.123456,
   },
 ];
 

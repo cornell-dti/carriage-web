@@ -21,6 +21,7 @@ router.get('/', validateUser('User'), (req, res) => {
   const { query } = req;
   if (Object.keys(query).length === 0) {
     db.getAll(res, Location, tableName);
+    console.log(res);
   } else {
     const { active } = query;
     let condition = new Condition();

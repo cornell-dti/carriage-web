@@ -12,17 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { LocationFormModal } from './LocationFormModal';
 import styles from './locations.module.css';
-
-interface Location {
-  id: number;
-  name: string;
-  shortName: string;
-  address: string;
-  info: string;
-  tag: string;
-  lat: number;
-  lng: number;
-}
+import { Location } from 'types';
 
 interface LocationDialogProps {
   location: Location | null;
