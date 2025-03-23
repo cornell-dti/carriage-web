@@ -8,4 +8,8 @@ const schema = new dynamoose.Schema({
   favoritedAt: { type: Date, default: () => new Date() },
 });
 
-export const Favorite = dynamoose.model('Favorites', schema, defaultModelConfig);
+export const Favorite = dynamoose.model(
+  'Favorites',
+  schema,
+  defaultModelConfig
+);
