@@ -25,11 +25,9 @@ router.post('/', validateUser('User'), async (req, res) => {
   });
 
   if (!ride) {
-    return res
-      .status(404)
-      .send({
-        err: 'Ride not found, unable to favorite a ride that does not exist.',
-      });
+    return res.status(404).send({
+      err: 'Ride not found, unable to favorite a ride that does not exist.',
+    });
   }
 
   const existingFavorite = await new Promise((resolve) => {
