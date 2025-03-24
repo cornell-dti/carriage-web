@@ -5,14 +5,14 @@ import { phone, wheel, user } from '../../icons/userInfo/index';
 import { Employee } from '../../types';
 import { AdminType, DriverType } from '../../types';
 
-const formatPhone = (phoneNumber: string |undefined) => {
+const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {
     const areaCode = phoneNumber.substring(0, 3);
     const firstPart = phoneNumber.substring(3, 6);
     const secondPart = phoneNumber.substring(6, 10);
     return `${areaCode}-${firstPart}-${secondPart}`;
   } else {
-    console.error("Undefined PhoneNumber")
+    console.error('Undefined PhoneNumber');
     return '';
   }
 };
