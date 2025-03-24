@@ -30,17 +30,6 @@ const Locations = () => {
     document.title = 'Locations';
   }, []);
 
-  // const handleAddLocation = (locationData: Location[]) => {
-  //   const newLocation: Location = {
-  //     ...locationData,
-  //   };
-  //   setLocations((prevLocations) => {
-  //     const updated = [...prevLocations, newLocation];
-  //     return updated;
-  //   });
-  //   setIsAddDialogOpen(false);
-  // };
-
   const handleUpdateLocation = (updatedLocation: Location) => {
     setLocations((prevLocations) =>
       prevLocations.map((location) =>

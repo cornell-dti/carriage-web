@@ -40,7 +40,6 @@ const schema = new dynamoose.Schema({
   },
   info: {
     type: String,
-    // required: true,
   },
   shortName: {
     type: String,
