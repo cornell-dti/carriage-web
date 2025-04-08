@@ -1,0 +1,67 @@
+.table {
+    padding: 2rem;
+    width: 100%;
+    border-spacing: 0 0.938rem;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 10px;
+    border-radius: 10px;
+
+  }
+  
+  .tableHeader {
+    border-bottom: none;
+    text-align: left;
+    padding-left: 2rem;
+    padding-bottom: 1rem;
+  }
+  
+  .tableRow {
+cursor: pointer;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+gap: 14px;
+width: 45%;
+text-indent: 0%;
+border-radius: 10px;
+
+  }
+  
+  .cell {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    background-color: white;
+    border: thin solid;
+    border-radius: 10px;
+    border-color: black; 
+    padding-top: 2%;
+
+ }
+  
+  .bold {
+    font-weight: bold;
+  }
+  
+  .statusTag {
+    border-radius: 10px;
+    background-color: rgb(228, 228, 228);
+    border: thin solid black;
+    text-align: center;
+    width: 110px
+  }
+
+
+  .nameAndStatus {
+    display: grid;
+    grid-template-columns: 2fr auto; /* name takes up space, status stays same size */
+    column-gap: .5rem;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+
+
+  

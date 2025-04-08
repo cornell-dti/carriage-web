@@ -18,6 +18,8 @@ import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
+import RideTable from 'components/RiderComponents/RideTable';
+import DriverRides from '../UserTables/DriverRidesTable';
 
 type EmployeeDetailProps = {
   id: string;
@@ -70,9 +72,8 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
   return (
     <div className={styles.statisticsContainer}>
-      <h3 className={styles.userDetailHeader}>CHANGE HERE</h3>
       <div className={styles.employeeStatistics}>
-        <h3 className={styles.statisticCardDesc}>Last Week</h3>
+        <h3 className={styles.statisticCardDesc}>Last Week's Statistics</h3>
         <div className={styles.statsContainer}>
           <Statistic
             icon={peopleStats}
@@ -284,7 +285,7 @@ const EmployeeDetail = () => {
     const isAdmin = employee.isDriver !== undefined;
     const isBoth = employee.isDriver ?? false;
     const availToString = (acc: string, [day, timeRange]: string[]) =>
-      `${acc + day}: ${timeRange} • `;
+      `${acc + day}: ${timeRange}\n`;
     const parsedAvail = employee.availability
       ? employee.availability.reduce(availToString, '')
       : '';
@@ -304,39 +305,43 @@ const EmployeeDetail = () => {
     return (
       <main id="main">
         <Header />
-        <div className={styles.detailContainer}>
+        <div className={styles.employeeInfoContaner}>
           <UserDetail
             firstName={employee.firstName}
             lastName={employee.lastName}
             netId={employee.netId}
             employee={employee}
-            role={roleValue()}
+            role={role()}
             photoLink={employee.photoLink}
           >
-            <UserContactInfo
-              icon={phone}
-              alt="phone"
-              text={employee.phoneNumber}
-            />
-            <UserContactInfo
-              icon={isAdmin || isBoth ? user : wheel}
-              alt="role"
-              text={role()}
-            />
-            <UserContactInfo
-              icon={clock}
-              alt="availability"
-              text={avail === '' ? 'N/A' : avail}
-            />
-            {employee.startDate && (
+            <div className={styles.employeeContact}>
+              <h4>Personal Info</h4>
               <UserContactInfo
-                icon={calender_dark}
-                alt="join date"
-                text={employee.startDate}
+                icon={phone}
+                alt="phone"
+                text={employee.phoneNumber}
               />
-            )}
+              {employee.startDate && (
+                <UserContactInfo
+                  icon={calender_dark}
+                  alt="join date"
+                  text={employee.startDate}
+                />
+              )}
+            </div>
+
+            <div className={styles.employeeHours}>
+              <h4>Working Hours</h4>
+              {avail === '' ? 'N/A' : avail}
+            </div>
           </UserDetail>
+
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
+        </div>
+
+        <div className={styles.todayRideContainer}>
+          <h2>Today</h2>
+          <DriverRides />
         </div>
       </main>
     );

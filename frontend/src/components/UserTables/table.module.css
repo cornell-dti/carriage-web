@@ -131,6 +131,11 @@
   background-color: #ff8b9d;
 }
 
+.statusTag {
+  background-color: #c5e4fb;
+  outline: #616161;
+}
+
 .deleteIcon {
   background: none;
   border: none;

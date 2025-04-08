@@ -34,6 +34,7 @@ export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
   </div>
 );
 
+
 type EmployeeDetailProps = {
   id: string;
   firstName: string;
