@@ -242,22 +242,6 @@
   font-weight: 400;
 }
 
-
-/* .todayRideContainer {
-  display: inline-grid;
-  grid-template-columns: auto auto auto;
-  
-  justify-content: center;
-  gap: 2px;
-  flex-wrap: wrap;
-  background-color: red;
-  margin-top: 7%;
-  margin-left: 5%;
-  margin-right: 5%;
-  text-align:end;
-  flex-wrap: wrap;
-} */
-
 .todayRideContainer {
   display: flex;
   flex-wrap: wrap;
