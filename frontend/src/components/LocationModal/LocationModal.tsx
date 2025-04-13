@@ -7,6 +7,7 @@ import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 import axios from '../../util/axios';
+import Upload from '../EmployeeModal/Upload';
 
 type LocationModalProps = {
   existingLocation?: Location;
@@ -19,6 +20,11 @@ type FormData = {
   address: string;
   info: string;
   tag: Tag;
+  photoLink?: string;
+  id: string;
+  lat: string;
+  lng: string;
+  shortName: string;
 };
 
 const isAddress = (address: string) => {
@@ -61,6 +67,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
   onEditLocation,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageBase64, setImageBase64] = useState('');
   const { showToast } = useToast();
   const {
     register,
@@ -95,6 +102,50 @@ const LocationModal: React.FC<LocationModalProps> = ({
     closeModal();
   };
 
+  const uploadPhotoForEmployee = async (
+    employeeId: string,
+    table: string,
+    refresh: () => Promise<void>,
+    isCreate: boolean // show toast if new employee is created
+  ) => {
+    const photo = {
+      id: employeeId,
+      tableName: table,
+      fileBuffer: imageBase64,
+    };
+    // Upload image
+    await axios
+      .post('/api/upload', photo)
+      .then(() => {
+        refresh();
+      })
+      .catch((err) => console.log(err));
+  };
+
+  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      const file = e.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        let res = reader.result;
+        if (res) {
+          res = res.toString();
+          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
+          setImageBase64(strBase64);
+        }
+      };
+      reader.onerror = function (error) {
+        console.log('Error reading file: ', error);
+      };
+    } else {
+      console.log('Undefined file upload');
+    }
+  }
+
   return (
     <>
       {existingLocation ? (
@@ -126,6 +177,19 @@ const LocationModal: React.FC<LocationModalProps> = ({
             />
             {errors.name && (
               <p className={styles.errorMsg}>Please enter a name</p>
+            )}
+
+            <Label htmlFor="short name">Short Name</Label>
+            <Input
+              {...register('shortName', { required: true })}
+              type="text"
+              id="shortname"
+              defaultValue={existingLocation?.address} //change to short name
+              className={styles.input}
+              aria-required="true"
+            />
+            {errors.shortName && (
+              <p className={styles.errorMsg}>Please enter a short name</p>
             )}
 
             <Label htmlFor="address">Address</Label>
@@ -172,6 +236,11 @@ const LocationModal: React.FC<LocationModalProps> = ({
                 )
               )}
             </select>
+
+            <Upload
+              imageChange={updateBase64}
+              existingPhoto={existingLocation?.name}
+            />
 
             <div>
               <Button className={styles.submit} type="submit">

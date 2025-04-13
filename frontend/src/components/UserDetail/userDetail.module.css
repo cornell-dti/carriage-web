@@ -3,8 +3,8 @@
   margin: auto;
 }
 
-.employeeInfoContaner{
-  display:flex;
+.employeeInfoContaner {
+  display: flex;
   gap: 20px;
   justify-content: center;
   white-space: pre-line;
@@ -14,12 +14,12 @@
   justify-content: space-between;
 }
 
-.employeeContact, .employeeHours {
+.employeeContact,
+.employeeHours {
   line-height: 200%;
   margin-top: -40px;
   gap: 10px;
 }
-
 
 .userDetail,
 .employeeStatistics {
@@ -30,7 +30,7 @@
   border-radius: 0.5rem;
   background-color: white;
   box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
-  padding:  3rem; /*1.875rem*/
+  padding: 3rem; /*1.875rem*/
   height: 110%;
 }
 
@@ -187,7 +187,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top:-0px;
+  margin-top: -0px;
 }
 
 .noContentText {
@@ -199,7 +199,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-bottom:30px;
+  margin-bottom: 30px;
   row-gap: 20px;
 }
 
@@ -227,14 +227,12 @@
 .statDescription {
   margin-left: 0.75rem;
   justify-content: center;
-
 }
 
 .statIcon {
   width: 3.313rem;
   object-fit: contain; /* or try 'cover' depending on your images */
-  display: block; 
-
+  display: block;
 }
 
 .statsHrs {
@@ -254,7 +252,7 @@
   text-indent: 90%;
   padding-top: 25px;
   gap: 0px;
-} 
+}
 
 @media (max-width: 768px) {
   .userDetail {

@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Upload from '../EmployeeModal/Upload';
+import axios from '../../util/axios';
+
 import {
   Dialog,
   DialogTitle,
@@ -25,12 +28,13 @@ const CAMPUS_OPTIONS = [
 interface Location {
   id: number;
   name: string;
-  shortName: string;
   address: string;
+  shortName: string;
   info: string;
   tag: string;
   lat: number;
   lng: number;
+  photoLink?: string;
 }
 
 interface LocationFormModalProps {
@@ -48,6 +52,7 @@ export const LocationFormModal = ({
   initialData,
   mode,
 }: LocationFormModalProps) => {
+  const [imageBase64, setImageBase64] = useState('');
   const [formData, setFormData] = useState<Location>({
     id: initialData?.id ?? 0,
     name: '',
@@ -57,6 +62,7 @@ export const LocationFormModal = ({
     tag: 'Other',
     lat: 0,
     lng: 0,
+    photoLink: '',
   });
 
   useEffect(() => {
@@ -72,6 +78,7 @@ export const LocationFormModal = ({
         tag: 'Other',
         lat: 0,
         lng: 0,
+        photoLink: '',
       });
     }
   }, [open, initialData, mode]);
@@ -85,10 +92,54 @@ export const LocationFormModal = ({
     }));
   };
 
+  const uploadPhotoForLocation = async (
+    locationId: number,
+    table: string,
+    refresh: () => Promise<void>,
+    isCreate: boolean // show toast if new employee is created
+  ) => {
+    const photo = {
+      id: locationId,
+      tableName: table,
+      fileBuffer: imageBase64,
+    };
+    // Upload image
+    await axios
+      .post('/api/upload', photo)
+      .then(() => {
+        refresh();
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleSubmit = () => {
     onSubmit(formData);
     onClose();
   };
+
+  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      const file = e.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        let res = reader.result;
+        if (res) {
+          res = res.toString();
+          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
+          setImageBase64(strBase64);
+        }
+      };
+      reader.onerror = function (error) {
+        console.log('Error reading file: ', error);
+      };
+    } else {
+      console.log('Undefined file upload');
+    }
+  }
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -110,6 +161,15 @@ export const LocationFormModal = ({
             value={formData.name}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+
+          <TextField
+            label="Short Name"
+            fullWidth
+            value={formData.shortName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, shortName: e.target.value }))
             }
           />
 
@@ -164,7 +224,24 @@ export const LocationFormModal = ({
             </Select>
           </FormControl>
         </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: '1rem',
+            width: '100%',
+            flexGrow: 1, // Ensures it takes up all available space
+            height: 'auto', // Allow for content to adjust the height
+          }}
+        >
+          <Upload
+            imageChange={updateBase64}
+            existingPhoto={formData?.photoLink}
+          />
+        </div>
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button

@@ -341,7 +341,7 @@ const EmployeeDetail = () => {
 
         <div className={styles.todayRideContainer}>
           <h2>Today</h2>
-          <DriverRides />
+          <DriverRides id={employee.id} />
         </div>
       </main>
     );

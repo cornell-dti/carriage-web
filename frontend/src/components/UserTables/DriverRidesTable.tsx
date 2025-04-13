@@ -6,7 +6,11 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import { id } from 'date-fns/locale';
 
-const DriverRides = () => {
+type DriverInfo = {
+  id: string;
+};
+
+const DriverRides = ({ id }: DriverInfo) => {
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
@@ -20,8 +24,11 @@ const DriverRides = () => {
   };
 
   useEffect(() => {
-    setRides(scheduledRides.sort(compRides));
-  }, [scheduledRides]);
+    const filteredRides = scheduledRides
+      .filter((ride) => ride.driver?.id === id)
+      .sort(compRides);
+    setRides(filteredRides);
+  }, [scheduledRides, id]);
 
   const renderRide = (ride: Ride) => {
     const startTime = new Date(ride.startTime).toLocaleTimeString([], {
