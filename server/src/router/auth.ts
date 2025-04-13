@@ -44,40 +44,23 @@ function findUserAndSendToken(
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (data?.length) {
-      const { id, active } = data[0].toJSON();
+      const { id, active, admin } = data[0].toJSON();
       const userPayload = {
         id,
         userType: getUserType(table),
       };
+
       if (table === 'Riders' && !active) {
         res.status(400).send({ err: 'User not active' });
+      } else if (table === 'Drivers' && !active) {
+        res.status(400).send({ err: 'User not active' });
+      } else if (table === 'Admins' && !admin) {
+        res.status(400).send({ err: 'User not an admin' });
       } else {
         res
           .status(200)
           .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
       }
-    } else if (table === 'Admins') {
-      // Check drivers table for admins
-      Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
-        if (dErr) {
-          res.status(dErr.statusCode || 500).send({ err: dErr });
-        } else if (dData?.length) {
-          const { id, admin } = dData[0].toJSON();
-          if (admin) {
-            const userPayload = {
-              id,
-              userType: getUserType(table),
-            };
-            res
-              .status(200)
-              .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-          } else {
-            res.status(400).send({ err: 'User not found' });
-          }
-        } else {
-          res.status(400).send({ err: 'User not found' });
-        }
-      });
     } else {
       res.status(400).send({ err: 'User not found' });
     }
