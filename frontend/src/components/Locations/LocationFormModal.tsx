@@ -135,7 +135,6 @@ export const LocationFormModal: React.FC<Props> = ({
       console.log('Undefined file upload');
     }
   }
-  
 
   const handleSubmit = () => {
     onSubmit(form);
@@ -227,7 +226,7 @@ export const LocationFormModal: React.FC<Props> = ({
 
                 <UploadLocationImage
             imageChange={updateBase64}
-            existingPhoto={formData?.photoLink}            
+            existingPhoto={formData?.photoLink}
           />
               </div>
             </div>
