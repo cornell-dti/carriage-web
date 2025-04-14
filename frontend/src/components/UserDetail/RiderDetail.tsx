@@ -131,6 +131,7 @@ const RiderDetail = () => {
             />
           </div>
         </UserDetail>
+        <br></br>
         <StudentRidesTable rides={rides} />
       </div>
     </main>
