@@ -12,6 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { LocationFormModal } from './LocationFormModal';
 import styles from './locations.module.css';
+import locationPlaceholder from '../Locations/PlaceholderLocationSmall.jpeg';
 
 interface Location {
   id: number;
@@ -22,6 +23,7 @@ interface Location {
   tag: string;
   lat: number;
   lng: number;
+  photoLink?: string;
 }
 
 interface LocationDialogProps {
@@ -103,6 +105,19 @@ const LocationDialog: React.FC<LocationDialogProps> = ({
               Information
             </Typography>
             <Typography>{currentLocation.info}</Typography>
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              right: '35px',
+              top: '90px',
+            }}
+          >
+            <img
+              src={location.photoLink || locationPlaceholder}
+              alt="Location"
+              style={{ width: '150px' }}
+            />
           </div>
 
           <Box sx={{ mt: 3, textAlign: 'right' }}>

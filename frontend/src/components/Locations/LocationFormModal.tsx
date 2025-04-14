@@ -12,6 +12,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import { PlacesSearch } from './PlacesSearch';
+import UploadLocationImage from './UploadLocationImage';
 
 const CAMPUS_OPTIONS = [
   'North Campus',
@@ -31,6 +32,7 @@ interface Location {
   tag: string;
   lat: number;
   lng: number;
+  photoLink?: string;
 }
 
 interface LocationFormModalProps {
@@ -48,6 +50,7 @@ export const LocationFormModal = ({
   initialData,
   mode,
 }: LocationFormModalProps) => {
+  const [imageBase64, setImageBase64] = useState('');
   const [formData, setFormData] = useState<Location>({
     id: initialData?.id ?? 0,
     name: '',
@@ -57,6 +60,7 @@ export const LocationFormModal = ({
     tag: 'Other',
     lat: 0,
     lng: 0,
+    photoLink: '',
   });
 
   useEffect(() => {
@@ -72,6 +76,7 @@ export const LocationFormModal = ({
         tag: 'Other',
         lat: 0,
         lng: 0,
+        photoLink: '',
       });
     }
   }, [open, initialData, mode]);
@@ -84,6 +89,33 @@ export const LocationFormModal = ({
       lng,
     }));
   };
+
+  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      const file = e.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        let res = reader.result;
+        if (res) {
+          res = res.toString();
+          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
+          const resStr = res.toString();
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
+          setImageBase64(strBase64);
+          setFormData((prev) => ({ ...prev, photoLink: resStr as string }));
+        }
+      };
+      reader.onerror = function (error) {
+        console.log('Error reading file: ', error);
+      };
+    } else {
+      console.log('Undefined file upload');
+    }
+  }
+  
 
   const handleSubmit = () => {
     onSubmit(formData);
@@ -110,6 +142,15 @@ export const LocationFormModal = ({
             value={formData.name}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+
+          <TextField
+            label="Short Name"
+            fullWidth
+            value={formData.shortName}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, shortName: e.target.value }))
             }
           />
 
@@ -163,6 +204,11 @@ export const LocationFormModal = ({
               ))}
             </Select>
           </FormControl>
+
+          <UploadLocationImage
+            imageChange={updateBase64}
+            existingPhoto={formData?.photoLink}            
+          />
         </div>
       </DialogContent>
       <DialogActions>
