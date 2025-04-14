@@ -42,7 +42,7 @@ const UploadLocationImage = ({ imageChange, existingPhoto }: UploadProps) => {
       console.log('Invalid file');
     }
   }
-  
+
   return (
     <div
       style={{
@@ -102,7 +102,7 @@ const UploadLocationImage = ({ imageChange, existingPhoto }: UploadProps) => {
         </span>
       </label>
     </div>
-  )
-}
+  );
+};
 
-export default UploadLocationImage
+export default UploadLocationImage;
