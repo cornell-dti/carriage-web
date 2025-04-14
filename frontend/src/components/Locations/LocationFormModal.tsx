@@ -21,6 +21,7 @@ import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
 import { Location, Tag } from 'types';
 import styles from './locations.module.css';
+import UploadLocationImage from './UploadLocationImage';
 
 const CAMPUS_OPTIONS = [
   { value: Tag.NORTH, label: 'North Campus' },
@@ -58,19 +59,22 @@ export const LocationFormModal: React.FC<Props> = ({
     lat: 0,
     lng: 0,
     photoLink: '',
-  };
+  }
+
 
   const [form, setForm] = useState<Location>(EMPTY);
   const [mapKey, setMapKey] = useState(0);
   const [loadingAddr, setLoadingAddr] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState('');
 
   useEffect(() => {
     if (!open) return;
 
     setMapKey((k) => k + 1);
     setForm(initialData && mode === 'edit' ? initialData : EMPTY);
-  }, [open, initialData, mode]);
+    
+  },[open,initialData,mode]);
 
   const update = (patch: Partial<Location>) =>
     setForm((prev) => ({ ...prev, ...patch }));
@@ -105,6 +109,33 @@ export const LocationFormModal: React.FC<Props> = ({
       setLoadingAddr(false);
     }
   };
+
+  function updateBase64(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+
+    if (e.target.files && e.target.files[0]) {
+      const reader = new FileReader();
+      const file = e.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = function () {
+        let res = reader.result;
+        if (res) {
+          res = res.toString();
+          // remove "data:image/png;base64," and "data:image/jpeg;base64,"
+          const resStr = res.toString();
+          const strBase64 = res.toString().substring(res.indexOf(',') + 1);
+          setImageBase64(strBase64);
+          setForm((prev) => ({ ...prev, photoLink: resStr as string }));
+        }
+      };
+      reader.onerror = function (error) {
+        console.log('Error reading file: ', error);
+      };
+    } else {
+      console.log('Undefined file upload');
+    }
+  }
+  
 
   const handleSubmit = () => {
     onSubmit(form);
@@ -193,6 +224,11 @@ export const LocationFormModal: React.FC<Props> = ({
                     ? ` ${form.lat.toFixed(6)}, ${form.lng.toFixed(6)}`
                     : ' None'}
                 </Typography>
+
+                <UploadLocationImage
+            imageChange={updateBase64}
+            existingPhoto={formData?.photoLink}            
+          />
               </div>
             </div>
 
