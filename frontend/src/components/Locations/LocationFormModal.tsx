@@ -115,7 +115,6 @@ export const LocationFormModal = ({
       console.log('Undefined file upload');
     }
   }
-  
 
   const handleSubmit = () => {
     onSubmit(formData);
@@ -207,7 +206,7 @@ export const LocationFormModal = ({
 
           <UploadLocationImage
             imageChange={updateBase64}
-            existingPhoto={formData?.photoLink}            
+            existingPhoto={formData?.photoLink}
           />
         </div>
       </DialogContent>
