@@ -29,7 +29,6 @@ router.post('/', validateUser('User'), (request, response) => {
       .json({ err: 'Invalid file buffer: empty or missing' });
   }
 
-
   if (!['Drivers', 'Admins', 'Riders', 'Locations'].includes(tableName)) {
     return response
       .status(400)
@@ -59,14 +58,11 @@ router.post('/', validateUser('User'), (request, response) => {
           db.update(response, Admin, { id }, databaseOperation, tableName);
           break;
         case 'Locations':
-          db.update(response, Location, {id} ,databaseOperation, tableName);
+          db.update(response, Location, { id }, databaseOperation, tableName);
           break;
         case 'Riders':
-          db.update(response, Rider,  {id} , databaseOperation, tableName);
+          db.update(response, Rider, { id }, databaseOperation, tableName);
           break;
-          
-
-
       }
     }
   });

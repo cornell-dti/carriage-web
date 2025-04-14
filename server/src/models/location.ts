@@ -44,7 +44,6 @@ const schema = new dynamoose.Schema({
     required: true,
   },
   photoLink: String,
-
 });
 
 export const Location = dynamoose.model(
