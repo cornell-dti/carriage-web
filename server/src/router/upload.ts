@@ -3,6 +3,8 @@ import { S3 } from '@aws-sdk/client-s3';
 import * as db from './common';
 import { Driver } from '../models/driver';
 import { Admin } from '../models/admin';
+import { Location } from '../models/location';
+import { Rider } from '../models/rider';
 import { validateUser } from '../util';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -27,8 +29,8 @@ router.post('/', validateUser('User'), (request, response) => {
       .json({ err: 'Invalid file buffer: empty or missing' });
   }
 
-  // Only Drivers and Admins can upload images.
-  if (tableName != 'Drivers' && tableName != 'Admins') {
+
+  if (!['Drivers', 'Admins', 'Riders', 'Locations'].includes(tableName)) {
     return response
       .status(400)
       .json({ err: `Invalid table name: ${tableName}` });
@@ -56,6 +58,15 @@ router.post('/', validateUser('User'), (request, response) => {
         case 'Admins':
           db.update(response, Admin, { id }, databaseOperation, tableName);
           break;
+        case 'Locations':
+          db.update(response, Location, {id} ,databaseOperation, tableName);
+          break;
+        case 'Riders':
+          db.update(response, Rider,  {id} , databaseOperation, tableName);
+          break;
+          
+
+
       }
     }
   });
