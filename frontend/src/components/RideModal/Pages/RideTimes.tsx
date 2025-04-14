@@ -259,10 +259,27 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                 validate: (dropoffTime: string) => {
                   const pickupTime = getValues('pickupTime');
                   const date = getValues('date');
-                  const pickupMoment = moment(`${date} ${pickupTime}`);
-                  const dropoffMoment = moment(`${date} ${dropoffTime}`);
-                  const duration = dropoffMoment.diff(pickupMoment, 'minutes');
-                  return duration >= 5 && checkBounds(date, dropoffMoment);
+                  const dropoff = moment(`${date} ${dropoffTime}`);
+
+                  const hourDiff =
+                    parseInt(
+                      dropoffTime.substring(0, dropoffTime.indexOf(':'))
+                    ) -
+                    parseInt(pickupTime.substring(0, pickupTime.indexOf(':')));
+
+                  const minDiff =
+                    parseInt(
+                      dropoffTime.substring(dropoffTime.indexOf(':') + 1)
+                    ) -
+                    parseInt(pickupTime.substring(pickupTime.indexOf(':') + 1));
+
+                  const duration = hourDiff * 60 + minDiff;
+
+                  return (
+                    pickupTime < dropoffTime &&
+                    duration >= 5 &&
+                    checkBounds(date, dropoff)
+                  );
                 },
               })}
               aria-required="true"
