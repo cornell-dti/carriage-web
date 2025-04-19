@@ -29,6 +29,7 @@ import {
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
 import { PlacesSearch } from 'components/Locations/PlacesSearch';
+import { Ride } from 'types';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -61,6 +62,7 @@ interface RequestRideDialogProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   supportedLocations: Location[];
+  ride?: Ride;
 }
 
 const repeatOptions: Array<{ value: RepeatOption; label: string }> = [
@@ -79,11 +81,27 @@ const fullDayNames = {
   F: 'Friday',
 } as const;
 
+/**
+ * RequestRideDialog component - A dialog for Riders to request a ride.
+ *
+ * @remarks
+ * This component is used to on the rider page when they request or edit a ride,
+ * where it asks the user to input/edit pickup and drop-off locations, date, time,
+ * and repeat options. It uses Material-UI components for consistent styling.
+ *
+ * @param props - Contains:
+ *  - open: boolean - Controls the visibility of the dialog.
+ *  -  onClose: function - Function to close the dialog.
+ *  - onSubmit: function - Function to handle form submission.
+ *  - supportedLocations: array of Location - List of locations available for drop-off.
+ *  - ride: Ride - Optional ride object to prepopulate the form for editing.
+ */
 const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   open,
   onClose,
   onSubmit,
   supportedLocations,
+  ride,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
@@ -96,6 +114,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   });
 
   useEffect(() => {
+    if (ride && open) {
+    }
     if (!open) {
       setFormData({
         pickupLocation: null,
@@ -183,6 +203,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     );
   };
 
+  //TODO: add edit dialog functionality that prepopulates the form with existing ride data
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>Request a Ride</DialogTitle>

@@ -189,7 +189,7 @@ const Schedule: React.FC = () => {
               <MainCard ride={mostRecentRide} />
             )}
             {rides.length === 0 && <NoRidesView />}
-          </div>
+          </div>{' '}
           <div className={styles.favoritesCardContainer}>
             <FavoritesCard
               favorites={favoriteRides}
@@ -201,7 +201,6 @@ const Schedule: React.FC = () => {
         <div className={styles.tableSection}>
           <RideTable rides={filteredRides} />
         </div>
-
         <RequestRideDialog
           open={isDialogOpen}
           onClose={handleDialogClose}
