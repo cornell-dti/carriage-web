@@ -206,7 +206,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   //TODO: add edit dialog functionality that prepopulates the form with existing ride data
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Request a Ride</DialogTitle>
+      <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
         <Stack
           direction="row"

@@ -204,7 +204,6 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
 
         {/* Driver Information */}
         <div className={styles.section}>
-          {/* <h3>Driver Information</h3> */}
           <div className={styles.driverInfo}>
             <div className={styles.driverImageContainer}>
               <img
