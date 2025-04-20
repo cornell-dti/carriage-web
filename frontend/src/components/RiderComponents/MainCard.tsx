@@ -100,7 +100,6 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
           <DeleteOrEditTypeModal
             open={cancelOpen}
             ride={ride}
-            // figure out how to handle so that the modal doesn't close on just any click
             onClose={() => {
               setCancelOpen(!cancelOpen);
             }}
@@ -179,7 +178,6 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
       <div className={styles.contentRow}>
         {/* Destination Information */}
         <div className={styles.section}>
-          {/* <h3>Destination Information</h3> */}
           <div className={styles.detail}>
             <CalendarMonthIcon fontSize="small" />
             <span className={styles.label}>Date:</span>

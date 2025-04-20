@@ -189,7 +189,7 @@ const Schedule: React.FC = () => {
               <MainCard ride={mostRecentRide} />
             )}
             {rides.length === 0 && <NoRidesView />}
-          </div>{' '}
+          </div>
           <div className={styles.favoritesCardContainer}>
             <FavoritesCard
               favorites={favoriteRides}

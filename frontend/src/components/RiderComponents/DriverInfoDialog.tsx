@@ -45,42 +45,8 @@ const DriverInfoDialog: React.FC<DriverInfoDialogProps> = ({
   onSubmit,
   driverInfo,
 }) => {
-  //   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  //   const [driverInfo, setDriverInfo] = useState(null);
   const [error, setError] = useState(null);
-
-  //   const handleOpen = () => {
-  //     setOpen(true);
-  //     fetchDriverInfo();
-  //   };
-
-  //   const handleClose = () => {
-  //     setOpen(false);
-  //     setError(null);
-  //   };
-
-  //   const fetchDriverInfo = async () => {
-  //     setLoading(true);
-  //     setError(null);
-
-  //     try {
-  //       // Replace this URL with your actual backend endpoint
-  //       //   const response = await fetch('/api/driver-info');
-
-  //       //   if (!response.ok) {
-  //       //     throw new Error(`Error: ${response.status}`);
-  //       //   }
-
-  //       //   const data = await response.json();
-  //       setDriverInfo(data);
-  //     } catch (err) {
-  //       console.error('Failed to fetch driver information:', err);
-  //       setError('Failed to load driver information. Please try again later.');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
 
   return (
     <Dialog

@@ -126,7 +126,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
           />
         </AdvancedMarker>
       )}
-      hi
+
       {dropoffLocation && (
         <AdvancedMarker
           position={{ lat: dropoffLocation.lat, lng: dropoffLocation.lng }}
