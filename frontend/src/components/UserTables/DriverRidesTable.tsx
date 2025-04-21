@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Ride } from '../../types/index';
-import RidesTable from './RidesTable';
 import styles from './driverrides.module.css';
-import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
-import { id } from 'date-fns/locale';
+import { Stack, PaginationItem, Pagination } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 type DriverInfo = {
   id: string;
+  todayOrPast: boolean;
 };
 
-const DriverRides = ({ id }: DriverInfo) => {
-  const { drivers } = useEmployees();
+const DriverRides = ({ id, todayOrPast }: DriverInfo) => {
   const [rides, setRides] = useState<Ride[]>([]);
   const { scheduledRides } = useRides();
 
@@ -50,10 +50,6 @@ const DriverRides = ({ id }: DriverInfo) => {
 
     const status = ride.status;
 
-    const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
-      hour: 'numeric',
-      hour12: true,
-    });
     const valuePickup = { data: pickupLocation };
     const valueDropoff = { data: dropoffLocation };
 
@@ -86,22 +82,119 @@ const DriverRides = ({ id }: DriverInfo) => {
   };
 
   const now = new Date();
-  const ongoingRides = rides.filter((ride) => new Date(ride.startTime) >= now);
-  const completedRides = rides.filter((ride) => new Date(ride.startTime) < now);
 
-  return (
-    <div className={styles.table}>
-      <div className={styles.tableRow}>
-        <h3>Upcoming/Current Rides</h3>
-        {ongoingRides.length > 0 && <>{ongoingRides.map(renderRide)}</>}
-      </div>
-
-      <div className={styles.tableRow}>
-        <h3>Completed Rides</h3>
-        {completedRides.length > 0 && <>{completedRides.map(renderRide)}</>}
-      </div>
-    </div>
+  const ongoingRidesToday = rides.filter(
+    (ride) => new Date(ride.startTime) > now || new Date(ride.endTime) > now
   );
+  const completedRidesToday = rides.filter(
+    (ride) => new Date(ride.startTime) < now && new Date(ride.endTime) < now
+  );
+
+  const rideOnWeekday = (day: number) =>
+    rides.filter((ride) => {
+      const rideDay = new Date(ride.endTime).getDay();
+      return rideDay === day;
+    });
+
+  if (todayOrPast)
+    return (
+      <div className={styles.rides}>
+        <div className={styles.table}>
+          <div className={styles.tableColumn}>
+            <h3>Upcoming/Current Rides</h3>
+            {ongoingRidesToday.length > 0 && (
+              <>{ongoingRidesToday.map(renderRide)}</>
+            )}
+          </div>
+
+          <div className={styles.tableColumn}>
+            <h3>Completed Rides</h3>
+            {completedRidesToday.length > 0 && (
+              <>{completedRidesToday.map(renderRide)}</>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  else
+    return (
+      <div>
+        <Stack spacing={2}>
+          <Pagination
+            count={10}
+            siblingCount={0}
+            boundaryCount={0}
+            renderItem={(item) => {
+              if (item.type === 'previous' || item.type === 'next') {
+                return (
+                  <PaginationItem
+                    {...item}
+                    slots={{
+                      previous: ArrowBackIcon,
+                      next: ArrowForwardIcon,
+                    }}
+                    sx={{ mx: 29 }} // mx = horizontal margin
+                  />
+                );
+              }
+              return null; // Don't render number buttons
+            }}
+          />
+        </Stack>
+        <div className={styles.rides}>
+          <div className={styles.table}>
+            <div className={styles.tableColumn}>
+              <div className={styles.tableRow}>
+                <h3>Monday</h3>
+                {rideOnWeekday(1).length > 0 && (
+                  <div className={styles.cellGroup}>
+                    {rideOnWeekday(1).map(renderRide)}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.tableRow}>
+                <h3>Wednesday</h3>
+                {rideOnWeekday(3).length > 0 && (
+                  <div className={styles.cellGroup}>
+                    {rideOnWeekday(3).map(renderRide)}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.tableRow}>
+                <h3>Friday</h3>
+                {rideOnWeekday(5).length > 0 && (
+                  <div className={styles.cellGroup}>
+                    {rideOnWeekday(5).map(renderRide)}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.tableColumn}>
+              <div className={styles.tableRow}>
+                <h3>Tuesday</h3>
+                {rideOnWeekday(2).length > 0 && (
+                  <div className={styles.cellGroup}>
+                    {rideOnWeekday(2).map(renderRide)}
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.tableRow}>
+                <h3>Thursday</h3>
+                {rideOnWeekday(4).length > 0 && (
+                  <div className={styles.cellGroup}>
+                    {rideOnWeekday(4).map(renderRide)}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 };
 
 export default DriverRides;

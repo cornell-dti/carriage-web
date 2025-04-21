@@ -2,24 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import {
-  phone,
-  clock,
-  wheel,
-  user,
-  calender_dark,
-} from '../../icons/userInfo/index';
-import PastRides from './PastRides';
+import { phone, calender_dark } from '../../icons/userInfo/index';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
-import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
-import RideTable from 'components/RiderComponents/RideTable';
 import DriverRides from '../UserTables/DriverRidesTable';
+import { Stack, Pagination, PaginationItem } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 type EmployeeDetailProps = {
   id: string;
@@ -339,9 +333,15 @@ const EmployeeDetail = () => {
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
         </div>
 
-        <div className={styles.todayRideContainer}>
+        <div className={styles.ridesContainer}>
           <h2>Today</h2>
-          <DriverRides id={employee.id} />
+
+            <DriverRides id={employee.id} todayOrPast={true} />
+          </div>
+
+        <div className={styles.ridesContainer}>
+          <h2>Past Rides</h2>
+            <DriverRides id={employee.id} todayOrPast={false} />
         </div>
       </main>
     );

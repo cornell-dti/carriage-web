@@ -7,6 +7,7 @@
   gap: 10px;
   border-radius: 10px;
   margin-top: -40px;
+  align-items:flex-start;
 }
 
 .tableHeader {
@@ -16,7 +17,7 @@
   padding-bottom: 1rem;
 }
 
-.tableRow {
+.tableColumn {
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -25,6 +26,17 @@
   width: 45%;
   text-indent: 0%;
   border-radius: 10px;
+}
+
+.tableRow {
+  display: flex;
+  flex-direction: column;
+}
+
+.cellGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* only applies between .cell elements */
 }
 
 .cell {
@@ -57,4 +69,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.rides {
+  display: flex;
+  flex-wrap: wrap;
+  border-radius: 10px;
 }
