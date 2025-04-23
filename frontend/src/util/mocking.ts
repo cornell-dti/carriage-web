@@ -229,6 +229,7 @@ export const randomRide = (drivers: Driver[], riders: Rider[]): Ride => {
     endLocation: randomLocation(),
     startTime: rideStart,
     endTime: rideEnd,
+    noShow: Math.random() > 0.8,
     rider: faker.helpers.arrayElement(riders),
     driver: faker.helpers.arrayElement(drivers),
     recurring: false,

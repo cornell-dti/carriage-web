@@ -143,6 +143,7 @@ export type Ride = {
   startTime: Date;
   endTime: Date;
   rider: Rider;
+  noShow: boolean;
   driver?: Driver;
   recurring: boolean;
   recurringDays?: number[];
