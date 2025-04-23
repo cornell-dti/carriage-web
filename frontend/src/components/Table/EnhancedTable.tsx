@@ -54,8 +54,8 @@ function mapRidesToData(rides: Ride[]): Data[] {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  let aVal = a[orderBy];
-  let bVal = b[orderBy];
+  const aVal = a[orderBy];
+  const bVal = b[orderBy];
 
   if (typeof aVal === 'string' && typeof bVal === 'string') {
     return bVal.localeCompare(aVal);

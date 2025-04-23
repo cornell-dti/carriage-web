@@ -54,8 +54,8 @@ function mapRidesToData(rides: Ride[]): Data[] {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  let aVal = a[orderBy];
-  let bVal = b[orderBy];
+  const aVal = a[orderBy];
+  const bVal = b[orderBy];
 
   // For date/time sorting, we'll rely on `startTime` if needed
   // We'll handle special cases in getComparator.

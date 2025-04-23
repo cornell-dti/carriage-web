@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect , useRef } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -8,8 +8,6 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
-import { useEffect } from 'react';
-import { useRef } from 'react';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -24,7 +22,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  let buttonRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
