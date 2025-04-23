@@ -1,6 +1,35 @@
-import { DriverType } from '../../../server/src/models/driver';
 import { AdminType } from '../../../server/src/models/admin';
-import { VehicleType } from '../../../server/src/models/vehicle';
+
+export interface Availability {
+  startTime: string;
+  endTime: string;
+}
+
+export interface AvailabilityType {
+  Mon?: Availability;
+  Tue?: Availability;
+  Wed?: Availability;
+  Thu?: Availability;
+  Fri?: Availability;
+}
+
+export interface Vehicle {
+  id: string;
+  name: string;
+  capacity: number;
+}
+
+export interface Driver {
+  id: string;
+  firstName: string;
+  lastName: string;
+  availability: AvailabilityType;
+  vehicle?: Vehicle;
+  phoneNumber: string;
+  startDate: string;
+  email: string;
+  photoLink?: string;
+}
 
 export enum Organization {
   REDRUNNER = 'RedRunner',
@@ -35,17 +64,6 @@ export type Rider = {
   active: boolean;
 };
 
-export type Availability = {
-  startTime: string;
-  endTime: string;
-};
-
-export type AvailabilityType = {
-  [day: string]: Availability;
-};
-
-export type Driver = DriverType;
-
 export type Admin = AdminType;
 
 export type Employee = {
@@ -71,8 +89,6 @@ export type ObjectType = {
   [x: string]: any;
 };
 
-export type Vehicle = VehicleType;
-
 export enum Tag {
   EAST = 'east',
   WEST = 'west',
@@ -92,25 +108,6 @@ export type Location = {
   info?: string;
 };
 
-export type Ride = {
-  id: string;
-  type: Type;
-  status: Status;
-  late: boolean;
-  startLocation: Location;
-  endLocation: Location;
-  startTime: string;
-  endTime: string;
-  rider: Rider;
-  driver?: DriverType;
-  recurring: boolean;
-  recurringDays?: number[];
-  endDate?: string;
-  deleted?: string[];
-  edits?: string[];
-  parentRide?: Ride;
-};
-
 export enum Type {
   ACTIVE = 'active',
   PAST = 'past',
@@ -126,6 +123,25 @@ export enum Status {
   NO_SHOW = 'no_show',
   CANCELLED = 'cancelled',
 }
+
+export type Ride = {
+  id: string;
+  type: Type;
+  status: Status;
+  late: boolean;
+  startLocation: Location;
+  endLocation: Location;
+  startTime: string;
+  endTime: string;
+  rider: Rider;
+  driver?: Driver;
+  recurring: boolean;
+  recurringDays?: number[];
+  endDate?: string;
+  deleted?: string[];
+  edits?: string[];
+  parentRide?: Ride;
+};
 
 export type TableData = {
   year: string;
@@ -148,4 +164,4 @@ export enum RepeatValues {
   Custom = 'Custom',
 }
 
-export type { DriverType, AdminType };
+export type { AdminType };

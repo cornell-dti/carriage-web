@@ -3,7 +3,7 @@ import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
 import { Employee } from '../../types';
-import { AdminType, DriverType } from '../../types';
+import { AdminType, Driver } from '../../types';
 
 const formatPhone = (phoneNumber: string) => {
   const areaCode = phoneNumber.substring(0, 3);
@@ -103,7 +103,7 @@ const EmployeeCard = ({
 };
 
 type EmployeeCardsProps = {
-  employees: (AdminType | DriverType)[];
+  employees: (AdminType | Driver)[];
 };
 
 const EmployeeCards = ({ employees }: EmployeeCardsProps) => {

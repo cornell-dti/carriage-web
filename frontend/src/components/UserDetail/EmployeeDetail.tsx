@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { Ride } from '../../types';
+import { Driver, Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import {
   phone,
@@ -9,13 +9,10 @@ import {
   user,
   calender_dark,
 } from '../../icons/userInfo/index';
-import PastRides from './PastRides';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
-import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
-import { DriverType } from '../../../../server/src/models/driver';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
 
@@ -92,7 +89,7 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
   );
 };
 
-const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
+const DriverToEmployees = (drivers: Driver[]): EmployeeDetailProps[] => {
   return drivers.map((driver) => ({
     id: driver.id,
     firstName: driver.firstName,
@@ -119,7 +116,7 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
 };
 
 const findEmployee = (
-  drivers: DriverType[],
+  drivers: Driver[],
   admins: AdminType[],
   employeeId: string
 ): EmployeeDetailProps => {

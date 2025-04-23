@@ -1,4 +1,13 @@
-import { Tag, Location, Accessibility, Organization } from 'types';
+import {
+  Tag,
+  Location,
+  Accessibility,
+  Organization,
+  Availability,
+  AvailabilityType,
+  Vehicle,
+  Driver,
+} from 'types';
 import { faker } from '@faker-js/faker';
 
 const mockLocations: Location[] = [
@@ -138,5 +147,49 @@ export const randomRider = () => {
     favoriteLocations,
     photoLink: Math.random() < 0.5 ? faker.image.avatar() : undefined,
     active,
+  };
+};
+
+const mockVehicleTypes: Vehicle[] = [
+  {
+    id: faker.string.uuid(),
+    name: 'minivan',
+    capacity: 6,
+  },
+  {
+    id: faker.string.uuid(),
+    name: 'Sedan',
+    capacity: 4,
+  },
+];
+
+/**
+ * @returns {Driver} a driver with randomized characteristics like name, phone, etc.
+ */
+export const randomDriver = (): Driver => {
+  const allAvailability: Availability = {
+    startTime: new Date().toISOString().split('T')[1],
+    endTime: new Date().toISOString().split('T')[1],
+  };
+
+  const availability: AvailabilityType = {
+    Mon: allAvailability,
+    Tue: allAvailability,
+    Wed: allAvailability,
+    Thu: allAvailability,
+    Fri: allAvailability,
+  };
+
+  const vehicle = faker.helpers.arrayElement(mockVehicleTypes);
+
+  return {
+    id: faker.string.uuid(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    availability,
+    vehicle,
+    phoneNumber: faker.phone.number(),
+    startDate: faker.date.past({ years: 10 }).toISOString().split('T')[0],
+    email: faker.internet.email(),
   };
 };
