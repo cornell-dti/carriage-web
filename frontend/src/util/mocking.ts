@@ -93,7 +93,7 @@ export const randomLocation = () => faker.helpers.arrayElement(mockLocations);
 /**
  * @returns {Rider} a rider with randomized characteristics like name, phone, email, etc.
  */
-export const randomRider = () => {
+export const randomRider = (): Rider => {
   const accessibilityValues = Object.values(Accessibility);
   const organizationValues = Object.values(Organization);
 
@@ -111,19 +111,14 @@ export const randomRider = () => {
       ? faker.helpers.arrayElement(organizationValues)
       : undefined;
 
-  const joinDateObj = faker.date.past({ years: 4 });
+  const joinDateObj = faker.date.past({ years: 3 });
   const joinDate = DateToDateString(joinDateObj);
 
-  const endDate =
-    Math.random() < 0.5
-      ? DateToDateString(
-          faker.date.between({
-            from: joinDateObj,
-            to: new Date(),
-          })
-        )
-      : undefined;
-  const active = endDate ? true : false;
+  const endDateObj = new Date(joinDateObj);
+  endDateObj.setFullYear(endDateObj.getFullYear() + 4);
+  const endDate = DateToDateString(endDateObj);
+
+  const active = true;
 
   const favoriteLocationsCount = Math.floor(Math.random() * 5);
   const favoriteLocations = Array.from({ length: favoriteLocationsCount }, () =>
