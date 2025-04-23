@@ -40,7 +40,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
     const { date, time } = formatDateAndTime(ride.startTime);
 
     const startName = ride.startLocation?.name ?? 'Unknown';
-    const endName   = ride.endLocation?.name  ?? 'Unknown';
+    const endName = ride.endLocation?.name ?? 'Unknown';
 
     return {
       startTime: ride.startTime,
