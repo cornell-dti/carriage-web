@@ -17,10 +17,13 @@ import { faker } from '@faker-js/faker';
 const DateToDateString = (date: Date) => date.toISOString().split('T')[0];
 const DateToTimeString = (date: Date) => date.toISOString().split('T')[1];
 
-const mockLocations: Location[] = [
+export const MOCK_LOCATIONS: Location[] = [
   {
     id: '1',
     name: 'Bailey Hall - Left',
+    shortName: 'Bailey Hall - Left',
+    lat: 50,
+    lng: 50,
     address: '123 East St',
     tag: Tag.EAST,
     info: 'Near the river',
@@ -28,12 +31,18 @@ const mockLocations: Location[] = [
   {
     id: '2',
     name: 'Bailey Hall - Right',
+    shortName: 'Bailey Hall - Right',
+    lat: 50,
+    lng: 50,
     address: '456 West Ave',
     tag: Tag.WEST,
   },
   {
     id: '3',
     name: 'Malott Hall Parking',
+    shortName: 'Malott Short Name',
+    lat: 50,
+    lng: 50,
     address: '789 Central Blvd',
     tag: Tag.CENTRAL,
     info: 'Open 9am-9pm',
@@ -41,6 +50,9 @@ const mockLocations: Location[] = [
   {
     id: '4',
     name: 'Baker Hall Parking',
+    shortName: 'Baker Parking',
+    lat: 50,
+    lng: 50,
     address: '101 North Rd',
     tag: Tag.NORTH,
   },
@@ -48,18 +60,29 @@ const mockLocations: Location[] = [
     id: '5',
     name: 'Rhodes Hall Back',
     address: '202 College St',
+    shortName: 'Rhodes Back',
+    lat: 50,
+    lng: 50,
     tag: Tag.CTOWN,
     info: 'Near university',
   },
   {
     id: '6',
     name: 'Prog. House Dr',
+    shortName: 'Prog Dr',
+    lat: 50,
+    lng: 50,
+
     address: '303 Downtown Ave',
     tag: Tag.DTOWN,
   },
   {
     id: '7',
     name: 'McClintock Back',
+    shortName: 'McClint Back',
+    lat: 50,
+    lng: 50,
+
     address: '404 Old Mill Rd',
     tag: Tag.INACTIVE,
     info: 'Closed for renovation',
@@ -67,28 +90,36 @@ const mockLocations: Location[] = [
   {
     id: '8',
     name: 'Ganedago Back',
+    shortName: 'Ganedago b',
+    lat: 50,
+    lng: 50,
     address: '505 Custom Ln',
     tag: Tag.CUSTOM,
   },
   {
     id: '9',
     name: 'Noyes Parking',
+    shortName: 'Noyes Pk',
+    lat: 50,
+    lng: 50,
     address: '606 East Market St',
     tag: Tag.EAST,
   },
   {
     id: '10',
     name: 'Casc. Hall',
+    shortName: 'Casc. Hall',
+    lat: 50,
+    lng: 50,
     address: '707 Westside Dr',
     tag: Tag.WEST,
-    info: 'Botanical garden',
   },
 ];
 
 /**
  * @returns a randomly selected location from a predefined set of fake locations
  */
-export const randomLocation = () => faker.helpers.arrayElement(mockLocations);
+export const randomLocation = () => faker.helpers.arrayElement(MOCK_LOCATIONS);
 
 /**
  * @returns {Rider} a rider with randomized characteristics like name, phone, email, etc.
@@ -124,7 +155,7 @@ export const randomRider = (): Rider => {
   const favoriteLocationsCount = Math.floor(Math.random() * 5);
   const favoriteLocations = Array.from({ length: favoriteLocationsCount }, () =>
     faker.helpers.arrayElement(
-      mockLocations.map((location) => {
+      MOCK_LOCATIONS.map((location) => {
         return location.name;
       })
     )
