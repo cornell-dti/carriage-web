@@ -140,6 +140,7 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
       >
         {rides.map((ride, idx) => (
           <button
+            id={`${ride.id}-table`}
             className={`w-full h-min flex items-center justify-between text-neutral-700 px-4 py-1.5 
               ${
                 ride.noShow
@@ -237,7 +238,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
         {/* timeline horizontal scroll */}
         <div className="w-full h-full overflow-x-scroll flex-col relative">
           {/* tick labels */}
-          <div className="w-full flex" style={{ marginLeft: leftOffset }}>
+          <div
+            className="w-full flex pointer-events-none"
+            style={{ marginLeft: leftOffset }}
+          >
             {timeLabels.map((timeLabel, idx) => (
               <div
                 key={idx}
@@ -264,7 +268,14 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               );
 
               return (
-                <div key={idx} className="h-10 flex items-center">
+                <button
+                  key={idx}
+                  className="h-10 flex items-center"
+                  id={`${ride.id}-timeline`}
+                  onClick={() =>
+                    selected === ride ? handleSelection(undefined) : ride
+                  }
+                >
                   {/* Student name on the left */}
                   <div
                     className="h-full flex justify-end items-center pr-2"
@@ -306,13 +317,13 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                       </p>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
           {/* tick marks */}
           <div
-            className="w-full h-full absolute flex top-0 left-0"
+            className="w-full h-full absolute flex top-0 left-0 pointer-events-none"
             style={{ left: leftOffset }}
           >
             {timeLabels.map((_timeLabel, idx) => (
@@ -363,8 +374,41 @@ const Scheduled: FC = () => {
     return renderedRides.filter((ride) => ride.noShow);
   }, [renderedRides]);
 
+  // Helper function to check if element is in viewport
+  const isElementInViewport = (el: Element) => {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  };
+
   const handleSelection = (updatedSelection: Ride | undefined) => {
     setSelected(updatedSelection);
+
+    if (updatedSelection) {
+      // Check and scroll to table element
+      const tableElement = document.getElementById(
+        `${updatedSelection.id}-table`
+      );
+      if (tableElement && !isElementInViewport(tableElement)) {
+        tableElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      // Check and scroll to timeline element
+      const timelineElement = document.getElementById(
+        `${updatedSelection.id}-timeline`
+      );
+      if (timelineElement && !isElementInViewport(timelineElement)) {
+        timelineElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
   };
 
   return (
