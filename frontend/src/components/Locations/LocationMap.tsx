@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
+  APIProvider,
   Map,
   AdvancedMarker,
   Pin,
@@ -8,19 +9,9 @@ import {
 } from '@vis.gl/react-google-maps';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
-import styles from './locations.module.css';
 import { OpenInFull } from '@mui/icons-material';
-
-interface Location {
-  id: number;
-  name: string;
-  shortName: string;
-  address: string;
-  info: string;
-  tag: string;
-  lat: number;
-  lng: number;
-}
+import styles from './locations.module.css';
+import { Location } from '../../types';
 
 interface LocationMapProps {
   locations: Location[];
@@ -29,48 +20,52 @@ interface LocationMapProps {
   onViewDetails: (location: Location) => void;
 }
 
-export const LocationMap: React.FC<LocationMapProps> = ({
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Accept only real, finite numbers (rules out undefined, null, NaN, "") */
+const isValidCoord = (v: unknown): v is number =>
+  typeof v === 'number' && Number.isFinite(v);
+
+/* -------------------------------------------------------------------------- */
+/* Internal map component (needs access to `useMap`)                           */
+/* -------------------------------------------------------------------------- */
+const MapContent = ({
   locations,
   selectedLocation,
   onLocationSelect,
   onViewDetails,
-}) => {
+}: LocationMapProps) => {
   const map = useMap();
+
+  /* Marker-cluster plumbing ------------------------------------------------- */
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markers = useRef<Record<string, Marker>>({});
 
-  // Initialize clusterer once when map is available
   useEffect(() => {
     if (!map || clusterer.current) return;
+
     clusterer.current = new MarkerClusterer({ map });
+
     return () => {
-      if (clusterer.current) {
-        clusterer.current.clearMarkers();
-        clusterer.current = null;
-      }
+      clusterer.current?.clearMarkers();
+      clusterer.current = null;
     };
   }, [map]);
 
-  // Handle marker references and clusterer updates
-  const handleMarkerRef = useCallback(
-    (marker: Marker | null, locationId: string) => {
-      if (marker) {
-        markers.current[locationId] = marker;
-      } else {
-        delete markers.current[locationId];
-      }
+  const handleMarkerRef = useCallback((marker: Marker | null, id: string) => {
+    if (marker) markers.current[id] = marker;
+    else delete markers.current[id];
 
-      // Schedule cluster update after React's DOM updates
-      setTimeout(() => {
-        if (clusterer.current) {
-          clusterer.current.clearMarkers();
-          clusterer.current.addMarkers(Object.values(markers.current));
-        }
-      }, 0);
-    },
-    []
-  );
+    // refresh after React flushes DOM updates
+    setTimeout(() => {
+      clusterer.current?.clearMarkers();
+      clusterer.current?.addMarkers(Object.values(markers.current));
+    }, 0);
+  }, []);
 
+  /* Zoom / pan to the currently selected location -------------------------- */
   useEffect(() => {
     if (map && selectedLocation) {
       map.setZoom(15);
@@ -78,43 +73,47 @@ export const LocationMap: React.FC<LocationMapProps> = ({
     }
   }, [map, selectedLocation]);
 
+  /* ------------------------------------------------------------------------ */
   return (
     <Map
       defaultZoom={13}
       defaultCenter={{ lat: 42.4534531, lng: -76.4760776 }}
       mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
       className={styles.mapPlaceholder}
-      gestureHandling={'greedy'}
+      gestureHandling="greedy"
       disableDefaultUI={false}
     >
-      {locations.map((location) => (
-        <AdvancedMarker
-          key={location.id}
-          position={{ lat: location.lat, lng: location.lng }}
-          onClick={() =>
-            onLocationSelect(
-              selectedLocation?.id === location.id ? null : location
-            )
-          }
-          clickable={true}
-          ref={(marker: Marker | null) =>
-            handleMarkerRef(marker, location.id.toString())
-          }
-        >
-          <Pin
-            background={
-              selectedLocation?.id === location.id ? '#1976d2' : '#FBBC04'
+      {/* --------------------------- Markers -------------------------------- */}
+      {locations
+        .filter(({ lat, lng }) => isValidCoord(lat) && isValidCoord(lng))
+        .map((loc) => (
+          <AdvancedMarker
+            key={loc.id}
+            position={{ lat: loc.lat, lng: loc.lng }} // safe values
+            onClick={() =>
+              onLocationSelect(selectedLocation?.id === loc.id ? null : loc)
             }
-            glyphColor="#000"
-            borderColor="#000"
-            scale={1.2}
-          />
-        </AdvancedMarker>
-      ))}
+            ref={(marker) => handleMarkerRef(marker, loc.id.toString())}
+            clickable
+          >
+            <Pin
+              background={
+                selectedLocation?.id === loc.id ? '#1976d2' : '#FBBC04'
+              }
+              glyphColor="#000"
+              borderColor="#000"
+              scale={1.2}
+            />
+          </AdvancedMarker>
+        ))}
 
+      {/* --------------------------- InfoWindow ----------------------------- */}
       {selectedLocation && (
         <InfoWindow
-          position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
+          position={{
+            lat: selectedLocation.lat,
+            lng: selectedLocation.lng,
+          }}
           pixelOffset={[0, -40]}
           onCloseClick={() => onLocationSelect(null)}
         >
@@ -130,9 +129,7 @@ export const LocationMap: React.FC<LocationMapProps> = ({
                 sx={{
                   cursor: 'pointer',
                   color: 'action.active',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
+                  '&:hover': { color: 'primary.main' },
                 }}
               />
             </div>
@@ -142,3 +139,17 @@ export const LocationMap: React.FC<LocationMapProps> = ({
     </Map>
   );
 };
+
+/* -------------------------------------------------------------------------- */
+/* Public wrapper (supplies the API key)                                      */
+/* -------------------------------------------------------------------------- */
+export const LocationMap: React.FC<LocationMapProps> = (props) => (
+  <APIProvider
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
+    libraries={['places']}
+  >
+    <MapContent {...props} />
+  </APIProvider>
+);
+
+export default LocationMap;

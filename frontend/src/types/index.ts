@@ -113,8 +113,12 @@ export type Location = {
   id: string;
   name: string;
   address: string;
-  tag: Tag;
+  shortName: string;
   info?: string;
+  tag: Tag;
+  lat: number;
+  lng: number;
+  photoLink?: string;
 };
 
 export enum Type {
