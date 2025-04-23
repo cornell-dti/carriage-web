@@ -7,7 +7,7 @@ import {
   Driver,
   Rider,
 } from 'types';
-import { randomDriver, randomRide, randomRider } from 'util/mocking';
+import { randomDriver, randomRide, randomRider } from '../../util/mocking';
 
 const TODAY = new Date().toISOString().split('T')[0];
 

@@ -8,10 +8,10 @@ import MainCard from '../../components/RiderComponents/MainCard';
 import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
 import RideTable from '../../components/RiderComponents/RideTable';
 import styles from './page.module.css';
-import { FormData } from 'components/RiderComponents/RequestRideDialog';
-import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
+import { FormData } from '../../components/RiderComponents/RequestRideDialog';
+import RequestRideDialog from '../../components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { randomLocation } from 'util/mocking';
+import { randomLocation } from '../../util/mocking';
 
 // Rider data type
 interface RiderData {
@@ -143,7 +143,7 @@ const Schedule: React.FC = () => {
 
   return (
     <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
       <main id="main" className={styles.schedulePage}>

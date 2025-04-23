@@ -41,13 +41,13 @@
     "react-hook-form": "^7.53.0",
     "react-router-dom": "^6.26.2",
     "react-router-hash-link": "^2.4.3",
-    "react-scripts": "^5.0.1",
     "react-select": "^5.8.1",
     "reactjs-popup": "^2.0.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "vite",
+    "build": "tsc && vite build",
+    "serve": "vite preview",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
@@ -75,11 +75,15 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react-swc": "^3.9.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "2.8.8",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "^6.3.2",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }

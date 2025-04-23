@@ -28,7 +28,7 @@ import {
 } from '@mui/x-date-pickers';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { PlacesSearch } from 'components/Locations/PlacesSearch';
+import { PlacesSearch } from '../../components/Locations/PlacesSearch';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 

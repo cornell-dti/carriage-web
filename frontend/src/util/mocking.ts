@@ -11,7 +11,7 @@ import {
   Ride,
   Type,
   Status,
-} from 'types';
+} from '../types';
 import { faker } from '@faker-js/faker';
 
 const DateToDateString = (date: Date) => date.toISOString().split('T')[0];
