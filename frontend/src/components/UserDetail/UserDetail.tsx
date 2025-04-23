@@ -6,7 +6,7 @@ import styles from './userDetail.module.css';
 import { red_trash, edit } from '../../icons/other/index';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';
-import { Rider } from '../../types/index';
+import { Rider, DriverType as Driver } from '../../types/index';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
@@ -57,6 +57,7 @@ type UserDetailProps = {
   photoLink?: string;
   isRider?: boolean;
   rider?: Rider;
+  driver?: Driver;
 };
 
 const UserDetail = ({
@@ -69,6 +70,7 @@ const UserDetail = ({
   photoLink,
   isRider,
   rider,
+  driver,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
   const [isShowing, setIsShowing] = useState(false);
@@ -97,6 +99,7 @@ const UserDetail = ({
       });
     }
   };
+  
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
@@ -170,9 +173,9 @@ const UserDetail = ({
             </button>
             <ConfirmationModal
               open={confirmationModalisOpen}
-              user={employee ? employee : rider!}
+              user={driver ? driver : (employee ? employee : rider!)}
               onClose={closeConfirmationModal}
-              role={role} // Specifies Admin Role, undefined if rider
+              role={role}
             />
           </div>
         </div>

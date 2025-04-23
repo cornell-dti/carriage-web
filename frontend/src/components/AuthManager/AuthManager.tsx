@@ -15,7 +15,8 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { Admin, Rider } from '../../types/index';
+import DriverRoutes from '../../pages/Driver/Routes';
+import { Admin, Rider, DriverType as Driver } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
@@ -40,7 +41,7 @@ export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
   const [id, setId] = useState(localStorage.getItem('userId') || '');
-  const [user, setUser] = useState<Rider | Admin>(
+  const [user, setUser] = useState<Rider | Admin | Driver>(
     JSON.parse(localStorage.getItem('user') || '{}')
   );
   const [refreshUser, setRefreshUser] = useState(() =>
@@ -89,8 +90,7 @@ const AuthManager = () => {
     document.cookie = `${cookieName}=${encrypt(value)};secure=true;path=/;`;
   }
 
-  function signIn(isAdmin: boolean, code: string) {
-    const userType = isAdmin ? 'Admin' : 'Rider';
+  function signIn(userType: 'Admin' | 'Rider' | 'Driver', code: string) {
     const table = `${userType}s`;
     const localUserType = localStorage.getItem('userType');
     if (!localUserType || localUserType === userType) {
@@ -110,9 +110,15 @@ const AuthManager = () => {
             refreshFunc();
             setRefreshUser(() => refreshFunc);
             setSignedIn(true);
-            navigate(isAdmin ? '/admin/home' : '/rider/home', {
-              replace: true,
-            });
+            
+            // Navigate based on user type
+            if (userType === 'Admin') {
+              navigate('/admin/home', { replace: true });
+            } else if (userType === 'Driver') {
+              navigate('/driver/rides', { replace: true });
+            } else {
+              navigate('/rider/schedule', { replace: true });
+            }
           } else {
             logout();
           }
@@ -126,13 +132,19 @@ const AuthManager = () => {
 
   const adminLogin = googleAuth({
     flow: 'auth-code',
-    onSuccess: async (res) => signIn(true, res.code),
+    onSuccess: async (res) => signIn('Admin', res.code),
     onError: (errorResponse) => console.error(errorResponse),
   });
 
   const studentLogin = googleAuth({
     flow: 'auth-code',
-    onSuccess: async (res) => signIn(false, res.code),
+    onSuccess: async (res) => signIn('Rider', res.code),
+    onError: (errorResponse) => console.error(errorResponse),
+  });
+
+  const driverLogin = googleAuth({
+    flow: 'auth-code',
+    onSuccess: async (res) => signIn('Driver', res.code),
     onError: (errorResponse) => console.error(errorResponse),
   });
 
@@ -148,8 +160,16 @@ const AuthManager = () => {
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
-    const endpoint =
-      userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
+    let endpoint = '';
+    
+    if (userType === 'Admin') {
+      endpoint = `/api/admins/${userId}`;
+    } else if (userType === 'Driver') {
+      endpoint = `/api/drivers/${userId}`;
+    } else {
+      endpoint = `/api/riders/${userId}`;
+    }
+    
     return () => {
       axios
         .get(endpoint)
@@ -189,7 +209,7 @@ const AuthManager = () => {
                 </button>
               }
               drivers={
-                <button className={styles.btn}>
+                <button onClick={() => driverLogin()} className={styles.btn}>
                   <img src={car} className={styles.icon} alt="car logo" />
                   <div className={styles.heading}>Drivers</div>
                   Sign in with Google
@@ -218,6 +238,7 @@ const AuthManager = () => {
           <Routes>
             <Route path="/admin/*" element={<AdminRoutes />} />
             <Route path="/rider/*" element={<RiderRoutes />} />
+            <Route path="/driver/*" element={<DriverRoutes />} />
             <Route
               path="/"
               element={
@@ -225,7 +246,9 @@ const AuthManager = () => {
                   to={
                     localStorage.getItem('userType') === 'Admin'
                       ? '/admin/home'
-                      : '/rider/home'
+                      : localStorage.getItem('userType') === 'Driver'
+                      ? '/driver/rides'
+                      : '/rider/schedule'
                   }
                   replace
                 />
