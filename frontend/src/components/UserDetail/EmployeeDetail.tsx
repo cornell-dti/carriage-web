@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import { phone, calender_dark } from '../../icons/userInfo/index';
+import { phone, calender_dark,  clock,
+  wheel,
+  user, } from '../../icons/userInfo/index';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
@@ -25,7 +27,6 @@ type EmployeeDetailProps = {
   phoneNumber: string;
   availability?: string[][];
   photoLink?: string;
-  startDate?: string;
 };
 
 type EmployeeStatisticsProps = {
@@ -92,11 +93,9 @@ const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
     id: driver.id,
     firstName: driver.firstName,
     lastName: driver.lastName,
-    availability: formatAvailability(driver.availability)!,
     netId: driver.email.split('@')[0],
     phoneNumber: driver.phoneNumber,
     photoLink: driver.photoLink,
-    startDate: driver.startDate,
   }));
 };
 
@@ -228,7 +227,6 @@ const EmployeeDetail = () => {
               ...driverData,
               ...adminData,
               ...{ netId: adminData.email.split('@')[0] },
-              availability: formatAvailability(driverData.availability),
             });
             setEmployeeRides(employeeId);
             setEmployeeStats(employeeId);
@@ -246,7 +244,6 @@ const EmployeeDetail = () => {
         setEmployee({
           ...driverData,
           ...{ netId: driverData.email.split('@')[0] },
-          availability: formatAvailability(driverData.availability),
         });
         setEmployeeRides(employeeId);
         setEmployeeStats(employeeId);
@@ -315,11 +312,11 @@ const EmployeeDetail = () => {
                 alt="phone"
                 text={employee.phoneNumber}
               />
-              {employee.startDate && (
+              {employee.netId && ( //{employee.startDate}
                 <UserContactInfo
                   icon={calender_dark}
                   alt="join date"
-                  text={employee.startDate}
+                  text={employee.netId} //{employee.startDate}
                 />
               )}
             </div>
@@ -328,6 +325,21 @@ const EmployeeDetail = () => {
               <h4>Working Hours</h4>
               {avail === '' ? 'N/A' : avail}
             </div>
+            <UserContactInfo
+              icon={phone}
+              alt="phone"
+              text={employee.phoneNumber}
+            />
+            <UserContactInfo
+              icon={isAdmin || isBoth ? user : wheel}
+              alt="role"
+              text={role()}
+            />
+            <UserContactInfo
+              icon={clock}
+              alt="availability"
+              text={avail === '' ? 'N/A' : avail}
+            />
           </UserDetail>
 
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />

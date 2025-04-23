@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
+  APIProvider,
   Map,
   AdvancedMarker,
   Pin,
@@ -29,12 +30,13 @@ interface LocationMapProps {
   onViewDetails: (location: Location) => void;
 }
 
-export const LocationMap: React.FC<LocationMapProps> = ({
+// Internal component with map functionality
+const MapContent = ({
   locations,
   selectedLocation,
   onLocationSelect,
   onViewDetails,
-}) => {
+}: LocationMapProps) => {
   const map = useMap();
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markers = useRef<Record<string, Marker>>({});
@@ -140,5 +142,16 @@ export const LocationMap: React.FC<LocationMapProps> = ({
         </InfoWindow>
       )}
     </Map>
+  );
+};
+
+export const LocationMap: React.FC<LocationMapProps> = (props) => {
+  return (
+    <APIProvider
+      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      libraries={['places']}
+    >
+      <MapContent {...props} />
+    </APIProvider>
   );
 };

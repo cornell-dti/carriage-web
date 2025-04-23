@@ -14,7 +14,7 @@
   position: relative;
 }
 
-/* Left panel - adjust to fit parent */
+/* Left panel */
 .leftPanel {
   display: flex;
   flex-direction: column;
@@ -109,6 +109,92 @@
   font-size: 0.9rem;
 }
 
+/* Form Container */
+.formContainer {
+  width: 100%;
+  min-height: 500px;
+}
+
+/* Form Layout */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Form Column */
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form Section */
+.formSection {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Map Section */
+.mapSection {
+  height: 400px;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Info Text */
+.infoText {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Address Section */
+.addressSection {
+  margin-top: 16px;
+}
+
+.addressTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.coordinatesText {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Address Tools */
+.addressTools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Confirmation Dialog */
+.confirmDialog {
+  padding: 1rem;
+  text-align: center;
+}
+
+.confirmDialogTitle {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.confirmDialogActions {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 1rem;
+}
+
 /* Map container */
 .mapContainer {
   position: relative;
@@ -131,7 +217,33 @@
   padding-top: 1rem;
 }
 
-/* Places autocomplete */
+/* Places search */
+.placesSearch {
+  position: relative;
+  width: 100%;
+}
+
+.resultsContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.resultItem {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.resultItem:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
 .placesAutocomplete {
   position: relative;
   width: 100%;
