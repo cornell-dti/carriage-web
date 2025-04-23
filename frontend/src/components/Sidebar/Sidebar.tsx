@@ -66,6 +66,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
 
   const adminMenu: MenuItem[] = [
     { icon: home, caption: 'Home', path: 'home' },
+    { icon: home, caption: 'Scheduled', path: 'scheduled' },
     { icon: drivers, caption: 'Employees', path: 'employees' },
     { icon: riders, caption: 'Students', path: 'riders' },
     { icon: locations, caption: 'Locations', path: 'locations' },

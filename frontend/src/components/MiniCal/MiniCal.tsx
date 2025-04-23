@@ -84,7 +84,6 @@ const MiniCal = () => {
           <button className={styles.customInput} onClick={this.props.onClick}>
             <span className={styles.primary}>
               {isToday(curDate) ? 'Today ' : ' '}
-              {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
             </span>
             <span className={styles.space} /> <Icon />
             <span className={styles.space} /> {this.props.value}
@@ -160,7 +159,7 @@ const MiniCal = () => {
                   pseudoScroll();
                 }}
               >
-                TODAY
+                <p>TODAY</p>
               </button>
               <Indicators date={date} />
               <button

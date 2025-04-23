@@ -40,6 +40,10 @@
   margin: 0px 12px;
 }
 
+button {
+  font-size: 12px;
+}
+
 .btn2 {
   cursor: pointer;
   background-color: white;
@@ -54,8 +58,7 @@
 
 .month {
   width: 160px;
-  line-height: 45px;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .active {
@@ -63,12 +66,17 @@
   color: black;
 }
 
+* {
+  font-size: 16px;
+}
 .primary {
   color: #00c48c;
+  font-size: 16px;
 }
 
 .space {
   width: 0.5em;
+  font-size: 16px;
 }
 
 .modal_state {
