@@ -7,8 +7,15 @@ import {
   AvailabilityType,
   Vehicle,
   Driver,
+  Rider,
+  Ride,
+  Type,
+  Status,
 } from 'types';
 import { faker } from '@faker-js/faker';
+
+const DateToDateString = (date: Date) => date.toISOString().split('T')[0];
+const DateToTimeString = (date: Date) => date.toISOString().split('T')[1];
 
 const mockLocations: Location[] = [
   {
@@ -105,17 +112,16 @@ export const randomRider = () => {
       : undefined;
 
   const joinDateObj = faker.date.past({ years: 4 });
-  const joinDate = joinDateObj.toISOString().split('T')[0];
+  const joinDate = DateToDateString(joinDateObj);
 
   const endDate =
     Math.random() < 0.5
-      ? faker.date
-          .between({
+      ? DateToDateString(
+          faker.date.between({
             from: joinDateObj,
             to: new Date(),
           })
-          .toISOString()
-          .split('T')[0]
+        )
       : undefined;
   const active = endDate ? true : false;
 
@@ -168,8 +174,8 @@ const mockVehicleTypes: Vehicle[] = [
  */
 export const randomDriver = (): Driver => {
   const allAvailability: Availability = {
-    startTime: new Date().toISOString().split('T')[1],
-    endTime: new Date().toISOString().split('T')[1],
+    startTime: DateToTimeString(new Date()),
+    endTime: DateToTimeString(new Date()),
   };
 
   const availability: AvailabilityType = {
@@ -189,7 +195,47 @@ export const randomDriver = (): Driver => {
     availability,
     vehicle,
     phoneNumber: faker.phone.number(),
-    startDate: faker.date.past({ years: 10 }).toISOString().split('T')[0],
+    startDate: DateToDateString(faker.date.past({ years: 10 })),
     email: faker.internet.email(),
+  };
+};
+
+/**
+ * @param {Driver} drivers a list of possible drivers that this ride can take
+ * @param {Rider} riders a list of possible riders that can this ride can belong to
+ */
+export const randomRide = (drivers: Driver[], riders: Rider[]): Ride => {
+  const dayStart = new Date();
+  dayStart.setHours(7, 0, 0, 0);
+
+  const dayLastRides = new Date();
+  dayLastRides.setHours(15, 30, 0, 0);
+
+  const dayEnd = new Date();
+  dayEnd.setHours(16, 0, 0, 0);
+
+  const rideStart = faker.date.between({ from: dayStart, to: dayLastRides });
+
+  const minEndTime = new Date(rideStart.getTime() + 5 * 60 * 1000); // 5 minutes after start
+  const maxEndTime = new Date(rideStart.getTime() + 30 * 60 * 1000); // 30 minutes after start
+
+  const adjustedMaxEndTime = maxEndTime > dayEnd ? dayEnd : maxEndTime;
+
+  const rideEnd = faker.date.between({
+    from: minEndTime,
+    to: adjustedMaxEndTime,
+  });
+  return {
+    id: faker.string.uuid(),
+    type: faker.helpers.enumValue(Type),
+    status: faker.helpers.enumValue(Status),
+    late: Math.random() > 0.5,
+    startLocation: randomLocation(),
+    endLocation: randomLocation(),
+    startTime: DateToTimeString(rideStart),
+    endTime: DateToTimeString(rideEnd),
+    rider: faker.helpers.arrayElement(riders),
+    driver: faker.helpers.arrayElement(drivers),
+    recurring: false,
   };
 };
