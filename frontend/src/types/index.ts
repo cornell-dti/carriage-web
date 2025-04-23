@@ -1,5 +1,3 @@
-import { AdminType } from '../../../server/src/models/admin';
-
 export interface Availability {
   startTime: string;
   endTime: string;
@@ -64,7 +62,18 @@ export type Rider = {
   active: boolean;
 };
 
-export type Admin = AdminType;
+export type AdminRole = 'sds-admin' | 'redrunner-admin';
+
+export interface Admin {
+  id: string;
+  firstName: string;
+  lastName: string;
+  type: AdminRole[];
+  isDriver: boolean;
+  phoneNumber: string;
+  email: string;
+  photoLink?: string;
+}
 
 export type Employee = {
   id: string;
@@ -163,5 +172,3 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type { AdminType };
