@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../components/FormElements/FormElements';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
-import LocationsContent from 'components/Locations/LocationsContent';
+import LocationsContent from '../../components/Locations/LocationsContent';
 import styles from './page.module.css';
-import { LocationFormModal } from 'components/Locations/LocationFormModal';
-import { Location } from 'types';
-import { useLocations } from 'context/LocationsContext';
+import { LocationFormModal } from '../../components/Locations/LocationFormModal';
+import { Location } from '../../types';
+import { useLocations } from '../../context/LocationsContext';
 
 const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import styles from './searchandfilter.module.css';
-import { search_icon, filter, check, down, x } from 'icons/other';
+import { search_icon, filter, check, down, x } from '../../icons/other';
 
 interface FilterOption {
   field: string;

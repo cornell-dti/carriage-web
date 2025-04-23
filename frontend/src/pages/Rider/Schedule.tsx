@@ -8,9 +8,11 @@ import MainCard from '../../components/RiderComponents/MainCard';
 import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
 import RideTable from '../../components/RiderComponents/RideTable';
 import styles from './page.module.css';
-import { FormData } from 'components/RiderComponents/RequestRideDialog';
-import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
+import RequestRideDialog, {
+  FormData,
+} from '../../components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import { randomLocation } from '../../util/mocking';
 
 // Rider data type
 interface RiderData {
@@ -66,22 +68,13 @@ const dummyRides: Ride[] = [
     type: Type.ACTIVE,
     status: Status.NOT_STARTED,
     late: false,
-    startLocation: {
-      name: 'Bailey Hall',
-      address: '123 College Ave',
-      tag: Tag.CENTRAL,
-    },
-    endLocation: {
-      name: 'Uris Library',
-      address: '456 University St',
-      tag: Tag.WEST,
-    },
-    startTime: new Date().toISOString(),
-    endTime: new Date(Date.now() + 30 * 60000).toISOString(),
+    startLocation: randomLocation(),
+    endLocation: randomLocation(),
+    startTime: new Date(),
+    endTime: new Date(Date.now() + 30 * 60000),
     rider: riderData,
     recurring: false,
   },
-  // ... other dummy rides
 ];
 
 const favoriteRides: FavoriteRide[] = [
@@ -99,7 +92,6 @@ const favoriteRides: FavoriteRide[] = [
     endLocation: { name: 'Noyes Fitness Center', address: '456 University St' },
     preferredTime: '8:00 AM',
   },
-  // ... other favorite rides
 ];
 
 const Schedule: React.FC = () => {
@@ -128,18 +120,10 @@ const Schedule: React.FC = () => {
       type: Type.UNSCHEDULED,
       status: Status.NOT_STARTED,
       late: false,
-      startLocation: {
-        name: formData.pickupLocation.address,
-        address: formData.pickupLocation.address,
-        tag: Tag.CUSTOM,
-      },
-      endLocation: {
-        name: formData.dropoffLocation.name,
-        address: formData.dropoffLocation.address,
-        tag: formData.dropoffLocation.tag as Tag,
-      },
-      startTime: formData.date?.toISOString() ?? new Date().toISOString(),
-      endTime: formData.time?.toISOString() ?? new Date().toISOString(),
+      startLocation: randomLocation(),
+      endLocation: randomLocation(),
+      startTime: formData.date ?? new Date(),
+      endTime: formData.time ?? new Date(),
       rider: riderData,
       recurring: formData.repeatType !== 'none',
     };
@@ -148,9 +132,9 @@ const Schedule: React.FC = () => {
     setFilteredRides((prevFiltered) => [...prevFiltered, newRide]);
   };
   // Using the date portion only for comparisons
-  const now = new Date().toISOString().split('T')[0];
+  const now = new Date();
   const currRides = rides.filter((ride) => ride.endTime >= now);
-  const pastRides = rides.filter((ride) => ride.endTime < now);
+  // const pastRides = rides.filter((ride) => ride.endTime < now);
 
   const sortedCurrRides = [...currRides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
@@ -160,7 +144,7 @@ const Schedule: React.FC = () => {
 
   return (
     <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
       <main id="main" className={styles.schedulePage}>

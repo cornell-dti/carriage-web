@@ -43,7 +43,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const dropoffTag = ride.endLocation.tag;
 
           // returns date in the format "MM/DD/YYYY"
-          const formatDate = (date: string): string =>
+          const formatDate = (date: Date): string =>
             moment(date).format('MM/DD/YYYY');
 
           const startDate = formatDate(ride.endTime);

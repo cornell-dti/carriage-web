@@ -31,11 +31,10 @@ interface Data {
   type: Type;
 }
 
-function formatDateAndTime(isoString: string): { date: string; time: string } {
-  const d = new Date(isoString);
+function formatDateAndTime(date: Date): { date: string; time: string } {
   return {
-    date: d.toLocaleDateString(),
-    time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    date: date.toLocaleDateString(),
+    time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
   };
 }
 
@@ -43,7 +42,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
   return rides.map((ride) => {
     const { date, time } = formatDateAndTime(ride.startTime);
     return {
-      startTime: ride.startTime,
+      startTime: time,
       date,
       time,
       startLocationName: ride.startLocation.name,
@@ -55,8 +54,8 @@ function mapRidesToData(rides: Ride[]): Data[] {
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  let aVal = a[orderBy];
-  let bVal = b[orderBy];
+  const aVal = a[orderBy];
+  const bVal = b[orderBy];
 
   if (typeof aVal === 'string' && typeof bVal === 'string') {
     return bVal.localeCompare(aVal);

@@ -22,10 +22,10 @@ services:
     build:
       context: .
       args:
-        - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
-        - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
-        - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
-        - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
+        - VITE_SERVER_URL=${VITE_SERVER_URL}
+        - VITE_CLIENT_ID=${VITE_CLIENT_ID}
+        - VITE_PUBLIC_VAPID_KEY=${VITE_PUBLIC_VAPID_KEY}
+        - VITE_ENCRYPTION_KEY=${VITE_ENCRYPTION_KEY}
     ports:
       - '3001:3001'
     image: dticarriage/carriage-service:latest

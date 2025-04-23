@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { Driver, Ride } from 'types';
+import { Driver, Ride } from '../../types';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -37,8 +37,7 @@ const MainCard: React.FC<MainCardProps> = ({
   onEdit,
   onContact,
 }) => {
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDateTime = (date: Date) => {
     return {
       date: format(date, 'yyyy-MM-dd'),
       time: format(date, 'h:mm a'),

@@ -18,9 +18,9 @@ const formatTime = (time: string) => {
 
 const formatAvailability = (availability?: AvailabilityType) => {
   if (!availability) return null;
-  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
   const availabilityList = days.reduce((acc, day) => {
-    const availabilityTimes = availability[day];
+    const availabilityTimes = availability[day as keyof AvailabilityType];
     if (availabilityTimes) {
       const { startTime, endTime } = availabilityTimes;
       const fmtStart = formatTime(startTime);

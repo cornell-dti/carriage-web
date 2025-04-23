@@ -1,11 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import SearchAndFilter from 'components/FormElements/SearchAndFilter';
+import SearchAndFilter from '../../components/FormElements/SearchAndFilter';
 import { LocationMap } from './LocationMap';
 import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
-import { Location } from 'types';
+import { Location } from '../../types';
 
 interface LocationsContentProps {
   locations: Location[];
