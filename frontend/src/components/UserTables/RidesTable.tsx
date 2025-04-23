@@ -1,4 +1,4 @@
-import React, { useState , useEffect , useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
