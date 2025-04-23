@@ -21,6 +21,10 @@ const audience = [
   '241748771473-7rfda2grc8f7p099bmf98en0q9bcvp18.apps.googleusercontent.com',
 ];
 
+/**
+ * Returns the appropriate model (Rider, Driver, Admin) for a given table name.
+ * @param table - The string name of the table (e.g., 'Riders', 'Drivers', 'Admins').
+ */
 function getModel(table: string) {
   const tableToModel: { [table: string]: ModelType<Item> } = {
     Riders: Rider,
@@ -30,10 +34,23 @@ function getModel(table: string) {
   return tableToModel[table];
 }
 
+/**
+ * Derives the singular user type from the table name.
+ * For example, 'Riders' becomes 'Rider'.
+ * @param table - The string name of the table.
+ */
 function getUserType(table: string) {
   return table.slice(0, table.length - 1);
 }
 
+/**
+ * Finds a user in the specified model by email and sends back a JWT token if found.
+ * If logging in as an Admin and no match is found, the Driver table is checked as a fallback for admin-flagged users.
+ * @param res - Express response object.
+ * @param model - The model to query (Rider, Admin, or Driver).
+ * @param table - Name of the user table (used to derive userType).
+ * @param email - The email address to look up.
+ */
 function findUserAndSendToken(
   res: express.Response,
   model: ModelType<Item>,
@@ -43,21 +60,27 @@ function findUserAndSendToken(
   model.scan({ email: { eq: email } }).exec((err, data) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
-    } else if (data?.length) {
+      return;
+    }
+
+    if (data?.length) {
       const { id, active } = data[0].toJSON();
+      if (table === 'Riders' && !active) {
+        res.status(400).send({ err: 'User not active' });
+        return;
+      }
       const userPayload = {
         id,
         userType: getUserType(table),
       };
-      if (table === 'Riders' && !active) {
-        res.status(400).send({ err: 'User not active' });
-      } else {
-        res
-          .status(200)
-          .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-      }
+      res
+        .status(200)
+        .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
     } else if (table === 'Admins') {
       // Check drivers table for admins
+      // when the frontend page is made, this removed and we only use the first scan and change the error handling to check
+      // per table this is because we would have decoupled admins and drivers, so drivers wouldnt sign on admin page and vice versa
+      // but maybe we would allow admins to log onto the driver page?
       Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
         if (dErr) {
           res.status(dErr.statusCode || 500).send({ err: dErr });
@@ -84,6 +107,11 @@ function findUserAndSendToken(
   });
 }
 
+/**
+ * Exchanges an OAuth2 authorization code for an ID token using the provided client.
+ * @param client - An instance of OAuth2Client.
+ * @param code - The authorization code returned from Google login.
+ */
 async function getIdToken(client: OAuth2Client, code: string) {
   const { tokens } = await client.getToken(code);
   const idToken = tokens.id_token!;

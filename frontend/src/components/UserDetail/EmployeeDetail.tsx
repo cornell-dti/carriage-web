@@ -29,7 +29,6 @@ type EmployeeDetailProps = {
   phoneNumber: string;
   availability?: string[][];
   photoLink?: string;
-  startDate?: string;
 };
 
 type EmployeeStatisticsProps = {
@@ -97,11 +96,9 @@ const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
     id: driver.id,
     firstName: driver.firstName,
     lastName: driver.lastName,
-    availability: formatAvailability(driver.availability)!,
     netId: driver.email.split('@')[0],
     phoneNumber: driver.phoneNumber,
     photoLink: driver.photoLink,
-    startDate: driver.startDate,
   }));
 };
 
@@ -233,7 +230,6 @@ const EmployeeDetail = () => {
               ...driverData,
               ...adminData,
               ...{ netId: adminData.email.split('@')[0] },
-              availability: formatAvailability(driverData.availability),
             });
             setEmployeeRides(employeeId);
             setEmployeeStats(employeeId);
@@ -251,7 +247,6 @@ const EmployeeDetail = () => {
         setEmployee({
           ...driverData,
           ...{ netId: driverData.email.split('@')[0] },
-          availability: formatAvailability(driverData.availability),
         });
         setEmployeeRides(employeeId);
         setEmployeeStats(employeeId);
@@ -328,13 +323,6 @@ const EmployeeDetail = () => {
               alt="availability"
               text={avail === '' ? 'N/A' : avail}
             />
-            {employee.startDate && (
-              <UserContactInfo
-                icon={calender_dark}
-                alt="join date"
-                text={employee.startDate}
-              />
-            )}
           </UserDetail>
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
         </div>
