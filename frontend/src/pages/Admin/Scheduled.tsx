@@ -116,10 +116,10 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
         {/* filter right */}
         <div className="w-min h-min flex items-center gap-4 text-neutral-800">
           {/* add ride */}
-          <PillButton accent={ButtonAccent.PRIMARY}>
+          {/* <PillButton accent={ButtonAccent.PRIMARY}>
             <p>Add Ride</p>
             <AirportShuttle></AirportShuttle>
-          </PillButton>
+          </PillButton> */}
         </div>
       </div>
       {/* table header */}
@@ -148,7 +148,7 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
                     ? 'bg-neutral-300 text-neutral-700 hover:bg-neutral-400'
                     : 'bg-neutral-200 text-neutral-600 hover:bg-neutral-300'
                   : selected === ride
-                  ? 'bg-blue-200 text-neutral-700 hover:bg-blue-300'
+                  ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
                   : 'bg-white text-neutral-700 hover:bg-neutral-200'
               } 
               `}
@@ -213,11 +213,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 
   const minuteWidth = useMemo(() => halfHourWidth / 30, [halfHourWidth]);
 
-  const calculateRidePosition = (startTime: Date, endTime: Date) => {
-    // Reference time: 7:00 AM
-    const baseTime = new Date();
-    baseTime.setHours(7, 0, 0, 0);
+  const baseTime = new Date();
+  baseTime.setHours(7);
 
+  const calculateRidePosition = (startTime: Date, endTime: Date) => {
     // Calculate minutes from 7:00 AM
     const startMinutesFromBase =
       (startTime.getTime() - baseTime.getTime()) / (60 * 1000);
@@ -268,13 +267,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               );
 
               return (
-                <button
+                <div
                   key={idx}
                   className="h-10 flex items-center"
                   id={`${ride.id}-timeline`}
-                  onClick={() =>
-                    selected === ride ? handleSelection(undefined) : ride
-                  }
                 >
                   {/* Student name on the left */}
                   <div
@@ -291,21 +287,26 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                   </div>
 
                   {/* Ride block with start time */}
-                  <div
-                    className={`h-full border ${
+                  <button
+                    className={`h-full border cursor-pointer ${
                       ride.noShow
-                        ? ' bg-neutral-200 border-neutral-300'
-                        : 'bg-blue-100 border-blue-300'
+                        ? ' bg-neutral-200 border-neutral-300 text-neutral-700'
+                        : 'bg-neutral-900 border-neutral-800 text-neutral-100'
                     } rounded-md flex items-center px-2 overflow-hidden`}
                     style={{
                       left: `${leftOffset + positionFromLeft}px`,
                       width: `${Math.max(width, 50)}px`, // Minimum width for visibility
                     }}
+                    onClick={() =>
+                      selected === ride
+                        ? handleSelection(undefined)
+                        : handleSelection(ride)
+                    }
                   >
                     <div className="flex flex-col justify-center">
                       <p
                         className={`text-sm ${
-                          ride.noShow ? 'text-neutral-800' : 'text-blue-700'
+                          ride.noShow ? 'text-neutral-800' : 'text-neutral-100'
                         }`}
                       >
                         {ride.startTime.getHours() % 12 || 12}:
@@ -316,8 +317,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                         {ride.startTime.getHours() >= 12 ? 'PM' : 'AM'}
                       </p>
                     </div>
-                  </div>
-                </button>
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -329,7 +330,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
             {timeLabels.map((_timeLabel, idx) => (
               <div
                 key={idx}
-                className="h-full border-l border-neutral-300 "
+                className="h-full border-l border-neutral-300"
                 style={{
                   left: `${leftOffset + idx * halfHourWidth}px`,
                   width: halfHourWidth,
@@ -339,6 +340,16 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               ></div>
             ))}
           </div>
+          {/* current line */}
+          <div
+            id="timeline-current-indicator"
+            className="w-1 h-full absolute top-0 pointer-events-none border-l-4 border-blue-600/50 border-dotted"
+            style={{
+              left:
+                ((new Date().getTime() - baseTime.getTime()) / (60 * 1000)) *
+                minuteWidth,
+            }}
+          ></div>
         </div>
       </div>
 
@@ -346,6 +357,27 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
       <BoxButton
         className="absolute left-2 bottom-2 z-10"
         accent={ButtonAccent.PRIMARY}
+        onClick={() => {
+          const element = document.getElementById('timeline-current-indicator');
+          const parentDiv =
+            element?.closest('.overflow-x-scroll') || element?.parentElement;
+
+          if (element && parentDiv) {
+            // Get the parent's dimensions and scroll position
+            const parentRect = parentDiv.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+
+            // Calculate the scroll position to center the element
+            const scrollLeft =
+              element.offsetLeft - parentRect.width / 2 + elementRect.width / 2;
+
+            // Scroll smoothly to the calculated position
+            parentDiv.scrollTo({
+              left: scrollLeft,
+              behavior: 'smooth',
+            });
+          }
+        }}
       >
         <p>{`Now: ${moment(Date.now()).format('h:mm A')}`}</p>
       </BoxButton>

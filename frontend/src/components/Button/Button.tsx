@@ -49,7 +49,7 @@ export const PillButton: FC<ButtonProps> = ({
 
   return (
     <button
-      className={`w-min h-min text-nowrap flex gap-2 px-4 py-2 ${border} ${background} ${hover} rounded-full hover:cursor-pointer transition-colors duration-200 ${className}`}
+      className={`w-min h-min text-nowrap flex gap-2 px-4 py-2 border ${border} ${background} ${hover} rounded-full hover:cursor-pointer transition-colors duration-200 ${className}`}
       onClick={onClick}
       {...rest}
     >
@@ -70,7 +70,7 @@ export const BoxButton: FC<ButtonProps> = ({
 
   return (
     <button
-      className={`w-min h-min text-nowrap flex gap-2 px-4 py-2 ${border} ${background} ${hover} rounded-lg hover:cursor-pointer transition-colors duration-200 ${className}`}
+      className={`w-min h-min text-nowrap flex gap-2 px-4 py-2 border ${border} ${background} ${hover} rounded-lg hover:cursor-pointer transition-colors duration-200 ${className}`}
       onClick={onClick}
       {...rest}
     >
