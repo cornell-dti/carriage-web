@@ -12,4 +12,4 @@ if (container) {
   console.error('Failed to find the root element');
 }
 
-serviceWorker.register();
+// serviceWorker.register();
