@@ -2,10 +2,9 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
-import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths(), svgr(), tailwindcss()],
+  plugins: [react(), tsconfigPaths(), svgr()],
   build: {
     outDir: 'build', // Keep same output directory as CRA
   },
