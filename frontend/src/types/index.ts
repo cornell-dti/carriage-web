@@ -1,9 +1,11 @@
-import { RiderType } from '../../../server/src/models/rider';
 import { DriverType } from '../../../server/src/models/driver';
 import { AdminType } from '../../../server/src/models/admin';
 import { VehicleType } from '../../../server/src/models/vehicle';
 
-export type Rider = RiderType;
+export enum Organization {
+  REDRUNNER = 'RedRunner',
+  CULIFT = 'CULift',
+}
 
 export enum Accessibility {
   ASSISTANT = 'Assistant',
@@ -14,6 +16,24 @@ export enum Accessibility {
   LOW_VISION = 'Low Vision/Blind',
   SERVICE_ANIMALS = 'Service Animal',
 }
+
+export type Rider = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  email: string;
+  accessibility?: Accessibility[];
+  organization?: Organization;
+  description?: string;
+  joinDate: string;
+  endDate: string;
+  pronouns?: string;
+  address: string;
+  favoriteLocations: string[];
+  photoLink?: string;
+  active: boolean;
+};
 
 export type Availability = {
   startTime: string;
@@ -81,7 +101,7 @@ export type Ride = {
   endLocation: Location;
   startTime: string;
   endTime: string;
-  rider: RiderType;
+  rider: Rider;
   driver?: DriverType;
   recurring: boolean;
   recurringDays?: number[];
