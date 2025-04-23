@@ -31,12 +31,12 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const date = format_date(curDate);
 
   const refreshRides = useCallback(async () => {
-    const ridesData: Ride[] = await axios
-      .get(`/api/rides?date=${date}`)
-      .then((res) => res.data)
-      .then((data) => data.data);
+    // const ridesData: Ride[] = await axios
+    //   .get(`/api/rides?date=${date}`)
+    //   .then((res) => res.data)
+    //   .then((data) => data.data);
 
-    // const ridesData = MOCK_RIDES;
+    const ridesData = MOCK_RIDES;
 
     if (ridesData) {
       setUnscheduledRides(

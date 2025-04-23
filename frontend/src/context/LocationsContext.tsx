@@ -24,12 +24,12 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
   const componentMounted = useRef(true);
   const [locations, setLocations] = useState<Array<Location>>([]);
   const refreshLocations = useCallback(async () => {
-    const locationsData: Array<Location> = await axios
-      .get('/api/locations')
-      .then((res) => res.data)
-      .then((data) => data.data);
+    // const locationsData: Array<Location> = await axios
+    //   .get('/api/locations')
+    //   .then((res) => res.data)
+    //   .then((data) => data.data);
 
-    // const locationsData = MOCK_LOCATIONS;
+    const locationsData = MOCK_LOCATIONS;
     if (locationsData) {
       locationsData.sort((a: Location, b: Location) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;

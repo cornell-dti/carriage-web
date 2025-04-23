@@ -23,12 +23,12 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
   const componentMounted = useRef(true);
   const [riders, setRiders] = useState<Array<Rider>>([]);
   const refreshRiders = useCallback(async () => {
-    const ridersData: Array<Rider> = await axios
-      .get('/api/riders')
-      .then((res) => res.data)
-      .then((data) => data.data);
+    // const ridersData: Array<Rider> = await axios
+    //   .get('/api/riders')
+    //   .then((res) => res.data)
+    //   .then((data) => data.data);
 
-    // const ridersData = MOCK_RIDERS;
+    const ridersData = MOCK_RIDERS;
     ridersData &&
       ridersData.sort((a: Rider, b: Rider) => {
         const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
