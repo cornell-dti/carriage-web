@@ -131,13 +131,13 @@ export type Ride = {
   late: boolean;
   startLocation: Location;
   endLocation: Location;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   rider: Rider;
   driver?: Driver;
   recurring: boolean;
   recurringDays?: number[];
-  endDate?: string;
+  endDate?: Date;
   deleted?: string[];
   edits?: string[];
   parentRide?: Ride;

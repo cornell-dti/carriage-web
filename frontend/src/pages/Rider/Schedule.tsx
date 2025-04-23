@@ -69,8 +69,8 @@ const dummyRides: Ride[] = [
     late: false,
     startLocation: randomLocation(),
     endLocation: randomLocation(),
-    startTime: new Date().toISOString(),
-    endTime: new Date(Date.now() + 30 * 60000).toISOString(),
+    startTime: new Date(),
+    endTime: new Date(Date.now() + 30 * 60000),
     rider: riderData,
     recurring: false,
   },
@@ -121,8 +121,8 @@ const Schedule: React.FC = () => {
       late: false,
       startLocation: randomLocation(),
       endLocation: randomLocation(),
-      startTime: formData.date?.toISOString() ?? new Date().toISOString(),
-      endTime: formData.time?.toISOString() ?? new Date().toISOString(),
+      startTime: formData.date ?? new Date(),
+      endTime: formData.time ?? new Date(),
       rider: riderData,
       recurring: formData.repeatType !== 'none',
     };
@@ -131,9 +131,9 @@ const Schedule: React.FC = () => {
     setFilteredRides((prevFiltered) => [...prevFiltered, newRide]);
   };
   // Using the date portion only for comparisons
-  const now = new Date().toISOString().split('T')[0];
+  const now = new Date();
   const currRides = rides.filter((ride) => ride.endTime >= now);
-  const pastRides = rides.filter((ride) => ride.endTime < now);
+  // const pastRides = rides.filter((ride) => ride.endTime < now);
 
   const sortedCurrRides = [...currRides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()

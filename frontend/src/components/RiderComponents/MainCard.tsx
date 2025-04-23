@@ -43,8 +43,7 @@ const MainCard: React.FC<MainCardProps> = ({
   onEdit,
   onContact,
 }) => {
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDateTime = (date: Date) => {
     return {
       date: format(date, 'yyyy-MM-dd'),
       time: format(date, 'h:mm a'),
