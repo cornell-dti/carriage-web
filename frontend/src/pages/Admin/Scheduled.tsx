@@ -15,6 +15,9 @@ import React, { FC, HTMLAttributes, useMemo } from 'react';
 import { useRides } from '../../context/RidesContext';
 import { Accessibility, Ride } from '../../types';
 import moment from 'moment';
+import PillButton, {
+  ButtonAccent,
+} from '../../components/PillButton/PillButton';
 
 const TitlePill: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
@@ -26,20 +29,6 @@ const TitlePill: FC<HTMLAttributes<HTMLDivElement>> = ({
     {children}
   </div>
 );
-
-const PillButton: FC<HTMLAttributes<HTMLButtonElement>> = ({
-  children,
-  onClick,
-}) => {
-  return (
-    <button
-      className="w-min h-min text-nowrap flex gap-2 px-4 py-2 border border-[#8ec695] bg-[#e4ffea] rounded-full hover:bg-[#c5f3cf] hover:cursor-pointer"
-      onClick={onClick}
-    >
-      {children}
-    </button>
-  );
-};
 
 const AccessibilityIcon: FC<{ type: Accessibility }> = ({ type }) => {
   switch (type) {
@@ -101,7 +90,7 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
         {/* filter right */}
         <div className="w-min h-min flex items-center gap-4 text-neutral-800">
           {/* add ride */}
-          <PillButton>
+          <PillButton accent={ButtonAccent.PRIMARY}>
             <p>Add Ride</p>
             <AirportShuttle></AirportShuttle>
           </PillButton>
@@ -202,7 +191,7 @@ const Scheduled: FC = () => {
               <p className="text-2xl">{noShow.length}</p>
               <p>Recorded No-Shows</p>
             </div>
-            <PillButton>
+            <PillButton accent={ButtonAccent.POSITIVE}>
               <p className="text-[#296831]">Export to Excel</p>
               <ViewList className="text-[#296831]"></ViewList>
             </PillButton>
