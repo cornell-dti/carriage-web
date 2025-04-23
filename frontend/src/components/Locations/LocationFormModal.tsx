@@ -14,6 +14,7 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Box,
 } from '@mui/material';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import LocationPickerMap from './LocationMapPicker';
@@ -21,6 +22,7 @@ import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
 import { Location, Tag } from '../../types';
 import styles from './locations.module.css';
+import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
 
 const CAMPUS_OPTIONS = [
   { value: Tag.NORTH, label: 'North Campus' },
@@ -36,8 +38,8 @@ const CAMPUS_OPTIONS = [
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (loc: Location) => void; // TODO : Update this to send the data to the backend
-  initialData?: Location;
+  onSubmit: (loc: Location & { imagesList?: LocationImage[] }) => void;
+  initialData?: Location & { imagesList?: LocationImage[] };
   mode: 'add' | 'edit';
 }
 
@@ -64,12 +66,23 @@ export const LocationFormModal: React.FC<Props> = ({
   const [mapKey, setMapKey] = useState(0);
   const [loadingAddr, setLoadingAddr] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [locationImages, setLocationImages] = useState<LocationImage[]>([]);
 
   useEffect(() => {
     if (!open) return;
 
     setMapKey((k) => k + 1);
     setForm(initialData && mode === 'edit' ? initialData : EMPTY);
+
+    // Initialize images if editing with existing images
+    if (initialData?.imagesList && mode === 'edit') {
+      setLocationImages(initialData.imagesList);
+    } else if (initialData?.photoLink && mode === 'edit') {
+      // Handle backward compatibility with single photoLink
+      setLocationImages([{ url: initialData.photoLink }]);
+    } else {
+      setLocationImages([]);
+    }
   }, [open, initialData, mode]);
 
   const update = (patch: Partial<Location>) =>
@@ -106,8 +119,34 @@ export const LocationFormModal: React.FC<Props> = ({
     }
   };
 
+  const handleImagesChange = (newImages: LocationImage[]) => {
+    setLocationImages(newImages);
+
+    // If we have at least one image, update the photoLink on the form for backward compatibility
+    if (newImages.length > 0 && newImages[0].file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(newImages[0].file);
+      reader.onload = function () {
+        if (reader.result) {
+          update({ photoLink: reader.result.toString() });
+        }
+      };
+    } else if (newImages.length > 0) {
+      // If using existing image
+      update({ photoLink: newImages[0].url });
+    } else {
+      // No images
+      update({ photoLink: '' });
+    }
+  };
+
   const handleSubmit = () => {
-    onSubmit(form);
+    // Include the images list in the submission
+    const updatedLocation = {
+      ...form,
+      imagesList: locationImages,
+    };
+    onSubmit(updatedLocation);
     onClose();
   };
 
@@ -123,7 +162,7 @@ export const LocationFormModal: React.FC<Props> = ({
           libraries={['places']}
         >
           <div className={styles.formGrid}>
-            {/* -------- Left column (inputs) -------------------------------- */}
+            {/* -------- Left column (Form inputs) -------------------------------- */}
             <div className={styles.formColumn}>
               <TextField
                 label="Location Name"
@@ -164,6 +203,33 @@ export const LocationFormModal: React.FC<Props> = ({
                 onChange={(e) => update({ info: e.target.value })}
               />
 
+              {/* Location Images Upload Component */}
+              <LocationImagesUpload
+                images={locationImages}
+                onImagesChange={handleImagesChange}
+                maxImages={4} // Set to 4 images max
+              />
+            </div>
+
+            {/* -------- Right column (Map and Address) -------------------------- */}
+            <div className={styles.formColumn}>
+              <div className={styles.mapSection}>
+                <LocationPickerMap
+                  key={`picker-${mapKey}`}
+                  onPointSelected={selectPoint}
+                  onGetAddress={reverseGeocode}
+                  initialPosition={
+                    Number.isFinite(form.lat) && Number.isFinite(form.lng)
+                      ? { lat: form.lat, lng: form.lng }
+                      : undefined
+                  }
+                />
+              </div>
+
+              <Typography className={styles.infoText}>
+                Click on the map to select a location and fetch its address.
+              </Typography>
+
               <div className={styles.addressSection}>
                 <Typography className={styles.addressTitle}>Address</Typography>
 
@@ -194,25 +260,6 @@ export const LocationFormModal: React.FC<Props> = ({
                     : ' None'}
                 </Typography>
               </div>
-            </div>
-
-            {/* -------- Right column (map) ---------------------------------- */}
-            <div className={styles.formColumn}>
-              <div className={styles.mapSection}>
-                <LocationPickerMap
-                  key={`picker-${mapKey}`}
-                  onPointSelected={selectPoint}
-                  onGetAddress={reverseGeocode}
-                  initialPosition={
-                    Number.isFinite(form.lat) && Number.isFinite(form.lng)
-                      ? { lat: form.lat, lng: form.lng }
-                      : undefined
-                  }
-                />
-              </div>
-              <Typography className={styles.infoText}>
-                Click on the map to select a location and fetch its address.
-              </Typography>
             </div>
           </div>
         </APIProvider>
@@ -249,5 +296,4 @@ export const LocationFormModal: React.FC<Props> = ({
     </Dialog>
   );
 };
-
 export default LocationFormModal;
