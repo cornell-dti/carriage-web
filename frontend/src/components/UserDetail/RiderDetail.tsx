@@ -119,7 +119,7 @@ const RiderDetail = () => {
             <UserContactInfo
               icon={phone}
               alt="phone number"
-              text={rider.phoneNumber}
+              text={rider.phoneNumber ?? ''}
             />
             <UserContactInfo icon={home} alt="address" text={rider.address} />
             <UserContactInfo

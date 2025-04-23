@@ -1,0 +1,329 @@
+/* Container */
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content area */
+.mainContent {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 1rem;
+  padding: 0 2rem 2rem;
+  position: relative;
+}
+
+/* Left panel */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Search and filter wrapper */
+.searchFilterWrapper {
+  height: 38px;
+  min-height: 38px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 4px;
+  padding: 0 0.5rem;
+}
+
+/* Locations list */
+.locationsList {
+  flex: 1;
+  overflow-y: auto;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 0;
+  max-height: calc(100vh - 300px);
+}
+
+/* Scrollbar styling */
+.locationsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.locationsList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.locationsList::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.locationsList::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Location items */
+.locationItem {
+  background: white;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.locationItem:last-child {
+  margin-bottom: 0;
+}
+
+.locationItem:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.locationItemSelected {
+  border: 2px solid #1976d2;
+}
+
+.locationContent {
+  display: flex;
+}
+
+.locationInfo {
+  flex: 1;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+}
+
+.locationName {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.locationDetails {
+  margin: 0.5rem 0 0 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Form Container */
+.formContainer {
+  width: 100%;
+  min-height: 500px;
+}
+
+/* Form Layout */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Form Column */
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Form Section */
+.formSection {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Map Section */
+.mapSection {
+  height: 400px;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Info Text */
+.infoText {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Address Section */
+.addressSection {
+  margin-top: 16px;
+}
+
+.addressTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.coordinatesText {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Address Tools */
+.addressTools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Confirmation Dialog */
+.confirmDialog {
+  padding: 1rem;
+  text-align: center;
+}
+
+.confirmDialogTitle {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.confirmDialogActions {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 1rem;
+}
+
+/* Map container */
+.mapContainer {
+  position: relative;
+  height: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mapPlaceholder {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+/* Dialog/Modal styling */
+.dialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+/* Places search */
+.placesSearch {
+  position: relative;
+  width: 100%;
+}
+
+.resultsContainer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.resultItem {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.resultItem:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.placesAutocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.addressInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+:global(.suggestions-container) {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+:global(.suggestion-item) {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+:global(.suggestion-item:hover) {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Map popup styling */
+.popupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 140px;
+}
+
+.mapPopup {
+  padding: 0.25rem;
+  min-width: 160px;
+}
+
+.mapPopup h4 {
+  margin: 0;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.locationFooter {
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.expandIcon {
+  transform: scaleX(-1);
+}
+
+/* locations.module.css */
+:global(.gm-style .cluster) {
+  background: #1976d2;
+  border-radius: 50%;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:global(.cluster span) {
+  position: relative;
+  top: -2px;
+}

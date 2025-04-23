@@ -23,7 +23,8 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
     '',
   ];
 
-  const fmtPhone = (number: string) => {
+  const fmtPhone = (number: string | undefined) => {
+    if (!number || number.length !== 10) return 'N/A';
     const areaCode = number.slice(0, 3);
     const firstPart = number.slice(3, 6);
     const secondPart = number.slice(6);
@@ -72,7 +73,7 @@ const StudentsTable = ({ students }: StudentsTableProps) => {
             : 'None';
 
         const phone = fmtPhone(phoneNumber);
-        const shortAddress = address.split(',')[0];
+        const shortAddress = address?.split(',')[0] ?? 'N/A';
         const joinEndDate = `${formatDate(joinDate)} - ${formatDate(endDate)}`;
         const isActive = active ? 'Active' : 'Inactive';
 
