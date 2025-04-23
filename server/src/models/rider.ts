@@ -22,7 +22,7 @@ export type RiderType = {
   id: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
+  phoneNumber?: string;
   email: string;
   accessibility?: Accessibility[];
   organization?: Organization;
