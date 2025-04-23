@@ -30,9 +30,9 @@ const RoutesComponent = () => {
       <Sidebar type="admin">
         <Routes>
           <Route path="/" element={<Navigate to="home" replace />} />
+          <Route path="scheduled" element={<Scheduled></Scheduled>}></Route>
           <Route path="home" element={<Outlet />}>
-            <Route index element={<Scheduled></Scheduled>}></Route>
-            {/* <Route index element={<Home />} /> */}
+            <Route index element={<Home />} />
             {/* <Route path="export" element={<ExportPreview />} /> */}
           </Route>
           <Route path="employees" element={<Employees />} />
