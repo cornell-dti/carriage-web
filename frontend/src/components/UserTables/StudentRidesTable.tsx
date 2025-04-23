@@ -38,12 +38,16 @@ function formatDateAndTime(isoString: string): { date: string; time: string } {
 function mapRidesToData(rides: Ride[]): Data[] {
   return rides.map((ride) => {
     const { date, time } = formatDateAndTime(ride.startTime);
+
+    const startName = ride.startLocation?.name ?? 'Unknown';
+    const endName   = ride.endLocation?.name  ?? 'Unknown';
+
     return {
       startTime: ride.startTime,
       date,
       time,
-      startLocationName: ride.startLocation.name,
-      endLocationName: ride.endLocation.name,
+      startLocationName: startName,
+      endLocationName: endName,
       status: ride.status,
       type: ride.type,
     };
