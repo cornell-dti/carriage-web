@@ -21,17 +21,12 @@ import {
   ButtonAccent,
 } from '../../components/Button/Button';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import styles from './Scheduled.module.css';
 
 const TitlePill: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
   className,
-}) => (
-  <div
-    className={`min-h-[55px] w-min rounded-full flex gap-4 px-2 py-1.5 items-center bg-white border border-neutral-300 ${className}`}
-  >
-    {children}
-  </div>
-);
+}) => <div className={`${styles.titlePill} ${className}`}>{children}</div>;
 
 const AccessibilityIcon: FC<{ type: Accessibility }> = ({ type }) => {
   switch (type) {
@@ -59,10 +54,10 @@ const AccessibilityIcons: FC<{ accessibilities?: Accessibility[] }> = ({
   accessibilities,
 }) => {
   if (!accessibilities || accessibilities.length === 0)
-    return <p className="w-full text-left">None</p>;
+    return <p className={styles.fullWidthLeft}>None</p>;
 
   return (
-    <div className="flex gap-1">
+    <div className={styles.accessibilityIconsContainer}>
       {/* Use Set to remove duplicates (e.g., if multiple wheelchair-type needs) */}
       {[...new Set(accessibilities)].map((type, index) => (
         <AccessibilityIcon key={index} type={type} />
@@ -90,11 +85,11 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
   handleSortChange,
 }) => {
   return (
-    <div className="flex flex-col w-full h-full items-center">
+    <div className={styles.tableWrapper}>
       {/* search and filter options */}
-      <div className="flex w-full p-4 items-center justify-between border-b border-neutral-300">
+      <div className={styles.filterBar}>
         {/* filter left */}
-        <div className="w-min h-min flex items-center gap-4 text-neutral-800">
+        <div className={styles.filterLeft}>
           {/* filter */}
           <FormControl size="small">
             <InputLabel id="sort-by-label">Sort By</InputLabel>
@@ -114,7 +109,7 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
           </FormControl>
         </div>
         {/* filter right */}
-        <div className="w-min h-min flex items-center gap-4 text-neutral-800">
+        <div className={styles.filterRight}>
           {/* add ride */}
           {/* <PillButton accent={ButtonAccent.PRIMARY}>
             <p>Add Ride</p>
@@ -123,55 +118,65 @@ const ScheduledTable: FC<ScheduledTableProps> = ({
         </div>
       </div>
       {/* table header */}
-      <div className="w-full h-min flex items-center justify-between text-neutral-500 px-4 py-1.5 border-b border-neutral-300">
-        <p className="w-[200px]">Student</p>
-        <p className="w-[150px]">Needs</p>
-        <p className="w-[150px]">Start</p>
-        <p className="w-[150px]">End</p>
-        <p className="w-[150px]">Pickup</p>
-        <p className="w-[150px]">Dropoff</p>
-        <p className="w-[150px]">No Show</p>
+      <div className={styles.tableHeader}>
+        <p className={styles.studentColumn}>Student</p>
+        <p className={styles.needsColumn}>Needs</p>
+        <p className={styles.timeColumn}>Start</p>
+        <p className={styles.timeColumn}>End</p>
+        <p className={styles.locationColumn}>Pickup</p>
+        <p className={styles.locationColumn}>Dropoff</p>
+        <p className={styles.noShowColumn}>No Show</p>
       </div>
 
       {/* table rows */}
-      <div
-        className="w-full h-72 overflow-y-scroll flex
-      justify-between flex-col "
-      >
-        {rides.map((ride, idx) => (
-          <button
-            id={`${ride.id}-table`}
-            className={`w-full h-min flex items-center justify-between text-neutral-700 px-4 py-1.5 
-              ${
-                ride.noShow
-                  ? selected === ride
-                    ? 'bg-neutral-300 text-neutral-700 hover:bg-neutral-400'
-                    : 'bg-neutral-200 text-neutral-600 hover:bg-neutral-300'
-                  : selected === ride
-                  ? 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300'
-                  : 'bg-white text-neutral-700 hover:bg-neutral-200'
-              } 
-              `}
-            key={idx}
-            onClick={() =>
+      <div className={styles.tableRows}>
+        {rides.map((ride, idx) => {
+          let rowClassName = '';
+          if (ride.noShow) {
+            rowClassName =
               selected === ride
-                ? handleSelection(undefined)
-                : handleSelection(ride)
-            }
-          >
-            <p className="w-[200px]">{`${ride.rider.firstName} ${ride.rider.lastName}`}</p>
-            <div className="w-[150px]">
-              <AccessibilityIcons accessibilities={ride.rider.accessibility} />
-            </div>
-            <p className="w-[150px]">
-              {moment(ride.startTime).format('h:mm A')}
-            </p>
-            <p className="w-[150px]">{moment(ride.endTime).format('h:mm A')}</p>
-            <p className="w-[150px]">{ride.startLocation.name}</p>
-            <p className="w-[150px]">{ride.endLocation.name}</p>
-            <p className="w-[150px]">{ride.noShow ? 'Yes' : 'No'}</p>
-          </button>
-        ))}
+                ? styles.tableRowNoShowSelected
+                : styles.tableRowNoShow;
+          } else {
+            rowClassName =
+              selected === ride
+                ? styles.tableRowSelected
+                : styles.tableRowNormal;
+          }
+
+          return (
+            <button
+              id={`${ride.id}-table`}
+              className={`${styles.tableRow} ${rowClassName}`}
+              key={idx}
+              onClick={() =>
+                selected === ride
+                  ? handleSelection(undefined)
+                  : handleSelection(ride)
+              }
+            >
+              <p
+                className={styles.studentColumn}
+              >{`${ride.rider.firstName} ${ride.rider.lastName}`}</p>
+              <div className={styles.needsColumn}>
+                <AccessibilityIcons
+                  accessibilities={ride.rider.accessibility}
+                />
+              </div>
+              <p className={styles.timeColumn}>
+                {moment(ride.startTime).format('h:mm A')}
+              </p>
+              <p className={styles.timeColumn}>
+                {moment(ride.endTime).format('h:mm A')}
+              </p>
+              <p className={styles.locationColumn}>{ride.startLocation.name}</p>
+              <p className={styles.locationColumn}>{ride.endLocation.name}</p>
+              <p className={styles.noShowColumn}>
+                {ride.noShow ? 'Yes' : 'No'}
+              </p>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -231,33 +236,30 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
   };
 
   return (
-    <div className="w-full flex relative flex-1 bg-white rounded-lg flex-col">
+    <div className={styles.timelineOuterContainer}>
       {/* timeline container */}
-      <div className="w-full h-full flex items-center justify-center p-4">
+      <div className={styles.timelineContainer}>
         {/* timeline horizontal scroll */}
-        <div className="w-full h-full overflow-x-scroll flex-col relative">
+        <div className={styles.timelineScroll}>
           {/* tick labels */}
-          <div
-            className="w-full flex pointer-events-none"
-            style={{ marginLeft: leftOffset }}
-          >
+          <div className={styles.tickLabels} style={{ marginLeft: leftOffset }}>
             {timeLabels.map((timeLabel, idx) => (
               <div
                 key={idx}
-                className="flex justify-start pl-0.5"
+                className={styles.tickLabel}
                 style={{
                   width: halfHourWidth,
                   maxWidth: halfHourWidth,
                   minWidth: halfHourWidth,
                 }}
               >
-                <p className="text-neutral-400 text-nowrap">{timeLabel}</p>
+                <p className={styles.tickLabelText}>{timeLabel}</p>
               </div>
             ))}
           </div>
           {/* timeline lines for rides */}
           <div
-            className="max-h-72 overflow-scroll flex flex-col gap-1 relative "
+            className={styles.timelineRidesContainer}
             style={{ width: `${halfHourWidth * timeLabels.length}px` }}
           >
             {rides.map((ride, idx) => {
@@ -269,30 +271,30 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               return (
                 <div
                   key={idx}
-                  className="h-10 flex items-center"
+                  className={styles.rideRow}
                   id={`${ride.id}-timeline`}
                 >
                   {/* Student name on the left */}
                   <div
-                    className="h-full flex justify-end items-center pr-2"
+                    className={styles.rideNameContainer}
                     style={{
                       left: `${leftOffset}px`,
                       minWidth: `${positionFromLeft}px`,
                       maxWidth: `${positionFromLeft}px`,
                     }}
                   >
-                    <p className="text-sm font-medium truncate text-left">
+                    <p className={styles.rideName}>
                       {ride.rider.firstName} {ride.rider.lastName}
                     </p>
                   </div>
 
                   {/* Ride block with start time */}
                   <button
-                    className={`h-full border cursor-pointer ${
+                    className={`${styles.rideBlock} ${
                       ride.noShow
-                        ? ' bg-neutral-200 border-neutral-300 text-neutral-700'
-                        : 'bg-neutral-900 border-neutral-800 text-neutral-100'
-                    } rounded-md flex items-center px-2 overflow-hidden`}
+                        ? styles.rideBlockNoShow
+                        : styles.rideBlockNormal
+                    }`}
                     style={{
                       left: `${leftOffset + positionFromLeft}px`,
                       width: `${Math.max(width, 50)}px`, // Minimum width for visibility
@@ -305,8 +307,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                   >
                     <div className="flex flex-col justify-center">
                       <p
-                        className={`text-sm ${
-                          ride.noShow ? 'text-neutral-800' : 'text-neutral-100'
+                        className={`${styles.rideTimeText} ${
+                          ride.noShow
+                            ? styles.rideTimeTextNoShow
+                            : styles.rideTimeTextNormal
                         }`}
                       >
                         {ride.startTime.getHours() % 12 || 12}:
@@ -324,13 +328,13 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           </div>
           {/* tick marks */}
           <div
-            className="w-full h-full absolute flex top-0 left-0 pointer-events-none"
+            className={styles.tickMarksContainer}
             style={{ left: leftOffset }}
           >
             {timeLabels.map((_timeLabel, idx) => (
               <div
                 key={idx}
-                className="h-full border-l border-neutral-300"
+                className={styles.tickMark}
                 style={{
                   left: `${leftOffset + idx * halfHourWidth}px`,
                   width: halfHourWidth,
@@ -343,11 +347,12 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           {/* current line */}
           <div
             id="timeline-current-indicator"
-            className="w-1 h-full absolute top-0 pointer-events-none border-l-4 border-blue-600/50 border-dotted"
+            className={styles.currentTimeLine}
             style={{
               left:
+                leftOffset +
                 ((new Date().getTime() - baseTime.getTime()) / (60 * 1000)) *
-                minuteWidth,
+                  minuteWidth,
             }}
           ></div>
         </div>
@@ -355,7 +360,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 
       {/* current time  */}
       <BoxButton
-        className="absolute left-2 bottom-2 z-10"
+        className={styles.currentTimeButton}
         accent={ButtonAccent.PRIMARY}
         onClick={() => {
           const element = document.getElementById('timeline-current-indicator');
@@ -444,41 +449,39 @@ const Scheduled: FC = () => {
   };
 
   return (
-    <div className="w-full h-full bg-neutral-100 flex flex-col">
+    <div className={styles.pageContainer}>
       {/* header */}
-      <div className="w-full flex justify-between items-center border-b border-neutral-300">
+      <div className={styles.header}>
         {/* header-left */}
-        <div className="flex h-min w-min py-2 px-4 gap-8 items-center">
+        <div className={styles.headerLeft}>
           {/* page title */}
-          <div className="h-full flex items-center justify-center">
-            <h1 className="text-2xl text-neutral-700 text-nowrap">
-              Scheduled Rides
-            </h1>
+          <div className={styles.pageTitle}>
+            <h1 className={styles.pageTitleText}>Scheduled Rides</h1>
           </div>
           {/* date changer button */}
-          <TitlePill className="text-neutral-800 text-nowrap">
-            <button className="hover:bg-neutral-200 rounded-full">
+          <TitlePill>
+            <button className={styles.chevronButton}>
               <ChevronLeft></ChevronLeft>
             </button>
 
             <p>Today | April 23, 2025</p>
             <CalendarToday></CalendarToday>
-            <button className="hover:bg-neutral-200 rounded-full">
+            <button className={styles.chevronButton}>
               <ChevronRight></ChevronRight>
             </button>
           </TitlePill>
         </div>
         {/* header-right  */}
-        <div className="flex h-min w-min py-2 px-4 gap-8 ">
-          <TitlePill className="text-neutral-800 text-nowrap">
+        <div className={styles.headerRight}>
+          <TitlePill>
             {/* title pill text element */}
-            <div className="w-min h-min gap-2 px-4 py-1.5 flex items-center">
-              <p className="text-2xl">{renderedRides.length}</p>
+            <div className={styles.pillTextElement}>
+              <p className={styles.pillTextLarge}>{renderedRides.length}</p>
               <p>Total Rides</p>
             </div>
             {/* title pill text element */}
-            <div className="w-min h-min gap-2 px-4 py-1.5 flex items-center">
-              <p className="text-2xl">{noShow.length}</p>
+            <div className={styles.pillTextElement}>
+              <p className={styles.pillTextLarge}>{noShow.length}</p>
               <p>Recorded No-Shows</p>
             </div>
             <PillButton accent={ButtonAccent.POSITIVE}>
@@ -489,9 +492,9 @@ const Scheduled: FC = () => {
         </div>
       </div>
       {/* body container */}
-      <div className="w-full h-full flex flex-col p-4 gap-4">
+      <div className={styles.bodyContainer}>
         {/* table container */}
-        <div className="w-full flex-1 bg-white rounded-lg border border-neutral-300 flex flex-col">
+        <div className={styles.tableContainer}>
           <ScheduledTable
             rides={renderedRides}
             selected={selected}
@@ -501,7 +504,7 @@ const Scheduled: FC = () => {
             }}
           ></ScheduledTable>
         </div>
-        <div className="w-full flex-1 bg-white rounded-lg border border-neutral-300 flex flex-col">
+        <div className={styles.timelineContainer}>
           <ScheduledTimeline
             rides={renderedRides}
             selected={selected}
