@@ -10,6 +10,8 @@ import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
 import { DriverType } from '../../../../server/src/models/driver';
 import { start } from 'repl';
+import { useEffect } from 'react';
+import { useRef } from 'react';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -90,6 +92,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  let buttonRef = useRef(null);
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -131,7 +134,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           });
           const { rider } = ride;
           const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
-          const needs = rider ? rider.accessibility || '' : '';
+
+          // Convert accessibility array to string
+          const needs =
+            rider && rider.accessibility && rider.accessibility.length > 0
+              ? rider.accessibility.join(', ')
+              : 'None';
+
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
@@ -156,8 +165,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           const assignButton = (shouldReassign: boolean) => (
             <Button
               className={styles.assignButton}
-              onClick={() => {
-                setOpenAssignModal(index);
+              ref={buttonRef}
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenAssignModal(openAssignModal === index ? -1 : index);
                 setReassign(shouldReassign);
               }}
               small
@@ -186,6 +197,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             <button
               className={styles.deleteIcon}
               onClick={() => {
+                //buttonRef = null;
                 setDeleteOpen(index);
               }}
             >
@@ -278,6 +290,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                   );
                 })}
                 reassign={reassign}
+                buttonRef={buttonRef}
               />
               <RideModal
                 key={`ride-modal-${ride.id}`}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import { phone, home, calendar } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
@@ -9,24 +9,33 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
+import RidesTable from 'components/UserTables/RidesTable';
+import RideTable from 'components/RiderComponents/RideTable';
 
-const Header = () => {
+const Header = ({ onBack }: { onBack: () => void }) => {
   return (
     <div className={styles.pageDivTitle}>
-      <Link
-        to={{
-          pathname: '/riders',
-        }}
+      <button
+        onClick={onBack}
         className={styles.header}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          padding: 0,
+        }}
       >
-        <img className={styles.chevronLeft} src={chevronLeft} />
+        <img className={styles.chevronLeft} src={chevronLeft} alt="Back" />
         Students
-      </Link>
+      </button>
     </div>
   );
 };
 
 const RiderDetail = () => {
+  const navigate = useNavigate();
   const { id: riderId } = useParams<{ id: string }>();
   const { riders } = useRiders();
   const [rider, setRider] = useState(
@@ -34,6 +43,11 @@ const RiderDetail = () => {
   );
   const [rides, setRides] = useState<Ride[]>([]);
   const netid = rider?.email.split('@')[0];
+
+  const handleBack = () => {
+    navigate('/admin/riders');
+  };
+
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
@@ -41,6 +55,7 @@ const RiderDetail = () => {
     if (x > y) return 1;
     return 0;
   };
+
   const formatDate = (date: string): string =>
     moment(date).format('MM/DD/YYYY');
 
@@ -70,7 +85,7 @@ const RiderDetail = () => {
 
   return rider ? (
     <main id="main">
-      <Header />
+      <Header onBack={handleBack} />
       <div className={styles.detailContainer}>
         <UserDetail
           firstName={rider.firstName}
@@ -83,7 +98,7 @@ const RiderDetail = () => {
             <UserContactInfo
               icon={phone}
               alt="phone number"
-              text={rider.phoneNumber}
+              text={rider.phoneNumber ?? ''}
             />
             <UserContactInfo icon={home} alt="address" text={rider.address} />
             <UserContactInfo
@@ -95,6 +110,7 @@ const RiderDetail = () => {
             />
           </div>
         </UserDetail>
+        <RideTable rides={rides} />
         <PastRides isStudent={true} rides={rides} />
       </div>
     </main>
