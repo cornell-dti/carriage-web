@@ -1,47 +1,14 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
-import { Vehicle, VehicleType } from './vehicle';
 import defaultModelConfig from '../util/modelConfig';
-
-type Availability = {
-  startTime: string;
-  endTime: string;
-};
-
-export type AvailabilityType = {
-  Mon?: Availability;
-  Tue?: Availability;
-  Wed?: Availability;
-  Thu?: Availability;
-  Fri?: Availability;
-};
 
 export type DriverType = {
   id: string;
   firstName: string;
   lastName: string;
-  availability: AvailabilityType;
-  vehicle?: VehicleType;
   phoneNumber: string;
-  startDate: string;
   email: string;
   photoLink?: string;
-};
-
-const availability = {
-  type: Object,
-  schema: {
-    startTime: String,
-    endTime: String,
-  },
-};
-
-const availabilitySchema = {
-  Mon: availability,
-  Tue: availability,
-  Wed: availability,
-  Thu: availability,
-  Fri: availability,
 };
 
 const schema = new dynamoose.Schema({
@@ -58,19 +25,10 @@ const schema = new dynamoose.Schema({
     type: String,
     required: true,
   },
-  availability: {
-    type: Object,
-    schema: availabilitySchema,
-  },
-  vehicle: Vehicle,
   phoneNumber: {
     type: String,
     required: true,
     validate: /^[0-9]{10}$/,
-  },
-  startDate: {
-    type: String,
-    required: true,
   },
   email: {
     type: String,

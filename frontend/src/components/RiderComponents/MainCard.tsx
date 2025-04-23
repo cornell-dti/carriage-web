@@ -20,12 +20,6 @@ const dummyDriver: Driver = {
   phoneNumber: '5551234567',
   email: 'mt123@cornell.edu',
   photoLink: '/driver.jpg',
-  startDate: '2024-01-01',
-  availability: {
-    Mon: { startTime: '09:00', endTime: '17:00' },
-    Wed: { startTime: '09:00', endTime: '17:00' },
-    Fri: { startTime: '09:00', endTime: '17:00' },
-  },
 };
 
 interface MainCardProps {
