@@ -8,8 +8,9 @@ import MainCard from '../../components/RiderComponents/MainCard';
 import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
 import RideTable from '../../components/RiderComponents/RideTable';
 import styles from './page.module.css';
-import { FormData } from '../../components/RiderComponents/RequestRideDialog';
-import RequestRideDialog from '../../components/RiderComponents/RequestRideDialog';
+import RequestRideDialog, {
+  FormData,
+} from '../../components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { randomLocation } from '../../util/mocking';
 
