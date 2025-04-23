@@ -11,6 +11,7 @@ import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import { randomLocation } from 'util/mocking';
 
 // Rider data type
 interface RiderData {
@@ -66,22 +67,13 @@ const dummyRides: Ride[] = [
     type: Type.ACTIVE,
     status: Status.NOT_STARTED,
     late: false,
-    startLocation: {
-      name: 'Bailey Hall',
-      address: '123 College Ave',
-      tag: Tag.CENTRAL,
-    },
-    endLocation: {
-      name: 'Uris Library',
-      address: '456 University St',
-      tag: Tag.WEST,
-    },
+    startLocation: randomLocation(),
+    endLocation: randomLocation(),
     startTime: new Date().toISOString(),
     endTime: new Date(Date.now() + 30 * 60000).toISOString(),
     rider: riderData,
     recurring: false,
   },
-  // ... other dummy rides
 ];
 
 const favoriteRides: FavoriteRide[] = [
@@ -99,7 +91,6 @@ const favoriteRides: FavoriteRide[] = [
     endLocation: { name: 'Noyes Fitness Center', address: '456 University St' },
     preferredTime: '8:00 AM',
   },
-  // ... other favorite rides
 ];
 
 const Schedule: React.FC = () => {
@@ -128,16 +119,8 @@ const Schedule: React.FC = () => {
       type: Type.UNSCHEDULED,
       status: Status.NOT_STARTED,
       late: false,
-      startLocation: {
-        name: formData.pickupLocation.address,
-        address: formData.pickupLocation.address,
-        tag: Tag.CUSTOM,
-      },
-      endLocation: {
-        name: formData.dropoffLocation.name,
-        address: formData.dropoffLocation.address,
-        tag: formData.dropoffLocation.tag as Tag,
-      },
+      startLocation: randomLocation(),
+      endLocation: randomLocation(),
       startTime: formData.date?.toISOString() ?? new Date().toISOString(),
       endTime: formData.time?.toISOString() ?? new Date().toISOString(),
       rider: riderData,

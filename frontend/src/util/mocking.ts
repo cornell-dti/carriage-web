@@ -1,0 +1,142 @@
+import { Tag, Location, Accessibility, Organization } from 'types';
+import { faker } from '@faker-js/faker';
+
+const mockLocations: Location[] = [
+  {
+    id: '1',
+    name: 'Bailey Hall - Left',
+    address: '123 East St',
+    tag: Tag.EAST,
+    info: 'Near the river',
+  },
+  {
+    id: '2',
+    name: 'Bailey Hall - Right',
+    address: '456 West Ave',
+    tag: Tag.WEST,
+  },
+  {
+    id: '3',
+    name: 'Malott Hall Parking',
+    address: '789 Central Blvd',
+    tag: Tag.CENTRAL,
+    info: 'Open 9am-9pm',
+  },
+  {
+    id: '4',
+    name: 'Baker Hall Parking',
+    address: '101 North Rd',
+    tag: Tag.NORTH,
+  },
+  {
+    id: '5',
+    name: 'Rhodes Hall Back',
+    address: '202 College St',
+    tag: Tag.CTOWN,
+    info: 'Near university',
+  },
+  {
+    id: '6',
+    name: 'Prog. House Dr',
+    address: '303 Downtown Ave',
+    tag: Tag.DTOWN,
+  },
+  {
+    id: '7',
+    name: 'McClintock Back',
+    address: '404 Old Mill Rd',
+    tag: Tag.INACTIVE,
+    info: 'Closed for renovation',
+  },
+  {
+    id: '8',
+    name: 'Ganedago Back',
+    address: '505 Custom Ln',
+    tag: Tag.CUSTOM,
+  },
+  {
+    id: '9',
+    name: 'Noyes Parking',
+    address: '606 East Market St',
+    tag: Tag.EAST,
+  },
+  {
+    id: '10',
+    name: 'Casc. Hall',
+    address: '707 Westside Dr',
+    tag: Tag.WEST,
+    info: 'Botanical garden',
+  },
+];
+
+/**
+ * @returns a randomly selected location from a predefined set of fake locations
+ */
+export const randomLocation = () => faker.helpers.arrayElement(mockLocations);
+
+/**
+ * @returns {Rider} a rider with randomized characteristics like name, phone, email, etc.
+ */
+export const randomRider = () => {
+  const accessibilityValues = Object.values(Accessibility);
+  const organizationValues = Object.values(Organization);
+
+  // picking random number of (unique) accessibility values
+  const accessibilityCount = Math.floor(
+    Math.random() * accessibilityValues.length
+  );
+  const accessibility = faker.helpers.arrayElements(
+    accessibilityValues,
+    accessibilityCount
+  );
+
+  const organization =
+    Math.random() < 0.5
+      ? faker.helpers.arrayElement(organizationValues)
+      : undefined;
+
+  const joinDateObj = faker.date.past({ years: 4 });
+  const joinDate = joinDateObj.toISOString().split('T')[0];
+
+  const endDate =
+    Math.random() < 0.5
+      ? faker.date
+          .between({
+            from: joinDateObj,
+            to: new Date(),
+          })
+          .toISOString()
+          .split('T')[0]
+      : undefined;
+  const active = endDate ? true : false;
+
+  const favoriteLocationsCount = Math.floor(Math.random() * 5);
+  const favoriteLocations = Array.from({ length: favoriteLocationsCount }, () =>
+    faker.helpers.arrayElement(
+      mockLocations.map((location) => {
+        return location.name;
+      })
+    )
+  );
+
+  return {
+    id: faker.string.uuid(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    phoneNumber: Math.random() < 0.5 ? faker.phone.number() : undefined,
+    email: faker.internet.email(),
+    accessibility,
+    organization,
+    description: Math.random() < 0.5 ? faker.lorem.sentence() : undefined,
+    joinDate,
+    endDate,
+    pronouns:
+      Math.random() < 0.75
+        ? faker.helpers.arrayElement(['he/him', 'she/her', 'they/them'])
+        : undefined,
+    address: faker.location.streetAddress({ useFullAddress: true }),
+    favoriteLocations,
+    photoLink: Math.random() < 0.5 ? faker.image.avatar() : undefined,
+    active,
+  };
+};

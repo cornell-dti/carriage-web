@@ -107,7 +107,7 @@ const DeleteOrEditTypeModal = ({
             <Input
               type="radio"
               id="single"
-              name="rideType"
+              name="Ride"
               value="single"
               onClick={(e) => changeSelection(e)}
               defaultChecked={true}
@@ -120,7 +120,7 @@ const DeleteOrEditTypeModal = ({
             <Input
               type="radio"
               id="recurring"
-              name="rideType"
+              name="Ride"
               value="recurring"
               onClick={(e) => changeSelection(e)}
             />
