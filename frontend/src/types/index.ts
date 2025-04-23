@@ -1,8 +1,6 @@
 import { RiderType } from '../../../server/src/models/rider';
 import { DriverType } from '../../../server/src/models/driver';
-import { RideType } from '../../../server/src/models/ride';
 import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
 import { VehicleType } from '../../../server/src/models/vehicle';
 
 export type Rider = RiderType;
@@ -57,18 +55,41 @@ export type Vehicle = VehicleType;
 
 export enum Tag {
   EAST = 'east',
+  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  WEST = 'west',
-  CTOWN = 'ctown',
-  DTOWN = 'dtown',
+  CTOWN = 'ctown', // college town
+  DTOWN = 'dtown', // downtown
   INACTIVE = 'inactive',
   CUSTOM = 'custom',
 }
 
-export type Location = LocationType;
+export type Location = {
+  id: string;
+  name: string;
+  address: string;
+  tag: Tag;
+  info?: string;
+};
 
-export type Ride = RideType;
+export type Ride = {
+  id: string;
+  type: Type;
+  status: Status;
+  late: boolean;
+  startLocation: Location;
+  endLocation: Location;
+  startTime: string;
+  endTime: string;
+  rider: RiderType;
+  driver?: DriverType;
+  recurring: boolean;
+  recurringDays?: number[];
+  endDate?: string;
+  deleted?: string[];
+  edits?: string[];
+  parentRide?: Ride;
+};
 
 export enum Type {
   ACTIVE = 'active',
@@ -107,4 +128,4 @@ export enum RepeatValues {
   Custom = 'Custom',
 }
 
-export type { DriverType, AdminType, RideType };
+export type { DriverType, AdminType };

@@ -6,6 +6,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@faker-js/faker": "^9.7.0",
     "@googlemaps/markerclusterer": "^2.5.3",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.10",
