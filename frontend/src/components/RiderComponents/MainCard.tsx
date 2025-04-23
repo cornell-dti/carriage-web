@@ -38,10 +38,9 @@ const dummyDriver: Driver = {
 
 interface MainCardProps {
   ride: Ride;
-  driver?: Driver;
 }
 
-const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
+const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(false); // only using delete functionality
   const [editOpen, setEditOpen] = useState(false);
@@ -164,7 +163,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
             onSubmit={() => {
               setOpenDriverInfoDialog(!openDriverInfoDialog);
             }}
-            driverInfo={driver}
+            driverInfo={ride.driver}
           />
         </div>
       </div>
@@ -199,8 +198,8 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
           <div className={styles.driverInfo}>
             <div className={styles.driverImageContainer}>
               <img
-                src={driver.photoLink}
-                alt={`${driver.firstName} ${driver.lastName}`}
+                src={ride.driver?.photoLink}
+                alt={`${ride.driver?.firstName} ${ride.driver?.lastName}`}
                 className={styles.driverImage}
               />
             </div>
@@ -209,18 +208,18 @@ const MainCard: React.FC<MainCardProps> = ({ ride, driver = dummyDriver }) => {
                 <PersonIcon fontSize="small" />
                 <span className={styles.label}>Name:</span>
                 <span>
-                  {driver.firstName} {driver.lastName}
+                  {ride.driver?.firstName} {ride.driver?.lastName}
                 </span>
               </div>
               <div className={styles.detail}>
                 <PhoneIcon fontSize="small" />
                 <span className={styles.label}>Phone:</span>
-                <span>{driver.phoneNumber}</span>
+                <span>{ride.driver?.phoneNumber}</span>
               </div>
               <div className={styles.detail}>
                 <EmailIcon fontSize="small" />
                 <span className={styles.label}>Email:</span>
-                <span>{driver.email}</span>
+                <span>{ride.driver?.email}</span>
               </div>
               <div className={styles.status}>
                 Status: {ride.status.replace('_', ' ')}

@@ -24,7 +24,7 @@ interface DriverInfoDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: FormData) => void;
-  driverInfo: Driver;
+  driverInfo?: Driver;
 }
 
 /**

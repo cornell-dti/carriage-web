@@ -11,6 +11,17 @@ import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import { Driver } from 'types';
+
+// Dummy driver data if none is provided
+const dummyDriver: Driver = {
+  id: 'driver_1',
+  firstName: 'Matthias',
+  lastName: 'Choi',
+  phoneNumber: '5551234567',
+  email: 'mt123@cornell.edu',
+  photoLink: '/driver.jpg',
+};
 
 // Rider data type
 interface RiderData {
@@ -80,6 +91,7 @@ const dummyRides: Ride[] = [
     endTime: new Date(Date.now() + 30 * 60000).toISOString(),
     rider: riderData,
     recurring: false,
+    driver: dummyDriver,
   },
   // ... other dummy rides
 ];
@@ -103,7 +115,7 @@ const favoriteRides: FavoriteRide[] = [
 ];
 
 const Schedule: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user, id } = useContext(AuthContext);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [rides, setRides] = useState<Ride[]>(dummyRides);
   const [filteredRides, setFilteredRides] = useState<Ride[]>(dummyRides);
@@ -158,6 +170,9 @@ const Schedule: React.FC = () => {
 
   const mostRecentRide = sortedCurrRides[0];
 
+  const hasDriver =
+    mostRecentRide?.driver !== null && mostRecentRide?.driver !== undefined;
+
   return (
     <APIProvider
       apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
@@ -165,7 +180,9 @@ const Schedule: React.FC = () => {
     >
       <main id="main" className={styles.schedulePage}>
         <div className={styles.pageTitle}>
-          <h1 className={styles.header}>{riderData.firstName}'s Schedule</h1>
+          {user && (
+            <h1 className={styles.header}>{user.firstName}'s Schedule</h1>
+          )}
           <div className={styles.rightSection}>
             <Button
               variant="contained"
@@ -185,10 +202,10 @@ const Schedule: React.FC = () => {
         </div>
         <div className={styles.topRow}>
           <div className={styles.mainCardContainer}>
-            {rides.length > 0 && mostRecentRide && (
+            {rides.length > 0 && mostRecentRide && hasDriver && (
               <MainCard ride={mostRecentRide} />
             )}
-            {rides.length === 0 && <NoRidesView />}
+            {(rides.length === 0 || !hasDriver) && <NoRidesView />}
           </div>
           <div className={styles.favoritesCardContainer}>
             <FavoritesCard
