@@ -235,3 +235,15 @@ export const randomRide = (drivers: Driver[], riders: Rider[]): Ride => {
     recurring: false,
   };
 };
+
+export const MOCK_DRIVERS: Driver[] = Array.from({ length: 6 }, (_, idx) =>
+  randomDriver()
+);
+
+export const MOCK_RIDERS: Rider[] = Array.from({ length: 70 }, (_, idx) =>
+  randomRider()
+);
+
+export const MOCK_RIDES: Ride[] = Array.from({ length: 30 }, (_, idx) =>
+  randomRide(MOCK_DRIVERS, MOCK_RIDERS)
+);

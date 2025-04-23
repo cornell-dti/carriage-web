@@ -7,7 +7,13 @@ import {
   Driver,
   Rider,
 } from '../../types';
-import { randomDriver, randomRide, randomRider } from '../../util/mocking';
+import {
+  MOCK_RIDERS,
+  MOCK_RIDES,
+  randomDriver,
+  randomRide,
+  randomRider,
+} from '../../util/mocking';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
@@ -23,15 +29,4 @@ const defaultAvailability: AvailabilityType = {
   Fri: { startTime: '09:00', endTime: '17:00' },
 };
 
-//creating 6 drivers
-const randomDrivers: Driver[] = Array.from({ length: 6 }, (_, idx) =>
-  randomDriver()
-);
-
-const randomRiders: Rider[] = Array.from({ length: 70 }, (_, idx) =>
-  randomRider()
-);
-
-export const todaysRides: Ride[] = Array.from({ length: 30 }, (_, idx) =>
-  randomRide(randomDrivers, randomRiders)
-);
+export const todaysRides: Ride[] = MOCK_RIDES;
