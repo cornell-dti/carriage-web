@@ -39,12 +39,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const [admins, setAdmins] = useState<Array<Admin>>([]);
 
   const refreshDrivers = useCallback(async () => {
-    // const driversData: Array<Driver> = await axios
-    //   .get('/api/drivers')
-    //   .then((res) => res.data)
-    //   .then((data) => data.data);
+    const driversData: Array<Driver> = await axios
+      .get('/api/drivers')
+      .then((res) => res.data)
+      .then((data) => data.data);
 
-    const driversData = MOCK_DRIVERS;
+    // const driversData = MOCK_DRIVERS;
 
     driversData?.sort(sortByName);
     componentMounted.current && setDrivers(driversData);

@@ -22,6 +22,7 @@ import {
 } from '../../components/Button/Button';
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import styles from './Scheduled.module.css';
+import { MOCK_RIDES } from '../../util/mocking';
 
 const TitlePill: FC<HTMLAttributes<HTMLDivElement>> = ({
   children,
@@ -391,7 +392,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 };
 
 const Scheduled: FC = () => {
-  const { scheduledRides, unscheduledRides } = useRides();
+  const scheduledRides = MOCK_RIDES;
   const [sortMode, setSortMode] = useState<SortMode>(SortMode.PickupTime);
   const [selected, setSelected] = useState<Ride | undefined>(undefined);
 
