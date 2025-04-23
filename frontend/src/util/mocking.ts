@@ -98,9 +98,10 @@ export const randomRider = (): Rider => {
   const organizationValues = Object.values(Organization);
 
   // picking random number of (unique) accessibility values
-  const accessibilityCount = Math.floor(
-    Math.random() * accessibilityValues.length
-  );
+  const accessibilityCount =
+    Math.random() > 0.5
+      ? Math.floor((Math.random() * accessibilityValues.length) / 2)
+      : 0;
   const accessibility = faker.helpers.arrayElements(
     accessibilityValues,
     accessibilityCount
@@ -229,7 +230,7 @@ export const randomRide = (drivers: Driver[], riders: Rider[]): Ride => {
     endLocation: randomLocation(),
     startTime: rideStart,
     endTime: rideEnd,
-    noShow: Math.random() > 0.8,
+    noShow: Math.random() > 0.9,
     rider: faker.helpers.arrayElement(riders),
     driver: faker.helpers.arrayElement(drivers),
     recurring: false,
@@ -244,6 +245,6 @@ export const MOCK_RIDERS: Rider[] = Array.from({ length: 70 }, (_, idx) =>
   randomRider()
 );
 
-export const MOCK_RIDES: Ride[] = Array.from({ length: 30 }, (_, idx) =>
+export const MOCK_RIDES: Ride[] = Array.from({ length: 100 }, (_, idx) =>
   randomRide(MOCK_DRIVERS, MOCK_RIDERS)
 );
