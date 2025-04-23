@@ -11,9 +11,11 @@ import { useLocations } from 'context/LocationsContext';
 const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const loc = useLocations().locations;
+
   useEffect(() => {
     setLocations(loc);
   }, [loc]);
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   const handleAddLocation = (newLocation: Location) => {
@@ -38,12 +40,15 @@ const Locations = () => {
   };
 
   return (
-    <main id="main">
+    <main id="main" className={styles.main}>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Locations</h1>
         <div className={styles.rightSection}>
           <CopyButton />
-          <Button onClick={() => setIsAddDialogOpen(true)}>
+          <Button
+            onClick={() => setIsAddDialogOpen(true)}
+            className={styles.addButton}
+          >
             + Add Location
           </Button>
           <Notification />

@@ -11,33 +11,26 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { LocationFormModal } from './LocationFormModal';
-import styles from './locations.module.css';
 import { Location } from 'types';
 
-interface LocationDialogProps {
+interface Props {
   location: Location | null;
   onClose: () => void;
-  onSave: (location: Location) => void;
+  onSave: (loc: Location) => void;
 }
 
-const LocationDialog: React.FC<LocationDialogProps> = ({
-  location,
-  onClose,
-  onSave,
-}) => {
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
+  const [edit, setEdit] = useState(false);
+  const [current, setCurrent] = useState<Location | null>(null);
 
-  useEffect(() => {
-    setCurrentLocation(location);
-  }, [location]);
+  useEffect(() => setCurrent(location), [location]);
 
-  if (!location || !currentLocation) return null;
+  if (!location || !current) return null;
 
-  const handleEditSubmit = (updatedLocation: Location) => {
-    onSave(updatedLocation);
-    setCurrentLocation(updatedLocation);
-    setIsEditMode(false);
+  const handleEditSave = (upd: Location) => {
+    onSave(upd);
+    setCurrent(upd);
+    setEdit(false);
   };
 
   return (
@@ -66,40 +59,32 @@ const LocationDialog: React.FC<LocationDialogProps> = ({
         >
           <IconButton
             onClick={onClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-            }}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
           >
             <CloseIcon />
           </IconButton>
 
           <Box sx={{ mb: 3, pr: 4 }}>
-            <Typography variant="h5" component="h2">
-              {currentLocation.name}
-            </Typography>
-            <Chip label={currentLocation.tag} size="small" sx={{ mt: 1 }} />
+            <Typography variant="h5">{current.name}</Typography>
+            <Chip label={current.tag} size="small" sx={{ mt: 1 }} />
           </Box>
 
-          <div className={styles.dialogContent}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Address
-            </Typography>
-            <Typography sx={{ mb: 2 }}>{currentLocation.address}</Typography>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            Address
+          </Typography>
+          <Typography sx={{ mb: 2 }}>{current.address}</Typography>
 
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Information
-            </Typography>
-            <Typography>{currentLocation.info}</Typography>
-          </div>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+            Information
+          </Typography>
+          <Typography>{current.info}</Typography>
 
           <Box sx={{ mt: 3, textAlign: 'right' }}>
             <Button
               startIcon={<EditIcon />}
-              onClick={() => setIsEditMode(true)}
               variant="outlined"
               sx={{ mr: 1 }}
+              onClick={() => setEdit(true)}
             >
               Edit
             </Button>
@@ -109,10 +94,10 @@ const LocationDialog: React.FC<LocationDialogProps> = ({
       </Modal>
 
       <LocationFormModal
-        open={isEditMode}
-        onClose={() => setIsEditMode(false)}
-        onSubmit={handleEditSubmit}
-        initialData={currentLocation}
+        open={edit}
+        onClose={() => setEdit(false)}
+        onSubmit={handleEditSave}
+        initialData={current}
         mode="edit"
       />
     </>
