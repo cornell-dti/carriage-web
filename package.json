@@ -17,6 +17,8 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.5.1",
     "prettier": "^2.8.8"
   },
   "scripts": {
@@ -33,7 +35,8 @@
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
     "format:check": "npx prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "type-check": "cd frontend && npm run type-check && cd ../server && npm run type-check",
-    "test:server": "cd server && npm run test"
+    "test:server": "cd server && npm run test",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -44,5 +47,10 @@
   "bugs": {
     "url": "https://github.com/cornell-dti/carriage-web/issues"
   },
-  "homepage": "https://github.com/cornell-dti/carriage-web#readme"
+  "homepage": "https://github.com/cornell-dti/carriage-web#readme",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write"
+    ]
+  }
 }

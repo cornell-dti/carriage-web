@@ -3,9 +3,9 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { Button } from '../../components/FormElements/FormElements';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
-import LocationsContent from 'components/Locations/LocationsContent';
+import LocationsContent from '../../components/Locations/LocationsContent';
 import styles from './page.module.css';
-import { LocationFormModal } from 'components/Locations/LocationFormModal';
+import { LocationFormModal } from '../../components/Locations/LocationFormModal';
 
 // TODO : Move interface to index.ts
 
@@ -83,7 +83,7 @@ const Locations = () => {
 
   return (
     <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
       <main id="main">

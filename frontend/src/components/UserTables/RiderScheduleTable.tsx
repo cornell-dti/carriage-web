@@ -97,7 +97,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
                 status: Status.NOT_STARTED,
                 startLocation: originalRide.startLocation,
                 endLocation: originalRide.endLocation,
-                startTime: rideStart.toISOString(),
+                startTime: rideStart.toDate(),
                 endTime: originalRide.endTime,
                 rider: originalRide.rider,
                 driver: originalRide.driver,
@@ -141,8 +141,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   }, [compRides, data, filterRides, generateRecurringRides, getRideMap]);
 
   // returns date in the format "MM/DD/YYYY"
-  const formatDate = (date: string): string =>
-    moment(date).format('MM/DD/YYYY');
+  const formatDate = (date: Date): string => moment(date).format('MM/DD/YYYY');
 
   // transforms the rides map into an array
   const rideMapToArray = (rideMap: ObjectType) => {

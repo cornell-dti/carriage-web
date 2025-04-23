@@ -82,7 +82,7 @@ export const LocationMap: React.FC<LocationMapProps> = ({
     <Map
       defaultZoom={13}
       defaultCenter={{ lat: 42.4534531, lng: -76.4760776 }}
-      mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+      mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
       className={styles.mapPlaceholder}
       gestureHandling={'greedy'}
       disableDefaultUI={false}

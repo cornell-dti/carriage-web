@@ -38,12 +38,12 @@ jobs:
             ANDROID_ARN=${{ secrets.ANDROID_ARN }},
             HOSTNAME=${{ secrets.HOSTNAME }},
             USE_HOSTNAME=${{ secrets.USE_HOSTNAME }},
-            OAUTH_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
+            OAUTH_CLIENT_ID=${{ secrets.VITE_CLIENT_ID }}
             OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }}
-            REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }},
-            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }},
-            REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }},
-            REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }},
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }},
+            VITE_CLIENT_ID=${{ secrets.VITE_CLIENT_ID }},
+            VITE_PUBLIC_VAPID_KEY=${{ secrets.VITE_PUBLIC_VAPID_KEY }},
+            VITE_ENCRYPTION_KEY=${{ secrets.VITE_ENCRYPTION_KEY }},
             DOMAIN=${{ secrets.DOMAIN }}'
 
       - name: Set up Docker Buildx
@@ -60,8 +60,8 @@ jobs:
         with:
           push: true
           build-args: |
-            REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }}
-            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
-            REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
-            REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }}
+            VITE_CLIENT_ID=${{ secrets.VITE_CLIENT_ID }}
+            VITE_PUBLIC_VAPID_KEY=${{ secrets.VITE_PUBLIC_VAPID_KEY }}
+            VITE_ENCRYPTION_KEY=${{ secrets.VITE_ENCRYPTION_KEY }}
           tags: dticarriage/carriage-service:latest

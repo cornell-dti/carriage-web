@@ -3,12 +3,12 @@ import StudentsTable from '../../components/UserTables/StudentsTable';
 import RiderModal from '../../components/Modal/RiderModal';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
-import SearchAndFilter from 'components/FormElements/SearchAndFilter';
+import SearchAndFilter from '../../components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { Rider, Accessibility } from '../../types';
-import StatsBox from 'components/AnalyticsOverview/StatsBox';
+import StatsBox from '../../components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
 
 const Riders = () => {

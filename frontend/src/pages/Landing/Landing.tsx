@@ -27,7 +27,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
     <main id="main">
       <div className={styles.home}>
         <div className={styles.tosButtonContainer}>
-          <a href={cuLiftTerms} target="_blank">
+          <a href={cuLiftTerms}>
             <button className={styles.tosButton}>Terms of Service</button>
           </a>
         </div>
@@ -86,7 +86,7 @@ const Landing = ({ students, admins }: LandingPropType) => {
 
       <div className={styles.footer}>
         <div className={styles.dti_container}>
-          <a href="https://www.cornelldti.org/" target="_blank">
+          <a href="https://www.cornelldti.org">
             <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
           </a>
         </div>
