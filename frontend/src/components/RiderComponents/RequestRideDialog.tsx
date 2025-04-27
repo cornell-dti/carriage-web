@@ -30,7 +30,6 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import styles from './requestridedialog.module.css';
-import { PlacesSearch } from 'components/Locations/PlacesSearch';
 import { Ride } from 'types';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
