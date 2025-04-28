@@ -86,4 +86,8 @@ router.delete('/:id', validateUser('Admin'), (req, res) => {
   db.deleteById(res, Driver, id, tableName);
 });
 
+// Get a driver's weekly stats
+
+router.get('/:id/stats', validateUser('Admin'), (req, res) => {});
+
 export default router;
