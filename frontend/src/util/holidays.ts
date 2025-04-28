@@ -48,8 +48,9 @@ type holiday = {
 function parseHoliday(holiday: Holidays): holiday {
   const [name, dates] = holiday.split(': ');
   const [start, end] = dates.split(' to ');
-
-  return { name, startDate: new Date(start), endDate: new Date(end) };
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T23:59:59`);
+  return { name, startDate, endDate };
 }
 
 /**
@@ -60,3 +61,9 @@ function parseHoliday(holiday: Holidays): holiday {
 export const holidaysList: holiday[] = Object.values(Holidays).map((h) =>
   parseHoliday(h)
 );
+
+export const isHoliday = (date: Date) => {
+  return holidaysList.some((holiday) => {
+    return holiday.startDate <= date && holiday.endDate >= date;
+  });
+};
