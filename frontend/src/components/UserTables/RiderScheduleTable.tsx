@@ -103,6 +103,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
                 driver: originalRide.driver,
                 recurring: true,
                 late: false,
+                noShow: false,
                 recurringDays: originalRide.recurringDays,
                 endDate: originalRide.endDate,
               };

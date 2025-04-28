@@ -12,7 +12,7 @@ import RequestRideDialog, {
   FormData,
 } from '../../components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { randomLocation } from '../../util/mocking';
+import { MOCK_RIDES, randomLocation } from '../../util/mocking';
 
 // Rider data type
 interface RiderData {
@@ -62,20 +62,7 @@ const riderData: RiderData = {
   firstName: 'Desmond',
 };
 
-const dummyRides: Ride[] = [
-  {
-    id: 'ride_1',
-    type: Type.ACTIVE,
-    status: Status.NOT_STARTED,
-    late: false,
-    startLocation: randomLocation(),
-    endLocation: randomLocation(),
-    startTime: new Date(),
-    endTime: new Date(Date.now() + 30 * 60000),
-    rider: riderData,
-    recurring: false,
-  },
-];
+const dummyRides: Ride[] = MOCK_RIDES;
 
 const favoriteRides: FavoriteRide[] = [
   {
@@ -125,6 +112,7 @@ const Schedule: React.FC = () => {
       startTime: formData.date ?? new Date(),
       endTime: formData.time ?? new Date(),
       rider: riderData,
+      noShow: false,
       recurring: formData.repeatType !== 'none',
     };
 
