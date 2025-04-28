@@ -5,11 +5,16 @@ import { phone, wheel, user } from '../../icons/userInfo/index';
 import { Admin, Driver, Employee } from '../../types';
 import React, { FC } from 'react';
 
-const formatPhone = (phoneNumber: string) => {
-  const areaCode = phoneNumber.substring(0, 3);
-  const firstPart = phoneNumber.substring(3, 6);
-  const secondPart = phoneNumber.substring(6, 10);
-  return `${areaCode}-${firstPart}-${secondPart}`;
+const formatPhone = (phoneNumber: string | undefined) => {
+  if (phoneNumber !== undefined) {
+    const areaCode = phoneNumber.substring(0, 3);
+    const firstPart = phoneNumber.substring(3, 6);
+    const secondPart = phoneNumber.substring(6, 10);
+    return `${areaCode}-${firstPart}-${secondPart}`;
+  } else {
+    console.error('Undefined PhoneNumber');
+    return '';
+  }
 };
 
 type EmployeeCardProps = {
@@ -34,7 +39,6 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
   const navigate = useNavigate();
   const netId = email.split('@')[0];
   const fmtPhone = formatPhone(phoneNumber);
-
   const formatAvail = (availability: {
     [key: string]: { startTime: string; endTime: string };
   }) => {
@@ -59,17 +63,6 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
     return 'Driver';
   };
 
-  const userInfo = {
-    id,
-    firstName,
-    lastName,
-    netId,
-    type,
-    phone: fmtPhone,
-    photoLink,
-    startDate,
-  };
-
   const handleClick = () => {
     const path =
       isAdmin || isBoth ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
@@ -86,7 +79,7 @@ const EmployeeCard: FC<EmployeeCardProps> = ({
         firstName={firstName}
         lastName={lastName}
         netId={netId}
-        photoLink={photoLink}
+        photoLink={photoLink ? `${photoLink}?t=${new Date().getTime()}` : ''}
       >
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>

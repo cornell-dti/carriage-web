@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -91,6 +91,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
+
+          // Task1
 
           const assignButton = (shouldReassign: boolean) => (
             <Button

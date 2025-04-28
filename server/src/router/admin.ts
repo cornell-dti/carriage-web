@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import * as db from './common';
 import { Admin } from '../models/admin';
 import { validateUser } from '../util';
+import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Admins';
@@ -23,10 +24,17 @@ router.get('/', validateUser('Admin'), (req, res) => {
 // Put a driver in Admins table
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
+
   const admin = new Admin({
-    id: uuid(),
-    ...body,
+    id: !body.eid || body.eid === '' ? uuid() : body.eid,
+    firstName: body.firstName,
+    lastName: body.lastName,
+    type: body.type,
+    isDriver: body.isDriver,
+    phoneNumber: body.phoneNumber,
+    email: body.email,
   });
+
   db.create(res, admin);
 });
 
