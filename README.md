@@ -18,6 +18,12 @@ After cloning the repository, run:
 `npm run start:frontend`
 This will start an instance running locally.
 
+## Maintenance Tasks
+
+1. check installed libraries and frameworks (typescript, vite, jest, etc.). Try to update to latest versions frequently
+2. check CI/CD workflows. Ensure checkout, setup-node, and docker workflows are up to date
+3. check Dockerfile, ensure that node version used in docker build is up to date
+
 ## About
 
 If you have a disability that prevents you from walking around campus, getting around can be difficult. This is a **Web** app that helps dispatchers of Cornell's CULift to schedule, edit, and manage all CULift and RedRunner rides.
