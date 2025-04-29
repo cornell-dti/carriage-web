@@ -53,6 +53,7 @@ type ButtonProps = {
   outline?: boolean;
   onClick?: (e: React.BaseSyntheticEvent) => void;
   children: React.ReactNode;
+  disabled?: boolean;
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -63,6 +64,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       name,
       small = false,
       outline = false,
+      disabled,
       onClick,
       children,
     } = props;
@@ -74,7 +76,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(btnClass, sizeClass, className)}
         name={name}
         ref={ref}
-        onClick={onClick}
+        onClick={disabled ? undefined : onClick} // Disable click handler if disabled
+        disabled={disabled}
+        // onClick={onClick}
       >
         {children}
       </button>
