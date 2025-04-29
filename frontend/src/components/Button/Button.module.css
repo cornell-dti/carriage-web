@@ -1,0 +1,65 @@
+/* Button.module.css */
+
+/* Base button styles */
+.buttonBase {
+  width: min-content;
+  height: min-content;
+  white-space: nowrap;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 200ms;
+}
+
+/* Pill button specific styles */
+.pillButton {
+  composes: buttonBase;
+  border-radius: 9999px;
+}
+
+/* Box button specific styles */
+.boxButton {
+  composes: buttonBase;
+  border-radius: 0.5rem;
+}
+
+/* Accent styles */
+.defaultAccent {
+  border-color: rgb(212, 212, 212); /* border-neutral-300 */
+  background-color: rgb(250, 250, 250); /* bg-neutral-50 */
+}
+
+.defaultAccent:hover {
+  background-color: rgb(245, 245, 245); /* hover:bg-neutral-100 */
+}
+
+.positiveAccent {
+  border-color: #8ec695;
+  background-color: #e4ffea;
+}
+
+.positiveAccent:hover {
+  background-color: #c5f3cf;
+}
+
+.primaryAccent {
+  border-color: #6b9bd3;
+  background-color: #e0ecff;
+}
+
+.primaryAccent:hover {
+  background-color: #c5d8f7;
+}
+
+.negativeAccent {
+  border-color: #d97979;
+  background-color: #ffe0e0;
+}
+
+.negativeAccent:hover {
+  background-color: #f7c5c5;
+}

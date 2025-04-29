@@ -28,8 +28,7 @@ interface Data {
   status: Status;
   type: Type;
 }
-function formatDateAndTime(isoString: string): { date: string; time: string } {
-  const d = new Date(isoString);
+function formatDateAndTime(d: Date): { date: string; time: string } {
   return {
     date: d.toLocaleDateString(),
     time: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -43,7 +42,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
     const endName = ride.endLocation?.name ?? 'Unknown';
 
     return {
-      startTime: ride.startTime,
+      startTime: ride.startTime.toISOString(),
       date,
       time,
       startLocationName: startName,
@@ -54,8 +53,8 @@ function mapRidesToData(rides: Ride[]): Data[] {
   });
 }
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  let aVal = a[orderBy];
-  let bVal = b[orderBy];
+  const aVal = a[orderBy];
+  const bVal = b[orderBy];
   // For date/time sorting, we'll rely on `startTime` if needed
   // We'll handle special cases in getComparator.
 

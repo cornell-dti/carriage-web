@@ -2,23 +2,23 @@ import React, { useState, useEffect, useMemo } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import Notification from '../../components/Notification/Notification';
-import SearchAndFilter from 'components/FormElements/SearchAndFilter';
+import SearchAndFilter from '../../components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
-import StatsBox from 'components/AnalyticsOverview/StatsBox';
+import StatsBox from '../../components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
-import { AdminType, DriverType } from '../../types';
+import { Admin, Driver } from '../../types';
 
 const Employees = () => {
   const { admins, drivers } = useEmployees();
   const [isOpen, setIsOpen] = useState(false);
   const [filteredEmployees, setFilteredEmployees] = useState<
-    (AdminType | DriverType)[]
+    (Admin | Driver)[]
   >([]);
   const [selectedEmployee, setSelectedEmployee] = useState<
-    AdminType | DriverType | null
+    Admin | Driver | null
   >(null);
 
   const [page, setPage] = useState(1);
@@ -46,7 +46,7 @@ const Employees = () => {
     setFilteredEmployees(displayEmployees);
   }, [displayEmployees]);
 
-  function convertToEmployeeEntity(employee: AdminType | DriverType): any {
+  function convertToEmployeeEntity(employee: Admin | Driver): any {
     const data = {
       id: employee.id,
       firstName: employee.firstName,
@@ -59,7 +59,7 @@ const Employees = () => {
     return data;
   }
 
-  const handleFilterApply = (filteredItems: (AdminType | DriverType)[]) => {
+  const handleFilterApply = (filteredItems: (Admin | Driver)[]) => {
     setFilteredEmployees(filteredItems);
     setPage(1);
   };

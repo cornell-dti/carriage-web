@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns';
-import { Driver, Ride } from 'types';
+import { Driver, Ride } from '../../types';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -11,16 +11,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import CallIcon from '@mui/icons-material/Call';
 import CancelIcon from '@mui/icons-material/Cancel';
 import styles from './maincard.module.css';
+import { randomDriver } from '../../util/mocking';
 
 // Dummy driver data if none is provided
-const dummyDriver: Driver = {
-  id: 'driver_1',
-  firstName: 'Matthias',
-  lastName: 'Choi',
-  phoneNumber: '5551234567',
-  email: 'mt123@cornell.edu',
-  photoLink: '/driver.jpg',
-};
+const dummyDriver: Driver = randomDriver();
 
 interface MainCardProps {
   ride: Ride;
@@ -37,8 +31,7 @@ const MainCard: React.FC<MainCardProps> = ({
   onEdit,
   onContact,
 }) => {
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDateTime = (date: Date) => {
     return {
       date: format(date, 'yyyy-MM-dd'),
       time: format(date, 'h:mm a'),

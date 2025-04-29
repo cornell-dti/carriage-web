@@ -68,7 +68,7 @@ const LocationPickerMap: React.FC<LocationPickerMapProps> = ({
       <Map
         defaultZoom={initialPosition ? 15 : 13}
         defaultCenter={defaultCenter}
-        mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+        mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
         className={styles.mapContainer}
         gestureHandling="greedy"
         disableDefaultUI={false}

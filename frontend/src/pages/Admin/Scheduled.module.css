@@ -1,0 +1,420 @@
+/* Scheduled.module.css */
+
+/* Reset default button styling */
+button {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  text-align: inherit;
+  text-transform: none;
+  overflow: visible;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Prevent focus outlines in most browsers */
+button:focus {
+  outline: none;
+}
+
+/* For accessibility, add a custom focus style that will only show when using keyboard navigation */
+button:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.5);
+  outline-offset: 2px;
+}
+
+.pageContainer {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(245, 245, 245);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgb(209, 213, 219);
+}
+
+.headerLeft {
+  display: flex;
+  height: min-content;
+  width: min-content;
+  padding: 0.5rem 1rem;
+  gap: 2rem;
+  align-items: center;
+}
+
+.pageTitle {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pageTitleText {
+  font-size: 1.5rem;
+  color: rgb(64, 64, 64);
+  white-space: nowrap;
+}
+
+.headerRight {
+  display: flex;
+  height: min-content;
+  width: min-content;
+  padding: 0.5rem 1rem;
+  gap: 2rem;
+}
+
+.bodyContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.tableContainer {
+  width: 100%;
+  flex: 1;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(209, 213, 219);
+  display: flex;
+  flex-direction: column;
+}
+
+.timelineContainer {
+  width: 100%;
+  flex: 1;
+  background-color: white;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(209, 213, 219);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Title Pill Component */
+.titlePill {
+  min-height: 55px;
+  width: min-content;
+  border-radius: 9999px;
+  display: flex;
+  gap: 1rem;
+  padding: 0.375rem 0.5rem;
+  align-items: center;
+  background-color: white;
+  border: 1px solid rgb(209, 213, 219);
+  color: rgb(38, 38, 38);
+  white-space: nowrap;
+}
+
+.pillTextElement {
+  width: min-content;
+  height: min-content;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.pillTextLarge {
+  font-size: 1.5rem;
+}
+
+.chevronButton {
+  border-radius: 9999px;
+}
+
+.chevronButton:hover {
+  background-color: rgb(229, 229, 229);
+}
+
+/* Scheduled Table */
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.filterBar {
+  display: flex;
+  width: 100%;
+  padding: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgb(209, 213, 219);
+}
+
+.filterLeft {
+  width: min-content;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: rgb(38, 38, 38);
+}
+
+.filterRight {
+  width: min-content;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: rgb(38, 38, 38);
+}
+
+.tableHeader {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(115, 115, 115);
+  padding: 0.375rem 1rem;
+  border-bottom: 1px solid rgb(209, 213, 219);
+}
+
+.tableRows {
+  width: 100%;
+  height: 18rem;
+  overflow-y: scroll;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.tableRow {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgb(64, 64, 64);
+  padding: 0.375rem 1rem;
+}
+
+.tableRowSelected {
+  background-color: rgb(229, 229, 229);
+  color: rgb(64, 64, 64);
+}
+
+.tableRowSelected:hover {
+  background-color: rgb(209, 213, 219);
+}
+
+.tableRowNoShow {
+  background-color: rgb(229, 229, 229);
+  color: rgb(82, 82, 82);
+}
+
+.tableRowNoShow:hover {
+  background-color: rgb(209, 213, 219);
+}
+
+.tableRowNoShowSelected {
+  background-color: rgb(209, 213, 219);
+  color: rgb(64, 64, 64);
+}
+
+.tableRowNoShowSelected:hover {
+  background-color: rgb(163, 163, 163);
+}
+
+.tableRowNormal {
+  background-color: white;
+  color: rgb(64, 64, 64);
+}
+
+.tableRowNormal:hover {
+  background-color: rgb(229, 229, 229);
+}
+
+.studentColumn {
+  width: 200px;
+}
+
+.needsColumn {
+  width: 150px;
+}
+
+.timeColumn {
+  width: 150px;
+}
+
+.locationColumn {
+  width: 150px;
+}
+
+.noShowColumn {
+  width: 150px;
+}
+
+/* Accessibility Icons */
+.accessibilityIconsContainer {
+  display: flex;
+  gap: 0.25rem;
+}
+
+/* Timeline Styles */
+.timelineOuterContainer {
+  width: 100%;
+  display: flex;
+  position: relative;
+  flex: 1;
+  background-color: white;
+  border-radius: 0.5rem;
+  flex-direction: column;
+}
+
+.timelineContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.timelineScroll {
+  width: 100%;
+  height: 100%;
+  overflow-x: scroll;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tickLabels {
+  width: 100%;
+  display: flex;
+  pointer-events: none;
+}
+
+.tickLabel {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 0.125rem;
+}
+
+.tickLabelText {
+  color: rgb(163, 163, 163);
+  white-space: nowrap;
+}
+
+.timelineRidesContainer {
+  max-height: 18rem;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.rideRow {
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.rideNameContainer {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 0.5rem;
+}
+
+.rideName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.rideBlock {
+  height: 100%;
+  border: 1px solid;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  overflow: hidden;
+}
+
+.rideBlockNormal {
+  background-color: rgb(23, 23, 23);
+  border-color: rgb(38, 38, 38);
+  color: rgb(245, 245, 245);
+}
+
+.rideBlockNoShow {
+  background-color: rgb(229, 229, 229);
+  border-color: rgb(209, 213, 219);
+  color: rgb(64, 64, 64);
+}
+
+.rideTimeText {
+  font-size: 0.875rem;
+}
+
+.rideTimeTextNormal {
+  color: rgb(245, 245, 245);
+}
+
+.rideTimeTextNoShow {
+  color: rgb(38, 38, 38);
+}
+
+.tickMarksContainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.tickMark {
+  height: 100%;
+  border-left: 1px solid rgb(209, 213, 219);
+}
+
+.currentTimeLine {
+  width: 0.25rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+  border-left: 4px dotted rgba(37, 99, 235, 0.5);
+}
+
+.currentTimeButton {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  z-index: 10;
+}
+
+.fullWidthLeft {
+  width: full;
+  text-align: left;
+}

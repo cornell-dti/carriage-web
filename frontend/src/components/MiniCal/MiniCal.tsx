@@ -5,7 +5,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
-import { isHoliday } from 'util/holidays';
+import { isHoliday } from '../../util/holidays';
 
 const isWeekday = (date: Date) => {
   return 0 < date.getDay() && date.getDay() < 6;
@@ -64,7 +64,6 @@ const MiniCal = () => {
           <button className={styles.customInput} onClick={this.props.onClick}>
             <span className={styles.primary}>
               {isToday(curDate) ? 'Today ' : ' '}
-              {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
             </span>
             <span className={styles.space} /> <Icon />
             <span className={styles.space} /> {this.props.value}
@@ -132,7 +131,7 @@ const MiniCal = () => {
                   pseudoScroll();
                 }}
               >
-                TODAY
+                <p>TODAY</p>
               </button>
               <Indicators date={date} />
               <button

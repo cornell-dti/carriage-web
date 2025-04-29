@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee } from '../../types';
-import { AdminType, DriverType } from '../../types';
+import { Admin, Driver, Employee } from '../../types';
+import React, { FC } from 'react';
 
 const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {
@@ -22,7 +22,7 @@ type EmployeeCardProps = {
   employee: Employee;
 };
 
-const EmployeeCard = ({
+const EmployeeCard: FC<EmployeeCardProps> = ({
   id,
   employee: {
     firstName,
@@ -96,7 +96,7 @@ const EmployeeCard = ({
 };
 
 type EmployeeCardsProps = {
-  employees: (AdminType | DriverType)[];
+  employees: (Admin | Driver)[];
 };
 
 const EmployeeCards = ({ employees }: EmployeeCardsProps) => {

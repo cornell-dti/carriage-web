@@ -119,7 +119,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     <Map
       defaultZoom={13}
       center={getMapCenter()}
-      mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+      mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
       gestureHandling={'greedy'}
       disableDefaultUI={false}
       className={styles.mapContainer}

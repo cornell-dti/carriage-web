@@ -21,7 +21,7 @@ import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 
-const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
+const secretKey = `${import.meta.env.VITE_ENCRYPTION_KEY!}`;
 
 const encrypt = (data: string) => {
   const encrypted = CryptoJS.AES.encrypt(
@@ -31,10 +31,30 @@ const encrypt = (data: string) => {
   return encrypted;
 };
 
-export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
-  const bytes = CryptoJS.AES.decrypt(hash, secretKey);
-  const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-  return decryptedData;
+export const decrypt = (hash: string | CryptoJS.lib.CipherParams): any => {
+  try {
+    // Perform decryption
+    const bytes = CryptoJS.AES.decrypt(hash, secretKey);
+
+    // Try to convert to UTF-8 string
+    try {
+      const decryptedString = bytes.toString(CryptoJS.enc.Utf8);
+
+      // Only try to parse if we have a non-empty string
+      if (decryptedString) {
+        return JSON.parse(decryptedString);
+      } else {
+        console.error('Decryption resulted in empty string');
+        return null;
+      }
+    } catch (utf8Error) {
+      console.error('Failed to convert decrypted bytes to UTF-8:', utf8Error);
+      return null;
+    }
+  } catch (decryptError) {
+    console.error('Decryption failed:', decryptError);
+    return null;
+  }
 };
 
 const AuthManager = () => {
