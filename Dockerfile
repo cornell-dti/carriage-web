@@ -7,6 +7,9 @@ WORKDIR /app
 # Set production environment for node
 ENV NODE_ENV=production
 
+# Install devDependencies for vite
+RUN npm install --include=dev
+
 # Read build-time environment variables
 ARG VITE_SERVER_URL
 ENV VITE_SERVER_URL ${VITE_SERVER_URL}
