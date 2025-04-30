@@ -307,7 +307,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             id="address"
             {...register('address', {
               required: true,
-              pattern: /^[a-zA-Z0-9\s,.'-]{3,}$/,
+              pattern: /^(?!\s*$).+/,
             })}
             type="text"
             aria-required="true"

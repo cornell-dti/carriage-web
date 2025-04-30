@@ -10,6 +10,10 @@ export function createKeys(property: string, values: string[]) {
   return values.map((v) => ({ [property]: v }));
 }
 
+// isAddress implementation does not accept "300 Day Hall" as a valid address.
+// Instead, a rider/admin would need to input "144 Feeney Way." A future PR
+// could be to hard-code address equivalencies (like Day Hall = 144 Feeney Way or
+// Martha Van Rensselaer Hall =  116 Reservoir Ave)
 export function isAddress(address: string) {
   let parsedAddr;
   try {
@@ -41,7 +45,11 @@ export function formatAddress(address: string): string {
     // type declaration in addresser is incorrect
     parsedAddr = parseAddress(address) as any;
   } catch {
-    parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`) as any;
+    try {
+      parsedAddr = parseAddress(`${address}, Ithaca, NY 14850`) as any;
+    } catch {
+      return address;
+    }
   }
   return parsedAddr.formattedAddress;
 }
