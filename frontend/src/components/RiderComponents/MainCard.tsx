@@ -30,6 +30,17 @@ interface MainCardProps {
   onContact?: () => void;
 }
 
+/**
+ * Main Card component for displaying next ride and driver information
+ * on the rider's schedule page, including actions to cancel, edit,
+ * or contact the driver.
+ * @param prop - Contains:
+ *  - ride: next ride information
+ *  - driver: driver information (optional)
+ *  -  onCancel: function to call when cancel button is clicked
+ *  - onEdit: function to call when edit button is clicked
+ *  - onContact: function to call when contact button is clicked
+ */
 const MainCard: React.FC<MainCardProps> = ({
   ride,
   driver = dummyDriver,
