@@ -20,7 +20,6 @@ const dummyDriver: Driver = {
   phoneNumber: '5551234567',
   email: 'mt123@cornell.edu',
   photoLink: '/driver.jpg',
-  availability: [DayOfWeek.MONDAY],
 };
 
 interface MainCardProps {
