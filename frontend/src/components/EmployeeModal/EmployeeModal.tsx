@@ -19,7 +19,6 @@ type EmployeeModalProps = {
     firstName?: string;
     lastName?: string;
     type?: string[];
-    isDriver?: boolean;
     netId?: string;
     email?: string;
     phone?: string;
@@ -47,6 +46,24 @@ type DriverData = {
   phoneNumber: any;
 };
 
+/**
+ * Type guard to check if an employee is an Admin.
+ * @param employee - The employee object to check.
+ * @returns True if the employee is an Admin.
+ */
+function isAdmin(employee: any): boolean {
+  return 'type' in employee;
+}
+
+/**
+ * Type guard to check if an employee is a Driver.
+ * @param employee - The employee object to check.
+ * @returns True if the employee is a Driver.
+ */
+function isDriver(employee: any): boolean {
+  return !isAdmin(employee);
+}
+
 const EmployeeModal = ({
   existingEmployee,
   isOpen,
@@ -66,14 +83,6 @@ const EmployeeModal = ({
       : [allowedRoles[0]]
   );
 
-  if (existingEmployee?.isDriver !== undefined) {
-    if (existingEmployee.isDriver) {
-      existingEmployee?.type?.push('driver');
-    }
-  } else if (existingEmployee) {
-    existingEmployee.type = existingEmployee?.type || ['driver'];
-  }
-
   const [imageBase64, setImageBase64] = useState('');
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
@@ -86,6 +95,13 @@ const EmployeeModal = ({
     setIsOpen(false);
   };
 
+  /**
+   * Uploads a photo for a given employee to the backend.
+   * @param employeeId - The ID of the employee.
+   * @param table - The name of the database table ("Admins" or "Drivers").
+   * @param refresh - A callback to refresh the UI after upload.
+   * @param isCreate - Whether this upload is for a newly created employee (used for conditional feedback).
+   */
   const uploadPhotoForEmployee = async (
     employeeId: string,
     table: string,
@@ -106,6 +122,15 @@ const EmployeeModal = ({
       .catch((err) => console.log(err));
   };
 
+  /**
+   * Creates a new employee (Admin or Driver) in the database.
+   * If a photo is provided, it will also be uploaded.
+   * @param employeeData - The data for the new employee.
+   * @param endpoint - The API endpoint to post the data to.
+   * @param refresh - Callback to refresh the UI after creation.
+   * @param table - The table name for photo upload.
+   * @returns The Axios response from the creation request.
+   */
   const createNewEmployee = async (
     employeeData: AdminData | DriverData,
     endpoint: string,
@@ -124,6 +149,14 @@ const EmployeeModal = ({
     return res;
   };
 
+  /**
+   * Updates an existing employee's data and uploads a new photo if provided.
+   * @param employeeData - The updated employee information.
+   * @param endpoint - The API endpoint to send the PUT request to.
+   * @param refresh - Callback to refresh the UI after update.
+   * @param table - The table name for photo upload.
+   * @returns The updated employee data.
+   */
   const updateExistingEmployee = async (
     employeeData: AdminData | DriverData,
     endpoint: string,
@@ -143,6 +176,12 @@ const EmployeeModal = ({
     return updatedEmployee;
   };
 
+  /**
+   * Creates or updates a driver, depending on the isNewDriver flag.
+   * @param driver - Driver data to be created or updated.
+   * @param isNewDriver - True if creating a new driver, false if updating.
+   * @returns The result of the create or update operation.
+   */
   const createOrUpdateDriver = async (
     driver: AdminData | DriverData,
     isNewDriver = false
@@ -164,6 +203,11 @@ const EmployeeModal = ({
     }
   };
 
+  /**
+   * Creates or updates an admin, depending on the isNewAdmin flag.
+   * @param admin - Admin data to be created or updated.
+   * @param isNewAdmin - True if creating a new admin, false if updating.
+   */
   const createOrUpdateAdmin = async (admin: AdminData, isNewAdmin = false) => {
     if (isNewAdmin) {
       await createNewEmployee(
@@ -182,10 +226,18 @@ const EmployeeModal = ({
     }
   };
 
+  /**
+   * Deletes a driver by their ID.
+   * @param id - The ID of the driver to delete.
+   */
   const deleteDriver = async (id: string | undefined) => {
     await axios.delete(`/api/drivers/${id}`);
   };
 
+  /**
+   * Deletes an admin by their ID.
+   * @param id - The ID of the admin to delete.
+   */
   const deleteAdmin = async (id: string | undefined) => {
     await axios.delete(`/api/admins/${id}`);
   };
@@ -209,8 +261,8 @@ const EmployeeModal = ({
       phoneNumber,
     };
 
-    const existingDriver = existingEmployee?.isDriver === undefined;
-    const existingAdmin = existingEmployee?.isDriver !== undefined;
+    const existingDriver = isDriver(existingEmployee);
+    const existingAdmin = isAdmin(existingEmployee);
 
     if (existingEmployee) {
       if (selectedRole.includes('driver')) {

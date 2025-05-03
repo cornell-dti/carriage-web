@@ -4,6 +4,11 @@ import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
 import { Admin, Driver } from '../../types';
 
+/**
+ * Formats a 10-digit phone number as `XXX-XXX-XXXX`.
+ * @param phoneNumber - A string representing a 10-digit phone number.
+ * @returns The formatted phone number or the original input if invalid.
+ */
 const formatPhone = (phoneNumber: string) => {
   if (!phoneNumber || phoneNumber.length !== 10) return phoneNumber;
   const areaCode = phoneNumber.substring(0, 3);
@@ -14,10 +19,20 @@ const formatPhone = (phoneNumber: string) => {
 
 type Employee = Admin | Driver;
 
+/**
+ * Type guard to check if an employee is an Admin.
+ * @param employee - The employee object to check.
+ * @returns True if the employee is an Admin.
+ */
 function isAdmin(employee: Employee): employee is Admin {
   return 'type' in employee;
 }
 
+/**
+ * Type guard to check if an employee is a Driver.
+ * @param employee - The employee object to check.
+ * @returns True if the employee is a Driver.
+ */
 function isDriver(employee: Employee): employee is Driver {
   return !isAdmin(employee);
 }
