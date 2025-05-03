@@ -45,7 +45,6 @@ export type Employee = {
   type?: string[];
   phoneNumber: string;
   email: string;
-  availability?: AvailabilityType;
   photoLink?: string;
   startDate?: string;
 };
