@@ -39,7 +39,6 @@ const testAdmin: Omit<AdminType, 'id'> = {
   phoneNumber: '1111111111',
   email: 'test-admin@cornell.edu',
   type: ['sds-admin'],
-  isDriver: false,
 };
 
 const testVehicle = {

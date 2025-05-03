@@ -9,7 +9,6 @@ export type AdminType = {
   firstName: string;
   lastName: string;
   type: AdminRole[];
-  isDriver: boolean;
   phoneNumber: string;
   email: string;
   photoLink?: string;
@@ -33,11 +32,6 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [String],
     required: true,
-  },
-  isDriver: {
-    type: Boolean,
-    required: true,
-    default: false,
   },
   phoneNumber: {
     type: String,

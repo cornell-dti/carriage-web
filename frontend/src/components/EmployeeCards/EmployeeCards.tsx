@@ -15,11 +15,11 @@ const formatPhone = (phoneNumber: string) => {
 type Employee = Admin | Driver;
 
 function isAdmin(employee: Employee): employee is Admin {
-  return 'isDriver' in employee;
+  return 'type' in employee;
 }
 
 function isDriver(employee: Employee): employee is Driver {
-  return 'availability' in employee && !('isDriver' in employee);
+  return !isAdmin(employee);
 }
 
 type EmployeeCardProps = {
@@ -32,19 +32,19 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
   const netId = employee.email.split('@')[0];
   const fmtPhone = formatPhone(employee.phoneNumber);
 
-  // Determine if employee is admin, driver, or both
-  const adminEmployee = isAdmin(employee);
-  const driverEmployee = isDriver(employee);
-  const isBoth = adminEmployee && employee.isDriver;
+  // const isEDriver = isDriver(employee);
+  const isEAdmin = isAdmin(employee);
 
-  const roles = (): string => {
-    if (isBoth) return 'Admin • Driver';
-    if (adminEmployee) return 'Admin';
-    return 'Driver';
+  const role = (): string | undefined => {
+    if (isEAdmin) {
+      return 'Admin';
+    } else {
+      return 'Driver';
+    }
   };
 
   const handleClick = () => {
-    const path = adminEmployee ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
+    const path = isEAdmin ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
     navigate(path);
   };
 
@@ -64,10 +64,10 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
           <p>{fmtPhone}</p>
         </CardInfo>
         <CardInfo
-          icon={adminEmployee ? user : wheel}
-          alt={adminEmployee ? 'admin' : 'wheel'}
+          icon={isEAdmin ? user : wheel}
+          alt={isEAdmin ? 'admin' : 'wheel'}
         >
-          <p>{roles()}</p>
+          <p>{role()}</p>
         </CardInfo>
       </Card>
     </div>

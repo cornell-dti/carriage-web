@@ -43,7 +43,6 @@ export type Employee = {
   firstName: string;
   lastName: string;
   type?: string[];
-  isDriver?: boolean;
   phoneNumber: string;
   email: string;
   availability?: AvailabilityType;

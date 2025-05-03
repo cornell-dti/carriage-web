@@ -20,7 +20,7 @@ router.get('/', validateUser('Admin'), (req, res) => {
   db.getAll(res, Admin, tableName);
 });
 
-// Put a driver in Admins table
+// Create an admin
 router.post('/', validateUser('Admin'), (req, res) => {
   const { body } = req;
   const admin = new Admin({

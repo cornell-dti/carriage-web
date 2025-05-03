@@ -39,10 +39,8 @@ type EmployeeDetailProps = {
   firstName: string;
   lastName: string;
   type?: string[];
-  isDriver?: boolean;
   netId: string;
   phoneNumber: string;
-  availability?: string[][];
   photoLink?: string;
   startDate?: string;
 };
@@ -99,7 +97,7 @@ const UserDetail = ({
       });
     }
   };
-  
+
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       {isShowing && rider ? (
@@ -136,11 +134,9 @@ const UserDetail = ({
                   firstName: employee.firstName,
                   lastName: employee.lastName,
                   type: employee?.type,
-                  isDriver: employee?.isDriver,
                   netId: employee.netId,
                   email: `${employee.netId}@cornell.edu`,
                   phone: employee.phoneNumber.replaceAll('-', ''), // remove dashes'-'
-                  availability: employee.availability,
                   photoLink: employee.photoLink,
                   startDate: employee.startDate,
                 }}
@@ -173,7 +169,7 @@ const UserDetail = ({
             </button>
             <ConfirmationModal
               open={confirmationModalisOpen}
-              user={driver ? driver : (employee ? employee : rider!)}
+              user={driver ? driver : employee ? employee : rider!}
               onClose={closeConfirmationModal}
               role={role}
             />

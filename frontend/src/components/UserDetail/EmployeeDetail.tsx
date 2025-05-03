@@ -24,7 +24,6 @@ type EmployeeDetailProps = {
   firstName: string;
   lastName: string;
   type?: string[];
-  isDriver?: boolean;
   netId: string;
   phoneNumber: string;
   availability?: string[][];
@@ -108,7 +107,6 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
     firstName: admin.firstName,
     lastName: admin.lastName,
     type: admin.type,
-    isDriver: admin.isDriver,
     netId: admin.email.split('@')[0],
     phoneNumber: admin.phoneNumber,
     photoLink: admin.photoLink,
@@ -224,7 +222,7 @@ const EmployeeDetail = () => {
   const setEmployeeData = (employeeId: string, userType: string) => {
     if (userType === 'admins') {
       fetchAdminData(employeeId).then((adminData) => {
-        if (adminData.isDriver) {
+        if (false) {
           fetchDriverData(employeeId).then((driverData) => {
             setEmployee({
               ...driverData,
@@ -276,8 +274,9 @@ const EmployeeDetail = () => {
   }, [employeeId, userType]);
 
   if (employee) {
-    const isAdmin = employee.isDriver !== undefined;
-    const isBoth = employee.isDriver ?? false;
+    const isAdmin = 'type' in employee;
+    const isDriver = !isAdmin;
+
     const availToString = (acc: string, [day, timeRange]: string[]) =>
       `${acc + day}: ${timeRange} • `;
     const parsedAvail = employee.availability
@@ -286,14 +285,11 @@ const EmployeeDetail = () => {
     const avail = parsedAvail.substring(0, parsedAvail.length - 2);
 
     const role = (): string => {
-      if (isBoth) return 'Admin • Driver';
-      if (isAdmin) return 'Admin';
-      return 'Driver';
+      return isAdmin ? 'Admin' : 'Driver';
     };
+
     const roleValue = (): string => {
-      if (isBoth) return 'both';
-      if (isAdmin) return 'admin';
-      return 'driver';
+      return isAdmin ? 'admin' : 'driver';
     };
 
     return (
@@ -314,7 +310,7 @@ const EmployeeDetail = () => {
               text={employee.phoneNumber}
             />
             <UserContactInfo
-              icon={isAdmin || isBoth ? user : wheel}
+              icon={isAdmin ? user : wheel}
               alt="role"
               text={role()}
             />

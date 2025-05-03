@@ -15,10 +15,12 @@ const NotifPreferences = () => (
       <h3>Notifications</h3>
       <div>
         <label className={styles.checkbox}>
-          <input type="checkbox" value="assign" defaultChecked /> New ride assignment
+          <input type="checkbox" value="assign" defaultChecked /> New ride
+          assignment
         </label>
         <label className={styles.checkbox}>
-          <input type="checkbox" value="update" defaultChecked /> Ride information updated
+          <input type="checkbox" value="update" defaultChecked /> Ride
+          information updated
         </label>
         <label className={styles.checkbox}>
           <input type="checkbox" value="cancel" defaultChecked /> Ride cancelled
@@ -33,10 +35,12 @@ const NotifPreferences = () => (
           <input type="checkbox" value="daily" /> Daily schedule summary
         </label>
         <label className={styles.checkbox}>
-          <input type="checkbox" value="assign" defaultChecked /> New ride assignments
+          <input type="checkbox" value="assign" defaultChecked /> New ride
+          assignments
         </label>
         <label className={styles.checkbox}>
-          <input type="checkbox" value="cancel" defaultChecked /> Ride cancellations
+          <input type="checkbox" value="cancel" defaultChecked /> Ride
+          cancellations
         </label>
       </div>
       <hr className={styles.divider} />

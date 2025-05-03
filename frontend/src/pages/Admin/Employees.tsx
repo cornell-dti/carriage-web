@@ -24,7 +24,7 @@ const Employees = () => {
     const employeeMap = new Map();
 
     admins.forEach((admin) => {
-      const roleType = admin.isDriver ? ['admin', 'driver'] : ['admin'];
+      const roleType = ['admin'];
       employeeMap.set(admin.id, { ...admin, roleType });
     });
 

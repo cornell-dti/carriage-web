@@ -23,7 +23,6 @@ type EmployeeModalProps = {
     netId?: string;
     email?: string;
     phone?: string;
-    availability?: string[][];
     startDate?: string;
     photoLink?: string;
   };
@@ -36,7 +35,6 @@ type AdminData = {
   firstName: any;
   lastName: any;
   type: string[];
-  isDriver: boolean;
   email: any;
   phoneNumber: any;
 };
@@ -47,7 +45,6 @@ type DriverData = {
   lastName: any;
   email: any;
   phoneNumber: any;
-  availability: ObjectType;
 };
 
 const EmployeeModal = ({
@@ -57,6 +54,18 @@ const EmployeeModal = ({
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
 
+  const pathname = window.location.pathname;
+  const isAdminPage = pathname.startsWith('/admin');
+  const isDriverPage = pathname.startsWith('/driver');
+
+  const allowedRoles = isAdminPage ? ['admin', 'driver'] : ['driver'];
+
+  const [selectedRole, setSelectedRole] = useState<string[]>(
+    existingEmployee?.type
+      ? existingEmployee.type.filter((r) => allowedRoles.includes(r))
+      : [allowedRoles[0]]
+  );
+
   if (existingEmployee?.isDriver !== undefined) {
     if (existingEmployee.isDriver) {
       existingEmployee?.type?.push('driver');
@@ -65,9 +74,6 @@ const EmployeeModal = ({
     existingEmployee.type = existingEmployee?.type || ['driver'];
   }
 
-  const [selectedRole, setSelectedRole] = useState<string[]>(
-    existingEmployee?.type || []
-  );
   const [imageBase64, setImageBase64] = useState('');
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const methods = useForm();
@@ -78,25 +84,6 @@ const EmployeeModal = ({
   const closeModal = () => {
     methods.clearErrors();
     setIsOpen(false);
-  };
-
-  /**
-   * Converts availabilities expressed as an array of {starTime, endTime, days}
-   * objects into an object mapping the day to the start and end time of each
-   * availability period
-   *
-   * @param availability the availibity array to convert
-   * @returns the availibity array expressed as an object mapping the day to
-   * the start and end time of each availibility period
-   */
-  const parseAvailability = (availability: ObjectType[]) => {
-    const result: ObjectType = {};
-    availability.forEach(({ startTime, endTime, days }) => {
-      days.forEach((day: string) => {
-        result[day] = { startTime, endTime };
-      });
-    });
-    return result;
   };
 
   const uploadPhotoForEmployee = async (
@@ -204,8 +191,7 @@ const EmployeeModal = ({
   };
 
   const onSubmit = async (data: ObjectType) => {
-    const { firstName, lastName, netid, phoneNumber, startDate, availability } =
-      data;
+    const { firstName, lastName, netid, phoneNumber, startDate } = data;
 
     const driver = {
       firstName,
@@ -213,7 +199,6 @@ const EmployeeModal = ({
       email: netid + '@cornell.edu',
       phoneNumber,
       startDate,
-      availability: parseAvailability(availability),
     };
 
     const admin = {
@@ -222,8 +207,6 @@ const EmployeeModal = ({
       email: netid + '@cornell.edu',
       type: selectedRole.filter((role) => !(role === 'driver')),
       phoneNumber,
-      availability: parseAvailability(availability),
-      isDriver: selectedRole.includes('driver'),
     };
 
     const existingDriver = existingEmployee?.isDriver === undefined;
@@ -338,10 +321,10 @@ const EmployeeModal = ({
 
             <StartDate existingDate={existingEmployee?.startDate} />
 
-            <WorkingHours
+            {/* <WorkingHours
               existingAvailability={existingEmployee?.availability}
               hide={false}
-            />
+            /> */}
             <RoleSelector
               selectedRoles={selectedRole}
               setSelectedRoles={setSelectedRole}

@@ -105,12 +105,12 @@ const AuthManager = () => {
             localStorage.setItem('userId', decoded.id);
             localStorage.setItem('userType', decoded.userType);
             setAuthToken(serverJWT);
-            console.log('Auth Token : ', serverJWT);
+            // console.log('Auth Token : ', serverJWT);
             const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
             refreshFunc();
             setRefreshUser(() => refreshFunc);
             setSignedIn(true);
-            
+
             // Navigate based on user type
             if (userType === 'Admin') {
               navigate('/admin/home', { replace: true });
@@ -161,7 +161,7 @@ const AuthManager = () => {
 
   function createRefresh(userId: string, userType: string, token: string) {
     let endpoint = '';
-    
+
     if (userType === 'Admin') {
       endpoint = `/api/admins/${userId}`;
     } else if (userType === 'Driver') {
@@ -169,7 +169,7 @@ const AuthManager = () => {
     } else {
       endpoint = `/api/riders/${userId}`;
     }
-    
+
     return () => {
       axios
         .get(endpoint)

@@ -6,7 +6,7 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import DateContext from '../../context/date';
 import { RidesProvider } from '../../context/RidesContext';
 import Rides from './Rides';
-import Settings from './Settings'
+import Settings from './Settings';
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();

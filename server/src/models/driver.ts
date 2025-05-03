@@ -18,7 +18,6 @@ export type DriverType = {
   phoneNumber: string;
   email: string;
   photoLink?: string;
-  availability: DayOfWeek[];
   active?: boolean;
   joinDate?: string;
 };
@@ -48,17 +47,6 @@ const schema = new dynamoose.Schema({
     validate: (email) => isEmail(email as string),
   },
   photoLink: String,
-  availability: {
-    type: Array,
-    schema: [String],
-    default: [
-      DayOfWeek.MONDAY,
-      DayOfWeek.TUESDAY,
-      DayOfWeek.WEDNESDAY,
-      DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY
-    ],
-  },
   active: {
     type: Boolean,
     default: true,
@@ -66,7 +54,7 @@ const schema = new dynamoose.Schema({
   joinDate: {
     type: String,
     default: () => new Date().toISOString(),
-  }
+  },
 });
 
 export const Driver = dynamoose.model('Drivers', schema, defaultModelConfig);

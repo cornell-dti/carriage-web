@@ -14,7 +14,7 @@ const driverData = {
     DayOfWeek.TUESDAY,
     DayOfWeek.WEDNESDAY,
     DayOfWeek.THURSDAY,
-    DayOfWeek.FRIDAY
+    DayOfWeek.FRIDAY,
   ],
   joinDate: '2024-01-15',
 };
@@ -27,11 +27,7 @@ const driver2Data = {
   email: 'msmith@example.com',
   phoneNumber: '555-765-4321',
   active: true,
-  availability: [
-    DayOfWeek.MONDAY,
-    DayOfWeek.WEDNESDAY,
-    DayOfWeek.FRIDAY
-  ],
+  availability: [DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY],
   joinDate: '2024-02-20',
 };
 
@@ -43,10 +39,7 @@ const driver3Data = {
   email: 'dbrown@example.com',
   phoneNumber: '555-987-6543',
   active: true,
-  availability: [
-    DayOfWeek.TUESDAY,
-    DayOfWeek.THURSDAY,
-  ],
+  availability: [DayOfWeek.TUESDAY, DayOfWeek.THURSDAY],
   joinDate: '2024-03-10',
 };
 
