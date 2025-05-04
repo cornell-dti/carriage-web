@@ -33,6 +33,7 @@ const Notification = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [notify, setNotify] = useState(false);
   const popupId = useId();
+  const [isNotifOpen, setIsNotifOpen] = useState(true);
 
   useEffect(() => {
     navigator.serviceWorker.addEventListener('message', (event) => {
@@ -72,7 +73,11 @@ const Notification = () => {
   return (
     <Popup
       trigger={
-        <button id={popupId} className={styles.bell}>
+        <button
+          id={popupId}
+          aria-expanded={isNotifOpen}
+          className={styles.bell}
+        >
           <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
@@ -83,10 +88,14 @@ const Notification = () => {
           )}
         </button>
       }
+      onOpen={() => {
+        setIsNotifOpen(true);
+      }}
       onClose={() => {
         setMessages([...newMessages, ...messages]);
         setNewMessages([]);
         setNotify(false);
+        setIsNotifOpen(false);
       }}
       position={['bottom right']}
       contentStyle={{

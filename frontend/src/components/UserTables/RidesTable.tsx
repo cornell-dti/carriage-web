@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
@@ -8,8 +8,6 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
-import { useEffect } from 'react';
-import { useRef } from 'react';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -93,6 +91,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               </span>
             ),
           };
+
+          // Task1
 
           const assignButton = (shouldReassign: boolean) => (
             <Button
