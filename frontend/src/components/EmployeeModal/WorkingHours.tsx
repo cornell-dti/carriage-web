@@ -15,17 +15,20 @@ type WorkingHoursProps = {
   hide: boolean;
 };
 
-const WorkingHours = ({ existingAvailability = [], hide }: WorkingHoursProps) => {
+const WorkingHours = ({
+  existingAvailability = [],
+  hide,
+}: WorkingHoursProps) => {
   const { register, setValue, getValues } = useFormContext();
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
-    existingAvailability as DayOfWeek[] || []
+    (existingAvailability as DayOfWeek[]) || []
   );
 
   const handleDayClick = (day: DayOfWeek) => {
     const updatedDays = selectedDays.includes(day)
       ? selectedDays.filter((d) => d !== day)
       : [...selectedDays, day];
-    
+
     setSelectedDays(updatedDays);
     setValue('availability', updatedDays);
   };
