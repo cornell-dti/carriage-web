@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { Employee, ObjectType } from '../../types/index';
+import { ObjectType } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
@@ -13,13 +13,21 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 
+enum DayOfWeek {
+  MONDAY = 'MON',
+  TUESDAY = 'TUE',
+  WEDNESDAY = 'WED',
+  THURSDAY = 'THURS',
+  FRIDAY = 'FRI',
+}
+
 type AdminData = {
   type: string[];
   isDriver: boolean;
 };
 
 type DriverData = {
-  availability: any;
+  availability: DayOfWeek[];
   startDate: string;
 };
 
@@ -82,19 +90,6 @@ const EmployeeModal = ({
     methods.clearErrors();
     setIsOpen(false);
   };
-
-  function parseAvailability(availability: ObjectType[]) {
-    const result: ObjectType = {};
-    if (availability === null || availability === undefined) {
-      return result;
-    }
-    availability.forEach(({ startTime, endTime, days }) => {
-      days.forEach((day: string) => {
-        result[day] = { startTime, endTime };
-      });
-    });
-    return result;
-  }
 
   /**
    * Uploads an employee's photo (in base64 format) to the backend.
@@ -304,7 +299,7 @@ const EmployeeModal = ({
 
     if (hasDriver) {
       driver_data = {
-        availability: parseAvailability(formData.availability),
+        availability: formData.availability || [],
         startDate: formData.startDate,
       };
     }
