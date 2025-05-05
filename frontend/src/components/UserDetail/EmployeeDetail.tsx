@@ -2,14 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import {
-  phone,
-  clock,
-  wheel,
-  user,
-} from '../../icons/userInfo/index';
+import { phone, clock, wheel, user } from '../../icons/userInfo/index';
 import styles from './userDetail.module.css';
-import { peopleStats, wheelStats } from '../../icons/stats/index';
+import { peopleStats } from '../../icons/stats/index';
 import formatAvailability from '../../util/employee';
 import DriverRides from '../UserTables/DriverRidesTable';
 import { AdminType } from '../../../../server/src/models/admin';
@@ -31,7 +26,6 @@ type EmployeeDetailProps = {
 
 type EmployeeStatisticsProps = {
   rideCount: number;
-  hours: number;
 };
 
 type StatisticProps = {
@@ -41,7 +35,7 @@ type StatisticProps = {
   description: string;
 };
 
-const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
+const EmployeeStatistics = ({ rideCount }: EmployeeStatisticsProps) => {
   const Statistic = ({ icon, stat, description, alt }: StatisticProps) => (
     <div className={styles.statistic}>
       <img src={icon} className={styles.statIcon} alt={alt} />
@@ -67,20 +61,12 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
   return (
     <div className={styles.statisticsContainer}>
-      <h3 className={styles.userDetailHeader}>CHANGE HERE</h3>
       <div className={styles.employeeStatistics}>
-        <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>
           <Statistic
             icon={peopleStats}
             stat={rideCount}
             description="rides"
-            alt="people"
-          />
-          <Statistic
-            icon={wheelStats}
-            stat={hours}
-            description="driving"
             alt="people"
           />
         </div>
@@ -322,12 +308,13 @@ const EmployeeDetail = () => {
               text={avail === '' ? 'N/A' : avail}
             />
           </UserDetail>
-          <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
+          <EmployeeStatistics rideCount={rideCount} />
         </div>
+
         <div className={styles.ridesContainer}>
           <h2>Today</h2>
-            <DriverRides id={employee.id} todayOrPast={true} />
-          </div>
+          <DriverRides id={employee.id} todayOrPast={true} />
+        </div>
       </main>
     );
   }
@@ -335,4 +322,3 @@ const EmployeeDetail = () => {
 };
 
 export default EmployeeDetail;
-
