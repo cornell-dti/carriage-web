@@ -42,10 +42,17 @@ export type RideType = {
   driver?: DriverType;
   recurring: boolean;
   recurringDays?: number[];
-  endDate?: string;
-  deleted?: string[];
-  edits?: string[];
-  parentRide?: RideType;
+  /**
+   * endDate means that the recurring rides should end on this date (inclusive) in UTC.
+   * Ex: 2024-12-31 : recurring rides should end on the 31 of dec 
+   * Note: should change to timestamp in the future.
+   */
+  endDate?: string;  
+  sourceRide? : RideType;
+  parentRide? : RideType; 
+  parentRideId? : string;
+  childRide? : RideType; 
+  childRideId? : string;
 };
 
 const locationSchema = {
@@ -110,19 +117,19 @@ const schema = new dynamoose.Schema({
     type: Array,
     schema: [Number],
   },
-  deleted: {
-    type: Array,
-    schema: [String],
-  },
-  edits: {
-    type: Array,
-    schema: [String],
-  },
   endDate: {
     type: String,
     required: false,
     validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
   },
+  parentRideId : {
+    type : String, 
+    required : false,
+  }, 
+  childRideId : {
+    type : String, 
+    required : false,
+  }, 
 });
 
 export const Ride = dynamoose.model('Rides', schema, defaultModelConfig);
