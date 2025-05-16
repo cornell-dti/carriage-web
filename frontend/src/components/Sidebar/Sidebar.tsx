@@ -75,7 +75,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     { icon: drivers, caption: 'Employees', path: 'employees' },
     { icon: riders, caption: 'Students', path: 'riders' },
     { icon: locations, caption: 'Locations', path: 'locations' },
-    // { icon: analytics, caption: 'Analytics', path: 'analytics' },
+    { icon: analytics, caption: 'Analytics', path: 'analytics' },
     { icon: car, caption: 'Rides', path: 'rides' },
   ];
 
