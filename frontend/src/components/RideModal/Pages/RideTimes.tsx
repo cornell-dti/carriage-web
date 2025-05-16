@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  FormProvider,
-  useForm,
-  useFormContext,
-  UseFormRegister,
-  FieldErrors,
-} from 'react-hook-form';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
@@ -14,7 +8,7 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
-import { isHoliday } from 'util/holidays';
+import { isHoliday } from '../../../util/holidays';
 
 type FormData = {
   date: string;

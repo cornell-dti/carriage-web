@@ -1,11 +1,38 @@
-import { RiderType } from '../../../server/src/models/rider';
-import { DriverType } from '../../../server/src/models/driver';
-import { RideType } from '../../../server/src/models/ride';
-import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
-import { VehicleType } from '../../../server/src/models/vehicle';
+export interface Availability {
+  startTime: string;
+  endTime: string;
+}
 
-export type Rider = RiderType;
+export interface AvailabilityType {
+  Mon?: Availability;
+  Tue?: Availability;
+  Wed?: Availability;
+  Thu?: Availability;
+  Fri?: Availability;
+}
+
+export interface Vehicle {
+  id: string;
+  name: string;
+  capacity: number;
+}
+
+export interface Driver {
+  id: string;
+  firstName: string;
+  lastName: string;
+  availability: AvailabilityType;
+  vehicle?: Vehicle;
+  phoneNumber: string;
+  startDate: string;
+  email: string;
+  photoLink?: string;
+}
+
+export enum Organization {
+  REDRUNNER = 'RedRunner',
+  CULIFT = 'CULift',
+}
 
 export enum Accessibility {
   ASSISTANT = 'Assistant',
@@ -17,18 +44,36 @@ export enum Accessibility {
   SERVICE_ANIMALS = 'Service Animal',
 }
 
-export type Availability = {
-  startTime: string;
-  endTime: string;
+export type Rider = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  email: string;
+  accessibility?: Accessibility[];
+  organization?: Organization;
+  description?: string;
+  joinDate: string;
+  endDate: string;
+  pronouns?: string;
+  address: string;
+  favoriteLocations: string[];
+  photoLink?: string;
+  active: boolean;
 };
 
-export type AvailabilityType = {
-  [day: string]: Availability;
-};
+export type AdminRole = 'sds-admin' | 'redrunner-admin';
 
-export type Driver = DriverType;
-
-export type Admin = AdminType;
+export interface Admin {
+  id: string;
+  firstName: string;
+  lastName: string;
+  type: AdminRole[];
+  isDriver: boolean;
+  phoneNumber: string;
+  email: string;
+  photoLink?: string;
+}
 
 export type Employee = {
   id: string;
@@ -53,22 +98,28 @@ export type ObjectType = {
   [x: string]: any;
 };
 
-export type Vehicle = VehicleType;
-
 export enum Tag {
   EAST = 'east',
+  WEST = 'west',
   CENTRAL = 'central',
   NORTH = 'north',
-  WEST = 'west',
-  CTOWN = 'ctown',
-  DTOWN = 'dtown',
+  CTOWN = 'ctown', // college town
+  DTOWN = 'dtown', // downtown
   INACTIVE = 'inactive',
   CUSTOM = 'custom',
 }
 
-export type Location = LocationType;
-
-export type Ride = RideType;
+export type Location = {
+  id: string;
+  name: string;
+  address: string;
+  shortName: string;
+  info?: string;
+  tag: Tag;
+  lat: number;
+  lng: number;
+  photoLink?: string;
+};
 
 export enum Type {
   ACTIVE = 'active',
@@ -85,6 +136,26 @@ export enum Status {
   NO_SHOW = 'no_show',
   CANCELLED = 'cancelled',
 }
+
+export type Ride = {
+  id: string;
+  type: Type;
+  status: Status;
+  late: boolean;
+  startLocation: Location;
+  endLocation: Location;
+  startTime: Date;
+  endTime: Date;
+  rider: Rider;
+  noShow: boolean;
+  driver?: Driver;
+  recurring: boolean;
+  recurringDays?: number[];
+  endDate?: Date;
+  deleted?: string[];
+  edits?: string[];
+  parentRide?: Ride;
+};
 
 export type TableData = {
   year: string;
@@ -106,5 +177,3 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type { DriverType, AdminType, RideType };

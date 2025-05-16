@@ -9,7 +9,7 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
-import StudentRidesTable from 'components/UserTables/StudentRidesTable';
+import StudentRidesTable from '../../components/UserTables/StudentRidesTable';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (

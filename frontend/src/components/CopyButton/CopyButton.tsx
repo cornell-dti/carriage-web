@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import styles from './copyButton.module.css';

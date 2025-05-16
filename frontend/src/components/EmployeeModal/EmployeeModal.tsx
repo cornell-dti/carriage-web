@@ -135,7 +135,7 @@ const EmployeeModal = ({
   ): Promise<EmployeeEntity> {
     let res: any;
     switch (endpoint) {
-      case '/api/drivers':
+      case '/api/drivers': {
         const {
           data: { data: createdDriver },
         } = await axios.post(endpoint, {
@@ -144,7 +144,8 @@ const EmployeeModal = ({
         });
         res = createdDriver;
         break;
-      case '/api/admins':
+      }
+      case '/api/admins': {
         const {
           data: { data: createdAdmin },
         } = await axios.post(endpoint, {
@@ -153,6 +154,7 @@ const EmployeeModal = ({
         });
         res = createdAdmin;
         break;
+      }
       default:
         break;
     }
@@ -172,7 +174,7 @@ const EmployeeModal = ({
   ): Promise<EmployeeEntity> {
     let res: any;
     switch (endpoint) {
-      case '/api/drivers':
+      case '/api/drivers': {
         const {
           data: { data: updatedDriver },
         } = await axios.put(
@@ -181,7 +183,8 @@ const EmployeeModal = ({
         );
         res = updatedDriver;
         break;
-      case '/api/admins':
+      }
+      case '/api/admins': {
         const {
           data: { data: updatedAdmin },
         } = await axios.put(
@@ -190,6 +193,7 @@ const EmployeeModal = ({
         );
         res = updatedAdmin;
         break;
+      }
       default:
         break;
     }
@@ -226,7 +230,7 @@ const EmployeeModal = ({
       selectedRoles.includes('redrunner-admin');
     const hasDriver = selectedRoles.includes('driver');
 
-    let currentId = employeeData.id;
+    const currentId = employeeData.id;
     // If no employee exists, create one using a primary role.
     if (!currentId || currentId === '') {
       if (hasAdmin) {
@@ -268,7 +272,7 @@ const EmployeeModal = ({
         await deleteEmployee(employeeData.id, '/api/drivers');
       }
     }
-    let id = employeeData.id;
+    const id = employeeData.id;
     if (!hasAdmin && !hasDriver) {
       return '';
     }

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';

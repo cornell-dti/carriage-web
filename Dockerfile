@@ -1,5 +1,5 @@
 # Base image
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Create a directory for the app
 WORKDIR /app
@@ -8,20 +8,21 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 # Read build-time environment variables
-ARG REACT_APP_SERVER_URL
-ENV REACT_APP_SERVER_URL ${REACT_APP_SERVER_URL}
-ARG REACT_APP_CLIENT_ID
-ENV REACT_APP_CLIENT_ID ${REACT_APP_CLIENT_ID}
-ARG REACT_APP_PUBLIC_VAPID_KEY
-ENV REACT_APP_PUBLIC_VAPID_KEY ${REACT_APP_PUBLIC_VAPID_KEY}
-ARG REACT_APP_ENCRYPTION_KEY
-ENV REACT_APP_ENCRYPTION_KEY ${REACT_APP_ENCRYPTION_KEY}
+ARG VITE_SERVER_URL
+ENV VITE_SERVER_URL ${VITE_SERVER_URL}
+ARG VITE_CLIENT_ID
+ENV VITE_CLIENT_ID ${VITE_CLIENT_ID}
+ARG VITE_PUBLIC_VAPID_KEY
+ENV VITE_PUBLIC_VAPID_KEY ${VITE_PUBLIC_VAPID_KEY}
+ARG VITE_ENCRYPTION_KEY
+ENV VITE_ENCRYPTION_KEY ${VITE_ENCRYPTION_KEY}
 
 # Copy package.jsons first to install
 COPY package.json package-lock.json /app/
 COPY frontend/package.json frontend/package-lock.json /app/frontend/
 COPY server/package.json server/package-lock.json /app/server/
 RUN npm install
+RUN npm install --include=dev
 
 # Copy the frontend and server directories to the app directory
 COPY frontend /app/frontend

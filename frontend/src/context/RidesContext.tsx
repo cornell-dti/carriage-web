@@ -3,6 +3,7 @@ import { Ride, Type } from '../types';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
+import { MOCK_RIDES } from '../util/mocking';
 
 type ridesState = {
   unscheduledRides: Ride[];
@@ -30,10 +31,13 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const date = format_date(curDate);
 
   const refreshRides = useCallback(async () => {
-    const ridesData: Ride[] = await axios
-      .get(`/api/rides?date=${date}`)
-      .then((res) => res.data)
-      .then((data) => data.data);
+    // const ridesData: Ride[] = await axios
+    //   .get(`/api/rides?date=${date}`)
+    //   .then((res) => res.data)
+    //   .then((data) => data.data);
+
+    const ridesData = MOCK_RIDES;
+
     if (ridesData) {
       setUnscheduledRides(
         ridesData.filter(({ type }) => type === Type.UNSCHEDULED)

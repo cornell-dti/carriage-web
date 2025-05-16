@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Admin, Driver } from '../types';
 import axios from '../util/axios';
+import { MOCK_DRIVERS } from '../util/mocking';
 
 type employeesState = {
   drivers: Array<Driver>;
@@ -38,10 +39,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const [admins, setAdmins] = useState<Array<Admin>>([]);
 
   const refreshDrivers = useCallback(async () => {
-    const driversData: Array<Driver> = await axios
-      .get('/api/drivers')
-      .then((res) => res.data)
-      .then((data) => data.data);
+    // const driversData: Array<Driver> = await axios
+    //   .get('/api/drivers')
+    //   .then((res) => res.data)
+    //   .then((data) => data.data);
+
+    const driversData = MOCK_DRIVERS;
 
     driversData?.sort(sortByName);
     componentMounted.current && setDrivers(driversData);
