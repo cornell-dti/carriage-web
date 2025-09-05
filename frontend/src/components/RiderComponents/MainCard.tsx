@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
-import {
-  format,
-  isBefore,
-  set,
-  setHours,
-  setMinutes,
-  setSeconds,
-  subDays,
-} from 'date-fns';
-import { Driver, Ride } from 'types';
+import { format, isBefore, setHours, setMinutes, setSeconds, subDays } from 'date-fns';
+import { DayOfWeek, Driver, Ride } from 'types';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -34,6 +26,9 @@ const dummyDriver: Driver = {
   phoneNumber: '5551234567',
   email: 'mt123@cornell.edu',
   photoLink: '/driver.jpg',
+  availability : [
+    DayOfWeek.MONDAY,
+  ],
 };
 
 interface MainCardProps {

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -163,62 +163,68 @@ const Rides = () => {
     console.log('Sending email...');
   };
 
+  useEffect(() => {
+    document.title = 'Rides - Carriage';
+  }, []);
+
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-        }}
-      >
-        <Typography variant="h4" component="h1">
-          Today's Rides
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            onClick={handleExport}
-          >
-            Export
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<EmailIcon />}
-            onClick={handleSendEmail}
-          >
-            Send Email
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Next Ride Card */}
-      <NextRideCard nextRide={nextDriverRide} />
-
-      {/* View Filter */}
-      <Box sx={{ mb: 2 }}>
-        <ToggleButtonGroup
-          value={viewFilter}
-          exclusive
-          onChange={handleViewChange}
-          aria-label="view filter"
-          size="small"
+    <main id="main">
+      <Box sx={{ p: 3 }}>
+        {/* Header */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+          }}
         >
-          <ToggleButton value="all" aria-label="show all rides">
-            All Rides
-          </ToggleButton>
-          <ToggleButton value="my-rides" aria-label="show my rides">
-            My Rides
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
+          <Typography variant="h4" component="h1">
+            Today's Rides
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              onClick={handleExport}
+            >
+              Export
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<EmailIcon />}
+              onClick={handleSendEmail}
+            >
+              Send Email
+            </Button>
+          </Box>
+        </Box>
 
-      {/* Rides Table */}
-      <EnhancedTable rides={filteredRides} />
-    </Box>
+        {/* Next Ride Card */}
+        <NextRideCard nextRide={nextDriverRide} />
+
+        {/* View Filter */}
+        <Box sx={{ mb: 2 }}>
+          <ToggleButtonGroup
+            value={viewFilter}
+            exclusive
+            onChange={handleViewChange}
+            aria-label="view filter"
+            size="small"
+          >
+            <ToggleButton value="all" aria-label="show all rides">
+              All Rides
+            </ToggleButton>
+            <ToggleButton value="my-rides" aria-label="show my rides">
+              My Rides
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+
+        {/* Rides Table */}
+        <EnhancedTable rides={filteredRides} />
+      </Box>
+    </main>
   );
 };
 

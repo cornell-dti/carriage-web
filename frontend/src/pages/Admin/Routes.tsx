@@ -16,7 +16,6 @@ import { EmployeesProvider } from '../../context/EmployeesContext';
 import { RidersProvider } from '../../context/RidersContext';
 import { LocationsProvider } from '../../context/LocationsContext';
 import { RidesProvider } from '../../context/RidesContext';
-import Rides from './Rides';
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();
@@ -40,7 +39,6 @@ const RoutesComponent = () => {
           <Route path="riders/:id" element={<RiderDetail />} />
           <Route path="locations" element={<Locations />} />
           <Route path="analytics" element={<Analytics />} />
-          <Route path="rides" element={<Rides />} />
         </Routes>
       </Sidebar>
     </>

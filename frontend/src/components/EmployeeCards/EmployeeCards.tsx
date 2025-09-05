@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
-import { Employee } from '../../types';
-import { AdminType, DriverType } from '../../types';
+import { Admin, Driver } from '../../types';
 
 const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {
@@ -17,55 +16,39 @@ const formatPhone = (phoneNumber: string | undefined) => {
   }
 };
 
+type Employee = Admin | Driver;
+
+function isAdmin(employee: Employee): employee is Admin {
+  return 'isDriver' in employee;
+}
+
+function isDriver(employee: Employee): employee is Driver {
+  return 'availability' in employee && !('isDriver' in employee);
+}
+
 type EmployeeCardProps = {
   id: string;
   employee: Employee;
 };
 
-const EmployeeCard = ({
-  id,
-  employee: {
-    firstName,
-    lastName,
-    email,
-    type,
-    isDriver,
-    phoneNumber,
-    availability,
-    photoLink,
-    startDate,
-  },
-}: EmployeeCardProps) => {
+const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
   const navigate = useNavigate();
-  const netId = email.split('@')[0];
-  const fmtPhone = formatPhone(phoneNumber);
-  const formatAvail = (availability: {
-    [key: string]: { startTime: string; endTime: string };
-  }) => {
-    if (!availability) {
-      return 'N/A';
-    }
+  const netId = employee.email.split('@')[0];
+  const fmtPhone = formatPhone(employee.phoneNumber);
 
-    return Object.entries(availability)
-      .filter(([_, timeRange]) => timeRange?.startTime && timeRange?.endTime)
-      .map(
-        ([day, timeRange]) =>
-          `${day}: ${timeRange.startTime} - ${timeRange.endTime}`
-      )
-      .join('\n ');
-  };
+  // Determine if employee is admin, driver, or both
+  const adminEmployee = isAdmin(employee);
+  const driverEmployee = isDriver(employee);
+  const isBoth = adminEmployee && employee.isDriver;
 
-  const isAdmin = isDriver !== undefined;
-  const isBoth = isDriver && isDriver == true;
   const roles = (): string => {
     if (isBoth) return 'Admin • Driver';
-    if (isAdmin) return 'Admin';
+    if (adminEmployee) return 'Admin';
     return 'Driver';
   };
 
   const handleClick = () => {
-    const path =
-      isAdmin || isBoth ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
+    const path = adminEmployee ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
     navigate(path);
   };
 
@@ -76,17 +59,17 @@ const EmployeeCard = ({
       className={styles.link}
     >
       <Card
-        firstName={firstName}
-        lastName={lastName}
+        firstName={employee.firstName}
+        lastName={employee.lastName}
         netId={netId}
-        photoLink={photoLink ? `${photoLink}?t=${new Date().getTime()}` : ''}
+        photoLink={employee.photoLink}
       >
         <CardInfo icon={phone} alt="phone">
           <p>{fmtPhone}</p>
         </CardInfo>
         <CardInfo
-          icon={isAdmin || isBoth ? user : wheel}
-          alt={isAdmin || isBoth ? 'admin' : 'wheel'}
+          icon={adminEmployee ? user : wheel}
+          alt={adminEmployee ? 'admin' : 'wheel'}
         >
           <p>{roles()}</p>
         </CardInfo>
@@ -96,7 +79,7 @@ const EmployeeCard = ({
 };
 
 type EmployeeCardsProps = {
-  employees: (AdminType | DriverType)[];
+  employees: Employee[];
 };
 
 const EmployeeCards = ({ employees }: EmployeeCardsProps) => {

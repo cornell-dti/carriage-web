@@ -17,16 +17,24 @@ export enum Accessibility {
   SERVICE_ANIMALS = 'Service Animal',
 }
 
+export enum DayOfWeek {
+  MONDAY = 'MON',
+  TUESDAY = 'TUE',
+  WEDNESDAY = 'WED',
+  THURSDAY = 'THURS',
+  FRIDAY = 'FRI',
+}
+
 export type Availability = {
   startTime: string;
   endTime: string;
 };
 
+export type Driver = DriverType;
+
 export type AvailabilityType = {
   [day: string]: Availability;
 };
-
-export type Driver = DriverType;
 
 export type Admin = AdminType;
 

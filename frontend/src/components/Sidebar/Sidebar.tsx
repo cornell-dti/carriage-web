@@ -18,7 +18,7 @@ import Footer from '../Footer/Footer';
 import axios from '../../util/axios';
 
 type SidebarProps = {
-  type: 'admin' | 'rider';
+  type: 'admin' | 'rider' | 'driver';
   children: React.ReactNode;
 };
 
@@ -36,6 +36,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const authContext = useContext(AuthContext);
   const localUserType = localStorage.getItem('userType');
   const isAdmin = localUserType === 'Admin';
+  const isDriver = localUserType === 'Driver';
 
   useEffect(() => {
     const { id } = authContext;
@@ -52,7 +53,19 @@ const Sidebar = ({ type, children }: SidebarProps) => {
       return () => {
         componentMounted.current = false;
       };
+    } else if (isDriver) {
+      axios
+        .get(`/api/drivers/${id}`)
+        .then((res) => res.data)
+        .then(
+          (data) => componentMounted.current && setProfile(data.data.photoLink)
+        );
+
+      return () => {
+        componentMounted.current = false;
+      };
     } else {
+      // Rider
       axios
         //riders dont have photo upload, only admin and drivers but maybe the intention was for all three?
         .get(`/api/riders/${id}`)
@@ -67,7 +80,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         componentMounted.current = false;
       };
     }
-  }, [authContext, authContext.id]);
+  }, [authContext, authContext.id, isAdmin, isDriver]);
 
   const adminMenu: MenuItem[] = [
     { icon: home, caption: 'Home', path: 'home' },
@@ -83,7 +96,20 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     { icon: settings, caption: 'Settings', path: 'settings' },
   ];
 
-  const menuItems = type === 'admin' ? adminMenu : riderMenu;
+  const driverMenu: MenuItem[] = [
+    { icon: car, caption: 'Rides', path: 'rides' },
+    { icon: settings, caption: 'Settings', path: 'settings' },
+  ];
+
+  let menuItems;
+  if (type === 'admin') {
+    menuItems = adminMenu;
+  } else if (type === 'driver') {
+    menuItems = driverMenu;
+  } else {
+    // rider
+    menuItems = riderMenu;
+  }
 
   return (
     <div className={styles.container}>
@@ -115,14 +141,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
           ))}
         </div>
         <div className={styles.logout}>
-          {isAdmin && (
+          {(isAdmin || isDriver) && (
             <img
               alt="profile_picture"
               className={styles.profile}
               src={photoLink ? `${photoLink}?t=${new Date().getTime()}` : blank}
             />
           )}
-          {/* Remove the profile condition */}
           <button className={styles.logoutLink} onClick={authContext.logout}>
             Log out
           </button>
