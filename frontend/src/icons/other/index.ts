@@ -17,6 +17,7 @@ export { default as chevronLeft } from './chevron-left.svg';
 export { default as block } from './blocked.svg';
 export { default as red_trash } from './red-trash.svg';
 export { default as search_icon } from './search.svg';
+export { default as green_check } from './green-check.svg';
 export { default as rightArrow } from './rightArrow.svg';
 export { default as active } from './active.svg';
 export { default as inactive } from './inactive.svg';

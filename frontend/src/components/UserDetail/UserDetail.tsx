@@ -77,7 +77,7 @@ const UserDetail = ({
   const { refreshUser } = useContext(AuthContext);
   const [showingToast, setToast] = useState(false);
   const { refreshRiders } = useRiders();
-  const { toastType } = useToast();
+  const { toastType, showToast } = useToast();
   const [confirmationModalisOpen, setConfirmationModalisOpen] = useState(false);
 
   const openConfirmationModal = () => {
@@ -136,15 +136,15 @@ const UserDetail = ({
       });
     }
   };
-
+  if (isShowing && rider) {
+    showToast(
+      `Rider ${rider.active ? 'activated' : 'deactivated'}.`,
+      toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR
+    );
+  }
+        
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
-      {isShowing && rider ? (
-        <Toast
-          message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
-          toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
-        />
-      ) : null}
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== '' ? (
           <img
