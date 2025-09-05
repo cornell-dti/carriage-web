@@ -14,3 +14,8 @@
   opacity: 0.7;
   color: #000000;
 }
+
+.image {
+  width: 200px; /* adjust this as needed */
+  height: auto; /* maintains aspect ratio */
+}
