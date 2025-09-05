@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Location } from '../../types';
-import LocationsTable from '../../components/UserTables/LocationsTable';
-import styles from './page.module.css';
+import React, { useState, useEffect } from 'react';
+import { Button } from '../../components/FormElements/FormElements';
+import CopyButton from '../../components/CopyButton/CopyButton';
 import Notification from '../../components/Notification/Notification';
-import LocationModal from '../../components/LocationModal/LocationModal';
-import { useLocations } from '../../context/LocationsContext';
+import LocationsContent from 'components/Locations/LocationsContent';
+import styles from './page.module.css';
+import { LocationFormModal } from 'components/Locations/LocationFormModal';
+import { Location } from 'types';
+import { useLocations } from 'context/LocationsContext';
 
 const Locations = () => {
-  useEffect(() => {
-    document.title = 'Locations - Carriage';
-  }, []);
   const [locations, setLocations] = useState<Location[]>([]);
   const loc = useLocations().locations;
 
@@ -17,24 +16,56 @@ const Locations = () => {
     setLocations(loc);
   }, [loc]);
 
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
   const handleAddLocation = (newLocation: Location) => {
     setLocations(
       [...locations, newLocation].sort((a: Location, b: Location) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       })
     );
+    setIsAddDialogOpen(false);
+  };
+
+  useEffect(() => {
+    document.title = 'Locations';
+  }, []);
+
+  const handleUpdateLocation = (updatedLocation: Location) => {
+    setLocations((prevLocations) =>
+      prevLocations.map((location) =>
+        location.id === updatedLocation.id ? updatedLocation : location
+      )
+    );
   };
 
   return (
-    <main id="main">
+    <main id="main" className={styles.main}>
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Locations</h1>
         <div className={styles.rightSection}>
-          <LocationModal onAddLocation={handleAddLocation} />
+          <CopyButton />
+          <Button
+            onClick={() => setIsAddDialogOpen(true)}
+            className={styles.addButton}
+          >
+            + Add Location
+          </Button>
           <Notification />
         </div>
       </div>
-      <LocationsTable locations={locations} setLocations={setLocations} />
+
+      <LocationsContent
+        locations={locations}
+        onUpdateLocation={handleUpdateLocation}
+      />
+
+      <LocationFormModal
+        open={isAddDialogOpen}
+        onClose={() => setIsAddDialogOpen(false)}
+        onSubmit={handleAddLocation}
+        mode="add"
+      />
     </main>
   );
 };

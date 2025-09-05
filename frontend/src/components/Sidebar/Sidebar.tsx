@@ -9,6 +9,7 @@ import {
   analytics,
   settings,
   blank,
+  car,
 } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import useClientId from '../../hooks/useClientId';
@@ -31,7 +32,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   const componentMounted = useRef(true);
   const { pathname } = useLocation();
   const [selected, setSelected] = useState(pathname);
-  const [profile, setProfile] = useState('');
+  const [photoLink, setPhotoLink] = useState('');
   const authContext = useContext(AuthContext);
   const localUserType = localStorage.getItem('userType');
   const isAdmin = localUserType === 'Admin';
@@ -41,21 +42,26 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     if (isAdmin) {
       axios
         .get(`/api/admins/${id}`)
-        .then((res) => res.data)
-        .then(
-          (data) => componentMounted.current && setProfile(data.data.photoLink)
-        );
+        .then((res: any) => res.data)
+        .then((data: any) => {
+          if (componentMounted) {
+            setPhotoLink(data.data.photoLink);
+          }
+        });
 
       return () => {
         componentMounted.current = false;
       };
     } else {
       axios
+        //riders dont have photo upload, only admin and drivers but maybe the intention was for all three?
         .get(`/api/riders/${id}`)
         .then((res) => res.data)
-        .then(
-          (data) => componentMounted.current && setProfile(data.data.photoLink)
-        );
+        .then((data) => {
+          if (componentMounted.current) {
+            setPhotoLink(data.data.photoLink);
+          }
+        });
 
       return () => {
         componentMounted.current = false;
@@ -69,6 +75,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
     { icon: riders, caption: 'Students', path: 'riders' },
     { icon: locations, caption: 'Locations', path: 'locations' },
     { icon: analytics, caption: 'Analytics', path: 'analytics' },
+    { icon: car, caption: 'Rides', path: 'rides' },
   ];
 
   const riderMenu: MenuItem[] = [
@@ -112,7 +119,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             <img
               alt="profile_picture"
               className={styles.profile}
-              src={profile === '' || !profile ? blank : `${profile}`}
+              src={photoLink ? `${photoLink}?t=${new Date().getTime()}` : blank}
             />
           )}
           {/* Remove the profile condition */}

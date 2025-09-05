@@ -14,6 +14,7 @@ import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
+import { isHoliday } from 'util/holidays';
 
 type FormData = {
   date: string;
@@ -166,7 +167,10 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
     watch,
   } = methods;
   const watchRepeats = watch('repeats');
-
+  const repeatOptions = Object.values(RepeatValues).map((value) => ({
+    id: value,
+    name: value,
+  }));
   useEffect(() => {
     setIsRepeating(watchRepeats !== RepeatValues.DoesNotRepeat);
   }, [watchRepeats]);
@@ -187,31 +191,39 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                   const fmtCurr = format_date(curDate);
                   const notWeekend =
                     moment(date).day() !== 0 && moment(date).day() !== 6;
-                  return fmtDate >= fmtCurr && notWeekend;
+                  if (fmtDate < fmtCurr) {
+                    return 'Please choose a future date.'; // can admin add rides same day?
+                  } else if (
+                    !notWeekend ||
+                    isHoliday(new Date(`${fmtDate}T00:00:00`))
+                  ) {
+                    return 'Please enter a valid start date (No rides on weekends or university-wide breaks).';
+                  }
+                  return true;
                 },
               })}
               aria-required="true"
+              className={cn(styles.dateStyle)}
             />
             {errors.date?.type === 'required' && (
               <p className={styles.error}>Please enter a date</p>
             )}
             {errors.date?.type === 'validate' && (
-              <p className={styles.error}>
-                Please enter a valid start date (No rides on weekends)
-              </p>
+              <p className={styles.error}>{errors.date.message}</p>
             )}
           </div>
           <div className={styles.col2}>
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
-              {...register('repeats', { required: true })}
-              aria-required="true"
-              className={styles.select}
+              {...register('repeats', {
+                required: 'Please select a repeat option',
+              })}
+              className={cn(styles.selectInputContainer, styles.selectInput)}
             >
-              {Object.values(RepeatValues).map((repeatValue) => (
-                <option key={repeatValue} value={repeatValue}>
-                  {repeatValue}
+              {repeatOptions.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
                 </option>
               ))}
             </select>
@@ -225,6 +237,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="pickupTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
@@ -239,7 +252,9 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.pickupTime?.type === 'validate' && (
-              <p className={styles.error}>Invalid time</p>
+              <p className={styles.error}>
+                Please choose a time between 7:30 am and 10:00 pm
+              </p>
             )}
           </div>
           <div className={styles.col2}>
@@ -247,6 +262,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
             <Input
               id="dropoffTime"
               type="time"
+              className={cn(styles.timeStyle)}
               {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {
@@ -255,18 +271,23 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                   const pickupMoment = moment(`${date} ${pickupTime}`);
                   const dropoffMoment = moment(`${date} ${dropoffTime}`);
                   const duration = dropoffMoment.diff(pickupMoment, 'minutes');
-                  return duration >= 5 && checkBounds(date, dropoffMoment);
+                  if (!checkBounds(date, dropoffMoment)) {
+                    return 'Please choose a time between 7:30 am and 10:00 pm';
+                  } else if (duration < 5) {
+                    return 'Dropoff time must be at least 5 minutes after pickup time';
+                  }
+                  return true;
                 },
               })}
+              // min="7:30"
+              // max="22:00"
               aria-required="true"
             />
             {errors.dropoffTime?.type === 'required' && (
               <p className={styles.error}>Please choose a valid dropoff time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
-              <p className={styles.error}>
-                Dropoff time must be at least 5 minutes after pickup time
-              </p>
+              <p className={styles.error}>{errors.dropoffTime.message}</p>
             )}
           </div>
         </div>

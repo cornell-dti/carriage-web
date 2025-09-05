@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Ride } from '../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import {
@@ -29,7 +29,6 @@ type EmployeeDetailProps = {
   phoneNumber: string;
   availability?: string[][];
   photoLink?: string;
-  startDate?: string;
 };
 
 type EmployeeStatisticsProps = {
@@ -70,7 +69,7 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
 
   return (
     <div className={styles.statisticsContainer}>
-      <h3 className={styles.userDetailHeader}>Statistics</h3>
+      <h3 className={styles.userDetailHeader}>CHANGE HERE</h3>
       <div className={styles.employeeStatistics}>
         <h3 className={styles.statisticCardDesc}>Last Week</h3>
         <div className={styles.statsContainer}>
@@ -92,21 +91,17 @@ const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
   );
 };
 
-//Convert DriverType to EmployeeType
 const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
   return drivers.map((driver) => ({
     id: driver.id,
     firstName: driver.firstName,
     lastName: driver.lastName,
-    availability: formatAvailability(driver.availability)!,
     netId: driver.email.split('@')[0],
     phoneNumber: driver.phoneNumber,
     photoLink: driver.photoLink,
-    startDate: driver.startDate,
   }));
 };
 
-//Convert AdminType to EmployeeType
 const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
   return admins.map((admin) => ({
     id: admin.id,
@@ -137,13 +132,27 @@ const findEmployee = (
 };
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/admin/employees');
+  };
+
   return (
     <div className={styles.pageDivTitle}>
-      <Link
-        to={{
-          pathname: '/employees',
-        }}
+      <button
+        onClick={handleBack}
         className={styles.header}
+        style={{
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          padding: 0,
+          fontSize: 'inherit',
+          color: 'inherit',
+        }}
       >
         <img
           className={styles.chevronLeft}
@@ -151,7 +160,7 @@ const Header = () => {
           alt="Back to Employees List"
         />
         Employees
-      </Link>
+      </button>
     </div>
   );
 };
@@ -221,7 +230,6 @@ const EmployeeDetail = () => {
               ...driverData,
               ...adminData,
               ...{ netId: adminData.email.split('@')[0] },
-              availability: formatAvailability(driverData.availability),
             });
             setEmployeeRides(employeeId);
             setEmployeeStats(employeeId);
@@ -239,7 +247,6 @@ const EmployeeDetail = () => {
         setEmployee({
           ...driverData,
           ...{ netId: driverData.email.split('@')[0] },
-          availability: formatAvailability(driverData.availability),
         });
         setEmployeeRides(employeeId);
         setEmployeeStats(employeeId);
@@ -270,7 +277,7 @@ const EmployeeDetail = () => {
 
   if (employee) {
     const isAdmin = employee.isDriver !== undefined;
-    const isBoth = employee.isDriver ?? false; // isDriver is only for admins + also driver if true
+    const isBoth = employee.isDriver ?? false;
     const availToString = (acc: string, [day, timeRange]: string[]) =>
       `${acc + day}: ${timeRange} • `;
     const parsedAvail = employee.availability
@@ -316,16 +323,8 @@ const EmployeeDetail = () => {
               alt="availability"
               text={avail === '' ? 'N/A' : avail}
             />
-            {employee.startDate && (
-              <UserContactInfo
-                icon={calender_dark}
-                alt="join date"
-                text={employee.startDate}
-              />
-            )}
           </UserDetail>
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-          {/* <PastRides isStudent={false} rides={rides} /> */}
         </div>
       </main>
     );

@@ -88,6 +88,45 @@ const UserDetail = ({
     setConfirmationModalisOpen(false);
   };
 
+  function createEmployeeEntity(
+    id: string,
+    firstName: string,
+    lastName: string,
+    netId: string,
+    phoneNumber: string,
+    availability?: string[][],
+    startDate?: string,
+    isDriver?: boolean,
+    type?: string[],
+    photoLink?: string
+  ): any {
+    return {
+      id,
+      firstName,
+      lastName,
+      netId,
+      email: `${netId}@cornell.edu`,
+      phoneNumber: phoneNumber.replaceAll('-', ''),
+      ...(availability || startDate
+        ? {
+            driver: {
+              availability: availability || [[]],
+              startDate: startDate || '',
+            },
+          }
+        : {}),
+      ...(isDriver !== undefined || type
+        ? {
+            admin: {
+              isDriver: isDriver || false,
+              type: type || [],
+            },
+          }
+        : {}),
+      photoLink,
+    };
+  }
+
   const toggleActive = (): void => {
     if (rider) {
       const { id, active } = rider;
@@ -103,13 +142,14 @@ const UserDetail = ({
       toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR
     );
   }
+        
   return (
     <div className={cn(styles.userDetail, { [styles.rider]: isRider })}>
       <div className={styles.imgContainer}>
         {photoLink && photoLink !== '' ? (
           <img
             className={styles.profilePic}
-            src={`${photoLink}`}
+            src={`${photoLink ? `${photoLink}?t=${new Date().getTime()}` : ''}`}
             alt="profile"
           />
         ) : null}
@@ -128,19 +168,18 @@ const UserDetail = ({
             ) : null}
             {employee ? (
               <EmployeeModal
-                existingEmployee={{
-                  id: employee.id,
-                  firstName: employee.firstName,
-                  lastName: employee.lastName,
-                  type: employee?.type,
-                  isDriver: employee?.isDriver,
-                  netId: employee.netId,
-                  email: `${employee.netId}@cornell.edu`,
-                  phone: employee.phoneNumber.replaceAll('-', ''), // remove dashes'-'
-                  availability: employee.availability,
-                  photoLink: employee.photoLink,
-                  startDate: employee.startDate,
-                }}
+                existingEmployee={createEmployeeEntity(
+                  employee.id,
+                  employee.firstName,
+                  employee.lastName,
+                  employee.netId,
+                  employee.phoneNumber,
+                  employee.availability,
+                  employee.startDate,
+                  employee.isDriver,
+                  employee.type,
+                  employee.photoLink
+                )}
                 isOpen={isEmployeeOpen}
                 setIsOpen={setEmployeeOpen}
               />

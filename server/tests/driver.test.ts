@@ -6,7 +6,12 @@ import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
 import { AdminType } from '../src/models/admin';
-import { Organization, Rider, RiderType } from '../src/models/rider';
+import {
+  Accessibility,
+  Organization,
+  Rider,
+  RiderType,
+} from '../src/models/rider';
 import { Ride, Status, Type } from '../src/models/ride';
 import { Location, LocationType, Tag } from '../src/models/location';
 import moment from 'moment';
@@ -26,7 +31,7 @@ const testRider: Omit<RiderType, 'id'> = {
   firstName: 'TestRider',
   lastName: 'Testing',
   pronouns: 'he/him/his',
-  accessibility: 'Crutches',
+  accessibility: [Accessibility.CRUTCHES, Accessibility.ASSISTANT],
   description: '',
   joinDate: '2023-03-09',
   endDate: '2024-03-09',
@@ -44,7 +49,7 @@ const testStatRider: RiderType = {
   firstName: 'Test',
   lastName: 'Testing',
   pronouns: 'he/him/his',
-  accessibility: 'Crutches',
+  accessibility: [Accessibility.ASSISTANT],
   description: '',
   joinDate: '2023-03-09',
   endDate: '2024-03-09',
@@ -142,6 +147,9 @@ const testLocations: LocationType[] = [
     address: '123 Test Location',
     tag: Tag.WEST,
     info: 'Test Info 1',
+    shortName: 'Test-1',
+    lat: 44.123456,
+    lng: -76.123456,
   },
   {
     id: '2',
@@ -149,6 +157,9 @@ const testLocations: LocationType[] = [
     address: '321 Test Drive',
     tag: Tag.NORTH,
     info: 'Test Info 2',
+    shortName: 'Test-2',
+    lat: 45.123456,
+    lng: -77.123456,
   },
 ];
 
