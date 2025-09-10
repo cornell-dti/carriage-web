@@ -153,7 +153,6 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
           />
         </AdvancedMarker>
       )}
-
       {markerWithPopup && (
         <InfoWindow
           position={{

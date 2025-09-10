@@ -129,9 +129,10 @@ const DeleteOrEditTypeModal = ({
             </Label>
           </div>
           <div className={styles.buttonContainer}>
-            <Button outline type="button" onClick={closeModal}>
+            <Button disabled={true} outline type="button" onClick={closeModal}>
               Back
             </Button>
+
             <Button
               type="submit"
               onClick={onButtonClick}
