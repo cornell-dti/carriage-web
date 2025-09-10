@@ -177,6 +177,10 @@ router.post('/', validateUser('User'), (req, res) => {
     return;
   }
 
+  // Determine scheduling state based on driver assignment
+  const hasDriver = body.driver ? true : false;
+  const schedulingState = body.schedulingState || (hasDriver ? SchedulingState.SCHEDULED : SchedulingState.UNSCHEDULED);
+
   // Create single ride
   const ride = new Ride({
     id: uuid(),
@@ -188,7 +192,7 @@ router.post('/', validateUser('User'), (req, res) => {
     driver: body.driver || undefined,
     type: body.type || Type.UNSCHEDULED,
     status: body.status || Status.NOT_STARTED,
-    schedulingState: body.schedulingState || SchedulingState.UNSCHEDULED,
+    schedulingState: schedulingState,
     isRecurring: false,
     timezone: body.timezone || 'America/New_York',
   });
@@ -213,6 +217,18 @@ router.put('/:id', validateUser('User'), (req, res) => {
 
   if (type && type === Type.UNSCHEDULED) {
     body.$REMOVE = ['driver'];
+  }
+
+  // Auto-update schedulingState based on driver assignment
+  if (body.driver) {
+    // If driver is being assigned, mark as scheduled
+    body.schedulingState = SchedulingState.SCHEDULED;
+  } else if (body.$REMOVE && body.$REMOVE.includes('driver')) {
+    // If driver is being removed, mark as unscheduled
+    body.schedulingState = SchedulingState.UNSCHEDULED;
+  } else if (body.hasOwnProperty('driver') && !body.driver) {
+    // If driver is explicitly set to null/undefined, mark as unscheduled
+    body.schedulingState = SchedulingState.UNSCHEDULED;
   }
 
   // Locations are always objects, no processing needed

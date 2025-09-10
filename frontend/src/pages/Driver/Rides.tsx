@@ -7,8 +7,6 @@ import {
   CardContent,
   Grid,
   Chip,
-  ToggleButton,
-  ToggleButtonGroup,
   Avatar,
   Divider,
   IconButton,
@@ -26,7 +24,7 @@ import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
 import { Ride, Status } from '../../types';
 import axios from '../../util/axios';
-import EnhancedTable from '../../components/Table/EnhancedTable';
+import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import ContactInfoModal from '../../components/ContactInfoModal/ContactInfoModal';
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
@@ -287,11 +285,10 @@ const Rides = () => {
   const { scheduledRides, refreshRides } = useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
-  const [viewFilter, setViewFilter] = useState<'all' | 'my-rides'>('all');
   const [updating, setUpdating] = useState(false);
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
 
-  // Filter rides based on view selection
+  // Get today's rides for current/next ride calculations
   const todaysRides = useMemo(() => {
     const today = new Date();
     const startOfDay = new Date(today);
@@ -304,12 +301,11 @@ const Rides = () => {
     });
   }, [scheduledRides]);
 
-  const myRides = useMemo(
-    () => todaysRides.filter((ride) => ride.driver?.id === authContext.id),
-    [todaysRides, authContext.id]
-  );
 
-  const filteredRides = viewFilter === 'all' ? todaysRides : myRides;
+  const filteredRides = useMemo(() => {
+    // Always show only rides assigned to this driver
+    return scheduledRides.filter((ride) => ride.driver?.id === authContext.id);
+  }, [scheduledRides, authContext.id]);
 
   const nextDriverRide = useMemo(() => {
     return todaysRides
@@ -354,14 +350,6 @@ const Rides = () => {
     }
   };
 
-  const handleViewChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newView: 'all' | 'my-rides'
-  ) => {
-    if (newView !== null) {
-      setViewFilter(newView);
-    }
-  };
 
   useEffect(() => {
     document.title = 'Rides - Carriage';
@@ -380,7 +368,7 @@ const Rides = () => {
             }}
           >
             <Typography variant="h4" component="h1">
-              Today's Rides
+              My Rides
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button variant="outlined" startIcon={<DownloadIcon />}>Export</Button>
@@ -405,20 +393,8 @@ const Rides = () => {
             </Grid>
           </Grid>
 
-          <Box sx={{ mb: 2 }}>
-            <ToggleButtonGroup
-              value={viewFilter}
-              exclusive
-              onChange={handleViewChange}
-              aria-label="view filter"
-              size="small"
-            >
-              <ToggleButton value="all" aria-label="show all rides">All Rides</ToggleButton>
-              <ToggleButton value="my-rides" aria-label="show my rides">My Rides</ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
 
-          <EnhancedTable rides={filteredRides} />
+          <RideTable rides={filteredRides} userRole="driver" />
         </Box>
       </main>
     </APIProvider>

@@ -50,6 +50,13 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
 
   const { date, time } = formatDateTime(ride.startTime);
 
+  // Determine if this is a current ride or next ride
+  const now = new Date().getTime();
+  const startTime = new Date(ride.startTime).getTime();
+  const endTime = new Date(ride.endTime).getTime();
+  const isCurrentRide = startTime <= now && now < endTime;
+  const cardTitle = isCurrentRide ? 'Current Ride' : 'Next Ride';
+
   const handleCancel = () => {
     // If ride is scheduled (has driver), show admin contact modal
     if (ride.driver) {
@@ -99,7 +106,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   return (
     <div className={styles.card}>
       <div className={styles.header}>
-        <h2>Next Ride</h2>
+        <h2>{cardTitle}</h2>
         <div className={styles.actions}>
           <button
             onClick={handleCancel}

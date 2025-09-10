@@ -10,6 +10,7 @@ import {
   calender_dark,
 } from '../../icons/userInfo/index';
 import PastRides from './PastRides';
+import { RideTable } from '../RideDetails';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -215,8 +216,8 @@ const EmployeeDetail = () => {
     return res.data.data;
   };
 
-  const fetchPastRides = async (employeeId: any) => {
-    const res = await axios.get(`/api/rides?type=past&driver=${employeeId}`);
+  const fetchAllRides = async (employeeId: any) => {
+    const res = await axios.get(`/api/rides?driver=${employeeId}`);
     return res.data.data;
   };
 
@@ -263,7 +264,7 @@ const EmployeeDetail = () => {
   };
 
   const setEmployeeRides = (employeeId: string) => {
-    fetchPastRides(employeeId).then((data) => {
+    fetchAllRides(employeeId).then((data) => {
       setRides(data.sort(compRides));
     });
   };
@@ -321,6 +322,10 @@ const EmployeeDetail = () => {
             />
           </UserDetail>
           <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
+          {/* Rides Table */}
+          <div className={styles.ridesSection}>
+            <RideTable rides={rides} userRole="admin" />
+          </div>
         </div>
       </main>
     );

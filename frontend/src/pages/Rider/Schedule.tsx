@@ -6,7 +6,7 @@ import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
 import MainCard from '../../components/RiderComponents/MainCard';
 import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
-import RideTable from '../../components/RiderComponents/RideTable';
+import { RideTable } from '../../components/RideDetails';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
@@ -131,7 +131,6 @@ const Schedule: React.FC = () => {
   const allRides = [...unscheduledRides, ...scheduledRides].filter(ride => {
     const riderId = (ride.rider as any)?.id;
     const matches = riderId === id;
-    console.log(`Ride ${ride.id}: riderId=${riderId}, currentId=${id}, matches=${matches}`);
     return matches;
   });
   
@@ -201,7 +200,7 @@ const Schedule: React.FC = () => {
           </div>
         </div>
         <div className={styles.tableSection}>
-          <RideTable rides={allRides} />
+          <RideTable rides={allRides} userRole="rider" />
         </div>
         <RequestRideDialog
           open={isDialogOpen}

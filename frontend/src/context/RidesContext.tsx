@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, Type } from '../types';
+import { Ride, Type, SchedulingState } from '../types';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
@@ -40,8 +40,8 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       console.log('All rides from API:', ridesData);
       
       if (ridesData) {
-        const unscheduled = ridesData.filter(({ type }) => type === Type.UNSCHEDULED);
-        const scheduled = ridesData.filter(({ type }) => type !== Type.UNSCHEDULED);
+        const unscheduled = ridesData.filter(({ schedulingState }) => schedulingState === SchedulingState.UNSCHEDULED);
+        const scheduled = ridesData.filter(({ schedulingState }) => schedulingState === SchedulingState.SCHEDULED);
         
         console.log('Unscheduled rides:', unscheduled);
         console.log('Scheduled rides:', scheduled);

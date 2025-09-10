@@ -1,0 +1,86 @@
+.container {
+  max-width: 1000px;
+}
+
+.locationsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.locationBlock {
+  margin-bottom: 16px;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.locationCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+.locationCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.locationInfo {
+  flex: 1;
+}
+
+.copyButton {
+  margin-left: 8px;
+}
+
+.locationTag {
+  margin-top: 8px;
+}
+
+.mapContainer {
+  height: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tripInfo {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+}
+
+.tripInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tripInfoItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .locationsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .tripInfoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}

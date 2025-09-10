@@ -1,0 +1,140 @@
+.container {
+  max-width: 1000px;
+}
+
+.overviewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .overviewGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.scheduleSection {
+  margin-bottom: 24px;
+}
+
+.scheduleHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.dateRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.timeRow {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.timeBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusSection {
+  margin-bottom: 24px;
+}
+
+.statusHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.chipsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recurrenceSection {
+  margin-bottom: 16px;
+}
+
+.recurrenceChips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.personCard {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.personHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accessibilitySection {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 12px;
+  padding-top: 12px;
+}
+
+.accessibilityChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.notAssigned {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  background-color: #f5f5f5;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+}

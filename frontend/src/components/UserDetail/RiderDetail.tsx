@@ -9,7 +9,7 @@ import styles from './userDetail.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { chevronLeft } from '../../icons/other';
 import axios from '../../util/axios';
-import StudentRidesTable from 'components/UserTables/StudentRidesTable';
+import { RideTable } from '../RideDetails';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
@@ -132,7 +132,7 @@ const RiderDetail = () => {
           </div>
         </UserDetail>
         <br></br>
-        <StudentRidesTable rides={rides} />
+        <RideTable rides={rides} userRole="admin" />
       </div>
     </main>
   ) : null;
