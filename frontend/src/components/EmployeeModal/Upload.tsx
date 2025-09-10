@@ -2,14 +2,15 @@ import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
 import styles from './employeemodal.module.css';
 
-const IMAGE_SIZE_LIMIT = 500000000;
+const IMAGE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB limit
 
 type UploadProps = {
   imageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   existingPhoto?: string;
+  isUploading?: boolean;
 };
 
-const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
+const Upload = ({ imageChange, existingPhoto, isUploading = false }: UploadProps) => {
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}?${new Date().getTime()}` : ''
   );
@@ -17,19 +18,39 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
   const inputRef = createRef<HTMLInputElement>();
 
   const handleKeyboardPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !isUploading) {
       inputRef.current && inputRef.current.click();
     }
   };
 
   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
     const { files } = e.target;
-    if (files && files[0] && files[0].size < IMAGE_SIZE_LIMIT) {
-      setImageURL(URL.createObjectURL(files[0]));
-      imageChange(e);
-    } else {
-      setErrorMessage(`Images must be under ${IMAGE_SIZE_LIMIT / 1000} KB`);
-      console.log(errorMessage);
+    if (files && files[0]) {
+      const file = files[0];
+      
+      // Check file type
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/heic', 'image/heif'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage('Please select a valid image file (PNG, JPEG, HEIC, or HEIF)');
+        if (inputRef.current) {
+          inputRef.current.value = '';
+        }
+        return;
+      }
+      
+      // Check file size
+      if (file.size < IMAGE_SIZE_LIMIT) {
+        setImageURL(URL.createObjectURL(file));
+        setErrorMessage(null); // Clear any previous error
+        imageChange(e);
+      } else {
+        const sizeInMB = (IMAGE_SIZE_LIMIT / (1024 * 1024)).toFixed(1);
+        setErrorMessage(`Images must be under ${sizeInMB} MB`);
+        // Reset the input
+        if (inputRef.current) {
+          inputRef.current.value = '';
+        }
+      }
     }
   }
 
@@ -51,17 +72,23 @@ const Upload = ({ imageChange, existingPhoto }: UploadProps) => {
         ref={inputRef}
         style={{ display: 'none' }}
         onChange={previewImage}
+        disabled={isUploading}
       />
-      <label htmlFor="driverPhotoInput" className={styles.uploadText}>
+      <label htmlFor="driverPhotoInput" className={styles.uploadText} style={{ opacity: isUploading ? 0.6 : 1 }}>
         <span
           role="button"
           aria-controls="filename"
           tabIndex={0}
           onKeyPress={handleKeyboardPress}
         >
-          Upload a picture
+          {isUploading ? 'Uploading...' : 'Upload a picture'}
         </span>
       </label>
+      {errorMessage && (
+        <div className={styles.error} style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#eb0023' }}>
+          {errorMessage}
+        </div>
+      )}
     </div>
   );
 };

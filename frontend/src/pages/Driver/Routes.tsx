@@ -5,8 +5,10 @@ import useSkipMain from '../../hooks/useSkipMain';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import DateContext from '../../context/date';
 import { RidesProvider } from '../../context/RidesContext';
+import { LocationsProvider } from '../../context/LocationsContext';
 import Rides from './Rides';
 import Settings from './Settings'
+import Reports from 'pages/Driver/Reports'
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();
@@ -21,6 +23,7 @@ const RoutesComponent = () => {
           <Route index element={<Navigate to="rides" replace />} />
           <Route path="rides" element={<Rides />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="reports" element={<Reports />} />
           <Route path="*" element={<Navigate to="rides" replace />} />
         </Routes>
       </Sidebar>
@@ -35,7 +38,9 @@ const DriverRoutes = () => {
   return (
     <DateContext.Provider value={defaultVal}>
       <RidesProvider>
-        <RoutesComponent />
+        <LocationsProvider>
+          <RoutesComponent />
+        </LocationsProvider>
       </RidesProvider>
     </DateContext.Provider>
   );

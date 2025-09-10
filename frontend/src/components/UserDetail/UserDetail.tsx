@@ -42,7 +42,7 @@ type EmployeeDetailProps = {
   isDriver?: boolean;
   netId: string;
   phoneNumber: string;
-  availability?: string[][];
+  availability?: string[];
   photoLink?: string;
   startDate?: string;
 };
@@ -96,7 +96,7 @@ const UserDetail = ({
     lastName: string,
     netId: string,
     phoneNumber: string,
-    availability?: string[][],
+    availability?: string[],
     startDate?: string,
     isDriver?: boolean,
     type?: string[],
@@ -112,7 +112,7 @@ const UserDetail = ({
       ...(availability || startDate
         ? {
             driver: {
-              availability: availability || [[]],
+              availability: availability || [],
               startDate: startDate || '',
             },
           }

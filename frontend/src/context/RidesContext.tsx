@@ -30,23 +30,33 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const date = format_date(curDate);
 
   const refreshRides = useCallback(async () => {
-    const ridesData: Ride[] = await axios
-      .get(`/api/rides?date=${date}`)
-      .then((res) => res.data)
-      .then((data) => data.data);
-    if (ridesData) {
-      setUnscheduledRides(
-        ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
-      );
-      setScheduledRides(
-        ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
-      );
+    console.log('Refreshing rides...');
+    try {
+      // Fetch all rides (not just today's rides) so we can show upcoming rides
+      const response = await axios.get(`/api/rides`);
+      console.log('Rides API response:', response.data);
+      
+      const ridesData: Ride[] = response.data.data;
+      console.log('All rides from API:', ridesData);
+      
+      if (ridesData) {
+        const unscheduled = ridesData.filter(({ type }) => type === Type.UNSCHEDULED);
+        const scheduled = ridesData.filter(({ type }) => type !== Type.UNSCHEDULED);
+        
+        console.log('Unscheduled rides:', unscheduled);
+        console.log('Scheduled rides:', scheduled);
+        
+        setUnscheduledRides(unscheduled);
+        setScheduledRides(scheduled);
+      }
+    } catch (error) {
+      console.error('Error refreshing rides:', error);
     }
-  }, [date]);
+  }, []);
 
   useEffect(() => {
     refreshRides();
-  }, [date]);
+  }, [refreshRides]);
 
   return (
     <RidesContext.Provider

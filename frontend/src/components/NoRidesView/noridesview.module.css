@@ -7,6 +7,15 @@
   justify-content: center;
 }
 
+.containerCompact {
+  height: 220px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .text {
   margin-top: 24px;
   font-size: 18px;

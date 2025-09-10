@@ -127,7 +127,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
-    const { recurring } = ride;
+    const recurring = ride.isRecurring;
     if (recurring) {
       axios
         .put(`api/rides/${rideId}/edits`, {

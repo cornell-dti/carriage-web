@@ -4,6 +4,7 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
+import RideDetailsModal from '../RideModal/RideDetailsModal';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
@@ -22,7 +23,14 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   let buttonRef = useRef(null);
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedRide(null);
+  };
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -114,7 +122,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               outline
               small
               onClick={() => {
-                if (rides[index].recurring) {
+                if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
                 } else {
                   setOpenEditModal(index);
@@ -176,11 +184,17 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             valueEditAssign,
           ];
 
+          const handleRowClick = () => {
+            setSelectedRide(ride);
+            setDetailsModalOpen(true);
+          };
+
           const scheduledRow = () => (
             <Row
               key={ride.id}
               data={scheduledRideData}
               colSizes={scheduledColSizes}
+              onClick={handleRowClick}
             />
           );
 
@@ -190,6 +204,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               data={unscheduledRideData}
               colSizes={unscheduledColSizes}
               groupStart={2}
+              onClick={handleRowClick}
             />
           );
 
@@ -229,6 +244,15 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           );
         })}
       </Table>
+      
+      {/* Ride Details Modal */}
+      {selectedRide && (
+        <RideDetailsModal
+          open={detailsModalOpen}
+          close={handleCloseDetailsModal}
+          ride={selectedRide}
+        />
+      )}
     </>
   );
 };

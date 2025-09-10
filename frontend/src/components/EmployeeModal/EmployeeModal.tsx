@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { ObjectType, DayOfWeek } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
@@ -12,14 +12,6 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
-
-enum DayOfWeek {
-  MONDAY = 'MON',
-  TUESDAY = 'TUE',
-  WEDNESDAY = 'WED',
-  THURSDAY = 'THURS',
-  FRIDAY = 'FRI',
-}
 
 type AdminData = {
   type: string[];
@@ -84,10 +76,13 @@ const EmployeeModal = ({
   const { refreshAdmins, refreshDrivers } = useEmployees();
   const [selectedRoles, setSelectedRole] = useState<string[]>([]);
   const [imageBase64, setImageBase64] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const methods = useForm();
 
   const closeModal = () => {
     methods.clearErrors();
+    setImageBase64(''); // Reset image state
+    setIsUploadingImage(false); // Reset upload state
     setIsOpen(false);
   };
 
@@ -113,6 +108,7 @@ const EmployeeModal = ({
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
+      throw new Error('Failed to upload employee photo. Please try again.');
     }
   }
 
@@ -181,7 +177,7 @@ const EmployeeModal = ({
           data: { data: updatedAdmin },
         } = await axios.put(
           `${endpoint}/${employeeData.id}`,
-          extractDriverData(employeeData)
+          extractAdminData(employeeData)
         );
         res = updatedAdmin;
         break;
@@ -325,7 +321,15 @@ const EmployeeModal = ({
           selectedRoles.includes('redrunner-admin')
             ? 'Admins'
             : 'Drivers';
-        await uploadEmployeePhoto(id, targetTable, imageBase64);
+        try {
+          setIsUploadingImage(true);
+          await uploadEmployeePhoto(id, targetTable, imageBase64);
+        } catch (uploadError) {
+          showToast('Employee created but photo upload failed. You can try uploading the photo again later.', ToastStatus.ERROR);
+          // Don't throw here - we want the employee creation to succeed even if photo upload fails
+        } finally {
+          setIsUploadingImage(false);
+        }
       }
 
       // Refresh both admin and driver data once after processing.
@@ -375,6 +379,7 @@ const EmployeeModal = ({
               ? `${existingEmployee?.photoLink}?t=${new Date().getTime()}`
               : ''
           }
+          isUploading={isUploadingImage}
         />
 
         <FormProvider {...methods}>

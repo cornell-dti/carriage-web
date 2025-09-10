@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride, Type, Status, Tag, Accessibility } from '../../types';
+import { Ride, Type, Status, SchedulingState, Tag, Accessibility } from '../../types';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
@@ -11,32 +11,10 @@ import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { Driver } from 'types';
-
-// Dummy driver data if none is provided
-const dummyDriver: Driver = {
-  id: 'driver_1',
-  firstName: 'Matthias',
-  lastName: 'Choi',
-  phoneNumber: '5551234567',
-  email: 'mt123@cornell.edu',
-  photoLink: '/driver.jpg',
-};
-
-// Rider data type
-interface RiderData {
-  phoneNumber: string;
-  active: boolean;
-  accessibility: Accessibility[];
-  endDate: string;
-  lastName: string;
-  favoriteLocations: any[];
-  joinDate: string;
-  address: string;
-  email: string;
-  id: string;
-  firstName: string;
-}
+import { Driver, DayOfWeek } from 'types';
+import { useLocations } from '../../context/LocationsContext';
+import { useRides } from '../../context/RidesContext';
+import axios from '../../util/axios';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -53,76 +31,50 @@ interface FavoriteRide {
   preferredTime: string;
 }
 
-const riderData: RiderData = {
-  phoneNumber: '5188188059',
-  active: true,
-  accessibility: [
-    Accessibility.ASSISTANT,
-    Accessibility.CRUTCHES,
-    Accessibility.WHEELCHAIR,
-  ],
-  endDate: '2024-10-31',
-  lastName: 'Atikpui',
-  favoriteLocations: [],
-  joinDate: '2024-10-17',
-  address: '817 N Aurora St, Ithaca, NY 14850',
-  email: 'dka34@cornell.edu',
-  id: '34a57961-1af4-4fee-82b2-0d85b8485e86',
-  firstName: 'Desmond',
-};
-
-const dummyRides: Ride[] = [
-  {
-    id: 'ride_1',
-    type: Type.ACTIVE,
-    status: Status.NOT_STARTED,
-    late: false,
-    startLocation: {
-      name: 'Bailey Hall',
-      address: '123 College Ave',
-      tag: Tag.CENTRAL,
-    },
-    endLocation: {
-      name: 'Uris Library',
-      address: '456 University St',
-      tag: Tag.WEST,
-    },
-    startTime: new Date().toISOString(),
-    endTime: new Date(Date.now() + 30 * 60000).toISOString(),
-    rider: riderData,
-    recurring: false,
-    driver: dummyDriver,
-  },
-  // ... other dummy rides
-];
-
-const favoriteRides: FavoriteRide[] = [
-  {
-    id: 'fav_1',
-    name: 'Systems Lecture',
-    startLocation: { name: 'Downtown Hub', address: '789 College Ave' },
-    endLocation: { name: 'Philips Hall', address: '456 University St' },
-    preferredTime: '8:00 AM',
-  },
-  {
-    id: 'fav_2',
-    name: 'Gym Commute',
-    startLocation: { name: 'Downtown Hub', address: '789 College Ave' },
-    endLocation: { name: 'Noyes Fitness Center', address: '456 University St' },
-    preferredTime: '8:00 AM',
-  },
-  // ... other favorite rides
-];
-
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
+  const { locations } = useLocations();
+  const { unscheduledRides, scheduledRides, refreshRides } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [rides, setRides] = useState<Ride[]>(dummyRides);
-  const [filteredRides, setFilteredRides] = useState<Ride[]>(dummyRides);
+  const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
+
+  const fetchFavorites = async () => {
+    if (!id) return;
+    setLoadingFavorites(true);
+    try {
+      const response = await axios.get('/api/favorites');
+      const favorites = response.data.data || [];
+      // Convert rides to FavoriteRide format
+      const formattedFavorites: FavoriteRide[] = favorites.map((ride: Ride) => ({
+        id: ride.id,
+        name: `Ride to ${ride.endLocation}`,
+        startLocation: {
+          name: ride.startLocation,
+          address: ride.startLocation,
+        },
+        endLocation: {
+          name: ride.endLocation,
+          address: ride.endLocation,
+        },
+        preferredTime: new Date(ride.startTime).toLocaleTimeString([], { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
+      }));
+      setFavoriteRides(formattedFavorites);
+    } catch (error) {
+      console.error('Failed to fetch favorites:', error);
+      setFavoriteRides([]);
+    } finally {
+      setLoadingFavorites(false);
+    }
+  };
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
-  }, []);
+    fetchFavorites();
+  }, [id]);
 
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
@@ -132,46 +84,79 @@ const Schedule: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  const handleRideSubmit = (formData: FormData) => {
+  const handleRideSubmit = async (formData: FormData) => {
     if (!formData.pickupLocation || !formData.dropoffLocation) return;
 
-    const newRide: Ride = {
-      id: `ride_${Date.now()}`,
-      type: Type.UNSCHEDULED,
-      status: Status.NOT_STARTED,
-      late: false,
-      startLocation: {
-        name: formData.pickupLocation.address,
-        address: formData.pickupLocation.address,
-        tag: Tag.CUSTOM,
-      },
-      endLocation: {
-        name: formData.dropoffLocation.name,
-        address: formData.dropoffLocation.address,
-        tag: formData.dropoffLocation.tag as Tag,
-      },
-      startTime: formData.date?.toISOString() ?? new Date().toISOString(),
-      endTime: formData.time?.toISOString() ?? new Date().toISOString(),
-      rider: riderData,
-      recurring: formData.repeatType !== 'none',
-    };
+    // For now, block any recurring rides
+    if (formData.repeatType !== 'none') {
+      alert('Recurring rides are not yet supported. Please create a single ride.');
+      return;
+    }
 
-    setRides((prevRides) => [...prevRides, newRide]);
-    setFilteredRides((prevFiltered) => [...prevFiltered, newRide]);
+    try {
+      // Build ISO datetimes
+      if (!formData.date || !formData.time) {
+        alert('Please select both date and time.');
+        return;
+      }
+      
+      const dateStr = formData.date.toISOString().split('T')[0];
+      const timeStr = formData.time.toTimeString().split(' ')[0];
+      const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
+
+      const endISO = new Date(new Date(startISO).getTime() + 30 * 60 * 1000).toISOString();
+
+      await axios.post('/api/rides', {
+        // Send location IDs (matching Admin flow)
+        startLocation: formData.pickupLocation.id,
+        endLocation: formData.dropoffLocation.id,
+        startTime: startISO,
+        endTime: endISO,
+        rider: id,
+        type: 'unscheduled',
+        status: 'not_started',
+        schedulingState: 'unscheduled',
+      });
+
+      // Refresh rides after successful creation
+      await refreshRides();
+      console.log('Ride created successfully');
+    } catch (error) {
+      console.error('Failed to create ride:', error);
+      alert('Failed to create ride. Please try again.');
+    }
   };
+
+  
+  const allRides = [...unscheduledRides, ...scheduledRides].filter(ride => {
+    const riderId = (ride.rider as any)?.id;
+    const matches = riderId === id;
+    console.log(`Ride ${ride.id}: riderId=${riderId}, currentId=${id}, matches=${matches}`);
+    return matches;
+  });
+  
   // Using the date portion only for comparisons
   const now = new Date().toISOString().split('T')[0];
-  const currRides = rides.filter((ride) => ride.endTime >= now);
-  const pastRides = rides.filter((ride) => ride.endTime < now);
+  console.log('Current date (YYYY-MM-DD):', now);
+  
+  const currRides = allRides.filter((ride) => {
+    const rideEndDate = ride.endTime.split('T')[0];
+    const isCurrent = ride.endTime >= now;
+    console.log(`Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}`);
+    return isCurrent;
+  });
+  const pastRides = allRides.filter((ride) => ride.endTime < now);
+  
+  console.log('Current rides:', currRides);
+  console.log('Past rides:', pastRides);
 
   const sortedCurrRides = [...currRides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
 
-  const mostRecentRide = sortedCurrRides[0];
+  const nextUpcomingRide = sortedCurrRides[0];
 
-  const hasDriver =
-    mostRecentRide?.driver !== null && mostRecentRide?.driver !== undefined;
+  const hasUpcomingRide = nextUpcomingRide !== undefined;
 
   return (
     <APIProvider
@@ -186,7 +171,7 @@ const Schedule: React.FC = () => {
           <div className={styles.rightSection}>
             <Button
               variant="contained"
-              color="secondary" // Changed color from 'primary' to 'secondary'
+              color="secondary" 
               onClick={handleDialogOpen}
               sx={{
                 backgroundColor: 'black',
@@ -202,10 +187,10 @@ const Schedule: React.FC = () => {
         </div>
         <div className={styles.topRow}>
           <div className={styles.mainCardContainer}>
-            {rides.length > 0 && mostRecentRide && hasDriver && (
-              <MainCard ride={mostRecentRide} />
+            {allRides.length > 0 && nextUpcomingRide && hasUpcomingRide && (
+              <MainCard ride={nextUpcomingRide} />
             )}
-            {(rides.length === 0 || !hasDriver) && <NoRidesView />}
+            {(allRides.length === 0 || !hasUpcomingRide) && <NoRidesView />}
           </div>
           <div className={styles.favoritesCardContainer}>
             <FavoritesCard
@@ -216,42 +201,26 @@ const Schedule: React.FC = () => {
           </div>
         </div>
         <div className={styles.tableSection}>
-          <RideTable rides={filteredRides} />
+          <RideTable rides={allRides} />
         </div>
         <RequestRideDialog
           open={isDialogOpen}
           onClose={handleDialogClose}
-          onSubmit={handleRideSubmit} // Use the actual handler instead of console.log
-          supportedLocations={[
-            {
-              id: 1,
-              name: 'Campus Center',
-              address: '123 Campus Drive',
-              info: 'Main campus center',
-              tag: 'Central',
-              lat: 42.4534531,
-              lng: -76.4760776,
-            },
-            {
-              id: 2,
-              name: 'North Campus',
-              address: '456 North Drive',
-              info: 'North campus area',
-              tag: 'North',
-              lat: 42.4534531,
-              lng: -76.4760776,
-            },
-            {
-              id: 3,
-              name: 'West Campus',
-              address: '789 West Drive',
-              info: 'West campus area',
-              tag: 'West',
-              lat: 42.4534531,
-              lng: -76.4760776,
-            },
-            // Add more locations as needed
-          ]}
+          onSubmit={handleRideSubmit}
+          supportedLocations={locations
+            .map(l => ({
+              id: String(l.id),
+              name: l.name,
+              address: l.address,
+              shortName: l.shortName,
+              info: l.info ?? '',
+              tag: (l.tag as any) ?? '',
+              lat: Number(l.lat),
+              lng: Number(l.lng),
+              photoLink: l.photoLink,
+              images: l.images,
+            }))
+            .filter(l => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
         />
       </main>
     </APIProvider>

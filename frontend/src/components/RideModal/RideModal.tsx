@@ -30,31 +30,17 @@ const getRideData = (ride: Ride | undefined) => {
         ? ride.endLocation.name
         : ride.endLocation.address,
     };
-    if (ride.recurring) {
-      let repeats;
-      let days;
-      const startDay = moment(ride.startTime).weekday();
-
-      if (ride.recurringDays!.length === 5) {
-        repeats = RepeatValues.Daily;
-      } else if (
-        ride.recurringDays!.length === 1 &&
-        ride.recurringDays![0] === startDay
-      ) {
-        repeats = RepeatValues.Weekly;
-      } else {
-        repeats = RepeatValues.Custom;
-        const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-        days = ride.recurringDays!.reduce((prev, curr) => {
-          return { ...prev, [numToDay[curr]]: '1' };
-        }, {} as ObjectType);
-      }
-
+    if (ride.isRecurring) {
+      // Note: Recurring functionality is disabled for now
+      // This is legacy code that will be updated when RFC 5545 is implemented
+      let repeats = RepeatValues.DoesNotRepeat;
+      let days = {};
+      
       rideData = {
         ...rideData,
         repeats,
         days,
-        endDate: format_date(ride.endDate),
+        endDate: format_date(ride.startTime), // Use startTime as fallback
       };
     }
     return rideData;
@@ -208,7 +194,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         onClose={closeModal}
       >
         <RideTimesPage
-          defaultRepeating={ride.recurring}
+          defaultRepeating={ride.isRecurring}
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />

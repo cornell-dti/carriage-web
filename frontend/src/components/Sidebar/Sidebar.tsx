@@ -58,7 +58,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         .get(`/api/drivers/${id}`)
         .then((res) => res.data)
         .then(
-          (data) => componentMounted.current && setProfile(data.data.photoLink)
+          (data) => componentMounted.current && setPhotoLink(data.data.photoLink)
         );
 
       return () => {
@@ -98,6 +98,7 @@ const Sidebar = ({ type, children }: SidebarProps) => {
 
   const driverMenu: MenuItem[] = [
     { icon: car, caption: 'Rides', path: 'rides' },
+    { icon: analytics, caption: 'Reports', path: 'reports' },
     { icon: settings, caption: 'Settings', path: 'settings' },
   ];
 

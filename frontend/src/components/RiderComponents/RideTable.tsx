@@ -18,6 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
+import RideDetailsModal from '../RideModal/RideDetailsModal';
 
 type Order = 'asc' | 'desc';
 
@@ -223,6 +224,8 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [statusFilter, setStatusFilter] = React.useState<Status | 'All'>('All');
+  const [selectedRide, setSelectedRide] = React.useState<Ride | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = React.useState(false);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -242,6 +245,20 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleRowClick = (row: Data) => {
+    // Find the original ride object from the rides array
+    const originalRide = rides.find(ride => ride.startTime === row.startTime);
+    if (originalRide) {
+      setSelectedRide(originalRide);
+      setDetailsModalOpen(true);
+    }
+  };
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedRide(null);
   };
 
   const filteredRows = React.useMemo(() => {
@@ -291,7 +308,19 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-row-${index}`;
                 return (
-                  <TableRow hover role="row" tabIndex={-1} key={index}>
+                  <TableRow 
+                    hover 
+                    role="row" 
+                    tabIndex={-1} 
+                    key={index}
+                    onClick={() => handleRowClick(row)}
+                    sx={{ 
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: alpha('#000', 0.04),
+                      }
+                    }}
+                  >
                     <TableCell component="th" id={labelId} scope="row">
                       {row.date}
                     </TableCell>
@@ -321,6 +350,15 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      
+      {/* Ride Details Modal */}
+      {selectedRide && (
+        <RideDetailsModal
+          open={detailsModalOpen}
+          close={handleCloseDetailsModal}
+          ride={selectedRide}
+        />
+      )}
     </Box>
   );
 }

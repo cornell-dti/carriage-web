@@ -60,7 +60,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
             </h3>
             <p>Status Updates</p>
             <div className={styles.bar}>
-              <ProgressBar status={ride.status} late={ride.late} />
+              <ProgressBar status={ride.status} late={false} />
             </div>
             <div className={styles.row}>
               <div className={styles.column}>

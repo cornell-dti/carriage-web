@@ -24,17 +24,7 @@ export enum DayOfWeek {
   THURSDAY = 'THURS',
   FRIDAY = 'FRI',
 }
-
-export type Availability = {
-  startTime: string;
-  endTime: string;
-};
-
 export type Driver = DriverType;
-
-export type AvailabilityType = {
-  [day: string]: Availability;
-};
 
 export type Admin = AdminType;
 
@@ -46,7 +36,7 @@ export type Employee = {
   isDriver?: boolean;
   phoneNumber: string;
   email: string;
-  availability?: AvailabilityType;
+  availability?: DayOfWeek[];
   photoLink?: string;
   startDate?: string;
 };
@@ -92,6 +82,12 @@ export enum Status {
   COMPLETED = 'completed',
   NO_SHOW = 'no_show',
   CANCELLED = 'cancelled',
+}
+
+// Scheduling state - separate from operational status
+export enum SchedulingState {
+  SCHEDULED = 'scheduled',
+  UNSCHEDULED = 'unscheduled',
 }
 
 export type TableData = {

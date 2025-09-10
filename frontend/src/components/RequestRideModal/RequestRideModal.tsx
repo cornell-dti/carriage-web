@@ -66,7 +66,7 @@ const RequestRideModal = ({
           outline
           small
           onClick={
-            ride.recurring
+            ride.isRecurring
               ? openTypeModal
               : () => openCreateOrEditModal('EDIT_REGULAR')
           }
@@ -74,7 +74,7 @@ const RequestRideModal = ({
           Edit
         </Button>
       )}
-      {ride && ride.recurring && (
+      {ride && ride.isRecurring && (
         <DeleteOrEditTypeModal
           open={typeModalIsOpen}
           onClose={closeTypeModal}

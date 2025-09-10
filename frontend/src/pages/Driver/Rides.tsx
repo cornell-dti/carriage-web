@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import {
   Box,
-  Paper,
   Typography,
   Button,
   Card,
@@ -10,17 +9,30 @@ import {
   Chip,
   ToggleButton,
   ToggleButtonGroup,
+  Avatar,
+  Divider,
+  IconButton,
+  Stack,
 } from '@mui/material';
+import PhoneIcon from '@mui/icons-material/Phone';
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
+import PlaceIcon from '@mui/icons-material/Place';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
 import { Ride, Status } from '../../types';
+import axios from '../../util/axios';
 import EnhancedTable from '../../components/Table/EnhancedTable';
-import { todaysRides } from './todaysRides';
+import NoRidesView from '../../components/NoRidesView/NoRidesView';
+import ContactInfoModal from '../../components/ContactInfoModal/ContactInfoModal';
+import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
+import UpdateStatusModal from '../../components/UpdateStatusModal/UpdateStatusModal';
 
-const getStatusColor = (status: Status) => {
+const getStatusColor = (status: Status): "default" | "primary" | "info" | "warning" | "success" | "error" => {
   switch (status) {
     case Status.NOT_STARTED:
       return 'default';
@@ -40,111 +52,307 @@ const getStatusColor = (status: Status) => {
   }
 };
 
-const NextRideCard = ({ nextRide }: { nextRide: Ride | undefined }) => {
-  if (!nextRide) {
+const mapLink = (address: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+
+// Fallback function to calculate approximate distance using Haversine formula
+const getApproximateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c * 10) / 10; // Round to 1 decimal place
+};
+
+const RideDetailCard = ({
+  ride,
+  isCurrent,
+  updating,
+  onUpdate,
+}: {
+  ride: Ride | undefined;
+  isCurrent: boolean;
+  updating?: boolean;
+  onUpdate?: (rideId: string, status: Status) => void;
+}) => {
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const [tripInfo, setTripInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const mapsLibrary = useMapsLibrary('routes');
+
+  useEffect(() => {
+    if (!mapsLibrary || !ride) {
+      setTripInfo(null);
+      return;
+    }
+    const directionsService = new mapsLibrary.DirectionsService();
+
+    const origin = ride.startLocation.address;
+    const destination = ride.endLocation.address;
+
+    // Debug logging: input data
+    console.log('[Directions] Ride:', ride.id);
+    console.log('[Directions] Origin address:', origin);
+    console.log('[Directions] Origin coords:', ride.startLocation.lat, ride.startLocation.lng);
+    console.log('[Directions] Destination address:', destination);
+    console.log('[Directions] Destination coords:', ride.endLocation.lat, ride.endLocation.lng);
+
+    if (!origin || !destination) {
+      if (ride.startLocation.lat && ride.startLocation.lng && ride.endLocation.lat && ride.endLocation.lng) {
+        const distance = getApproximateDistance(
+          ride.startLocation.lat,
+          ride.startLocation.lng,
+          ride.endLocation.lat,
+          ride.endLocation.lng
+        );
+        console.log('[Directions][Fallback] Haversine distance (mi):', distance);
+        setTripInfo({
+          distance: `${distance} mi`,
+          duration: `${Math.round(distance * 2)} min`,
+        });
+      } else {
+        console.warn('[Directions] Missing addresses and coordinates; cannot compute');
+        setTripInfo({ distance: '', duration: '' });
+      }
+      return;
+    }
+
+    directionsService.route(
+      {
+        origin,
+        destination,
+        travelMode: mapsLibrary.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        console.log('[Directions] Status:', status);
+        const leg = result?.routes?.[0]?.legs?.[0];
+        if (status === mapsLibrary.DirectionsStatus.OK && leg) {
+          const rawDistance = leg.distance?.text || '';
+          const rawDuration = leg.duration?.text || '';
+          setTripInfo({
+            distance: rawDistance,
+            duration: rawDuration,
+          });
+        } else {
+          console.warn('[Directions] Failed to compute. Result:', result);
+          setTripInfo({ distance: '', duration: '' });
+        }
+      }
+    );
+  }, [mapsLibrary, ride]);
+
+  const allStatuses: Status[] = useMemo(() => {
+    return Object.values(Status) as Status[];
+  }, []);
+
+  if (!ride) {
     return (
-      <Card sx={{ mb: 3, width: '100%' }}>
+      <Card sx={{ width: '100%', height: '100%' }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            No upcoming rides scheduled
-          </Typography>
+          <NoRidesView compact message={isCurrent ? "No current ride in progress" : "No upcoming rides scheduled"} />
         </CardContent>
       </Card>
     );
   }
 
+  const { rider, startLocation, endLocation, startTime, status } = ride;
+
+  const handleStatusUpdate = async (newStatus: Status) => {
+    if (onUpdate) {
+      await onUpdate(ride.id, newStatus);
+    }
+  };
+
+  const canNavigateToPickup = ![Status.PICKED_UP, Status.COMPLETED, Status.CANCELLED].includes(status);
+  const navigationTarget = canNavigateToPickup ? startLocation : endLocation;
+
   return (
-    <Card sx={{ mb: 3, width: '100%' }}>
-      <CardContent>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            mb: 2,
-          }}
-        >
-          <Typography variant="h6">Your Next Ride</Typography>
-          <Chip
-            label={nextRide.status.replace('_', ' ')}
-            color={getStatusColor(nextRide.status)}
-            size="small"
-          />
-        </Box>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={3}>
-            <Typography color="textSecondary" variant="subtitle2">
-              Rider
-            </Typography>
-            <Typography variant="body1">
-              {`${nextRide.rider.firstName} ${nextRide.rider.lastName}`}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Typography color="textSecondary" variant="subtitle2">
-              Pick up
-            </Typography>
-            <Typography variant="body1">
-              {nextRide.startLocation.name}
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-              {nextRide.startLocation.address}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Typography color="textSecondary" variant="subtitle2">
-              Drop off
-            </Typography>
-            <Typography variant="body1">{nextRide.endLocation.name}</Typography>
-            <Typography variant="caption" color="textSecondary">
-              {nextRide.endLocation.address}
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Typography color="textSecondary" variant="subtitle2">
-              Time
-            </Typography>
-            <Typography variant="body1">
-              {new Date(nextRide.startTime).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </Typography>
-            {nextRide.recurring && (
-              <Typography variant="caption" color="textSecondary">
-                Recurring
-              </Typography>
+    <>
+      <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <CardContent sx={{ flexGrow: 1, p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+            <Typography variant="h6">{isCurrent ? 'Current Ride' : 'Upcoming Ride'}</Typography>
+            <Chip label={status.replace(/_/g, ' ')} color={getStatusColor(status)} size="small" />
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+            <Avatar src={rider.photoLink} sx={{ width: 48, height: 48, mr: 2 }}>
+              {rider.firstName.charAt(0)}{rider.lastName.charAt(0)}
+            </Avatar>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="body1" fontWeight="bold">{`${rider.firstName} ${rider.lastName}`}</Typography>
+              <Typography variant="body2" color="textSecondary">{rider.pronouns}</Typography>
+            </Box>
+            <IconButton onClick={() => setContactModalOpen(true)} aria-label="Show contact info">
+              <PhoneIcon />
+            </IconButton>
+          </Box>
+
+          {rider.accessibility && rider.accessibility.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="caption" color="textSecondary" gutterBottom>ACCESSIBILITY NEEDS</Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
+                {rider.accessibility.map((need) => <Chip key={need} label={need} size="small" />)}
+              </Box>
+            </Box>
+          )}
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* Locations - compact with same icon */}
+          <Stack spacing={1.5}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <PlaceIcon color="action" sx={{ mr: 1.5 }} />
+              <Typography variant="body2"><b>From:</b> {startLocation.name}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <PlaceIcon color="action" sx={{ mr: 1.5 }} />
+              <Typography variant="body2"><b>To:</b> {endLocation.name}</Typography>
+            </Box>
+          </Stack>
+          
+          {/* ETA and distance with clear icons */}
+          <Grid container spacing={2} sx={{ mt: 1, color: 'text.secondary' }}>
+            {tripInfo && (
+              <>
+                <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <TimelapseIcon sx={{ mr: 1 }} fontSize="small" />
+                  <Typography variant="body2">{tripInfo.duration}</Typography>
+                </Grid>
+                <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <DirectionsCarIcon sx={{ mr: 1 }} fontSize="small" />
+                  <Typography variant="body2">{tripInfo.distance}</Typography>
+                </Grid>
+              </>
             )}
+            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+              <ScheduleIcon sx={{ mr: 1 }} fontSize="small" />
+              <Typography variant="body2">
+                {new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {' - '}
+                {new Date(ride.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+
+        </CardContent>
+
+        <Box sx={{ p: 2, pt: 1 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              fullWidth
+              variant="contained"
+              size="small"
+              startIcon={<PlaceIcon />}
+              href={mapLink(navigationTarget.address)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Navigate to {canNavigateToPickup ? 'Pickup' : 'Dropoff'}
+            </Button>
+            {isCurrent && onUpdate && (
+              <Button
+                fullWidth
+                variant="outlined"
+                size="small"
+                onClick={() => setUpdateModalOpen(true)}
+              >
+                Update Status
+              </Button>
+            )}
+          </Stack>
+        </Box>
+      </Card>
+      <ContactInfoModal open={contactModalOpen} onClose={() => setContactModalOpen(false)} rider={rider} />
+      {isCurrent && (
+        <UpdateStatusModal 
+          open={updateModalOpen}
+          onClose={() => setUpdateModalOpen(false)}
+          currentStatus={status}
+          nextStatuses={allStatuses}
+          onUpdate={async (newStatus) => {
+            await handleStatusUpdate(newStatus);
+            setUpdateModalOpen(false);
+          }}
+          updating={!!updating}
+        />
+      )}
+    </>
   );
 };
 
 const Rides = () => {
-  const { scheduledRides } = useRides();
+  const { scheduledRides, refreshRides } = useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
   const [viewFilter, setViewFilter] = useState<'all' | 'my-rides'>('all');
+  const [updating, setUpdating] = useState(false);
+  const [currentRideId, setCurrentRideId] = useState<string | null>(null);
 
   // Filter rides based on view selection
-  const filteredRides =
-    viewFilter === 'all'
-      ? todaysRides
-      : todaysRides.filter((ride) => ride.driver?.id === authContext.id);
+  const todaysRides = useMemo(() => {
+    const today = new Date();
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+    return scheduledRides.filter((ride) => {
+      const s = new Date(ride.startTime).getTime();
+      return s >= startOfDay.getTime() && s <= endOfDay.getTime();
+    });
+  }, [scheduledRides]);
 
-  // Find the next ride for the logged-in driver
-  const nextDriverRide = todaysRides
-    .filter(
-      (ride) =>
-        ride.driver?.id === authContext.id &&
-        new Date(ride.startTime) > new Date()
-    )
-    .sort(
-      (a, b) =>
-        new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-    )[0];
+  const myRides = useMemo(
+    () => todaysRides.filter((ride) => ride.driver?.id === authContext.id),
+    [todaysRides, authContext.id]
+  );
+
+  const filteredRides = viewFilter === 'all' ? todaysRides : myRides;
+
+  const nextDriverRide = useMemo(() => {
+    return todaysRides
+      .filter(
+        (ride) =>
+          ride.driver?.id === authContext.id &&
+          new Date(ride.startTime) > new Date()
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+      )[0];
+  }, [todaysRides, authContext.id]);
+
+  const currentRide: Ride | undefined = useMemo(() => {
+    const now = Date.now();
+    const mine = todaysRides.filter((r) => r.driver?.id === authContext.id);
+    return mine.find((r) => {
+      const start = new Date(r.startTime).getTime();
+      const end = new Date(r.endTime).getTime();
+      return (
+        start <= now && now <= end && r.status !== Status.COMPLETED && r.status !== Status.CANCELLED
+      );
+    });
+  }, [todaysRides, authContext.id]);
+
+  useEffect(() => {
+    setCurrentRideId(currentRide ? currentRide.id : null);
+  }, [currentRide]);
+
+  const updateStatus = async (rideId: string, status: Status) => {
+    try {
+      setUpdating(true);
+      await axios.put(`/api/rides/${rideId}`, { status });
+      await refreshRides();
+    } catch (error: any) {
+      console.error("Failed to update ride status:", error);
+      const errorMessage = error.response?.data?.message || "Could not update ride status. Please try again.";
+      alert(`Error: ${errorMessage}`);
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   const handleViewChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -155,76 +363,65 @@ const Rides = () => {
     }
   };
 
-  const handleExport = () => {
-    console.log('Exporting rides...');
-  };
-
-  const handleSendEmail = () => {
-    console.log('Sending email...');
-  };
-
   useEffect(() => {
     document.title = 'Rides - Carriage';
   }, []);
 
   return (
-    <main id="main">
-      <Box sx={{ p: 3 }}>
-        {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 3,
-          }}
-        >
-          <Typography variant="h4" component="h1">
-            Today's Rides
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={handleExport}
-            >
-              Export
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<EmailIcon />}
-              onClick={handleSendEmail}
-            >
-              Send Email
-            </Button>
-          </Box>
-        </Box>
-
-        {/* Next Ride Card */}
-        <NextRideCard nextRide={nextDriverRide} />
-
-        {/* View Filter */}
-        <Box sx={{ mb: 2 }}>
-          <ToggleButtonGroup
-            value={viewFilter}
-            exclusive
-            onChange={handleViewChange}
-            aria-label="view filter"
-            size="small"
+    <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}>
+      <main id="main">
+        <Box sx={{ p: 3 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 3,
+            }}
           >
-            <ToggleButton value="all" aria-label="show all rides">
-              All Rides
-            </ToggleButton>
-            <ToggleButton value="my-rides" aria-label="show my rides">
-              My Rides
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Box>
+            <Typography variant="h4" component="h1">
+              Today's Rides
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button variant="outlined" startIcon={<DownloadIcon />}>Export</Button>
+              <Button variant="outlined" startIcon={<EmailIcon />}>Send Email</Button>
+            </Box>
+          </Box>
 
-        {/* Rides Table */}
-        <EnhancedTable rides={filteredRides} />
-      </Box>
-    </main>
+          <Grid container spacing={3} sx={{ mb: 3 }} alignItems="stretch">
+            <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+              <RideDetailCard 
+                ride={currentRide}
+                isCurrent={true}
+                updating={updating}
+                onUpdate={updateStatus}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+              <RideDetailCard
+                ride={nextDriverRide}
+                isCurrent={false}
+              />
+            </Grid>
+          </Grid>
+
+          <Box sx={{ mb: 2 }}>
+            <ToggleButtonGroup
+              value={viewFilter}
+              exclusive
+              onChange={handleViewChange}
+              aria-label="view filter"
+              size="small"
+            >
+              <ToggleButton value="all" aria-label="show all rides">All Rides</ToggleButton>
+              <ToggleButton value="my-rides" aria-label="show my rides">My Rides</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
+          <EnhancedTable rides={filteredRides} />
+        </Box>
+      </main>
+    </APIProvider>
   );
 };
 

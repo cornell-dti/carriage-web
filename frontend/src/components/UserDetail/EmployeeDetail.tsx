@@ -12,7 +12,6 @@ import {
 import PastRides from './PastRides';
 import styles from './userDetail.module.css';
 import { peopleStats, wheelStats } from '../../icons/stats/index';
-import formatAvailability from '../../util/employee';
 import { useEmployees } from '../../context/EmployeesContext';
 import { AdminType } from '../../../../server/src/models/admin';
 import { DriverType } from '../../../../server/src/models/driver';
@@ -27,7 +26,7 @@ type EmployeeDetailProps = {
   isDriver?: boolean;
   netId: string;
   phoneNumber: string;
-  availability?: string[][];
+  availability?: string[];
   photoLink?: string;
 };
 
@@ -238,7 +237,7 @@ const EmployeeDetail = () => {
           setEmployee({
             ...adminData,
             ...{ netId: adminData.email.split('@')[0] },
-            availability: formatAvailability(adminData.availability),
+            availability: adminData.availability,
           });
         }
       });
@@ -278,12 +277,9 @@ const EmployeeDetail = () => {
   if (employee) {
     const isAdmin = employee.isDriver !== undefined;
     const isBoth = employee.isDriver ?? false;
-    const availToString = (acc: string, [day, timeRange]: string[]) =>
-      `${acc + day}: ${timeRange} • `;
-    const parsedAvail = employee.availability
-      ? employee.availability.reduce(availToString, '')
+    const avail = employee.availability
+      ? employee.availability.join(' • ')
       : '';
-    const avail = parsedAvail.substring(0, parsedAvail.length - 2);
 
     const role = (): string => {
       if (isBoth) return 'Admin • Driver';

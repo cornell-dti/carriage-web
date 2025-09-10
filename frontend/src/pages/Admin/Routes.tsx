@@ -14,8 +14,8 @@ import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
 import { EmployeesProvider } from '../../context/EmployeesContext';
 import { RidersProvider } from '../../context/RidersContext';
-import { LocationsProvider } from '../../context/LocationsContext';
 import { RidesProvider } from '../../context/RidesContext';
+import { LocationsProvider } from '../../context/LocationsContext';
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();

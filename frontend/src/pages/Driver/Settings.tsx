@@ -9,66 +9,6 @@ import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
 import { DriverType as Driver } from 'types';
 
-const NotifPreferences = () => (
-  <div className={styles.settings}>
-    <div>
-      <h3>Notifications</h3>
-      <div>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="assign" defaultChecked /> New ride assignment
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="update" defaultChecked /> Ride information updated
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="cancel" defaultChecked /> Ride cancelled
-        </label>
-      </div>
-      <hr className={styles.divider} />
-    </div>
-    <div>
-      <h3>Email Preferences</h3>
-      <div>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="daily" /> Daily schedule summary
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="assign" defaultChecked /> New ride assignments
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="cancel" defaultChecked /> Ride cancellations
-        </label>
-      </div>
-      <hr className={styles.divider} />
-    </div>
-    <div>
-      <h3>Availability</h3>
-      <div>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="monday" defaultChecked /> Monday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="tuesday" defaultChecked /> Tuesday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="wednesday" defaultChecked /> Wednesday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="thursday" defaultChecked /> Thursday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="friday" defaultChecked /> Friday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="saturday" /> Saturday
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="sunday" /> Sunday
-        </label>
-      </div>
-    </div>
-  </div>
-);
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
@@ -92,6 +32,17 @@ const Settings = () => {
         netId={netId}
         photoLink={user?.photoLink}
         driver={user as Driver}
+        employee={{
+          id: (user as Driver)?.id || '',
+          firstName: user?.firstName || '',
+          lastName: user?.lastName || '',
+          netId,
+          phoneNumber: user?.phoneNumber || '',
+          availability: (user as Driver)?.availability as unknown as string[] | undefined,
+          photoLink: user?.photoLink,
+          startDate: (user as Driver)?.joinDate,
+          isDriver: true,
+        }}
         role="driver"
       >
         <UserContactInfo
@@ -101,7 +52,6 @@ const Settings = () => {
         />
         <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
-      <NotifPreferences />
     </main>
   );
 };

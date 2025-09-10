@@ -215,12 +215,9 @@ export const sendToUsers = (
 export const getNotificationEvent = (
   body: Partial<RideType>
 ): NotificationEvent => {
-  const { status, late, type, driver } = body;
+  const { status, type, driver } = body;
   if (status) {
     return status;
-  }
-  if (late) {
-    return Change.LATE;
   }
   if (type === Type.ACTIVE && driver) {
     return Change.SCHEDULED;

@@ -10,6 +10,7 @@ import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
 import { checkBounds, isTimeValid } from '../../util/index';
 import { useLocations } from '../../context/LocationsContext';
+import RequestRideMap from '../RiderComponents/RequestRideMap';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -49,13 +50,13 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
     setValue,
   } = useFormContext<FormData>();
   const [locations, setLocations] = useState<Location[]>([]);
-  const [custom, setCustom] = useState(ride?.recurring || false);
-  const watchRepeating = watch('recurring', ride?.recurring || false);
+  const [custom, setCustom] = useState(false);
+  const [pickupLocation, setPickupLocation] = useState<Location | null>(null);
+  const [dropoffLocation, setDropoffLocation] = useState<Location | null>(null);
+  const watchRepeating = watch('recurring', false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
-  const shouldDisableStartDate =
-    (ride?.parentRide && ride?.parentRide.type !== 'unscheduled') ||
-    (ride && ride.type !== 'unscheduled');
+  const shouldDisableStartDate = (ride && ride.type !== 'unscheduled');
   const loc = useLocations().locations;
 
   useEffect(() => {
@@ -91,6 +92,44 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       }
     }
   }, [watchPickupCustom, watchDropoffCustom, ride, setValue]);
+
+  // Handle pickup location selection from map
+  const handlePickupSelect = (location: Location | null) => {
+    setPickupLocation(location);
+    if (location) {
+      // Find the location in our locations list and set the form value
+      const foundLocation = locations.find(loc => loc.id === location.id);
+      if (foundLocation) {
+        setValue('startLocation', foundLocation.id);
+      } else {
+        // If it's a custom location, set to 'Other' and populate custom fields
+        setValue('startLocation', 'Other');
+        const parsed = addresser.parseAddress(location.address);
+        setValue('customPickup', parsed.addressLine1);
+        setValue('pickupCity', parsed.placeName);
+        setValue('pickupZip', parsed.zipCode);
+      }
+    }
+  };
+
+  // Handle dropoff location selection from map
+  const handleDropoffSelect = (location: Location | null) => {
+    setDropoffLocation(location);
+    if (location) {
+      // Find the location in our locations list and set the form value
+      const foundLocation = locations.find(loc => loc.id === location.id);
+      if (foundLocation) {
+        setValue('endLocation', foundLocation.id);
+      } else {
+        // If it's a custom location, set to 'Other' and populate custom fields
+        setValue('endLocation', 'Other');
+        const parsed = addresser.parseAddress(location.address);
+        setValue('customDropoff', parsed.addressLine1);
+        setValue('dropoffCity', parsed.placeName);
+        setValue('dropoffZip', parsed.zipCode);
+      }
+    }
+  };
 
   return (
     <div>
@@ -334,7 +373,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             pattern="[0-9]*"
             maxLength={10}
             {...register('pickupZip', {
-              required: watchDropoffCustom === 'Other',
+              required: watchPickupCustom === 'Other',
             })}
           />
         </div>
@@ -402,6 +441,21 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           )}
         </div>
       </div>
+      
+      {/* Map for location selection */}
+      <div className={styles.mapSection}>
+        <Label className={styles.largeLabel}>Select Locations on Map</Label>
+        <div className={styles.mapContainer}>
+          <RequestRideMap
+            pickupLocation={pickupLocation}
+            dropoffLocation={dropoffLocation}
+            availableLocations={locations}
+            onPickupSelect={handlePickupSelect}
+            onDropoffSelect={handleDropoffSelect}
+          />
+        </div>
+      </div>
+      
       {watchDropoffCustom === 'Other' ? (
         <div className={styles.box}>
           <Label className={styles.boldLabel} id="customDropoff">
