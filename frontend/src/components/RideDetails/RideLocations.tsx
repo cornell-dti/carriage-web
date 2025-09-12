@@ -4,6 +4,12 @@ import {
   IconButton,
   Chip,
   Box,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Autocomplete,
+  TextField,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -11,10 +17,12 @@ import TimelapseIcon from '@mui/icons-material/Timelapse';
 import PlaceIcon from '@mui/icons-material/Place';
 import { APIProvider, Map, AdvancedMarker, Pin, useMapsLibrary, useMap } from '@vis.gl/react-google-maps';
 import { RideType, Location } from '../../types';
+import { useRideEdit } from './RideEditContext';
+import { useLocations } from '../../context/LocationsContext';
 import styles from './RideLocations.module.css';
 
 interface RideLocationsProps {
-  ride: RideType;
+  // No props needed - gets ride from context
 }
 
 interface LocationBlockProps {
@@ -278,24 +286,95 @@ const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   </APIProvider>
 );
 
-const RideLocations: React.FC<RideLocationsProps> = ({ ride }) => {
+const RideLocations: React.FC<RideLocationsProps> = () => {
+  const { editedRide, isEditing, updateRideField, canEdit } = useRideEdit();
+  const { locations } = useLocations();
+  const ride = editedRide!;
+
+  const handleLocationChange = (field: 'startLocation' | 'endLocation', location: Location | null) => {
+    if (location) {
+      updateRideField(field, location);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.locationsGrid}>
         {/* Left side - Address blocks */}
         <div>
-          <LocationBlock
-            location={ride.startLocation}
-            label="Pickup Location"
-            icon={<PlaceIcon color="primary" />}
-            isPickup={true}
-          />
-          <LocationBlock
-            location={ride.endLocation}
-            label="Dropoff Location"
-            icon={<PlaceIcon color="secondary" />}
-            isPickup={false}
-          />
+          {isEditing && canEdit ? (
+            <div>
+              <FormControl fullWidth sx={{ mb: 2 }}>
+                <Autocomplete
+                  options={locations}
+                  getOptionLabel={(option) => option.name}
+                  value={ride.startLocation}
+                  onChange={(_, newValue) => handleLocationChange('startLocation', newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Pickup Location"
+                      variant="outlined"
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <Box component="li" {...props}>
+                      <Box>
+                        <Typography variant="body1">{option.name}</Typography>
+                        {option.address && (
+                          <Typography variant="body2" color="textSecondary">
+                            {option.address}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                />
+              </FormControl>
+              <FormControl fullWidth>
+                <Autocomplete
+                  options={locations}
+                  getOptionLabel={(option) => option.name}
+                  value={ride.endLocation}
+                  onChange={(_, newValue) => handleLocationChange('endLocation', newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Dropoff Location"
+                      variant="outlined"
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <Box component="li" {...props}>
+                      <Box>
+                        <Typography variant="body1">{option.name}</Typography>
+                        {option.address && (
+                          <Typography variant="body2" color="textSecondary">
+                            {option.address}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                />
+              </FormControl>
+            </div>
+          ) : (
+            <>
+              <LocationBlock
+                location={ride.startLocation}
+                label="Pickup Location"
+                icon={<PlaceIcon color="primary" />}
+                isPickup={true}
+              />
+              <LocationBlock
+                location={ride.endLocation}
+                label="Dropoff Location"
+                icon={<PlaceIcon color="secondary" />}
+                isPickup={false}
+              />
+            </>
+          )}
         </div>
 
         {/* Right side - Map */}

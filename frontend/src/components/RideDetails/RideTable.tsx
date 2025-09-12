@@ -549,6 +549,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
               setSelectedRide(null);
             }}
             ride={selectedRide}
+            onRideUpdated={(updatedRide) => {
+              // Update the selected ride to reflect changes
+              setSelectedRide(updatedRide);
+              // Note: The parent component should handle refreshing the rides list
+            }}
           />
         )}
       </Box>

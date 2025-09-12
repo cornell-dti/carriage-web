@@ -6,6 +6,12 @@ import {
   Avatar,
   IconButton,
   CardContent,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -15,11 +21,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import { RideType, Status, SchedulingState, Type, Driver, Rider } from '../../types';
+import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
 import styles from './RideOverview.module.css';
 
 interface RideOverviewProps {
-  ride: RideType;
   userRole: 'rider' | 'driver' | 'admin';
 }
 
@@ -168,7 +174,9 @@ const PersonCardOverview: React.FC<{ person: Driver | Rider; type: 'driver' | 'r
   );
 };
 
-const RideOverview: React.FC<RideOverviewProps> = ({ ride, userRole }) => {
+const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
+  const { editedRide, isEditing, updateRideField, userRole: contextUserRole } = useRideEdit();
+  const ride = editedRide!;
   const temporalType = getTemporalType(ride);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
 
@@ -191,6 +199,37 @@ const RideOverview: React.FC<RideOverviewProps> = ({ ride, userRole }) => {
 
   const startDateTime = formatDateTime(ride.startTime);
   const endDateTime = formatDateTime(ride.endTime);
+
+  // Helper functions for date/time editing
+  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newStartTime = new Date(event.target.value);
+    const currentEndTime = new Date(ride.endTime);
+    
+    // Ensure end time is after start time
+    if (newStartTime >= currentEndTime) {
+      const newEndTime = new Date(newStartTime.getTime() + 30 * 60000); // Add 30 minutes
+      updateRideField('endTime', newEndTime.toISOString());
+    }
+    
+    updateRideField('startTime', newStartTime.toISOString());
+  };
+
+  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newEndTime = new Date(event.target.value);
+    updateRideField('endTime', newEndTime.toISOString());
+  };
+
+  const handleStatusChange = (event: any) => {
+    updateRideField('status', event.target.value);
+  };
+
+  const handleSchedulingStateChange = (event: any) => {
+    updateRideField('schedulingState', event.target.value);
+  };
+
+  const handleTypeChange = (event: any) => {
+    updateRideField('type', event.target.value);
+  };
 
   const renderPersonSection = () => {
     if (userRole === 'admin') return null; // Admin has separate People tab
@@ -242,33 +281,60 @@ const RideOverview: React.FC<RideOverviewProps> = ({ ride, userRole }) => {
           
           {/* Schedule Section */}
           <div className={styles.scheduleSection}>
-            <div className={styles.dateRow}>
-              <CalendarTodayIcon fontSize="small" color="action" />
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                {startDateTime.date}
-              </Typography>
-            </div>
-            
-            <div className={styles.timeRow}>
-              <div className={styles.timeBlock}>
-                <AccessTimeIcon fontSize="small" color="action" />
-                <Box>
-                  <Typography variant="body2" color="textSecondary">Start</Typography>
+            {isEditing ? (
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    label="Start Date & Time"
+                    type="datetime-local"
+                    value={new Date(ride.startTime).toISOString().slice(0, 16)}
+                    onChange={handleStartTimeChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="End Date & Time"
+                    type="datetime-local"
+                    value={new Date(ride.endTime).toISOString().slice(0, 16)}
+                    onChange={handleEndTimeChange}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+              </Grid>
+            ) : (
+              <>
+                <div className={styles.dateRow}>
+                  <CalendarTodayIcon fontSize="small" color="action" />
                   <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {startDateTime.time}
+                    {startDateTime.date}
                   </Typography>
-                </Box>
-              </div>
-              <div className={styles.timeBlock}>
-                <AccessTimeIcon fontSize="small" color="action" />
-                <Box>
-                  <Typography variant="body2" color="textSecondary">End</Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {endDateTime.time}
-                  </Typography>
-                </Box>
-              </div>
-            </div>
+                </div>
+                
+                <div className={styles.timeRow}>
+                  <div className={styles.timeBlock}>
+                    <AccessTimeIcon fontSize="small" color="action" />
+                    <Box>
+                      <Typography variant="body2" color="textSecondary">Start</Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {startDateTime.time}
+                      </Typography>
+                    </Box>
+                  </div>
+                  <div className={styles.timeBlock}>
+                    <AccessTimeIcon fontSize="small" color="action" />
+                    <Box>
+                      <Typography variant="body2" color="textSecondary">End</Typography>
+                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                        {endDateTime.time}
+                      </Typography>
+                    </Box>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Status Section */}
@@ -278,30 +344,83 @@ const RideOverview: React.FC<RideOverviewProps> = ({ ride, userRole }) => {
               <Typography variant="h6">Status</Typography>
             </div>
             
-            <div className={styles.chipsContainer}>
-              <Chip
-                label={ride.status.replace(/_/g, ' ')}
-                color={getStatusColor(ride.status)}
-                size="medium"
-              />
-              
-              {/* Show scheduling state for rider and admin, hide for driver */}
-              {userRole !== 'driver' && (
+            {isEditing && userRole === 'admin' ? (
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Status</InputLabel>
+                    <Select
+                      value={ride.status}
+                      onChange={handleStatusChange}
+                      label="Status"
+                    >
+                      {Object.values(Status).map((status) => (
+                        <MenuItem key={status} value={status}>
+                          {status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Scheduling State</InputLabel>
+                    <Select
+                      value={ride.schedulingState}
+                      onChange={handleSchedulingStateChange}
+                      label="Scheduling State"
+                    >
+                      {Object.values(SchedulingState).map((state) => (
+                        <MenuItem key={state} value={state}>
+                          {state.charAt(0).toUpperCase() + state.slice(1)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Type</InputLabel>
+                    <Select
+                      value={ride.type}
+                      onChange={handleTypeChange}
+                      label="Type"
+                    >
+                      {Object.values(Type).map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            ) : (
+              <div className={styles.chipsContainer}>
                 <Chip
-                  label={ride.schedulingState}
-                  color={getSchedulingStateColor(ride.schedulingState)}
+                  label={ride.status.replace(/_/g, ' ')}
+                  color={getStatusColor(ride.status)}
+                  size="medium"
+                />
+                
+                {/* Show scheduling state for rider and admin, hide for driver */}
+                {userRole !== 'driver' && (
+                  <Chip
+                    label={ride.schedulingState}
+                    color={getSchedulingStateColor(ride.schedulingState)}
+                    size="medium"
+                    variant="outlined"
+                  />
+                )}
+                
+                <Chip
+                  label={temporalType}
+                  color={getTemporalTypeColor(temporalType)}
                   size="medium"
                   variant="outlined"
                 />
-              )}
-              
-              <Chip
-                label={temporalType}
-                color={getTemporalTypeColor(temporalType)}
-                size="medium"
-                variant="outlined"
-              />
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Recurrence Section - Show for Rider and Admin only */}

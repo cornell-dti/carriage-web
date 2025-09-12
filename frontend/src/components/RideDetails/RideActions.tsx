@@ -20,6 +20,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
@@ -28,9 +29,9 @@ import ReportIcon from '@mui/icons-material/Report';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
+import { useRideEdit } from './RideEditContext';
 
 interface RideActionsProps {
-  ride: RideType;
   userRole: 'rider' | 'driver' | 'admin';
   isMobile?: boolean;
   onClose?: () => void;
@@ -56,15 +57,25 @@ const formatStatusLabel = (status: Status): string => {
   return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
-const RideActions: React.FC<RideActionsProps> = ({ ride, userRole, isMobile = false, onClose }) => {
+const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, onClose }) => {
+  const { 
+    isEditing, 
+    editedRide, 
+    canEdit, 
+    hasChanges, 
+    startEditing, 
+    stopEditing, 
+    saveChanges 
+  } = useRideEdit();
+  
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   const [contactAdminOpen, setContactAdminOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const [updating, setUpdating] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Check if rider can edit/cancel based on scheduling state
-  const riderCanEdit = ride.schedulingState === SchedulingState.UNSCHEDULED;
+  const ride = editedRide!; // We know this exists from the context
   const rideCompleted = ride.status === Status.COMPLETED;
 
   const handleStatusUpdate = async () => {
@@ -96,8 +107,32 @@ const RideActions: React.FC<RideActionsProps> = ({ ride, userRole, isMobile = fa
   };
 
   const handleEdit = () => {
-    // In a real app, open edit dialog or navigate to edit page
-    console.log('Edit ride:', ride.id);
+    if (isEditing) {
+      // Save changes
+      handleSave();
+    } else {
+      // Start editing
+      startEditing();
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const success = await saveChanges();
+      if (!success) {
+        // Handle save failure
+        console.error('Failed to save ride changes');
+      }
+    } catch (error) {
+      console.error('Error saving ride:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    stopEditing();
   };
 
   const handleReport = () => {
@@ -106,39 +141,54 @@ const RideActions: React.FC<RideActionsProps> = ({ ride, userRole, isMobile = fa
   };
 
   const renderRiderActions = () => {
-    if (riderCanEdit) {
+    if (canEdit) {
       return (
         <Stack direction={isMobile ? "column" : "row"} spacing={1}>
           <Button
             variant="contained"
-            startIcon={!isMobile ? <EditIcon /> : undefined}
+            startIcon={!isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : undefined}
             onClick={handleEdit}
             fullWidth={isMobile}
-            disabled={rideCompleted}
-            aria-label="Edit ride"
+            disabled={rideCompleted || (isEditing && !hasChanges) || saving}
+            aria-label={isEditing ? "Save changes" : "Edit ride"}
           >
-            {isMobile ? <EditIcon /> : 'Edit'}
+            {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? 'Save' : 'Edit')}
           </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={!isMobile ? <CancelIcon /> : undefined}
-            onClick={() => setCancelConfirmOpen(true)}
-            fullWidth={isMobile}
-            disabled={rideCompleted}
-            aria-label="Cancel ride"
-          >
-            {isMobile ? <CancelIcon /> : 'Cancel'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={!isMobile ? <ReportIcon /> : undefined}
-            onClick={handleReport}
-            fullWidth={isMobile}
-            aria-label="Report issue"
-          >
-            {isMobile ? <ReportIcon /> : 'Report'}
-          </Button>
+          {isEditing && (
+            <Button
+              variant="outlined"
+              startIcon={!isMobile ? <CancelIcon /> : undefined}
+              onClick={handleCancelEdit}
+              fullWidth={isMobile}
+              aria-label="Cancel editing"
+            >
+              {isMobile ? <CancelIcon /> : 'Cancel'}
+            </Button>
+          )}
+          {!isEditing && (
+            <>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={!isMobile ? <CancelIcon /> : undefined}
+                onClick={() => setCancelConfirmOpen(true)}
+                fullWidth={isMobile}
+                disabled={rideCompleted}
+                aria-label="Cancel ride"
+              >
+                {isMobile ? <CancelIcon /> : 'Cancel'}
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={!isMobile ? <ReportIcon /> : undefined}
+                onClick={handleReport}
+                fullWidth={isMobile}
+                aria-label="Report issue"
+              >
+                {isMobile ? <ReportIcon /> : 'Report'}
+              </Button>
+            </>
+          )}
         </Stack>
       );
     } else {
@@ -195,33 +245,49 @@ const RideActions: React.FC<RideActionsProps> = ({ ride, userRole, isMobile = fa
     <Stack direction={isMobile ? "column" : "row"} spacing={1}>
       <Button
         variant="contained"
-        startIcon={!isMobile ? <EditIcon /> : undefined}
+        startIcon={!isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : undefined}
         onClick={handleEdit}
         fullWidth={isMobile}
-        aria-label="Edit ride"
+        disabled={(isEditing && !hasChanges) || saving}
+        aria-label={isEditing ? "Save changes" : "Edit ride"}
       >
-        {isMobile ? <EditIcon /> : 'Edit'}
+        {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? 'Save' : 'Edit')}
       </Button>
-      <Button
-        variant="outlined"
-        color="error"
-        startIcon={!isMobile ? <CancelIcon /> : undefined}
-        onClick={() => setCancelConfirmOpen(true)}
-        fullWidth={isMobile}
-        aria-label="Cancel ride"
-      >
-        {isMobile ? <CancelIcon /> : 'Cancel'}
-      </Button>
-      <Button
-        variant="outlined"
-        startIcon={!isMobile ? <AdminPanelSettingsIcon /> : undefined}
-        onClick={handleReport}
-        fullWidth={isMobile}
-        disabled
-        aria-label="Actions (placeholder)"
-      >
-        {isMobile ? <AdminPanelSettingsIcon /> : 'Actions'}
-      </Button>
+      {isEditing && (
+        <Button
+          variant="outlined"
+          startIcon={!isMobile ? <CancelIcon /> : undefined}
+          onClick={handleCancelEdit}
+          fullWidth={isMobile}
+          aria-label="Cancel editing"
+        >
+          {isMobile ? <CancelIcon /> : 'Cancel'}
+        </Button>
+      )}
+      {!isEditing && (
+        <>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={!isMobile ? <CancelIcon /> : undefined}
+            onClick={() => setCancelConfirmOpen(true)}
+            fullWidth={isMobile}
+            aria-label="Cancel ride"
+          >
+            {isMobile ? <CancelIcon /> : 'Cancel'}
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={!isMobile ? <AdminPanelSettingsIcon /> : undefined}
+            onClick={handleReport}
+            fullWidth={isMobile}
+            disabled
+            aria-label="Actions (placeholder)"
+          >
+            {isMobile ? <AdminPanelSettingsIcon /> : 'Actions'}
+          </Button>
+        </>
+      )}
     </Stack>
   );
 

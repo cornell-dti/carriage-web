@@ -16,12 +16,14 @@ import RideOverview from './RideOverview';
 import RidePeople from './RidePeople';
 import RideLocations from './RideLocations';
 import RideActions from './RideActions';
+import { RideEditProvider } from './RideEditContext';
 import styles from './RideDetails.module.css';
 
 interface RideDetailsProps {
   open: boolean;
   onClose: () => void;
   ride: RideType;
+  onRideUpdated?: (updatedRide: RideType) => void;
 }
 
 interface TabPanelProps {
@@ -47,6 +49,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   open,
   onClose,
   ride,
+  onRideUpdated,
 }) => {
   const [tabValue, setTabValue] = useState(0);
   const authContext = useContext(AuthContext);
@@ -99,87 +102,89 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   const tabs = getTabsForRole();
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullScreen={isMobile}
-      PaperProps={{
-        className: isMobile ? styles.modalMobile : styles.modal,
-      }}
-    >
-      <DialogContent sx={{ p: 0, height: '100%' }}>
-        <div className={styles.mainContainer}>
-          {/* Main content area - tabs */}
-          <div className={styles.contentContainer}>
-            {/* Tabs */}
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              className={styles.tabs}
-              variant="fullWidth"
-            >
-              {tabs.map((tab) => (
-                <Tab key={tab.value} label={tab.label} className={styles.tab} />
-              ))}
-            </Tabs>
+    <RideEditProvider ride={ride} userRole={userRole} onRideUpdated={onRideUpdated}>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="md"
+        fullScreen={isMobile}
+        PaperProps={{
+          className: isMobile ? styles.modalMobile : styles.modal,
+        }}
+      >
+        <DialogContent sx={{ p: 0, height: '100%' }}>
+          <div className={styles.mainContainer}>
+            {/* Main content area - tabs */}
+            <div className={styles.contentContainer}>
+              {/* Tabs */}
+              <Tabs
+                value={tabValue}
+                onChange={handleTabChange}
+                className={styles.tabs}
+                variant="fullWidth"
+              >
+                {tabs.map((tab) => (
+                  <Tab key={tab.value} label={tab.label} className={styles.tab} />
+                ))}
+              </Tabs>
 
-            {/* Tab Content */}
-            <div className={`${styles.tabContent} ${isMobile ? styles.tabContentMobile : styles.tabContentWithActions}`}>
-              <TabPanel value={tabValue} index={0}>
-                <div className={styles.tabPanelContainer}>
-                  <div className={styles.tabPanelContent}>
-                    <RideOverview ride={ride} userRole={userRole} />
-                  </div>
-                  {!isMobile && (
-                    <div className={styles.tabActions}>
-                      <RideActions ride={ride} userRole={userRole} onClose={onClose} />
-                    </div>
-                  )}
-                </div>
-              </TabPanel>
-              <TabPanel value={tabValue} index={1}>
-                <div className={styles.tabPanelContainer}>
-                  <div className={styles.tabPanelContent}>
-                    {userRole === 'admin' ? (
-                      <RidePeople ride={ride} userRole={userRole} />
-                    ) : (
-                      <RideLocations ride={ride} />
-                    )}
-                  </div>
-                  {!isMobile && (
-                    <div className={styles.tabActions}>
-                      <RideActions ride={ride} userRole={userRole} onClose={onClose} />
-                    </div>
-                  )}
-                </div>
-              </TabPanel>
-              {userRole === 'admin' && (
-                <TabPanel value={tabValue} index={2}>
+              {/* Tab Content */}
+              <div className={`${styles.tabContent} ${isMobile ? styles.tabContentMobile : styles.tabContentWithActions}`}>
+                <TabPanel value={tabValue} index={0}>
                   <div className={styles.tabPanelContainer}>
                     <div className={styles.tabPanelContent}>
-                      <RideLocations ride={ride} />
+                      <RideOverview userRole={userRole} />
                     </div>
                     {!isMobile && (
                       <div className={styles.tabActions}>
-                        <RideActions ride={ride} userRole={userRole} onClose={onClose} />
+                        <RideActions userRole={userRole} onClose={onClose} />
                       </div>
                     )}
                   </div>
                 </TabPanel>
-              )}
+                <TabPanel value={tabValue} index={1}>
+                  <div className={styles.tabPanelContainer}>
+                    <div className={styles.tabPanelContent}>
+                      {userRole === 'admin' ? (
+                        <RidePeople userRole={userRole} />
+                      ) : (
+                        <RideLocations />
+                      )}
+                    </div>
+                    {!isMobile && (
+                      <div className={styles.tabActions}>
+                        <RideActions userRole={userRole} onClose={onClose} />
+                      </div>
+                    )}
+                  </div>
+                </TabPanel>
+                {userRole === 'admin' && (
+                  <TabPanel value={tabValue} index={2}>
+                    <div className={styles.tabPanelContainer}>
+                      <div className={styles.tabPanelContent}>
+                        <RideLocations />
+                      </div>
+                      {!isMobile && (
+                        <div className={styles.tabActions}>
+                          <RideActions userRole={userRole} onClose={onClose} />
+                        </div>
+                      )}
+                    </div>
+                  </TabPanel>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Mobile actions - sticky bottom sheet */}
-        {isMobile && (
-          <div className={styles.mobileActions}>
-            <RideActions ride={ride} userRole={userRole} isMobile />
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
+          {/* Mobile actions - sticky bottom sheet */}
+          {isMobile && (
+            <div className={styles.mobileActions}>
+              <RideActions userRole={userRole} isMobile />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </RideEditProvider>
   );
 };
 
