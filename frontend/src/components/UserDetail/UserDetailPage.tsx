@@ -7,6 +7,7 @@ import UserInfoCard from './UserInfoCard';
 import StatisticsCard from './StatisticsCard';
 import ActionsCard from './ActionsCard';
 import useUserDetailData from './hooks/useUserDetailData';
+import styles from './UserDetailCards.module.css';
 
 interface UserDetailPageProps {
   userType: 'employee' | 'rider';
@@ -38,7 +39,7 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
   const { id: userId } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
-  const { user, rides, loading, error } = useUserDetailData(userId, userType);
+  const { user, rides, loading, error, refreshUserData } = useUserDetailData(userId, userType);
   
   const handleBack = () => {
     const backPath = userType === 'employee' ? '/admin/employees' : '/admin/riders';
@@ -82,17 +83,17 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
       <div className="space-y-6">
         {/* User Section */}
         <div>
-          <div className="p-4">
+          <div className="">
             <div className="grid grid-cols-3 gap-3">
               <UserInfoCard user={user} userType={userType} />
               <StatisticsCard user={user} userType={userType} rides={rides} />
-              <ActionsCard user={user} userType={userType} />
+              <ActionsCard user={user} userType={userType} refreshUserData={refreshUserData} />
             </div>
           </div>
         </div>
 
         {/* Rides Section */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div className={`bg-white rounded-xl border border-gray-200 ${styles.userDetailCardShadow}`}>
           <div className="p-4">
             <RideTable rides={rides} userRole="admin" />
           </div>

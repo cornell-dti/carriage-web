@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, Typography, Avatar, Box } from '@mui/material';
+import { Card, CardContent, Typography, Avatar, Box, Chip } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
@@ -8,7 +8,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { Rider, Employee } from '../../types/index';
+import { getUserNetId } from '../../util';
+import styles from './UserDetailCards.module.css';
 
 interface UserInfoCardProps {
   user: Employee | Rider;
@@ -35,13 +38,31 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
   };
 
   return (
-    <Card className="bg-white rounded-xl border border-gray-600 shadow-xl p-4 flex flex-col h-full">
+    <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
-        <h3 className="text-md font-medium text-gray-900 mb-3">User Info</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-md font-medium text-gray-900">User Info</h3>
+          {userType === 'rider' ? (
+            <Chip
+              icon={(user as Rider).active ? <CheckCircleIcon /> : <CancelIcon />}
+              label={(user as Rider).active ? 'Active' : 'Inactive'}
+              size="small"
+              color={(user as Rider).active ? 'success' : 'error'}
+              variant="outlined"
+              className="text-xs"
+            />
+          ) : (
+            <Chip
+              label={getEmployeeRole(user as Employee)}
+              size="small"
+              variant="outlined"
+              className="text-xs bg-blue-50 border-blue-300 text-blue-700"
+            />
+          )}
+        </div>
         
         {/* Basic Info */}
         <div className="mb-3">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Basic Info</h4>
           <div className="flex items-center gap-3">
             <Avatar
               src={user.photoLink ? `${user.photoLink}?t=${new Date().getTime()}` : undefined}
@@ -52,8 +73,14 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
             </Avatar>
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
-              <span className="text-gray-400">•</span>
-              <p className="text-xs text-gray-600">{(user as any).netId || 'N/A'}</p>
+              {getUserNetId(user) && (
+                <Chip
+                  label={getUserNetId(user)}
+                  size="small"
+                  variant="outlined"
+                  className="text-xs bg-gray-50 border-gray-300"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -61,50 +88,52 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
         {/* Contact Info */}
         <div className="flex-grow">
           <h4 className="text-sm font-medium text-gray-700 mb-2">Contact Info</h4>
-          <div className="space-y-1">
+          <div className="space-y-2">
             {userType === 'employee' ? (
               <>
-                <div className="flex items-center gap-2">
-                  <WorkIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900">{getEmployeeRole(user as Employee)}</p>
+                {/* First row: Phone, Email */}
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1">
+                    <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="font-medium text-gray-900">{user.phoneNumber || 'N/A'}</span>
+                  </div>
+                  <span className="text-gray-400">•</span>
+                  <div className="flex items-center gap-1">
+                    <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="font-medium text-gray-900 truncate">{(user as Employee).email || 'N/A'}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900">{user.phoneNumber || 'N/A'}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900 truncate">{(user as Employee).email || 'N/A'}</p>
-                </div>
+                {/* Second row: Working days */}
                 {(user as Employee).availability && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 text-xs">
                     <CalendarTodayIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <p className="text-xs font-medium text-gray-900">{formatAvailability((user as Employee).availability)}</p>
+                    <span className="font-medium text-gray-900">{formatAvailability((user as Employee).availability)}</span>
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div className="flex items-center gap-2">
-                  <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900">{user.phoneNumber || 'N/A'}</p>
+                {/* First row: Email, Phone */}
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1">
+                    <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="font-medium text-gray-900 truncate">{(user as Rider).email || 'N/A'}</span>
+                  </div>
+                  <span className="text-gray-400">•</span>
+                  <div className="flex items-center gap-1">
+                    <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                    <span className="font-medium text-gray-900">{user.phoneNumber || 'N/A'}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* Second row: Address */}
+                <div className="flex items-center gap-2 text-xs">
                   <HomeIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900">{(user as Rider).address || 'N/A'}</p>
+                  <span className="font-medium text-gray-900">{(user as Rider).address || 'N/A'}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* Third row: Active dates */}
+                <div className="flex items-center gap-2 text-xs">
                   <CalendarTodayIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <p className="text-xs font-medium text-gray-900">{formatDateRange((user as Rider).joinDate, (user as Rider).endDate)}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {(user as Rider).active ? 
-                    <CheckCircleIcon className="w-3 h-3 text-green-500 flex-shrink-0" /> : 
-                    <CancelIcon className="w-3 h-3 text-red-500 flex-shrink-0" />
-                  }
-                  <p className={`text-xs font-medium ${(user as Rider).active ? 'text-green-700' : 'text-red-700'}`}>
-                    {(user as Rider).active ? 'Active' : 'Inactive'}
-                  </p>
+                  <span className="font-medium text-gray-900">{formatDateRange((user as Rider).joinDate, (user as Rider).endDate)}</span>
                 </div>
               </>
             )}

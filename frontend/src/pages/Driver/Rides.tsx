@@ -282,7 +282,7 @@ const RideDetailCard = ({
 };
 
 const Rides = () => {
-  const { scheduledRides, refreshRides, refreshRidesByUser } = useRides();
+  const { scheduledRides, refreshRides, refreshRidesByUser, updateRideStatus } = useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
   const [updating, setUpdating] = useState(false);
@@ -359,8 +359,8 @@ const Rides = () => {
   const updateStatus = async (rideId: string, status: Status) => {
     try {
       setUpdating(true);
-      await axios.put(`/api/rides/${rideId}`, { status });
-      await refreshRides();
+      // Use optimistic update from context
+      await updateRideStatus(rideId, status);
     } catch (error: any) {
       console.error("Failed to update ride status:", error);
       const errorMessage = error.response?.data?.message || "Could not update ride status. Please try again.";

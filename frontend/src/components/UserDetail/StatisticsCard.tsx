@@ -11,6 +11,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import useUserStatistics, { StatisticsFilters } from './hooks/useUserStatistics';
 import StatisticsFilter from './StatisticsFilter';
 import { Rider, Employee, Ride } from '../../types/index';
+import styles from './UserDetailCards.module.css';
 
 interface StatisticsCardProps {
   user: Employee | Rider;
@@ -40,7 +41,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({ user, userType, rides }
   };
 
   return (
-    <Card className="bg-white rounded-xl border border-gray-200 shadow-xl p-4 flex flex-col h-full">
+    <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-md font-medium text-gray-900">Statistics</h3>

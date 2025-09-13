@@ -491,7 +491,7 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
         </Collapse>
 
         {/* Table Container with Pagination */}
-        <Paper>
+        <Paper elevation={0}>
           <TableContainer>
             <Table stickyHeader>
               <TableHead>

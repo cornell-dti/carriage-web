@@ -47,14 +47,27 @@ const Employees = () => {
   }, [displayEmployees]);
 
   function convertToEmployeeEntity(employee: AdminType | DriverType): any {
+    // Check if it's an admin
+    const isAdmin = 'type' in employee && 'isDriver' in employee;
+    // Check if it's a driver
+    const isDriver = 'availability' in employee;
+
     const data = {
       id: employee.id,
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,
-      admin: {},
-      driver: {},
+      netId: employee.email.split('@')[0], // Extract netId from email
+      phoneNumber: employee.phoneNumber,
       photoLink: employee.photoLink,
+      admin: isAdmin ? {
+        type: (employee as AdminType).type,
+        isDriver: (employee as AdminType).isDriver,
+      } : undefined,
+      driver: isDriver ? {
+        availability: (employee as DriverType).availability,
+        startDate: (employee as DriverType).joinDate, // Map joinDate to startDate for the modal
+      } : undefined,
     };
     return data;
   }

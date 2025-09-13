@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
@@ -11,24 +11,38 @@ import ConfirmationModal from '../Modal/ConfirmationModal';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
-import axios from '../../util/axios';
+import styles from './UserDetailCards.module.css';
 
 interface ActionsCardProps {
   user: Employee | Rider;
   userType: 'employee' | 'rider';
+  refreshUserData?: () => void;
 }
 
 const ActionsCard: React.FC<ActionsCardProps> = ({ 
   user, 
-  userType
+  userType,
+  refreshUserData
 }) => {
   const [isEmployeeOpen, setEmployeeOpen] = useState(false);
   const [isRiderOpen, setRiderOpen] = useState(false);
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   
-  const { refreshRiders } = useRiders();
+  const { updateRiderActive } = useRiders();
   const { toastType } = useToast();
+
+  // Auto-dismiss toast after 3 seconds
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 1000); // 1.5 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   const createEmployeeEntity = (employee: Employee) => {
     return {
@@ -58,14 +72,27 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
     };
   };
 
-  const handleToggleActive = () => {
+  const handleToggleActive = async () => {
     if (userType === 'rider') {
       const rider = user as Rider;
       const { id, active } = rider;
-      axios.put(`/api/riders/${id}`, { active: !active }).then(() => {
+      const newActiveStatus = !active;
+
+      try {
+        // Use optimistic update from context
+        await updateRiderActive(id, newActiveStatus);
+
+        // Show success message
+        setToastMessage(`Rider ${newActiveStatus ? 'activated' : 'deactivated'}.`);
         setShowToast(true);
-        refreshRiders();
-      });
+
+        // Note: No need to call refreshUserData() as the context update automatically
+        // triggers the useUserDetailData hook to update the local user state
+      } catch (error) {
+        console.error('Error updating rider status:', error);
+        setToastMessage(`Failed to ${newActiveStatus ? 'activate' : 'deactivate'} rider.`);
+        setShowToast(true);
+      }
     }
   };
 
@@ -99,14 +126,14 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
   const employee = userType === 'employee' ? (user as Employee) : undefined;
 
   return (
-    <Card className="bg-white rounded-xl border border-gray-200 shadow-md p-4 flex flex-col h-full">
+    <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
         <h3 className="text-md font-medium text-gray-900 mb-3">Actions</h3>
         
         <div className="flex flex-col gap-2 flex-grow justify-start">
           {showToast && rider && (
             <Toast
-              message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
+              message={toastMessage}
               toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
             />
           )}
@@ -115,8 +142,8 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
             <button
               onClick={handleToggleActive}
               className={`flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors w-full ${
-                rider.active 
-                  ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                rider.active
+                  ? 'bg-red-100 text-red-700 hover:bg-red-200'
                   : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
             >
