@@ -10,6 +10,18 @@ import {
   MenuItem,
   Autocomplete,
   TextField,
+  Card,
+  CardContent,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -286,15 +298,146 @@ const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   </APIProvider>
 );
 
+interface LocationSelectorProps {
+  value: Location;
+  onSelect: (location: Location) => void;
+  label: string;
+  isPickup?: boolean;
+}
+
+const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onSelect, label, isPickup = false }) => {
+  const { locations } = useLocations();
+  const [selectorOpen, setSelectorOpen] = useState(false);
+
+  const handleLocationSelect = (location: Location) => {
+    onSelect(location);
+    setSelectorOpen(false);
+  };
+
+  return (
+    <>
+      <Card variant="outlined" sx={{ mb: 2 }}>
+        <CardContent sx={{ p: 2 }}>
+          <div className={styles.editLocationHeader}>
+            <PlaceIcon color={isPickup ? "primary" : "secondary"} />
+            <Typography variant="subtitle2" color="textSecondary">
+              {label}
+            </Typography>
+          </div>
+          
+          <div className={styles.editLocationCard}>
+            <div className={styles.locationInfo}>
+              <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                {value.name}
+              </Typography>
+              {value.address && (
+                <Typography variant="body2" color="textSecondary">
+                  {value.address}
+                </Typography>
+              )}
+              {value.tag && (
+                <Chip 
+                  label={value.tag} 
+                  size="small" 
+                  variant="outlined"
+                  color={isPickup ? "primary" : "secondary"}
+                  sx={{ mt: 0.5 }}
+                />
+              )}
+            </div>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setSelectorOpen(true)}
+              sx={{ ml: 1 }}
+            >
+              Change
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Location Selection Dialog */}
+      <Dialog 
+        open={selectorOpen} 
+        onClose={() => setSelectorOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Select {label}</DialogTitle>
+        <DialogContent>
+          <List>
+            {locations.map((location) => (
+              <ListItem
+                key={location.id}
+                component="div"
+                onClick={() => handleLocationSelect(location)}
+                sx={{ 
+                  cursor: 'pointer', 
+                  '&:hover': { backgroundColor: 'action.hover' },
+                  borderRadius: 1,
+                  mb: 1,
+                  border: location.id === value.id ? '2px solid' : '1px solid',
+                  borderColor: location.id === value.id ? 
+                    (isPickup ? 'primary.main' : 'secondary.main') : 
+                    'divider'
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar sx={{ 
+                    bgcolor: isPickup ? 'primary.main' : 'secondary.main',
+                    width: 32,
+                    height: 32
+                  }}>
+                    <PlaceIcon fontSize="small" />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={location.name}
+                  secondary={
+                    <Box>
+                      {location.address && (
+                        <Typography variant="body2" color="textSecondary">
+                          {location.address}
+                        </Typography>
+                      )}
+                      {location.info && (
+                        <Typography variant="caption" color="textSecondary">
+                          {location.info}
+                        </Typography>
+                      )}
+                    </Box>
+                  }
+                />
+                {location.tag && (
+                  <Chip 
+                    label={location.tag} 
+                    size="small" 
+                    variant="outlined"
+                    color={isPickup ? "primary" : "secondary"}
+                  />
+                )}
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectorOpen(false)}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
 const RideLocations: React.FC<RideLocationsProps> = () => {
   const { editedRide, isEditing, updateRideField, canEdit } = useRideEdit();
   const { locations } = useLocations();
   const ride = editedRide!;
 
-  const handleLocationChange = (field: 'startLocation' | 'endLocation', location: Location | null) => {
-    if (location) {
-      updateRideField(field, location);
-    }
+  const handleLocationChange = (field: 'startLocation' | 'endLocation', location: Location) => {
+    updateRideField(field, location);
   };
 
   return (
@@ -303,61 +446,19 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
         {/* Left side - Address blocks */}
         <div>
           {isEditing && canEdit ? (
-            <div>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <Autocomplete
-                  options={locations}
-                  getOptionLabel={(option) => option.name}
-                  value={ride.startLocation}
-                  onChange={(_, newValue) => handleLocationChange('startLocation', newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Pickup Location"
-                      variant="outlined"
-                    />
-                  )}
-                  renderOption={(props, option) => (
-                    <Box component="li" {...props}>
-                      <Box>
-                        <Typography variant="body1">{option.name}</Typography>
-                        {option.address && (
-                          <Typography variant="body2" color="textSecondary">
-                            {option.address}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  )}
-                />
-              </FormControl>
-              <FormControl fullWidth>
-                <Autocomplete
-                  options={locations}
-                  getOptionLabel={(option) => option.name}
-                  value={ride.endLocation}
-                  onChange={(_, newValue) => handleLocationChange('endLocation', newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Dropoff Location"
-                      variant="outlined"
-                    />
-                  )}
-                  renderOption={(props, option) => (
-                    <Box component="li" {...props}>
-                      <Box>
-                        <Typography variant="body1">{option.name}</Typography>
-                        {option.address && (
-                          <Typography variant="body2" color="textSecondary">
-                            {option.address}
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                  )}
-                />
-              </FormControl>
+            <div className={styles.editLocationsContainer}>
+              <LocationSelector
+                value={ride.startLocation}
+                onSelect={(location) => handleLocationChange('startLocation', location)}
+                label="Pickup Location"
+                isPickup={true}
+              />
+              <LocationSelector
+                value={ride.endLocation}
+                onSelect={(location) => handleLocationChange('endLocation', location)}
+                label="Dropoff Location"
+                isPickup={false}
+              />
             </div>
           ) : (
             <>

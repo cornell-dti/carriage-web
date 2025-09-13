@@ -34,10 +34,12 @@ interface FavoriteRide {
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
   const { locations } = useLocations();
-  const { unscheduledRides, scheduledRides, refreshRides } = useRides();
+  const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
+  const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
+  const [loadingRides, setLoadingRides] = useState(false);
 
   const fetchFavorites = async () => {
     if (!id) return;
@@ -70,6 +72,25 @@ const Schedule: React.FC = () => {
       setLoadingFavorites(false);
     }
   };
+
+  // Fetch all rider rides on component mount
+  useEffect(() => {
+    const fetchRiderRides = async () => {
+      if (id) {
+        setLoadingRides(true);
+        try {
+          const rides = await refreshRidesByUser(id, 'rider');
+          setAllRiderRides(rides);
+        } catch (error) {
+          console.error('Failed to fetch rider rides:', error);
+        } finally {
+          setLoadingRides(false);
+        }
+      }
+    };
+
+    fetchRiderRides();
+  }, [id, refreshRidesByUser]);
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
@@ -128,11 +149,8 @@ const Schedule: React.FC = () => {
   };
 
   
-  const allRides = [...unscheduledRides, ...scheduledRides].filter(ride => {
-    const riderId = (ride.rider as any)?.id;
-    const matches = riderId === id;
-    return matches;
-  });
+  // Use the fetched rider rides instead of filtering from context
+  const allRides = allRiderRides;
   
   // Using the date portion only for comparisons
   const now = new Date().toISOString().split('T')[0];

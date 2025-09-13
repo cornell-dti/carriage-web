@@ -80,12 +80,22 @@ function getComparator<Key extends keyof Data>(
   orderBy: Key
 ): (a: Data, b: Data) => number {
   return (a, b) => {
-    // If sorting by 'date' or 'time', we actually sort by 'startTime'
-    let sortField = orderBy;
+    // If sorting by 'date' or 'time', we actually sort by 'startTime' chronologically
     if (orderBy === 'date' || orderBy === 'time') {
-      sortField = 'startTime' as Key;
+      const aDate = new Date(a.startTime);
+      const bDate = new Date(b.startTime);
+      
+      // Handle invalid dates
+      if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+        return 0;
+      }
+      
+      const diff = bDate.getTime() - aDate.getTime();
+      return order === 'desc' ? diff : -diff;
     }
 
+    // For other fields, use the original logic
+    const sortField = orderBy;
     const cmp = descendingComparator(a, b, sortField);
     return order === 'desc' ? cmp : -cmp;
   };
@@ -236,7 +246,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 

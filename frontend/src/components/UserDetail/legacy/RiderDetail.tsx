@@ -1,35 +1,38 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Button } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
 import UserDetail, { UserContactInfo } from './UserDetail';
-import { phone, home, calendar } from '../../icons/userInfo/index';
-import PastRides from './PastRides';
-import { Ride } from '../../types';
+import UserActions from './UserActions';
+import { phone, home, calendar } from '../../../icons/userInfo/index';
+import { Ride } from '../../../types';
 import styles from './userDetail.module.css';
-import { useRiders } from '../../context/RidersContext';
-import { chevronLeft } from '../../icons/other';
-import axios from '../../util/axios';
-import { RideTable } from '../RideDetails';
+import { useRiders } from '../../../context/RidersContext';
+import axios from '../../../util/axios';
+import { RideTable } from '../../RideDetails';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
-    <div className={styles.pageDivTitle}>
-      <button
+    <Box className={styles.pageDivTitle}>
+      <Button
+        startIcon={<ArrowBack />}
         onClick={onBack}
-        className={styles.header}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
+        sx={{
+          fontSize: '1.75rem',
+          fontWeight: 'bold',
+          color: 'inherit',
+          textTransform: 'none',
           padding: 0,
+          minWidth: 'auto',
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
         }}
       >
-        <img className={styles.chevronLeft} src={chevronLeft} alt="Back" />
         Students
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 };
 
@@ -107,33 +110,47 @@ const RiderDetail = () => {
   return rider ? (
     <main id="main">
       <Header onBack={handleBack} />
-      <div className={styles.detailContainer}>
-        <UserDetail
-          firstName={rider.firstName}
-          lastName={rider.lastName}
-          netId={netid!}
-          photoLink={rider.photoLink}
-          rider={rider}
-        >
-          <div className={styles.riderContactInfo}>
-            <UserContactInfo
-              icon={phone}
-              alt="phone number"
-              text={rider.phoneNumber ?? ''}
+      <Box className={styles.pageContainer}>
+        {/* User Information Section */}
+        <Box className={styles.userInformationSection}>
+          <Box className={styles.userInfoContainer}>
+            <UserDetail
+              firstName={rider.firstName}
+              lastName={rider.lastName}
+              netId={netid!}
+              photoLink={rider.photoLink}
+              rider={rider}
+              isRider
+            >
+              <UserContactInfo
+                icon={phone}
+                alt="phone number"
+                text={rider.phoneNumber ?? ''}
+              />
+              <UserContactInfo icon={home} alt="address" text={rider.address} />
+              <UserContactInfo
+                icon={calendar}
+                alt="active dates"
+                text={`${formatDate(rider.joinDate)} - ${formatDate(
+                  rider.endDate
+                )}`}
+              />
+            </UserDetail>
+          </Box>
+          
+          <Box className={styles.actionsContainer}>
+            <UserActions
+              role="rider"
+              rider={rider}
             />
-            <UserContactInfo icon={home} alt="address" text={rider.address} />
-            <UserContactInfo
-              icon={calendar}
-              alt="active dates"
-              text={`${formatDate(rider.joinDate)} - ${formatDate(
-                rider.endDate
-              )}`}
-            />
-          </div>
-        </UserDetail>
-        <br></br>
-        <RideTable rides={rides} userRole="admin" />
-      </div>
+          </Box>
+        </Box>
+        
+        {/* Rides Table Section */}
+        <Box className={styles.ridesTableSection}>
+          <RideTable rides={rides} userRole="admin" />
+        </Box>
+      </Box>
     </main>
   ) : null;
 };

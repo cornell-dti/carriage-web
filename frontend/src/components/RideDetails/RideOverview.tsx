@@ -13,6 +13,10 @@ import {
   MenuItem,
   Grid,
 } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoIcon from '@mui/icons-material/Info';
@@ -20,6 +24,7 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
+import RepeatIcon from '@mui/icons-material/Repeat';
 import { RideType, Status, SchedulingState, Type, Driver, Rider } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
@@ -201,22 +206,72 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   const endDateTime = formatDateTime(ride.endTime);
 
   // Helper functions for date/time editing
-  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newStartTime = new Date(event.target.value);
-    const currentEndTime = new Date(ride.endTime);
+  const handleStartDateChange = (newDate: Dayjs | null) => {
+    if (!newDate) return;
+    
+    const currentStartTime = dayjs(ride.startTime);
+    const updatedStartTime = newDate
+      .hour(currentStartTime.hour())
+      .minute(currentStartTime.minute())
+      .second(0)
+      .millisecond(0);
+    
+    const currentEndTime = dayjs(ride.endTime);
     
     // Ensure end time is after start time
-    if (newStartTime >= currentEndTime) {
-      const newEndTime = new Date(newStartTime.getTime() + 30 * 60000); // Add 30 minutes
+    if (updatedStartTime.isAfter(currentEndTime) || updatedStartTime.isSame(currentEndTime)) {
+      const newEndTime = updatedStartTime.add(30, 'minute');
       updateRideField('endTime', newEndTime.toISOString());
     }
     
-    updateRideField('startTime', newStartTime.toISOString());
+    updateRideField('startTime', updatedStartTime.toISOString());
   };
 
-  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newEndTime = new Date(event.target.value);
-    updateRideField('endTime', newEndTime.toISOString());
+  const handleStartTimeChange = (newTime: Dayjs | null) => {
+    if (!newTime) return;
+    
+    const currentStartDate = dayjs(ride.startTime);
+    const updatedStartTime = currentStartDate
+      .hour(newTime.hour())
+      .minute(newTime.minute())
+      .second(0)
+      .millisecond(0);
+    
+    const currentEndTime = dayjs(ride.endTime);
+    
+    // Ensure end time is after start time
+    if (updatedStartTime.isAfter(currentEndTime) || updatedStartTime.isSame(currentEndTime)) {
+      const newEndTime = updatedStartTime.add(30, 'minute');
+      updateRideField('endTime', newEndTime.toISOString());
+    }
+    
+    updateRideField('startTime', updatedStartTime.toISOString());
+  };
+
+  const handleEndDateChange = (newDate: Dayjs | null) => {
+    if (!newDate) return;
+    
+    const currentEndTime = dayjs(ride.endTime);
+    const updatedEndTime = newDate
+      .hour(currentEndTime.hour())
+      .minute(currentEndTime.minute())
+      .second(0)
+      .millisecond(0);
+    
+    updateRideField('endTime', updatedEndTime.toISOString());
+  };
+
+  const handleEndTimeChange = (newTime: Dayjs | null) => {
+    if (!newTime) return;
+    
+    const currentEndDate = dayjs(ride.endTime);
+    const updatedEndTime = currentEndDate
+      .hour(newTime.hour())
+      .minute(newTime.minute())
+      .second(0)
+      .millisecond(0);
+    
+    updateRideField('endTime', updatedEndTime.toISOString());
   };
 
   const handleStatusChange = (event: any) => {
@@ -282,28 +337,46 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
           {/* Schedule Section */}
           <div className={styles.scheduleSection}>
             {isEditing ? (
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <TextField
-                    label="Start Date & Time"
-                    type="datetime-local"
-                    value={new Date(ride.startTime).toISOString().slice(0, 16)}
-                    onChange={handleStartTimeChange}
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    label="End Date & Time"
-                    type="datetime-local"
-                    value={new Date(ride.endTime).toISOString().slice(0, 16)}
-                    onChange={handleEndTimeChange}
-                    fullWidth
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-              </Grid>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <div className={styles.editFormFields}>
+                  <div className={styles.dateTimeRow}>
+                    <DatePicker
+                      label="Start Date"
+                      value={dayjs(ride.startTime)}
+                      onChange={handleStartDateChange}
+                      slotProps={{
+                        textField: { size: 'small', sx: { flex: 1 } }
+                      }}
+                    />
+                    <TimePicker
+                      label="Start Time"
+                      value={dayjs(ride.startTime)}
+                      onChange={handleStartTimeChange}
+                      slotProps={{
+                        textField: { size: 'small', sx: { flex: 1 } }
+                      }}
+                    />
+                  </div>
+                  <div className={styles.dateTimeRow}>
+                    <DatePicker
+                      label="End Date"
+                      value={dayjs(ride.endTime)}
+                      onChange={handleEndDateChange}
+                      slotProps={{
+                        textField: { size: 'small', sx: { flex: 1 } }
+                      }}
+                    />
+                    <TimePicker
+                      label="End Time"
+                      value={dayjs(ride.endTime)}
+                      onChange={handleEndTimeChange}
+                      slotProps={{
+                        textField: { size: 'small', sx: { flex: 1 } }
+                      }}
+                    />
+                  </div>
+                </div>
+              </LocalizationProvider>
             ) : (
               <>
                 <div className={styles.dateRow}>
@@ -345,56 +418,50 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
             </div>
             
             {isEditing && userRole === 'admin' ? (
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>Status</InputLabel>
-                    <Select
-                      value={ride.status}
-                      onChange={handleStatusChange}
-                      label="Status"
-                    >
-                      {Object.values(Status).map((status) => (
-                        <MenuItem key={status} value={status}>
-                          {status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>Scheduling State</InputLabel>
-                    <Select
-                      value={ride.schedulingState}
-                      onChange={handleSchedulingStateChange}
-                      label="Scheduling State"
-                    >
-                      {Object.values(SchedulingState).map((state) => (
-                        <MenuItem key={state} value={state}>
-                          {state.charAt(0).toUpperCase() + state.slice(1)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>Type</InputLabel>
-                    <Select
-                      value={ride.type}
-                      onChange={handleTypeChange}
-                      label="Type"
-                    >
-                      {Object.values(Type).map((type) => (
-                        <MenuItem key={type} value={type}>
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
+              <div className={styles.editStatusFields}>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    value={ride.status}
+                    onChange={handleStatusChange}
+                    label="Status"
+                  >
+                    {Object.values(Status).map((status) => (
+                      <MenuItem key={status} value={status}>
+                        {status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Scheduling State</InputLabel>
+                  <Select
+                    value={ride.schedulingState}
+                    onChange={handleSchedulingStateChange}
+                    label="Scheduling State"
+                  >
+                    {Object.values(SchedulingState).map((state) => (
+                      <MenuItem key={state} value={state}>
+                        {state.charAt(0).toUpperCase() + state.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Type</InputLabel>
+                  <Select
+                    value={ride.type}
+                    onChange={handleTypeChange}
+                    label="Type"
+                  >
+                    {Object.values(Type).map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
             ) : (
               <div className={styles.chipsContainer}>
                 <Chip
@@ -424,7 +491,69 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
           </div>
 
           {/* Recurrence Section - Show for Rider and Admin only */}
-          <RecurrenceDisplay ride={ride} showForRole={showRecurrence} />
+          {showRecurrence && (
+            <div className={styles.recurrenceSection}>
+              <div className={styles.sectionTitle}>
+                <RepeatIcon color="primary" />
+                <Typography variant="h6">Recurrence</Typography>
+              </div>
+              
+              {isEditing ? (
+                <div className={styles.editRecurrenceFields}>
+                  <FormControl size="small" sx={{ minWidth: 120 }}>
+                    <InputLabel>Repeat</InputLabel>
+                    <Select
+                      value={ride.isRecurring ? 'weekly' : 'none'}
+                      onChange={(e) => updateRideField('isRecurring', e.target.value !== 'none')}
+                      label="Repeat"
+                    >
+                      <MenuItem value="none">Does not repeat</MenuItem>
+                      <MenuItem value="daily">Daily</MenuItem>
+                      <MenuItem value="weekly">Weekly</MenuItem>
+                      <MenuItem value="monthly">Monthly</MenuItem>
+                      <MenuItem value="custom">Custom</MenuItem>
+                    </Select>
+                  </FormControl>
+                  
+                  {ride.isRecurring && (
+                    <>
+                      <TextField
+                        label="End date (optional)"
+                        type="date"
+                        size="small"
+                        InputLabelProps={{ shrink: true }}
+                        placeholder="No end date"
+                      />
+                      <Typography variant="caption" color="textSecondary" sx={{ fontStyle: 'italic' }}>
+                        Note: Full recurrence functionality coming soon
+                      </Typography>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <RecurrenceDisplay ride={ride} showForRole={showRecurrence} />
+                  {!ride.isRecurring && (
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 1, 
+                      p: 2, 
+                      backgroundColor: 'grey.50', 
+                      borderRadius: 1,
+                      border: '1px dashed',
+                      borderColor: 'grey.300'
+                    }}>
+                      <RepeatIcon color="disabled" />
+                      <Typography variant="body2" color="textSecondary">
+                        This ride does not repeat
+                      </Typography>
+                    </Box>
+                  )}
+                </>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Right Column - Person Information */}

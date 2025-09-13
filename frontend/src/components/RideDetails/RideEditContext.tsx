@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { RideType, Status, SchedulingState, Type } from '../../types';
 import axios from '../../util/axios';
+import { canEditRide, UserRole } from '../../util/rideValidation';
 
 interface RideEditContextType {
   isEditing: boolean;
@@ -12,7 +13,7 @@ interface RideEditContextType {
   saveChanges: () => Promise<boolean>;
   hasChanges: boolean;
   canEdit: boolean;
-  userRole: 'rider' | 'driver' | 'admin';
+  userRole: UserRole;
 }
 
 const RideEditContext = createContext<RideEditContextType | undefined>(undefined);
@@ -20,7 +21,7 @@ const RideEditContext = createContext<RideEditContextType | undefined>(undefined
 interface RideEditProviderProps {
   children: ReactNode;
   ride: RideType;
-  userRole: 'rider' | 'driver' | 'admin';
+  userRole: UserRole;
   onRideUpdated?: (updatedRide: RideType) => void;
 }
 
@@ -36,17 +37,8 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
   // Determine if user can edit based on role and ride state
   const canEdit = useCallback(() => {
-    if (userRole === 'driver') return false; // Drivers cannot edit rides
-    if (userRole === 'rider') {
-      // Riders can only edit unscheduled rides
-      return ride.schedulingState === SchedulingState.UNSCHEDULED;
-    }
-    if (userRole === 'admin') {
-      // Admins can edit any ride
-      return true;
-    }
-    return false;
-  }, [userRole, ride.schedulingState]);
+    return canEditRide(ride, userRole);
+  }, [ride, userRole]);
 
   const startEditing = useCallback(() => {
     if (!canEdit()) return;

@@ -48,8 +48,7 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
   };
 
   const handleClick = () => {
-    const path = adminEmployee ? `/admin/admins/${id}` : `/admin/drivers/${id}`;
-    navigate(path);
+    navigate(`/admin/employees/${id}`);
   };
 
   return (

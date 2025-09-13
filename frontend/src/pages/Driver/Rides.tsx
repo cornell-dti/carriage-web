@@ -282,11 +282,32 @@ const RideDetailCard = ({
 };
 
 const Rides = () => {
-  const { scheduledRides, refreshRides } = useRides();
+  const { scheduledRides, refreshRides, refreshRidesByUser } = useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
   const [updating, setUpdating] = useState(false);
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
+  const [allDriverRides, setAllDriverRides] = useState<Ride[]>([]);
+  const [loadingRides, setLoadingRides] = useState(false);
+
+  // Fetch all driver rides on component mount
+  useEffect(() => {
+    const fetchDriverRides = async () => {
+      if (authContext.id) {
+        setLoadingRides(true);
+        try {
+          const rides = await refreshRidesByUser(authContext.id, 'driver');
+          setAllDriverRides(rides);
+        } catch (error) {
+          console.error('Failed to fetch driver rides:', error);
+        } finally {
+          setLoadingRides(false);
+        }
+      }
+    };
+
+    fetchDriverRides();
+  }, [authContext.id, refreshRidesByUser]);
 
   // Get today's rides for current/next ride calculations
   const todaysRides = useMemo(() => {
@@ -295,17 +316,16 @@ const Rides = () => {
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(today);
     endOfDay.setHours(23, 59, 59, 999);
-    return scheduledRides.filter((ride) => {
+    return allDriverRides.filter((ride) => {
       const s = new Date(ride.startTime).getTime();
       return s >= startOfDay.getTime() && s <= endOfDay.getTime();
     });
-  }, [scheduledRides]);
-
+  }, [allDriverRides]);
 
   const filteredRides = useMemo(() => {
-    // Always show only rides assigned to this driver
-    return scheduledRides.filter((ride) => ride.driver?.id === authContext.id);
-  }, [scheduledRides, authContext.id]);
+    // Show all rides assigned to this driver (across all dates)
+    return allDriverRides.filter((ride) => ride.driver?.id === authContext.id);
+  }, [allDriverRides, authContext.id]);
 
   const nextDriverRide = useMemo(() => {
     return todaysRides

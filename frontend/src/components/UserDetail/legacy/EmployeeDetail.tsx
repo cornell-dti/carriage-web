@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { Ride } from '../../types';
+import { Box, Button, Typography, IconButton } from '@mui/material';
+import { ArrowBack } from '@mui/icons-material';
+import { Ride } from '../../../types';
 import UserDetail, { UserContactInfo } from './UserDetail';
+import UserStatistics from './UserStatistics';
+import UserActions from './UserActions';
 import {
   phone,
   clock,
   wheel,
   user,
   calender_dark,
-} from '../../icons/userInfo/index';
-import PastRides from './PastRides';
-import { RideTable } from '../RideDetails';
+} from '../../../icons/userInfo/index';
+import { RideTable } from '../../RideDetails';
 import styles from './userDetail.module.css';
-import { peopleStats, wheelStats } from '../../icons/stats/index';
-import { useEmployees } from '../../context/EmployeesContext';
-import { AdminType } from '../../../../server/src/models/admin';
-import { DriverType } from '../../../../server/src/models/driver';
-import { chevronLeft } from '../../icons/other';
-import axios from '../../util/axios';
+import { AdminType } from '../../../../../server/src/models/admin';
+import { DriverType } from '../../../../../server/src/models/driver';
+import axios from '../../../util/axios';
 
 type EmployeeDetailProps = {
   id: string;
@@ -31,65 +31,6 @@ type EmployeeDetailProps = {
   photoLink?: string;
 };
 
-type EmployeeStatisticsProps = {
-  rideCount: number;
-  hours: number;
-};
-
-type StatisticProps = {
-  icon: string;
-  stat: number;
-  alt: string;
-  description: string;
-};
-
-const EmployeeStatistics = ({ rideCount, hours }: EmployeeStatisticsProps) => {
-  const Statistic = ({ icon, stat, description, alt }: StatisticProps) => (
-    <div className={styles.statistic}>
-      <img src={icon} className={styles.statIcon} alt={alt} />
-      <div className={styles.statDescription}>
-        {stat >= 0 ? (
-          <>
-            {icon === peopleStats ? (
-              <h2 className={styles.stat}>{stat}</h2>
-            ) : (
-              <h2 className={styles.stat}>
-                {stat}
-                <span className={styles.statsHrs}>hrs</span>
-              </h2>
-            )}
-          </>
-        ) : (
-          <p className={styles.stat}>N/A</p>
-        )}
-        <p>{description}</p>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className={styles.statisticsContainer}>
-      <h3 className={styles.userDetailHeader}>Statistics</h3>
-      <div className={styles.employeeStatistics}>
-        <h3 className={styles.statisticCardDesc}>Last Week</h3>
-        <div className={styles.statsContainer}>
-          <Statistic
-            icon={peopleStats}
-            stat={rideCount}
-            description="rides"
-            alt="people"
-          />
-          <Statistic
-            icon={wheelStats}
-            stat={hours}
-            description="driving"
-            alt="people"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
   return drivers.map((driver) => ({
@@ -139,29 +80,25 @@ const Header = () => {
   };
 
   return (
-    <div className={styles.pageDivTitle}>
-      <button
+    <Box className={styles.pageDivTitle}>
+      <Button
+        startIcon={<ArrowBack />}
         onClick={handleBack}
-        className={styles.header}
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          padding: 0,
-          fontSize: 'inherit',
+        sx={{
+          fontSize: '1.75rem',
+          fontWeight: 'bold',
           color: 'inherit',
+          textTransform: 'none',
+          padding: 0,
+          minWidth: 'auto',
+          '&:hover': {
+            backgroundColor: 'transparent',
+          },
         }}
       >
-        <img
-          className={styles.chevronLeft}
-          src={chevronLeft}
-          alt="Back to Employees List"
-        />
         Employees
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
 };
 
@@ -217,7 +154,7 @@ const EmployeeDetail = () => {
   };
 
   const fetchAllRides = async (employeeId: any) => {
-    const res = await axios.get(`/api/rides?driver=${employeeId}`);
+    const res = await axios.get(`/api/rides?driver=${employeeId}&allDates=true`);
     return res.data.data;
   };
 
@@ -296,37 +233,57 @@ const EmployeeDetail = () => {
     return (
       <main id="main">
         <Header />
-        <div className={styles.detailContainer}>
-          <UserDetail
-            firstName={employee.firstName}
-            lastName={employee.lastName}
-            netId={employee.netId}
-            employee={employee}
-            role={roleValue()}
-            photoLink={employee.photoLink}
-          >
-            <UserContactInfo
-              icon={phone}
-              alt="phone"
-              text={employee.phoneNumber}
-            />
-            <UserContactInfo
-              icon={isAdmin || isBoth ? user : wheel}
-              alt="role"
-              text={role()}
-            />
-            <UserContactInfo
-              icon={clock}
-              alt="availability"
-              text={avail === '' ? 'N/A' : avail}
-            />
-          </UserDetail>
-          <EmployeeStatistics rideCount={rideCount} hours={workingHours} />
-          {/* Rides Table */}
-          <div className={styles.ridesSection}>
+        <Box className={styles.pageContainer}>
+          {/* User Information Section */}
+          <Box className={styles.userInformationSection}>
+            <Box className={styles.userInfoContainer}>
+              <UserDetail
+                firstName={employee.firstName}
+                lastName={employee.lastName}
+                netId={employee.netId}
+                employee={employee}
+                role={roleValue()}
+                photoLink={employee.photoLink}
+              >
+                <UserContactInfo
+                  icon={phone}
+                  alt="phone"
+                  text={employee.phoneNumber}
+                />
+                <UserContactInfo
+                  icon={isAdmin || isBoth ? user : wheel}
+                  alt="role"
+                  text={role()}
+                />
+                <UserContactInfo
+                  icon={clock}
+                  alt="availability"
+                  text={avail === '' ? 'N/A' : avail}
+                />
+              </UserDetail>
+            </Box>
+            
+            <Box className={styles.statisticsContainer}>
+              <UserStatistics
+                role={roleValue() as 'driver' | 'admin' | 'both'}
+                rideCount={rideCount}
+                hours={workingHours}
+              />
+            </Box>
+            
+            <Box className={styles.actionsContainer}>
+              <UserActions
+                role={roleValue() as 'driver' | 'admin' | 'both'}
+                employee={employee}
+              />
+            </Box>
+          </Box>
+          
+          {/* Rides Table Section */}
+          <Box className={styles.ridesTableSection}>
             <RideTable rides={rides} userRole="admin" />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </main>
     );
   }

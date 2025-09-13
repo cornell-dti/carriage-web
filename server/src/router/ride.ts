@@ -93,7 +93,7 @@ router.get('/rider/:id', validateUser('User'), (req, res) => {
 
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
-  const { type, status, rider, driver, date, scheduled, schedulingState } = req.query;
+  const { type, status, rider, driver, date, scheduled, schedulingState, allDates } = req.query;
   let condition = new Condition('status').not().eq(Status.CANCELLED);
   
   if (type) {
@@ -117,13 +117,16 @@ router.get('/', validateUser('User'), (req, res) => {
   if (driver) {
     condition = condition.where('driver').eq(driver);
   }
-  if (date) {
+  
+  // Only apply date filter if date is provided and allDates is not true
+  if (date && allDates !== 'true') {
     const dateStart = moment(date as string).toISOString();
     const dateEnd = moment(date as string)
       .endOf('day')
       .toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
   }
+  
   db.scan(res, Ride, condition);
 });
 

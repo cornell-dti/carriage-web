@@ -8,8 +8,7 @@ import Students from './Students';
 import Home from './Home';
 import Locations from './Locations';
 import Analytics from './Analytics';
-import EmployeeDetail from '../../components/UserDetail/EmployeeDetail';
-import RiderDetail from '../../components/UserDetail/RiderDetail';
+import UserDetailPage from '../../components/UserDetail/UserDetailPage';
 import ExportPreview from '../../components/ExportPreview/ExportPreview';
 import DateContext from '../../context/date';
 import { EmployeesProvider } from '../../context/EmployeesContext';
@@ -33,10 +32,9 @@ const RoutesComponent = () => {
             <Route path="export" element={<ExportPreview />} />
           </Route>
           <Route path="employees" element={<Employees />} />
-          <Route path="admins/:id" element={<EmployeeDetail />} />
-          <Route path="drivers/:id" element={<EmployeeDetail />} />
+          <Route path="employees/:id" element={<UserDetailPage userType="employee" />} />
           <Route path="riders" element={<Students />} />
-          <Route path="riders/:id" element={<RiderDetail />} />
+          <Route path="riders/:id" element={<UserDetailPage userType="rider" />} />
           <Route path="locations" element={<Locations />} />
           <Route path="analytics" element={<Analytics />} />
         </Routes>

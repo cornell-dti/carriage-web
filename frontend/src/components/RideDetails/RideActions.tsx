@@ -30,9 +30,10 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
 import { useRideEdit } from './RideEditContext';
+import { canUpdateStatus, canCancelRide, getRestrictionMessage, UserRole } from '../../util/rideValidation';
 
 interface RideActionsProps {
-  userRole: 'rider' | 'driver' | 'admin';
+  userRole: UserRole;
   isMobile?: boolean;
   onClose?: () => void;
 }
@@ -77,6 +78,8 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
 
   const ride = editedRide!; // We know this exists from the context
   const rideCompleted = ride.status === Status.COMPLETED;
+  const canUpdateRideStatus = canUpdateStatus(ride, userRole);
+  const canCancelThisRide = canCancelRide(ride, userRole);
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) return;
@@ -173,8 +176,9 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
                 startIcon={!isMobile ? <CancelIcon /> : undefined}
                 onClick={() => setCancelConfirmOpen(true)}
                 fullWidth={isMobile}
-                disabled={rideCompleted}
+                disabled={!canCancelThisRide}
                 aria-label="Cancel ride"
+                title={!canCancelThisRide ? getRestrictionMessage(ride, 'edit', userRole) : undefined}
               >
                 {isMobile ? <CancelIcon /> : 'Cancel'}
               </Button>
@@ -224,8 +228,9 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
         startIcon={!isMobile ? <UpdateIcon /> : undefined}
         onClick={() => setUpdateStatusOpen(true)}
         fullWidth={isMobile}
-        disabled={rideCompleted}
+        disabled={!canUpdateRideStatus}
         aria-label="Update Status"
+        title={!canUpdateRideStatus ? getRestrictionMessage(ride, 'updateStatus', userRole) : undefined}
       >
         {isMobile ? <UpdateIcon /> : 'Update Status'}
       </Button>
@@ -272,7 +277,9 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
             startIcon={!isMobile ? <CancelIcon /> : undefined}
             onClick={() => setCancelConfirmOpen(true)}
             fullWidth={isMobile}
+            disabled={!canCancelThisRide}
             aria-label="Cancel ride"
+            title={!canCancelThisRide ? getRestrictionMessage(ride, 'edit', userRole) : undefined}
           >
             {isMobile ? <CancelIcon /> : 'Cancel'}
           </Button>
@@ -329,7 +336,14 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
           <Typography variant="body2" color="textSecondary" gutterBottom>
             Current status: {formatStatusLabel(ride.status)}
           </Typography>
-          <FormControl component="fieldset" sx={{ mt: 2 }}>
+          {!canUpdateRideStatus && (
+            <Box sx={{ p: 2, backgroundColor: 'warning.light', borderRadius: 1, mb: 2 }}>
+              <Typography variant="body2" color="warning.dark">
+                {getRestrictionMessage(ride, 'updateStatus', userRole)}
+              </Typography>
+            </Box>
+          )}
+          <FormControl component="fieldset" sx={{ mt: 2 }} disabled={!canUpdateRideStatus}>
             <FormLabel component="legend">Select new status</FormLabel>
             <RadioGroup
               value={selectedStatus || ''}
@@ -351,7 +365,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
           <Button
             onClick={handleStatusUpdate}
             variant="contained"
-            disabled={!selectedStatus || updating}
+            disabled={!selectedStatus || updating || !canUpdateRideStatus}
             startIcon={updating ? <CircularProgress size={20} /> : undefined}
           >
             {updating ? 'Updating...' : 'Update'}

@@ -5,7 +5,7 @@
 .overviewGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  gap: 24px;
   align-items: start;
 }
 
@@ -29,12 +29,54 @@
 @media (max-width: 768px) {
   .overviewGrid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 16px;
+  }
+  
+  .editStatusFields {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .scheduleSection,
+  .statusSection {
+    margin-bottom: 16px;
+  }
+  
+  .dateTimeRow {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
 .scheduleSection {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+}
+
+.editFormFields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dateTimeRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.editStatusFields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.editRecurrenceFields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .scheduleHeader {
@@ -64,7 +106,7 @@
 }
 
 .statusSection {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .statusHeader {

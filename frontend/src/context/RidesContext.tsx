@@ -8,12 +8,14 @@ type ridesState = {
   unscheduledRides: Ride[];
   scheduledRides: Ride[];
   refreshRides: () => Promise<void>;
+  refreshRidesByUser: (userId: string, userType: 'rider' | 'driver') => Promise<Ride[]>;
 };
 
 const initialState: ridesState = {
   unscheduledRides: [],
   scheduledRides: [],
   refreshRides: async () => {},
+  refreshRidesByUser: async () => [],
 };
 
 const RidesContext = React.createContext(initialState);
@@ -27,13 +29,13 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [unscheduledRides, setUnscheduledRides] = useState<Ride[]>([]);
   const [scheduledRides, setScheduledRides] = useState<Ride[]>([]);
   const { curDate } = useDate();
-  const date = format_date(curDate);
 
   const refreshRides = useCallback(async () => {
-    console.log('Refreshing rides...');
+    const formattedDate = format_date(curDate);
+    console.log('Refreshing rides for date:', formattedDate);
     try {
-      // Fetch all rides (not just today's rides) so we can show upcoming rides
-      const response = await axios.get(`/api/rides`);
+      // Fetch rides filtered by the selected date
+      const response = await axios.get(`/api/rides?date=${formattedDate}`);
       console.log('Rides API response:', response.data);
       
       const ridesData: Ride[] = response.data.data;
@@ -52,6 +54,24 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     } catch (error) {
       console.error('Error refreshing rides:', error);
     }
+  }, [curDate]);
+
+  const refreshRidesByUser = useCallback(async (userId: string, userType: 'rider' | 'driver'): Promise<Ride[]> => {
+    console.log(`Refreshing rides for ${userType}:`, userId);
+    try {
+      // Fetch all rides for the user across all dates
+      const queryParam = userType === 'rider' ? 'rider' : 'driver';
+      const response = await axios.get(`/api/rides?${queryParam}=${userId}&allDates=true`);
+      console.log(`${userType} rides API response:`, response.data);
+      
+      const ridesData: Ride[] = response.data.data || [];
+      console.log(`All ${userType} rides from API:`, ridesData);
+      
+      return ridesData;
+    } catch (error) {
+      console.error(`Error refreshing ${userType} rides:`, error);
+      return [];
+    }
   }, []);
 
   useEffect(() => {
@@ -64,6 +84,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         unscheduledRides,
         scheduledRides,
         refreshRides,
+        refreshRidesByUser,
       }}
     >
       {children}

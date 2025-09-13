@@ -72,6 +72,27 @@
   gap: 8px;
 }
 
+/* Edit mode styles */
+.editLocationsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.editLocationHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.editLocationCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .locationsGrid {
@@ -82,5 +103,11 @@
   .tripInfoGrid {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  
+  .editLocationCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
   }
 }

@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TablePagination,
   Paper,
   Chip,
   Typography,
@@ -24,10 +25,10 @@ import {
   CardContent,
   useTheme,
   useMediaQuery,
-  Pagination,
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ClearIcon from '@mui/icons-material/Clear';
+import { visuallyHidden } from '@mui/utils';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -51,8 +52,8 @@ interface FilterState {
   searchText: string;
 }
 
+type Order = 'asc' | 'desc';
 type SortField = 'date' | 'startTime' | 'endTime' | 'status' | 'rider' | 'driver';
-type SortOrder = 'asc' | 'desc';
 
 // Helper function to determine temporal type
 const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
@@ -64,6 +65,72 @@ const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
   if (startTime <= now && now < endTime) return 'Active';
   return 'Upcoming';
 };
+
+// Material-UI style comparator functions
+function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator<Key extends keyof any>(
+  order: Order,
+  orderBy: Key,
+): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+// Custom comparator for ride data
+function getRideComparator(order: Order, orderBy: SortField) {
+  return order === 'desc'
+    ? (a: RideType, b: RideType) => descendingRideComparator(a, b, orderBy)
+    : (a: RideType, b: RideType) => -descendingRideComparator(a, b, orderBy);
+}
+
+function descendingRideComparator(a: RideType, b: RideType, orderBy: SortField) {
+  let aValue: any;
+  let bValue: any;
+
+  switch (orderBy) {
+    case 'date':
+    case 'startTime':
+      aValue = new Date(a.startTime).getTime();
+      bValue = new Date(b.startTime).getTime();
+      break;
+    case 'endTime':
+      aValue = new Date(a.endTime).getTime();
+      bValue = new Date(b.endTime).getTime();
+      break;
+    case 'status':
+      aValue = a.status;
+      bValue = b.status;
+      break;
+    case 'rider':
+      aValue = a.rider ? `${a.rider.firstName} ${a.rider.lastName}` : '';
+      bValue = b.rider ? `${b.rider.firstName} ${b.rider.lastName}` : '';
+      break;
+    case 'driver':
+      aValue = a.driver ? `${a.driver.firstName} ${a.driver.lastName}` : '';
+      bValue = b.driver ? `${b.driver.firstName} ${b.driver.lastName}` : '';
+      break;
+    default:
+      return 0;
+  }
+
+  if (bValue < aValue) {
+    return -1;
+  }
+  if (bValue > aValue) {
+    return 1;
+  }
+  return 0;
+}
 
 const getStatusColor = (status: Status): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
   switch (status) {
@@ -114,11 +181,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  const [sortField, setSortField] = useState<SortField>('startTime');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [order, setOrder] = useState<Order>('desc');
+  const [orderBy, setOrderBy] = useState<SortField>('startTime');
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(25);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   
@@ -184,8 +251,8 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
 
   const columns = getColumnsForRole();
 
-  // Filter and sort rides
-  const filteredAndSortedRides = useMemo(() => {
+  // Filter rides (sorting will be applied after)
+  const filteredRides = useMemo(() => {
     let filtered = rides;
     
     // For drivers, only show scheduled rides
@@ -238,66 +305,39 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
       );
     }
 
-    // Apply sorting
-    return filtered.sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+    return filtered;
+  }, [rides, filters, userRole]);
 
-      switch (sortField) {
-        case 'date':
-          aValue = new Date(a.startTime).getTime();
-          bValue = new Date(b.startTime).getTime();
-          break;
-        case 'startTime':
-          aValue = new Date(a.startTime).getTime();
-          bValue = new Date(b.startTime).getTime();
-          break;
-        case 'endTime':
-          aValue = new Date(a.endTime).getTime();
-          bValue = new Date(b.endTime).getTime();
-          break;
-        case 'status':
-          aValue = a.status;
-          bValue = b.status;
-          break;
-        case 'rider':
-          aValue = a.rider ? `${a.rider.firstName} ${a.rider.lastName}` : '';
-          bValue = b.rider ? `${b.rider.firstName} ${b.rider.lastName}` : '';
-          break;
-        case 'driver':
-          aValue = a.driver ? `${a.driver.firstName} ${a.driver.lastName}` : '';
-          bValue = b.driver ? `${b.driver.firstName} ${b.driver.lastName}` : '';
-          break;
-        default:
-          return 0;
-      }
+  // Apply sorting using Material-UI approach
+  const sortedRides = useMemo(() => {
+    return [...filteredRides].sort(getRideComparator(order, orderBy));
+  }, [filteredRides, order, orderBy]);
 
-      if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-      if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
-      return 0;
-    });
-  }, [rides, filters, sortField, sortOrder]);
-
-  // Pagination
+  // Pagination with Material-UI
   const paginatedRides = useMemo(() => {
-    const startIndex = (page - 1) * pageSize;
-    return filteredAndSortedRides.slice(startIndex, startIndex + pageSize);
-  }, [filteredAndSortedRides, page, pageSize]);
+    const startIndex = page * rowsPerPage;
+    return sortedRides.slice(startIndex, startIndex + rowsPerPage);
+  }, [sortedRides, page, rowsPerPage]);
 
-  const totalPages = Math.ceil(filteredAndSortedRides.length / pageSize);
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortOrder('asc');
-    }
+  // Material-UI style sort handler
+  const handleRequestSort = (event: React.MouseEvent<unknown>, property: SortField) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
   };
 
   const handleRowClick = (ride: RideType) => {
     setSelectedRide(ride);
     setDetailsOpen(true);
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
   };
 
   const clearFilters = () => {
@@ -309,7 +349,7 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
       temporalTypes: [],
       searchText: '',
     });
-    setPage(1);
+    setPage(0);
   };
 
   const formatTime = (dateString: string) => {
@@ -321,6 +361,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  // Create sort handler for individual columns
+  const createSortHandler = (property: SortField) => (event: React.MouseEvent<unknown>) => {
+    handleRequestSort(event, property);
   };
 
   if (loading) {
@@ -445,100 +490,100 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
           </Card>
         </Collapse>
 
-        {/* Results summary */}
-        <Box mb={2}>
-          <Typography variant="body2" color="textSecondary">
-            Showing {paginatedRides.length} of {filteredAndSortedRides.length} rides
-          </Typography>
-        </Box>
-
-        {/* Table */}
-        <TableContainer component={Paper}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell key={column.key}>
-                    {column.sortable ? (
-                      <TableSortLabel
-                        active={sortField === column.key}
-                        direction={sortField === column.key ? sortOrder : 'asc'}
-                        onClick={() => handleSort(column.key as SortField)}
-                      >
-                        {column.label}
-                      </TableSortLabel>
-                    ) : (
-                      column.label
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {paginatedRides.map((ride) => {
-                const temporalType = getTemporalType(ride);
-                return (
-                  <TableRow
-                    key={ride.id}
-                    onClick={() => handleRowClick(ride)}
-                    sx={{
-                      cursor: 'pointer',
-                      '&:hover': { backgroundColor: 'action.hover' },
-                    }}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleRowClick(ride);
-                    }}
-                    aria-label="Open ride details"
-                  >
-                    <TableCell>{formatDate(ride.startTime)}</TableCell>
-                    <TableCell>{formatTime(ride.startTime)}</TableCell>
-                    <TableCell>{formatTime(ride.endTime)}</TableCell>
-                    <TableCell>{ride.startLocation.name}</TableCell>
-                    <TableCell>{ride.endLocation.name}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={ride.status.replace(/_/g, ' ')}
-                        color={getStatusColor(ride.status)}
-                        size="small"
-                      />
+        {/* Table Container with Pagination */}
+        <Paper>
+          <TableContainer>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell key={column.key}>
+                      {column.sortable ? (
+                        <TableSortLabel
+                          active={orderBy === column.key}
+                          direction={orderBy === column.key ? order : 'asc'}
+                          onClick={createSortHandler(column.key as SortField)}
+                        >
+                          {column.label}
+                          {orderBy === column.key ? (
+                            <Box component="span" sx={visuallyHidden}>
+                              {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                            </Box>
+                          ) : null}
+                        </TableSortLabel>
+                      ) : (
+                        column.label
+                      )}
                     </TableCell>
-                    {userRole !== 'driver' && (
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedRides.map((ride) => {
+                  const temporalType = getTemporalType(ride);
+                  return (
+                    <TableRow
+                      key={ride.id}
+                      onClick={() => handleRowClick(ride)}
+                      sx={{
+                        cursor: 'pointer',
+                        '&:hover': { backgroundColor: 'action.hover' },
+                      }}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleRowClick(ride);
+                      }}
+                      aria-label="Open ride details"
+                    >
+                      <TableCell>{formatDate(ride.startTime)}</TableCell>
+                      <TableCell>{formatTime(ride.startTime)}</TableCell>
+                      <TableCell>{formatTime(ride.endTime)}</TableCell>
+                      <TableCell>{ride.startLocation.name}</TableCell>
+                      <TableCell>{ride.endLocation.name}</TableCell>
                       <TableCell>
                         <Chip
-                          label={ride.schedulingState}
-                          color={getSchedulingStateColor(ride.schedulingState)}
+                          label={ride.status.replace(/_/g, ' ')}
+                          color={getStatusColor(ride.status)}
+                          size="small"
+                        />
+                      </TableCell>
+                      {userRole !== 'driver' && (
+                        <TableCell>
+                          <Chip
+                            label={ride.schedulingState}
+                            color={getSchedulingStateColor(ride.schedulingState)}
+                            size="small"
+                            variant="outlined"
+                          />
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <Chip
+                          label={temporalType}
+                          color={getTemporalTypeColor(temporalType)}
                           size="small"
                           variant="outlined"
                         />
                       </TableCell>
-                    )}
-                    <TableCell>
-                      <Chip
-                        label={temporalType}
-                        color={getTemporalTypeColor(temporalType)}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <Box display="flex" justifyContent="center" mt={3}>
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              color="primary"
-            />
-          </Box>
-        )}
+          {/* Material-UI TablePagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 15, 20]}
+            component="div"
+            count={sortedRides.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            labelRowsPerPage="Rides per page:"
+          />
+        </Paper>
 
         {/* Ride Details Modal */}
         {selectedRide && (
