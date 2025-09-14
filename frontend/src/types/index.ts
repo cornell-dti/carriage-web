@@ -70,9 +70,9 @@ export type Location = LocationType;
 export type Ride = RideType;
 
 export enum Type {
-  ACTIVE = 'active',
+  UPCOMING = 'upcoming',
   PAST = 'past',
-  UNSCHEDULED = 'unscheduled',
+  ACTIVE = 'active',
 }
 
 export enum Status {

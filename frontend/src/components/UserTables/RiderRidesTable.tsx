@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { Ride, Type } from '../../types/index';
+import { Ride, Type, SchedulingState } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
@@ -92,15 +92,12 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           };
 
           let valueStatus;
-          switch (ride.type) {
-            case Type.UNSCHEDULED:
-              valueStatus = 'Requested';
-              break;
-            case Type.ACTIVE:
-              valueStatus = 'Confirmed';
-              break;
-            default:
-              valueStatus = 'Past';
+          if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
+            valueStatus = 'Requested';
+          } else if (ride.type === 'active') {
+            valueStatus = 'Confirmed';
+          } else {
+            valueStatus = 'Past';
           }
 
           const editButton = <RequestRideModal ride={ride} />;
@@ -125,7 +122,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const valueEditDelete = {
             data: !isPast ? (
               <>
-                {ride.type === Type.UNSCHEDULED && editButton}
+                {ride.schedulingState === SchedulingState.UNSCHEDULED && editButton}
                 {isOneHourBeforeRideStart && deleteButton}
               </>
             ) : null,

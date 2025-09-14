@@ -100,7 +100,7 @@ router.get('/', validateUser('User'), (req, res) => {
     condition = condition.where('type').eq(type);
   } else if (scheduled) {
     // Legacy support: scheduled=true means not unscheduled
-    condition = condition.where('type').not().eq(Type.UNSCHEDULED);
+    condition = condition.where('schedulingState').eq(SchedulingState.SCHEDULED);
   }
   
   // New schedulingState filter
@@ -193,7 +193,7 @@ router.post('/', validateUser('User'), (req, res) => {
     endTime: body.endTime,
     rider: body.rider,
     driver: body.driver || undefined,
-    type: body.type || Type.UNSCHEDULED,
+    type: body.type || Type.UPCOMING,
     status: body.status || Status.NOT_STARTED,
     schedulingState: schedulingState,
     isRecurring: false,
@@ -218,7 +218,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
   } = req;
   const { type, startLocation, endLocation } = body;
 
-  if (type && type === Type.UNSCHEDULED) {
+  if (type && type === Type.UPCOMING && body.schedulingState === SchedulingState.UNSCHEDULED) {
     body.$REMOVE = ['driver'];
   }
 

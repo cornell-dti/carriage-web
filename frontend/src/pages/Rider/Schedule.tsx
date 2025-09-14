@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride, Type, Status, SchedulingState, Tag, Accessibility } from '../../types';
+import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
@@ -134,7 +134,7 @@ const Schedule: React.FC = () => {
         startTime: startISO,
         endTime: endISO,
         rider: id,
-        type: 'unscheduled',
+        type: 'upcoming',
         status: 'not_started',
         schedulingState: 'unscheduled',
       });

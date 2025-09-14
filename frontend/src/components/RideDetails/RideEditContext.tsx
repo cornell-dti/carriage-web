@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { RideType, Status, SchedulingState, Type } from '../../types';
+import { RideType } from '../../types';
 import axios from '../../util/axios';
 import { canEditRide, UserRole } from '../../util/rideValidation';
 
@@ -23,6 +23,7 @@ interface RideEditProviderProps {
   ride: RideType;
   userRole: UserRole;
   onRideUpdated?: (updatedRide: RideType) => void;
+  initialEditingState?: boolean;
 }
 
 export const RideEditProvider: React.FC<RideEditProviderProps> = ({
@@ -30,9 +31,10 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
   ride,
   userRole,
   onRideUpdated,
+  initialEditingState = false,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedRide, setEditedRide] = useState<RideType | null>(null);
+  const [isEditing, setIsEditing] = useState(initialEditingState);
+  const [editedRide, setEditedRide] = useState<RideType | null>(initialEditingState ? ride : null);
   const [originalRide, setOriginalRide] = useState<RideType | null>(null);
 
   // Determine if user can edit based on role and ride state

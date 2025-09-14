@@ -129,7 +129,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       const hasDriver = Boolean(driver) && driver !== 'None';
 
       let rideData: ObjectType = {
-        type: hasDriver ? 'active' : 'unscheduled',
+        type: hasDriver ? 'active' : 'upcoming',
+        schedulingState: hasDriver ? 'scheduled' : 'unscheduled',
         startTime,
         endTime,
         driver: hasDriver ? driver : undefined,
@@ -150,7 +151,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
-          rideData.type = 'unscheduled';
+          rideData.type = 'upcoming';
+          rideData.schedulingState = 'unscheduled';
         }
         if (editSingle) {
           // edit single instance of repeating ride

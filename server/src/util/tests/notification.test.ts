@@ -23,7 +23,7 @@ const rider: RiderType = {
 
 const unscheduledRide: RideType = {
   id: 'ride',
-  type: Type.UNSCHEDULED,
+  type: Type.UPCOMING,
   status: Status.NOT_STARTED,
   schedulingState: SchedulingState.UNSCHEDULED,
   startLocation: {

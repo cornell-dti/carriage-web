@@ -225,18 +225,47 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
             </Typography>
             {isEditing && canEditRider ? (
               <div>
-                <PersonCard person={ride.rider} type="rider" showAccessibility />
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => setRiderSelectOpen(true)}
-                  sx={{ mt: 1 }}
-                >
-                  Change Rider
-                </Button>
+                {ride.rider && ride.rider.id ? (
+                  <div>
+                    <PersonCard person={ride.rider} type="rider" showAccessibility />
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => setRiderSelectOpen(true)}
+                      sx={{ mt: 1 }}
+                    >
+                      Change Rider
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className={styles.notAssigned}>
+                      <Typography variant="body1">
+                        Not assigned
+                      </Typography>
+                    </div>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={<PersonAddIcon />}
+                      onClick={() => setRiderSelectOpen(true)}
+                      sx={{ mt: 1 }}
+                    >
+                      Assign Rider
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : (
-              <PersonCard person={ride.rider} type="rider" showAccessibility />
+              ride.rider && ride.rider.id ? (
+                <PersonCard person={ride.rider} type="rider" showAccessibility />
+              ) : (
+                <div className={styles.notAssigned}>
+                  <Typography variant="body1">
+                    Not assigned
+                  </Typography>
+                </div>
+              )
             )}
           </div>
           <div className={styles.adminCard}>

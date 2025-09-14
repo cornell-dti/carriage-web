@@ -6,9 +6,9 @@ import { Driver, DriverType } from './driver';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Type {
-  ACTIVE = 'active',
+  UPCOMING = 'upcoming',
   PAST = 'past',
-  UNSCHEDULED = 'unscheduled',
+  ACTIVE = 'active',
 }
 
 // Scheduling state - separate from operational status
@@ -62,7 +62,7 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: Object.values(Type),
     required: true,
-    default: Type.UNSCHEDULED,
+    default: Type.UPCOMING,
   },
   status: {
     type: String,

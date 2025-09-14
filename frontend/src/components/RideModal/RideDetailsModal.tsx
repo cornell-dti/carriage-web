@@ -12,7 +12,7 @@ import {
   Divider,
   Grid,
 } from '@mui/material';
-import { Ride, Type } from '../../types/index';
+import { Ride, SchedulingState } from '../../types/index';
 import { format_date } from '../../util/index';
 
 type RideDetailsModalProps = {
@@ -36,28 +36,26 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
     : 'None';
 
   const getStatusText = () => {
-    switch (ride.type) {
-      case Type.UNSCHEDULED:
-        return 'Requested';
-      case Type.ACTIVE:
-        return 'Confirmed';
-      case Type.PAST:
-        return 'Completed';
-      default:
-        return 'Unknown';
+    if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
+      return 'Requested';
+    } else if (ride.type === 'active') {
+      return 'Confirmed';
+    } else if (ride.type === 'past') {
+      return 'Completed';
+    } else {
+      return 'Unknown';
     }
   };
 
   const getStatusColor = (): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
-    switch (ride.type) {
-      case Type.UNSCHEDULED:
-        return 'warning';
-      case Type.ACTIVE:
-        return 'success';
-      case Type.PAST:
-        return 'info';
-      default:
-        return 'default';
+    if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
+      return 'warning';
+    } else if (ride.type === 'active') {
+      return 'success';
+    } else if (ride.type === 'past') {
+      return 'info';
+    } else {
+      return 'default';
     }
   };
 

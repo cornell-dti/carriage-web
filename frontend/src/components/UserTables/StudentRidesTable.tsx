@@ -49,7 +49,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
       startLocationName: startName,
       endLocationName: endName,
       status: ride.status,
-      type: ride.type,
+      type: ride.type as any,
     };
   });
 }

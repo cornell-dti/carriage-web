@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, Type, SchedulingState, Status } from '../types';
+import { Ride, SchedulingState, Status } from '../types';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import RideModal from '../../components/RideModal/RideModal';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
@@ -11,15 +11,14 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import { format_date } from '../../util/index';
+import { RideType } from '../../types';
 
 const Home = () => {
   const { curDate } = useDate();
   const today = format_date(curDate);
-
   useEffect(() => {
     document.title = 'Home - Carriage';
   }, []);
-
   return (
     <main id="main">
       <div className={styles.pageTitle}>

@@ -156,7 +156,7 @@ export function canChangeRider(ride: RideType, userRole: UserRole): boolean {
     return false;
   }
   
-  // Cannot change rider for active rides
+  // Cannot change rider for active rides (but allow for not_started rides)
   if (isRideActive(ride)) {
     return false;
   }

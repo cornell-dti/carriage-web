@@ -56,7 +56,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   const watchRepeating = watch('recurring', false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
-  const shouldDisableStartDate = (ride && ride.type !== 'unscheduled');
+  const shouldDisableStartDate = (ride && ride.schedulingState !== 'unscheduled');
   const loc = useLocations().locations;
 
   useEffect(() => {

@@ -121,11 +121,13 @@ const CreateOrEditRideModal = ({
 
     if (!ride) {
       // create ride
-      rideData.type = 'unscheduled';
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios.post('/api/rides', rideData).then(afterSubmit);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
-      rideData.type = 'unscheduled';
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios
         .put(`/api/rides/${ride.id}/edits`, {
           deleteOnly: false,
@@ -135,7 +137,8 @@ const CreateOrEditRideModal = ({
         .then(afterSubmit);
     } else {
       // edit single ride - for now all rides are treated as single rides
-      rideData.type = 'unscheduled';
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios.put(`/api/rides/${ride.id}`, rideData).then(afterSubmit);
     }
   };
