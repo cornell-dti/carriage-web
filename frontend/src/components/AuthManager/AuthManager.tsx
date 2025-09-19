@@ -23,17 +23,12 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import {
-  Admin,
-  Rider,
-  UnregisteredUser,
-  DriverType as Driver,
-} from '../../types/index';
-import DriverRoutes from '../../pages/Driver/Routes';
+import { Admin, Rider, UnregisteredUser } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
+import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
 import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
@@ -63,10 +58,8 @@ const AuthManager = () => {
   );
   const [unregisteredUser, setUnregisteredUser] =
     useState<UnregisteredUser | null>(null);
-  const [ssoError, setSsoError] = useState<string>('');
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   // Handler to go back from unregistered screen
   const handleBackFromUnregistered = () => {
@@ -260,22 +253,62 @@ const AuthManager = () => {
     document.cookie = `${cookieName}=${encrypt(value)};secure=true;path=/;`;
   }
 
-  // SSO Login handlers
-  function handleSSOLogin(isAdmin: boolean = false, isDriver: boolean = false) {
-    const frontendUrl = window.location.origin;
-    const redirectUri = encodeURIComponent(`${frontendUrl}/`);
+  function signIn(isAdmin: boolean, code: string) {
+    const userType = isAdmin ? 'Admin' : 'Rider';
+    const table = `${userType}s`;
+    const localUserType = localStorage.getItem('userType');
+    if (!localUserType || localUserType === userType) {
+      axios
+        .post('/api/auth', { code, table })
+        .then((res) => res.data.jwt)
+        .then((serverJWT) => {
+          if (serverJWT) {
+            setCookie('jwt', serverJWT);
+            const decoded: any = jwtDecode(serverJWT);
+            setId(decoded.id);
+            localStorage.setItem('userId', decoded.id);
+            localStorage.setItem('userType', decoded.userType);
+            setAuthToken(serverJWT);
+            console.log('Auth Token : ', serverJWT);
+            const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
+            refreshFunc();
+            setRefreshUser(() => refreshFunc);
+            setSignedIn(true);
+            navigate(isAdmin ? '/admin/home' : '/rider/home', {
+              replace: true,
+            });
+          } else {
+            logout();
+          }
+        })
+        .catch((error) => {
+          console.error('Login error:', error);
 
-    // Determine user type based on button clicked (matching Google OAuth pattern)
-    let userType = 'Rider';
-    if (isAdmin) {
-      userType = 'Admin';
-    } else if (isDriver) {
-      userType = 'Driver';
+          if (
+            error.response?.status === 400 &&
+            error.response?.data?.err === 'User not found'
+          ) {
+            setUnregisteredUser({
+              ...error.response?.data?.user,
+            });
+          } else {
+            logout();
+          }
+        });
     }
-
-    const ssoUrl = `${process.env.REACT_APP_SERVER_URL}/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
-    window.location.href = ssoUrl;
   }
+
+  const adminLogin = googleAuth({
+    flow: 'auth-code',
+    onSuccess: async (res) => signIn(true, res.code),
+    onError: (errorResponse) => console.error(errorResponse),
+  });
+
+  const studentLogin = googleAuth({
+    flow: 'auth-code',
+    onSuccess: async (res) => signIn(false, res.code),
+    onError: (errorResponse) => console.error(errorResponse),
+  });
 
   function logout() {
     localStorage.removeItem('userType');
@@ -317,6 +350,15 @@ const AuthManager = () => {
   }
 
   const { visible, message, toastType } = useToast();
+
+  if (unregisteredUser) {
+    return (
+      <UnregisteredUserPage
+        user={unregisteredUser}
+        onBack={handleBackFromUnregistered}
+      />
+    );
+  }
 
   if (unregisteredUser) {
     return (
