@@ -194,23 +194,39 @@
   height: 100%;
 }
 
-/* Landing page is almost fully responsive. It still needs to vertical media queries. */
-
-@media (max-width: 400px) {
-  .container {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 550px) {
+@media (max-width: 550px) { 
   .main {
     flex-direction: column;
+    margin-block: center;
   }
+
   .left {
+    /*top for vertical media query*/
     border-radius: 16px 16px 0 0;
+    margin-top: -30px;
   }
   .right {
+    /* bottom for vertical media query*/
     border-radius: 0 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .container {
+    flex-direction: column;
+    margin-top: -10px;
+  }
+
+  .home {
+    height: 1000px;
+  }
+
+  .studentImgContainer {
+    transform: scale(0.75);
+  }
+
+  .topLaptop {
+    transform: scale(0.75);
   }
 }
 
