@@ -194,7 +194,7 @@
   height: 100%;
 }
 
-@media (max-width: 550px) { 
+@media (max-width: 550px) {
   .main {
     flex-direction: column;
     margin-block: center;
