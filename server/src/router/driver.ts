@@ -157,14 +157,12 @@ router.post('/', validateUser('Admin'), (req, res) => {
     email: body.email,
   });
   if (!Array.isArray(body.availability)) {
-    res
-      .status(469)
-      .send({
-        err:
-          'Expected availability to be of type array, instead found type ' +
-          typeof body.availability +
-          '.',
-      });
+    res.status(469).send({
+      err:
+        'Expected availability to be of type array, instead found type ' +
+        typeof body.availability +
+        '.',
+    });
   } else {
     db.create(res, admin);
   }
