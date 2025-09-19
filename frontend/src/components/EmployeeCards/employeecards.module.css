@@ -1,7 +1,7 @@
 .cardsContainer {
   display: flex;
   flex-wrap: wrap;
-  height: 38rem;
+  min-height: 10rem;
   margin-top: 1rem;
 }
 
