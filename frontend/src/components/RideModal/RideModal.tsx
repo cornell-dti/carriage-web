@@ -22,7 +22,14 @@ const getRideData = (ride: Ride | undefined) => {
       date: format_date(ride.startTime),
       pickupTime: moment(ride.startTime).format('kk:mm'),
       dropoffTime: moment(ride.endTime).format('kk:mm'),
-      rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+      rider:
+        ride.riders && ride.riders.length > 0
+          ? ride.riders.length === 1
+            ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
+            : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
+                ride.riders.length - 1
+              } more`
+          : 'No rider assigned',
       pickupLoc: ride.startLocation.id
         ? ride.startLocation.name
         : ride.startLocation.address,
@@ -30,31 +37,17 @@ const getRideData = (ride: Ride | undefined) => {
         ? ride.endLocation.name
         : ride.endLocation.address,
     };
-    if (ride.recurring) {
-      let repeats;
-      let days;
-      const startDay = moment(ride.startTime).weekday();
-
-      if (ride.recurringDays!.length === 5) {
-        repeats = RepeatValues.Daily;
-      } else if (
-        ride.recurringDays!.length === 1 &&
-        ride.recurringDays![0] === startDay
-      ) {
-        repeats = RepeatValues.Weekly;
-      } else {
-        repeats = RepeatValues.Custom;
-        const numToDay = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-        days = ride.recurringDays!.reduce((prev, curr) => {
-          return { ...prev, [numToDay[curr]]: '1' };
-        }, {} as ObjectType);
-      }
+    if (ride.isRecurring) {
+      // Note: Recurring functionality is disabled for now
+      // This is legacy code that will be updated when RFC 5545 is implemented
+      let repeats = RepeatValues.DoesNotRepeat;
+      let days = {};
 
       rideData = {
         ...rideData,
         repeats,
         days,
-        endDate: format_date(ride.endDate),
+        endDate: format_date(ride.startTime), // Use startTime as fallback
       };
     }
     return rideData;
@@ -143,7 +136,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       const hasDriver = Boolean(driver) && driver !== 'None';
 
       let rideData: ObjectType = {
-        type: hasDriver ? 'active' : 'unscheduled',
+        type: hasDriver ? 'active' : 'upcoming',
+        schedulingState: hasDriver ? 'scheduled' : 'unscheduled',
         startTime,
         endTime,
         driver: hasDriver ? driver : undefined,
@@ -164,7 +158,8 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
       if (ride) {
         // scheduled ride
         if (ride.type === 'active') {
-          rideData.type = 'unscheduled';
+          rideData.type = 'upcoming';
+          rideData.schedulingState = 'unscheduled';
         }
         if (editSingle) {
           // edit single instance of repeating ride
@@ -208,7 +203,7 @@ const RideModal = ({ open, close, ride, editSingle }: RideModalProps) => {
         onClose={closeModal}
       >
         <RideTimesPage
-          defaultRepeating={ride.recurring}
+          defaultRepeating={ride.isRecurring}
           formData={formData}
           onSubmit={saveDataThen(goNextPage)}
         />

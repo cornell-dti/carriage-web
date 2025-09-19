@@ -70,15 +70,25 @@ const Schedule = () => {
 
   const getRides = () => {
     setEvents(
-      scheduledRides.map((ride: Ride) => ({
-        id: ride.id,
-        title: `${ride.startLocation.name} to ${ride.endLocation.name}
-Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
-        start: new Date(ride.startTime.toString()),
-        end: new Date(ride.endTime.toString()),
-        resourceId: ride.driver!.id,
-        ride,
-      }))
+      scheduledRides
+        .filter((ride: Ride) => ride && ride.id)
+        .map((ride: Ride) => ({
+          id: ride.id,
+          title: `${ride.startLocation.name} to ${ride.endLocation.name}
+Rider: ${
+            ride.riders && ride.riders.length > 0
+              ? ride.riders.length === 1
+                ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
+                : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
+                    ride.riders.length - 1
+                  } more`
+              : 'No rider assigned'
+          }`,
+          start: new Date(ride.startTime.toString()),
+          end: new Date(ride.endTime.toString()),
+          resourceId: ride.driver!.id,
+          ride,
+        }))
     );
   };
 
@@ -127,7 +137,7 @@ Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
 
   const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
-    const { recurring } = ride;
+    const recurring = ride.isRecurring;
     if (recurring) {
       axios
         .put(`api/rides/${rideId}/edits`, {

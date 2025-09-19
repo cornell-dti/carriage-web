@@ -31,7 +31,7 @@ function createRepeatingRides() {
 
   Ride.scan(condition).exec((_, data) => {
     data?.forEach((masterRide) => {
-      const { rider, startLocation, endLocation, startTime, endTime } =
+      const { riders, startLocation, endLocation, startTime, endTime } =
         masterRide.toJSON() as RideType;
 
       const newStartTimeOnly = moment(startTime).format('HH:mm:ss');
@@ -48,7 +48,7 @@ function createRepeatingRides() {
         id: uuid(),
         startTime: newStartTime,
         endTime: newEndTime,
-        rider,
+        riders,
         startLocation: startLocation.id ?? startLocation,
         endLocation: endLocation.id ?? endLocation,
       });

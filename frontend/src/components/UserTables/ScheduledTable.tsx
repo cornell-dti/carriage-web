@@ -23,18 +23,18 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    setRides(scheduledRides.sort(compRides));
+    setRides(scheduledRides.filter((ride) => ride && ride.id).sort(compRides));
   }, [scheduledRides]);
 
   return rides.length ? (
     <>
       {drivers.map(({ id, firstName, lastName }) => {
         const name = `${firstName} ${lastName}`;
-        const driverRides = rides.filter((r) => r.driver?.id === id);
+        const driverRides = rides.filter((r) => r && r.driver?.id === id);
         return driverRides.length ? (
           <React.Fragment key={id}>
             <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={false} />
+            <RidesTable rides={driverRides} hasButtons={true} />
           </React.Fragment>
         ) : null;
       })}

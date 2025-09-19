@@ -1,14 +1,19 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { Tag } from './location';
+import { Tag, LocationType, Location } from './location';
 import { Rider, RiderType } from './rider';
 import { Driver, DriverType } from './driver';
-import { getRideLocation } from '../util';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Type {
-  ACTIVE = 'active',
+  UPCOMING = 'upcoming',
   PAST = 'past',
+  ACTIVE = 'active',
+}
+
+// Scheduling state - separate from operational status
+export enum SchedulingState {
+  SCHEDULED = 'scheduled',
   UNSCHEDULED = 'unscheduled',
 }
 
@@ -22,46 +27,28 @@ export enum Status {
   CANCELLED = 'cancelled',
 }
 
-export type RideLocation = {
-  id?: string;
-  name: string;
-  address: string;
-  tag: Tag;
-};
+// Use the proper LocationType instead of custom RideLocation
 
 export type RideType = {
   id: string;
   type: Type;
   status: Status;
-  late: boolean;
-  startLocation: RideLocation;
-  endLocation: RideLocation;
+  schedulingState: SchedulingState;
+  startLocation: LocationType;
+  endLocation: LocationType;
   startTime: string;
   endTime: string;
-  rider: RiderType;
+  riders: RiderType[];
   driver?: DriverType;
-  recurring: boolean;
-  recurringDays?: number[];
-  endDate?: string;
-  deleted?: string[];
-  edits?: string[];
-  parentRide?: RideType;
-};
 
-const locationSchema = {
-  type: [String, Object],
-  required: true,
-  get: getRideLocation,
-  schema: {
-    name: String,
-    address: {
-      type: String,
-    },
-    tag: {
-      type: String,
-      enum: Object.values(Tag),
-    },
-  },
+  // RFC 5545 Recurrence fields (placeholders - no functionality yet)
+  isRecurring: boolean;
+  rrule?: string; // RFC 5545 recurrence rule
+  exdate?: string[]; // Excluded dates (ISO 8601 format)
+  rdate?: string[]; // Additional dates (ISO 8601 format)
+  parentRideId?: string; // Reference to parent ride for series
+  recurrenceId?: string; // Original start time for overrides
+  timezone?: string; // Timezone for recurrence calculations
 };
 
 const schema = new dynamoose.Schema({
@@ -74,7 +61,7 @@ const schema = new dynamoose.Schema({
     type: String,
     enum: Object.values(Type),
     required: true,
-    default: Type.UNSCHEDULED,
+    default: Type.UPCOMING,
   },
   status: {
     type: String,
@@ -82,13 +69,14 @@ const schema = new dynamoose.Schema({
     required: true,
     default: Status.NOT_STARTED,
   },
-  late: {
-    type: Boolean,
-    default: false,
+  schedulingState: {
+    type: String,
+    enum: Object.values(SchedulingState),
     required: true,
+    default: SchedulingState.UNSCHEDULED,
   },
-  startLocation: locationSchema,
-  endLocation: locationSchema,
+  startLocation: Location,
+  endLocation: Location,
   startTime: {
     type: String,
     required: true,
@@ -99,29 +87,46 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  rider: Rider,
+  riders: {
+    type: Array,
+    schema: [String], // Store rider IDs, not full objects
+    required: true,
+    default: [],
+  },
   driver: Driver,
-  recurring: {
+
+  // RFC 5545 Recurrence fields (placeholders - no functionality yet)
+  isRecurring: {
     type: Boolean,
     required: true,
     default: false,
   },
-  recurringDays: {
-    type: Array,
-    schema: [Number],
-  },
-  deleted: {
-    type: Array,
-    schema: [String],
-  },
-  edits: {
-    type: Array,
-    schema: [String],
-  },
-  endDate: {
+  rrule: {
     type: String,
     required: false,
-    validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
+  },
+  exdate: {
+    type: Array,
+    schema: [String],
+    required: false,
+  },
+  rdate: {
+    type: Array,
+    schema: [String],
+    required: false,
+  },
+  parentRideId: {
+    type: String,
+    required: false,
+  },
+  recurrenceId: {
+    type: String,
+    required: false,
+  },
+  timezone: {
+    type: String,
+    required: false,
+    default: 'America/New_York',
   },
 });
 
