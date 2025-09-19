@@ -309,10 +309,6 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     }
   }, []);
 
-  const cancelRide = useCallback(async (rideId: string) => {
-    await updateRideStatus(rideId, Status.CANCELLED);
-  }, [updateRideStatus]);
-
   const deleteRide = useCallback(async (rideId: string) => {
     const originalRide = getRideById(rideId);
     if (!originalRide) {
@@ -334,6 +330,40 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     } catch (error) {
       // Rollback on error
       console.error('Failed to delete ride:', error);
+      if (originalRide) {
+        if (wasScheduled) {
+          setScheduledRides(prev => [...prev, originalRide]);
+        } else {
+          setUnscheduledRides(prev => [...prev, originalRide]);
+        }
+      }
+      setError(error as Error);
+      throw error;
+    }
+  }, [getRideById]);
+
+  const cancelRide = useCallback(async (rideId: string) => {
+    // Cancelling a ride means deleting it from the database entirely
+    const originalRide = getRideById(rideId);
+    if (!originalRide) {
+      throw new Error('Ride not found');
+    }
+
+    const wasScheduled = originalRide.schedulingState === SchedulingState.SCHEDULED;
+
+    try {
+      // Optimistic update
+      if (wasScheduled) {
+        setScheduledRides(prev => prev.filter(ride => ride.id !== rideId));
+      } else {
+        setUnscheduledRides(prev => prev.filter(ride => ride.id !== rideId));
+      }
+
+      // Make API call
+      await axios.delete(`/api/rides/${rideId}`);
+    } catch (error) {
+      // Rollback on error
+      console.error('Failed to cancel ride:', error);
       if (originalRide) {
         if (wasScheduled) {
           setScheduledRides(prev => [...prev, originalRide]);

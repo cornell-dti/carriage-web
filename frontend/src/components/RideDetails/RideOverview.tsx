@@ -28,6 +28,7 @@ import RepeatIcon from '@mui/icons-material/Repeat';
 import { RideType, Status, SchedulingState, Type, Driver, Rider } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
+import RiderList from './RiderList';
 import styles from './RideOverview.module.css';
 
 interface RideOverviewProps {
@@ -287,7 +288,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   const renderPersonSection = () => {
-    if (userRole === 'admin') return null; // Admin has separate People tab
+    if (userRole === 'admin') return null; // Admin overview shows only ride info, people are in separate tab
     
     if (userRole === 'rider') {
       return (
@@ -296,15 +297,19 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
             <PersonIcon color="primary" />
             <Typography variant="h6">Driver</Typography>
           </div>
-          {ride.driver ? (
-            <PersonCardOverview person={ride.driver} type="driver" />
-          ) : (
-            <div className={styles.notAssigned}>
-              <Typography variant="body1" color="textSecondary">
-                Not assigned
-              </Typography>
+          <div className={styles.contentArea}>
+            <div className={styles.riderListContainer}>
+              {ride.driver ? (
+                <PersonCardOverview person={ride.driver} type="driver" />
+              ) : (
+                <div className={styles.notAssigned}>
+                  <Typography variant="body1" color="textSecondary">
+                    Not assigned
+                  </Typography>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       );
     }
@@ -314,9 +319,17 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
         <div className={styles.rightColumn}>
           <div className={styles.sectionTitle}>
             <PersonIcon color="primary" />
-            <Typography variant="h6">Rider</Typography>
+            <Typography variant="h6">Riders ({ride.riders?.length || 0})</Typography>
           </div>
-          <PersonCardOverview person={ride.rider} type="rider" showAccessibility />
+          <div className={styles.contentArea}>
+            <div className={styles.riderListContainer}>
+              <RiderList
+                riders={ride.riders || []}
+                showAccessibility
+                hideHeader
+              />
+            </div>
+          </div>
         </div>
       );
     }
@@ -326,13 +339,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.overviewGrid}>
+      <div className={userRole === 'admin' ? styles.adminOverviewGrid : styles.overviewGrid}>
         {/* Left Column - Ride Information */}
         <div className={styles.leftColumn}>
           <div className={styles.sectionTitle}>
             <DirectionsCarIcon color="primary" />
             <Typography variant="h6">Ride Overview</Typography>
           </div>
+          <div className={styles.contentArea}>
           
           {/* Schedule Section */}
           <div className={styles.scheduleSection}>
@@ -554,6 +568,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
               )}
             </div>
           )}
+          </div>
         </div>
 
         {/* Right Column - Person Information */}

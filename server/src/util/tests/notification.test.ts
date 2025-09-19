@@ -46,7 +46,7 @@ const unscheduledRide: RideType = {
   },
   startTime: '2022-09-28T15:00:00.000Z',
   endTime: '2022-09-28T15:00:00.000Z',
-  rider,
+  riders: [rider],
   isRecurring: false,
   timezone: 'America/New_York',
 };

@@ -38,9 +38,9 @@ export type RideType = {
   endLocation: LocationType;
   startTime: string;
   endTime: string;
-  rider: RiderType;
+  riders: RiderType[];
   driver?: DriverType;
-  
+
   // RFC 5545 Recurrence fields (placeholders - no functionality yet)
   isRecurring: boolean;
   rrule?: string; // RFC 5545 recurrence rule
@@ -88,7 +88,12 @@ const schema = new dynamoose.Schema({
     required: true,
     validate: (time) => isISO8601(time as string),
   },
-  rider: Rider,
+  riders: {
+    type: Array,
+    schema: [Rider],
+    required: true,
+    default: [],
+  },
   driver: Driver,
   
   // RFC 5545 Recurrence fields (placeholders - no functionality yet)

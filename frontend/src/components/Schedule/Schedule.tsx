@@ -73,7 +73,11 @@ const Schedule = () => {
       scheduledRides.map((ride: Ride) => ({
         id: ride.id,
         title: `${ride.startLocation.name} to ${ride.endLocation.name}
-Rider: ${ride.rider.firstName} ${ride.rider.lastName}`,
+Rider: ${ride.riders && ride.riders.length > 0
+          ? (ride.riders.length === 1
+            ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
+            : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`)
+          : 'No rider assigned'}`,
         start: new Date(ride.startTime.toString()),
         end: new Date(ride.endTime.toString()),
         resourceId: ride.driver!.id,

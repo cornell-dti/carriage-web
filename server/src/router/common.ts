@@ -180,13 +180,49 @@ export function scan(
 ) {
   model.scan(condition).exec(async (err, data) => {
     if (err) {
+      console.error('Dynamoose scan error:', err);
       res.status(err.statusCode || 500).send({ err: err.message });
     } else if (!data) {
       res.status(400).send({ err: 'error when scanning table' });
     } else if (callback) {
-      callback((await data.populate()).toJSON());
+      try {
+        // data should already be an array from DynamoDB scan
+        let resultArray: any[] = [];
+
+        if (Array.isArray(data)) {
+          // Populate each item in the array
+          const populatedData = await data.populate();
+          resultArray = populatedData.map((item: any) => item.toJSON ? item.toJSON() : item);
+        } else {
+          // If somehow it's not an array, make it one
+          const populatedData = await (data as any).populate();
+          const jsonData = (populatedData as any).toJSON ? (populatedData as any).toJSON() : populatedData;
+          resultArray = [jsonData];
+        }
+
+        callback(resultArray);
+      } catch (error) {
+        console.error('Error in scan callback:', error);
+        res.status(500).send({ err: 'Error processing scan results' });
+      }
     } else {
-      res.status(200).send({ data: (await data.populate()).toJSON() });
+      try {
+        let resultArray: any[] = [];
+
+        if (Array.isArray(data)) {
+          const populatedData = await data.populate();
+          resultArray = populatedData.map((item: any) => item.toJSON ? item.toJSON() : item);
+        } else {
+          const populatedData = await (data as any).populate();
+          const jsonData = (populatedData as any).toJSON ? (populatedData as any).toJSON() : populatedData;
+          resultArray = [jsonData];
+        }
+
+        res.status(200).send({ data: resultArray });
+      } catch (error) {
+        console.error('Error in scan response:', error);
+        res.status(500).send({ err: 'Error processing scan results' });
+      }
     }
   });
 }

@@ -70,13 +70,13 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             hour: '2-digit',
             minute: '2-digit',
           });
-          const { rider } = ride;
-          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
+          // Use primary rider (first in array) for table display
+          const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+          const riderName = primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : '';
 
           // Convert accessibility array to string
-          const needs =
-            rider && rider.accessibility && rider.accessibility.length > 0
-              ? rider.accessibility.join(', ')
+          const needs = primaryRider && primaryRider.accessibility && primaryRider.accessibility.length > 0
+              ? primaryRider.accessibility.join(', ')
               : 'None';
 
           const pickupLocation = ride.startLocation.name;

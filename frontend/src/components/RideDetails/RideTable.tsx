@@ -112,8 +112,9 @@ function descendingRideComparator(a: RideType, b: RideType, orderBy: SortField) 
       bValue = b.status;
       break;
     case 'rider':
-      aValue = a.rider ? `${a.rider.firstName} ${a.rider.lastName}` : '';
-      bValue = b.rider ? `${b.rider.firstName} ${b.rider.lastName}` : '';
+      // For sorting, use primary rider (first in array) or empty string
+      aValue = a.riders && a.riders.length > 0 ? `${a.riders[0].firstName} ${a.riders[0].lastName}` : '';
+      bValue = b.riders && b.riders.length > 0 ? `${b.riders[0].firstName} ${b.riders[0].lastName}` : '';
       break;
     case 'driver':
       aValue = a.driver ? `${a.driver.firstName} ${a.driver.lastName}` : '';
@@ -296,8 +297,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
     if (filters.searchText) {
       const searchLower = filters.searchText.toLowerCase();
       filtered = filtered.filter(ride =>
-        ride.rider?.firstName?.toLowerCase().includes(searchLower) ||
-        ride.rider?.lastName?.toLowerCase().includes(searchLower) ||
+        // Search across all riders in the array
+        ride.riders?.some(rider =>
+          rider.firstName?.toLowerCase().includes(searchLower) ||
+          rider.lastName?.toLowerCase().includes(searchLower)
+        ) ||
         ride.driver?.firstName?.toLowerCase().includes(searchLower) ||
         ride.driver?.lastName?.toLowerCase().includes(searchLower) ||
         ride.startLocation.name?.toLowerCase().includes(searchLower) ||

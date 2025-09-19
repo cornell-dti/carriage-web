@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -6,28 +6,18 @@ import {
   Avatar,
   Chip,
   IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  CircularProgress,
 } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { RideType, Driver, Rider } from '../../types';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Driver, Rider } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
 import axios from '../../util/axios';
+import RiderList from './RiderList';
+import SearchPopup from './SearchPopup';
 import styles from './RidePeople.module.css';
 
 interface RidePeopleProps {
@@ -125,34 +115,61 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [driverSelectOpen, setDriverSelectOpen] = useState(false);
   const [driversError, setDriversError] = useState<string | null>(null);
+  const driverButtonRef = useRef<HTMLButtonElement>(null);
+  
+  // Ref to store the driver assigned when editing started
+  const originalDriverRef = useRef<Driver | null>(null);
+  
+  // Track the temp driver changes (before saving)
+  const [tempCurrentDriver, setTempCurrentDriver] = useState<Driver | null>(ride.driver || null);
   
   const [riders, setRiders] = useState<Rider[]>([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
   const [riderSelectOpen, setRiderSelectOpen] = useState(false);
   const [ridersError, setRidersError] = useState<string | null>(null);
+  const riderButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Fetch available drivers and riders when component mounts or when editing starts
+  // Fetch data and set initial state when editing starts
   useEffect(() => {
     if (isEditing && userRole === 'admin') {
+      // Snapshot the driver at the start of the edit session
+      const driverAtEditStart = ride.driver || null;
+      originalDriverRef.current = driverAtEditStart;
+      setTempCurrentDriver(driverAtEditStart);
+
       fetchDrivers();
       fetchRiders();
     }
+    // This effect should only run once when isEditing becomes true
   }, [isEditing, userRole]);
 
   const fetchDrivers = async () => {
     setLoadingDrivers(true);
     setDriversError(null);
     try {
-      const response = await axios.get('/api/drivers');
-      // The API returns { data: [...] } structure
+      const startTime = new Date(ride.startTime);
+      const endTime = new Date(ride.endTime);
+      
+      const date = startTime.toISOString().split('T')[0];
+      const startTimeStr = startTime.toTimeString().slice(0, 5);
+      const endTimeStr = endTime.toTimeString().slice(0, 5);
+      
+      const response = await axios.get('/api/drivers/available', {
+        params: {
+          date,
+          startTime: startTimeStr,
+          endTime: endTimeStr,
+          timezone: 'America/New_York'
+        }
+      });
+      
       const driversData = response.data?.data || response.data;
-      // Ensure we have an array
       const driversArray = Array.isArray(driversData) ? driversData : [];
       setDrivers(driversArray);
     } catch (error) {
-      console.error('Failed to fetch drivers:', error);
-      setDriversError('Failed to load drivers');
-      setDrivers([]); // Ensure we have an empty array on error
+      console.error('Failed to fetch available drivers:', error);
+      setDriversError('Failed to load available drivers');
+      setDrivers([]);
     } finally {
       setLoadingDrivers(false);
     }
@@ -163,52 +180,86 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     setRidersError(null);
     try {
       const response = await axios.get('/api/riders');
-      // The API returns { data: [...] } structure
       const ridersData = response.data?.data || response.data;
-      // Ensure we have an array
+      // CORRECTED LINE: Used ridersData instead of ridersArray
       const ridersArray = Array.isArray(ridersData) ? ridersData : [];
       setRiders(ridersArray);
     } catch (error) {
       console.error('Failed to fetch riders:', error);
       setRidersError('Failed to load riders');
-      setRiders([]); // Ensure we have an empty array on error
+      setRiders([]);
     } finally {
       setLoadingRiders(false);
     }
   };
 
-  const handleDriverSelect = (driver: Driver | null) => {
+  const handleDriverSelect = (driver: Driver) => {
+    setTempCurrentDriver(driver);
     updateRideField('driver', driver);
     setDriverSelectOpen(false);
   };
 
   const handleRiderSelect = (rider: Rider) => {
-    updateRideField('rider', rider);
+    const currentRiders = ride.riders || [];
+    if (!currentRiders.find(r => r.id === rider.id)) {
+      updateRideField('riders', [...currentRiders, rider]);
+    }
     setRiderSelectOpen(false);
   };
+
+  const handleRemoveRider = (rider: Rider) => {
+    const currentRiders = ride.riders || [];
+    updateRideField('riders', currentRiders.filter(r => r.id !== rider.id));
+  };
+
+  const handleRemoveDriver = () => {
+    setTempCurrentDriver(null);
+    updateRideField('driver', null);
+  };
+
   const renderRiderView = () => (
     <div className={styles.container}>
-      <Typography variant="h6" gutterBottom>
-        Driver Information
-      </Typography>
-      {ride.driver ? (
-        <PersonCard person={ride.driver} type="driver" />
-      ) : (
-        <div className={styles.notAssigned}>
-          <Typography variant="body1">
-            Not assigned
+      <div className={styles.adminContainer}>
+        <div className={styles.adminCard}>
+          <Typography variant="subtitle1" gutterBottom>
+            Driver
           </Typography>
+          <div className={styles.contentArea}>
+            <div className={styles.riderListContainer}>
+              {ride.driver ? (
+                <PersonCard person={ride.driver} type="driver" />
+              ) : (
+                <div className={styles.notAssigned}>
+                  <Typography variant="body1">
+                    Not assigned
+                  </Typography>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 
   const renderDriverView = () => (
     <div className={styles.container}>
-      <Typography variant="h6" gutterBottom>
-        Rider Information
-      </Typography>
-      <PersonCard person={ride.rider} type="rider" showAccessibility />
+      <div className={styles.adminContainer}>
+        <div className={styles.adminCard}>
+          <Typography variant="subtitle1" gutterBottom>
+            Riders ({ride.riders?.length || 0})
+          </Typography>
+          <div className={styles.contentArea}>
+            <div className={styles.riderListContainer}>
+              <RiderList
+                riders={ride.riders || []}
+                showAccessibility
+                hideHeader
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -221,231 +272,127 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
         <div className={styles.adminContainer}>
           <div className={styles.adminCard}>
             <Typography variant="subtitle1" gutterBottom>
-              Rider
+              Riders ({ride.riders?.length || 0})
             </Typography>
-            {isEditing && canEditRider ? (
-              <div>
-                {ride.rider && ride.rider.id ? (
-                  <div>
-                    <PersonCard person={ride.rider} type="rider" showAccessibility />
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => setRiderSelectOpen(true)}
-                      sx={{ mt: 1 }}
-                    >
-                      Change Rider
-                    </Button>
-                  </div>
-                ) : (
-                  <div>
-                    <div className={styles.notAssigned}>
-                      <Typography variant="body1">
-                        Not assigned
-                      </Typography>
-                    </div>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      startIcon={<PersonAddIcon />}
-                      onClick={() => setRiderSelectOpen(true)}
-                      sx={{ mt: 1 }}
-                    >
-                      Assign Rider
-                    </Button>
-                  </div>
-                )}
+            <div className={styles.contentArea}>
+              <div className={styles.riderListContainer}>
+                <RiderList
+                  riders={ride.riders || []}
+                  showAccessibility
+                  hideHeader
+                />
               </div>
-            ) : (
-              ride.rider && ride.rider.id ? (
-                <PersonCard person={ride.rider} type="rider" showAccessibility />
-              ) : (
-                <div className={styles.notAssigned}>
-                  <Typography variant="body1">
-                    Not assigned
-                  </Typography>
-                </div>
-              )
+            </div>
+            {isEditing && canEditRider && (
+              <div className={styles.actionButtons}>
+                <Button
+                  ref={riderButtonRef}
+                  variant="outlined"
+                  size="small"
+                  startIcon={<SettingsIcon />}
+                  onClick={() => setRiderSelectOpen(!riderSelectOpen)}
+                >
+                  Manage Riders
+                </Button>
+              </div>
             )}
           </div>
           <div className={styles.adminCard}>
             <Typography variant="subtitle1" gutterBottom>
               Driver
             </Typography>
-            {isEditing && canEditDriver ? (
-            <div>
-              {ride.driver ? (
-                <div>
-                  <PersonCard person={ride.driver} type="driver" />
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => setDriverSelectOpen(true)}
-                    sx={{ mt: 1 }}
-                  >
-                    Change Driver
-                  </Button>
-                  <Button
-                    variant="text"
-                    size="small"
-                    color="error"
-                    onClick={() => handleDriverSelect(null)}
-                    sx={{ mt: 1, ml: 1 }}
-                  >
-                    Remove Driver
-                  </Button>
-                </div>
-              ) : (
-                <div>
+            <div className={styles.contentArea}>
+              <div className={styles.riderListContainer}>
+                {tempCurrentDriver ? (
+                  <PersonCard person={tempCurrentDriver} type="driver" />
+                ) : (
                   <div className={styles.notAssigned}>
                     <Typography variant="body1">
                       Not assigned
                     </Typography>
                   </div>
+                )}
+              </div>
+            </div>
+            {isEditing && canEditDriver && (
+              <div className={styles.actionButtons}>
+                {tempCurrentDriver ? (
+                  <>
+                    <Button
+                      ref={driverButtonRef}
+                      variant="outlined"
+                      size="small"
+                      onClick={() => setDriverSelectOpen(!driverSelectOpen)}
+                      sx={{ mr: 1 }}
+                    >
+                      Change Driver
+                    </Button>
+                    <Button
+                      variant="text"
+                      size="small"
+                      color="error"
+                      onClick={handleRemoveDriver}
+                    >
+                      Remove Driver
+                    </Button>
+                  </>
+                ) : (
                   <Button
+                    ref={driverButtonRef}
                     variant="contained"
                     size="small"
                     startIcon={<PersonAddIcon />}
-                    onClick={() => setDriverSelectOpen(true)}
-                    sx={{ mt: 1 }}
+                    onClick={() => setDriverSelectOpen(!driverSelectOpen)}
                   >
                     Assign Driver
                   </Button>
-                </div>
-              )}
-            </div>
-            ) : (
-              ride.driver ? (
-                <PersonCard person={ride.driver} type="driver" />
-              ) : (
-                <div className={styles.notAssigned}>
-                  <Typography variant="body1">
-                    Not assigned
-                  </Typography>
-                </div>
-              )
+                )}
+              </div>
             )}
           </div>
         </div>
 
-      {/* Driver Selection Dialog */}
-      <Dialog 
-        open={driverSelectOpen} 
+      {/* Driver Selection Popup */}
+      <SearchPopup<Driver>
+        open={driverSelectOpen}
         onClose={() => setDriverSelectOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Select Driver</DialogTitle>
-        <DialogContent>
-          {loadingDrivers ? (
-            <Box display="flex" justifyContent="center" p={3}>
-              <CircularProgress />
-            </Box>
-          ) : driversError ? (
-            <Box display="flex" flexDirection="column" alignItems="center" p={3}>
-              <Typography color="error" gutterBottom>{driversError}</Typography>
-              <Button variant="outlined" onClick={fetchDrivers} size="small">
-                Retry
-              </Button>
-            </Box>
-          ) : Array.isArray(drivers) && drivers.length > 0 ? (
-            <List>
-              {drivers.map((driver) => (
-                <ListItem
-                  key={driver.id}
-                  component="div"
-                  onClick={() => handleDriverSelect(driver)}
-                  sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}
-                >
-                  <ListItemAvatar>
-                    <Avatar src={driver.photoLink}>
-                      {driver.firstName?.charAt(0)}{driver.lastName?.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`${driver.firstName} ${driver.lastName}`}
-                    secondary={driver.email}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Box display="flex" justifyContent="center" p={3}>
-              <Typography color="textSecondary">No drivers available</Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDriverSelectOpen(false)}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onSelect={handleDriverSelect}
+        items={(() => {
+          let allDrivers = drivers;
+          const originalDriver = originalDriverRef.current;
+          
+          // Add the original driver to the list if they aren't in the available list
+          if (originalDriver && !drivers.find(d => d.id === originalDriver.id)) {
+            allDrivers = [...drivers, originalDriver];
+          }
+          
+          // Filter out the currently selected temporary driver from the options
+          return allDrivers.filter(driver => driver.id !== tempCurrentDriver?.id);
+        })()}
+        loading={loadingDrivers}
+        error={driversError}
+        title="Select Driver"
+        placeholder="Search drivers..."
+        selectedItems={tempCurrentDriver ? [tempCurrentDriver] : []}
+        onRemove={handleRemoveDriver}
+        anchorEl={driverButtonRef.current}
+      />
 
-      {/* Rider Selection Dialog */}
-      <Dialog 
-        open={riderSelectOpen} 
+      {/* Rider Selection Popup */}
+      <SearchPopup<Rider>
+        open={riderSelectOpen}
         onClose={() => setRiderSelectOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Select Rider</DialogTitle>
-        <DialogContent>
-          {loadingRiders ? (
-            <Box display="flex" justifyContent="center" p={3}>
-              <CircularProgress />
-            </Box>
-          ) : ridersError ? (
-            <Box display="flex" flexDirection="column" alignItems="center" p={3}>
-              <Typography color="error" gutterBottom>{ridersError}</Typography>
-              <Button variant="outlined" onClick={fetchRiders} size="small">
-                Retry
-              </Button>
-            </Box>
-          ) : Array.isArray(riders) && riders.length > 0 ? (
-            <List>
-              {riders.map((rider) => (
-                <ListItem
-                  key={rider.id}
-                  component="div"
-                  onClick={() => handleRiderSelect(rider)}
-                  sx={{ cursor: 'pointer', '&:hover': { backgroundColor: 'action.hover' } }}
-                >
-                  <ListItemAvatar>
-                    <Avatar src={rider.photoLink}>
-                      {rider.firstName?.charAt(0)}{rider.lastName?.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={`${rider.firstName} ${rider.lastName}`}
-                    secondary={
-                      <Box>
-                        <Typography variant="body2" color="textSecondary">
-                          {rider.email}
-                        </Typography>
-                        {rider.accessibility && rider.accessibility.length > 0 && (
-                          <Typography variant="caption" color="textSecondary">
-                            Accessibility: {rider.accessibility.join(', ')}
-                          </Typography>
-                        )}
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Box display="flex" justifyContent="center" p={3}>
-              <Typography color="textSecondary">No riders available</Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setRiderSelectOpen(false)}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onSelect={handleRiderSelect}
+        items={riders.filter(rider => !(ride.riders || []).find(r => r.id === rider.id))}
+        loading={loadingRiders}
+        error={ridersError}
+        title="Manage Riders"
+        placeholder="Search riders..."
+        selectedItems={ride.riders || []}
+        onRemove={handleRemoveRider}
+        showAccessibility={true}
+        anchorEl={riderButtonRef.current}
+      />
     </div>
     );
   };

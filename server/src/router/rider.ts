@@ -24,20 +24,25 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
   const isPast = new Condition('type').eq(Type.PAST);
   db.scan(res, Ride, isPast, (data: RideType[]) => {
     data.forEach((ride) => {
-      const currID = ride.rider.id;
-      if (currID in usageObj) {
-        if (ride.status === Status.COMPLETED) {
-          usageObj[currID].totalRides += 1;
+      // Handle multiple riders - count usage for each rider in the ride
+      const ridersToProcess = ride.riders || [];
+
+      ridersToProcess.forEach((rider) => {
+        const currID = rider.id;
+        if (currID in usageObj) {
+          if (ride.status === Status.COMPLETED) {
+            usageObj[currID].totalRides += 1;
+          } else {
+            usageObj[currID].noShows += 1;
+          }
         } else {
-          usageObj[currID].noShows += 1;
+          const dummy =
+            ride.status === Status.COMPLETED
+              ? { noShows: 0, totalRides: 1 }
+              : { noShows: 1, totalRides: 0 };
+          usageObj[currID] = dummy;
         }
-      } else {
-        const dummy =
-          ride.status === Status.COMPLETED
-            ? { noShows: 0, totalRides: 1 }
-            : { noShows: 1, totalRides: 0 };
-        usageObj[currID] = dummy;
-      }
+      });
     });
     res.send(usageObj);
   });
@@ -124,14 +129,36 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
   db.getById(res, Rider, id, tableName, () => {
     const now = moment().toISOString();
     const end = moment().add(30, 'minutes').toISOString();
-    const isRider = new Condition('rider').eq(id);
+
+    // For now, let's get all active rides and filter in JavaScript
+    // This avoids the Dynamoose condition issue with the riders array
     const isActive = new Condition('type').eq(Type.ACTIVE);
     const isSoon = new Condition('startTime').between(now, end);
     const isNow = new Condition('startTime').le(now).where('endTime').ge(now);
-    const condition = isRider.group(isActive.group(isSoon.or().group(isNow)));
+    const condition = isActive.group(isSoon.or().group(isNow));
+
     db.scan(res, Ride, condition, (data: RideType[]) => {
-      data.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
-      res.send(data[0] ?? {});
+      if (!Array.isArray(data)) {
+        console.error('Data is not an array in currentride:', data);
+        res.status(500).send({ err: 'Invalid data format returned from scan' });
+        return;
+      }
+
+      // Filter for rides that include this rider
+      const riderRides = data.filter(ride => {
+        // Check both old (rider) and new (riders) format for compatibility
+        if (ride.riders && Array.isArray(ride.riders)) {
+          return ride.riders.some(rider => rider.id === id);
+        }
+        // Legacy support for old rider field (if it exists)
+        if ((ride as any).rider && (ride as any).rider.id === id) {
+          return true;
+        }
+        return false;
+      });
+
+      riderRides.sort((a, b) => (a.startTime < b.startTime ? -1 : 1));
+      res.send(riderRides[0] ?? {});
     });
   });
 });
@@ -143,12 +170,25 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
   let noShowCount: number;
   let studentRides: number;
   db.getById(res, Rider, id, tableName, () => {
-    const isRider = new Condition('rider').eq(id);
-    db.scan(res, Ride, isRider, (data: RideType[]) => {
-      noShowCount = data.filter(
+    // Scan all rides and filter in JavaScript to avoid Dynamoose array condition issues
+    db.scan(res, Ride, new Condition(), (data: RideType[]) => {
+      // Filter for rides that include this rider
+      const riderRides = data.filter(ride => {
+        // Check both old (rider) and new (riders) format for compatibility
+        if (ride.riders && Array.isArray(ride.riders)) {
+          return ride.riders.some(rider => rider.id === id);
+        }
+        // Legacy support for old rider field (if it exists)
+        if ((ride as any).rider && (ride as any).rider.id === id) {
+          return true;
+        }
+        return false;
+      });
+
+      noShowCount = riderRides.filter(
         (ride) => ride.status === Status.NO_SHOW
       ).length;
-      studentRides = data.filter(
+      studentRides = riderRides.filter(
         (ride) => ride.status === Status.COMPLETED
       ).length;
       res.send({ studentRides, noShowCount });

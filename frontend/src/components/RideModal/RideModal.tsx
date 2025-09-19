@@ -22,7 +22,11 @@ const getRideData = (ride: Ride | undefined) => {
       date: format_date(ride.startTime),
       pickupTime: moment(ride.startTime).format('kk:mm'),
       dropoffTime: moment(ride.endTime).format('kk:mm'),
-      rider: `${ride.rider.firstName} ${ride.rider.lastName}`,
+      rider: ride.riders && ride.riders.length > 0
+        ? (ride.riders.length === 1
+          ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
+          : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`)
+        : 'No rider assigned',
       pickupLoc: ride.startLocation.id
         ? ride.startLocation.name
         : ride.startLocation.address,

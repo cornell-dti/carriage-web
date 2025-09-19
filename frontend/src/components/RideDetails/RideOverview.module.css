@@ -9,6 +9,13 @@
   align-items: start;
 }
 
+.adminOverviewGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .leftColumn {
   display: flex;
   flex-direction: column;
@@ -27,22 +34,28 @@
 }
 
 @media (max-width: 768px) {
-  .overviewGrid {
+  .overviewGrid,
+  .adminOverviewGrid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
+  .adminOverviewGrid {
+    max-width: 100%;
+    margin: 0;
+  }
+
   .editStatusFields {
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
   }
-  
+
   .scheduleSection,
   .statusSection {
     margin-bottom: 16px;
   }
-  
+
   .dateTimeRow {
     flex-direction: column;
     gap: 8px;
@@ -134,9 +147,9 @@
 }
 
 .personCard {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background-color: #fafafa;
+  height: 100%; /* Fill 100% of riderListContainer */
+  display: flex;
+  flex-direction: column;
 }
 
 .personHeader {
@@ -175,8 +188,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 120px;
+  height: 100%;
   background-color: #f5f5f5;
   border: 1px dashed #ccc;
   border-radius: 8px;
+}
+
+/* Content area that grows to fill available space */
+.contentArea {
+  height: 380px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+/* Rider list container that can scroll if needed */
+.riderListContainer {
+  height: 100%; /* Fill 100% of contentArea */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }

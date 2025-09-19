@@ -25,15 +25,30 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
   const startTime = moment(ride.startTime).format('h:mm A');
   const endTime = moment(ride.endTime).format('h:mm A');
   const date = format_date(ride.startTime);
-  const riderName = ride.rider ? `${ride.rider.firstName} ${ride.rider.lastName}` : 'No rider assigned';
+  // For display purposes, use primary rider (first in array) or show multiple riders
+  const getRiderDisplayName = () => {
+    if (!ride.riders || ride.riders.length === 0) return 'No rider assigned';
+    if (ride.riders.length === 1) return `${ride.riders[0].firstName} ${ride.riders[0].lastName}`;
+    return `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`;
+  };
+
+  const riderName = getRiderDisplayName();
   const driverName = ride.driver ? `${ride.driver.firstName} ${ride.driver.lastName}` : 'No driver assigned';
-  
+
   const pickupLocation = ride.startLocation.name || ride.startLocation.address;
   const dropoffLocation = ride.endLocation.name || ride.endLocation.address;
-  
-  const needs = ride.rider && ride.rider.accessibility && ride.rider.accessibility.length > 0
-    ? ride.rider.accessibility.join(', ')
-    : 'None';
+
+  // Collect accessibility needs from all riders
+  const getAllAccessibilityNeeds = () => {
+    if (!ride.riders || ride.riders.length === 0) return 'None';
+    const allNeeds = ride.riders
+      .filter(rider => rider.accessibility && rider.accessibility.length > 0)
+      .flatMap(rider => rider.accessibility)
+      .filter((need, index, arr) => arr.indexOf(need) === index); // Remove duplicates
+    return allNeeds.length > 0 ? allNeeds.join(', ') : 'None';
+  };
+
+  const needs = getAllAccessibilityNeeds();
 
   const getStatusText = () => {
     if (ride.schedulingState === SchedulingState.UNSCHEDULED) {

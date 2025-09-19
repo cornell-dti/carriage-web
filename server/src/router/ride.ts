@@ -32,20 +32,38 @@ router.get('/download', (req, res) => {
   const callback = (value: any) => {
     const dataToExport = value
       .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
-      .map((doc: any) => {
+      .flatMap((doc: any) => {
         const start = moment(doc.startTime);
         const end = moment(doc.endTime);
         const fullName = (user: RiderType | DriverType) =>
           `${user.firstName} ${user.lastName.substring(0, 1)}.`;
-        return {
-          Name: fullName(doc.rider),
+
+        // Handle multiple riders - create a row for each rider
+        const ridersToProcess = doc.riders || [];
+        if (ridersToProcess.length === 0) {
+          // No riders assigned
+          return [{
+            Name: 'No rider assigned',
+            'Pick Up': start.format('h:mm A'),
+            From: doc.startLocation.name,
+            To: doc.endLocation.name,
+            'Drop Off': end.format('h:mm A'),
+            Needs: 'None',
+            Driver: doc.driver ? fullName(doc.driver) : '',
+          }];
+        }
+
+        return ridersToProcess.map((rider: RiderType) => ({
+          Name: fullName(rider),
           'Pick Up': start.format('h:mm A'),
           From: doc.startLocation.name,
           To: doc.endLocation.name,
           'Drop Off': end.format('h:mm A'),
-          Needs: doc.rider.accessibility,
+          Needs: rider.accessibility && rider.accessibility.length > 0
+            ? rider.accessibility.join(', ')
+            : 'None',
           Driver: doc.driver ? fullName(doc.driver) : '',
-        };
+        }));
       });
     csv
       .writeToBuffer(dataToExport, { headers: true })
@@ -68,10 +86,28 @@ router.get('/repeating', validateUser('User'), (req, res) => {
     .where('status')
     .not()
     .eq(Status.CANCELLED);
+
   if (rider) {
-    condition = condition.where('rider').eq(rider);
+    // If rider filter is specified, use callback to filter after scan
+    db.scan(res, Ride, condition, (data: RideType[]) => {
+      // Filter for rides that include this rider
+      const riderRides = data.filter(ride => {
+        // Check both old (rider) and new (riders) format for compatibility
+        if (ride.riders && Array.isArray(ride.riders)) {
+          return ride.riders.some(riderObj => riderObj.id === rider);
+        }
+        // Legacy support for old rider field (if it exists)
+        if ((ride as any).rider && (ride as any).rider.id === rider) {
+          return true;
+        }
+        return false;
+      });
+      res.status(200).send({ data: riderRides });
+    });
+  } else {
+    // No rider filter, can use direct scan
+    db.scan(res, Ride, condition);
   }
-  db.scan(res, Ride, condition);
 });
 
 // Get a ride by id in Rides table
@@ -87,37 +123,51 @@ router.get('/rider/:id', validateUser('User'), (req, res) => {
   const {
     params: { id },
   } = req;
-  const condition = new Condition('rider').eq(id);
-  db.scan(res, Ride, condition);
+  // Scan all rides and filter in JavaScript to avoid Dynamoose array condition issues
+  db.scan(res, Ride, new Condition(), (data: RideType[]) => {
+    // Filter for rides that include this rider
+    const riderRides = data.filter(ride => {
+      // Check both old (rider) and new (riders) format for compatibility
+      if (ride.riders && Array.isArray(ride.riders)) {
+        return ride.riders.some(rider => rider.id === id);
+      }
+      // Legacy support for old rider field (if it exists)
+      if ((ride as any).rider && (ride as any).rider.id === id) {
+        return true;
+      }
+      return false;
+    });
+    res.status(200).send({ data: riderRides });
+  });
 });
 
 // Get and query all rides in table
 router.get('/', validateUser('User'), (req, res) => {
   const { type, status, rider, driver, date, scheduled, schedulingState, allDates } = req.query;
   let condition = new Condition('status').not().eq(Status.CANCELLED);
-  
+
   if (type) {
     condition = condition.where('type').eq(type);
   } else if (scheduled) {
     // Legacy support: scheduled=true means not unscheduled
     condition = condition.where('schedulingState').eq(SchedulingState.SCHEDULED);
   }
-  
+
   // New schedulingState filter
   if (schedulingState) {
     condition = condition.where('schedulingState').eq(schedulingState);
   }
-  
+
   if (status) {
     condition = condition.where('status').eq(status);
   }
-  if (rider) {
-    condition = condition.where('rider').eq(rider);
-  }
+
+  // Skip rider condition in Dynamoose query - will filter in JavaScript
+
   if (driver) {
     condition = condition.where('driver').eq(driver);
   }
-  
+
   // Only apply date filter if date is provided and allDates is not true
   if (date && allDates !== 'true') {
     const dateStart = moment(date as string).toISOString();
@@ -126,8 +176,28 @@ router.get('/', validateUser('User'), (req, res) => {
       .toISOString();
     condition = condition.where('startTime').between(dateStart, dateEnd);
   }
-  
-  db.scan(res, Ride, condition);
+
+  if (rider) {
+    // If rider filter is specified, use callback to filter after scan
+    db.scan(res, Ride, condition, (data: RideType[]) => {
+      // Filter for rides that include this rider
+      const riderRides = data.filter(ride => {
+        // Check both old (rider) and new (riders) format for compatibility
+        if (ride.riders && Array.isArray(ride.riders)) {
+          return ride.riders.some(riderObj => riderObj.id === rider);
+        }
+        // Legacy support for old rider field (if it exists)
+        if ((ride as any).rider && (ride as any).rider.id === rider) {
+          return true;
+        }
+        return false;
+      });
+      res.status(200).send({ data: riderRides });
+    });
+  } else {
+    // No rider filter, can use direct scan
+    db.scan(res, Ride, condition);
+  }
 });
 
 // Create a new ride
@@ -153,10 +223,13 @@ router.post('/', validateUser('User'), (req, res) => {
     return;
   }
 
-  // Validate single ride requirements
-  if (!body.startTime || !body.endTime || !body.rider) {
-    res.status(400).send({ 
-      err: 'Missing required fields: startTime, endTime, and rider are required for single rides.' 
+  // Validate single ride requirements - support both legacy rider and new riders array
+  const hasRiders = body.riders && body.riders.length > 0;
+  const hasLegacyRider = body.rider;
+
+  if (!body.startTime || !body.endTime || (!hasRiders && !hasLegacyRider)) {
+    res.status(400).send({
+      err: 'Missing required fields: startTime, endTime, and at least one rider are required for single rides.'
     });
     return;
   }
@@ -184,6 +257,17 @@ router.post('/', validateUser('User'), (req, res) => {
   const hasDriver = body.driver ? true : false;
   const schedulingState = body.schedulingState || (hasDriver ? SchedulingState.SCHEDULED : SchedulingState.UNSCHEDULED);
 
+  // Determine riders array - support both new format and legacy format
+  let ridersArray;
+  if (body.riders && body.riders.length > 0) {
+    ridersArray = body.riders;
+  } else if (body.rider) {
+    // Convert legacy single rider to array
+    ridersArray = [body.rider];
+  } else {
+    ridersArray = [];
+  }
+
   // Create single ride
   const ride = new Ride({
     id: uuid(),
@@ -191,7 +275,7 @@ router.post('/', validateUser('User'), (req, res) => {
     endLocation: endLocationObj,
     startTime: body.startTime,
     endTime: body.endTime,
-    rider: body.rider,
+    riders: ridersArray,
     driver: body.driver || undefined,
     type: body.type || Type.UPCOMING,
     status: body.status || Status.NOT_STARTED,
@@ -238,10 +322,12 @@ router.put('/:id', validateUser('User'), (req, res) => {
 
   //Check if id matches or user is admin
   db.getById(res, Ride, id, tableName, (ride: RideType) => {
-    const { rider, driver } = ride;
+    const { riders, driver } = ride;
+    const userIsRider = riders && riders.some(rider => rider.id === res.locals.user.id);
+
     if (
       res.locals.user.userType === UserType.ADMIN ||
-      res.locals.user.id == rider.id ||
+      userIsRider ||
       (driver && res.locals.user.id === driver.id)
     ) {
       db.update(res, Ride, { id }, body, tableName, async (doc) => {
@@ -273,34 +359,69 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     params: { id },
   } = req;
   db.getById(res, Ride, id, tableName, (ride) => {
-    const { isRecurring, type } = ride;
-    
+    const { isRecurring, riders, driver } = ride;
+
     // For now, block deletion of recurring rides
     if (isRecurring) {
-      res.status(400).send({ 
-        err: 'Recurring ride deletion not supported yet. Only single rides can be deleted.' 
+      res.status(400).send({
+        err: 'Recurring ride deletion not supported yet. Only single rides can be deleted.'
       });
       return;
     }
-    
-    if (type === Type.ACTIVE) {
-      // Cancel active rides instead of deleting
-      const operation = { status: Status.CANCELLED };
-      db.update(res, Ride, { id }, operation, tableName, async (doc) => {
-        const deletedRide = doc;
-        const { userType } = res.locals.user;
-        deletedRide.startLocation = ride.startLocation;
-        deletedRide.endLocation = ride.endLocation;
-        notify(deletedRide, operation, userType)
-          .then(() => res.send(doc))
-          .catch(() => res.send(doc));
+
+    // Check if user has permission to cancel/delete this ride
+    const userIsRider = riders && riders.some((rider: any) => rider.id === res.locals.user.id);
+    const userIsDriver = driver && res.locals.user.id === driver.id;
+    const userIsAdmin = res.locals.user.userType === 'Admin';
+
+    if (!userIsAdmin && !userIsRider && !userIsDriver) {
+      res.status(403).send({
+        err: 'You do not have permission to cancel this ride.',
       });
-    } else {
-      // Delete non-active single rides
-      Ride.delete(id)
-        .then(() => res.send({ id }))
-        .catch((err) => res.status(500).send({ err: err.message }));
+      return;
     }
+
+    // Check constraints based on user type and ride status
+    if (!userIsAdmin) {
+      // Riders can only cancel rides that haven't started
+      if (userIsRider && ride.status !== Status.NOT_STARTED) {
+        res.status(400).send({
+          err: 'You can only cancel rides that have not started yet.',
+        });
+        return;
+      }
+
+      // Drivers cannot cancel rides (only admins can)
+      if (userIsDriver && !userIsRider) {
+        res.status(400).send({
+          err: 'Drivers cannot cancel rides. Please contact an admin.',
+        });
+        return;
+      }
+    }
+
+    // Admin can cancel any ride, but check if it's already completed/past
+    if (ride.status === Status.COMPLETED) {
+      res.status(400).send({
+        err: 'Cannot cancel a ride that has already been completed.',
+      });
+      return;
+    }
+
+    // Delete the ride from database and send notification
+    Ride.delete(id)
+      .then(async () => {
+        // Send cancellation notification
+        const { userType } = res.locals.user;
+        try {
+          await notify(ride, {}, userType, Change.CANCELLED);
+        } catch (notificationError) {
+          console.error('Failed to send cancellation notification:', notificationError);
+          // Continue with the response even if notification fails
+        }
+        res.send({ id });
+      })
+      .catch((err) => res.status(500).send({ err: err.message }));
   });
 });
 

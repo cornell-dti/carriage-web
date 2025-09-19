@@ -155,7 +155,9 @@ const RideDetailCard = ({
     );
   }
 
-  const { rider, startLocation, endLocation, startTime, status } = ride;
+  // Use primary rider (first in array) for driver interface
+  const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const { startLocation, endLocation, startTime, status } = ride;
 
   const handleStatusUpdate = async (newStatus: Status) => {
     if (onUpdate) {
@@ -176,23 +178,26 @@ const RideDetailCard = ({
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
-            <Avatar src={rider.photoLink} sx={{ width: 48, height: 48, mr: 2 }}>
-              {rider.firstName.charAt(0)}{rider.lastName.charAt(0)}
+            <Avatar src={primaryRider?.photoLink} sx={{ width: 48, height: 48, mr: 2 }}>
+              {primaryRider ? `${primaryRider.firstName.charAt(0)}${primaryRider.lastName.charAt(0)}` : '?'}
             </Avatar>
             <Box sx={{ flexGrow: 1 }}>
-              <Typography variant="body1" fontWeight="bold">{`${rider.firstName} ${rider.lastName}`}</Typography>
-              <Typography variant="body2" color="textSecondary">{rider.pronouns}</Typography>
+              <Typography variant="body1" fontWeight="bold">
+                {primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : 'No rider assigned'}
+                {ride.riders && ride.riders.length > 1 && ` +${ride.riders.length - 1} more`}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">{primaryRider?.pronouns}</Typography>
             </Box>
             <IconButton onClick={() => setContactModalOpen(true)} aria-label="Show contact info">
               <PhoneIcon />
             </IconButton>
           </Box>
 
-          {rider.accessibility && rider.accessibility.length > 0 && (
+          {primaryRider && primaryRider.accessibility && primaryRider.accessibility.length > 0 && (
             <Box sx={{ mb: 2 }}>
               <Typography variant="caption" color="textSecondary" gutterBottom>ACCESSIBILITY NEEDS</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-                {rider.accessibility.map((need) => <Chip key={need} label={need} size="small" />)}
+                {primaryRider.accessibility.map((need: string) => <Chip key={need} label={need} size="small" />)}
               </Box>
             </Box>
           )}
@@ -263,7 +268,7 @@ const RideDetailCard = ({
           </Stack>
         </Box>
       </Card>
-      <ContactInfoModal open={contactModalOpen} onClose={() => setContactModalOpen(false)} rider={rider} />
+      <ContactInfoModal open={contactModalOpen} onClose={() => setContactModalOpen(false)} rider={primaryRider || undefined} />
       {isCurrent && (
         <UpdateStatusModal 
           open={updateModalOpen}

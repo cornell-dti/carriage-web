@@ -172,8 +172,8 @@ export function canChangeRider(ride: RideType, userRole: UserRole): boolean {
  * @returns A message explaining why the action is restricted
  */
 export function getRestrictionMessage(
-  ride: RideType, 
-  action: 'edit' | 'updateStatus' | 'assignDriver' | 'changeRider',
+  ride: RideType,
+  action: 'edit' | 'updateStatus' | 'assignDriver' | 'changeRider' | 'cancel',
   userRole: UserRole
 ): string {
   if (isRidePast(ride)) {
@@ -220,8 +220,20 @@ export function getRestrictionMessage(
         return 'Cannot change rider for active rides.';
       }
       break;
+
+    case 'cancel':
+      if (userRole === 'driver') {
+        return 'Drivers cannot cancel rides.';
+      }
+      if (userRole === 'rider' && ride.status !== Status.NOT_STARTED) {
+        return 'Rides can only be cancelled before they start.';
+      }
+      if (isRideActive(ride)) {
+        return 'Cannot cancel rides that are already in progress.';
+      }
+      break;
   }
-  
+
   return 'This action is not permitted.';
 }
 
@@ -236,22 +248,23 @@ export function canCancelRide(ride: RideType, userRole: UserRole): boolean {
   if (isRidePast(ride) || isRideCompleted(ride)) {
     return false;
   }
-  
-  // Riders can cancel their own unscheduled rides
+
+  // Riders can cancel their own rides if they haven't started yet
   if (userRole === 'rider') {
-    return ride.schedulingState === SchedulingState.UNSCHEDULED;
+    // Allow cancellation if ride hasn't started (not active) and not already completed
+    return ride.status === Status.NOT_STARTED;
   }
-  
+
   // Drivers cannot cancel rides
   if (userRole === 'driver') {
     return false;
   }
-  
+
   // Admins can cancel any non-past, non-completed ride
   if (userRole === 'admin') {
     return true;
   }
-  
+
   return false;
 }
 

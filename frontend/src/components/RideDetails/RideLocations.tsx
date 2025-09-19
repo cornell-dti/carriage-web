@@ -444,7 +444,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
     <div className={styles.container}>
       <div className={styles.locationsGrid}>
         {/* Left side - Address blocks */}
-        <div>
+        <div className={styles.locationsContainer}>
           {isEditing && canEdit ? (
             <div className={styles.editLocationsContainer}>
               <LocationSelector
@@ -479,7 +479,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
         </div>
 
         {/* Right side - Map */}
-        <div>
+        <div className={styles.mapAndInfoContainer}>
           <RideMapWithProvider
             startLocation={ride.startLocation}
             endLocation={ride.endLocation}

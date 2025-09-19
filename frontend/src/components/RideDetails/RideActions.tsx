@@ -31,6 +31,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { canUpdateStatus, canCancelRide, getRestrictionMessage, UserRole } from '../../util/rideValidation';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { useRides } from '../../context/RidesContext';
+import axios from '../../util/axios';
 
 interface RideActionsProps {
   userRole: UserRole;
@@ -59,15 +62,17 @@ const formatStatusLabel = (status: Status): string => {
 };
 
 const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, onClose }) => {
-  const { 
-    isEditing, 
-    editedRide, 
-    canEdit, 
-    hasChanges, 
-    startEditing, 
-    stopEditing, 
-    saveChanges 
+  const {
+    isEditing,
+    editedRide,
+    canEdit,
+    hasChanges,
+    startEditing,
+    stopEditing,
+    saveChanges
   } = useRideEdit();
+  const { showToast } = useToast();
+  const { refreshRides } = useRides();
   
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
@@ -98,14 +103,37 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
     }
   };
 
-  const handleCancel = async () => {
+  const handleCancel = () => {
+    setCancelConfirmOpen(true);
+  };
+
+  const handleCancelConfirm = async () => {
+    // Check for recurring rides (not supported yet)
+    if (ride.isRecurring) {
+      showToast('Recurring ride deletion not supported yet', ToastStatus.ERROR);
+      return;
+    }
+
     try {
-      // In a real app, make API call to cancel ride
-      console.log('Cancelling ride:', ride.id);
-      // await cancelRide(ride.id);
+      // Call the DELETE endpoint like DeleteOrEditTypeModal does
+      await axios.delete(`/api/rides/${ride.id}`);
+
+      // Close the cancel confirmation modal
       setCancelConfirmOpen(false);
+
+      // Close the main ride details dialog since the ride no longer exists
+      if (onClose) {
+        onClose();
+      }
+
+      // Refresh the rides data
+      refreshRides();
+
+      // Show success message
+      showToast('Ride Cancelled', ToastStatus.SUCCESS);
     } catch (error) {
       console.error('Failed to cancel ride:', error);
+      showToast('Failed to cancel ride', ToastStatus.ERROR);
     }
   };
 
@@ -160,12 +188,12 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
           {isEditing && (
             <Button
               variant="outlined"
-              startIcon={!isMobile ? <CancelIcon /> : undefined}
+              startIcon={!isMobile ? <CloseIcon /> : undefined}
               onClick={handleCancelEdit}
               fullWidth={isMobile}
               aria-label="Cancel editing"
             >
-              {isMobile ? <CancelIcon /> : 'Cancel'}
+              {isMobile ? <CloseIcon /> : 'Cancel Edit'}
             </Button>
           )}
           {!isEditing && (
@@ -174,13 +202,13 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
                 variant="outlined"
                 color="error"
                 startIcon={!isMobile ? <CancelIcon /> : undefined}
-                onClick={() => setCancelConfirmOpen(true)}
+                onClick={handleCancel}
                 fullWidth={isMobile}
                 disabled={!canCancelThisRide}
                 aria-label="Cancel ride"
-                title={!canCancelThisRide ? getRestrictionMessage(ride, 'edit', userRole) : undefined}
+                title={!canCancelThisRide ? getRestrictionMessage(ride, 'cancel', userRole) : undefined}
               >
-                {isMobile ? <CancelIcon /> : 'Cancel'}
+                {isMobile ? <CancelIcon /> : 'Cancel Ride'}
               </Button>
               <Button
                 variant="outlined"
@@ -261,12 +289,12 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
       {isEditing && (
         <Button
           variant="outlined"
-          startIcon={!isMobile ? <CancelIcon /> : undefined}
+          startIcon={!isMobile ? <CloseIcon /> : undefined}
           onClick={handleCancelEdit}
           fullWidth={isMobile}
           aria-label="Cancel editing"
         >
-          {isMobile ? <CancelIcon /> : 'Cancel'}
+          {isMobile ? <CloseIcon /> : 'Cancel Edit'}
         </Button>
       )}
       {!isEditing && (
@@ -279,19 +307,9 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
             fullWidth={isMobile}
             disabled={!canCancelThisRide}
             aria-label="Cancel ride"
-            title={!canCancelThisRide ? getRestrictionMessage(ride, 'edit', userRole) : undefined}
+            title={!canCancelThisRide ? getRestrictionMessage(ride, 'cancel', userRole) : undefined}
           >
-            {isMobile ? <CancelIcon /> : 'Cancel'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={!isMobile ? <AdminPanelSettingsIcon /> : undefined}
-            onClick={handleReport}
-            fullWidth={isMobile}
-            disabled
-            aria-label="Actions (placeholder)"
-          >
-            {isMobile ? <AdminPanelSettingsIcon /> : 'Actions'}
+            {isMobile ? <CancelIcon /> : 'Cancel Ride'}
           </Button>
         </>
       )}
@@ -314,19 +332,21 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
   const nextStatuses = getNextStatuses(ride.status);
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-      <Box sx={{ display: 'flex', gap: 1 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+      <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
         {getActionsForRole()}
       </Box>
       {onClose && (
-        <Button
-          variant="outlined"
-          startIcon={<CloseIcon />}
-          onClick={onClose}
-          aria-label="Close"
-        >
-          Close
-        </Button>
+        <Box sx={{ ml: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<CloseIcon />}
+            onClick={onClose}
+            aria-label="Close"
+          >
+            Close
+          </Button>
+        </Box>
       )}
 
       {/* Update Status Modal */}
@@ -398,7 +418,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCancelConfirmOpen(false)}>Keep Ride</Button>
-          <Button onClick={handleCancel} variant="contained" color="error">
+          <Button onClick={handleCancelConfirm} variant="contained" color="error">
             Cancel Ride
           </Button>
         </DialogActions>
