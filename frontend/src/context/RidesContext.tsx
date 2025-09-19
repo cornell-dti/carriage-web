@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, SchedulingState, Status } from '../types';
+import { Ride, SchedulingState, Status, Rider } from '../types';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
@@ -21,6 +21,8 @@ type ridesState = {
   // Helper functions
   getRideById: (rideId: string) => Ride | undefined;
   getAllRides: () => Ride[];
+  // Available riders functions
+  getAvailableRiders: (startTime: string, endTime: string) => Promise<Rider[]>;
   // Error handling
   clearError: () => void;
   error: Error | null;
@@ -41,6 +43,7 @@ const initialState: ridesState = {
   deleteRide: async () => undefined,
   getRideById: () => undefined,
   getAllRides: () => [],
+  getAvailableRiders: async () => [],
   clearError: () => undefined,
   error: null,
 };
@@ -61,22 +64,17 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
 
   const refreshRides = useCallback(async () => {
     const formattedDate = format_date(curDate);
-    console.log('Refreshing rides for date:', formattedDate);
     setLoading(true);
     try {
       // Fetch rides filtered by the selected date
       const response = await axios.get(`/api/rides?date=${formattedDate}`);
-      console.log('Rides API response:', response.data);
 
       const ridesData: Ride[] = response.data.data;
-      console.log('All rides from API:', ridesData);
 
       if (ridesData) {
         const unscheduled = ridesData.filter(({ schedulingState }) => schedulingState === SchedulingState.UNSCHEDULED);
         const scheduled = ridesData.filter(({ schedulingState }) => schedulingState === SchedulingState.SCHEDULED);
 
-        console.log('Unscheduled rides:', unscheduled);
-        console.log('Scheduled rides:', scheduled);
 
         setUnscheduledRides(unscheduled);
         setScheduledRides(scheduled);
@@ -90,15 +88,12 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   }, [curDate]);
 
   const refreshRidesByUser = useCallback(async (userId: string, userType: 'rider' | 'driver'): Promise<Ride[]> => {
-    console.log(`Refreshing rides for ${userType}:`, userId);
     try {
       // Fetch all rides for the user across all dates
       const queryParam = userType === 'rider' ? 'rider' : 'driver';
       const response = await axios.get(`/api/rides?${queryParam}=${userId}&allDates=true`);
-      console.log(`${userType} rides API response:`, response.data);
       
       const ridesData: Ride[] = response.data.data || [];
-      console.log(`All ${userType} rides from API:`, ridesData);
       
       return ridesData;
     } catch (error) {
@@ -139,7 +134,11 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   };
 
   const getRideById = useCallback((rideId: string): Ride | undefined => {
-    return [...unscheduledRides, ...scheduledRides].find(ride => ride.id === rideId);
+    const allRides = [...unscheduledRides, ...scheduledRides];
+    allRides.forEach((ride, index) => {
+    });
+    const foundRide = allRides.find(ride => ride.id === rideId);
+    return foundRide;
   }, [unscheduledRides, scheduledRides]);
 
   const getAllRides = useCallback((): Ride[] => {
@@ -236,37 +235,62 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   }, [getRideById]);
 
   const updateRideInfo = useCallback(async (rideId: string, updates: Partial<Ride>) => {
-    const originalRide = getRideById(rideId);
+    let originalRide: Ride | undefined = getRideById(rideId);
+
+    // If ride not found in current context, fetch it from the server first
     if (!originalRide) {
-      throw new Error('Ride not found');
+      try {
+        const response = await axios.get(`/api/rides/${rideId}`);
+        originalRide = response.data.data;
+
+        // Don't add to context state since it's not from the current date
+        // We'll just use it for the optimistic update logic
+      } catch (error) {
+        console.error('Failed to fetch ride from server:', error);
+        throw new Error('Ride not found');
+      }
+    }
+
+    // At this point originalRide should definitely exist, but add type guard for safety
+    if (!originalRide) {
+      throw new Error('Failed to get ride data');
     }
 
     const wasScheduled = originalRide.schedulingState === SchedulingState.SCHEDULED;
     const willBeScheduled = (updates.schedulingState || originalRide.schedulingState) === SchedulingState.SCHEDULED;
 
     try {
-      // Optimistic update
-      if (wasScheduled === willBeScheduled) {
-        updateRideInLists(rideId, ride => ({ ...ride, ...updates }));
+      // Check if ride is in current context for optimistic updates
+      const rideInContext = getRideById(rideId);
+
+      if (rideInContext) {
+        // Optimistic update for rides in current context
+        if (wasScheduled === willBeScheduled) {
+          updateRideInLists(rideId, ride => ({ ...ride, ...updates }));
+        } else {
+          moveRideBetweenLists(rideId, wasScheduled, willBeScheduled, ride => ({ ...ride, ...updates }));
+        }
       } else {
-        moveRideBetweenLists(rideId, wasScheduled, willBeScheduled, ride => ({ ...ride, ...updates }));
       }
 
       // Make API call
       const response = await axios.put(`/api/rides/${rideId}`, updates);
       const serverRide = response.data.data;
 
-      // Update with server data
-      if (willBeScheduled) {
-        setScheduledRides(prev => prev.map(ride => ride.id === rideId ? serverRide : ride));
-      } else {
-        setUnscheduledRides(prev => prev.map(ride => ride.id === rideId ? serverRide : ride));
+      if (rideInContext) {
+        // Update with server data if ride is in current context
+        if (willBeScheduled) {
+          setScheduledRides(prev => prev.map(ride => ride.id === rideId ? serverRide : ride));
+        } else {
+          setUnscheduledRides(prev => prev.map(ride => ride.id === rideId ? serverRide : ride));
+        }
       }
     } catch (error) {
-      // Rollback on error
+      // Rollback on error (only if ride was in context)
       console.error('Failed to update ride info:', error);
-      if (originalRide) {
-        moveRideBetweenLists(rideId, willBeScheduled, wasScheduled, () => originalRide);
+      const rideInContext = getRideById(rideId);
+      if (originalRide && rideInContext) {
+        moveRideBetweenLists(rideId, willBeScheduled, wasScheduled, () => originalRide as Ride);
       }
       setError(error as Error);
       throw error;
@@ -376,6 +400,62 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     }
   }, [getRideById]);
 
+  const getAvailableRiders = useCallback(async (startTime: string, endTime: string): Promise<Rider[]> => {
+    try {
+      // Fetch all riders
+      const ridersResponse = await axios.get('/api/riders');
+      const ridersData = ridersResponse.data?.data || ridersResponse.data;
+      const allRiders = Array.isArray(ridersData) ? ridersData : [];
+      
+      // Fetch all rides for the same date to check for conflicts
+      const startDate = new Date(startTime);
+      const dateStr = startDate.toISOString().split('T')[0];
+      
+      const ridesResponse = await axios.get('/api/rides', {
+        params: {
+          date: dateStr,
+          allDates: 'false'
+        }
+      });
+      
+      const ridesData = ridesResponse.data?.data || ridesResponse.data;
+      const rides = Array.isArray(ridesData) ? ridesData : [];
+      
+      // Helper to check time overlap
+      const overlaps = (rideStart: string, rideEnd: string) => {
+        const reqStart = new Date(startTime).getTime();
+        const reqEnd = new Date(endTime).getTime();
+        const rideStartTime = new Date(rideStart).getTime();
+        const rideEndTime = new Date(rideEnd).getTime();
+        
+        return !(rideEndTime <= reqStart || rideStartTime >= reqEnd);
+      };
+      
+      // Find riders who have conflicting rides
+      const conflictingRiderIds = new Set<string>();
+      for (const ride of rides) {
+        if (!ride.riders || !Array.isArray(ride.riders)) continue;
+        
+        // Check if this ride overlaps with the requested time window
+        if (overlaps(ride.startTime, ride.endTime)) {
+          // Mark all riders in this ride as conflicting
+          for (const rider of ride.riders) {
+            if (rider && rider.id) {
+              conflictingRiderIds.add(rider.id);
+            }
+          }
+        }
+      }
+      
+      // Return riders who don't have any conflicting rides
+      return allRiders.filter(rider => !conflictingRiderIds.has(rider.id));
+    } catch (error) {
+      console.error('Failed to get available riders:', error);
+      setError(error as Error);
+      throw error;
+    }
+  }, []);
+
   useEffect(() => {
     refreshRides();
   }, [refreshRides]);
@@ -397,6 +477,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         deleteRide,
         getRideById,
         getAllRides,
+        getAvailableRiders,
         clearError,
         error,
       }}

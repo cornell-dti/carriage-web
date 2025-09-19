@@ -24,6 +24,7 @@ interface RideDetailsProps {
   onClose: () => void;
   ride: RideType;
   onRideUpdated?: (updatedRide: RideType) => void;
+  initialEditingState?: boolean;
 }
 
 interface TabPanelProps {
@@ -50,6 +51,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   onClose,
   ride,
   onRideUpdated,
+  initialEditingState = false,
 }) => {
   const [tabValue, setTabValue] = useState(0);
   const authContext = useContext(AuthContext);
@@ -102,7 +104,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   const tabs = getTabsForRole();
 
   return (
-    <RideEditProvider ride={ride} userRole={userRole} onRideUpdated={onRideUpdated}>
+    <RideEditProvider ride={ride} userRole={userRole} onRideUpdated={onRideUpdated} initialEditingState={initialEditingState}>
       <Dialog
         open={open}
         onClose={onClose}

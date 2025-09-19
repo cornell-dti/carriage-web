@@ -33,6 +33,8 @@ import { useRideEdit } from './RideEditContext';
 import { canUpdateStatus, canCancelRide, getRestrictionMessage, UserRole } from '../../util/rideValidation';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import { useRides } from '../../context/RidesContext';
+import { useDate } from '../../context/date';
+import { isNewRide } from '../../util/modelFixtures';
 import axios from '../../util/axios';
 
 interface RideActionsProps {
@@ -73,6 +75,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
   } = useRideEdit();
   const { showToast } = useToast();
   const { refreshRides } = useRides();
+  const { curDate } = useDate();
   
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
@@ -92,7 +95,6 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
     setUpdating(true);
     try {
       // In a real app, make API call to update status
-      console.log('Updating status to:', selectedStatus);
       // await updateRideStatus(ride.id, selectedStatus);
       setUpdateStatusOpen(false);
       setSelectedStatus(null);
@@ -151,12 +153,28 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
     setSaving(true);
     try {
       const success = await saveChanges();
-      if (!success) {
-        // Handle save failure
-        console.error('Failed to save ride changes');
+      if (success) {
+        const message = isNewRide(ride) ? 'Ride created successfully' : 'Ride saved successfully';
+        showToast(message, ToastStatus.SUCCESS);
+
+        // Only refresh rides if the ride is on the current date being displayed in the context
+        const rideDate = new Date(ride.startTime).toDateString();
+        const contextDate = curDate.toDateString();
+        if (rideDate === contextDate) {
+          refreshRides();
+        }
+
+        if (isNewRide(ride) && onClose) {
+          onClose(); // Close modal after creating new ride
+        }
+      } else {
+        const message = isNewRide(ride) ? 'Failed to create ride' : 'Failed to save ride';
+        showToast(message, ToastStatus.ERROR);
       }
     } catch (error) {
       console.error('Error saving ride:', error);
+      const message = isNewRide(ride) ? 'Failed to create ride' : 'Failed to save ride';
+      showToast(message, ToastStatus.ERROR);
     } finally {
       setSaving(false);
     }
@@ -168,7 +186,6 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
 
   const handleReport = () => {
     // In a real app, open report issue dialog
-    console.log('Report issue for ride:', ride.id);
   };
 
   const renderRiderActions = () => {
@@ -183,7 +200,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
             disabled={rideCompleted || (isEditing && !hasChanges) || saving}
             aria-label={isEditing ? "Save changes" : "Edit ride"}
           >
-            {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? 'Save' : 'Edit')}
+            {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? (isNewRide(ride) ? 'Create' : 'Save') : 'Edit')}
           </Button>
           {isEditing && (
             <Button
@@ -284,7 +301,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
         disabled={(isEditing && !hasChanges) || saving}
         aria-label={isEditing ? "Save changes" : "Edit ride"}
       >
-        {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? 'Save' : 'Edit')}
+        {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? (isNewRide(ride) ? 'Create' : 'Save') : 'Edit')}
       </Button>
       {isEditing && (
         <Button

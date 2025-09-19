@@ -90,7 +90,7 @@ const schema = new dynamoose.Schema({
   },
   riders: {
     type: Array,
-    schema: [Rider],
+    schema: [String], // Store rider IDs, not full objects
     required: true,
     default: [],
   },

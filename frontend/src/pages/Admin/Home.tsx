@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import RideModal from '../../components/RideModal/RideModal';
+import AddRideButton from '../../components/AddRideButton/AddRideButton';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
@@ -30,7 +30,7 @@ const Home = () => {
             csvCols={'Name,Pick Up,From,To,Drop Off,Needs,Driver'}
             filename={`scheduledRides_${today}.csv`}
           />
-          <RideModal />
+          <AddRideButton />
           <Notification />
         </div>
       </div>

@@ -228,7 +228,20 @@ const RideMap: React.FC<RideMapProps> = ({
         result.routes[0].overview_path.forEach((point) => {
           bounds.extend(point);
         });
-        map.fitBounds(bounds);
+        // Fit bounds with padding so markers/route aren't at the very edge
+        // and cap the zoom so it doesn't zoom in too much
+        try {
+          // @ts-ignore - allow padding object per Maps JS API
+          map.fitBounds(bounds, { top: 60, bottom: 60, left: 60, right: 60 });
+        } catch {
+          map.fitBounds(bounds);
+        }
+        // Cap the zoom after fitting bounds
+        const maxZoom = 15;
+        const currentZoom = map.getZoom();
+        if (typeof currentZoom === 'number' && currentZoom > maxZoom) {
+          map.setZoom(maxZoom);
+        }
         
         // Set trip info from route result
         const leg = result.routes[0]?.legs?.[0];
@@ -303,12 +316,18 @@ const RideMap: React.FC<RideMapProps> = ({
       {/* Map */}
       <div className={styles.mapContainer}>
         <Map
-          defaultZoom={13}
+          defaultZoom={12}
           defaultCenter={getMapCenter()}
           mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
           onClick={handleMapClick}
+          // Map options for more controlled zooming
+          // @ts-ignore - pass through to Google Maps options
+          options={{
+            minZoom: 10,
+            maxZoom: 18,
+          }}
         >
           {/* Always show pickup marker */}
           <AdvancedMarker

@@ -15,6 +15,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Driver, Rider } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
+import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
@@ -52,11 +53,6 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, type, showAccessibility
             <Typography variant="body2" color="textSecondary" sx={{ textTransform: 'capitalize' }}>
               {type}
             </Typography>
-            {rider?.pronouns && (
-              <Typography variant="body2" color="textSecondary">
-                {rider.pronouns}
-              </Typography>
-            )}
           </Box>
         </div>
 
@@ -110,6 +106,7 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, type, showAccessibility
 
 const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const { editedRide, isEditing, updateRideField } = useRideEdit();
+  const { getAvailableRiders } = useRides();
   const ride = editedRide!;
   
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -143,6 +140,13 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     }
     // This effect should only run once when isEditing becomes true
   }, [isEditing, userRole]);
+
+  // Refetch available riders when ride times change
+  useEffect(() => {
+    if (isEditing && userRole === 'admin' && ride.startTime && ride.endTime) {
+      fetchRiders();
+    }
+  }, [ride.startTime, ride.endTime, isEditing, userRole]);
 
   const fetchDrivers = async () => {
     setLoadingDrivers(true);
@@ -180,11 +184,17 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     setLoadingRiders(true);
     setRidersError(null);
     try {
-      const response = await axios.get('/api/riders');
-      const ridersData = response.data?.data || response.data;
-      // CORRECTED LINE: Used ridersData instead of ridersArray
-      const ridersArray = Array.isArray(ridersData) ? ridersData : [];
-      setRiders(ridersArray);
+      // If we have start and end times, get available riders
+      if (ride.startTime && ride.endTime) {
+        const availableRiders = await getAvailableRiders(ride.startTime, ride.endTime);
+        setRiders(availableRiders);
+      } else {
+        // Fallback to all riders if no times are set
+        const response = await axios.get('/api/riders');
+        const ridersData = response.data?.data || response.data;
+        const ridersArray = Array.isArray(ridersData) ? ridersData : [];
+        setRiders(ridersArray);
+      }
     } catch (error) {
       console.error('Failed to fetch riders:', error);
       setRidersError('Failed to load riders');

@@ -68,12 +68,6 @@ const RiderCard: React.FC<RiderCardProps> = ({ rider, showAccessibility = false,
       {/* Expanded View - Collapsible */}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ pt: 1, pb: 2 }}>
-          {/* Pronouns */}
-          {rider.pronouns && (
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
-              Pronouns: {rider.pronouns}
-            </Typography>
-          )}
 
           {/* Contact Information */}
           <div className={styles.contactInfo}>

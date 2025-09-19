@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
@@ -72,7 +72,6 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
       firstName,
       lastName,
       phoneNumber,
-      pronouns,
       joinDate,
       endDate,
     } = rider;
@@ -81,7 +80,6 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
       firstName,
       lastName,
       phoneNumber,
-      pronouns,
       joinDate,
       endDate,
     });

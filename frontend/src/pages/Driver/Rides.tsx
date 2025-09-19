@@ -186,7 +186,6 @@ const RideDetailCard = ({
                 {primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : 'No rider assigned'}
                 {ride.riders && ride.riders.length > 1 && ` +${ride.riders.length - 1} more`}
               </Typography>
-              <Typography variant="body2" color="textSecondary">{primaryRider?.pronouns}</Typography>
             </Box>
             <IconButton onClick={() => setContactModalOpen(true)} aria-label="Show contact info">
               <PhoneIcon />

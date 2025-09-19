@@ -1,8 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Ride, Driver } from '../../types/index';
-import styles from './assigndrivermodal.module.css';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import SearchPopup from '../RideDetails/SearchPopup';
+import { SearchableType } from '../../utils/searchConfig';
+import { Box, Typography, Button, Paper } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 type AssignModalProps = {
   isOpen: boolean;
@@ -13,22 +17,6 @@ type AssignModalProps = {
   buttonRef: any;
 };
 
-type DriverRowProps = {
-  onclick: () => void;
-  firstName: string;
-  imageURL?: string;
-};
-
-const DriverRow = ({ onclick, firstName, imageURL }: DriverRowProps) => (
-  <div className={styles.driverRow} onClick={onclick}>
-    <p className={styles.driverName}>{firstName}</p>
-    {imageURL ? (
-      <img className={styles.driverImage} src={imageURL} alt="Avatar" />
-    ) : (
-      <span className={styles.driverImage} />
-    )}
-  </div>
-);
 
 const AssignDriverModal = ({
   isOpen,
@@ -39,28 +27,10 @@ const AssignDriverModal = ({
   buttonRef,
 }: AssignModalProps) => {
   const { refreshRides } = useRides();
-  // source: https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
-  function useOutsideAlerter(wrapperRef: any, buttonRef: any) {
-    useEffect(() => {
-      function handleClickOutside(event: any) {
-        event.stopPropagation();
-        const isClickOutsideButton =
-          buttonRef.current && !buttonRef.current.contains(event.target);
-        const isClickOutsideModal =
-          wrapperRef.current && !wrapperRef.current.contains(event.target);
-        if (isClickOutsideModal && isClickOutsideButton) {
-          close();
-        }
-      }
+  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [wrapperRef, buttonRef]);
-  }
-
-  const wrapperRef = useRef(null);
+  // This function handles the backend call - same as before
   const addDriver = (driver: Driver) => {
     axios
       .put(`/api/rides/${ride.id}`, {
@@ -71,23 +41,82 @@ const AssignDriverModal = ({
     close();
   };
 
-  useOutsideAlerter(wrapperRef, buttonRef);
+  // Handle driver selection from SearchPopup
+  const handleDriverSelect = (driver: Driver) => {
+    setSelectedDriver(driver);
+    setShowConfirmation(true);
+  };
+
+  // Handle confirmation
+  const handleConfirm = () => {
+    if (selectedDriver) {
+      addDriver(selectedDriver);
+    }
+    setShowConfirmation(false);
+    setSelectedDriver(null);
+  };
+
+  // Handle cancel
+  const handleCancel = () => {
+    setShowConfirmation(false);
+    setSelectedDriver(null);
+  };
 
   return (
     <>
-      {isOpen && (
-        <div className={styles.modal} ref={wrapperRef}>
-          {allDrivers.map((driver, id) => (
-            <DriverRow
-              onclick={() => {
-                addDriver(driver);
-              }}
-              key={id}
-              firstName={driver.firstName}
-              imageURL={driver.photoLink ? `${driver.photoLink}` : undefined}
-            />
-          ))}
-        </div>
+      <SearchPopup<Driver>
+        open={isOpen && !showConfirmation}
+        onClose={close}
+        onSelect={handleDriverSelect}
+        items={allDrivers}
+        searchType={SearchableType.DRIVER}
+        loading={false}
+        error={null}
+        title={reassign ? 'Reassign Driver' : 'Assign Driver'}
+        placeholder="Search drivers..."
+        selectedItems={[]}
+        anchorEl={buttonRef?.current}
+      />
+      
+      {/* Confirmation Dialog */}
+      {showConfirmation && selectedDriver && (
+        <Paper
+          elevation={8}
+          sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 320,
+            p: 3,
+            zIndex: 1300,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            {reassign ? 'Reassign Driver?' : 'Assign Driver?'}
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+            {reassign ? 'Reassign' : 'Assign'} {selectedDriver.firstName} {selectedDriver.lastName} to this ride?
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+            <Button
+              variant="outlined"
+              startIcon={<CloseIcon />}
+              onClick={handleCancel}
+              size="small"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<CheckIcon />}
+              onClick={handleConfirm}
+              size="small"
+            >
+              {reassign ? 'Reassign' : 'Assign'}
+            </Button>
+          </Box>
+        </Paper>
       )}
     </>
   );

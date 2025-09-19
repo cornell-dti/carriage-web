@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Box,
   TextField,
@@ -111,7 +112,7 @@ const SearchPopup = <T extends { id: string | number }>({
 
   if (!open) return null;
 
-  return (
+  const popupContent = (
     <Paper
       ref={popupRef}
       elevation={8}
@@ -220,6 +221,9 @@ const SearchPopup = <T extends { id: string | number }>({
       )}
     </Paper>
   );
+
+  // Render as portal to avoid affecting document flow
+  return createPortal(popupContent, document.body);
 };
 
 export default SearchPopup;

@@ -70,7 +70,7 @@ const Schedule = () => {
 
   const getRides = () => {
     setEvents(
-      scheduledRides.map((ride: Ride) => ({
+      scheduledRides.filter((ride: Ride) => ride && ride.id).map((ride: Ride) => ({
         id: ride.id,
         title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${ride.riders && ride.riders.length > 0

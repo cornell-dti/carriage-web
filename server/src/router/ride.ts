@@ -17,6 +17,46 @@ import { UserType } from '../models/subscription';
 const router = express.Router();
 const tableName = 'Rides';
 
+// Debug endpoint to get current user's JWT token
+router.get('/debug/token', validateUser('User'), (req, res) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  res.json({
+    token: token,
+    user: res.locals.user
+  });
+});
+
+// Diagnostic endpoint to find corrupted rides that fail populate
+router.get('/diagnose', async (_req, res) => {
+  try {
+    Ride.scan(new Condition()).exec(async (err, data) => {
+      if (err) {
+        res.status(500).send({ err: err.message });
+        return;
+      }
+      const items = data || [];
+      const bad: any[] = [];
+      const goodIds: string[] = [];
+      for (const item of items) {
+        if (!item) continue;
+        let id: string | undefined = undefined;
+        try {
+          id = (item as any).id || ((item as any).get && (item as any).get('id'));
+        } catch {}
+        try {
+          const populated = await (item as any).populate();
+          if (id) goodIds.push(id);
+        } catch (e: any) {
+          bad.push({ id, error: e?.message || String(e) });
+        }
+      }
+      res.status(200).send({ total: items.length, goodCount: goodIds.length, bad });
+    });
+  } catch (e: any) {
+    res.status(500).send({ err: e?.message || 'diagnostic failed' });
+  }
+});
+
 router.get('/download', (req, res) => {
   const dateStart = moment(req.query.date as string).toISOString();
   const dateEnd = moment(req.query.date as string)
@@ -200,6 +240,37 @@ router.get('/', validateUser('User'), (req, res) => {
   }
 });
 
+// Diagnostic endpoint to find corrupted rides that fail populate
+router.get('/diagnose', async (_req, res) => {
+  try {
+    Ride.scan(new Condition()).exec(async (err, data) => {
+      if (err) {
+        res.status(500).send({ err: err.message });
+        return;
+      }
+      const items = data || [];
+      const bad: any[] = [];
+      const goodIds: string[] = [];
+      for (const item of items) {
+        if (!item) continue;
+        let id: string | undefined = undefined;
+        try {
+          id = (item as any).id || ((item as any).get && (item as any).get('id'));
+        } catch {}
+        try {
+          const populated = await (item as any).populate();
+          if (id) goodIds.push(id);
+        } catch (e: any) {
+          bad.push({ id, error: e?.message || String(e) });
+        }
+      }
+      res.status(200).send({ total: items.length, goodCount: goodIds.length, bad });
+    });
+  } catch (e: any) {
+    res.status(500).send({ err: e?.message || 'diagnostic failed' });
+  }
+});
+
 // Create a new ride
 router.post('/', validateUser('User'), (req, res) => {
   const { body } = req;
@@ -211,7 +282,7 @@ router.post('/', validateUser('User'), (req, res) => {
     recurring 
   } = body;
 
-  // Process locations - both startLocation and endLocation are always objects
+  // Process locations - convert to reference IDs for storage
   const startLocationObj = startLocation as LocationType;
   const endLocationObj = endLocation as LocationType;
 
@@ -268,6 +339,13 @@ router.post('/', validateUser('User'), (req, res) => {
     ridersArray = [];
   }
 
+  // Process riders - convert to IDs only for database storage (same logic as PUT route)
+  if (ridersArray && Array.isArray(ridersArray)) {
+    ridersArray = ridersArray.map((rider: any) =>
+      typeof rider === 'string' ? rider : rider.id
+    );
+  }
+
   // Create single ride
   const ride = new Ride({
     id: uuid(),
@@ -318,7 +396,12 @@ router.put('/:id', validateUser('User'), (req, res) => {
     body.schedulingState = SchedulingState.UNSCHEDULED;
   }
 
-  // Locations are always objects, no processing needed
+  // Process riders - convert to IDs only for database storage
+  if (body.riders && Array.isArray(body.riders)) {
+    body.riders = body.riders.map((rider: any) =>
+      typeof rider === 'string' ? rider : rider.id
+    );
+  }
 
   //Check if id matches or user is admin
   db.getById(res, Ride, id, tableName, (ride: RideType) => {

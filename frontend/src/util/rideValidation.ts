@@ -121,16 +121,7 @@ export function canAssignDriver(ride: RideType, userRole: UserRole): boolean {
     return false;
   }
   
-  // Cannot assign driver to past rides
-  if (isRidePast(ride)) {
-    return false;
-  }
-  
-  // Cannot assign driver to completed rides
-  if (isRideCompleted(ride)) {
-    return false;
-  }
-  
+  // Admins can assign drivers to any ride regardless of timing or status
   return true;
 }
 
@@ -146,21 +137,7 @@ export function canChangeRider(ride: RideType, userRole: UserRole): boolean {
     return false;
   }
   
-  // Cannot change rider for past rides
-  if (isRidePast(ride)) {
-    return false;
-  }
-  
-  // Cannot change rider for completed rides
-  if (isRideCompleted(ride)) {
-    return false;
-  }
-  
-  // Cannot change rider for active rides (but allow for not_started rides)
-  if (isRideActive(ride)) {
-    return false;
-  }
-  
+  // Admins can change riders for any ride regardless of timing or status
   return true;
 }
 

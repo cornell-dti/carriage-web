@@ -4,7 +4,7 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
-import RideDetailsModal from '../RideModal/RideDetailsModal';
+import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
@@ -25,6 +25,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [rideEditOpenIndex, setRideEditOpenIndex] = useState(-1);
   let buttonRef = useRef(null);
 
   const handleCloseDetailsModal = () => {
@@ -125,7 +126,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
                 } else {
-                  setOpenEditModal(index);
+                  setRideEditOpenIndex(index);
                 }
               }}
             >
@@ -247,10 +248,20 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       
       {/* Ride Details Modal */}
       {selectedRide && (
-        <RideDetailsModal
+        <RideDetailsComponent
           open={detailsModalOpen}
-          close={handleCloseDetailsModal}
+          onClose={handleCloseDetailsModal}
           ride={selectedRide}
+        />
+      )}
+      
+      {/* Ride Edit Modal */}
+      {rideEditOpenIndex >= 0 && (
+        <RideDetailsComponent
+          open={rideEditOpenIndex >= 0}
+          onClose={() => setRideEditOpenIndex(-1)}
+          ride={rides[rideEditOpenIndex]}
+          initialEditingState={true}
         />
       )}
     </>
