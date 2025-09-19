@@ -7,6 +7,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
 import { ModelType } from 'dynamoose/dist/General';
 import { Item } from 'dynamoose/dist/Item';
+import { UnregisteredUserType } from '../util/types';
 
 const router = express.Router();
 
@@ -50,12 +51,14 @@ function getUserType(table: string) {
  * @param model - The model to query (Rider, Admin, or Driver).
  * @param table - Name of the user table (used to derive userType).
  * @param email - The email address to look up.
+ * @param userInfo - Optional user info from Google OAuth (name, etc.).
  */
 function findUserAndSendToken(
   res: express.Response,
   model: ModelType<Item>,
   table: string,
-  email: string
+  email: string,
+  userInfo?: Partial<UnregisteredUserType>
 ) {
   model.scan({ email: { eq: email } }).exec((err, data) => {
     if (err) {
@@ -95,14 +98,35 @@ function findUserAndSendToken(
               .status(200)
               .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
           } else {
-            res.status(400).send({ err: 'User not found' });
+            const unregisteredUser: UnregisteredUserType = {
+              email: email,
+              name: userInfo?.name || 'User',
+            };
+            res.status(400).send({
+              err: 'User not found',
+              user: unregisteredUser,
+            });
           }
         } else {
-          res.status(400).send({ err: 'User not found' });
+          const unregisteredUser: UnregisteredUserType = {
+            email: email,
+            name: userInfo?.name || 'User',
+          };
+          res.status(400).send({
+            err: 'User not found',
+            user: unregisteredUser,
+          });
         }
       });
     } else {
-      res.status(400).send({ err: 'User not found' });
+      const unregisteredUser: UnregisteredUserType = {
+        email: email,
+        name: userInfo?.name || 'User',
+      };
+      res.status(400).send({
+        err: 'User not found',
+        user: unregisteredUser,
+      });
     }
   });
 }
@@ -131,10 +155,12 @@ router.post('/', async (req, res) => {
     });
     const idToken = req.body.idToken || (await getIdToken(client, code));
     const result = await client.verifyIdToken({ idToken, audience });
-    const email = result.getPayload()?.email;
+    const payload = result.getPayload();
+    const email = payload?.email;
+    const name = payload?.name;
     const model = getModel(table);
     if (model && email) {
-      findUserAndSendToken(res, model, table, email);
+      findUserAndSendToken(res, model, table, email, { name });
     } else if (!model) {
       res.status(400).send({ err: 'Table not found' });
     } else if (!email) {
@@ -154,7 +180,7 @@ if (process.env.NODE_ENV === 'test') {
     try {
       const model = getModel(table);
       if (model && email) {
-        findUserAndSendToken(res, model, table, email);
+        findUserAndSendToken(res, model, table, email, { name: email });
       } else if (!model) {
         res.status(400).send({ err: 'Table not found' });
       } else if (!email) {
