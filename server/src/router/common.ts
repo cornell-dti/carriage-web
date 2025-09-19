@@ -292,7 +292,9 @@ export function scan(
               itemId =
                 (item as any).id ||
                 ((item as any).get && (item as any).get('id'));
-            } catch {}
+            } catch (e) {
+              // Ignore error when getting item ID
+            }
             console.error(
               'Populate failed for item',
               itemId ? { id: itemId } : '',
@@ -332,7 +334,9 @@ export function scan(
               itemId =
                 (item as any).id ||
                 ((item as any).get && (item as any).get('id'));
-            } catch {}
+            } catch (e) {
+              // Ignore error when getting item ID
+            }
             console.error(
               'Error in scan response: populate failed for item',
               itemId ? { id: itemId } : '',

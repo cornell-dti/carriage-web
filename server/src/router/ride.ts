@@ -43,7 +43,9 @@ router.get('/diagnose', async (_req, res) => {
         try {
           id =
             (item as any).id || ((item as any).get && (item as any).get('id'));
-        } catch {}
+        } catch (e) {
+          // Ignore error when getting item ID
+        }
         try {
           const populated = await (item as any).populate();
           if (id) goodIds.push(id);
@@ -125,7 +127,7 @@ router.get('/repeating', validateUser('User'), (req, res) => {
     query: { rider },
   } = req;
   const now = moment().format('YYYY-MM-DD');
-  let condition = new Condition('recurring')
+  const condition = new Condition('recurring')
     .eq(true)
     .where('endDate')
     .ge(now)
@@ -274,7 +276,9 @@ router.get('/diagnose', async (_req, res) => {
         try {
           id =
             (item as any).id || ((item as any).get && (item as any).get('id'));
-        } catch {}
+        } catch (e) {
+          // Ignore error when getting item ID
+        }
         try {
           const populated = await (item as any).populate();
           if (id) goodIds.push(id);
@@ -417,7 +421,10 @@ router.put('/:id', validateUser('User'), (req, res) => {
   } else if (body.$REMOVE && body.$REMOVE.includes('driver')) {
     // If driver is being removed, mark as unscheduled
     body.schedulingState = SchedulingState.UNSCHEDULED;
-  } else if (body.hasOwnProperty('driver') && !body.driver) {
+  } else if (
+    Object.prototype.hasOwnProperty.call(body, 'driver') &&
+    !body.driver
+  ) {
     // If driver is explicitly set to null/undefined, mark as unscheduled
     body.schedulingState = SchedulingState.UNSCHEDULED;
   }
