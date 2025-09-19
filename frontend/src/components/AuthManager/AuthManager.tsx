@@ -15,11 +15,12 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { Admin, Rider } from '../../types/index';
+import { Admin, Rider, UnregisteredUser } from '../../types/index';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
+import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
@@ -46,8 +47,16 @@ const AuthManager = () => {
   const [refreshUser, setRefreshUser] = useState(() =>
     createRefresh(id, localStorage.getItem('userType') || '', jwtValue())
   );
+  const [unregisteredUser, setUnregisteredUser] =
+    useState<UnregisteredUser | null>(null);
 
   const navigate = useNavigate();
+
+  // Handler to go back from unregistered screen
+  const handleBackFromUnregistered = () => {
+    setUnregisteredUser(null);
+    logout();
+  };
 
   useEffect(() => {
     const token = jwtValue();
@@ -119,7 +128,17 @@ const AuthManager = () => {
         })
         .catch((error) => {
           console.error('Login error:', error);
-          logout();
+
+          if (
+            error.response?.status === 400 &&
+            error.response?.data?.err === 'User not found'
+          ) {
+            setUnregisteredUser({
+              ...error.response?.data?.user,
+            });
+          } else {
+            logout();
+          }
         });
     }
   }
@@ -162,6 +181,15 @@ const AuthManager = () => {
   }
 
   const { visible, message, toastType } = useToast();
+
+  if (unregisteredUser) {
+    return (
+      <UnregisteredUserPage
+        user={unregisteredUser}
+        onBack={handleBackFromUnregistered}
+      />
+    );
+  }
 
   if (!signedIn) {
     return (
