@@ -6,7 +6,11 @@ import { Rider } from '../models/rider';
 
 // Helper function to populate riders for ride objects
 async function populateRiders(rideJson: any) {
-  if (rideJson.riders && Array.isArray(rideJson.riders) && rideJson.riders.length > 0) {
+  if (
+    rideJson.riders &&
+    Array.isArray(rideJson.riders) &&
+    rideJson.riders.length > 0
+  ) {
     try {
       // If riders are just IDs (strings), populate them
       if (typeof rideJson.riders[0] === 'string') {
@@ -22,7 +26,7 @@ async function populateRiders(rideJson: any) {
             }
           })
         );
-        rideJson.riders = populatedRiders.filter(rider => rider !== null);
+        rideJson.riders = populatedRiders.filter((rider) => rider !== null);
       }
     } catch (error) {
       console.error('Error populating riders:', error);
@@ -275,7 +279,9 @@ export function scan(
           }
           try {
             const populated = await (item as any).populate();
-            let json = (populated as any).toJSON ? (populated as any).toJSON() : populated;
+            let json = (populated as any).toJSON
+              ? (populated as any).toJSON()
+              : populated;
             // Manually populate riders if needed
             json = await populateRiders(json);
             results.push(json);
@@ -283,9 +289,16 @@ export function scan(
             // Attempt to get an identifier for logging
             let itemId: any = undefined;
             try {
-              itemId = (item as any).id || (item as any).get && (item as any).get('id');
+              itemId =
+                (item as any).id ||
+                ((item as any).get && (item as any).get('id'));
             } catch {}
-            console.error('Populate failed for item', itemId ? { id: itemId } : '', 'error:', e);
+            console.error(
+              'Populate failed for item',
+              itemId ? { id: itemId } : '',
+              'error:',
+              e
+            );
             // Continue processing the rest
           }
         }
@@ -307,16 +320,25 @@ export function scan(
           }
           try {
             const populated = await (item as any).populate();
-            let json = (populated as any).toJSON ? (populated as any).toJSON() : populated;
+            let json = (populated as any).toJSON
+              ? (populated as any).toJSON()
+              : populated;
             // Manually populate riders if needed
             json = await populateRiders(json);
             results.push(json);
           } catch (e) {
             let itemId: any = undefined;
             try {
-              itemId = (item as any).id || (item as any).get && (item as any).get('id');
+              itemId =
+                (item as any).id ||
+                ((item as any).get && (item as any).get('id'));
             } catch {}
-            console.error('Error in scan response: populate failed for item', itemId ? { id: itemId } : '', 'error:', e);
+            console.error(
+              'Error in scan response: populate failed for item',
+              itemId ? { id: itemId } : '',
+              'error:',
+              e
+            );
             // Continue processing other items
           }
         }

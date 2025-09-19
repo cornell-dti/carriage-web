@@ -23,7 +23,7 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    setRides(scheduledRides.filter(ride => ride && ride.id).sort(compRides));
+    setRides(scheduledRides.filter((ride) => ride && ride.id).sort(compRides));
   }, [scheduledRides]);
 
   return rides.length ? (

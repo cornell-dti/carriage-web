@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import { 
-  Box, 
-  IconButton, 
-  Button, 
-  useMediaQuery, 
+import {
+  Box,
+  IconButton,
+  Button,
+  useMediaQuery,
   useTheme,
   Tooltip,
   Card,
   CardContent,
-  Typography
+  Typography,
 } from '@mui/material';
-import { 
-  Edit as EditIcon, 
+import {
+  Edit as EditIcon,
   Delete as DeleteIcon,
   PersonOff as DeactivateIcon,
-  PersonAdd as ActivateIcon 
+  PersonAdd as ActivateIcon,
 } from '@mui/icons-material';
 import EmployeeModal from '../../EmployeeModal/EmployeeModal';
 import RiderModal from '../../Modal/RiderModal';
@@ -49,15 +49,21 @@ type UserActionsProps = {
   isRiderView?: boolean;
 };
 
-const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActionsProps) => {
+const UserActions = ({
+  role,
+  employee,
+  rider,
+  driver,
+  isRiderView,
+}: UserActionsProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const [isEmployeeOpen, setEmployeeOpen] = useState(false);
   const [isRiderOpen, setRiderOpen] = useState(false);
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  
+
   const { refreshRiders } = useRiders();
   const { toastType } = useToast();
 
@@ -127,7 +133,7 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
         <Typography variant="h6" className={styles.actionsHeader}>
           Actions
         </Typography>
-        
+
         <Box className={styles.buttonsContainer}>
           {showToast && rider && (
             <Toast
@@ -141,10 +147,10 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
             <>
               {isMobile ? (
                 <Tooltip title={getActivateButtonText()}>
-                  <IconButton 
+                  <IconButton
                     onClick={toggleActive}
                     className={styles.actionButton}
-                    color={rider.active ? "error" : "success"}
+                    color={rider.active ? 'error' : 'success'}
                   >
                     {getActivateButtonIcon()}
                   </IconButton>
@@ -155,7 +161,7 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
                   startIcon={getActivateButtonIcon()}
                   onClick={toggleActive}
                   className={styles.activateButton}
-                  color={rider.active ? "error" : "success"}
+                  color={rider.active ? 'error' : 'success'}
                 >
                   {getActivateButtonText()}
                 </Button>
@@ -166,7 +172,7 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
           {/* Edit Button */}
           {isMobile ? (
             <Tooltip title="Edit">
-              <IconButton 
+              <IconButton
                 onClick={handleEdit}
                 className={styles.actionButton}
                 color="primary"
@@ -188,7 +194,7 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
           {/* Delete Button */}
           {isMobile ? (
             <Tooltip title="Delete">
-              <IconButton 
+              <IconButton
                 onClick={handleDelete}
                 className={styles.actionButton}
                 color="error"
@@ -217,7 +223,7 @@ const UserActions = ({ role, employee, rider, driver, isRiderView }: UserActions
             setIsOpen={setEmployeeOpen}
           />
         )}
-        
+
         {rider && (
           <RiderModal
             existingRider={rider}

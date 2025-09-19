@@ -43,7 +43,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
   useEffect(() => {
     if (ride && ride.isRecurring) {
       // Recurring rides not yet implemented - disable for now
-      console.warn("Recurring rides not yet supported");
+      console.warn('Recurring rides not yet supported');
     }
   }, [ride, handleClick, dayLabels]);
 

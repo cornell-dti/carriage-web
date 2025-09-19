@@ -82,7 +82,14 @@ const StatisticsFilter: React.FC<StatisticsFilterProps> = ({
 
   return (
     <Paper sx={{ p: 3, minWidth: 300, maxWidth: 400 }} elevation={3}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 2,
+        }}
+      >
         <Typography variant="h6">Filter Statistics</Typography>
         <IconButton size="small" onClick={onClose}>
           <CloseIcon />
@@ -98,7 +105,7 @@ const StatisticsFilter: React.FC<StatisticsFilterProps> = ({
             onChange={handleDateFromChange}
             slotProps={{ textField: { size: 'small' } }}
           />
-          
+
           <DatePicker
             label="To Date"
             value={filters.dateTo}
@@ -116,7 +123,13 @@ const StatisticsFilter: React.FC<StatisticsFilterProps> = ({
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => (
-                    <Chip key={value} label={statusOptions.find(s => s.value === value)?.label} size="small" />
+                    <Chip
+                      key={value}
+                      label={
+                        statusOptions.find((s) => s.value === value)?.label
+                      }
+                      size="small"
+                    />
                   ))}
                 </Box>
               )}
@@ -135,11 +148,20 @@ const StatisticsFilter: React.FC<StatisticsFilterProps> = ({
             <Select
               multiple
               value={filters.schedulingStates}
-              onChange={(e) => handleSchedulingStateChange(e.target.value as SchedulingState[])}
+              onChange={(e) =>
+                handleSchedulingStateChange(e.target.value as SchedulingState[])
+              }
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => (
-                    <Chip key={value} label={schedulingStateOptions.find(s => s.value === value)?.label} size="small" />
+                    <Chip
+                      key={value}
+                      label={
+                        schedulingStateOptions.find((s) => s.value === value)
+                          ?.label
+                      }
+                      size="small"
+                    />
                   ))}
                 </Box>
               )}
@@ -162,7 +184,13 @@ const StatisticsFilter: React.FC<StatisticsFilterProps> = ({
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {selected.map((value) => (
-                    <Chip key={value} label={rideTypeOptions.find(t => t.value === value)?.label} size="small" />
+                    <Chip
+                      key={value}
+                      label={
+                        rideTypeOptions.find((t) => t.value === value)?.label
+                      }
+                      size="small"
+                    />
                   ))}
                 </Box>
               )}

@@ -1,7 +1,12 @@
 import dayjs, { Dayjs } from 'dayjs';
 
 export interface TimeValidationError {
-  type: 'start_time_past' | 'end_time_before_start' | 'same_time' | 'too_long_duration' | 'invalid_time';
+  type:
+    | 'start_time_past'
+    | 'end_time_before_start'
+    | 'same_time'
+    | 'too_long_duration'
+    | 'invalid_time';
   message: string;
 }
 
@@ -22,11 +27,11 @@ export const validateRideTimes = (
   const {
     allowPastTimes = false,
     maxDurationHours = 24,
-    minDurationMinutes = 5
+    minDurationMinutes = 5,
   } = options;
 
   const errors: TimeValidationError[] = [];
-  
+
   const start = dayjs(startTime);
   const end = dayjs(endTime);
   const now = dayjs();
@@ -35,7 +40,7 @@ export const validateRideTimes = (
   if (!allowPastTimes && start.isBefore(now, 'minute')) {
     errors.push({
       type: 'start_time_past',
-      message: 'Start time cannot be in the past'
+      message: 'Start time cannot be in the past',
     });
   }
 
@@ -43,7 +48,7 @@ export const validateRideTimes = (
   if (end.isBefore(start) || end.isSame(start)) {
     errors.push({
       type: 'end_time_before_start',
-      message: 'End time must be after start time'
+      message: 'End time must be after start time',
     });
   }
 
@@ -51,7 +56,7 @@ export const validateRideTimes = (
   if (start.isSame(end)) {
     errors.push({
       type: 'same_time',
-      message: 'Start and end times cannot be the same'
+      message: 'Start and end times cannot be the same',
     });
   }
 
@@ -60,7 +65,7 @@ export const validateRideTimes = (
   if (durationMinutes < minDurationMinutes) {
     errors.push({
       type: 'too_long_duration',
-      message: `Ride duration must be at least ${minDurationMinutes} minutes`
+      message: `Ride duration must be at least ${minDurationMinutes} minutes`,
     });
   }
 
@@ -69,13 +74,12 @@ export const validateRideTimes = (
   if (durationHours > maxDurationHours) {
     errors.push({
       type: 'too_long_duration',
-      message: `Ride duration cannot exceed ${maxDurationHours} hours`
+      message: `Ride duration cannot exceed ${maxDurationHours} hours`,
     });
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
-

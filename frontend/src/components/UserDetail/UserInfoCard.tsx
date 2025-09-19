@@ -1,5 +1,12 @@
 import React from 'react';
-import { Card, CardContent, Typography, Avatar, Box, Chip } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Box,
+  Chip,
+} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
@@ -44,7 +51,9 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
           <h3 className="text-md font-medium text-gray-900">User Info</h3>
           {userType === 'rider' ? (
             <Chip
-              icon={(user as Rider).active ? <CheckCircleIcon /> : <CancelIcon />}
+              icon={
+                (user as Rider).active ? <CheckCircleIcon /> : <CancelIcon />
+              }
               label={(user as Rider).active ? 'Active' : 'Inactive'}
               size="small"
               color={(user as Rider).active ? 'success' : 'error'}
@@ -60,19 +69,25 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
             />
           )}
         </div>
-        
+
         {/* Basic Info */}
         <div className="mb-3">
           <div className="flex items-center gap-3">
             <Avatar
-              src={user.photoLink ? `${user.photoLink}?t=${new Date().getTime()}` : undefined}
+              src={
+                user.photoLink
+                  ? `${user.photoLink}?t=${new Date().getTime()}`
+                  : undefined
+              }
               className="w-12 h-12 border-2 border-gray-200"
               alt={`${user.firstName} ${user.lastName}`}
             >
               <PersonIcon fontSize="large" />
             </Avatar>
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-gray-900">{user.firstName} {user.lastName}</p>
+              <p className="text-sm font-medium text-gray-900">
+                {user.firstName} {user.lastName}
+              </p>
               {getUserNetId(user) && (
                 <Chip
                   label={getUserNetId(user)}
@@ -87,7 +102,9 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
 
         {/* Contact Info */}
         <div className="flex-grow">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Contact Info</h4>
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            Contact Info
+          </h4>
           <div className="space-y-2">
             {userType === 'employee' ? (
               <>
@@ -95,19 +112,25 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
                 <div className="flex items-center gap-2 text-xs">
                   <div className="flex items-center gap-1">
                     <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="font-medium text-gray-900">{user.phoneNumber || 'N/A'}</span>
+                    <span className="font-medium text-gray-900">
+                      {user.phoneNumber || 'N/A'}
+                    </span>
                   </div>
                   <span className="text-gray-400">•</span>
                   <div className="flex items-center gap-1">
                     <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="font-medium text-gray-900 truncate">{(user as Employee).email || 'N/A'}</span>
+                    <span className="font-medium text-gray-900 truncate">
+                      {(user as Employee).email || 'N/A'}
+                    </span>
                   </div>
                 </div>
                 {/* Second row: Working days */}
                 {(user as Employee).availability && (
                   <div className="flex items-center gap-2 text-xs">
                     <CalendarTodayIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="font-medium text-gray-900">{formatAvailability((user as Employee).availability)}</span>
+                    <span className="font-medium text-gray-900">
+                      {formatAvailability((user as Employee).availability)}
+                    </span>
                   </div>
                 )}
               </>
@@ -117,23 +140,34 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
                 <div className="flex items-center gap-2 text-xs">
                   <div className="flex items-center gap-1">
                     <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="font-medium text-gray-900 truncate">{(user as Rider).email || 'N/A'}</span>
+                    <span className="font-medium text-gray-900 truncate">
+                      {(user as Rider).email || 'N/A'}
+                    </span>
                   </div>
                   <span className="text-gray-400">•</span>
                   <div className="flex items-center gap-1">
                     <PhoneIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                    <span className="font-medium text-gray-900">{user.phoneNumber || 'N/A'}</span>
+                    <span className="font-medium text-gray-900">
+                      {user.phoneNumber || 'N/A'}
+                    </span>
                   </div>
                 </div>
                 {/* Second row: Address */}
                 <div className="flex items-center gap-2 text-xs">
                   <HomeIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <span className="font-medium text-gray-900">{(user as Rider).address || 'N/A'}</span>
+                  <span className="font-medium text-gray-900">
+                    {(user as Rider).address || 'N/A'}
+                  </span>
                 </div>
                 {/* Third row: Active dates */}
                 <div className="flex items-center gap-2 text-xs">
                   <CalendarTodayIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                  <span className="font-medium text-gray-900">{formatDateRange((user as Rider).joinDate, (user as Rider).endDate)}</span>
+                  <span className="font-medium text-gray-900">
+                    {formatDateRange(
+                      (user as Rider).joinDate,
+                      (user as Rider).endDate
+                    )}
+                  </span>
                 </div>
               </>
             )}

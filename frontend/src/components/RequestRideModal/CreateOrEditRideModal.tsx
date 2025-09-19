@@ -97,7 +97,9 @@ const CreateOrEditRideModal = ({
     let rideData: ObjectType;
     if (recurring || whenRepeat) {
       // For now, block recurring rides as they're not fully implemented
-      alert('Recurring rides are not yet supported. Please create a single ride instead.');
+      alert(
+        'Recurring rides are not yet supported. Please create a single ride instead.'
+      );
       return;
     } else {
       // Single ride (non-recurring)

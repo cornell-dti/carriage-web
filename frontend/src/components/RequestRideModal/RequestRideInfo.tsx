@@ -56,7 +56,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   const watchRepeating = watch('recurring', false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
-  const shouldDisableStartDate = (ride && ride.schedulingState !== 'unscheduled');
+  const shouldDisableStartDate = ride && ride.schedulingState !== 'unscheduled';
   const loc = useLocations().locations;
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
     setPickupLocation(location);
     if (location) {
       // Find the location in our locations list and set the form value
-      const foundLocation = locations.find(loc => loc.id === location.id);
+      const foundLocation = locations.find((loc) => loc.id === location.id);
       if (foundLocation) {
         setValue('startLocation', foundLocation.id);
       } else {
@@ -117,7 +117,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
     setDropoffLocation(location);
     if (location) {
       // Find the location in our locations list and set the form value
-      const foundLocation = locations.find(loc => loc.id === location.id);
+      const foundLocation = locations.find((loc) => loc.id === location.id);
       if (foundLocation) {
         setValue('endLocation', foundLocation.id);
       } else {
@@ -441,7 +441,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           )}
         </div>
       </div>
-      
+
       {/* Map for location selection */}
       <div className={styles.mapSection}>
         <Label className={styles.largeLabel}>Select Locations on Map</Label>
@@ -455,7 +455,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           />
         </div>
       </div>
-      
+
       {watchDropoffCustom === 'Other' ? (
         <div className={styles.box}>
           <Label className={styles.boldLabel} id="customDropoff">

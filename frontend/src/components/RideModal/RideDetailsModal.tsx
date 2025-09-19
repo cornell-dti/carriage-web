@@ -28,12 +28,17 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
   // For display purposes, use primary rider (first in array) or show multiple riders
   const getRiderDisplayName = () => {
     if (!ride.riders || ride.riders.length === 0) return 'No rider assigned';
-    if (ride.riders.length === 1) return `${ride.riders[0].firstName} ${ride.riders[0].lastName}`;
-    return `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`;
+    if (ride.riders.length === 1)
+      return `${ride.riders[0].firstName} ${ride.riders[0].lastName}`;
+    return `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
+      ride.riders.length - 1
+    } more`;
   };
 
   const riderName = getRiderDisplayName();
-  const driverName = ride.driver ? `${ride.driver.firstName} ${ride.driver.lastName}` : 'No driver assigned';
+  const driverName = ride.driver
+    ? `${ride.driver.firstName} ${ride.driver.lastName}`
+    : 'No driver assigned';
 
   const pickupLocation = ride.startLocation.name || ride.startLocation.address;
   const dropoffLocation = ride.endLocation.name || ride.endLocation.address;
@@ -42,8 +47,8 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
   const getAllAccessibilityNeeds = () => {
     if (!ride.riders || ride.riders.length === 0) return 'None';
     const allNeeds = ride.riders
-      .filter(rider => rider.accessibility && rider.accessibility.length > 0)
-      .flatMap(rider => rider.accessibility)
+      .filter((rider) => rider.accessibility && rider.accessibility.length > 0)
+      .flatMap((rider) => rider.accessibility)
       .filter((need, index, arr) => arr.indexOf(need) === index); // Remove duplicates
     return allNeeds.length > 0 ? allNeeds.join(', ') : 'None';
   };
@@ -62,7 +67,14 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
     }
   };
 
-  const getStatusColor = (): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
+  const getStatusColor = ():
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'error'
+    | 'info'
+    | 'success'
+    | 'warning' => {
     if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
       return 'warning';
     } else if (ride.type === 'active') {
@@ -90,7 +102,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Date
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -98,18 +113,24 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Status
                 </Typography>
-                <Chip 
-                  label={getStatusText()} 
-                  color={getStatusColor()} 
+                <Chip
+                  label={getStatusText()}
+                  color={getStatusColor()}
                   size="small"
                   className="mt-1"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Pickup Time
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -117,7 +138,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Dropoff Time
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -136,7 +160,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Rider
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -144,7 +171,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Driver
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -163,7 +193,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Pickup Location
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -171,7 +204,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Dropoff Location
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -190,7 +226,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Accessibility Needs
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">
@@ -198,7 +237,10 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Typography variant="body2" className="text-gray-600 font-medium">
+                <Typography
+                  variant="body2"
+                  className="text-gray-600 font-medium"
+                >
                   Recurring
                 </Typography>
                 <Typography variant="body1" className="text-gray-900">

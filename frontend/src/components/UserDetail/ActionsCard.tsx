@@ -19,17 +19,17 @@ interface ActionsCardProps {
   refreshUserData?: () => void;
 }
 
-const ActionsCard: React.FC<ActionsCardProps> = ({ 
-  user, 
+const ActionsCard: React.FC<ActionsCardProps> = ({
+  user,
   userType,
-  refreshUserData
+  refreshUserData,
 }) => {
   const [isEmployeeOpen, setEmployeeOpen] = useState(false);
   const [isRiderOpen, setRiderOpen] = useState(false);
   const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  
+
   const { updateRiderActive } = useRiders();
   const { toastType } = useToast();
 
@@ -83,14 +83,18 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
         await updateRiderActive(id, newActiveStatus);
 
         // Show success message
-        setToastMessage(`Rider ${newActiveStatus ? 'activated' : 'deactivated'}.`);
+        setToastMessage(
+          `Rider ${newActiveStatus ? 'activated' : 'deactivated'}.`
+        );
         setShowToast(true);
 
         // Note: No need to call refreshUserData() as the context update automatically
         // triggers the useUserDetailData hook to update the local user state
       } catch (error) {
         console.error('Error updating rider status:', error);
-        setToastMessage(`Failed to ${newActiveStatus ? 'activate' : 'deactivate'} rider.`);
+        setToastMessage(
+          `Failed to ${newActiveStatus ? 'activate' : 'deactivate'} rider.`
+        );
         setShowToast(true);
       }
     }
@@ -107,7 +111,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
   const handleDelete = () => {
     setConfirmationModalIsOpen(true);
   };
-  
+
   const getUserRole = () => {
     if (userType === 'employee') {
       const employee = user as Employee;
@@ -129,7 +133,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
     <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
         <h3 className="text-md font-medium text-gray-900 mb-3">Actions</h3>
-        
+
         <div className="flex flex-col gap-2 flex-grow justify-start">
           {showToast && rider && (
             <Toast
@@ -147,7 +151,11 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
                   : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
             >
-              {rider.active ? <PersonOffIcon className="w-3 h-3" /> : <PersonAddIcon className="w-3 h-3" />}
+              {rider.active ? (
+                <PersonOffIcon className="w-3 h-3" />
+              ) : (
+                <PersonAddIcon className="w-3 h-3" />
+              )}
               {rider.active ? 'Deactivate' : 'Activate'}
             </button>
           )}
@@ -176,7 +184,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
             setIsOpen={setEmployeeOpen}
           />
         )}
-        
+
         {rider && (
           <RiderModal
             existingRider={rider}

@@ -44,7 +44,8 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   const [markerWithPopup, setMarkerWithPopup] = useState<Location | null>(null);
 
   // Accept only real, finite numbers
-  const isValidCoord = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+  const isValidCoord = (v: unknown): v is number =>
+    typeof v === 'number' && Number.isFinite(v);
 
   // Marker-cluster plumbing
   useEffect(() => {
@@ -156,93 +157,119 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
 
   return (
     <>
-    <Map
-      defaultZoom={13}
-      defaultCenter={getMapCenter()}
-      mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
-      gestureHandling={'greedy'}
-      disableDefaultUI={false}
-      className={styles.mapContainer}
-    >
-      {/* Pickup Location Marker */}
-      {pickupLocation && (
-        <AdvancedMarker
-          position={{ lat: pickupLocation.lat, lng: pickupLocation.lng }}
-          onClick={() => handleMarkerClick(pickupLocation)}
-          clickable={true}
-        >
-          <Pin
-            background={'#1976d2'}
-            glyphColor="#fff"
-            borderColor="#1976d2"
-            scale={1.2}
-          />
-        </AdvancedMarker>
-      )}
-
-
-      {/* Available Locations for Dropoff Selection */}
-      {availableLocations
-        .filter((loc) => isValidCoord(loc.lat) && isValidCoord(loc.lng))
-        .map((location) => (
+      <Map
+        defaultZoom={13}
+        defaultCenter={getMapCenter()}
+        mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+        gestureHandling={'greedy'}
+        disableDefaultUI={false}
+        className={styles.mapContainer}
+      >
+        {/* Pickup Location Marker */}
+        {pickupLocation && (
           <AdvancedMarker
-            key={location.id}
-            position={{ lat: location.lat, lng: location.lng }}
-            onClick={() => onDropoffSelect(location)}
-            ref={(marker) => handleMarkerRef(marker, location.id.toString())}
+            position={{ lat: pickupLocation.lat, lng: pickupLocation.lng }}
+            onClick={() => handleMarkerClick(pickupLocation)}
             clickable={true}
           >
             <Pin
-              background={dropoffLocation?.id === location.id ? '#4caf50' : '#FBBC04'}
-              glyphColor={dropoffLocation?.id === location.id ? "#fff" : "#000"}
-              borderColor={dropoffLocation?.id === location.id ? "#4caf50" : "#000"}
-              scale={dropoffLocation?.id === location.id ? 1.2 : 1.0}
+              background={'#1976d2'}
+              glyphColor="#fff"
+              borderColor="#1976d2"
+              scale={1.2}
             />
           </AdvancedMarker>
-        ))}
+        )}
 
-      {/* Legacy dropoffOptions support */}
-      {!dropoffLocation && !availableLocations.length && Array.isArray(dropoffOptions) && dropoffOptions
-        .filter(o => isValidCoord(o.lat) && isValidCoord(o.lng))
-        .map((opt: { id?: number | string; lat: number; lng: number; name: string; address: string; }, idx: number) => (
-          <AdvancedMarker
-            key={`${opt.id ?? idx}-${opt.lat}-${opt.lng}`}
-            position={{ lat: opt.lat, lng: opt.lng }}
-            onClick={() => onDropoffSelect({
-              id: opt.id?.toString() || 'custom',
-              lat: opt.lat,
-              lng: opt.lng,
-              name: opt.name,
-              address: opt.address,
-              shortName: opt.name,
-              tag: 'custom' as any,
-              info: ''
-            })}
-            clickable={true}
+        {/* Available Locations for Dropoff Selection */}
+        {availableLocations
+          .filter((loc) => isValidCoord(loc.lat) && isValidCoord(loc.lng))
+          .map((location) => (
+            <AdvancedMarker
+              key={location.id}
+              position={{ lat: location.lat, lng: location.lng }}
+              onClick={() => onDropoffSelect(location)}
+              ref={(marker) => handleMarkerRef(marker, location.id.toString())}
+              clickable={true}
+            >
+              <Pin
+                background={
+                  dropoffLocation?.id === location.id ? '#4caf50' : '#FBBC04'
+                }
+                glyphColor={
+                  dropoffLocation?.id === location.id ? '#fff' : '#000'
+                }
+                borderColor={
+                  dropoffLocation?.id === location.id ? '#4caf50' : '#000'
+                }
+                scale={dropoffLocation?.id === location.id ? 1.2 : 1.0}
+              />
+            </AdvancedMarker>
+          ))}
+
+        {/* Legacy dropoffOptions support */}
+        {!dropoffLocation &&
+          !availableLocations.length &&
+          Array.isArray(dropoffOptions) &&
+          dropoffOptions
+            .filter((o) => isValidCoord(o.lat) && isValidCoord(o.lng))
+            .map(
+              (
+                opt: {
+                  id?: number | string;
+                  lat: number;
+                  lng: number;
+                  name: string;
+                  address: string;
+                },
+                idx: number
+              ) => (
+                <AdvancedMarker
+                  key={`${opt.id ?? idx}-${opt.lat}-${opt.lng}`}
+                  position={{ lat: opt.lat, lng: opt.lng }}
+                  onClick={() =>
+                    onDropoffSelect({
+                      id: opt.id?.toString() || 'custom',
+                      lat: opt.lat,
+                      lng: opt.lng,
+                      name: opt.name,
+                      address: opt.address,
+                      shortName: opt.name,
+                      tag: 'custom' as any,
+                      info: '',
+                    })
+                  }
+                  clickable={true}
+                >
+                  <Pin
+                    background={'#4caf50'}
+                    glyphColor="#fff"
+                    borderColor="#4caf50"
+                    scale={1.0}
+                  />
+                </AdvancedMarker>
+              )
+            )}
+
+        {markerWithPopup && (
+          <InfoWindow
+            position={{
+              lat: markerWithPopup.lat + 0.001,
+              lng: markerWithPopup.lng,
+            }}
+            onCloseClick={() => setMarkerWithPopup(null)}
           >
-            <Pin background={'#4caf50'} glyphColor="#fff" borderColor="#4caf50" scale={1.0} />
-          </AdvancedMarker>
-        ))}
+            <div className={styles.mapPopup}>
+              <h4>{markerWithPopup.shortName}</h4>
+              <p>{markerWithPopup.name}</p>
+              <p>{markerWithPopup.address}</p>
+            </div>
+          </InfoWindow>
+        )}
+      </Map>
 
-      {markerWithPopup && (
-        <InfoWindow
-          position={{
-            lat: markerWithPopup.lat + 0.001,
-            lng: markerWithPopup.lng,
-          }}
-          onCloseClick={() => setMarkerWithPopup(null)}
-        >
-          <div className={styles.mapPopup}>
-            <h4>{markerWithPopup.shortName}</h4>
-            <p>{markerWithPopup.name}</p>
-            <p>{markerWithPopup.address}</p>
-          </div>
-        </InfoWindow>
-      )}
-    </Map>
-
-    {/* Confirmation dialog is now handled in the parent component */}
-  </>
+      {/* Confirmation dialog is now handled in the parent component */}
+    </>
   );
 };
 

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { format, isBefore, setHours, setMinutes, setSeconds, subDays } from 'date-fns';
+import {
+  format,
+  isBefore,
+  setHours,
+  setMinutes,
+  setSeconds,
+  subDays,
+} from 'date-fns';
 import { Ride } from 'types';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -32,9 +39,9 @@ interface MainCardProps {
 
 const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
-  const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(false); 
+  const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false); 
+  const [openEditModal, setOpenEditModal] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [openDriverInfoDialog, setOpenDriverInfoDialog] = useState(false);
   const [adminContactOpen, setAdminContactOpen] = useState(false);
@@ -63,7 +70,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
       setAdminContactOpen(true);
       return;
     }
-    
+
     // For unscheduled rides, proceed with normal cancel flow
     const dayBefore10AM = setSeconds(
       setMinutes(setHours(subDays(new Date(ride.startTime), 1), 10), 0),
@@ -82,7 +89,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
       setAdminContactOpen(true);
       return;
     }
-    
+
     // For unscheduled rides, proceed with normal edit flow
     setEditOpen(!editOpen);
   };
@@ -142,7 +149,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
             }}
             ride={ride}
             supportedLocations={locations
-              .map(l => ({
+              .map((l) => ({
                 id: String(l.id),
                 name: l.name,
                 address: l.address,
@@ -154,7 +161,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
                 photoLink: l.photoLink,
                 images: l.images,
               }))
-              .filter(l => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
+              .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
           />
           {ride.driver && (
             <>
@@ -274,16 +281,17 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
         <DialogContent>
           <DialogContentText>
             <Typography variant="body1" sx={{ mb: 2 }}>
-              This ride has been scheduled and a driver has been assigned. 
-              To cancel or edit this ride, please contact the administrator.
+              This ride has been scheduled and a driver has been assigned. To
+              cancel or edit this ride, please contact the administrator.
             </Typography>
             <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ fontWeight: 'bold', mb: 1 }}
+              >
                 Administrator Contact:
               </Typography>
-              <Typography variant="body2">
-                Email: admin@carriage.com
-              </Typography>
+              <Typography variant="body2">Email: admin@carriage.com</Typography>
             </Box>
           </DialogContentText>
         </DialogContent>

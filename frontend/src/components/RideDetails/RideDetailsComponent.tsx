@@ -65,12 +65,12 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   // Determine user role and appropriate tabs
   const getUserRole = (): 'rider' | 'driver' | 'admin' => {
     const userType = localStorage.getItem('userType');
-    
+
     // Use the user type from localStorage - this is the source of truth
     if (userType === 'Admin') return 'admin';
     if (userType === 'Driver') return 'driver';
     if (userType === 'Rider') return 'rider';
-    
+
     // Fallback - shouldn't normally reach here
     return 'rider';
   };
@@ -104,7 +104,12 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
   const tabs = getTabsForRole();
 
   return (
-    <RideEditProvider ride={ride} userRole={userRole} onRideUpdated={onRideUpdated} initialEditingState={initialEditingState}>
+    <RideEditProvider
+      ride={ride}
+      userRole={userRole}
+      onRideUpdated={onRideUpdated}
+      initialEditingState={initialEditingState}
+    >
       <Dialog
         open={open}
         onClose={onClose}
@@ -126,12 +131,22 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
                 variant="fullWidth"
               >
                 {tabs.map((tab) => (
-                  <Tab key={tab.value} label={tab.label} className={styles.tab} />
+                  <Tab
+                    key={tab.value}
+                    label={tab.label}
+                    className={styles.tab}
+                  />
                 ))}
               </Tabs>
 
               {/* Tab Content */}
-              <div className={`${styles.tabContent} ${isMobile ? styles.tabContentMobile : styles.tabContentWithActions}`}>
+              <div
+                className={`${styles.tabContent} ${
+                  isMobile
+                    ? styles.tabContentMobile
+                    : styles.tabContentWithActions
+                }`}
+              >
                 <TabPanel value={tabValue} index={0}>
                   <div className={styles.tabPanelContainer}>
                     <div className={styles.tabPanelContent}>

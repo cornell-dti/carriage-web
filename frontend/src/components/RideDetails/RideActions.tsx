@@ -30,7 +30,12 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
 import { useRideEdit } from './RideEditContext';
-import { canUpdateStatus, canCancelRide, getRestrictionMessage, UserRole } from '../../util/rideValidation';
+import {
+  canUpdateStatus,
+  canCancelRide,
+  getRestrictionMessage,
+  UserRole,
+} from '../../util/rideValidation';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
@@ -60,10 +65,14 @@ const getNextStatuses = (currentStatus: Status): Status[] => {
 };
 
 const formatStatusLabel = (status: Status): string => {
-  return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 };
 
-const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, onClose }) => {
+const RideActions: React.FC<RideActionsProps> = ({
+  userRole,
+  isMobile = false,
+  onClose,
+}) => {
   const {
     isEditing,
     editedRide,
@@ -71,12 +80,12 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
     hasChanges,
     startEditing,
     stopEditing,
-    saveChanges
+    saveChanges,
   } = useRideEdit();
   const { showToast } = useToast();
   const { refreshRides } = useRides();
   const { curDate } = useDate();
-  
+
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   const [contactAdminOpen, setContactAdminOpen] = useState(false);
@@ -91,7 +100,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) return;
-    
+
     setUpdating(true);
     try {
       // In a real app, make API call to update status
@@ -154,7 +163,9 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
     try {
       const success = await saveChanges();
       if (success) {
-        const message = isNewRide(ride) ? 'Ride created successfully' : 'Ride saved successfully';
+        const message = isNewRide(ride)
+          ? 'Ride created successfully'
+          : 'Ride saved successfully';
         showToast(message, ToastStatus.SUCCESS);
 
         // Only refresh rides if the ride is on the current date being displayed in the context
@@ -168,12 +179,16 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
           onClose(); // Close modal after creating new ride
         }
       } else {
-        const message = isNewRide(ride) ? 'Failed to create ride' : 'Failed to save ride';
+        const message = isNewRide(ride)
+          ? 'Failed to create ride'
+          : 'Failed to save ride';
         showToast(message, ToastStatus.ERROR);
       }
     } catch (error) {
       console.error('Error saving ride:', error);
-      const message = isNewRide(ride) ? 'Failed to create ride' : 'Failed to save ride';
+      const message = isNewRide(ride)
+        ? 'Failed to create ride'
+        : 'Failed to save ride';
       showToast(message, ToastStatus.ERROR);
     } finally {
       setSaving(false);
@@ -191,16 +206,32 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
   const renderRiderActions = () => {
     if (canEdit) {
       return (
-        <Stack direction={isMobile ? "column" : "row"} spacing={1}>
+        <Stack direction={isMobile ? 'column' : 'row'} spacing={1}>
           <Button
             variant="contained"
-            startIcon={!isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : undefined}
+            startIcon={
+              !isMobile ? isEditing ? <SaveIcon /> : <EditIcon /> : undefined
+            }
             onClick={handleEdit}
             fullWidth={isMobile}
             disabled={rideCompleted || (isEditing && !hasChanges) || saving}
-            aria-label={isEditing ? "Save changes" : "Edit ride"}
+            aria-label={isEditing ? 'Save changes' : 'Edit ride'}
           >
-            {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? (isNewRide(ride) ? 'Create' : 'Save') : 'Edit')}
+            {isMobile ? (
+              isEditing ? (
+                <SaveIcon />
+              ) : (
+                <EditIcon />
+              )
+            ) : isEditing ? (
+              isNewRide(ride) ? (
+                'Create'
+              ) : (
+                'Save'
+              )
+            ) : (
+              'Edit'
+            )}
           </Button>
           {isEditing && (
             <Button
@@ -223,7 +254,11 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
                 fullWidth={isMobile}
                 disabled={!canCancelThisRide}
                 aria-label="Cancel ride"
-                title={!canCancelThisRide ? getRestrictionMessage(ride, 'cancel', userRole) : undefined}
+                title={
+                  !canCancelThisRide
+                    ? getRestrictionMessage(ride, 'cancel', userRole)
+                    : undefined
+                }
               >
                 {isMobile ? <CancelIcon /> : 'Cancel Ride'}
               </Button>
@@ -242,7 +277,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
       );
     } else {
       return (
-        <Stack direction={isMobile ? "column" : "row"} spacing={1}>
+        <Stack direction={isMobile ? 'column' : 'row'} spacing={1}>
           <Button
             variant="contained"
             startIcon={!isMobile ? <AdminPanelSettingsIcon /> : undefined}
@@ -267,7 +302,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
   };
 
   const renderDriverActions = () => (
-    <Stack direction={isMobile ? "column" : "row"} spacing={1}>
+    <Stack direction={isMobile ? 'column' : 'row'} spacing={1}>
       <Button
         variant="contained"
         startIcon={!isMobile ? <UpdateIcon /> : undefined}
@@ -275,7 +310,11 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
         fullWidth={isMobile}
         disabled={!canUpdateRideStatus}
         aria-label="Update Status"
-        title={!canUpdateRideStatus ? getRestrictionMessage(ride, 'updateStatus', userRole) : undefined}
+        title={
+          !canUpdateRideStatus
+            ? getRestrictionMessage(ride, 'updateStatus', userRole)
+            : undefined
+        }
       >
         {isMobile ? <UpdateIcon /> : 'Update Status'}
       </Button>
@@ -292,16 +331,32 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
   );
 
   const renderAdminActions = () => (
-    <Stack direction={isMobile ? "column" : "row"} spacing={1}>
+    <Stack direction={isMobile ? 'column' : 'row'} spacing={1}>
       <Button
         variant="contained"
-        startIcon={!isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : undefined}
+        startIcon={
+          !isMobile ? isEditing ? <SaveIcon /> : <EditIcon /> : undefined
+        }
         onClick={handleEdit}
         fullWidth={isMobile}
         disabled={(isEditing && !hasChanges) || saving}
-        aria-label={isEditing ? "Save changes" : "Edit ride"}
+        aria-label={isEditing ? 'Save changes' : 'Edit ride'}
       >
-        {isMobile ? (isEditing ? <SaveIcon /> : <EditIcon />) : (isEditing ? (isNewRide(ride) ? 'Create' : 'Save') : 'Edit')}
+        {isMobile ? (
+          isEditing ? (
+            <SaveIcon />
+          ) : (
+            <EditIcon />
+          )
+        ) : isEditing ? (
+          isNewRide(ride) ? (
+            'Create'
+          ) : (
+            'Save'
+          )
+        ) : (
+          'Edit'
+        )}
       </Button>
       {isEditing && (
         <Button
@@ -324,7 +379,11 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
             fullWidth={isMobile}
             disabled={!canCancelThisRide}
             aria-label="Cancel ride"
-            title={!canCancelThisRide ? getRestrictionMessage(ride, 'cancel', userRole) : undefined}
+            title={
+              !canCancelThisRide
+                ? getRestrictionMessage(ride, 'cancel', userRole)
+                : undefined
+            }
           >
             {isMobile ? <CancelIcon /> : 'Cancel Ride'}
           </Button>
@@ -350,9 +409,7 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-      <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>
-        {getActionsForRole()}
-      </Box>
+      <Box sx={{ display: 'flex', gap: 1, flex: 1 }}>{getActionsForRole()}</Box>
       {onClose && (
         <Box sx={{ ml: 2 }}>
           <Button
@@ -367,20 +424,36 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
       )}
 
       {/* Update Status Modal */}
-      <Dialog open={updateStatusOpen} onClose={() => setUpdateStatusOpen(false)} fullWidth maxWidth="xs">
+      <Dialog
+        open={updateStatusOpen}
+        onClose={() => setUpdateStatusOpen(false)}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Update Ride Status</DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="textSecondary" gutterBottom>
             Current status: {formatStatusLabel(ride.status)}
           </Typography>
           {!canUpdateRideStatus && (
-            <Box sx={{ p: 2, backgroundColor: 'warning.light', borderRadius: 1, mb: 2 }}>
+            <Box
+              sx={{
+                p: 2,
+                backgroundColor: 'warning.light',
+                borderRadius: 1,
+                mb: 2,
+              }}
+            >
               <Typography variant="body2" color="warning.dark">
                 {getRestrictionMessage(ride, 'updateStatus', userRole)}
               </Typography>
             </Box>
           )}
-          <FormControl component="fieldset" sx={{ mt: 2 }} disabled={!canUpdateRideStatus}>
+          <FormControl
+            component="fieldset"
+            sx={{ mt: 2 }}
+            disabled={!canUpdateRideStatus}
+          >
             <FormLabel component="legend">Select new status</FormLabel>
             <RadioGroup
               value={selectedStatus || ''}
@@ -411,61 +484,74 @@ const RideActions: React.FC<RideActionsProps> = ({ userRole, isMobile = false, o
       </Dialog>
 
       {/* Cancel Confirmation Modal */}
-      <Dialog open={cancelConfirmOpen} onClose={() => setCancelConfirmOpen(false)} fullWidth maxWidth="xs">
+      <Dialog
+        open={cancelConfirmOpen}
+        onClose={() => setCancelConfirmOpen(false)}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Cancel Ride</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to cancel this ride? This action cannot be undone.
+            Are you sure you want to cancel this ride? This action cannot be
+            undone.
           </Typography>
-          <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}>
+          <Box
+            sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}
+          >
             <Typography variant="body2" color="textSecondary">
               Ride Summary
             </Typography>
             <Typography variant="body2">
               {new Date(ride.startTime).toLocaleDateString()} at{' '}
-              {new Date(ride.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(ride.startTime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </Typography>
             <Typography variant="body2">
               From: {ride.startLocation.name}
             </Typography>
-            <Typography variant="body2">
-              To: {ride.endLocation.name}
-            </Typography>
+            <Typography variant="body2">To: {ride.endLocation.name}</Typography>
           </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setCancelConfirmOpen(false)}>Keep Ride</Button>
-          <Button onClick={handleCancelConfirm} variant="contained" color="error">
+          <Button
+            onClick={handleCancelConfirm}
+            variant="contained"
+            color="error"
+          >
             Cancel Ride
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Contact Admin Modal */}
-      <Dialog open={contactAdminOpen} onClose={() => setContactAdminOpen(false)} fullWidth maxWidth="xs">
+      <Dialog
+        open={contactAdminOpen}
+        onClose={() => setContactAdminOpen(false)}
+        fullWidth
+        maxWidth="xs"
+      >
         <DialogTitle>Contact Admin</DialogTitle>
         <DialogContent>
           <Typography variant="body2" gutterBottom>
-            Need help with your ride? Contact our admin team using the information below.
+            Need help with your ride? Contact our admin team using the
+            information below.
           </Typography>
           <List>
             <ListItem>
               <ListItemIcon>
                 <PhoneIcon />
               </ListItemIcon>
-              <ListItemText 
-                primary="Phone" 
-                secondary="(555) 123-4567"
-              />
+              <ListItemText primary="Phone" secondary="(555) 123-4567" />
             </ListItem>
             <ListItem>
               <ListItemIcon>
                 <EmailIcon />
               </ListItemIcon>
-              <ListItemText 
-                primary="Email" 
-                secondary="admin@carriage.com"
-              />
+              <ListItemText primary="Email" secondary="admin@carriage.com" />
             </ListItem>
           </List>
         </DialogContent>

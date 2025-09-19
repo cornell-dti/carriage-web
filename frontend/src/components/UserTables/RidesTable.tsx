@@ -72,11 +72,17 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             minute: '2-digit',
           });
           // Use primary rider (first in array) for table display
-          const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
-          const riderName = primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : '';
+          const primaryRider =
+            ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+          const riderName = primaryRider
+            ? `${primaryRider.firstName} ${primaryRider.lastName}`
+            : '';
 
           // Convert accessibility array to string
-          const needs = primaryRider && primaryRider.accessibility && primaryRider.accessibility.length > 0
+          const needs =
+            primaryRider &&
+            primaryRider.accessibility &&
+            primaryRider.accessibility.length > 0
               ? primaryRider.accessibility.join(', ')
               : 'None';
 
@@ -245,7 +251,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           );
         })}
       </Table>
-      
+
       {/* Ride Details Modal */}
       {selectedRide && (
         <RideDetailsComponent
@@ -254,7 +260,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           ride={selectedRide}
         />
       )}
-      
+
       {/* Ride Edit Modal */}
       {rideEditOpenIndex >= 0 && (
         <RideDetailsComponent

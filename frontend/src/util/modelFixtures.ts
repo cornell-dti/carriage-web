@@ -1,5 +1,14 @@
 import { v4 as uuid } from 'uuid';
-import { Ride, Driver, Rider, Location, Status, SchedulingState, Type, Tag } from '../types';
+import {
+  Ride,
+  Driver,
+  Rider,
+  Location,
+  Status,
+  SchedulingState,
+  Type,
+  Tag,
+} from '../types';
 
 // Type aliases for better readability
 type RideType = Ride;
@@ -107,11 +116,10 @@ export function createDefaultRide(): RideType {
   const today = new Date(now);
   today.setDate(today.getDate());
 
-  
-  today.setHours(today.getHours(), today.getMinutes(), 0, 0); 
+  today.setHours(today.getHours(), today.getMinutes(), 0, 0);
 
   const endTime = new Date(today);
-  endTime.setHours(today.getHours(), today.getMinutes()+ 30, 0, 0);
+  endTime.setHours(today.getHours(), today.getMinutes() + 30, 0, 0);
   // Create empty location templates for pickup/dropoff
   const emptyPickupLocation = createDefaultStartLocation();
 
@@ -141,28 +149,36 @@ export function createDefaultRide(): RideType {
 /**
  * Utility functions for creating objects with custom overrides
  */
-export function createDriverWithDefaults(overrides: Partial<DriverType> = {}): DriverType {
+export function createDriverWithDefaults(
+  overrides: Partial<DriverType> = {}
+): DriverType {
   return {
     ...createDefaultDriver(),
     ...overrides,
   };
 }
 
-export function createRiderWithDefaults(overrides: Partial<RiderType> = {}): RiderType {
+export function createRiderWithDefaults(
+  overrides: Partial<RiderType> = {}
+): RiderType {
   return {
     ...createDefaultRider(),
     ...overrides,
   };
 }
 
-export function createLocationWithDefaults(overrides: Partial<LocationType> = {}): LocationType {
+export function createLocationWithDefaults(
+  overrides: Partial<LocationType> = {}
+): LocationType {
   return {
     ...createDefaultLocation(),
     ...overrides,
   };
 }
 
-export function createRideWithDefaults(overrides: Partial<RideType> = {}): RideType {
+export function createRideWithDefaults(
+  overrides: Partial<RideType> = {}
+): RideType {
   return {
     ...createDefaultRide(),
     ...overrides,
@@ -194,18 +210,19 @@ export function isNewRide(ride: RideType): boolean {
 export function deepCompare(obj1: any, obj2: any): boolean {
   if (obj1 === obj2) return true;
   if (obj1 == null || obj2 == null) return false;
-  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return obj1 === obj2;
-  
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object')
+    return obj1 === obj2;
+
   const keys1 = Object.keys(obj1);
   const keys2 = Object.keys(obj2);
-  
+
   if (keys1.length !== keys2.length) return false;
-  
+
   for (let key of keys1) {
     if (!keys2.includes(key)) return false;
     if (!deepCompare(obj1[key], obj2[key])) return false;
   }
-  
+
   return true;
 }
 
@@ -215,65 +232,80 @@ export function deepCompare(obj1: any, obj2: any): boolean {
 export function compareDateTime(date1: string, date2: string): boolean {
   if (date1 === date2) return true;
   if (!date1 || !date2) return false;
-  
+
   const time1 = new Date(date1).getTime();
   const time2 = new Date(date2).getTime();
-  
+
   return time1 === time2;
 }
 
 /**
  * Compare two Location objects
  */
-export function compareLocation(loc1: LocationType, loc2: LocationType): boolean {
+export function compareLocation(
+  loc1: LocationType,
+  loc2: LocationType
+): boolean {
   if (!loc1 || !loc2) return loc1 === loc2;
-  
-  return loc1.id === loc2.id && 
-         loc1.name === loc2.name && 
-         loc1.address === loc2.address &&
-         loc1.lat === loc2.lat &&
-         loc1.lng === loc2.lng;
+
+  return (
+    loc1.id === loc2.id &&
+    loc1.name === loc2.name &&
+    loc1.address === loc2.address &&
+    loc1.lat === loc2.lat &&
+    loc1.lng === loc2.lng
+  );
 }
 
 /**
  * Compare two Driver objects
  */
-export function compareDriver(driver1: DriverType | null, driver2: DriverType | null): boolean {
+export function compareDriver(
+  driver1: DriverType | null,
+  driver2: DriverType | null
+): boolean {
   if (driver1 === driver2) return true;
   if (!driver1 || !driver2) return false;
-  
-  return driver1.id === driver2.id &&
-         driver1.firstName === driver2.firstName &&
-         driver1.lastName === driver2.lastName &&
-         driver1.email === driver2.email &&
-         driver1.phoneNumber === driver2.phoneNumber;
+
+  return (
+    driver1.id === driver2.id &&
+    driver1.firstName === driver2.firstName &&
+    driver1.lastName === driver2.lastName &&
+    driver1.email === driver2.email &&
+    driver1.phoneNumber === driver2.phoneNumber
+  );
 }
 
 /**
  * Compare two Rider objects
  */
 export function compareRider(rider1: RiderType, rider2: RiderType): boolean {
-  return rider1.id === rider2.id &&
-         rider1.firstName === rider2.firstName &&
-         rider1.lastName === rider2.lastName &&
-         rider1.email === rider2.email &&
-         rider1.phoneNumber === rider2.phoneNumber;
+  return (
+    rider1.id === rider2.id &&
+    rider1.firstName === rider2.firstName &&
+    rider1.lastName === rider2.lastName &&
+    rider1.email === rider2.email &&
+    rider1.phoneNumber === rider2.phoneNumber
+  );
 }
 
 /**
  * Compare two arrays of riders
  */
-export function compareRiders(riders1: RiderType[], riders2: RiderType[]): boolean {
+export function compareRiders(
+  riders1: RiderType[],
+  riders2: RiderType[]
+): boolean {
   if (riders1.length !== riders2.length) return false;
-  
+
   // Sort by ID to ensure consistent comparison
   const sorted1 = [...riders1].sort((a, b) => a.id.localeCompare(b.id));
   const sorted2 = [...riders2].sort((a, b) => a.id.localeCompare(b.id));
-  
+
   for (let i = 0; i < sorted1.length; i++) {
     if (!compareRider(sorted1[i], sorted2[i])) return false;
   }
-  
+
   return true;
 }
 
@@ -281,65 +313,73 @@ export function compareRiders(riders1: RiderType[], riders2: RiderType[]): boole
  * Compare two Ride objects for changes
  */
 export function compareRide(ride1: RideType, ride2: RideType): boolean {
-  return compareDateTime(ride1.startTime, ride2.startTime) &&
-         compareDateTime(ride1.endTime, ride2.endTime) &&
-         compareLocation(ride1.startLocation, ride2.startLocation) &&
-         compareLocation(ride1.endLocation, ride2.endLocation) &&
-         compareDriver(ride1.driver || null, ride2.driver || null) &&
-         compareRiders(ride1.riders || [], ride2.riders || []) &&
-         ride1.status === ride2.status &&
-         ride1.schedulingState === ride2.schedulingState &&
-         ride1.type === ride2.type;
+  return (
+    compareDateTime(ride1.startTime, ride2.startTime) &&
+    compareDateTime(ride1.endTime, ride2.endTime) &&
+    compareLocation(ride1.startLocation, ride2.startLocation) &&
+    compareLocation(ride1.endLocation, ride2.endLocation) &&
+    compareDriver(ride1.driver || null, ride2.driver || null) &&
+    compareRiders(ride1.riders || [], ride2.riders || []) &&
+    ride1.status === ride2.status &&
+    ride1.schedulingState === ride2.schedulingState &&
+    ride1.type === ride2.type
+  );
 }
 
 /**
  * Get changed fields between two rides
  */
-export function getRideChanges(originalRide: RideType, editedRide: RideType): Partial<RideType> {
+export function getRideChanges(
+  originalRide: RideType,
+  editedRide: RideType
+): Partial<RideType> {
   const changes: Partial<RideType> = {};
-  
+
   if (!compareDateTime(originalRide.startTime, editedRide.startTime)) {
     changes.startTime = editedRide.startTime;
   }
-  
+
   if (!compareDateTime(originalRide.endTime, editedRide.endTime)) {
     changes.endTime = editedRide.endTime;
   }
-  
+
   if (!compareLocation(originalRide.startLocation, editedRide.startLocation)) {
     changes.startLocation = editedRide.startLocation;
   }
-  
+
   if (!compareLocation(originalRide.endLocation, editedRide.endLocation)) {
     changes.endLocation = editedRide.endLocation;
   }
-  
+
   if (!compareDriver(originalRide.driver || null, editedRide.driver || null)) {
     changes.driver = editedRide.driver;
   }
-  
+
   if (!compareRiders(originalRide.riders || [], editedRide.riders || [])) {
     changes.riders = editedRide.riders;
   }
-  
+
   if (originalRide.status !== editedRide.status) {
     changes.status = editedRide.status;
   }
-  
+
   if (originalRide.schedulingState !== editedRide.schedulingState) {
     changes.schedulingState = editedRide.schedulingState;
   }
-  
+
   if (originalRide.type !== editedRide.type) {
     changes.type = editedRide.type;
   }
-  
+
   return changes;
 }
 
 /**
  * Check if a ride has any changes
  */
-export function hasRideChanges(originalRide: RideType, editedRide: RideType): boolean {
+export function hasRideChanges(
+  originalRide: RideType,
+  editedRide: RideType
+): boolean {
   return !compareRide(originalRide, editedRide);
 }

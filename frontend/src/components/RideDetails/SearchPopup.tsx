@@ -14,7 +14,11 @@ import {
   Chip,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { SearchableType, getSearchConfig, filterItems } from '../../utils/searchConfig';
+import {
+  SearchableType,
+  getSearchConfig,
+  filterItems,
+} from '../../utils/searchConfig';
 
 interface SearchPopupProps<T extends { id: string | number }> {
   open: boolean;
@@ -41,7 +45,7 @@ const SearchPopup = <T extends { id: string | number }>({
   loading = false,
   error,
   title,
-  placeholder = "Search...",
+  placeholder = 'Search...',
   selectedItems = [],
   onRemove,
   showAccessibility = false,
@@ -66,11 +70,11 @@ const SearchPopup = <T extends { id: string | number }>({
       const popup = popupRef.current;
       const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;
-      
+
       // Calculate position
       let top = rect.bottom + 12; // More space below button
       let left = rect.left;
-      
+
       // Adjust if popup would go off screen
       if (top + 400 > viewportHeight) {
         top = rect.top - 400 - 12; // Position above with more space
@@ -78,7 +82,7 @@ const SearchPopup = <T extends { id: string | number }>({
       if (left + 320 > viewportWidth) {
         left = viewportWidth - 320 - 16; // Adjust to fit
       }
-      
+
       popup.style.position = 'fixed';
       popup.style.top = `${Math.max(8, top)}px`;
       popup.style.left = `${Math.max(8, left)}px`;
@@ -89,15 +93,20 @@ const SearchPopup = <T extends { id: string | number }>({
   // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node) && 
-          anchorEl && !anchorEl.contains(event.target as Node)) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target as Node) &&
+        anchorEl &&
+        !anchorEl.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
 
     if (open) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [open, onClose, anchorEl]);
 
@@ -107,7 +116,7 @@ const SearchPopup = <T extends { id: string | number }>({
   };
 
   const isSelected = (item: T) => {
-    return selectedItems.some(selected => selected.id === item.id);
+    return selectedItems.some((selected) => selected.id === item.id);
   };
 
   if (!open) return null;
@@ -168,7 +177,11 @@ const SearchPopup = <T extends { id: string | number }>({
           <List dense>
             {filteredItems.map((item) => {
               const selected = isSelected(item);
-              const renderedItem = searchConfig.renderItem(item, selected, showAccessibility);
+              const renderedItem = searchConfig.renderItem(
+                item,
+                selected,
+                showAccessibility
+              );
 
               return (
                 <ListItem
@@ -178,15 +191,15 @@ const SearchPopup = <T extends { id: string | number }>({
                     cursor: 'pointer',
                     backgroundColor: selected ? 'primary.50' : 'transparent',
                     '&:hover': {
-                      backgroundColor: selected ? 'primary.100' : 'action.hover',
+                      backgroundColor: selected
+                        ? 'primary.100'
+                        : 'action.hover',
                     },
                     borderBottom: 1,
                     borderColor: 'divider',
                   }}
                 >
-                  <ListItemAvatar>
-                    {renderedItem.avatar}
-                  </ListItemAvatar>
+                  <ListItemAvatar>{renderedItem.avatar}</ListItemAvatar>
                   <ListItemText
                     primary={renderedItem.primary}
                     secondary={renderedItem.secondary}

@@ -32,25 +32,31 @@ interface PersonCardProps {
   showAccessibility?: boolean;
 }
 
-const PersonCard: React.FC<PersonCardProps> = ({ person, type, showAccessibility = false }) => {
+const PersonCard: React.FC<PersonCardProps> = ({
+  person,
+  type,
+  showAccessibility = false,
+}) => {
   const isRider = type === 'rider';
-  const rider = isRider ? person as Rider : undefined;
+  const rider = isRider ? (person as Rider) : undefined;
 
   return (
     <div className={styles.personCard}>
       <CardContent>
         <div className={styles.personHeader}>
-          <Avatar
-            src={person.photoLink}
-            sx={{ width: 48, height: 48 }}
-          >
-            {person.firstName?.charAt(0)}{person.lastName?.charAt(0)}
+          <Avatar src={person.photoLink} sx={{ width: 48, height: 48 }}>
+            {person.firstName?.charAt(0)}
+            {person.lastName?.charAt(0)}
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               {person.firstName} {person.lastName}
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ textTransform: 'capitalize' }}>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              sx={{ textTransform: 'capitalize' }}
+            >
               {type}
             </Typography>
           </Box>
@@ -63,9 +69,7 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, type, showAccessibility
               <IconButton size="small" aria-label="Call">
                 <PhoneIcon fontSize="small" />
               </IconButton>
-              <Typography variant="body2">
-                {person.phoneNumber}
-              </Typography>
+              <Typography variant="body2">{person.phoneNumber}</Typography>
             </div>
           )}
           {person.email && (
@@ -73,32 +77,32 @@ const PersonCard: React.FC<PersonCardProps> = ({ person, type, showAccessibility
               <IconButton size="small" aria-label="Email">
                 <EmailIcon fontSize="small" />
               </IconButton>
-              <Typography variant="body2">
-                {person.email}
-              </Typography>
+              <Typography variant="body2">{person.email}</Typography>
             </div>
           )}
         </div>
 
         {/* Accessibility needs for riders */}
-        {showAccessibility && rider?.accessibility && rider.accessibility.length > 0 && (
-          <div className={styles.accessibilitySection}>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-              Accessibility Needs
-            </Typography>
-            <div className={styles.accessibilityChips}>
-              {rider.accessibility.map((need: string) => (
-                <Chip
-                  key={need}
-                  label={need}
-                  size="small"
-                  color="info"
-                  variant="outlined"
-                />
-              ))}
+        {showAccessibility &&
+          rider?.accessibility &&
+          rider.accessibility.length > 0 && (
+            <div className={styles.accessibilitySection}>
+              <Typography variant="body2" color="textSecondary" gutterBottom>
+                Accessibility Needs
+              </Typography>
+              <div className={styles.accessibilityChips}>
+                {rider.accessibility.map((need: string) => (
+                  <Chip
+                    key={need}
+                    label={need}
+                    size="small"
+                    color="info"
+                    variant="outlined"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </CardContent>
     </div>
   );
@@ -108,19 +112,21 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const { editedRide, isEditing, updateRideField } = useRideEdit();
   const { getAvailableRiders } = useRides();
   const ride = editedRide!;
-  
+
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [driverSelectOpen, setDriverSelectOpen] = useState(false);
   const [driversError, setDriversError] = useState<string | null>(null);
   const driverButtonRef = useRef<HTMLButtonElement>(null);
-  
+
   // Ref to store the driver assigned when editing started
   const originalDriverRef = useRef<Driver | null>(null);
-  
+
   // Track the temp driver changes (before saving)
-  const [tempCurrentDriver, setTempCurrentDriver] = useState<Driver | null>(ride.driver || null);
-  
+  const [tempCurrentDriver, setTempCurrentDriver] = useState<Driver | null>(
+    ride.driver || null
+  );
+
   const [riders, setRiders] = useState<Rider[]>([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
   const [riderSelectOpen, setRiderSelectOpen] = useState(false);
@@ -154,20 +160,20 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     try {
       const startTime = new Date(ride.startTime);
       const endTime = new Date(ride.endTime);
-      
+
       const date = startTime.toISOString().split('T')[0];
       const startTimeStr = startTime.toTimeString().slice(0, 5);
       const endTimeStr = endTime.toTimeString().slice(0, 5);
-      
+
       const response = await axios.get('/api/drivers/available', {
         params: {
           date,
           startTime: startTimeStr,
           endTime: endTimeStr,
-          timezone: 'America/New_York'
-        }
+          timezone: 'America/New_York',
+        },
       });
-      
+
       const driversData = response.data?.data || response.data;
       const driversArray = Array.isArray(driversData) ? driversData : [];
       setDrivers(driversArray);
@@ -186,7 +192,10 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     try {
       // If we have start and end times, get available riders
       if (ride.startTime && ride.endTime) {
-        const availableRiders = await getAvailableRiders(ride.startTime, ride.endTime);
+        const availableRiders = await getAvailableRiders(
+          ride.startTime,
+          ride.endTime
+        );
         setRiders(availableRiders);
       } else {
         // Fallback to all riders if no times are set
@@ -212,7 +221,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
 
   const handleRiderSelect = (rider: Rider) => {
     const currentRiders = ride.riders || [];
-    if (!currentRiders.find(r => r.id === rider.id)) {
+    if (!currentRiders.find((r) => r.id === rider.id)) {
       updateRideField('riders', [...currentRiders, rider]);
     }
     setRiderSelectOpen(false);
@@ -220,7 +229,10 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
 
   const handleRemoveRider = (rider: Rider) => {
     const currentRiders = ride.riders || [];
-    updateRideField('riders', currentRiders.filter(r => r.id !== rider.id));
+    updateRideField(
+      'riders',
+      currentRiders.filter((r) => r.id !== rider.id)
+    );
   };
 
   const handleRemoveDriver = () => {
@@ -241,9 +253,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
                 <PersonCard person={ride.driver} type="driver" />
               ) : (
                 <div className={styles.notAssigned}>
-                  <Typography variant="body1">
-                    Not assigned
-                  </Typography>
+                  <Typography variant="body1">Not assigned</Typography>
                 </div>
               )}
             </div>
@@ -318,9 +328,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
                   <PersonCard person={tempCurrentDriver} type="driver" />
                 ) : (
                   <div className={styles.notAssigned}>
-                    <Typography variant="body1">
-                      Not assigned
-                    </Typography>
+                    <Typography variant="body1">Not assigned</Typography>
                   </div>
                 )}
               </div>
@@ -363,50 +371,57 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
           </div>
         </div>
 
-      {/* Driver Selection Popup */}
-      <SearchPopup<Driver>
-        open={driverSelectOpen}
-        onClose={() => setDriverSelectOpen(false)}
-        onSelect={handleDriverSelect}
-        items={(() => {
-          let allDrivers = drivers;
-          const originalDriver = originalDriverRef.current;
+        {/* Driver Selection Popup */}
+        <SearchPopup<Driver>
+          open={driverSelectOpen}
+          onClose={() => setDriverSelectOpen(false)}
+          onSelect={handleDriverSelect}
+          items={(() => {
+            let allDrivers = drivers;
+            const originalDriver = originalDriverRef.current;
 
-          // Add the original driver to the list if they aren't in the available list
-          if (originalDriver && !drivers.find(d => d.id === originalDriver.id)) {
-            allDrivers = [...drivers, originalDriver];
-          }
+            // Add the original driver to the list if they aren't in the available list
+            if (
+              originalDriver &&
+              !drivers.find((d) => d.id === originalDriver.id)
+            ) {
+              allDrivers = [...drivers, originalDriver];
+            }
 
-          // Filter out the currently selected temporary driver from the options
-          return allDrivers.filter(driver => driver.id !== tempCurrentDriver?.id);
-        })()}
-        searchType={SearchableType.DRIVER}
-        loading={loadingDrivers}
-        error={driversError}
-        title="Select Driver"
-        placeholder="Search drivers..."
-        selectedItems={tempCurrentDriver ? [tempCurrentDriver] : []}
-        onRemove={handleRemoveDriver}
-        anchorEl={driverButtonRef.current}
-      />
+            // Filter out the currently selected temporary driver from the options
+            return allDrivers.filter(
+              (driver) => driver.id !== tempCurrentDriver?.id
+            );
+          })()}
+          searchType={SearchableType.DRIVER}
+          loading={loadingDrivers}
+          error={driversError}
+          title="Select Driver"
+          placeholder="Search drivers..."
+          selectedItems={tempCurrentDriver ? [tempCurrentDriver] : []}
+          onRemove={handleRemoveDriver}
+          anchorEl={driverButtonRef.current}
+        />
 
-      {/* Rider Selection Popup */}
-      <SearchPopup<Rider>
-        open={riderSelectOpen}
-        onClose={() => setRiderSelectOpen(false)}
-        onSelect={handleRiderSelect}
-        items={riders.filter(rider => !(ride.riders || []).find(r => r.id === rider.id))}
-        searchType={SearchableType.RIDER}
-        loading={loadingRiders}
-        error={ridersError}
-        title="Manage Riders"
-        placeholder="Search riders..."
-        selectedItems={ride.riders || []}
-        onRemove={handleRemoveRider}
-        showAccessibility={true}
-        anchorEl={riderButtonRef.current}
-      />
-    </div>
+        {/* Rider Selection Popup */}
+        <SearchPopup<Rider>
+          open={riderSelectOpen}
+          onClose={() => setRiderSelectOpen(false)}
+          onSelect={handleRiderSelect}
+          items={riders.filter(
+            (rider) => !(ride.riders || []).find((r) => r.id === rider.id)
+          )}
+          searchType={SearchableType.RIDER}
+          loading={loadingRiders}
+          error={ridersError}
+          title="Manage Riders"
+          placeholder="Search riders..."
+          selectedItems={ride.riders || []}
+          onRemove={handleRemoveRider}
+          showAccessibility={true}
+          anchorEl={riderButtonRef.current}
+        />
+      </div>
     );
   };
 

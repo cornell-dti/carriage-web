@@ -17,7 +17,6 @@ type AssignModalProps = {
   buttonRef: any;
 };
 
-
 const AssignDriverModal = ({
   isOpen,
   close,
@@ -77,7 +76,7 @@ const AssignDriverModal = ({
         selectedItems={[]}
         anchorEl={buttonRef?.current}
       />
-      
+
       {/* Confirmation Dialog */}
       {showConfirmation && selectedDriver && (
         <Paper
@@ -96,7 +95,8 @@ const AssignDriverModal = ({
             {reassign ? 'Reassign Driver?' : 'Assign Driver?'}
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-            {reassign ? 'Reassign' : 'Assign'} {selectedDriver.firstName} {selectedDriver.lastName} to this ride?
+            {reassign ? 'Reassign' : 'Assign'} {selectedDriver.firstName}{' '}
+            {selectedDriver.lastName} to this ride?
           </Typography>
           <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
             <Button

@@ -10,12 +10,12 @@ export type UserRole = 'admin' | 'driver' | 'rider';
 export function isRidePast(ride: RideType): boolean {
   const now = new Date();
   const rideEndTime = new Date(ride.endTime);
-  
+
   // Consider invalid dates as not past to be safe
   if (isNaN(rideEndTime.getTime())) {
     return false;
   }
-  
+
   return rideEndTime < now;
 }
 
@@ -25,12 +25,8 @@ export function isRidePast(ride: RideType): boolean {
  * @returns True if the ride is currently active
  */
 export function isRideActive(ride: RideType): boolean {
-  const activeStatuses = [
-    Status.ON_THE_WAY,
-    Status.ARRIVED,
-    Status.PICKED_UP
-  ];
-  
+  const activeStatuses = [Status.ON_THE_WAY, Status.ARRIVED, Status.PICKED_UP];
+
   return activeStatuses.includes(ride.status);
 }
 
@@ -43,9 +39,9 @@ export function isRideCompleted(ride: RideType): boolean {
   const completedStatuses = [
     Status.COMPLETED,
     Status.NO_SHOW,
-    Status.CANCELLED
+    Status.CANCELLED,
   ];
-  
+
   return completedStatuses.includes(ride.status);
 }
 
@@ -60,17 +56,17 @@ export function canEditRide(ride: RideType, userRole: UserRole): boolean {
   if (userRole === 'driver') {
     return false;
   }
-  
+
   // Riders can only edit unscheduled rides
   if (userRole === 'rider') {
     return ride.schedulingState === SchedulingState.UNSCHEDULED;
   }
-  
+
   // Admins can edit any ride
   if (userRole === 'admin') {
     return true;
   }
-  
+
   return false;
 }
 
@@ -85,27 +81,27 @@ export function canUpdateStatus(ride: RideType, userRole: UserRole): boolean {
   if (isRidePast(ride)) {
     return false;
   }
-  
+
   // Completed rides cannot have status updates
   if (isRideCompleted(ride)) {
     return false;
   }
-  
+
   // Only drivers and admins can update status
   if (userRole === 'rider') {
     return false;
   }
-  
+
   // Drivers can only update status if they are assigned to the ride
   if (userRole === 'driver') {
     return ride.driver !== undefined;
   }
-  
+
   // Admins can always update status for non-past, non-completed rides
   if (userRole === 'admin') {
     return true;
   }
-  
+
   return false;
 }
 
@@ -120,7 +116,7 @@ export function canAssignDriver(ride: RideType, userRole: UserRole): boolean {
   if (userRole !== 'admin') {
     return false;
   }
-  
+
   // Admins can assign drivers to any ride regardless of timing or status
   return true;
 }
@@ -136,7 +132,7 @@ export function canChangeRider(ride: RideType, userRole: UserRole): boolean {
   if (userRole !== 'admin') {
     return false;
   }
-  
+
   // Admins can change riders for any ride regardless of timing or status
   return true;
 }
@@ -156,21 +152,24 @@ export function getRestrictionMessage(
   if (isRidePast(ride)) {
     return 'This action cannot be performed on past rides.';
   }
-  
+
   if (isRideCompleted(ride)) {
     return 'This action cannot be performed on completed rides.';
   }
-  
+
   switch (action) {
     case 'edit':
       if (userRole === 'driver') {
         return 'Drivers cannot edit ride details.';
       }
-      if (userRole === 'rider' && ride.schedulingState === SchedulingState.SCHEDULED) {
+      if (
+        userRole === 'rider' &&
+        ride.schedulingState === SchedulingState.SCHEDULED
+      ) {
         return 'Riders cannot edit scheduled rides.';
       }
       break;
-      
+
     case 'updateStatus':
       if (userRole === 'rider') {
         return 'Riders cannot update ride status.';
@@ -179,7 +178,7 @@ export function getRestrictionMessage(
         return 'You must be assigned to this ride to update its status.';
       }
       break;
-      
+
     case 'assignDriver':
       if (userRole !== 'admin') {
         return 'Only administrators can assign drivers.';
@@ -188,7 +187,7 @@ export function getRestrictionMessage(
         return 'Cannot change driver assignment for active rides.';
       }
       break;
-      
+
     case 'changeRider':
       if (userRole !== 'admin') {
         return 'Only administrators can change riders.';
@@ -254,30 +253,30 @@ export function rideRequiresAttention(ride: RideType): boolean {
   const now = new Date();
   const rideStartTime = new Date(ride.startTime);
   const rideEndTime = new Date(ride.endTime);
-  
+
   // Invalid dates don't require attention
   if (isNaN(rideStartTime.getTime()) || isNaN(rideEndTime.getTime())) {
     return false;
   }
-  
+
   // Unscheduled rides that are supposed to start within 24 hours
   if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
     const timeDiff = rideStartTime.getTime() - now.getTime();
     const hoursUntilStart = timeDiff / (1000 * 60 * 60);
     return hoursUntilStart <= 24 && hoursUntilStart > 0;
   }
-  
+
   // Scheduled rides without a driver that start within 2 hours
   if (!ride.driver) {
     const timeDiff = rideStartTime.getTime() - now.getTime();
     const hoursUntilStart = timeDiff / (1000 * 60 * 60);
     return hoursUntilStart <= 2 && hoursUntilStart > 0;
   }
-  
+
   // Active rides that are running late
   if (isRideActive(ride)) {
     return now > rideEndTime;
   }
-  
+
   return false;
 }

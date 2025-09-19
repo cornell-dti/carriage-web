@@ -88,7 +88,11 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
 
       <div className={styles.footer}>
         <div className={styles.dti_container}>
-          <a href="https://www.cornelldti.org/" target="_blank" rel="noreferrer">
+          <a
+            href="https://www.cornelldti.org/"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
           </a>
         </div>

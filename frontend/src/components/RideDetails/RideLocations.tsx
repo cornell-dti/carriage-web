@@ -1,18 +1,20 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  Typography,
-  IconButton,
-  Chip,
-  Box,
-  Button,
-} from '@mui/material';
+import { Typography, IconButton, Chip, Box, Button } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import PlaceIcon from '@mui/icons-material/Place';
 import CheckIcon from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { APIProvider, Map, AdvancedMarker, Pin, useMapsLibrary, useMap, MapMouseEvent } from '@vis.gl/react-google-maps';
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  Pin,
+  useMapsLibrary,
+  useMap,
+  MapMouseEvent,
+} from '@vis.gl/react-google-maps';
 import { RideType, Location, Tag } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
@@ -49,7 +51,7 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
   onConfirm,
   onCancel,
   canEdit = false,
-  dropdownButtonRef
+  dropdownButtonRef,
 }) => {
   const handleCopyAddress = () => {
     if (location.address) {
@@ -66,12 +68,18 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
         </Typography>
       </div>
       <div
-        className={`${styles.locationCard} ${isChanging ? styles.locationCardChanging : ''}`}
-        style={isChanging ? {
-          border: '2px solid',
-          borderColor: isPickup ? '#1976d2' : '#9c27b0',
-          borderRadius: '8px'
-        } : {}}
+        className={`${styles.locationCard} ${
+          isChanging ? styles.locationCardChanging : ''
+        }`}
+        style={
+          isChanging
+            ? {
+                border: '2px solid',
+                borderColor: isPickup ? '#1976d2' : '#9c27b0',
+                borderRadius: '8px',
+              }
+            : {}
+        }
       >
         <div className={styles.locationCardHeader}>
           <div className={styles.locationInfo}>
@@ -84,7 +92,11 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
               </Typography>
             )}
             {location.info && (
-              <Typography variant="body2" color="textSecondary" sx={{ mt: 0.5, fontSize: '0.85rem' }}>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                sx={{ mt: 0.5, fontSize: '0.85rem' }}
+              >
                 {location.info}
               </Typography>
             )}
@@ -94,7 +106,7 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
                   label={location.tag}
                   size="small"
                   variant="outlined"
-                  color={isPickup ? "primary" : "secondary"}
+                  color={isPickup ? 'primary' : 'secondary'}
                 />
               </div>
             )}
@@ -159,13 +171,21 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
 };
 
 // Fallback function to calculate approximate distance using Haversine formula
-const getApproximateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+const getApproximateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
   const R = 3959; // Earth's radius in miles
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c * 10) / 10; // Round to 1 decimal place
 };
@@ -185,11 +205,14 @@ const RideMap: React.FC<RideMapProps> = ({
   isSelecting = false,
   availableLocations = [],
   onLocationSelect,
-  changingLocationType = null
+  changingLocationType = null,
 }) => {
   const map = useMap();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
-  const [tripInfo, setTripInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const [tripInfo, setTripInfo] = useState<{
+    distance: string;
+    duration: string;
+  } | null>(null);
   const mapsLibrary = useMapsLibrary('routes');
 
   const fetchAndDrawRoute = useCallback(async () => {
@@ -242,7 +265,7 @@ const RideMap: React.FC<RideMapProps> = ({
         if (typeof currentZoom === 'number' && currentZoom > maxZoom) {
           map.setZoom(maxZoom);
         }
-        
+
         // Set trip info from route result
         const leg = result.routes[0]?.legs?.[0];
         if (leg) {
@@ -293,23 +316,26 @@ const RideMap: React.FC<RideMapProps> = ({
     return { lat: 42.4534531, lng: -76.4760776 };
   };
 
-  const handleMapClick = useCallback((event: MapMouseEvent) => {
-    if (isSelecting && onLocationSelect && event.detail.latLng) {
-      const { lat, lng } = event.detail.latLng;
-      // Create a custom location from map click
-      const customLocation: Location = {
-        id: `custom-${Date.now()}`,
-        name: 'Custom Location',
-        address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
-        lat,
-        lng,
-        shortName: 'Custom',
-        tag: Tag.CUSTOM,
-        info: 'Selected on map'
-      };
-      onLocationSelect(customLocation);
-    }
-  }, [isSelecting, onLocationSelect]);
+  const handleMapClick = useCallback(
+    (event: MapMouseEvent) => {
+      if (isSelecting && onLocationSelect && event.detail.latLng) {
+        const { lat, lng } = event.detail.latLng;
+        // Create a custom location from map click
+        const customLocation: Location = {
+          id: `custom-${Date.now()}`,
+          name: 'Custom Location',
+          address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+          lat,
+          lng,
+          shortName: 'Custom',
+          tag: Tag.CUSTOM,
+          info: 'Selected on map',
+        };
+        onLocationSelect(customLocation);
+      }
+    },
+    [isSelecting, onLocationSelect]
+  );
 
   return (
     <>
@@ -356,26 +382,28 @@ const RideMap: React.FC<RideMapProps> = ({
           </AdvancedMarker>
 
           {/* Show available location markers when selecting */}
-          {isSelecting && availableLocations.map((location) => {
-            // Use pickup or dropoff color based on what we're changing
-            const markerColor = changingLocationType === 'pickup' ? '#1976d2' : '#9c27b0';
+          {isSelecting &&
+            availableLocations.map((location) => {
+              // Use pickup or dropoff color based on what we're changing
+              const markerColor =
+                changingLocationType === 'pickup' ? '#1976d2' : '#9c27b0';
 
-            return (
-              <AdvancedMarker
-                key={location.id}
-                position={{ lat: location.lat, lng: location.lng }}
-                onClick={() => onLocationSelect?.(location)}
-                clickable={true}
-              >
-                <Pin
-                  background={markerColor}
-                  glyphColor="#fff"
-                  borderColor={markerColor}
-                  scale={1.0}
-                />
-              </AdvancedMarker>
-            );
-          })}
+              return (
+                <AdvancedMarker
+                  key={location.id}
+                  position={{ lat: location.lat, lng: location.lng }}
+                  onClick={() => onLocationSelect?.(location)}
+                  clickable={true}
+                >
+                  <Pin
+                    background={markerColor}
+                    glyphColor="#fff"
+                    borderColor={markerColor}
+                    scale={1.0}
+                  />
+                </AdvancedMarker>
+              );
+            })}
         </Map>
       </div>
 
@@ -425,22 +453,23 @@ const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   </APIProvider>
 );
 
-
-
 const RideLocations: React.FC<RideLocationsProps> = () => {
   const { editedRide, isEditing, updateRideField, canEdit } = useRideEdit();
   const { locations } = useLocations();
   const ride = editedRide!;
 
   // State for managing which location is being changed
-  const [changingLocation, setChangingLocation] = useState<'pickup' | 'dropoff' | null>(null);
+  const [changingLocation, setChangingLocation] = useState<
+    'pickup' | 'dropoff' | null
+  >(null);
   const [tempLocation, setTempLocation] = useState<Location | null>(null);
   const [locationSelectorOpen, setLocationSelectorOpen] = useState(false);
   const pickupButtonRef = useRef<HTMLButtonElement>(null);
   const dropoffButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleStartChanging = (locationType: 'pickup' | 'dropoff') => {
-    const currentLocation = locationType === 'pickup' ? ride.startLocation : ride.endLocation;
+    const currentLocation =
+      locationType === 'pickup' ? ride.startLocation : ride.endLocation;
     setChangingLocation(locationType);
     setTempLocation(currentLocation);
   };
@@ -452,7 +481,8 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
 
   const handleConfirmChange = () => {
     if (changingLocation && tempLocation) {
-      const field = changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
+      const field =
+        changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
       updateRideField(field, tempLocation);
     }
     handleCancelChange();
@@ -514,7 +544,6 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
             canEdit={isEditing && canEdit}
             dropdownButtonRef={dropoffButtonRef}
           />
-
         </div>
 
         {/* Right side - Map */}
@@ -523,19 +552,23 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
             startLocation={getDisplayLocation('pickup')}
             endLocation={getDisplayLocation('dropoff')}
             isSelecting={changingLocation !== null}
-            availableLocations={changingLocation ? locations.filter(location => {
-              // Don't show temp selected location
-              if (location.id === tempLocation?.id) return false;
+            availableLocations={
+              changingLocation
+                ? locations.filter((location) => {
+                    // Don't show temp selected location
+                    if (location.id === tempLocation?.id) return false;
 
-              // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
-              if (changingLocation === 'pickup') {
-                // When changing pickup, don't show current dropoff location
-                return location.id !== ride.endLocation.id;
-              } else {
-                // When changing dropoff, don't show current pickup location
-                return location.id !== ride.startLocation.id;
-              }
-            }) : []}
+                    // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
+                    if (changingLocation === 'pickup') {
+                      // When changing pickup, don't show current dropoff location
+                      return location.id !== ride.endLocation.id;
+                    } else {
+                      // When changing dropoff, don't show current pickup location
+                      return location.id !== ride.startLocation.id;
+                    }
+                  })
+                : []
+            }
             onLocationSelect={handleMapLocationSelect}
             changingLocationType={changingLocation}
           />
@@ -550,7 +583,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
           onSelect={handleLocationSelect}
           items={(() => {
             // Filter out the temporarily selected location and the other location type
-            return locations.filter(location => {
+            return locations.filter((location) => {
               // Don't show temp selected location
               if (location.id === tempLocation?.id) return false;
 
@@ -567,7 +600,9 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
           searchType={SearchableType.LOCATION}
           loading={false}
           error={null}
-          title={`Select ${changingLocation === 'pickup' ? 'Pickup' : 'Dropoff'} Location`}
+          title={`Select ${
+            changingLocation === 'pickup' ? 'Pickup' : 'Dropoff'
+          } Location`}
           placeholder="Search locations..."
           selectedItems={tempLocation ? [tempLocation] : []}
           anchorEl={getCurrentButtonRef().current}

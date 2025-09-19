@@ -35,12 +35,7 @@ const UpdateStatusModal: React.FC<UpdateStatusModalProps> = ({
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={onClose} 
-      fullWidth 
-      maxWidth="xs"
-    >
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
       <DialogTitle>Update Ride Status</DialogTitle>
       <DialogContent dividers>
         <Typography variant="body2" gutterBottom>
@@ -69,7 +64,9 @@ const UpdateStatusModal: React.FC<UpdateStatusModalProps> = ({
         </List>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={updating}>Cancel</Button>
+        <Button onClick={onClose} disabled={updating}>
+          Cancel
+        </Button>
       </DialogActions>
     </Dialog>
   );

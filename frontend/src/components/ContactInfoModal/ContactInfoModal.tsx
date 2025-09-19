@@ -23,7 +23,11 @@ interface ContactInfoModalProps {
   rider: Rider | undefined;
 }
 
-const ContactInfoModal: React.FC<ContactInfoModalProps> = ({ open, onClose, rider }) => {
+const ContactInfoModal: React.FC<ContactInfoModalProps> = ({
+  open,
+  onClose,
+  rider,
+}) => {
   if (!rider) {
     return null;
   }
@@ -33,7 +37,8 @@ const ContactInfoModal: React.FC<ContactInfoModalProps> = ({ open, onClose, ride
       <DialogTitle sx={{ m: 0, p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Avatar src={rider.photoLink} sx={{ width: 40, height: 40, mr: 2 }}>
-            {rider.firstName.charAt(0)}{rider.lastName.charAt(0)}
+            {rider.firstName.charAt(0)}
+            {rider.lastName.charAt(0)}
           </Avatar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {rider.firstName} {rider.lastName}
@@ -58,7 +63,10 @@ const ContactInfoModal: React.FC<ContactInfoModalProps> = ({ open, onClose, ride
             <ListItemIcon>
               <PhoneIcon />
             </ListItemIcon>
-            <ListItemText primary="Phone Number" secondary={rider.phoneNumber || 'Not provided'} />
+            <ListItemText
+              primary="Phone Number"
+              secondary={rider.phoneNumber || 'Not provided'}
+            />
           </ListItem>
           <ListItem>
             <ListItemIcon>

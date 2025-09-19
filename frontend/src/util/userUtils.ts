@@ -9,7 +9,7 @@ export const extractNetIdFromEmail = (email: string): string | null => {
   if (!email || typeof email !== 'string') {
     return null;
   }
-  
+
   const match = email.match(/^([^@]+)@cornell\.edu$/i);
   return match ? match[1] : null;
 };

@@ -236,7 +236,7 @@ export const notify = (
 ) =>
   new Promise((resolve, reject) => {
     // Handle multiple riders - collect all rider IDs
-    const riderIds = updatedRide.riders?.map(rider => rider.id) || [];
+    const riderIds = updatedRide.riders?.map((rider) => rider.id) || [];
     const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
     const notifEvent = change || getNotificationEvent(body);
@@ -258,7 +258,7 @@ export const notify = (
           );
         } else if (receiver === UserType.RIDER) {
           // Send notifications to all riders
-          return riderIds.map(riderId => {
+          return riderIds.map((riderId) => {
             const title = 'Carriage'; // placeholder
             const body = getMessage(sender, receiver, notifEvent, updatedRide);
             return sendToUsers(

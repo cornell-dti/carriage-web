@@ -7,8 +7,8 @@ import DateContext from '../../context/date';
 import { RidesProvider } from '../../context/RidesContext';
 import { LocationsProvider } from '../../context/LocationsContext';
 import Rides from './Rides';
-import Settings from './Settings'
-import Reports from 'pages/Driver/Reports'
+import Settings from './Settings';
+import Reports from 'pages/Driver/Reports';
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();

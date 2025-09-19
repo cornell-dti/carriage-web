@@ -1,6 +1,12 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { CircularProgress, Typography, Box, Grid, IconButton } from '@mui/material';
+import {
+  CircularProgress,
+  Typography,
+  Box,
+  Grid,
+  IconButton,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { RideTable } from '../RideDetails';
 import UserInfoCard from './UserInfoCard';
@@ -29,20 +35,22 @@ const ErrorMessage: React.FC<{ error: string }> = ({ error }) => (
 
 const NotFound: React.FC = () => (
   <div className="flex items-center justify-center min-h-96 text-center">
-    <Typography variant="h6">
-      User not found
-    </Typography>
+    <Typography variant="h6">User not found</Typography>
   </div>
 );
 
 const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
   const { id: userId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  const { user, rides, loading, error, refreshUserData } = useUserDetailData(userId, userType);
-  
+
+  const { user, rides, loading, error, refreshUserData } = useUserDetailData(
+    userId,
+    userType
+  );
+
   const handleBack = () => {
-    const backPath = userType === 'employee' ? '/admin/employees' : '/admin/riders';
+    const backPath =
+      userType === 'employee' ? '/admin/employees' : '/admin/riders';
     navigate(backPath);
   };
 
@@ -64,15 +72,15 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
-          <IconButton 
+          <IconButton
             onClick={handleBack}
             className="flex items-center justify-center w-10 h-10 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
           >
             <ArrowBackIcon className="w-5 h-5 text-gray-600" />
           </IconButton>
-          <Typography 
-            variant="h6" 
-            component="h1" 
+          <Typography
+            variant="h6"
+            component="h1"
             className="text-2xl font-bold text-gray-900"
           >
             {userType === 'employee' ? 'Employees' : 'Students'}
@@ -87,13 +95,19 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
             <div className="grid grid-cols-3 gap-3">
               <UserInfoCard user={user} userType={userType} />
               <StatisticsCard user={user} userType={userType} rides={rides} />
-              <ActionsCard user={user} userType={userType} refreshUserData={refreshUserData} />
+              <ActionsCard
+                user={user}
+                userType={userType}
+                refreshUserData={refreshUserData}
+              />
             </div>
           </div>
         </div>
 
         {/* Rides Section */}
-        <div className={`bg-white rounded-xl border border-gray-200 ${styles.userDetailCardShadow}`}>
+        <div
+          className={`bg-white rounded-xl border border-gray-200 ${styles.userDetailCardShadow}`}
+        >
           <div className="p-4">
             <RideTable rides={rides} userRole="admin" />
           </div>

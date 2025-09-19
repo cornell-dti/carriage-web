@@ -1,18 +1,18 @@
 .settings {
-    display: block;
-    margin: 2.25rem 2.5rem;
-  }
-  
-  .divider {
-    border: 0.1px solid #ebebeb;
-    width: 50%;
-    margin-left: 0;
-    margin-bottom: 30px;
-  }
-  
-  .checkbox {
-    display: block;
-    margin-bottom: 5px;
-    cursor: pointer;
-    color: #14142b;
-  }
+  display: block;
+  margin: 2.25rem 2.5rem;
+}
+
+.divider {
+  border: 0.1px solid #ebebeb;
+  width: 50%;
+  margin-left: 0;
+  margin-bottom: 30px;
+}
+
+.checkbox {
+  display: block;
+  margin-bottom: 5px;
+  cursor: pointer;
+  color: #14142b;
+}

@@ -32,9 +32,15 @@ const RoutesComponent = () => {
             <Route path="export" element={<ExportPreview />} />
           </Route>
           <Route path="employees" element={<Employees />} />
-          <Route path="employees/:id" element={<UserDetailPage userType="employee" />} />
+          <Route
+            path="employees/:id"
+            element={<UserDetailPage userType="employee" />}
+          />
           <Route path="riders" element={<Students />} />
-          <Route path="riders/:id" element={<UserDetailPage userType="rider" />} />
+          <Route
+            path="riders/:id"
+            element={<UserDetailPage userType="rider" />}
+          />
           <Route path="locations" element={<Locations />} />
           <Route path="analytics" element={<Analytics />} />
         </Routes>

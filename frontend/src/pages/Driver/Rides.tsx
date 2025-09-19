@@ -30,7 +30,9 @@ import ContactInfoModal from '../../components/ContactInfoModal/ContactInfoModal
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
 import UpdateStatusModal from '../../components/UpdateStatusModal/UpdateStatusModal';
 
-const getStatusColor = (status: Status): "default" | "primary" | "info" | "warning" | "success" | "error" => {
+const getStatusColor = (
+  status: Status
+): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
   switch (status) {
     case Status.NOT_STARTED:
       return 'default';
@@ -50,16 +52,27 @@ const getStatusColor = (status: Status): "default" | "primary" | "info" | "warni
   }
 };
 
-const mapLink = (address: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+const mapLink = (address: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    address
+  )}`;
 
 // Fallback function to calculate approximate distance using Haversine formula
-const getApproximateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
+const getApproximateDistance = (
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number
+): number => {
   const R = 3959; // Earth's radius in miles
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return Math.round(R * c * 10) / 10; // Round to 1 decimal place
 };
@@ -77,7 +90,10 @@ const RideDetailCard = ({
 }) => {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const [tripInfo, setTripInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const [tripInfo, setTripInfo] = useState<{
+    distance: string;
+    duration: string;
+  } | null>(null);
   const mapsLibrary = useMapsLibrary('routes');
 
   useEffect(() => {
@@ -93,25 +109,43 @@ const RideDetailCard = ({
     // Debug logging: input data
     console.log('[Directions] Ride:', ride.id);
     console.log('[Directions] Origin address:', origin);
-    console.log('[Directions] Origin coords:', ride.startLocation.lat, ride.startLocation.lng);
+    console.log(
+      '[Directions] Origin coords:',
+      ride.startLocation.lat,
+      ride.startLocation.lng
+    );
     console.log('[Directions] Destination address:', destination);
-    console.log('[Directions] Destination coords:', ride.endLocation.lat, ride.endLocation.lng);
+    console.log(
+      '[Directions] Destination coords:',
+      ride.endLocation.lat,
+      ride.endLocation.lng
+    );
 
     if (!origin || !destination) {
-      if (ride.startLocation.lat && ride.startLocation.lng && ride.endLocation.lat && ride.endLocation.lng) {
+      if (
+        ride.startLocation.lat &&
+        ride.startLocation.lng &&
+        ride.endLocation.lat &&
+        ride.endLocation.lng
+      ) {
         const distance = getApproximateDistance(
           ride.startLocation.lat,
           ride.startLocation.lng,
           ride.endLocation.lat,
           ride.endLocation.lng
         );
-        console.log('[Directions][Fallback] Haversine distance (mi):', distance);
+        console.log(
+          '[Directions][Fallback] Haversine distance (mi):',
+          distance
+        );
         setTripInfo({
           distance: `${distance} mi`,
           duration: `${Math.round(distance * 2)} min`,
         });
       } else {
-        console.warn('[Directions] Missing addresses and coordinates; cannot compute');
+        console.warn(
+          '[Directions] Missing addresses and coordinates; cannot compute'
+        );
         setTripInfo({ distance: '', duration: '' });
       }
       return;
@@ -149,14 +183,22 @@ const RideDetailCard = ({
     return (
       <Card sx={{ width: '100%', height: '100%' }}>
         <CardContent>
-          <NoRidesView compact message={isCurrent ? "No current ride in progress" : "No upcoming rides scheduled"} />
+          <NoRidesView
+            compact
+            message={
+              isCurrent
+                ? 'No current ride in progress'
+                : 'No upcoming rides scheduled'
+            }
+          />
         </CardContent>
       </Card>
     );
   }
 
   // Use primary rider (first in array) for driver interface
-  const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
   const { startLocation, endLocation, startTime, status } = ride;
 
   const handleStatusUpdate = async (newStatus: Status) => {
@@ -165,41 +207,91 @@ const RideDetailCard = ({
     }
   };
 
-  const canNavigateToPickup = ![Status.PICKED_UP, Status.COMPLETED, Status.CANCELLED].includes(status);
+  const canNavigateToPickup = ![
+    Status.PICKED_UP,
+    Status.COMPLETED,
+    Status.CANCELLED,
+  ].includes(status);
   const navigationTarget = canNavigateToPickup ? startLocation : endLocation;
 
   return (
     <>
-      <Card sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Card
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <CardContent sx={{ flexGrow: 1, p: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-            <Typography variant="h6">{isCurrent ? 'Current Ride' : 'Upcoming Ride'}</Typography>
-            <Chip label={status.replace(/_/g, ' ')} color={getStatusColor(status)} size="small" />
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 1,
+            }}
+          >
+            <Typography variant="h6">
+              {isCurrent ? 'Current Ride' : 'Upcoming Ride'}
+            </Typography>
+            <Chip
+              label={status.replace(/_/g, ' ')}
+              color={getStatusColor(status)}
+              size="small"
+            />
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
-            <Avatar src={primaryRider?.photoLink} sx={{ width: 48, height: 48, mr: 2 }}>
-              {primaryRider ? `${primaryRider.firstName.charAt(0)}${primaryRider.lastName.charAt(0)}` : '?'}
+            <Avatar
+              src={primaryRider?.photoLink}
+              sx={{ width: 48, height: 48, mr: 2 }}
+            >
+              {primaryRider
+                ? `${primaryRider.firstName.charAt(
+                    0
+                  )}${primaryRider.lastName.charAt(0)}`
+                : '?'}
             </Avatar>
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body1" fontWeight="bold">
-                {primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : 'No rider assigned'}
-                {ride.riders && ride.riders.length > 1 && ` +${ride.riders.length - 1} more`}
+                {primaryRider
+                  ? `${primaryRider.firstName} ${primaryRider.lastName}`
+                  : 'No rider assigned'}
+                {ride.riders &&
+                  ride.riders.length > 1 &&
+                  ` +${ride.riders.length - 1} more`}
               </Typography>
             </Box>
-            <IconButton onClick={() => setContactModalOpen(true)} aria-label="Show contact info">
+            <IconButton
+              onClick={() => setContactModalOpen(true)}
+              aria-label="Show contact info"
+            >
               <PhoneIcon />
             </IconButton>
           </Box>
 
-          {primaryRider && primaryRider.accessibility && primaryRider.accessibility.length > 0 && (
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" color="textSecondary" gutterBottom>ACCESSIBILITY NEEDS</Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
-                {primaryRider.accessibility.map((need: string) => <Chip key={need} label={need} size="small" />)}
+          {primaryRider &&
+            primaryRider.accessibility &&
+            primaryRider.accessibility.length > 0 && (
+              <Box sx={{ mb: 2 }}>
+                <Typography
+                  variant="caption"
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  ACCESSIBILITY NEEDS
+                </Typography>
+                <Box
+                  sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}
+                >
+                  {primaryRider.accessibility.map((need: string) => (
+                    <Chip key={need} label={need} size="small" />
+                  ))}
+                </Box>
               </Box>
-            </Box>
-          )}
+            )}
 
           <Divider sx={{ my: 2 }} />
 
@@ -207,23 +299,35 @@ const RideDetailCard = ({
           <Stack spacing={1.5}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <PlaceIcon color="action" sx={{ mr: 1.5 }} />
-              <Typography variant="body2"><b>From:</b> {startLocation.name}</Typography>
+              <Typography variant="body2">
+                <b>From:</b> {startLocation.name}
+              </Typography>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <PlaceIcon color="action" sx={{ mr: 1.5 }} />
-              <Typography variant="body2"><b>To:</b> {endLocation.name}</Typography>
+              <Typography variant="body2">
+                <b>To:</b> {endLocation.name}
+              </Typography>
             </Box>
           </Stack>
-          
+
           {/* ETA and distance with clear icons */}
           <Grid container spacing={2} sx={{ mt: 1, color: 'text.secondary' }}>
             {tripInfo && (
               <>
-                <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
                   <TimelapseIcon sx={{ mr: 1 }} fontSize="small" />
                   <Typography variant="body2">{tripInfo.duration}</Typography>
                 </Grid>
-                <Grid item xs={6} sx={{ display: 'flex', alignItems: 'center' }}>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
                   <DirectionsCarIcon sx={{ mr: 1 }} fontSize="small" />
                   <Typography variant="body2">{tripInfo.distance}</Typography>
                 </Grid>
@@ -232,13 +336,18 @@ const RideDetailCard = ({
             <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
               <ScheduleIcon sx={{ mr: 1 }} fontSize="small" />
               <Typography variant="body2">
-                {new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(startTime).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
                 {' - '}
-                {new Date(ride.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {new Date(ride.endTime).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
               </Typography>
             </Grid>
           </Grid>
-
         </CardContent>
 
         <Box sx={{ p: 2, pt: 1 }}>
@@ -267,9 +376,13 @@ const RideDetailCard = ({
           </Stack>
         </Box>
       </Card>
-      <ContactInfoModal open={contactModalOpen} onClose={() => setContactModalOpen(false)} rider={primaryRider || undefined} />
+      <ContactInfoModal
+        open={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        rider={primaryRider || undefined}
+      />
       {isCurrent && (
-        <UpdateStatusModal 
+        <UpdateStatusModal
           open={updateModalOpen}
           onClose={() => setUpdateModalOpen(false)}
           currentStatus={status}
@@ -286,7 +399,8 @@ const RideDetailCard = ({
 };
 
 const Rides = () => {
-  const { scheduledRides, refreshRides, refreshRidesByUser, updateRideStatus } = useRides();
+  const { scheduledRides, refreshRides, refreshRidesByUser, updateRideStatus } =
+    useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
   const [updating, setUpdating] = useState(false);
@@ -351,7 +465,10 @@ const Rides = () => {
       const start = new Date(r.startTime).getTime();
       const end = new Date(r.endTime).getTime();
       return (
-        start <= now && now <= end && r.status !== Status.COMPLETED && r.status !== Status.CANCELLED
+        start <= now &&
+        now <= end &&
+        r.status !== Status.COMPLETED &&
+        r.status !== Status.CANCELLED
       );
     });
   }, [todaysRides, authContext.id]);
@@ -366,14 +483,15 @@ const Rides = () => {
       // Use optimistic update from context
       await updateRideStatus(rideId, status);
     } catch (error: any) {
-      console.error("Failed to update ride status:", error);
-      const errorMessage = error.response?.data?.message || "Could not update ride status. Please try again.";
+      console.error('Failed to update ride status:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        'Could not update ride status. Please try again.';
       alert(`Error: ${errorMessage}`);
     } finally {
       setUpdating(false);
     }
   };
-
 
   useEffect(() => {
     document.title = 'Rides - Carriage';
@@ -395,14 +513,18 @@ const Rides = () => {
               My Rides
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" startIcon={<DownloadIcon />}>Export</Button>
-              <Button variant="outlined" startIcon={<EmailIcon />}>Send Email</Button>
+              <Button variant="outlined" startIcon={<DownloadIcon />}>
+                Export
+              </Button>
+              <Button variant="outlined" startIcon={<EmailIcon />}>
+                Send Email
+              </Button>
             </Box>
           </Box>
 
           <Grid container spacing={3} sx={{ mb: 3 }} alignItems="stretch">
             <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-              <RideDetailCard 
+              <RideDetailCard
                 ride={currentRide}
                 isCurrent={true}
                 updating={updating}
@@ -410,13 +532,9 @@ const Rides = () => {
               />
             </Grid>
             <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-              <RideDetailCard
-                ride={nextDriverRide}
-                isCurrent={false}
-              />
+              <RideDetailCard ride={nextDriverRide} isCurrent={false} />
             </Grid>
           </Grid>
-
 
           <RideTable rides={filteredRides} userRole="driver" />
         </Box>

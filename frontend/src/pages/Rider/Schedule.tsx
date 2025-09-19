@@ -34,7 +34,8 @@ interface FavoriteRide {
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
   const { locations } = useLocations();
-  const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } = useRides();
+  const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } =
+    useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
@@ -48,22 +49,24 @@ const Schedule: React.FC = () => {
       const response = await axios.get('/api/favorites');
       const favorites = response.data.data || [];
       // Convert rides to FavoriteRide format
-      const formattedFavorites: FavoriteRide[] = favorites.map((ride: Ride) => ({
-        id: ride.id,
-        name: `Ride to ${ride.endLocation}`,
-        startLocation: {
-          name: ride.startLocation,
-          address: ride.startLocation,
-        },
-        endLocation: {
-          name: ride.endLocation,
-          address: ride.endLocation,
-        },
-        preferredTime: new Date(ride.startTime).toLocaleTimeString([], { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }),
-      }));
+      const formattedFavorites: FavoriteRide[] = favorites.map(
+        (ride: Ride) => ({
+          id: ride.id,
+          name: `Ride to ${ride.endLocation}`,
+          startLocation: {
+            name: ride.startLocation,
+            address: ride.startLocation,
+          },
+          endLocation: {
+            name: ride.endLocation,
+            address: ride.endLocation,
+          },
+          preferredTime: new Date(ride.startTime).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        })
+      );
       setFavoriteRides(formattedFavorites);
     } catch (error) {
       console.error('Failed to fetch favorites:', error);
@@ -110,7 +113,9 @@ const Schedule: React.FC = () => {
 
     // For now, block any recurring rides
     if (formData.repeatType !== 'none') {
-      alert('Recurring rides are not yet supported. Please create a single ride.');
+      alert(
+        'Recurring rides are not yet supported. Please create a single ride.'
+      );
       return;
     }
 
@@ -120,12 +125,14 @@ const Schedule: React.FC = () => {
         alert('Please select both date and time.');
         return;
       }
-      
+
       const dateStr = formData.date.toISOString().split('T')[0];
       const timeStr = formData.time.toTimeString().split(' ')[0];
       const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
 
-      const endISO = new Date(new Date(startISO).getTime() + 30 * 60 * 1000).toISOString();
+      const endISO = new Date(
+        new Date(startISO).getTime() + 30 * 60 * 1000
+      ).toISOString();
 
       await axios.post('/api/rides', {
         // Send location IDs (matching Admin flow)
@@ -148,22 +155,23 @@ const Schedule: React.FC = () => {
     }
   };
 
-  
   // Use the fetched rider rides instead of filtering from context
   const allRides = allRiderRides;
-  
+
   // Using the date portion only for comparisons
   const now = new Date().toISOString().split('T')[0];
   console.log('Current date (YYYY-MM-DD):', now);
-  
+
   const currRides = allRides.filter((ride) => {
     const rideEndDate = ride.endTime.split('T')[0];
     const isCurrent = ride.endTime >= now;
-    console.log(`Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}`);
+    console.log(
+      `Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}`
+    );
     return isCurrent;
   });
   const pastRides = allRides.filter((ride) => ride.endTime < now);
-  
+
   console.log('Current rides:', currRides);
   console.log('Past rides:', pastRides);
 
@@ -188,7 +196,7 @@ const Schedule: React.FC = () => {
           <div className={styles.rightSection}>
             <Button
               variant="contained"
-              color="secondary" 
+              color="secondary"
               onClick={handleDialogOpen}
               sx={{
                 backgroundColor: 'black',
@@ -225,7 +233,7 @@ const Schedule: React.FC = () => {
           onClose={handleDialogClose}
           onSubmit={handleRideSubmit}
           supportedLocations={locations
-            .map(l => ({
+            .map((l) => ({
               id: String(l.id),
               name: l.name,
               address: l.address,
@@ -237,7 +245,7 @@ const Schedule: React.FC = () => {
               photoLink: l.photoLink,
               images: l.images,
             }))
-            .filter(l => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
+            .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
         />
       </main>
     </APIProvider>

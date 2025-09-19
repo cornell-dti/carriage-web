@@ -58,7 +58,8 @@ const Sidebar = ({ type, children }: SidebarProps) => {
         .get(`/api/drivers/${id}`)
         .then((res) => res.data)
         .then(
-          (data) => componentMounted.current && setPhotoLink(data.data.photoLink)
+          (data) =>
+            componentMounted.current && setPhotoLink(data.data.photoLink)
         );
 
       return () => {

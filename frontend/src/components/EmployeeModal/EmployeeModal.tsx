@@ -41,7 +41,10 @@ function extractAdminData(employeeData: EmployeeEntity) {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
-    type: (employeeData.admin?.type || []) as ('sds-admin' | 'redrunner-admin')[],
+    type: (employeeData.admin?.type || []) as (
+      | 'sds-admin'
+      | 'redrunner-admin'
+    )[],
     isDriver: employeeData.admin?.isDriver || false,
     phoneNumber: employeeData.phoneNumber,
     email: employeeData.email,
@@ -73,7 +76,14 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const { updateAdminInfo, updateDriverInfo, createAdmin, createDriver, deleteAdmin, deleteDriver } = useEmployees();
+  const {
+    updateAdminInfo,
+    updateDriverInfo,
+    createAdmin,
+    createDriver,
+    deleteAdmin,
+    deleteDriver,
+  } = useEmployees();
   const [selectedRoles, setSelectedRole] = useState<string[]>([]);
   const [imageBase64, setImageBase64] = useState('');
   const [isUploadingImage, setIsUploadingImage] = useState(false);
@@ -196,7 +206,10 @@ const EmployeeModal = ({
     switch (endpoint) {
       case '/api/drivers':
         // Use optimistic update from context
-        await updateDriverInfo(employeeData.id, extractDriverData(employeeData));
+        await updateDriverInfo(
+          employeeData.id,
+          extractDriverData(employeeData)
+        );
         res = employeeData; // Since optimistic update handles the server response
         break;
       case '/api/admins':
@@ -353,7 +366,10 @@ const EmployeeModal = ({
           setIsUploadingImage(true);
           await uploadEmployeePhoto(id, targetTable, imageBase64);
         } catch (uploadError) {
-          showToast('Employee created but photo upload failed. You can try uploading the photo again later.', ToastStatus.ERROR);
+          showToast(
+            'Employee created but photo upload failed. You can try uploading the photo again later.',
+            ToastStatus.ERROR
+          );
           // Don't throw here - we want the employee creation to succeed even if photo upload fails
         } finally {
           setIsUploadingImage(false);

@@ -2,13 +2,8 @@ import React from 'react';
 import { useRiders } from '../../context/RidersContext';
 
 const OptimisticDemo: React.FC = () => {
-  const {
-    riders,
-    isOptimistic,
-    pendingOperations,
-    updateRiderActive,
-    error
-  } = useRiders();
+  const { riders, isOptimistic, pendingOperations, updateRiderActive, error } =
+    useRiders();
 
   const handleDemoToggle = async () => {
     if (riders.length > 0) {
@@ -26,11 +21,19 @@ const OptimisticDemo: React.FC = () => {
       <h3 className="text-lg font-bold mb-4">Optimistic UI Demo</h3>
 
       <div className="mb-4">
-        <p><strong>Riders Count:</strong> {riders.length}</p>
-        <p><strong>Is Optimistic:</strong> {isOptimistic ? 'Yes' : 'No'}</p>
-        <p><strong>Pending Operations:</strong> {pendingOperations.length}</p>
+        <p>
+          <strong>Riders Count:</strong> {riders.length}
+        </p>
+        <p>
+          <strong>Is Optimistic:</strong> {isOptimistic ? 'Yes' : 'No'}
+        </p>
+        <p>
+          <strong>Pending Operations:</strong> {pendingOperations.length}
+        </p>
         {error && (
-          <p className="text-red-600"><strong>Error:</strong> {error.message}</p>
+          <p className="text-red-600">
+            <strong>Error:</strong> {error.message}
+          </p>
         )}
       </div>
 
@@ -49,14 +52,17 @@ const OptimisticDemo: React.FC = () => {
       {riders.length > 0 && (
         <div className="mt-4">
           <h4 className="font-semibold">First Rider:</h4>
-          <p>{riders[0].firstName} {riders[0].lastName} -
-             <span className={`ml-2 px-2 py-1 rounded text-xs ${
-               riders[0].active
-                 ? 'bg-green-100 text-green-800'
-                 : 'bg-red-100 text-red-800'
-             }`}>
-               {riders[0].active ? 'Active' : 'Inactive'}
-             </span>
+          <p>
+            {riders[0].firstName} {riders[0].lastName} -
+            <span
+              className={`ml-2 px-2 py-1 rounded text-xs ${
+                riders[0].active
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-red-100 text-red-800'
+              }`}
+            >
+              {riders[0].active ? 'Active' : 'Inactive'}
+            </span>
           </p>
         </div>
       )}

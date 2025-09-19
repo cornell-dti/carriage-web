@@ -9,7 +9,9 @@ const OptimisticToast: React.FC<OptimisticToastProps> = ({ message }) => {
   const { error, isOptimistic, pendingOperations } = useRiders();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState<'success' | 'error' | 'pending'>('pending');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'pending'>(
+    'pending'
+  );
 
   useEffect(() => {
     if (error) {
@@ -66,7 +68,8 @@ const OptimisticToast: React.FC<OptimisticToastProps> = ({ message }) => {
   if (!showToast) return null;
 
   const getToastStyles = () => {
-    const baseStyles = 'fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 max-w-sm transition-all duration-300 transform';
+    const baseStyles =
+      'fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 max-w-sm transition-all duration-300 transform';
 
     switch (toastType) {
       case 'success':

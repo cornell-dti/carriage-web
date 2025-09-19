@@ -65,29 +65,35 @@ const UserDetail = ({
   driver,
 }: UserDetailProps) => {
   const fullName = `${firstName} ${lastName}`;
-  
 
   return (
-    <Card className={cn(styles.userDetail, { [styles.rider]: isRider })} elevation={2}>
+    <Card
+      className={cn(styles.userDetail, { [styles.rider]: isRider })}
+      elevation={2}
+    >
       <CardContent className={styles.userDetailContent}>
         <Box className={styles.profileSection}>
           <Box className={styles.profilePicContainer}>
             <Avatar
-              src={photoLink && photoLink !== '' ? `${photoLink}?t=${new Date().getTime()}` : undefined}
+              src={
+                photoLink && photoLink !== ''
+                  ? `${photoLink}?t=${new Date().getTime()}`
+                  : undefined
+              }
               className={styles.profilePic}
               alt={`${fullName} profile`}
             >
               {(!photoLink || photoLink === '') && (
-                <img 
-                  src={defaultUserIcon} 
-                  alt="Default user" 
+                <img
+                  src={defaultUserIcon}
+                  alt="Default user"
                   className={styles.defaultUserIcon}
                 />
               )}
             </Avatar>
           </Box>
         </Box>
-        
+
         <Box className={styles.basicInfoContainer}>
           <Box className={styles.basicInfoTop}>
             <Box className={styles.nameInfoContainer}>
@@ -99,10 +105,8 @@ const UserDetail = ({
               </Typography>
             </Box>
           </Box>
-          
-          <Box className={styles.contactInfoContainer}>
-            {children}
-          </Box>
+
+          <Box className={styles.contactInfoContainer}>{children}</Box>
         </Box>
       </CardContent>
     </Card>

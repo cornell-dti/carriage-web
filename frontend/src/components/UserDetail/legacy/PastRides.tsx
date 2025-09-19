@@ -37,11 +37,17 @@ const PastRides = ({ isStudent, rides }: PastRideProps) => {
               .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
               .toLowerCase();
             // Use primary rider (first in array) for legacy display
-            const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
-            const name = primaryRider ? `${primaryRider.firstName} ${primaryRider.lastName}` : 'No rider assigned';
+            const primaryRider =
+              ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+            const name = primaryRider
+              ? `${primaryRider.firstName} ${primaryRider.lastName}`
+              : 'No rider assigned';
 
             // Convert accessibility array to string
-            const needs = primaryRider && primaryRider.accessibility && primaryRider.accessibility.length > 0
+            const needs =
+              primaryRider &&
+              primaryRider.accessibility &&
+              primaryRider.accessibility.length > 0
                 ? primaryRider.accessibility.join(', ')
                 : 'None';
 

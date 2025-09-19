@@ -35,7 +35,9 @@ const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
 
       // Prefer images array from backend; fall back to imagesList or photoLink
       if ((location as any).images && (location as any).images.length > 0) {
-        const mapped = ((location as any).images as string[]).map((u) => ({ url: u }));
+        const mapped = ((location as any).images as string[]).map((u) => ({
+          url: u,
+        }));
         setImages(mapped);
       } else if (location.imagesList && location.imagesList.length > 0) {
         setImages(location.imagesList);

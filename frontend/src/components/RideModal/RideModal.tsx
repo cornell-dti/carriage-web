@@ -22,11 +22,14 @@ const getRideData = (ride: Ride | undefined) => {
       date: format_date(ride.startTime),
       pickupTime: moment(ride.startTime).format('kk:mm'),
       dropoffTime: moment(ride.endTime).format('kk:mm'),
-      rider: ride.riders && ride.riders.length > 0
-        ? (ride.riders.length === 1
-          ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
-          : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`)
-        : 'No rider assigned',
+      rider:
+        ride.riders && ride.riders.length > 0
+          ? ride.riders.length === 1
+            ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
+            : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
+                ride.riders.length - 1
+              } more`
+          : 'No rider assigned',
       pickupLoc: ride.startLocation.id
         ? ride.startLocation.name
         : ride.startLocation.address,
@@ -39,7 +42,7 @@ const getRideData = (ride: Ride | undefined) => {
       // This is legacy code that will be updated when RFC 5545 is implemented
       let repeats = RepeatValues.DoesNotRepeat;
       let days = {};
-      
+
       rideData = {
         ...rideData,
         repeats,

@@ -56,7 +56,7 @@ const schema = new dynamoose.Schema({
       DayOfWeek.TUESDAY,
       DayOfWeek.WEDNESDAY,
       DayOfWeek.THURSDAY,
-      DayOfWeek.FRIDAY
+      DayOfWeek.FRIDAY,
     ],
   },
   active: {
@@ -66,7 +66,7 @@ const schema = new dynamoose.Schema({
   joinDate: {
     type: String,
     default: () => new Date().toISOString(),
-  }
+  },
 });
 
 export const Driver = dynamoose.model('Drivers', schema, defaultModelConfig);

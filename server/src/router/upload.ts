@@ -100,7 +100,9 @@ router.post('/', validateUser('User'), (request, response) => {
           // Merge with existing images if any
           Location.get(id, (err, data) => {
             const existing: string[] = (data && (data as any).images) || [];
-            const merged = Array.from(new Set([...(existing || []), ...uploadedUrls]));
+            const merged = Array.from(
+              new Set([...(existing || []), ...uploadedUrls])
+            );
             const databaseOperation = {
               $SET: {
                 images: merged,

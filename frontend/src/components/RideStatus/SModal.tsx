@@ -57,9 +57,11 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
             </div>
             <h3 className={styles.title}>
               {ride.riders && ride.riders.length > 0
-                ? (ride.riders.length === 1
+                ? ride.riders.length === 1
                   ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
-                  : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${ride.riders.length - 1} more`)
+                  : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
+                      ride.riders.length - 1
+                    } more`
                 : 'No rider assigned'}
             </h3>
             <p>Status Updates</p>
@@ -142,12 +144,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                 </div>
                 <div>
                   {(() => {
-                    if (!ride.riders || ride.riders.length === 0) return 'No accessibility needs';
+                    if (!ride.riders || ride.riders.length === 0)
+                      return 'No accessibility needs';
                     const allNeeds = ride.riders
-                      .filter(rider => rider.accessibility && rider.accessibility.length > 0)
-                      .flatMap(rider => rider.accessibility)
-                      .filter((need, index, arr) => arr.indexOf(need) === index);
-                    return allNeeds.length > 0 ? allNeeds.join(', ') : 'No accessibility needs';
+                      .filter(
+                        (rider) =>
+                          rider.accessibility && rider.accessibility.length > 0
+                      )
+                      .flatMap((rider) => rider.accessibility)
+                      .filter(
+                        (need, index, arr) => arr.indexOf(need) === index
+                      );
+                    return allNeeds.length > 0
+                      ? allNeeds.join(', ')
+                      : 'No accessibility needs';
                   })()}
                 </div>
               </div>

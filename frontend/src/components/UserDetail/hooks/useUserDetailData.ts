@@ -18,24 +18,30 @@ interface UserDetailData {
   refreshUserData: () => void;
 }
 
-const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'rider'): UserDetailData => {
+const useUserDetailData = (
+  userId: string | undefined,
+  userType: 'employee' | 'rider'
+): UserDetailData => {
   const [user, setUser] = useState<Employee | Rider | null>(null);
   const [rides, setRides] = useState<Ride[]>([]);
-  const [statistics, setStatistics] = useState({ rideCount: -1, workingHours: -1 });
+  const [statistics, setStatistics] = useState({
+    rideCount: -1,
+    workingHours: -1,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const lastRiderId = useRef<string | null>(null);
-  
+
   const { riders, loading: ridersLoading } = useRiders();
   const { drivers, admins, loading: employeesLoading } = useEmployees();
 
   // Helper function to find employee from context
   const findEmployeeInContext = (employeeId: string): Employee | null => {
     // Look in admins first
-    const admin = admins.find(a => a.id === employeeId);
+    const admin = admins.find((a) => a.id === employeeId);
     if (admin) {
       // If admin is also a driver, merge the data
-      const driver = drivers.find(d => d.id === employeeId);
+      const driver = drivers.find((d) => d.id === employeeId);
       return {
         id: admin.id,
         firstName: admin.firstName,
@@ -51,7 +57,7 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
     }
 
     // Look in drivers only
-    const driver = drivers.find(d => d.id === employeeId);
+    const driver = drivers.find((d) => d.id === employeeId);
     if (driver) {
       return {
         id: driver.id,
@@ -85,7 +91,9 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
   };
 
   const fetchEmployeeRides = async (employeeId: string) => {
-    const res = await axios.get(`/api/rides?driver=${employeeId}&allDates=true`);
+    const res = await axios.get(
+      `/api/rides?driver=${employeeId}&allDates=true`
+    );
     return res.data.data;
   };
 
@@ -93,7 +101,6 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
     const res = await axios.get(`/api/rides/rider/${riderId}`);
     return res.data.data;
   };
-
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -107,11 +114,11 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
     console.log('🔄 setEmployeeData called for ID:', employeeId);
     setLoading(true);
     setError(null);
-    
+
     // Try to fetch as admin first
     try {
       const adminData: AdminType = await fetchAdminData(employeeId);
-      
+
       if (adminData.isDriver) {
         const driverData: DriverType = await fetchDriverData(employeeId);
         setUser({
@@ -177,7 +184,7 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
 
       // Fetch rider's rides
       const ridesData = await fetchRiderRides(riderId);
-      
+
       setUser(rider);
       setRides(ridesData.sort(compRides));
       setStatistics({ rideCount: ridesData.length, workingHours: 0 });
@@ -190,7 +197,16 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
   };
 
   useEffect(() => {
-    console.log('🚀 useEffect triggered - userType:', userType, 'userId:', userId, 'ridersLoading:', ridersLoading, 'employeesLoading:', employeesLoading);
+    console.log(
+      '🚀 useEffect triggered - userType:',
+      userType,
+      'userId:',
+      userId,
+      'ridersLoading:',
+      ridersLoading,
+      'employeesLoading:',
+      employeesLoading
+    );
     if (userId && !ridersLoading && !employeesLoading) {
       if (userType === 'employee') {
         // First try to get employee from context (optimistic data)
@@ -216,15 +232,24 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
 
   // Effect to update user data when riders context changes (for rider updates)
   useEffect(() => {
-    if (userType === 'rider' && userId && !ridersLoading && riders.length > 0 && lastRiderId.current === userId) {
+    if (
+      userType === 'rider' &&
+      userId &&
+      !ridersLoading &&
+      riders.length > 0 &&
+      lastRiderId.current === userId
+    ) {
       const updatedRider = riders.find((r) => r.id === userId);
       if (updatedRider && user) {
         // Check if any properties have changed to avoid unnecessary updates
         const currentRider = user as Rider;
-        const hasChanges = JSON.stringify(updatedRider) !== JSON.stringify(currentRider);
+        const hasChanges =
+          JSON.stringify(updatedRider) !== JSON.stringify(currentRider);
 
         if (hasChanges) {
-          console.log('🔄 Updating rider data from context change (optimistic or server update)');
+          console.log(
+            '🔄 Updating rider data from context change (optimistic or server update)'
+          );
           setUser(updatedRider);
         }
       }
@@ -233,15 +258,23 @@ const useUserDetailData = (userId: string | undefined, userType: 'employee' | 'r
 
   // Effect to update user data when employees context changes (for employee updates)
   useEffect(() => {
-    if (userType === 'employee' && userId && !employeesLoading && (admins.length > 0 || drivers.length > 0)) {
+    if (
+      userType === 'employee' &&
+      userId &&
+      !employeesLoading &&
+      (admins.length > 0 || drivers.length > 0)
+    ) {
       const updatedEmployee = findEmployeeInContext(userId);
       if (updatedEmployee && user) {
         // Check if any properties have changed to avoid unnecessary updates
         const currentEmployee = user as Employee;
-        const hasChanges = JSON.stringify(updatedEmployee) !== JSON.stringify(currentEmployee);
+        const hasChanges =
+          JSON.stringify(updatedEmployee) !== JSON.stringify(currentEmployee);
 
         if (hasChanges) {
-          console.log('🔄 Updating employee data from context change (optimistic or server update)');
+          console.log(
+            '🔄 Updating employee data from context change (optimistic or server update)'
+          );
           setUser(updatedEmployee);
         }
       }

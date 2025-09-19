@@ -51,7 +51,6 @@ export type RideType = {
   timezone?: string; // Timezone for recurrence calculations
 };
 
-
 const schema = new dynamoose.Schema({
   id: {
     type: String,
@@ -95,7 +94,7 @@ const schema = new dynamoose.Schema({
     default: [],
   },
   driver: Driver,
-  
+
   // RFC 5545 Recurrence fields (placeholders - no functionality yet)
   isRecurring: {
     type: Boolean,

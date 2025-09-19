@@ -17,7 +17,11 @@ export interface SearchField<T> {
 
 export interface SearchConfig<T> {
   searchFields: SearchField<T>[];
-  renderItem: (item: T, selected: boolean, showAccessibility?: boolean) => {
+  renderItem: (
+    item: T,
+    selected: boolean,
+    showAccessibility?: boolean
+  ) => {
     avatar: React.ReactNode;
     primary: React.ReactNode;
     secondary: React.ReactNode;
@@ -35,11 +39,9 @@ const driverSearchConfig: SearchConfig<Driver> = {
   ],
   renderItem: (driver, selected, showAccessibility) => ({
     avatar: (
-      <Avatar
-        src={driver.photoLink}
-        sx={{ width: 40, height: 40 }}
-      >
-        {driver.firstName?.charAt(0)}{driver.lastName?.charAt(0)}
+      <Avatar src={driver.photoLink} sx={{ width: 40, height: 40 }}>
+        {driver.firstName?.charAt(0)}
+        {driver.lastName?.charAt(0)}
       </Avatar>
     ),
     primary: (
@@ -73,17 +75,16 @@ const riderSearchConfig: SearchConfig<Rider> = {
     { key: 'phoneNumber', weight: 0.6 },
   ],
   renderItem: (rider, selected, showAccessibility) => {
-    const accessibility = showAccessibility && rider.accessibility && rider.accessibility.length > 0
-      ? rider.accessibility
-      : null;
+    const accessibility =
+      showAccessibility && rider.accessibility && rider.accessibility.length > 0
+        ? rider.accessibility
+        : null;
 
     return {
       avatar: (
-        <Avatar
-          src={rider.photoLink}
-          sx={{ width: 40, height: 40 }}
-        >
-          {rider.firstName?.charAt(0)}{rider.lastName?.charAt(0)}
+        <Avatar src={rider.photoLink} sx={{ width: 40, height: 40 }}>
+          {rider.firstName?.charAt(0)}
+          {rider.lastName?.charAt(0)}
         </Avatar>
       ),
       primary: (
@@ -190,8 +191,8 @@ export function filterItems<T extends { id: string | number }>(
 
   const lowerSearchTerm = searchTerm.toLowerCase();
 
-  return items.filter(item => {
-    return config.searchFields.some(field => {
+  return items.filter((item) => {
+    return config.searchFields.some((field) => {
       const value = item[field.key];
       if (typeof value === 'string') {
         return value.toLowerCase().includes(lowerSearchTerm);

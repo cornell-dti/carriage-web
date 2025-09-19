@@ -9,7 +9,6 @@ import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
 import { DriverType as Driver } from 'types';
 
-
 const Settings = () => {
   const { user } = useContext(AuthContext);
   const netId = user?.email?.split('@')[0] || '';
@@ -38,7 +37,9 @@ const Settings = () => {
           lastName: user?.lastName || '',
           netId,
           phoneNumber: user?.phoneNumber || '',
-          availability: (user as Driver)?.availability as unknown as string[] | undefined,
+          availability: (user as Driver)?.availability as unknown as
+            | string[]
+            | undefined,
           photoLink: user?.photoLink,
           startDate: (user as Driver)?.joinDate,
           isDriver: true,

@@ -31,7 +31,6 @@ type EmployeeDetailProps = {
   photoLink?: string;
 };
 
-
 const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
   return drivers.map((driver) => ({
     id: driver.id,
@@ -154,7 +153,9 @@ const EmployeeDetail = () => {
   };
 
   const fetchAllRides = async (employeeId: any) => {
-    const res = await axios.get(`/api/rides?driver=${employeeId}&allDates=true`);
+    const res = await axios.get(
+      `/api/rides?driver=${employeeId}&allDates=true`
+    );
     return res.data.data;
   };
 
@@ -262,7 +263,7 @@ const EmployeeDetail = () => {
                 />
               </UserDetail>
             </Box>
-            
+
             <Box className={styles.statisticsContainer}>
               <UserStatistics
                 role={roleValue() as 'driver' | 'admin' | 'both'}
@@ -270,7 +271,7 @@ const EmployeeDetail = () => {
                 hours={workingHours}
               />
             </Box>
-            
+
             <Box className={styles.actionsContainer}>
               <UserActions
                 role={roleValue() as 'driver' | 'admin' | 'both'}
@@ -278,7 +279,7 @@ const EmployeeDetail = () => {
               />
             </Box>
           </Box>
-          
+
           {/* Rides Table Section */}
           <Box className={styles.ridesTableSection}>
             <RideTable rides={rides} userRole="admin" />

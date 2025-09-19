@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Chip,
-  Card,
-  CardContent,
-} from '@mui/material';
+import { Box, Typography, Chip, Card, CardContent } from '@mui/material';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import { RideType } from '../../types';
@@ -16,11 +10,13 @@ interface RecurrenceDisplayProps {
 }
 
 // Enhanced RRULE parsing for better display
-const parseRecurrenceRule = (rrule: string): { summary: string; details: string[] } => {
+const parseRecurrenceRule = (
+  rrule: string
+): { summary: string; details: string[] } => {
   const parts = rrule.toUpperCase().split(';');
   const ruleMap: { [key: string]: string } = {};
-  
-  parts.forEach(part => {
+
+  parts.forEach((part) => {
     const [key, value] = part.split('=');
     if (key && value) {
       ruleMap[key] = value;
@@ -51,10 +47,15 @@ const parseRecurrenceRule = (rrule: string): { summary: string; details: string[
     case 'WEEKLY':
       if (interval === 1) {
         if (byWeekDay) {
-          const days = byWeekDay.split(',').map(day => {
+          const days = byWeekDay.split(',').map((day) => {
             const dayMap: { [key: string]: string } = {
-              'MO': 'Monday', 'TU': 'Tuesday', 'WE': 'Wednesday', 
-              'TH': 'Thursday', 'FR': 'Friday', 'SA': 'Saturday', 'SU': 'Sunday'
+              MO: 'Monday',
+              TU: 'Tuesday',
+              WE: 'Wednesday',
+              TH: 'Thursday',
+              FR: 'Friday',
+              SA: 'Saturday',
+              SU: 'Sunday',
             };
             return dayMap[day] || day;
           });
@@ -68,7 +69,9 @@ const parseRecurrenceRule = (rrule: string): { summary: string; details: string[
         summary = `Every ${interval} weeks`;
         details.push(`Repeats every ${interval} weeks`);
         if (byWeekDay) {
-          const days = byWeekDay.split(',').map(day => day.replace(/[+-]?\d+/, ''));
+          const days = byWeekDay
+            .split(',')
+            .map((day) => day.replace(/[+-]?\d+/, ''));
           details.push(`On ${days.join(', ')}`);
         }
       }
@@ -77,7 +80,11 @@ const parseRecurrenceRule = (rrule: string): { summary: string; details: string[
     case 'MONTHLY':
       if (byMonthDay) {
         summary = `Monthly on day ${byMonthDay}`;
-        details.push(`Every month on the ${byMonthDay}${getOrdinalSuffix(parseInt(byMonthDay))}`);
+        details.push(
+          `Every month on the ${byMonthDay}${getOrdinalSuffix(
+            parseInt(byMonthDay)
+          )}`
+        );
       } else {
         summary = 'Monthly';
         details.push('Every month');
@@ -101,12 +108,15 @@ const parseRecurrenceRule = (rrule: string): { summary: string; details: string[
 };
 
 const getOrdinalSuffix = (n: number): string => {
-  const s = ["th", "st", "nd", "rd"];
+  const s = ['th', 'st', 'nd', 'rd'];
   const v = n % 100;
   return s[(v - 20) % 10] || s[v] || s[0];
 };
 
-const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole }) => {
+const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({
+  ride,
+  showForRole,
+}) => {
   if (!showForRole || !ride.isRecurring || !ride.rrule) {
     return null;
   }
@@ -122,7 +132,7 @@ const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole
             <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
               Recurring Ride
             </Typography>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <Chip
                 label={summary}
@@ -131,7 +141,7 @@ const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole
                 size="medium"
                 icon={<EventRepeatIcon />}
               />
-              
+
               {ride.parentRideId && ride.recurrenceId && (
                 <Chip
                   label="Part of Series"
@@ -145,9 +155,9 @@ const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole
             {details.length > 0 && (
               <Box>
                 {details.map((detail, index) => (
-                  <Typography 
-                    key={index} 
-                    variant="body2" 
+                  <Typography
+                    key={index}
+                    variant="body2"
                     color="textSecondary"
                     sx={{ lineHeight: 1.4 }}
                   >
@@ -161,7 +171,10 @@ const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole
             {ride.exdate && ride.exdate.length > 0 && (
               <Box sx={{ mt: 1 }}>
                 <Typography variant="caption" color="textSecondary">
-                  Excluded dates: {ride.exdate.map(date => new Date(date).toLocaleDateString()).join(', ')}
+                  Excluded dates:{' '}
+                  {ride.exdate
+                    .map((date) => new Date(date).toLocaleDateString())
+                    .join(', ')}
                 </Typography>
               </Box>
             )}
@@ -170,7 +183,10 @@ const RecurrenceDisplay: React.FC<RecurrenceDisplayProps> = ({ ride, showForRole
             {ride.rdate && ride.rdate.length > 0 && (
               <Box sx={{ mt: 1 }}>
                 <Typography variant="caption" color="textSecondary">
-                  Additional dates: {ride.rdate.map(date => new Date(date).toLocaleDateString()).join(', ')}
+                  Additional dates:{' '}
+                  {ride.rdate
+                    .map((date) => new Date(date).toLocaleDateString())
+                    .join(', ')}
                 </Typography>
               </Box>
             )}

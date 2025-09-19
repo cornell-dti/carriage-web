@@ -81,7 +81,10 @@ const Locations = () => {
     setIsAddDialogOpen(false);
 
     setIsUploading(true);
-    const updated = await uploadLocationImage(created.id, newLocation.imagesList);
+    const updated = await uploadLocationImage(
+      created.id,
+      newLocation.imagesList
+    );
     setIsUploading(false);
     if (updated) {
       setLocations((prev) =>
@@ -114,17 +117,20 @@ const Locations = () => {
       .then((d) => d.data);
     const updatedWithTempImages: any = {
       ...updated,
-      imagesList: imagesList && imagesList.length ? imagesList : (updated as any).imagesList,
+      imagesList:
+        imagesList && imagesList.length
+          ? imagesList
+          : (updated as any).imagesList,
     };
-    setLocations((prev) => prev.map((l) => (l.id === id ? updatedWithTempImages : l)));
+    setLocations((prev) =>
+      prev.map((l) => (l.id === id ? updatedWithTempImages : l))
+    );
 
     setIsUploading(true);
     const withImages = await uploadLocationImage(id, imagesList);
     setIsUploading(false);
     if (withImages) {
-      setLocations((prev) =>
-        prev.map((l) => (l.id === id ? withImages : l))
-      );
+      setLocations((prev) => prev.map((l) => (l.id === id ? withImages : l)));
     }
   };
 

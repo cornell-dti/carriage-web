@@ -20,10 +20,15 @@ type UserStatisticsProps = {
   className?: string;
 };
 
-const UserStatistics = ({ role, rideCount = -1, hours = -1, className }: UserStatisticsProps) => {
+const UserStatistics = ({
+  role,
+  rideCount = -1,
+  hours = -1,
+  className,
+}: UserStatisticsProps) => {
   const getStatistics = (): StatisticData[] => {
     const stats: StatisticData[] = [];
-    
+
     // Add rides statistic for drivers and admins who are drivers
     if (role === 'driver' || role === 'both' || role === 'admin') {
       stats.push({
@@ -55,7 +60,10 @@ const UserStatistics = ({ role, rideCount = -1, hours = -1, className }: UserSta
   }
 
   return (
-    <Card className={`${styles.statisticsContainer} ${className || ''}`} elevation={2}>
+    <Card
+      className={`${styles.statisticsContainer} ${className || ''}`}
+      elevation={2}
+    >
       <CardContent className={styles.statisticsCardContent}>
         <Typography variant="h6" className={styles.userDetailHeader}>
           Statistics (Last Week)
@@ -66,14 +74,21 @@ const UserStatistics = ({ role, rideCount = -1, hours = -1, className }: UserSta
               <Card className={styles.statisticCard} elevation={1}>
                 <CardContent className={styles.cardContent}>
                   <Box className={styles.statIconContainer}>
-                    <img src={stat.icon} className={styles.statIcon} alt={stat.alt} />
+                    <img
+                      src={stat.icon}
+                      className={styles.statIcon}
+                      alt={stat.alt}
+                    />
                   </Box>
                   <Box className={styles.statDescription}>
                     {stat.value >= 0 ? (
                       <Typography variant="h4" className={styles.stat}>
                         {stat.value}
                         {stat.unit && (
-                          <Typography component="span" className={styles.statsUnit}>
+                          <Typography
+                            component="span"
+                            className={styles.statsUnit}
+                          >
                             {stat.unit}
                           </Typography>
                         )}

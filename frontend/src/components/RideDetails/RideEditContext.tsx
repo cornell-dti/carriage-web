@@ -1,8 +1,19 @@
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { RideType, SchedulingState } from '../../types';
 import axios from '../../util/axios';
 import { canEditRide, UserRole } from '../../util/rideValidation';
-import { isNewRide, hasRideChanges, getRideChanges } from '../../util/modelFixtures';
+import {
+  isNewRide,
+  hasRideChanges,
+  getRideChanges,
+} from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import { useRides } from '../../context/RidesContext';
 
@@ -19,7 +30,9 @@ interface RideEditContextType {
   userRole: UserRole;
 }
 
-const RideEditContext = createContext<RideEditContextType | undefined>(undefined);
+const RideEditContext = createContext<RideEditContextType | undefined>(
+  undefined
+);
 
 interface RideEditProviderProps {
   children: ReactNode;
@@ -41,7 +54,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
   // For new rides, automatically start in editing mode
   const shouldStartEditing = initialEditingState || isNewRide(ride);
   const [isEditing, setIsEditing] = useState(shouldStartEditing);
-  const [editedRide, setEditedRide] = useState<RideType | null>(shouldStartEditing ? ride : null);
+  const [editedRide, setEditedRide] = useState<RideType | null>(
+    shouldStartEditing ? ride : null
+  );
   const [originalRide, setOriginalRide] = useState<RideType | null>(
     shouldStartEditing && !isNewRide(ride) ? { ...ride } : null
   );
@@ -51,7 +66,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     const newShouldStartEditing = initialEditingState || isNewRide(ride);
     setIsEditing(newShouldStartEditing);
     setEditedRide(newShouldStartEditing ? ride : null);
-    setOriginalRide(newShouldStartEditing && !isNewRide(ride) ? { ...ride } : null);
+    setOriginalRide(
+      newShouldStartEditing && !isNewRide(ride) ? { ...ride } : null
+    );
   }, [ride.id, initialEditingState]);
 
   // Determine if user can edit based on role and ride state
@@ -79,21 +96,30 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     setOriginalRide(null);
   }, []);
 
-  const updateRideField = useCallback((field: keyof RideType, value: any) => {
-    if (!editedRide) return;
+  const updateRideField = useCallback(
+    (field: keyof RideType, value: any) => {
+      if (!editedRide) return;
 
-    setEditedRide(prev => {
-      if (!prev) return null;
+      setEditedRide((prev) => {
+        if (!prev) return null;
 
-      // Auto-update scheduling state when driver is assigned/removed
-      if (field === 'driver') {
-        const newSchedulingState = value ? SchedulingState.SCHEDULED : SchedulingState.UNSCHEDULED;
-        return { ...prev, [field]: value, schedulingState: newSchedulingState };
-      }
+        // Auto-update scheduling state when driver is assigned/removed
+        if (field === 'driver') {
+          const newSchedulingState = value
+            ? SchedulingState.SCHEDULED
+            : SchedulingState.UNSCHEDULED;
+          return {
+            ...prev,
+            [field]: value,
+            schedulingState: newSchedulingState,
+          };
+        }
 
-      return { ...prev, [field]: value };
-    });
-  }, [editedRide]);
+        return { ...prev, [field]: value };
+      });
+    },
+    [editedRide]
+  );
 
   const hasChanges = useCallback(() => {
     if (!editedRide) {
@@ -102,7 +128,8 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
     // For new rides, check if required fields are filled
     if (isNewRide(editedRide)) {
-      const hasRequiredFields = editedRide.startLocation.id !== '' && editedRide.endLocation.id !== '';
+      const hasRequiredFields =
+        editedRide.startLocation.id !== '' && editedRide.endLocation.id !== '';
       return hasRequiredFields;
     }
 
@@ -122,12 +149,16 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
     // Validate ride times
     if (editedRide.startTime && editedRide.endTime) {
-      const timeValidation = validateRideTimes(editedRide.startTime, editedRide.endTime, {
-        allowPastTimes: !isNewRide(editedRide),
-        maxDurationHours: 24,
-        minDurationMinutes: 5
-      });
-      
+      const timeValidation = validateRideTimes(
+        editedRide.startTime,
+        editedRide.endTime,
+        {
+          allowPastTimes: !isNewRide(editedRide),
+          maxDurationHours: 24,
+          minDurationMinutes: 5,
+        }
+      );
+
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
         return false;
@@ -137,8 +168,12 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     // For new rides, we need different validation and payload
     if (isNewRide(editedRide)) {
       // Validate required fields for new ride
-      if (!editedRide.startLocation.id || !editedRide.endLocation.id ||
-          !editedRide.startTime || !editedRide.endTime) {
+      if (
+        !editedRide.startLocation.id ||
+        !editedRide.endLocation.id ||
+        !editedRide.startTime ||
+        !editedRide.endTime
+      ) {
         console.error('Missing required fields for new ride');
         return false;
       }
@@ -183,12 +218,22 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
         // Only include changed fields - include riders for single rider updates
         const fieldsToCheck: (keyof RideType)[] = [
-          'startTime', 'endTime', 'startLocation', 'endLocation',
-          'status', 'schedulingState', 'type', 'driver', 'riders'
+          'startTime',
+          'endTime',
+          'startLocation',
+          'endLocation',
+          'status',
+          'schedulingState',
+          'type',
+          'driver',
+          'riders',
         ];
 
         for (const field of fieldsToCheck) {
-          if (JSON.stringify(editedRide[field]) !== JSON.stringify(originalRide[field])) {
+          if (
+            JSON.stringify(editedRide[field]) !==
+            JSON.stringify(originalRide[field])
+          ) {
             updatePayload[field] = editedRide[field];
           }
         }
@@ -197,7 +242,6 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         if (originalRide.driver && !editedRide.driver) {
           updatePayload.$REMOVE = ['driver'];
         }
-
 
         // Use optimistic update from RidesContext
         await updateRideInfo(ride.id, updatePayload);
@@ -214,7 +258,15 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         return false;
       }
     }
-  }, [editedRide, originalRide, hasChanges, ride.id, onRideUpdated, stopEditing, updateRideInfo]);
+  }, [
+    editedRide,
+    originalRide,
+    hasChanges,
+    ride.id,
+    onRideUpdated,
+    stopEditing,
+    updateRideInfo,
+  ]);
 
   const contextValue: RideEditContextType = {
     isEditing,

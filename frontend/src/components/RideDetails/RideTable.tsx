@@ -53,7 +53,13 @@ interface FilterState {
 }
 
 type Order = 'asc' | 'desc';
-type SortField = 'date' | 'startTime' | 'endTime' | 'status' | 'rider' | 'driver';
+type SortField =
+  | 'date'
+  | 'startTime'
+  | 'endTime'
+  | 'status'
+  | 'rider'
+  | 'driver';
 
 // Helper function to determine temporal type
 const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
@@ -79,7 +85,7 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
 
 function getComparator<Key extends keyof any>(
   order: Order,
-  orderBy: Key,
+  orderBy: Key
 ): (a: { [key in Key]: any }, b: { [key in Key]: any }) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -93,7 +99,11 @@ function getRideComparator(order: Order, orderBy: SortField) {
     : (a: RideType, b: RideType) => -descendingRideComparator(a, b, orderBy);
 }
 
-function descendingRideComparator(a: RideType, b: RideType, orderBy: SortField) {
+function descendingRideComparator(
+  a: RideType,
+  b: RideType,
+  orderBy: SortField
+) {
   let aValue: any;
   let bValue: any;
 
@@ -113,8 +123,14 @@ function descendingRideComparator(a: RideType, b: RideType, orderBy: SortField) 
       break;
     case 'rider':
       // For sorting, use primary rider (first in array) or empty string
-      aValue = a.riders && a.riders.length > 0 ? `${a.riders[0].firstName} ${a.riders[0].lastName}` : '';
-      bValue = b.riders && b.riders.length > 0 ? `${b.riders[0].firstName} ${b.riders[0].lastName}` : '';
+      aValue =
+        a.riders && a.riders.length > 0
+          ? `${a.riders[0].firstName} ${a.riders[0].lastName}`
+          : '';
+      bValue =
+        b.riders && b.riders.length > 0
+          ? `${b.riders[0].firstName} ${b.riders[0].lastName}`
+          : '';
       break;
     case 'driver':
       aValue = a.driver ? `${a.driver.firstName} ${a.driver.lastName}` : '';
@@ -133,7 +149,9 @@ function descendingRideComparator(a: RideType, b: RideType, orderBy: SortField) 
   return 0;
 }
 
-const getStatusColor = (status: Status): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
+const getStatusColor = (
+  status: Status
+): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
   switch (status) {
     case Status.NOT_STARTED:
       return 'default';
@@ -153,7 +171,9 @@ const getStatusColor = (status: Status): 'default' | 'primary' | 'info' | 'warni
   }
 };
 
-const getSchedulingStateColor = (state: SchedulingState): 'default' | 'success' | 'warning' => {
+const getSchedulingStateColor = (
+  state: SchedulingState
+): 'default' | 'success' | 'warning' => {
   switch (state) {
     case SchedulingState.SCHEDULED:
       return 'success';
@@ -164,7 +184,9 @@ const getSchedulingStateColor = (state: SchedulingState): 'default' | 'success' 
   }
 };
 
-const getTemporalTypeColor = (type: string): 'default' | 'info' | 'warning' | 'success' => {
+const getTemporalTypeColor = (
+  type: string
+): 'default' | 'info' | 'warning' | 'success' => {
   switch (type) {
     case 'Past':
       return 'default';
@@ -177,11 +199,16 @@ const getTemporalTypeColor = (type: string): 'default' | 'info' | 'warning' | 's
   }
 };
 
-const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, userRole: propUserRole }) => {
+const RideTable: React.FC<RideTableProps> = ({
+  rides,
+  loading = false,
+  error,
+  userRole: propUserRole,
+}) => {
   const authContext = useContext(AuthContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<SortField>('startTime');
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -189,7 +216,7 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  
+
   const [filters, setFilters] = useState<FilterState>({
     dateFrom: null,
     dateTo: null,
@@ -203,13 +230,13 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   const getUserRole = (): 'rider' | 'driver' | 'admin' => {
     // If role is explicitly passed as prop, use that
     if (propUserRole) return propUserRole;
-    
+
     // Otherwise use localStorage userType as source of truth
     const userType = localStorage.getItem('userType');
     if (userType === 'Admin') return 'admin';
     if (userType === 'Driver') return 'driver';
     if (userType === 'Rider') return 'rider';
-    
+
     // Fallback
     return 'rider';
   };
@@ -231,7 +258,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
       case 'rider':
         return [
           ...baseColumns,
-          { key: 'schedulingState', label: 'Scheduling State', sortable: false },
+          {
+            key: 'schedulingState',
+            label: 'Scheduling State',
+            sortable: false,
+          },
           { key: 'type', label: 'Type', sortable: false },
         ];
       case 'driver':
@@ -242,7 +273,11 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
       case 'admin':
         return [
           ...baseColumns,
-          { key: 'schedulingState', label: 'Scheduling State', sortable: false },
+          {
+            key: 'schedulingState',
+            label: 'Scheduling State',
+            sortable: false,
+          },
           { key: 'type', label: 'Type', sortable: false },
         ];
       default:
@@ -255,57 +290,61 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   // Filter rides (sorting will be applied after)
   const filteredRides = useMemo(() => {
     let filtered = rides;
-    
+
     // For drivers, only show scheduled rides
     if (userRole === 'driver') {
-      filtered = filtered.filter(ride => ride.schedulingState === SchedulingState.SCHEDULED);
+      filtered = filtered.filter(
+        (ride) => ride.schedulingState === SchedulingState.SCHEDULED
+      );
     }
 
     // Apply filters
     if (filters.dateFrom) {
-      filtered = filtered.filter(ride => 
-        new Date(ride.startTime) >= filters.dateFrom!
+      filtered = filtered.filter(
+        (ride) => new Date(ride.startTime) >= filters.dateFrom!
       );
     }
-    
+
     if (filters.dateTo) {
       const endOfDay = new Date(filters.dateTo);
       endOfDay.setHours(23, 59, 59, 999);
-      filtered = filtered.filter(ride => 
-        new Date(ride.startTime) <= endOfDay
+      filtered = filtered.filter(
+        (ride) => new Date(ride.startTime) <= endOfDay
       );
     }
-    
+
     if (filters.statuses.length > 0) {
-      filtered = filtered.filter(ride => 
+      filtered = filtered.filter((ride) =>
         filters.statuses.includes(ride.status)
       );
     }
-    
+
     if (filters.schedulingStates.length > 0) {
-      filtered = filtered.filter(ride => 
+      filtered = filtered.filter((ride) =>
         filters.schedulingStates.includes(ride.schedulingState)
       );
     }
-    
+
     if (filters.temporalTypes.length > 0) {
-      filtered = filtered.filter(ride => 
+      filtered = filtered.filter((ride) =>
         filters.temporalTypes.includes(getTemporalType(ride))
       );
     }
-    
+
     if (filters.searchText) {
       const searchLower = filters.searchText.toLowerCase();
-      filtered = filtered.filter(ride =>
-        // Search across all riders in the array
-        ride.riders?.some(rider =>
-          rider.firstName?.toLowerCase().includes(searchLower) ||
-          rider.lastName?.toLowerCase().includes(searchLower)
-        ) ||
-        ride.driver?.firstName?.toLowerCase().includes(searchLower) ||
-        ride.driver?.lastName?.toLowerCase().includes(searchLower) ||
-        ride.startLocation.name?.toLowerCase().includes(searchLower) ||
-        ride.endLocation.name?.toLowerCase().includes(searchLower)
+      filtered = filtered.filter(
+        (ride) =>
+          // Search across all riders in the array
+          ride.riders?.some(
+            (rider) =>
+              rider.firstName?.toLowerCase().includes(searchLower) ||
+              rider.lastName?.toLowerCase().includes(searchLower)
+          ) ||
+          ride.driver?.firstName?.toLowerCase().includes(searchLower) ||
+          ride.driver?.lastName?.toLowerCase().includes(searchLower) ||
+          ride.startLocation.name?.toLowerCase().includes(searchLower) ||
+          ride.endLocation.name?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -324,7 +363,10 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   }, [sortedRides, page, rowsPerPage]);
 
   // Material-UI style sort handler
-  const handleRequestSort = (event: React.MouseEvent<unknown>, property: SortField) => {
+  const handleRequestSort = (
+    event: React.MouseEvent<unknown>,
+    property: SortField
+  ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -339,7 +381,9 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -368,9 +412,10 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
   };
 
   // Create sort handler for individual columns
-  const createSortHandler = (property: SortField) => (event: React.MouseEvent<unknown>) => {
-    handleRequestSort(event, property);
-  };
+  const createSortHandler =
+    (property: SortField) => (event: React.MouseEvent<unknown>) => {
+      handleRequestSort(event, property);
+    };
 
   if (loading) {
     return (
@@ -392,7 +437,12 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box>
         {/* Header */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+        >
           <Typography variant="h6">Rides</Typography>
           <Box display="flex" alignItems="center" gap={1}>
             {!isMobile && (
@@ -400,7 +450,10 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
                 Filter
               </Typography>
             )}
-            <IconButton onClick={() => setFiltersOpen(!filtersOpen)} aria-label="Toggle filters">
+            <IconButton
+              onClick={() => setFiltersOpen(!filtersOpen)}
+              aria-label="Toggle filters"
+            >
               <FilterListIcon />
             </IconButton>
           </Box>
@@ -411,42 +464,72 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
           <Card sx={{ mb: 2 }}>
             <CardContent>
               <Stack spacing={2}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Typography variant="subtitle1">Filters</Typography>
-                  <IconButton onClick={clearFilters} size="small" aria-label="Clear filters">
+                  <IconButton
+                    onClick={clearFilters}
+                    size="small"
+                    aria-label="Clear filters"
+                  >
                     <ClearIcon />
                   </IconButton>
                 </Box>
-                
-                <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={2}>
+
+                <Box
+                  display="grid"
+                  gridTemplateColumns="repeat(auto-fit, minmax(200px, 1fr))"
+                  gap={2}
+                >
                   <TextField
                     label="Search"
                     value={filters.searchText}
-                    onChange={(e) => setFilters(prev => ({ ...prev, searchText: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        searchText: e.target.value,
+                      }))
+                    }
                     size="small"
                     fullWidth
                   />
-                  
+
                   <DatePicker
                     label="Date From"
                     value={filters.dateFrom}
-                    onChange={(date) => setFilters(prev => ({ ...prev, dateFrom: date }))}
-                    slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                    onChange={(date) =>
+                      setFilters((prev) => ({ ...prev, dateFrom: date }))
+                    }
+                    slotProps={{
+                      textField: { size: 'small', fullWidth: true },
+                    }}
                   />
-                  
+
                   <DatePicker
                     label="Date To"
                     value={filters.dateTo}
-                    onChange={(date) => setFilters(prev => ({ ...prev, dateTo: date }))}
-                    slotProps={{ textField: { size: 'small', fullWidth: true } }}
+                    onChange={(date) =>
+                      setFilters((prev) => ({ ...prev, dateTo: date }))
+                    }
+                    slotProps={{
+                      textField: { size: 'small', fullWidth: true },
+                    }}
                   />
-                  
+
                   <FormControl size="small" fullWidth>
                     <InputLabel>Status</InputLabel>
                     <Select
                       multiple
                       value={filters.statuses}
-                      onChange={(e) => setFilters(prev => ({ ...prev, statuses: e.target.value as Status[] }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          statuses: e.target.value as Status[],
+                        }))
+                      }
                       input={<OutlinedInput label="Status" />}
                     >
                       {Object.values(Status).map((status) => (
@@ -456,13 +539,18 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
                       ))}
                     </Select>
                   </FormControl>
-                  
+
                   <FormControl size="small" fullWidth>
                     <InputLabel>Scheduling State</InputLabel>
                     <Select
                       multiple
                       value={filters.schedulingStates}
-                      onChange={(e) => setFilters(prev => ({ ...prev, schedulingStates: e.target.value as SchedulingState[] }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          schedulingStates: e.target.value as SchedulingState[],
+                        }))
+                      }
                       input={<OutlinedInput label="Scheduling State" />}
                     >
                       {Object.values(SchedulingState).map((state) => (
@@ -472,13 +560,18 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
                       ))}
                     </Select>
                   </FormControl>
-                  
+
                   <FormControl size="small" fullWidth>
                     <InputLabel>Type</InputLabel>
                     <Select
                       multiple
                       value={filters.temporalTypes}
-                      onChange={(e) => setFilters(prev => ({ ...prev, temporalTypes: e.target.value as string[] }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          temporalTypes: e.target.value as string[],
+                        }))
+                      }
                       input={<OutlinedInput label="Type" />}
                     >
                       {['Past', 'Active', 'Upcoming'].map((type) => (
@@ -511,7 +604,9 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
                           {column.label}
                           {orderBy === column.key ? (
                             <Box component="span" sx={visuallyHidden}>
-                              {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                              {order === 'desc'
+                                ? 'sorted descending'
+                                : 'sorted ascending'}
                             </Box>
                           ) : null}
                         </TableSortLabel>
@@ -555,7 +650,9 @@ const RideTable: React.FC<RideTableProps> = ({ rides, loading = false, error, us
                         <TableCell>
                           <Chip
                             label={ride.schedulingState}
-                            color={getSchedulingStateColor(ride.schedulingState)}
+                            color={getSchedulingStateColor(
+                              ride.schedulingState
+                            )}
                             size="small"
                             variant="outlined"
                           />

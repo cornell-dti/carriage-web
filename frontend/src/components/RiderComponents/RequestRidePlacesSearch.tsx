@@ -26,7 +26,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       console.log('Searching for:', query);
       console.log('Map available:', !!map);
       console.log('Google Maps available:', !!google?.maps?.places);
-      
+
       if (!map || !query) {
         setResults([]);
         setError('Map not initialized or empty query');

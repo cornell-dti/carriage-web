@@ -13,7 +13,7 @@ const AddRideButton: React.FC = () => {
 
   const handleOpenModal = () => {
     setEmptyRide(createEmptyRide()); // Create fresh empty ride each time
-    setModalKey(prev => prev + 1); // Force remount of the modal
+    setModalKey((prev) => prev + 1); // Force remount of the modal
     setOpen(true);
   };
 

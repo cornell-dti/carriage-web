@@ -84,12 +84,12 @@ function getComparator<Key extends keyof Data>(
     if (orderBy === 'date' || orderBy === 'time') {
       const aDate = new Date(a.startTime);
       const bDate = new Date(b.startTime);
-      
+
       // Handle invalid dates
       if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
         return 0;
       }
-      
+
       const diff = bDate.getTime() - aDate.getTime();
       return order === 'desc' ? diff : -diff;
     }
@@ -259,7 +259,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
 
   const handleRowClick = (row: Data) => {
     // Find the original ride object from the rides array
-    const originalRide = rides.find(ride => ride.startTime === row.startTime);
+    const originalRide = rides.find((ride) => ride.startTime === row.startTime);
     if (originalRide) {
       setSelectedRide(originalRide);
       setDetailsModalOpen(true);
@@ -318,17 +318,17 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-row-${index}`;
                 return (
-                  <TableRow 
-                    hover 
-                    role="row" 
-                    tabIndex={-1} 
+                  <TableRow
+                    hover
+                    role="row"
+                    tabIndex={-1}
                     key={index}
                     onClick={() => handleRowClick(row)}
-                    sx={{ 
+                    sx={{
                       cursor: 'pointer',
                       '&:hover': {
                         backgroundColor: alpha('#000', 0.04),
-                      }
+                      },
                     }}
                   >
                     <TableCell component="th" id={labelId} scope="row">
@@ -360,7 +360,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      
+
       {/* Ride Details Modal */}
       {selectedRide && (
         <RideDetailsModal

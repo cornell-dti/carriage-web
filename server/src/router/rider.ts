@@ -67,14 +67,8 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
     params: { id },
   } = req;
   db.getById(res, Rider, id, tableName, (rider: RiderType) => {
-    const {
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      joinDate,
-      endDate,
-    } = rider;
+    const { email, firstName, lastName, phoneNumber, joinDate, endDate } =
+      rider;
     res.send({
       email,
       firstName,
@@ -143,10 +137,10 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
       }
 
       // Filter for rides that include this rider
-      const riderRides = data.filter(ride => {
+      const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some(rider => rider.id === id);
+          return ride.riders.some((rider) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {
@@ -171,10 +165,10 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
     // Scan all rides and filter in JavaScript to avoid Dynamoose array condition issues
     db.scan(res, Ride, new Condition(), (data: RideType[]) => {
       // Filter for rides that include this rider
-      const riderRides = data.filter(ride => {
+      const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some(rider => rider.id === id);
+          return ride.riders.some((rider) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {

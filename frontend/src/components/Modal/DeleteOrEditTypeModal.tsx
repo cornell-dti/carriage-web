@@ -36,7 +36,7 @@ const DeleteOrEditTypeModal = ({
       showToast('Recurring ride deletion not supported yet', ToastStatus.ERROR);
       return;
     }
-    
+
     axios
       .delete(`/api/rides/${ride.id}`)
       .then(() => {
@@ -60,7 +60,14 @@ const DeleteOrEditTypeModal = ({
         <p className={styles.modalText}>
           Are you sure you want to cancel this ride?
           {ride.isRecurring && (
-            <span style={{color: 'red', display: 'block', marginTop: '10px', fontSize: '0.9em'}}>
+            <span
+              style={{
+                color: 'red',
+                display: 'block',
+                marginTop: '10px',
+                fontSize: '0.9em',
+              }}
+            >
               Note: Recurring ride features are not yet supported.
             </span>
           )}

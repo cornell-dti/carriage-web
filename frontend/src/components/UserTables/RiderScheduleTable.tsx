@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import { Ride, Type, Status, SchedulingState, ObjectType } from '../../types/index';
+import {
+  Ride,
+  Type,
+  Status,
+  SchedulingState,
+  ObjectType,
+} from '../../types/index';
 import RiderRidesTable from './RiderRidesTable';
 import styles from './table.module.css';
 import { useDate } from '../../context/date';

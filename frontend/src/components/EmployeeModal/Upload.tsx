@@ -10,7 +10,11 @@ type UploadProps = {
   isUploading?: boolean;
 };
 
-const Upload = ({ imageChange, existingPhoto, isUploading = false }: UploadProps) => {
+const Upload = ({
+  imageChange,
+  existingPhoto,
+  isUploading = false,
+}: UploadProps) => {
   const [imageURL, setImageURL] = useState(
     existingPhoto ? `${existingPhoto}?${new Date().getTime()}` : ''
   );
@@ -27,17 +31,25 @@ const Upload = ({ imageChange, existingPhoto, isUploading = false }: UploadProps
     const { files } = e.target;
     if (files && files[0]) {
       const file = files[0];
-      
+
       // Check file type
-      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/heic', 'image/heif'];
+      const allowedTypes = [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/heic',
+        'image/heif',
+      ];
       if (!allowedTypes.includes(file.type)) {
-        setErrorMessage('Please select a valid image file (PNG, JPEG, HEIC, or HEIF)');
+        setErrorMessage(
+          'Please select a valid image file (PNG, JPEG, HEIC, or HEIF)'
+        );
         if (inputRef.current) {
           inputRef.current.value = '';
         }
         return;
       }
-      
+
       // Check file size
       if (file.size < IMAGE_SIZE_LIMIT) {
         setImageURL(URL.createObjectURL(file));
@@ -74,7 +86,11 @@ const Upload = ({ imageChange, existingPhoto, isUploading = false }: UploadProps
         onChange={previewImage}
         disabled={isUploading}
       />
-      <label htmlFor="driverPhotoInput" className={styles.uploadText} style={{ opacity: isUploading ? 0.6 : 1 }}>
+      <label
+        htmlFor="driverPhotoInput"
+        className={styles.uploadText}
+        style={{ opacity: isUploading ? 0.6 : 1 }}
+      >
         <span
           role="button"
           aria-controls="filename"
@@ -85,7 +101,10 @@ const Upload = ({ imageChange, existingPhoto, isUploading = false }: UploadProps
         </span>
       </label>
       {errorMessage && (
-        <div className={styles.error} style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#eb0023' }}>
+        <div
+          className={styles.error}
+          style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#eb0023' }}
+        >
           {errorMessage}
         </div>
       )}

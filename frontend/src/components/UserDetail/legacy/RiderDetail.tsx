@@ -137,15 +137,12 @@ const RiderDetail = () => {
               />
             </UserDetail>
           </Box>
-          
+
           <Box className={styles.actionsContainer}>
-            <UserActions
-              role="rider"
-              rider={rider}
-            />
+            <UserActions role="rider" rider={rider} />
           </Box>
         </Box>
-        
+
         {/* Rides Table Section */}
         <Box className={styles.ridesTableSection}>
           <RideTable rides={rides} userRole="admin" />

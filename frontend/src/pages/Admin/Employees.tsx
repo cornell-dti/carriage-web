@@ -60,14 +60,18 @@ const Employees = () => {
       netId: employee.email.split('@')[0], // Extract netId from email
       phoneNumber: employee.phoneNumber,
       photoLink: employee.photoLink,
-      admin: isAdmin ? {
-        type: (employee as AdminType).type,
-        isDriver: (employee as AdminType).isDriver,
-      } : undefined,
-      driver: isDriver ? {
-        availability: (employee as DriverType).availability,
-        startDate: (employee as DriverType).joinDate, // Map joinDate to startDate for the modal
-      } : undefined,
+      admin: isAdmin
+        ? {
+            type: (employee as AdminType).type,
+            isDriver: (employee as AdminType).isDriver,
+          }
+        : undefined,
+      driver: isDriver
+        ? {
+            availability: (employee as DriverType).availability,
+            startDate: (employee as DriverType).joinDate, // Map joinDate to startDate for the modal
+          }
+        : undefined,
     };
     return data;
   }

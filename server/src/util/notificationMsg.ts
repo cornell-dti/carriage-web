@@ -5,7 +5,8 @@ import { timeTo12Hr, timeToMDY } from './index';
 
 const getCancelledMessage = (receiver: UserType, ride: RideType) => {
   // Use primary rider (first in array) for message templates
-  const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
   const { startTime, startLocation, endLocation } = ride;
   if (receiver === UserType.DRIVER) {
     return `Rides have been removed from your schedule for ${timeToMDY(
@@ -43,7 +44,8 @@ const getEditedMessage = (
   receiver: UserType,
   ride: RideType
 ) => {
-  const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
   const { startTime } = ride;
   if (sender === UserType.RIDER) {
     return `${primaryRider?.firstName || 'A rider'} ${
@@ -70,11 +72,14 @@ const getLateMessage = (receiver: UserType, ride: RideType) => {
 };
 
 const getNoShowMessage = (receiver: UserType, ride: RideType) => {
-  const primaryRider = ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
   if (receiver === UserType.RIDER) {
     return 'Your driver cancelled the ride because the driver was unable to find you.';
   } else {
-    return `${primaryRider?.firstName || 'A rider'} ${primaryRider?.lastName || ''} missed a ride.`;
+    return `${primaryRider?.firstName || 'A rider'} ${
+      primaryRider?.lastName || ''
+    } missed a ride.`;
   }
 };
 

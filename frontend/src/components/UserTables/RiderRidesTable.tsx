@@ -122,7 +122,8 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const valueEditDelete = {
             data: !isPast ? (
               <>
-                {ride.schedulingState === SchedulingState.UNSCHEDULED && editButton}
+                {ride.schedulingState === SchedulingState.UNSCHEDULED &&
+                  editButton}
                 {isOneHourBeforeRideStart && deleteButton}
               </>
             ) : null,
@@ -150,12 +151,16 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
                 onClose={onClose}
                 deleting={true}
               />
-              <Row data={unscheduledRideData} colSizes={colSizes} onClick={handleRowClick} />
+              <Row
+                data={unscheduledRideData}
+                colSizes={colSizes}
+                onClick={handleRowClick}
+              />
             </span>
           );
         })}
       </Table>
-      
+
       {/* Ride Details Modal */}
       {selectedRide && (
         <RideDetailsModal

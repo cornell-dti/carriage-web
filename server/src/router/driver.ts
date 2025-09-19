@@ -28,19 +28,31 @@ router.get('/available', validateUser('User'), (req, res) => {
   };
 
   if (!date || !startTime || !endTime) {
-    res.status(400).send({ err: 'Missing required query params: date, startTime, endTime' });
+    res
+      .status(400)
+      .send({ err: 'Missing required query params: date, startTime, endTime' });
     return;
   }
 
   const tz = timezone || 'America/New_York';
 
   // Build requested time window ISO strings
-  const requestedStartIso = moment.tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz).toISOString();
-  const requestedEndIso = moment.tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz).toISOString();
+  const requestedStartIso = moment
+    .tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz)
+    .toISOString();
+  const requestedEndIso = moment
+    .tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz)
+    .toISOString();
 
   // Build full-day window for scanning rides
-  const dayStartIso = moment.tz(date, 'YYYY-MM-DD', tz).startOf('day').toISOString();
-  const dayEndIso = moment.tz(date, 'YYYY-MM-DD', tz).endOf('day').toISOString();
+  const dayStartIso = moment
+    .tz(date, 'YYYY-MM-DD', tz)
+    .startOf('day')
+    .toISOString();
+  const dayEndIso = moment
+    .tz(date, 'YYYY-MM-DD', tz)
+    .endOf('day')
+    .toISOString();
 
   // Map JS weekday to our DayOfWeek enum values
   const weekday = moment.tz(date, 'YYYY-MM-DD', tz).format('ddd'); // e.g., Mon, Tue, Wed
@@ -71,7 +83,10 @@ router.get('/available', validateUser('User'), (req, res) => {
 
       // Filter by weekday availability if we have a valid token
       const dayFilteredDrivers = dayToken
-        ? activeDrivers.filter((d) => Array.isArray(d.availability) && d.availability.includes(dayToken))
+        ? activeDrivers.filter(
+            (d) =>
+              Array.isArray(d.availability) && d.availability.includes(dayToken)
+          )
         : activeDrivers;
 
       const reqStart = requestedStartIso;
@@ -91,7 +106,9 @@ router.get('/available', validateUser('User'), (req, res) => {
         }
       }
 
-      const availableDrivers = dayFilteredDrivers.filter((d) => !conflictingDriverIds.has(d.id));
+      const availableDrivers = dayFilteredDrivers.filter(
+        (d) => !conflictingDriverIds.has(d.id)
+      );
 
       res.send({ data: availableDrivers });
     });
@@ -140,7 +157,14 @@ router.post('/', validateUser('Admin'), (req, res) => {
     email: body.email,
   });
   if (!Array.isArray(body.availability)) {
-    res.status(469).send({ err: 'Expected availability to be of type array, instead found type ' + typeof body.availability + '.' });
+    res
+      .status(469)
+      .send({
+        err:
+          'Expected availability to be of type array, instead found type ' +
+          typeof body.availability +
+          '.',
+      });
   } else {
     db.create(res, admin);
   }

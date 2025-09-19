@@ -32,7 +32,7 @@ const unscheduledRide: RideType = {
     address: '',
     shortName: 'Loc1',
     tag: Tag.CENTRAL,
-    lat: 42.4440,
+    lat: 42.444,
     lng: -76.5019,
   },
   endLocation: {
@@ -41,7 +41,7 @@ const unscheduledRide: RideType = {
     address: '',
     shortName: 'Loc2',
     tag: Tag.CENTRAL,
-    lat: 42.4440,
+    lat: 42.444,
     lng: -76.5019,
   },
   startTime: '2022-09-28T15:00:00.000Z',

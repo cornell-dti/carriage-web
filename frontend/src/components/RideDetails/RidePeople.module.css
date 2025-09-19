@@ -97,7 +97,7 @@
   flex-direction: column;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding:6px;
+  padding: 6px;
 }
 
 /* Action buttons container that stays at bottom */
@@ -114,26 +114,26 @@
     gap: 12px;
     flex-wrap: nowrap;
   }
-  
+
   .adminCard {
     min-width: unset;
     flex: none;
   }
-  
+
   .personCard .MuiCardContent-root {
     padding: 12px !important;
   }
-  
+
   .personHeader {
     margin-bottom: 8px;
     gap: 10px;
   }
-  
+
   .contactInfo {
     margin-bottom: 8px;
     gap: 4px;
   }
-  
+
   .accessibilitySection {
     margin-top: 8px;
     padding-top: 8px;
