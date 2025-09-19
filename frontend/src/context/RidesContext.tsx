@@ -34,12 +34,21 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       .get(`/api/rides?date=${date}`)
       .then((res) => res.data)
       .then((data) => data.data);
+
+    //Ensures rider with null name does not percolate to other pages
     if (ridesData) {
+      const normalized = ridesData.map((ride) => ({
+        ...ride,
+        rider: ride.rider ?? { firstName: 'Unknown', lastName: 'Rider' },
+        startLocation: ride.startLocation ?? { name: 'Unknown', address: '' },
+        endLocation: ride.endLocation ?? { name: 'Unknown', address: '' },
+      }));
+
       setUnscheduledRides(
-        ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
+        normalized.filter(({ type }) => type === Type.UNSCHEDULED)
       );
       setScheduledRides(
-        ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
+        normalized.filter(({ type }) => type !== Type.UNSCHEDULED)
       );
     }
   }, [date]);
