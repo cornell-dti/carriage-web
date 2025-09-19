@@ -4,33 +4,20 @@ import {
   IconButton,
   Chip,
   Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Autocomplete,
-  TextField,
-  Card,
-  CardContent,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
 import PlaceIcon from '@mui/icons-material/Place';
-import { APIProvider, Map, AdvancedMarker, Pin, useMapsLibrary, useMap } from '@vis.gl/react-google-maps';
-import { RideType, Location } from '../../types';
+import CheckIcon from '@mui/icons-material/Check';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { APIProvider, Map, AdvancedMarker, Pin, useMapsLibrary, useMap, MapMouseEvent } from '@vis.gl/react-google-maps';
+import { RideType, Location, Tag } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
+import { SearchableType } from '../../utils/searchConfig';
+import SearchPopup from './SearchPopup';
 import styles from './RideLocations.module.css';
 
 interface RideLocationsProps {
@@ -42,9 +29,28 @@ interface LocationBlockProps {
   label: string;
   icon: React.ReactNode;
   isPickup?: boolean;
+  isChanging?: boolean;
+  onChangeClick?: () => void;
+  onDropdownClick?: () => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+  canEdit?: boolean;
+  dropdownButtonRef?: React.RefObject<HTMLButtonElement>;
 }
 
-const LocationBlock: React.FC<LocationBlockProps> = ({ location, label, icon, isPickup = false }) => {
+const LocationBlock: React.FC<LocationBlockProps> = ({
+  location,
+  label,
+  icon,
+  isPickup = false,
+  isChanging = false,
+  onChangeClick,
+  onDropdownClick,
+  onConfirm,
+  onCancel,
+  canEdit = false,
+  dropdownButtonRef
+}) => {
   const handleCopyAddress = () => {
     if (location.address) {
       navigator.clipboard.writeText(location.address);
@@ -59,7 +65,14 @@ const LocationBlock: React.FC<LocationBlockProps> = ({ location, label, icon, is
           {label}
         </Typography>
       </div>
-      <div className={styles.locationCard}>
+      <div
+        className={`${styles.locationCard} ${isChanging ? styles.locationCardChanging : ''}`}
+        style={isChanging ? {
+          border: '2px solid',
+          borderColor: isPickup ? '#1976d2' : '#9c27b0',
+          borderRadius: '8px'
+        } : {}}
+      >
         <div className={styles.locationCardHeader}>
           <div className={styles.locationInfo}>
             <Typography variant="body1" sx={{ fontWeight: 500, mb: 0.5 }}>
@@ -77,25 +90,68 @@ const LocationBlock: React.FC<LocationBlockProps> = ({ location, label, icon, is
             )}
             {location.tag && (
               <div className={styles.locationTag}>
-                <Chip 
-                  label={location.tag} 
-                  size="small" 
+                <Chip
+                  label={location.tag}
+                  size="small"
                   variant="outlined"
                   color={isPickup ? "primary" : "secondary"}
                 />
               </div>
             )}
           </div>
-          {location.address && (
-            <IconButton 
-              size="small" 
-              onClick={handleCopyAddress} 
-              title="Copy address"
-              className={styles.copyButton}
-            >
-              <ContentCopyIcon fontSize="small" />
-            </IconButton>
-          )}
+          <div className={styles.locationActions}>
+            {!isChanging && location.address && (
+              <IconButton
+                size="small"
+                onClick={handleCopyAddress}
+                title="Copy address"
+                className={styles.copyButton}
+              >
+                <ContentCopyIcon fontSize="small" />
+              </IconButton>
+            )}
+            {!isChanging && canEdit && (
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={onChangeClick}
+                sx={{ ml: 1 }}
+              >
+                Change
+              </Button>
+            )}
+            {isChanging && (
+              <div className={styles.changingActions}>
+                <Button
+                  ref={dropdownButtonRef}
+                  variant="outlined"
+                  size="small"
+                  onClick={onDropdownClick}
+                  sx={{ mr: 1 }}
+                >
+                  Select
+                </Button>
+                <div className={styles.confirmActions}>
+                  <IconButton
+                    size="small"
+                    onClick={onConfirm}
+                    title="Confirm change"
+                    color="primary"
+                  >
+                    <CheckIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={onCancel}
+                    title="Cancel change"
+                    color="error"
+                  >
+                    <CancelIcon fontSize="small" />
+                  </IconButton>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -117,9 +173,20 @@ const getApproximateDistance = (lat1: number, lng1: number, lat2: number, lng2: 
 interface RideMapProps {
   startLocation: Location;
   endLocation: Location;
+  isSelecting?: boolean;
+  availableLocations?: Location[];
+  onLocationSelect?: (location: Location) => void;
+  changingLocationType?: 'pickup' | 'dropoff' | null;
 }
 
-const RideMap: React.FC<RideMapProps> = ({ startLocation, endLocation }) => {
+const RideMap: React.FC<RideMapProps> = ({
+  startLocation,
+  endLocation,
+  isSelecting = false,
+  availableLocations = [],
+  onLocationSelect,
+  changingLocationType = null
+}) => {
   const map = useMap();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const [tripInfo, setTripInfo] = useState<{ distance: string; duration: string } | null>(null);
@@ -213,6 +280,24 @@ const RideMap: React.FC<RideMapProps> = ({ startLocation, endLocation }) => {
     return { lat: 42.4534531, lng: -76.4760776 };
   };
 
+  const handleMapClick = useCallback((event: MapMouseEvent) => {
+    if (isSelecting && onLocationSelect && event.detail.latLng) {
+      const { lat, lng } = event.detail.latLng;
+      // Create a custom location from map click
+      const customLocation: Location = {
+        id: `custom-${Date.now()}`,
+        name: 'Custom Location',
+        address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        lat,
+        lng,
+        shortName: 'Custom',
+        tag: Tag.CUSTOM,
+        info: 'Selected on map'
+      };
+      onLocationSelect(customLocation);
+    }
+  }, [isSelecting, onLocationSelect]);
+
   return (
     <>
       {/* Map */}
@@ -223,32 +308,55 @@ const RideMap: React.FC<RideMapProps> = ({ startLocation, endLocation }) => {
           mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
+          onClick={handleMapClick}
         >
-          {/* Pickup Location Marker */}
+          {/* Always show pickup marker */}
           <AdvancedMarker
             position={{ lat: startLocation.lat, lng: startLocation.lng }}
             clickable={true}
           >
             <Pin
-              background={'#1976d2'}
+              background={'#1976d2'} // Blue for pickup
               glyphColor="#fff"
               borderColor="#1976d2"
               scale={1.2}
             />
           </AdvancedMarker>
 
-          {/* Dropoff Location Marker */}
+          {/* Always show dropoff marker */}
           <AdvancedMarker
             position={{ lat: endLocation.lat, lng: endLocation.lng }}
             clickable={true}
           >
             <Pin
-              background={'#4caf50'}
+              background={'#9c27b0'} // Purple for dropoff
               glyphColor="#fff"
-              borderColor="#4caf50"
+              borderColor="#9c27b0"
               scale={1.2}
             />
           </AdvancedMarker>
+
+          {/* Show available location markers when selecting */}
+          {isSelecting && availableLocations.map((location) => {
+            // Use pickup or dropoff color based on what we're changing
+            const markerColor = changingLocationType === 'pickup' ? '#1976d2' : '#9c27b0';
+
+            return (
+              <AdvancedMarker
+                key={location.id}
+                position={{ lat: location.lat, lng: location.lng }}
+                onClick={() => onLocationSelect?.(location)}
+                clickable={true}
+              >
+                <Pin
+                  background={markerColor}
+                  glyphColor="#fff"
+                  borderColor={markerColor}
+                  scale={1.0}
+                />
+              </AdvancedMarker>
+            );
+          })}
         </Map>
       </div>
 
@@ -298,146 +406,62 @@ const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   </APIProvider>
 );
 
-interface LocationSelectorProps {
-  value: Location;
-  onSelect: (location: Location) => void;
-  label: string;
-  isPickup?: boolean;
-}
 
-const LocationSelector: React.FC<LocationSelectorProps> = ({ value, onSelect, label, isPickup = false }) => {
-  const { locations } = useLocations();
-  const [selectorOpen, setSelectorOpen] = useState(false);
-
-  const handleLocationSelect = (location: Location) => {
-    onSelect(location);
-    setSelectorOpen(false);
-  };
-
-  return (
-    <>
-      <Card variant="outlined" sx={{ mb: 2 }}>
-        <CardContent sx={{ p: 2 }}>
-          <div className={styles.editLocationHeader}>
-            <PlaceIcon color={isPickup ? "primary" : "secondary"} />
-            <Typography variant="subtitle2" color="textSecondary">
-              {label}
-            </Typography>
-          </div>
-          
-          <div className={styles.editLocationCard}>
-            <div className={styles.locationInfo}>
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                {value.name}
-              </Typography>
-              {value.address && (
-                <Typography variant="body2" color="textSecondary">
-                  {value.address}
-                </Typography>
-              )}
-              {value.tag && (
-                <Chip 
-                  label={value.tag} 
-                  size="small" 
-                  variant="outlined"
-                  color={isPickup ? "primary" : "secondary"}
-                  sx={{ mt: 0.5 }}
-                />
-              )}
-            </div>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => setSelectorOpen(true)}
-              sx={{ ml: 1 }}
-            >
-              Change
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Location Selection Dialog */}
-      <Dialog 
-        open={selectorOpen} 
-        onClose={() => setSelectorOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Select {label}</DialogTitle>
-        <DialogContent>
-          <List>
-            {locations.map((location) => (
-              <ListItem
-                key={location.id}
-                component="div"
-                onClick={() => handleLocationSelect(location)}
-                sx={{ 
-                  cursor: 'pointer', 
-                  '&:hover': { backgroundColor: 'action.hover' },
-                  borderRadius: 1,
-                  mb: 1,
-                  border: location.id === value.id ? '2px solid' : '1px solid',
-                  borderColor: location.id === value.id ? 
-                    (isPickup ? 'primary.main' : 'secondary.main') : 
-                    'divider'
-                }}
-              >
-                <ListItemAvatar>
-                  <Avatar sx={{ 
-                    bgcolor: isPickup ? 'primary.main' : 'secondary.main',
-                    width: 32,
-                    height: 32
-                  }}>
-                    <PlaceIcon fontSize="small" />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={location.name}
-                  secondary={
-                    <Box>
-                      {location.address && (
-                        <Typography variant="body2" color="textSecondary">
-                          {location.address}
-                        </Typography>
-                      )}
-                      {location.info && (
-                        <Typography variant="caption" color="textSecondary">
-                          {location.info}
-                        </Typography>
-                      )}
-                    </Box>
-                  }
-                />
-                {location.tag && (
-                  <Chip 
-                    label={location.tag} 
-                    size="small" 
-                    variant="outlined"
-                    color={isPickup ? "primary" : "secondary"}
-                  />
-                )}
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSelectorOpen(false)}>
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-};
 
 const RideLocations: React.FC<RideLocationsProps> = () => {
   const { editedRide, isEditing, updateRideField, canEdit } = useRideEdit();
   const { locations } = useLocations();
   const ride = editedRide!;
 
-  const handleLocationChange = (field: 'startLocation' | 'endLocation', location: Location) => {
-    updateRideField(field, location);
+  // State for managing which location is being changed
+  const [changingLocation, setChangingLocation] = useState<'pickup' | 'dropoff' | null>(null);
+  const [tempLocation, setTempLocation] = useState<Location | null>(null);
+  const [locationSelectorOpen, setLocationSelectorOpen] = useState(false);
+  const pickupButtonRef = useRef<HTMLButtonElement>(null);
+  const dropoffButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleStartChanging = (locationType: 'pickup' | 'dropoff') => {
+    const currentLocation = locationType === 'pickup' ? ride.startLocation : ride.endLocation;
+    setChangingLocation(locationType);
+    setTempLocation(currentLocation);
+  };
+
+  const handleLocationSelect = (location: Location) => {
+    setTempLocation(location);
+    setLocationSelectorOpen(false);
+  };
+
+  const handleConfirmChange = () => {
+    if (changingLocation && tempLocation) {
+      const field = changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
+      updateRideField(field, tempLocation);
+    }
+    handleCancelChange();
+  };
+
+  const handleCancelChange = () => {
+    setChangingLocation(null);
+    setTempLocation(null);
+    setLocationSelectorOpen(false);
+  };
+
+  const handleMapLocationSelect = (location: Location) => {
+    setTempLocation(location);
+  };
+
+  const handleDropdownClick = () => {
+    setLocationSelectorOpen(!locationSelectorOpen);
+  };
+
+  const getDisplayLocation = (locationType: 'pickup' | 'dropoff') => {
+    if (changingLocation === locationType && tempLocation) {
+      return tempLocation;
+    }
+    return locationType === 'pickup' ? ride.startLocation : ride.endLocation;
+  };
+
+  const getCurrentButtonRef = () => {
+    return changingLocation === 'pickup' ? pickupButtonRef : dropoffButtonRef;
   };
 
   return (
@@ -445,47 +469,91 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
       <div className={styles.locationsGrid}>
         {/* Left side - Address blocks */}
         <div className={styles.locationsContainer}>
-          {isEditing && canEdit ? (
-            <div className={styles.editLocationsContainer}>
-              <LocationSelector
-                value={ride.startLocation}
-                onSelect={(location) => handleLocationChange('startLocation', location)}
-                label="Pickup Location"
-                isPickup={true}
-              />
-              <LocationSelector
-                value={ride.endLocation}
-                onSelect={(location) => handleLocationChange('endLocation', location)}
-                label="Dropoff Location"
-                isPickup={false}
-              />
-            </div>
-          ) : (
-            <>
-              <LocationBlock
-                location={ride.startLocation}
-                label="Pickup Location"
-                icon={<PlaceIcon color="primary" />}
-                isPickup={true}
-              />
-              <LocationBlock
-                location={ride.endLocation}
-                label="Dropoff Location"
-                icon={<PlaceIcon color="secondary" />}
-                isPickup={false}
-              />
-            </>
-          )}
+          <LocationBlock
+            location={getDisplayLocation('pickup')}
+            label="Pickup Location"
+            icon={<PlaceIcon color="primary" />}
+            isPickup={true}
+            isChanging={changingLocation === 'pickup'}
+            onChangeClick={() => handleStartChanging('pickup')}
+            onDropdownClick={handleDropdownClick}
+            onConfirm={handleConfirmChange}
+            onCancel={handleCancelChange}
+            canEdit={isEditing && canEdit}
+            dropdownButtonRef={pickupButtonRef}
+          />
+          <LocationBlock
+            location={getDisplayLocation('dropoff')}
+            label="Dropoff Location"
+            icon={<PlaceIcon color="secondary" />}
+            isPickup={false}
+            isChanging={changingLocation === 'dropoff'}
+            onChangeClick={() => handleStartChanging('dropoff')}
+            onDropdownClick={handleDropdownClick}
+            onConfirm={handleConfirmChange}
+            onCancel={handleCancelChange}
+            canEdit={isEditing && canEdit}
+            dropdownButtonRef={dropoffButtonRef}
+          />
+
         </div>
 
         {/* Right side - Map */}
         <div className={styles.mapAndInfoContainer}>
           <RideMapWithProvider
-            startLocation={ride.startLocation}
-            endLocation={ride.endLocation}
+            startLocation={getDisplayLocation('pickup')}
+            endLocation={getDisplayLocation('dropoff')}
+            isSelecting={changingLocation !== null}
+            availableLocations={changingLocation ? locations.filter(location => {
+              // Don't show temp selected location
+              if (location.id === tempLocation?.id) return false;
+
+              // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
+              if (changingLocation === 'pickup') {
+                // When changing pickup, don't show current dropoff location
+                return location.id !== ride.endLocation.id;
+              } else {
+                // When changing dropoff, don't show current pickup location
+                return location.id !== ride.startLocation.id;
+              }
+            }) : []}
+            onLocationSelect={handleMapLocationSelect}
+            changingLocationType={changingLocation}
           />
         </div>
       </div>
+
+      {/* Location Selection Popup */}
+      {changingLocation && (
+        <SearchPopup<Location>
+          open={locationSelectorOpen}
+          onClose={() => setLocationSelectorOpen(false)}
+          onSelect={handleLocationSelect}
+          items={(() => {
+            // Filter out the temporarily selected location and the other location type
+            return locations.filter(location => {
+              // Don't show temp selected location
+              if (location.id === tempLocation?.id) return false;
+
+              // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
+              if (changingLocation === 'pickup') {
+                // When changing pickup, don't show current dropoff location
+                return location.id !== ride.endLocation.id;
+              } else {
+                // When changing dropoff, don't show current pickup location
+                return location.id !== ride.startLocation.id;
+              }
+            });
+          })()}
+          searchType={SearchableType.LOCATION}
+          loading={false}
+          error={null}
+          title={`Select ${changingLocation === 'pickup' ? 'Pickup' : 'Dropoff'} Location`}
+          placeholder="Search locations..."
+          selectedItems={tempLocation ? [tempLocation] : []}
+          anchorEl={getCurrentButtonRef().current}
+        />
+      )}
     </div>
   );
 };

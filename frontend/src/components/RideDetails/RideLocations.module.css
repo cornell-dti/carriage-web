@@ -117,21 +117,50 @@
   gap: 12px;
 }
 
+/* New styles for changing state */
+.locationCardChanging {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.locationActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 4px;
+}
+
+.changingActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
 /* Mobile responsive */
 @media (max-width: 768px) {
   .locationsGrid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  
+
   .tripInfoGrid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   .editLocationCard {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
+  }
+
+  .locationActions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

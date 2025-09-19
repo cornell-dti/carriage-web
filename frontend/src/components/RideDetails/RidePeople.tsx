@@ -18,6 +18,7 @@ import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
 import axios from '../../util/axios';
 import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
+import { SearchableType } from '../../utils/searchConfig';
 import styles from './RidePeople.module.css';
 
 interface RidePeopleProps {
@@ -360,15 +361,16 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
         items={(() => {
           let allDrivers = drivers;
           const originalDriver = originalDriverRef.current;
-          
+
           // Add the original driver to the list if they aren't in the available list
           if (originalDriver && !drivers.find(d => d.id === originalDriver.id)) {
             allDrivers = [...drivers, originalDriver];
           }
-          
+
           // Filter out the currently selected temporary driver from the options
           return allDrivers.filter(driver => driver.id !== tempCurrentDriver?.id);
         })()}
+        searchType={SearchableType.DRIVER}
         loading={loadingDrivers}
         error={driversError}
         title="Select Driver"
@@ -384,6 +386,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
         onClose={() => setRiderSelectOpen(false)}
         onSelect={handleRiderSelect}
         items={riders.filter(rider => !(ride.riders || []).find(r => r.id === rider.id))}
+        searchType={SearchableType.RIDER}
         loading={loadingRiders}
         error={ridersError}
         title="Manage Riders"

@@ -6,23 +6,21 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Avatar,
   Typography,
   CircularProgress,
-  Button,
   Paper,
   InputAdornment,
   Chip,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import PersonIcon from '@mui/icons-material/Person';
-import { Driver, Rider } from '../../types';
+import { SearchableType, getSearchConfig, filterItems } from '../../utils/searchConfig';
 
-interface SearchPopupProps<T extends Driver | Rider> {
+interface SearchPopupProps<T extends { id: string | number }> {
   open: boolean;
   onClose: () => void;
   onSelect: (item: T) => void;
   items: T[];
+  searchType: SearchableType;
   loading?: boolean;
   error?: string | null;
   title: string;
@@ -33,11 +31,12 @@ interface SearchPopupProps<T extends Driver | Rider> {
   anchorEl?: HTMLElement | null;
 }
 
-const SearchPopup = <T extends Driver | Rider>({
+const SearchPopup = <T extends { id: string | number }>({
   open,
   onClose,
   onSelect,
   items,
+  searchType,
   loading = false,
   error,
   title,
@@ -51,18 +50,13 @@ const SearchPopup = <T extends Driver | Rider>({
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
   const popupRef = useRef<HTMLDivElement>(null);
 
+  const searchConfig = getSearchConfig<T>(searchType);
+
   // Filter items based on search term
   useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredItems(items);
-    } else {
-      const filtered = items.filter(item =>
-        `${item.firstName} ${item.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.email?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredItems(filtered);
-    }
-  }, [items, searchTerm]);
+    const filtered = filterItems(items, searchTerm, searchConfig);
+    setFilteredItems(filtered);
+  }, [items, searchTerm, searchConfig]);
 
   // Position the popup relative to anchor element
   useEffect(() => {
@@ -113,12 +107,6 @@ const SearchPopup = <T extends Driver | Rider>({
 
   const isSelected = (item: T) => {
     return selectedItems.some(selected => selected.id === item.id);
-  };
-
-  const getAccessibilityInfo = (item: T) => {
-    if (!showAccessibility || !('accessibility' in item)) return null;
-    const rider = item as Rider;
-    return rider.accessibility && rider.accessibility.length > 0 ? rider.accessibility : null;
   };
 
   if (!open) return null;
@@ -178,9 +166,9 @@ const SearchPopup = <T extends Driver | Rider>({
         ) : (
           <List dense>
             {filteredItems.map((item) => {
-              const accessibility = getAccessibilityInfo(item);
               const selected = isSelected(item);
-              
+              const renderedItem = searchConfig.renderItem(item, selected, showAccessibility);
+
               return (
                 <ListItem
                   key={item.id}
@@ -196,39 +184,13 @@ const SearchPopup = <T extends Driver | Rider>({
                   }}
                 >
                   <ListItemAvatar>
-                    <Avatar
-                      src={item.photoLink}
-                      sx={{ width: 40, height: 40 }}
-                    >
-                      {item.firstName?.charAt(0)}{item.lastName?.charAt(0)}
-                    </Avatar>
+                    {renderedItem.avatar}
                   </ListItemAvatar>
                   <ListItemText
-                    primary={
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {item.firstName} {item.lastName}
-                        {selected && (
-                          <Chip
-                            label="Selected"
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                            sx={{ ml: 1 }}
-                          />
-                        )}
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography variant="caption" color="textSecondary">
-                        {item.email}
-                        {accessibility && (
-                          <div style={{ marginTop: 4 }}>
-                            Accessibility: {accessibility.join(', ')}
-                          </div>
-                        )}
-                      </Typography>
-                    }
+                    primary={renderedItem.primary}
+                    secondary={renderedItem.secondary}
                   />
+                  {renderedItem.chips}
                 </ListItem>
               );
             })}
@@ -246,7 +208,7 @@ const SearchPopup = <T extends Driver | Rider>({
             {selectedItems.map((item) => (
               <Chip
                 key={item.id}
-                label={`${item.firstName} ${item.lastName}`}
+                label={searchConfig.getItemLabel(item)}
                 size="small"
                 onDelete={() => onRemove(item)}
                 color="primary"
