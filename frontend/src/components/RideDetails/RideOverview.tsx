@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -18,6 +18,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import InfoIcon from '@mui/icons-material/Info';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -39,6 +41,7 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
+import axios from '../../util/axios';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -205,6 +208,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   const ride = editedRide!;
   const temporalType = getTemporalType(ride);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
+  const [isClicked, setIsClicked] = useState(false);
 
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString);
@@ -313,6 +317,51 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     updateRideField('type', event.target.value);
   };
 
+/**
+ * handleFavorite
+ * 
+ * Triggered when a user clicks the favorite or unfavorite button for a past ride 
+ * Intended to send a POST or DELETE request to database then be added or unadded 
+ * as a favorites card
+ *
+ * Current status:
+ *  - Function is implemented and makes both requests.
+ *  - Issue: Favoriting and deleting favorites are currently failing with a 500 
+ *    Internal Server Error
+ *
+ * TODO:
+ *  - Fix backend schema mismatch or ensure correct key format
+ *  - Add responsivity for button icon
+ */
+
+  const handleFavorite = async () => {
+    if (!isClicked) {
+      //user favorited icon
+      setIsClicked(true);
+      try {
+        await axios.post('/api/favorites', {
+          rideId: ride.id,
+        });
+      } catch (error: any) {
+        console.error(
+          'Error favoriting ride:',
+          error.response?.data || error.message
+        );
+      }
+    } else {
+      //user unfavorited icon
+      setIsClicked(false);
+      try {
+        await axios.delete('/api/favorites/ride.id');
+      } catch (error: any) {
+        console.error(
+          'Error unfavoriting ride:',
+          error.response?.data || error.message
+        );
+      }
+    }
+  };
+
   const renderPersonSection = () => {
     if (userRole === 'admin') return null; // Admin overview shows only ride info, people are in separate tab
 
@@ -377,6 +426,24 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
           <div className={styles.sectionTitle}>
             <DirectionsCarIcon color="primary" />
             <Typography variant="h6">Ride Overview</Typography>
+
+            {userRole === 'rider' && (
+              <div>
+                <IconButton
+                  onClick={handleFavorite}
+                  size="small"
+                  sx={{
+                    marginLeft: '90px',
+                  }}
+                >
+                  {isClicked ? (
+                    <FavoriteIcon color="primary" />
+                  ) : (
+                    <FavoriteBorderIcon color="primary" />
+                  )}
+                </IconButton>
+              </div>
+            )}
           </div>
           <div className={styles.contentArea}>
             {/* Schedule Section */}
