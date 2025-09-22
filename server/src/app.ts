@@ -17,7 +17,7 @@ import upload from './router/upload';
 import auth from './router/auth';
 import stats from './router/stats';
 import initSchedule from './util/repeatingRide';
-import favorites from './router/favorites'
+import favorites from './router/favorites';
 import notification from './router/notification';
 import initDynamoose from './util/dynamoose';
 

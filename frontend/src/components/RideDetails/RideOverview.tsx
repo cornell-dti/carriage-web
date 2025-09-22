@@ -317,22 +317,22 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     updateRideField('type', event.target.value);
   };
 
-/**
- * handleFavorite
- * 
- * Triggered when a user clicks the favorite or unfavorite button for a past ride 
- * Intended to send a POST or DELETE request to database then be added or unadded 
- * as a favorites card
- *
- * Current status:
- *  - Function is implemented and makes both requests.
- *  - Issue: Favoriting and deleting favorites are currently failing with a 500 
- *    Internal Server Error
- *
- * TODO:
- *  - Fix backend schema mismatch or ensure correct key format
- *  - Add responsivity for button icon
- */
+  /**
+   * handleFavorite
+   *
+   * Triggered when a user clicks the favorite or unfavorite button for a past ride
+   * Intended to send a POST or DELETE request to database then be added or unadded
+   * as a favorites card
+   *
+   * Current status:
+   *  - Function is implemented and makes both requests.
+   *  - Issue: Favoriting and deleting favorites are currently failing with a 500
+   *    Internal Server Error
+   *
+   * TODO:
+   *  - Fix backend schema mismatch or ensure correct key format
+   *  - Add responsivity for button icon
+   */
 
   const handleFavorite = async () => {
     if (!isClicked) {
