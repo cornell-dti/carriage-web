@@ -4,9 +4,9 @@ import styles from './noridesview.module.css';
 
 const NoRidesView = () => (
   <div className={styles.container}>
-    <img src={noRides} alt="No rides" />
+    <img src={noRides} className={styles.image} alt="No rides" />
     <p className={styles.text}>
-      You have no upcoming rides! Request a ride to get started
+      You have no upcoming rides! Request a ride to get started.
     </p>
   </div>
 );
