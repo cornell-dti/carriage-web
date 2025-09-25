@@ -2,7 +2,7 @@ name: Continuous Deployment to Staging
 
 on:
   push:
-    branches: [master]
+    branches: [master, mk2672/fix-okteto]
 
 jobs:
   deploy:
