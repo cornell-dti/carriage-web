@@ -7,6 +7,7 @@ import Schedule from './Schedule';
 import Settings from './Settings';
 import DateContext from '../../context/date';
 import { RidesProvider } from '../../context/RidesContext';
+import { LocationsProvider } from '../../context/LocationsContext';
 
 const RoutesComponent = () => {
   const skipRef = useSkipMain();
@@ -35,7 +36,9 @@ const RiderRoutes = () => {
   return (
     <DateContext.Provider value={defaultVal}>
       <RidesProvider>
-        <RoutesComponent />
+        <LocationsProvider>
+          <RoutesComponent />
+        </LocationsProvider>
       </RidesProvider>
     </DateContext.Provider>
   );

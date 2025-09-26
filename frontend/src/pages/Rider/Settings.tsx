@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import UserDetail, {
   UserContactInfo,
-} from '../../components/UserDetail/UserDetail';
+} from '../../components/UserDetail/legacy/UserDetail';
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';

@@ -41,11 +41,9 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
   );
 
   useEffect(() => {
-    if (ride && ride.recurring) {
-      const days = Object.keys(dayLabels);
-      ride.recurringDays!.forEach((day) => {
-        handleClick(days[day - 1]);
-      });
+    if (ride && ride.isRecurring) {
+      // Recurring rides not yet implemented - disable for now
+      console.warn('Recurring rides not yet supported');
     }
   }, [ride, handleClick, dayLabels]);
 

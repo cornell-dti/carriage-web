@@ -5,7 +5,7 @@ const schema = new dynamoose.Schema({
   // we store references because storing the ride duplicates the data, comp key for efficiency and better normalization
   userId: { type: String, required: true, hashKey: true },
   rideId: { type: String, required: true, rangeKey: true },
-  favoritedAt: { type: Date, default: () => new Date() },
+  favoritedAt: { type: String, default: () => new Date().toISOString() },
 });
 
 export const Favorite = dynamoose.model(

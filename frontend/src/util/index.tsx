@@ -24,3 +24,6 @@ export const isTimeValid = (startDate: string, pickupTime: string) => {
   const bufferDays = now.isAfter(today10AM) ? 2 : 1;
   return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
 };
+
+// Re-export user utilities
+export { extractNetIdFromEmail, getUserNetId } from './userUtils';

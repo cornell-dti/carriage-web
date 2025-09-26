@@ -1,6 +1,6 @@
 import React from 'react';
-import { Row, Table } from '../TableComponents/TableComponents';
-import { Ride } from '../../types';
+import { Row, Table } from '../../TableComponents/TableComponents';
+import { Ride } from '../../../types';
 import styles from './userDetail.module.css';
 
 type PastRideProps = {
@@ -36,13 +36,19 @@ const PastRides = ({ isStudent, rides }: PastRideProps) => {
             const endTime = new Date(ride.endTime)
               .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
               .toLowerCase();
-            const { rider } = ride;
-            const name = `${rider.firstName} ${rider.lastName}`;
+            // Use primary rider (first in array) for legacy display
+            const primaryRider =
+              ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+            const name = primaryRider
+              ? `${primaryRider.firstName} ${primaryRider.lastName}`
+              : 'No rider assigned';
 
             // Convert accessibility array to string
             const needs =
-              rider.accessibility && rider.accessibility.length > 0
-                ? rider.accessibility.join(', ')
+              primaryRider &&
+              primaryRider.accessibility &&
+              primaryRider.accessibility.length > 0
+                ? primaryRider.accessibility.join(', ')
                 : 'None';
 
             const pickupLocation = ride.startLocation.name;

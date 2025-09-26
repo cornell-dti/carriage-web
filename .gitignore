@@ -74,3 +74,12 @@ server/.env
 
 # build
 build/
+
+# Claude Code
+.claude/
+
+# Husky
+.husky/
+
+# Documentation
+docs/

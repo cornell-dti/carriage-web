@@ -15,6 +15,7 @@ export enum Change {
   REPEATING_EDITED = 'repeating_edited',
   CREATED = 'created',
   REASSIGN_DRIVER = 'reassign_driver',
+  CANCELLED = 'cancelled',
 }
 
 export type NotificationEvent = Change | Status;
