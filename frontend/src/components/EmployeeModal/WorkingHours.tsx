@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { DayOfWeek } from '../../types';
 import styles from './employeemodal.module.css';
-
-enum DayOfWeek {
-  MONDAY = 'MON',
-  TUESDAY = 'TUE',
-  WEDNESDAY = 'WED',
-  THURSDAY = 'THURS',
-  FRIDAY = 'FRI',
-}
 
 type WorkingHoursProps = {
   existingAvailability?: string[];
@@ -19,7 +12,7 @@ const WorkingHours = ({
   existingAvailability = [],
   hide,
 }: WorkingHoursProps) => {
-  const { register, setValue, getValues } = useFormContext();
+  const { register, setValue } = useFormContext();
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
     (existingAvailability as DayOfWeek[]) || []
   );
@@ -33,11 +26,21 @@ const WorkingHours = ({
     setValue('availability', updatedDays);
   };
 
-  // Register the availability field
+  // Register the availability field and keep it in sync
   React.useEffect(() => {
     register('availability');
+  }, [register]);
+
+  React.useEffect(() => {
     setValue('availability', selectedDays);
-  }, [register, setValue, selectedDays]);
+  }, [setValue, selectedDays]);
+
+  // If existing availability changes (e.g., when opening modal), sync selection
+  React.useEffect(() => {
+    const normalized = (existingAvailability as DayOfWeek[]) || [];
+    setSelectedDays(normalized);
+    setValue('availability', normalized);
+  }, [existingAvailability, setValue]);
 
   if (hide) return null;
 

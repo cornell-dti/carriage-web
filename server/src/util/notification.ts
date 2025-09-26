@@ -215,12 +215,9 @@ export const sendToUsers = (
 export const getNotificationEvent = (
   body: Partial<RideType>
 ): NotificationEvent => {
-  const { status, late, type, driver } = body;
+  const { status, type, driver } = body;
   if (status) {
     return status;
-  }
-  if (late) {
-    return Change.LATE;
   }
   if (type === Type.ACTIVE && driver) {
     return Change.SCHEDULED;
@@ -238,30 +235,43 @@ export const notify = (
   change?: Change
 ) =>
   new Promise((resolve, reject) => {
-    const riderId = updatedRide.rider.id;
+    // Handle multiple riders - collect all rider IDs
+    const riderIds = updatedRide.riders?.map((rider) => rider.id) || [];
     const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
     const notifEvent = change || getNotificationEvent(body);
     const receivers = getReceivers(sender, notifEvent, hasDriver);
 
     Promise.all(
-      receivers.map((receiver) => {
-        let userId;
+      receivers.flatMap((receiver) => {
         if (receiver === UserType.DRIVER) {
-          userId = driverId;
+          const userId = driverId;
+          const title = 'Carriage'; // placeholder
+          const body = getMessage(sender, receiver, notifEvent, updatedRide);
+          return sendToUsers(
+            title,
+            body,
+            notifEvent,
+            updatedRide,
+            receiver,
+            userId
+          );
         } else if (receiver === UserType.RIDER) {
-          userId = riderId;
+          // Send notifications to all riders
+          return riderIds.map((riderId) => {
+            const title = 'Carriage'; // placeholder
+            const body = getMessage(sender, receiver, notifEvent, updatedRide);
+            return sendToUsers(
+              title,
+              body,
+              notifEvent,
+              updatedRide,
+              receiver,
+              riderId
+            );
+          });
         }
-        const title = 'Carriage'; // placeholder
-        const body = getMessage(sender, receiver, notifEvent, updatedRide);
-        return sendToUsers(
-          title,
-          body,
-          notifEvent,
-          updatedRide,
-          receiver,
-          userId
-        );
+        return [];
       })
     )
       .then(() => resolve(updatedRide))
