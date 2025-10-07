@@ -21,6 +21,7 @@ import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
 import SearchPopup from './SearchPopup';
 import styles from './RideLocations.module.css';
+import { useTripDuration } from './TripDurationContext';
 
 interface RideLocationsProps {
   // No props needed - gets ride from context
@@ -214,6 +215,7 @@ const RideMap: React.FC<RideMapProps> = ({
     duration: string;
   } | null>(null);
   const mapsLibrary = useMapsLibrary('routes');
+  const { setTripDuration } = useTripDuration();
 
   const fetchAndDrawRoute = useCallback(async () => {
     if (!window.google || !map || !startLocation || !endLocation) {
@@ -274,6 +276,10 @@ const RideMap: React.FC<RideMapProps> = ({
             duration: leg.duration?.text || '',
           });
         }
+        if (leg.duration?.value) {
+          // value is in seconds
+          setTripDuration({ duration: Math.round(leg.duration.value / 60) });
+        }
       }
     } catch (error) {
       console.error('Error fetching route:', error);
@@ -292,6 +298,9 @@ const RideMap: React.FC<RideMapProps> = ({
         distance: `${distance} mi`,
         duration: `${Math.round(distance * 2)} min`,
       });
+
+      const approxDuration = Math.round(distance * 2);
+      setTripDuration({ duration: approxDuration });
     }
   }, [map, startLocation, endLocation]);
 

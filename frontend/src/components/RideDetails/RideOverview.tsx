@@ -39,16 +39,20 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
+import { useTripDuration } from './TripDurationContext';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
 }
 
 // Helper function to determine temporal type
-const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
+const getTemporalType = (
+  ride: RideType,
+  rideDurationMinutes: number
+): 'Past' | 'Active' | 'Upcoming' => {
   const now = new Date().getTime();
   const startTime = new Date(ride.startTime).getTime();
-  const endTime = new Date(ride.endTime).getTime();
+  const endTime = new Date(ride.startTime).getTime() + rideDurationMinutes; //quack
 
   if (endTime < now) return 'Past';
   if (startTime <= now && now < endTime) return 'Active';
@@ -196,6 +200,9 @@ const PersonCardOverview: React.FC<{
 };
 
 const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
+  const { tripDuration } = useTripDuration();
+  const rideDurationMinutes = tripDuration.duration ?? 0;
+
   const {
     editedRide,
     isEditing,
@@ -203,7 +210,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     userRole: contextUserRole,
   } = useRideEdit();
   const ride = editedRide!;
-  const temporalType = getTemporalType(ride);
+  const temporalType = getTemporalType(ride, rideDurationMinutes);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
 
   const formatDateTime = (dateTimeString: string) => {
@@ -224,7 +231,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   const startDateTime = formatDateTime(ride.startTime);
-  const endDateTime = formatDateTime(ride.endTime);
+  const endDateTime = formatDateTime(ride.endTime); //quack
 
   // Helper functions for date/time editing
   const handleStartDateChange = (newDate: Dayjs | null) => {
@@ -244,7 +251,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updatedStartTime.isAfter(currentEndTime) ||
       updatedStartTime.isSame(currentEndTime)
     ) {
-      const newEndTime = updatedStartTime.add(30, 'minute');
+      const newEndTime = updatedStartTime.add(rideDurationMinutes, 'minute'); //quack
       updateRideField('endTime', newEndTime.toISOString());
     }
 
@@ -268,37 +275,11 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updatedStartTime.isAfter(currentEndTime) ||
       updatedStartTime.isSame(currentEndTime)
     ) {
-      const newEndTime = updatedStartTime.add(30, 'minute');
+      const newEndTime = updatedStartTime.add(rideDurationMinutes, 'minute');
       updateRideField('endTime', newEndTime.toISOString());
     }
 
     updateRideField('startTime', updatedStartTime.toISOString());
-  };
-
-  const handleEndDateChange = (newDate: Dayjs | null) => {
-    if (!newDate) return;
-
-    const currentEndTime = dayjs(ride.endTime);
-    const updatedEndTime = newDate
-      .hour(currentEndTime.hour())
-      .minute(currentEndTime.minute())
-      .second(0)
-      .millisecond(0);
-
-    updateRideField('endTime', updatedEndTime.toISOString());
-  };
-
-  const handleEndTimeChange = (newTime: Dayjs | null) => {
-    if (!newTime) return;
-
-    const currentEndDate = dayjs(ride.endTime);
-    const updatedEndTime = currentEndDate
-      .hour(newTime.hour())
-      .minute(newTime.minute())
-      .second(0)
-      .millisecond(0);
-
-    updateRideField('endTime', updatedEndTime.toISOString());
   };
 
   const handleStatusChange = (event: any) => {
@@ -402,20 +383,9 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       const startTimePastError = validation.errors.find(
                         (e) => e.type === 'start_time_past'
                       );
-                      const endTimeBeforeStartError = validation.errors.find(
-                        (e) =>
-                          e.type === 'end_time_before_start' ||
-                          e.type === 'same_time'
-                      );
-                      const durationError = validation.errors.find(
-                        (e) => e.type === 'too_long_duration'
-                      );
 
                       const hasStartTimeError =
                         startTimePastError !== undefined;
-                      const hasEndTimeError =
-                        endTimeBeforeStartError !== undefined ||
-                        durationError !== undefined;
 
                       return (
                         <>
@@ -466,61 +436,6 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                                   }}
                                 >
                                   {startTimePastError.message}
-                                </Typography>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className={styles.dateTimeRow}>
-                            <div style={{ flex: 1 }}>
-                              <DatePicker
-                                label="End Date"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndDateChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <TimePicker
-                                label="End Time"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndTimeChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                              {/* End time specific errors - directly below end time field */}
-                              {(endTimeBeforeStartError || durationError) && (
-                                <Typography
-                                  variant="caption"
-                                  color="error"
-                                  sx={{
-                                    display: 'block',
-                                    fontSize: '0.75rem',
-                                    marginTop: 0.5,
-                                    marginLeft: 1,
-                                  }}
-                                >
-                                  {
-                                    (endTimeBeforeStartError || durationError)
-                                      ?.message
-                                  }
                                 </Typography>
                               )}
                             </div>
