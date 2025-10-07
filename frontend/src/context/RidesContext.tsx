@@ -37,18 +37,11 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
 
     //Ensures rider with null name does not percolate to other pages
     if (ridesData) {
-      const normalized = ridesData.map((ride) => ({
-        ...ride,
-        rider: ride.rider ?? { firstName: 'Unknown', lastName: 'Rider' },
-        startLocation: ride.startLocation ?? { name: 'Unknown', address: '' },
-        endLocation: ride.endLocation ?? { name: 'Unknown', address: '' },
-      }));
-
       setUnscheduledRides(
-        normalized.filter(({ type }) => type === Type.UNSCHEDULED)
+        ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
       );
       setScheduledRides(
-        normalized.filter(({ type }) => type !== Type.UNSCHEDULED)
+        ridesData.filter(({ type }) => type !== Type.UNSCHEDULED)
       );
     }
   }, [date]);

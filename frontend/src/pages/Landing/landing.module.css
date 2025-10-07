@@ -12,6 +12,9 @@
   justify-content: center;
   align-items: flex-start;
   padding: 0 1.25rem;
+  background-attachment: scroll;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 .main {
@@ -70,6 +73,7 @@
   justify-content: center;
   align-items: center;
   padding: 1rem;
+  left: 50%;
 }
 
 .dti_logo {
@@ -124,7 +128,7 @@
   overflow: hidden;
   line-height: 0;
   transform: rotate(180deg);
-  height: 15%;
+  height: 16%; /*ensures correct layering*/
   z-index: 10;
 }
 
@@ -194,16 +198,19 @@
   height: 100%;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 750px) {
   .main {
     flex-direction: column;
-    margin-block: center;
+    margin-top: -10rem; /* spacing from top */
+    height: auto;
+    margin-left: 30px;
+    margin-right: 30px;
   }
 
   .left {
     /*top for vertical media query*/
     border-radius: 16px 16px 0 0;
-    margin-top: -30px;
+    margin-top: 0px;
   }
   .right {
     /* bottom for vertical media query*/
@@ -214,11 +221,30 @@
 
   .container {
     flex-direction: column;
-    margin-top: -10px;
+    margin-top: 0px;
   }
 
   .home {
-    height: 1000px;
+    height: 1250px;
+    width: 160%;
+    align-items: center;
+  }
+
+  .adminInfo {
+    padding: 9rem 8rem 9rem 8rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 13rem;
+    justify-content: right;
+  }
+
+  .information {
+    width: 160%;
+  }
+
+  .studentInfo {
+    width: 160%;
   }
 
   .studentImgContainer {
@@ -228,11 +254,75 @@
   .topLaptop {
     transform: scale(0.75);
   }
+
+  .dti_container {
+    margin-left: 300px;
+  }
+
+  .customShape {
+    margin-bottom: 10px;
+    height: 300px; /*ensures correct layering*/
+  }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 1914px) {
+  .home {
+    height: 1000px;
+  }
+  .customShape {
+    margin-bottom: -4px; /*ensures correct layering*/
+  }
+}
+
+@media (max-width: 360px) {
+  .home {
+    width: 190%;
+  }
+
+  .information {
+    width: 190%;
+  }
+  .studentInfo {
+    width: 190%;
+  }
+
+  .dti_container {
+    margin-left: auto;
+  }
+
+  .customShape {
+    margin-bottom: -4px; /*ensures correct layering*/
+  }
+}
+
+@media (max-width: 400px) {
+  .home {
+    width: 180%;
+  }
+
+  .information {
+    width: 180%;
+  }
+  .studentInfo {
+    width: 180%;
+  }
+
+  .dti_container {
+    margin-left: 300px;
+  }
+
+  .customShape {
+    margin-bottom: -10px; /*ensures correct layering*/
+  }
+
   .main {
-    min-height: 0px;
+    margin-top: 0.75rem;
+  }
+}
+
+@media (min-width: 550px) and (max-width: 750px) {
+  .dti_container {
+    margin-left: 395px;
   }
 }
 
@@ -257,6 +347,41 @@
 
   .adminInfo p {
     max-width: 70%;
+  }
+}
+
+@media (min-width: 400px) and (max-width: 750px) {
+  .main {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .home {
+    height: 1150px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    margin-left: 30px;
+    margin-right: 30px;
+  }
+}
+
+@media (min-width: 1230px) and (max-width: 1382px) {
+  .home {
+    width: 120%;
+  }
+
+  .dti_container {
+    margin-left: 275px;
+  }
+
+  .information {
+    width: 120%;
+  }
+  .studentInfo {
+    width: 120%;
   }
 }
 
