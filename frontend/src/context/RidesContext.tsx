@@ -34,6 +34,8 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       .get(`/api/rides?date=${date}`)
       .then((res) => res.data)
       .then((data) => data.data);
+
+    //Ensures rider with null name does not percolate to other pages
     if (ridesData) {
       setUnscheduledRides(
         ridesData.filter(({ type }) => type === Type.UNSCHEDULED)
