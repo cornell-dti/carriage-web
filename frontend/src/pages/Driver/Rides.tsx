@@ -188,7 +188,7 @@ const RideDetailCard = ({
             message={
               isCurrent
                 ? 'No current ride in progress'
-                : 'No upcoming rides scheduled'
+                : 'No upcoming rides for today'
             }
           />
         </CardContent>
