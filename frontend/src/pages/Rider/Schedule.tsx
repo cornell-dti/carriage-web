@@ -14,7 +14,6 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { Driver, DayOfWeek } from 'types';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
-import { useTripDuration } from '../../components/RideDetails/TripDurationContext';
 import axios from '../../util/axios';
 
 // Favorite ride type
@@ -42,7 +41,6 @@ const Schedule: React.FC = () => {
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
-  const { tripDuration } = useTripDuration();
 
   const fetchFavorites = async () => {
     if (!id) return;
@@ -133,7 +131,7 @@ const Schedule: React.FC = () => {
       const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
 
       const endISO = new Date(
-        new Date(startISO).getTime() + (tripDuration.duration ?? 0) * 60 * 1000 //uses google location to location estimate for end time
+        new Date(startISO).getTime() + 30 * 60 * 1000
       ).toISOString();
 
       await axios.post('/api/rides', {

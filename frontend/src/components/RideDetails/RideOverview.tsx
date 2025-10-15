@@ -39,20 +39,16 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
-import { useTripDuration } from './TripDurationContext';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
 }
 
 // Helper function to determine temporal type
-const getTemporalType = (
-  ride: RideType,
-  rideDurationMinutes: number
-): 'Past' | 'Active' | 'Upcoming' => {
+const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
   const now = new Date().getTime();
   const startTime = new Date(ride.startTime).getTime();
-  const endTime = new Date(ride.startTime).getTime() + rideDurationMinutes; //quack
+  const endTime = new Date(ride.startTime).getTime() + 15; //buffer time
 
   if (endTime < now) return 'Past';
   if (startTime <= now && now < endTime) return 'Active';
@@ -200,9 +196,6 @@ const PersonCardOverview: React.FC<{
 };
 
 const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
-  const { tripDuration } = useTripDuration();
-  const rideDurationMinutes = tripDuration.duration ?? 0;
-
   const {
     editedRide,
     isEditing,
@@ -210,7 +203,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     userRole: contextUserRole,
   } = useRideEdit();
   const ride = editedRide!;
-  const temporalType = getTemporalType(ride, rideDurationMinutes);
+  const temporalType = getTemporalType(ride);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
 
   const formatDateTime = (dateTimeString: string) => {
@@ -231,7 +224,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   const startDateTime = formatDateTime(ride.startTime);
-  const endDateTime = formatDateTime(ride.endTime); //quack
+  const endDateTime = formatDateTime(ride.endTime);
 
   // Helper functions for date/time editing
   const handleStartDateChange = (newDate: Dayjs | null) => {
@@ -251,7 +244,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updatedStartTime.isAfter(currentEndTime) ||
       updatedStartTime.isSame(currentEndTime)
     ) {
-      const newEndTime = updatedStartTime.add(rideDurationMinutes, 'minute'); //quack
+      const newEndTime = updatedStartTime.add(30, 'minute');
       updateRideField('endTime', newEndTime.toISOString());
     }
 
@@ -275,7 +268,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updatedStartTime.isAfter(currentEndTime) ||
       updatedStartTime.isSame(currentEndTime)
     ) {
-      const newEndTime = updatedStartTime.add(rideDurationMinutes, 'minute');
+      const newEndTime = updatedStartTime.add(30, 'minute');
       updateRideField('endTime', newEndTime.toISOString());
     }
 
