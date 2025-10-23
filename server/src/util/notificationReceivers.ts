@@ -1,6 +1,6 @@
 import { Change, NotificationEvent } from './types';
 import { UserType } from '../models/subscription';
-import { Status } from '../models/ride';
+import { Status } from '@shared/types/ride';
 
 export const getReceivers = (
   sender: UserType,

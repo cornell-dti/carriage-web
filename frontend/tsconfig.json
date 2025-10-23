@@ -8,7 +8,10 @@
     "module": "esnext",
     "noEmit": true,
     "jsx": "react-jsx",
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@shared/*": ["../../shared/*"]
+    }
   },
   "include": ["src"]
 }

@@ -1,9 +1,9 @@
-import { RiderType } from '../../../server/src/models/rider';
-import { DriverType } from '../../../server/src/models/driver';
 import { RideType } from '../../../server/src/models/ride';
 import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
 import { VehicleType } from '../../../server/src/models/vehicle';
+import { RiderType } from '@shared/types/rider';
+import { DriverType } from '@shared/types/driver';
+import { LocationType } from '@shared/types/location';
 
 export type Rider = RiderType;
 

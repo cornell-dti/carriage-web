@@ -15,8 +15,7 @@ import {
 } from '../../../icons/userInfo/index';
 import { RideTable } from '../../RideDetails';
 import styles from './userDetail.module.css';
-import { AdminType } from '../../../../../server/src/models/admin';
-import { DriverType } from '../../../../../server/src/models/driver';
+import { Driver, Admin } from '../../../types/index';
 import axios from '../../../util/axios';
 
 type EmployeeDetailProps = {
@@ -31,7 +30,7 @@ type EmployeeDetailProps = {
   photoLink?: string;
 };
 
-const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
+const DriverToEmployees = (drivers: Driver[]): EmployeeDetailProps[] => {
   return drivers.map((driver) => ({
     id: driver.id,
     firstName: driver.firstName,
@@ -42,7 +41,7 @@ const DriverToEmployees = (drivers: DriverType[]): EmployeeDetailProps[] => {
   }));
 };
 
-const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
+const AdminToEmployees = (admins: Admin[]): EmployeeDetailProps[] => {
   return admins.map((admin) => ({
     id: admin.id,
     firstName: admin.firstName,
@@ -56,8 +55,8 @@ const AdminToEmployees = (admins: AdminType[]): EmployeeDetailProps[] => {
 };
 
 const findEmployee = (
-  drivers: DriverType[],
-  admins: AdminType[],
+  drivers: Driver[],
+  admins: Admin[],
   employeeId: string
 ): EmployeeDetailProps => {
   const employee = AdminToEmployees(admins).find(

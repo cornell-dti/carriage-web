@@ -4,7 +4,10 @@
     "target": "es6",
     "outDir": "build",
     "allowJs": true,
-    "module": "commonjs"
+    "module": "commonjs",
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    }
   },
   "include": ["src", "tests"],
   "exclude": ["node_modules"]

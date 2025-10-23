@@ -2,38 +2,7 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
 import defaultModelConfig from '../util/modelConfig';
-
-export enum Accessibility {
-  ASSISTANT = 'Assistant',
-  CRUTCHES = 'Crutches',
-  WHEELCHAIR = 'Wheelchair',
-  MOTOR_SCOOTER = 'Motorized Scooter',
-  KNEE_SCOOTER = 'Knee Scooter',
-  LOW_VISION = 'Low Vision/Blind',
-  SERVICE_ANIMALS = 'Service Animal',
-}
-
-export enum Organization {
-  REDRUNNER = 'RedRunner',
-  CULIFT = 'CULift',
-}
-
-export type RiderType = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  email: string;
-  accessibility?: Accessibility[];
-  organization?: Organization;
-  description?: string;
-  joinDate: string;
-  endDate: string;
-  address: string;
-  favoriteLocations: string[];
-  photoLink?: string;
-  active: boolean;
-};
+import { Organization } from '@shared/types/rider';
 
 const schema = new dynamoose.Schema({
   id: {

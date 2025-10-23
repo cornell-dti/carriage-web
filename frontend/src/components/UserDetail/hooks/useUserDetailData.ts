@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Employee, Rider, Ride } from '../../../types/index';
-import { AdminType } from '../../../../../server/src/models/admin';
-import { DriverType } from '../../../../../server/src/models/driver';
+import { Driver, Admin } from '../../../types/index';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
@@ -117,10 +116,10 @@ const useUserDetailData = (
 
     // Try to fetch as admin first
     try {
-      const adminData: AdminType = await fetchAdminData(employeeId);
+      const adminData: Admin = await fetchAdminData(employeeId);
 
       if (adminData.isDriver) {
-        const driverData: DriverType = await fetchDriverData(employeeId);
+        const driverData: Driver = await fetchDriverData(employeeId);
         setUser({
           ...driverData,
           ...adminData,
@@ -137,7 +136,7 @@ const useUserDetailData = (
     } catch (adminError) {
       // If not an admin, try as driver only
       try {
-        const driverData: DriverType = await fetchDriverData(employeeId);
+        const driverData: Driver = await fetchDriverData(employeeId);
         setUser({
           ...driverData,
           isDriver: true,

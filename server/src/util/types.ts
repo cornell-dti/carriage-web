@@ -1,4 +1,4 @@
-import { Status } from '../models/ride';
+import { Status } from '@shared/types/ride';
 
 export type UserType = 'User' | 'Rider' | 'Driver' | 'Admin';
 
