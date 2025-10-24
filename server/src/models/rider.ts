@@ -2,7 +2,7 @@ import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import { formatAddress, isAddress } from '../util';
 import defaultModelConfig from '../util/modelConfig';
-import { Organization } from '@shared/types/rider';
+import { Organization } from '@carriage-web/shared/types/rider';
 
 const schema = new dynamoose.Schema({
   id: {

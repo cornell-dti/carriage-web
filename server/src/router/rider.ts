@@ -6,10 +6,10 @@ import * as db from './common';
 import { Rider } from '../models/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
-import { Ride, Type, RideType } from '../models/ride';
+import { Ride } from '../models/ride';
 import { UserType } from '../models/subscription';
-import { Status } from '@shared/types/ride';
-import { RiderType } from '@shared/types/rider';
+import { RideType, Status, Type } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 const router = express.Router();
 const tableName = 'Riders';

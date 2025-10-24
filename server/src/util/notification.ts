@@ -13,7 +13,7 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
-import { RideType, Type } from '../models/ride';
+import { RideType, Type } from '@carriage-web/shared/types/ride';
 import { Change, NotificationEvent } from './types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';

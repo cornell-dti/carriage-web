@@ -5,14 +5,18 @@ import authorize from './utils/auth';
 import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
-import { AdminType } from '../src/models/admin';
 import { Rider } from '../src/models/rider';
-import { Ride, Type } from '../src/models/ride';
+import { Ride } from '../src/models/ride';
 import { Location } from '../src/models/location';
 import moment from 'moment';
-import { Accessibility, Organization, RiderType } from '@shared/types/rider';
-import { LocationType, Tag } from '@shared/types/location';
-import { Status } from '@shared/types/ride';
+import {
+  Accessibility,
+  Organization,
+  RiderType,
+} from '@carriage-web/shared/types/rider';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
+import { Status, Type } from '@carriage-web/shared/types/ride';
+import { AdminType } from '@carriage-web/shared/types/admin';
 
 const testAdmin: Omit<AdminType, 'id'> = {
   firstName: 'Test-Admin',

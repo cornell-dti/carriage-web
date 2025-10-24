@@ -8,8 +8,8 @@ import { validateUser } from '../util';
 import { Ride } from '../models/ride';
 import { UserType } from '../models/subscription';
 import { Item } from 'dynamoose/dist/Item';
-import { Status } from '@shared/types/ride';
-import { DriverType } from '@shared/types/driver';
+import { Status } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 const router = express.Router();
 const tableName = 'Drivers';

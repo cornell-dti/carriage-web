@@ -1,6 +1,7 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
 import { Location } from './location';
+import { SchedulingState, Status, Type } from '@carriage-web/shared/types/ride';
 import { Driver } from './driver';
 import defaultModelConfig from '../util/modelConfig';
 

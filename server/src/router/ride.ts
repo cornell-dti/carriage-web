@@ -5,15 +5,20 @@ import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
-import { Ride, Type, RideType } from '../models/ride';
+import { Ride } from '../models/ride';
 import { validateUser, daysUntilWeekday } from '../util';
 import { notify } from '../util/notification';
 import { Change } from '../util/types';
 import { UserType } from '../models/subscription';
-import { SchedulingState, Status } from '@shared/types/ride';
-import { RiderType } from '@shared/types/rider';
-import { DriverType } from '@shared/types/driver';
-import { LocationType } from '@shared/types/location';
+import {
+  RideType,
+  SchedulingState,
+  Status,
+  Type,
+} from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 const router = express.Router();
 const tableName = 'Rides';
