@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { DayOfWeek } from '../../types/index';
+import { DayOfWeek } from '@shared/types/driver';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';

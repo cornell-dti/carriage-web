@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
-import { ObjectType, Rider } from '../../types/index';
+import { ObjectType } from '../../types/index';
+import { RiderType } from '@shared/types/rider';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useRiders } from '../../context/RidersContext';
@@ -10,7 +11,7 @@ import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
 
 type RiderModalProps = {
-  existingRider?: Rider;
+  existingRider?: RiderType;
   isRiderWeb?: boolean;
   isOpen: boolean;
   setIsOpen: any;

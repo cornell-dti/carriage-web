@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import styles from './modal.module.css';
-import { Ride } from '../../types';
+import { RideType } from '@shared/types/ride';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 
@@ -11,7 +11,7 @@ type DeleteOrEditTypeModalProps = {
   onClose: () => void;
   onNext?: (single: boolean) => void;
   deleting?: boolean;
-  ride: Ride;
+  ride: RideType;
   refreshRides?: () => void;
   isRider?: boolean;
 };

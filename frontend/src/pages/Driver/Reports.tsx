@@ -2,13 +2,13 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { Box, Card, CardContent, Typography, Grid, Chip } from '@mui/material';
 import { useRides } from '../../context/RidesContext';
 import AuthContext from '../../context/auth';
-import { Ride, Status } from '../../types';
+import { RideType, Status } from '@shared/types/ride';
 
 const Reports = () => {
   const { scheduledRides } = useRides();
   const { id: driverId } = useContext(AuthContext);
 
-  const myCompletedRides: Ride[] = useMemo(
+  const myCompletedRides: RideType[] = useMemo(
     () =>
       scheduledRides.filter(
         (r) => r.driver?.id === driverId && r.status === Status.COMPLETED

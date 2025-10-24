@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import { Ride } from '../../types';
+import { RideType } from '@shared/types/ride';
 import styles from './requestridemodal.module.css';
 import { Label, SRLabel } from '../FormElements/FormElements';
 
@@ -10,7 +10,7 @@ type WeekType = {
 };
 
 type CustomRepeatingRidesProps = {
-  ride?: Ride;
+  ride?: RideType;
 };
 
 const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {

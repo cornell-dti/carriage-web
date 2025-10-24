@@ -32,7 +32,7 @@ import { visuallyHidden } from '@mui/utils';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { RideType, Status, SchedulingState } from '../../types';
+import { RideType, Status, SchedulingState } from '@shared/types/ride';
 import AuthContext from '../../context/auth';
 import RideDetailsComponent from './RideDetailsComponent';
 

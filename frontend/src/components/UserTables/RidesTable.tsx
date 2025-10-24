@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Ride } from '../../types/index';
+import { RideType } from '@shared/types/ride';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
@@ -11,7 +11,7 @@ import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
 
 type RidesTableProps = {
-  rides: Ride[];
+  rides: RideType[];
   hasButtons: boolean;
 };
 
@@ -23,7 +23,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rideEditOpenIndex, setRideEditOpenIndex] = useState(-1);
   let buttonRef = useRef(null);

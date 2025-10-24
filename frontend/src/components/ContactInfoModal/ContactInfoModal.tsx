@@ -15,12 +15,12 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import { Rider } from '../../types';
+import { RiderType } from '@shared/types/rider';
 
 interface ContactInfoModalProps {
   open: boolean;
   onClose: () => void;
-  rider: Rider | undefined;
+  rider: RiderType | undefined;
 }
 
 const ContactInfoModal: React.FC<ContactInfoModalProps> = ({

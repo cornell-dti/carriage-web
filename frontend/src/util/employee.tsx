@@ -1,4 +1,4 @@
-import { DayOfWeek } from '../types';
+import { DayOfWeek } from '@shared/types/driver';
 
 const formatAvailability = (availability?: DayOfWeek[]) => {
   if (!availability) return null;

@@ -12,20 +12,20 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { LocationFormModal } from './LocationFormModal';
-import { Location } from 'types';
+import { LocationType } from '@shared/types/location';
 import PaginatedImageCarousel from './ImageCarousel';
 import { LocationImage } from './LocationImagesUpload';
 
 interface Props {
-  location: (Location & { imagesList?: LocationImage[] }) | null;
+  location: (LocationType & { imagesList?: LocationImage[] }) | null;
   onClose: () => void;
-  onSave: (loc: Location & { imagesList?: LocationImage[] }) => void;
+  onSave: (loc: LocationType & { imagesList?: LocationImage[] }) => void;
 }
 
 const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
   const [edit, setEdit] = useState(false);
   const [current, setCurrent] = useState<
-    (Location & { imagesList?: LocationImage[] }) | null
+    (LocationType & { imagesList?: LocationImage[] }) | null
   >(null);
   const [images, setImages] = useState<LocationImage[]>([]);
 
@@ -51,7 +51,9 @@ const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
 
   if (!location || !current) return null;
 
-  const handleEditSave = (upd: Location & { imagesList?: LocationImage[] }) => {
+  const handleEditSave = (
+    upd: LocationType & { imagesList?: LocationImage[] }
+  ) => {
     onSave(upd);
     setCurrent(upd);
 

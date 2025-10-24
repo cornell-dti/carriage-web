@@ -14,7 +14,8 @@ import {
 } from 'react-big-calendar';
 import cn from 'classnames';
 import moment from 'moment';
-import { Ride, Driver } from '../../types';
+import { RideType } from '@shared/types/ride';
+import { DriverType } from '@shared/types/driver';
 import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';
@@ -40,7 +41,7 @@ type CalEvent = {
   start: Date;
   end: Date;
   resourceId: string;
-  ride: Ride;
+  ride: RideType;
 };
 
 type CalendarDriver = {
@@ -62,7 +63,9 @@ const Schedule = () => {
   const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
   const { drivers } = useEmployees();
   const [viewMore, setViewMore] = useState(false);
-  const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
+  const [currentRide, setCurrentRide] = useState<RideType | undefined>(
+    undefined
+  );
   const [colorIdMap, setColorIdMap] = useState(new Map<string, string>());
 
   const [isOpen, setIsOpen] = useState(false);
@@ -71,8 +74,8 @@ const Schedule = () => {
   const getRides = () => {
     setEvents(
       scheduledRides
-        .filter((ride: Ride) => ride && ride.id)
-        .map((ride: Ride) => ({
+        .filter((ride: RideType) => ride && ride.id)
+        .map((ride: RideType) => ({
           id: ride.id,
           title: `${ride.startLocation.name} to ${ride.endLocation.name}
 Rider: ${
@@ -135,7 +138,7 @@ Rider: ${
     },
   });
 
-  const cancelRide = (ride: Ride) => {
+  const cancelRide = (ride: RideType) => {
     const rideId = ride.id;
     const recurring = ride.isRecurring;
     if (recurring) {
@@ -151,7 +154,7 @@ Rider: ${
     }
   };
 
-  const updateRides = (rideId: string, updatedDriver: Driver) => {
+  const updateRides = (rideId: string, updatedDriver: DriverType) => {
     axios
       .put(`/api/rides/${rideId}`, { driver: updatedDriver })
       .then(refreshRides);
@@ -162,7 +165,7 @@ Rider: ${
       old.id === event.id ? { ...old, resourceId } : old
     );
 
-    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
+    const updatedDriver = drivers.find((d: DriverType) => d.id === resourceId);
     if (updatedDriver !== undefined) {
       updateRides(event.id, updatedDriver);
     }

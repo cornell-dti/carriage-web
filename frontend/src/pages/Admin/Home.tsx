@@ -11,7 +11,7 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import { format_date } from '../../util/index';
-import { RideType } from '../../types';
+import { RideType } from '@shared/types/ride';
 
 const Home = () => {
   const { curDate } = useDate();

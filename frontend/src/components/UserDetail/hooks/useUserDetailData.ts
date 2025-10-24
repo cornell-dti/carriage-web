@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Employee, Rider, Ride } from '../../../types/index';
-import { Driver, Admin } from '../../../types/index';
+import { Employee } from '../../../types/index';
+import { RiderType } from '@shared/types/rider';
+import { RideType } from '@shared/types/ride';
+import { DriverType } from '@shared/types/driver';
+import { AdminType } from '@shared/types/admin';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
 
 interface UserDetailData {
-  user: Employee | Rider | null;
-  rides: Ride[];
+  user: Employee | RiderType | null;
+  rides: RideType[];
   statistics: {
     rideCount: number;
     workingHours: number;
@@ -21,8 +24,8 @@ const useUserDetailData = (
   userId: string | undefined,
   userType: 'employee' | 'rider'
 ): UserDetailData => {
-  const [user, setUser] = useState<Employee | Rider | null>(null);
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [user, setUser] = useState<Employee | RiderType | null>(null);
+  const [rides, setRides] = useState<RideType[]>([]);
   const [statistics, setStatistics] = useState({
     rideCount: -1,
     workingHours: -1,
@@ -101,7 +104,7 @@ const useUserDetailData = (
     return res.data.data;
   };
 
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;
@@ -116,10 +119,10 @@ const useUserDetailData = (
 
     // Try to fetch as admin first
     try {
-      const adminData: Admin = await fetchAdminData(employeeId);
+      const adminData: AdminType = await fetchAdminData(employeeId);
 
       if (adminData.isDriver) {
-        const driverData: Driver = await fetchDriverData(employeeId);
+        const driverData: DriverType = await fetchDriverData(employeeId);
         setUser({
           ...driverData,
           ...adminData,
@@ -136,7 +139,7 @@ const useUserDetailData = (
     } catch (adminError) {
       // If not an admin, try as driver only
       try {
-        const driverData: Driver = await fetchDriverData(employeeId);
+        const driverData: DriverType = await fetchDriverData(employeeId);
         setUser({
           ...driverData,
           isDriver: true,
@@ -241,7 +244,7 @@ const useUserDetailData = (
       const updatedRider = riders.find((r) => r.id === userId);
       if (updatedRider && user) {
         // Check if any properties have changed to avoid unnecessary updates
-        const currentRider = user as Rider;
+        const currentRider = user as RiderType;
         const hasChanges =
           JSON.stringify(updatedRider) !== JSON.stringify(currentRider);
 

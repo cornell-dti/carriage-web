@@ -1,18 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
-import {
-  Ride,
-  Type,
-  Status,
-  SchedulingState,
-  ObjectType,
-} from '../../types/index';
+import { ObjectType } from '../../types/index';
+import { RideType, Type, Status, SchedulingState } from '@shared/types/ride';
 import RiderRidesTable from './RiderRidesTable';
 import styles from './table.module.css';
 import { useDate } from '../../context/date';
 
 type RiderScheduleTableProp = {
-  data: Ride[];
+  data: RideType[];
   isPast: boolean; // true if past rides, false if upcoming rides
 };
 
@@ -22,7 +17,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
 
   // sort rides from newest to oldest
   const compRides = useCallback(
-    (a: Ride, b: Ride) => {
+    (a: RideType, b: RideType) => {
       const x = new Date(a.startTime);
       const y = new Date(b.startTime);
       if (x < y) return isPast ? 1 : -1;
@@ -34,7 +29,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
 
   // removes rides whose startTime is past the current time
   const filterRides = useCallback(
-    (ride: Ride): boolean => {
+    (ride: RideType): boolean => {
       if (isPast) return ride.type === 'past';
       return ride.type !== 'past';
     },
@@ -58,7 +53,7 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
 
   // returns a list of dummy recurring rides
   const generateRecurringRides = useCallback(
-    (rides: Ride[]): Ride[] => {
+    (rides: RideType[]): RideType[] => {
       // Recurring ride expansion is disabled for now
       // Return original rides unchanged since we're focusing on single rides
       return rides;
@@ -67,11 +62,11 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   );
 
   // returns a map with date as keys and a list of rides as values
-  const getRideMap = useCallback((rides: Ride[]): ObjectType => {
+  const getRideMap = useCallback((rides: RideType[]): ObjectType => {
     const rideMap: ObjectType = {};
     rides.forEach((ride) => {
       const rideDate = formatDate(ride.startTime);
-      const rideArray: Ride[] | undefined = rideMap[rideDate];
+      const rideArray: RideType[] | undefined = rideMap[rideDate];
       if (rideArray) {
         // push ride onto rideArray
         rideArray.push(ride);

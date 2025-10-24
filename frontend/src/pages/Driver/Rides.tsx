@@ -22,7 +22,7 @@ import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
-import { Ride, Status } from '../../types';
+import { RideType, Status } from '@shared/types/ride';
 import axios from '../../util/axios';
 import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
@@ -83,7 +83,7 @@ const RideDetailCard = ({
   updating,
   onUpdate,
 }: {
-  ride: Ride | undefined;
+  ride: RideType | undefined;
   isCurrent: boolean;
   updating?: boolean;
   onUpdate?: (rideId: string, status: Status) => void;
@@ -405,7 +405,7 @@ const Rides = () => {
   const authContext = useContext(AuthContext);
   const [updating, setUpdating] = useState(false);
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
-  const [allDriverRides, setAllDriverRides] = useState<Ride[]>([]);
+  const [allDriverRides, setAllDriverRides] = useState<RideType[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
   // Fetch all driver rides on component mount
@@ -458,7 +458,7 @@ const Rides = () => {
       )[0];
   }, [todaysRides, authContext.id]);
 
-  const currentRide: Ride | undefined = useMemo(() => {
+  const currentRide: RideType | undefined = useMemo(() => {
     const now = Date.now();
     const mine = todaysRides.filter((r) => r.driver?.id === authContext.id);
     return mine.find((r) => {

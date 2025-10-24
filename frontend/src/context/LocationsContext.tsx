@@ -1,9 +1,10 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Admin, Location } from '../types';
+import { AdminType } from '@shared/types/admin';
+import { LocationType } from '@shared/types/location';
 import axios from '../util/axios';
 
 type locationsState = {
-  locations: Array<Location>;
+  locations: Array<LocationType>;
   refreshLocations: () => Promise<void>;
 };
 
@@ -21,14 +22,14 @@ type locationsProviderProps = {
 
 export const LocationsProvider = ({ children }: locationsProviderProps) => {
   const componentMounted = useRef(true);
-  const [locations, setLocations] = useState<Array<Location>>([]);
+  const [locations, setLocations] = useState<Array<LocationType>>([]);
   const refreshLocations = useCallback(async () => {
-    const locationsData: Array<Location> = await axios
+    const locationsData: Array<LocationType> = await axios
       .get('/api/locations')
       .then((res) => res.data)
       .then((data) => data.data);
     if (locationsData) {
-      locationsData.sort((a: Location, b: Location) => {
+      locationsData.sort((a: LocationType, b: LocationType) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
     }

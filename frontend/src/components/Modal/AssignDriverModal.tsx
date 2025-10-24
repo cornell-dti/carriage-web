@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Ride, Driver } from '../../types/index';
+import { RideType } from '@shared/types/ride';
+import { DriverType } from '@shared/types/driver';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import SearchPopup from '../RideDetails/SearchPopup';
@@ -11,8 +12,8 @@ import CloseIcon from '@mui/icons-material/Close';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Ride;
-  allDrivers: Driver[];
+  ride: RideType;
+  allDrivers: DriverType[];
   reassign: boolean;
   buttonRef: any;
 };
@@ -26,11 +27,11 @@ const AssignDriverModal = ({
   buttonRef,
 }: AssignModalProps) => {
   const { refreshRides } = useRides();
-  const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
+  const [selectedDriver, setSelectedDriver] = useState<DriverType | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   // This function handles the backend call - same as before
-  const addDriver = (driver: Driver) => {
+  const addDriver = (driver: DriverType) => {
     axios
       .put(`/api/rides/${ride.id}`, {
         driver,
@@ -41,7 +42,7 @@ const AssignDriverModal = ({
   };
 
   // Handle driver selection from SearchPopup
-  const handleDriverSelect = (driver: Driver) => {
+  const handleDriverSelect = (driver: DriverType) => {
     setSelectedDriver(driver);
     setShowConfirmation(true);
   };
@@ -63,7 +64,7 @@ const AssignDriverModal = ({
 
   return (
     <>
-      <SearchPopup<Driver>
+      <SearchPopup<DriverType>
         open={isOpen && !showConfirmation}
         onClose={close}
         onSelect={handleDriverSelect}

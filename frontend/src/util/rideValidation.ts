@@ -1,4 +1,4 @@
-import { RideType, Status, SchedulingState } from '../types';
+import { RideType, SchedulingState, Status } from '@shared/types/ride';
 
 export type UserRole = 'admin' | 'driver' | 'rider';
 

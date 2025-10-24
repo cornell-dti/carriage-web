@@ -1,27 +1,32 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Admin, Driver, Employee } from '../types';
+import { Employee } from '../types';
+import { AdminType } from '@shared/types/admin';
+import { DriverType } from '@shared/types/driver';
 import axios from '../util/axios';
 
 type employeesState = {
-  drivers: Array<Driver>;
-  admins: Array<Admin>;
+  drivers: Array<DriverType>;
+  admins: Array<AdminType>;
   loading: boolean;
   refreshDrivers: () => Promise<void>;
   refreshAdmins: () => Promise<void>;
   // Optimistic operations for drivers
   updateDriverInfo: (
     driverId: string,
-    updates: Partial<Driver>
+    updates: Partial<DriverType>
   ) => Promise<void>;
-  createDriver: (driver: Omit<Driver, 'id'>) => Promise<void>;
+  createDriver: (driver: Omit<DriverType, 'id'>) => Promise<void>;
   deleteDriver: (driverId: string) => Promise<void>;
   // Optimistic operations for admins
-  updateAdminInfo: (adminId: string, updates: Partial<Admin>) => Promise<void>;
-  createAdmin: (admin: Omit<Admin, 'id'>) => Promise<void>;
+  updateAdminInfo: (
+    adminId: string,
+    updates: Partial<AdminType>
+  ) => Promise<void>;
+  createAdmin: (admin: Omit<AdminType, 'id'>) => Promise<void>;
   deleteAdmin: (adminId: string) => Promise<void>;
   // Helper functions
-  getDriverById: (driverId: string) => Driver | undefined;
-  getAdminById: (adminId: string) => Admin | undefined;
+  getDriverById: (driverId: string) => DriverType | undefined;
+  getAdminById: (adminId: string) => AdminType | undefined;
   // Error handling
   clearError: () => void;
   error: Error | null;
@@ -63,14 +68,14 @@ const sortByName = (
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const componentMounted = useRef(true);
-  const [drivers, setDrivers] = useState<Array<Driver>>([]);
-  const [admins, setAdmins] = useState<Array<Admin>>([]);
+  const [drivers, setDrivers] = useState<Array<DriverType>>([]);
+  const [admins, setAdmins] = useState<Array<AdminType>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const refreshDrivers = useCallback(async () => {
     try {
-      const driversData: Array<Driver> = await axios
+      const driversData: Array<DriverType> = await axios
         .get('/api/drivers')
         .then((res) => res.data)
         .then((data) => data.data);
@@ -85,7 +90,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   const refreshAdmins = useCallback(async () => {
     try {
-      const adminsData: Array<Admin> = await axios
+      const adminsData: Array<AdminType> = await axios
         .get('/api/admins')
         .then((res) => res.data)
         .then((data) => data.data);
@@ -100,7 +105,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   // Optimistic Driver Operations
   const updateDriverInfo = useCallback(
-    async (driverId: string, updates: Partial<Driver>) => {
+    async (driverId: string, updates: Partial<DriverType>) => {
       const originalDrivers = [...drivers];
       try {
         // Optimistic update
@@ -133,9 +138,9 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [drivers]
   );
 
-  const createDriver = useCallback(async (driver: Omit<Driver, 'id'>) => {
+  const createDriver = useCallback(async (driver: Omit<DriverType, 'id'>) => {
     const tempId = `temp-driver-${Date.now()}`;
-    const tempDriver: Driver = { ...driver, id: tempId };
+    const tempDriver: DriverType = { ...driver, id: tempId };
 
     try {
       // Optimistic update
@@ -186,7 +191,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   // Optimistic Admin Operations
   const updateAdminInfo = useCallback(
-    async (adminId: string, updates: Partial<Admin>) => {
+    async (adminId: string, updates: Partial<AdminType>) => {
       const originalAdmins = [...admins];
       try {
         // Optimistic update
@@ -219,9 +224,9 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [admins]
   );
 
-  const createAdmin = useCallback(async (admin: Omit<Admin, 'id'>) => {
+  const createAdmin = useCallback(async (admin: Omit<AdminType, 'id'>) => {
     const tempId = `temp-admin-${Date.now()}`;
-    const tempAdmin: Admin = { ...admin, id: tempId };
+    const tempAdmin: AdminType = { ...admin, id: tempId };
 
     try {
       // Optimistic update
@@ -270,14 +275,14 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   // Helper Functions
   const getDriverById = useCallback(
-    (driverId: string): Driver | undefined => {
+    (driverId: string): DriverType | undefined => {
       return drivers.find((driver) => driver.id === driverId);
     },
     [drivers]
   );
 
   const getAdminById = useCallback(
-    (adminId: string): Admin | undefined => {
+    (adminId: string): AdminType | undefined => {
       return admins.find((admin) => admin.id === adminId);
     },
     [admins]
