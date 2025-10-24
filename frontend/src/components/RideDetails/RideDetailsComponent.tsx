@@ -10,9 +10,9 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { RideType } from '@shared/types/ride';
-import { DriverType } from '@shared/types/driver';
-import { RiderType } from '@shared/types/rider';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import AuthContext from '../../context/auth';
 import RideOverview from './RideOverview';
 import RidePeople from './RidePeople';

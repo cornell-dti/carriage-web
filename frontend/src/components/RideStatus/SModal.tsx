@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import Tag from '../Tag/Tag';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
 import { trash, x } from '../../icons/other/index';

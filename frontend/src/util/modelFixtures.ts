@@ -1,7 +1,7 @@
-import { DriverType } from '@shared/types/driver';
-import { LocationType, Tag } from '@shared/types/location';
-import { RideType, SchedulingState, Status, Type } from '@shared/types/ride';
-import { RiderType } from '@shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
+import { RideType, SchedulingState, Status, Type } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { v4 as uuid } from 'uuid';
 
 // Type aliases for better readability

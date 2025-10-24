@@ -1,4 +1,4 @@
-import { DayOfWeek } from '@shared/types/driver';
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 
 export type Employee = {
   id: string;

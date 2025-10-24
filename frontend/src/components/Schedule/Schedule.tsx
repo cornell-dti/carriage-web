@@ -14,8 +14,8 @@ import {
 } from 'react-big-calendar';
 import cn from 'classnames';
 import moment from 'moment';
-import { RideType } from '@shared/types/ride';
-import { DriverType } from '@shared/types/driver';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import { useDate } from '../../context/date';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './big_calendar_override.css';

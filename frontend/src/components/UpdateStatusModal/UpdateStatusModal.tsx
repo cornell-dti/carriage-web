@@ -11,7 +11,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-import { Status } from '@shared/types/ride';
+import { Status } from '@carriage-web/shared/types/ride';
 
 interface UpdateStatusModalProps {
   open: boolean;

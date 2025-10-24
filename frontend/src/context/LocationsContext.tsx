@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { AdminType } from '@shared/types/admin';
-import { LocationType } from '@shared/types/location';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { LocationType } from '@carriage-web/shared/types/location';
 import axios from '../util/axios';
 
 type locationsState = {

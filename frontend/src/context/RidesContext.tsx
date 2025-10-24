@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { RideType, SchedulingState, Status } from '@shared/types/ride';
-import { RiderType } from '@shared/types/rider';
+import { RideType, SchedulingState, Status } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';

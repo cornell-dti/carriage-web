@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import UserStatistics from './UserStatistics';
 import UserActions from './UserActions';
@@ -15,8 +15,8 @@ import {
 } from '../../../icons/userInfo/index';
 import { RideTable } from '../../RideDetails';
 import styles from './userDetail.module.css';
-import { DriverType } from '@shared/types/driver';
-import { AdminType } from '@shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { AdminType } from '@carriage-web/shared/types/admin';
 import axios from '../../../util/axios';
 
 type EmployeeDetailProps = {

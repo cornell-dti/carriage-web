@@ -1,7 +1,7 @@
 import { createContext } from 'react';
-import { AdminType } from '@shared/types/admin';
-import { RiderType } from '@shared/types/rider';
-import { DriverType } from '@shared/types/driver';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 export type ValidUser = AdminType | RiderType | DriverType;
 

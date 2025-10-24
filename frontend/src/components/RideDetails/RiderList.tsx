@@ -12,7 +12,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import { RiderType } from '@shared/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import styles from './RiderList.module.css';
 
 interface RiderListProps {

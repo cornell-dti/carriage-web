@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Typography, Chip, Card, CardContent } from '@mui/material';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import EventRepeatIcon from '@mui/icons-material/EventRepeat';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 interface RecurrenceDisplayProps {
   ride: RideType;

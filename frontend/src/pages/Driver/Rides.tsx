@@ -22,7 +22,7 @@ import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
-import { RideType, Status } from '@shared/types/ride';
+import { RideType, Status } from '@carriage-web/shared/types/ride';
 import axios from '../../util/axios';
 import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';

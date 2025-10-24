@@ -15,7 +15,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import CloseIcon from '@mui/icons-material/Close';
-import { Status, SchedulingState } from '@shared/types/ride';
+import { Status, SchedulingState } from '@carriage-web/shared/types/ride';
 import { StatisticsFilters } from './hooks/useUserStatistics';
 
 interface StatisticsFilterProps {

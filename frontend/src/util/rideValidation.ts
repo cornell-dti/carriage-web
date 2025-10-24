@@ -1,4 +1,4 @@
-import { RideType, SchedulingState, Status } from '@shared/types/ride';
+import { RideType, SchedulingState, Status } from '@carriage-web/shared/types/ride';
 
 export type UserRole = 'admin' | 'driver' | 'rider';
 

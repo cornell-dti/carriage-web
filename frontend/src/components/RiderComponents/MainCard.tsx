@@ -7,7 +7,7 @@ import {
   setSeconds,
   subDays,
 } from 'date-fns';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';

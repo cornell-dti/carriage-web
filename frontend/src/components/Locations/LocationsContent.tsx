@@ -5,7 +5,7 @@ import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
-import { LocationType } from '@shared/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface LocationsContentProps {
   locations: LocationType[];

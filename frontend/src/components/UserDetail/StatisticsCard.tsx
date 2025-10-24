@@ -13,8 +13,8 @@ import useUserStatistics, {
 } from './hooks/useUserStatistics';
 import StatisticsFilter from './StatisticsFilter';
 import { Employee } from '../../types/index';
-import { RiderType } from '@shared/types/rider';
-import { RideType } from '@shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './UserDetailCards.module.css';
 
 interface StatisticsCardProps {

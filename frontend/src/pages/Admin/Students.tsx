@@ -7,7 +7,7 @@ import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
-import { RiderType, Accessibility } from '@shared/types/rider';
+import { RiderType, Accessibility } from '@carriage-web/shared/types/rider';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
 

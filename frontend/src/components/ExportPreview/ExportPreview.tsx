@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import ScheduledTable from '../UserTables/ScheduledTable';
-import { DriverType } from '@shared/types/driver';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import styles from './exportPreview.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../ExportButton/ExportButton';

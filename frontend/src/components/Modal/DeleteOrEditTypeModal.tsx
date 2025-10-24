@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
 import styles from './modal.module.css';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 

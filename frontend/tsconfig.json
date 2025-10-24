@@ -9,9 +9,6 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@shared/*": ["../../shared/*"]
-    }
   },
   "include": ["src"]
 }

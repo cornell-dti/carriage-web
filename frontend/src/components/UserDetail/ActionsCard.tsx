@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Employee } from '../../types/index';
-import { RiderType } from '@shared/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import RiderModal from '../Modal/RiderModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';

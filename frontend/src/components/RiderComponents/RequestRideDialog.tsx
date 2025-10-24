@@ -27,8 +27,8 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { RideType } from '@shared/types/ride';
-import { LocationType } from '@shared/types/location';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { LocationType } from '@carriage-web/shared/types/location';
 import axios from '../../util/axios';
 import { useLocations } from '../../context/LocationsContext';
 

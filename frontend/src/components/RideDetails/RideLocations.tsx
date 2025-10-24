@@ -15,8 +15,8 @@ import {
   useMap,
   MapMouseEvent,
 } from '@vis.gl/react-google-maps';
-import { RideType } from '@shared/types/ride';
-import { LocationType, Tag } from '@shared/types/location';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
 import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';

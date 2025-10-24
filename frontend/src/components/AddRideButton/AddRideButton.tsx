@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../FormElements/FormElements';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import { createEmptyRide } from '../../util/modelFixtures';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { useRides } from '../../context/RidesContext';
 
 const AddRideButton: React.FC = () => {

@@ -11,7 +11,7 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import { OpenInFull } from '@mui/icons-material';
 import styles from './locations.module.css';
-import { LocationType } from '@shared/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface LocationMapProps {
   locations: LocationType[];

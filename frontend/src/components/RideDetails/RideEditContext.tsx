@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import { RideType, SchedulingState } from '@shared/types/ride';
+import { RideType, SchedulingState } from '@carriage-web/shared/types/ride';
 import axios from '../../util/axios';
 import { canEditRide, UserRole } from '../../util/rideValidation';
 import {

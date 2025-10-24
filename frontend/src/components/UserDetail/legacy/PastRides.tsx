@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Table } from '../../TableComponents/TableComponents';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './userDetail.module.css';
 
 type PastRideProps = {

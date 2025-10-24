@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { RideType, Type, SchedulingState } from '@shared/types/ride';
+import { RideType, Type, SchedulingState } from '@carriage-web/shared/types/ride';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';

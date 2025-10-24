@@ -31,9 +31,9 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
-import { RideType, Status, SchedulingState, Type } from '@shared/types/ride';
-import { DriverType } from '@shared/types/driver';
-import { RiderType } from '@shared/types/rider';
+import { RideType, Status, SchedulingState, Type } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';

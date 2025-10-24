@@ -2,9 +2,9 @@ import React from 'react';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Avatar, Typography, Chip, Box } from '@mui/material';
-import { DriverType } from '@shared/types/driver';
-import { RiderType } from '@shared/types/rider';
-import { LocationType } from '@shared/types/location';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 export enum SearchableType {
   DRIVER = 'driver',

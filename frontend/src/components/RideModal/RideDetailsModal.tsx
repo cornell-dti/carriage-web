@@ -12,7 +12,7 @@ import {
   Divider,
   Grid,
 } from '@mui/material';
-import { RideType, SchedulingState } from '@shared/types/ride';
+import { RideType, SchedulingState } from '@carriage-web/shared/types/ride';
 import { format_date } from '../../util/index';
 
 type RideDetailsModalProps = {

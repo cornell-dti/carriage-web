@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { Employee } from '../types';
-import { AdminType } from '@shared/types/admin';
-import { DriverType } from '@shared/types/driver';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import axios from '../util/axios';
 
 type employeesState = {

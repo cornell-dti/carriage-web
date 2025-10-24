@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Employee } from '../../../types/index';
-import { RiderType } from '@shared/types/rider';
-import { RideType } from '@shared/types/ride';
-import { DriverType } from '@shared/types/driver';
-import { AdminType } from '@shared/types/admin';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { AdminType } from '@carriage-web/shared/types/admin';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';

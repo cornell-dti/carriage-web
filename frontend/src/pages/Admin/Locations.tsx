@@ -5,7 +5,7 @@ import Notification from '../../components/Notification/Notification';
 import LocationsContent from 'components/Locations/LocationsContent';
 import styles from './page.module.css';
 import { LocationFormModal } from 'components/Locations/LocationFormModal';
-import { LocationType } from '@shared/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 import { useLocations } from 'context/LocationsContext';
 import axios from '../../util/axios';
 import { LocationImage } from 'components/Locations/LocationImagesUpload';

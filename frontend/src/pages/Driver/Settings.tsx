@@ -7,7 +7,7 @@ import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
 import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
-import { DriverType } from '@shared/types/driver';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);

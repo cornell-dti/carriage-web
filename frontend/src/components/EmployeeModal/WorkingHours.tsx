@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { DayOfWeek } from '@shared/types/driver';
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 import styles from './employeemodal.module.css';
 
 type WorkingHoursProps = {

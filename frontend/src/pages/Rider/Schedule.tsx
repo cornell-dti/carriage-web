@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
@@ -11,7 +11,7 @@ import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { DriverType, DayOfWeek } from '@shared/types/driver';
+import { DriverType, DayOfWeek } from '@carriage-web/shared/types/driver';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';

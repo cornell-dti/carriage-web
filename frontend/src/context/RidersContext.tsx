@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { RiderType } from '@shared/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import axios from '../util/axios';
 
 type ridersState = {

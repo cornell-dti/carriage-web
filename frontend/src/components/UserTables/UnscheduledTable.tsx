@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RideType } from '@shared/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import RidesTable from './RidesTable';
 import { useRides } from '../../context/RidesContext';
 
