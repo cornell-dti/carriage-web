@@ -19,9 +19,37 @@ export enum Status {
   CANCELLED = 'cancelled',
 }
 
+export enum Type {
+  UPCOMING = 'upcoming',
+  PAST = 'past',
+  ACTIVE = 'active',
+}
+
 export type RecurrenceData = {
   id: string;
   breaksRecurrence: boolean;
+};
+
+export type RideType = {
+  id: string;
+  type: Type;
+  status: Status;
+  schedulingState: SchedulingState;
+  startLocation: LocationType;
+  endLocation: LocationType;
+  startTime: string;
+  endTime: string;
+  riders: RiderType[];
+  driver?: DriverType;
+
+  // RFC 5545 Recurrence fields (placeholders - no functionality yet)
+  isRecurring: boolean;
+  rrule?: string; // RFC 5545 recurrence rule
+  exdate?: string[]; // Excluded dates (ISO 8601 format)
+  rdate?: string[]; // Additional dates (ISO 8601 format)
+  parentRideId?: string; // Reference to parent ride for series
+  recurrenceId?: string; // Original start time for overrides
+  timezone?: string; // Timezone for recurrence calculations
 };
 
 /* TODO: Create new type `RideType2` that contains
