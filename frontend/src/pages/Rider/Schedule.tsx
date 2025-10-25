@@ -15,6 +15,7 @@ import buttonStyles from '../../components/ResponsiveRideCard.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type DayRideCollection = [string, Ride[]][];
 
@@ -63,6 +64,7 @@ const partitionRides = (rides: Ride[]): DayRideCollection => {
 
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
+  const { showToast } = useToast();
   const { locations } = useLocations();
   const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -151,17 +153,18 @@ const Schedule: React.FC = () => {
 
     // For now, block any recurring rides
     if (formData.repeatType !== 'none') {
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride.'
+      showToast(
+        'Recurring rides are not yet supported. Please create a single ride.',
+        ToastStatus.ERROR
       );
-      return;
+      return false;
     }
 
     try {
       // Build ISO datetimes
       if (!formData.date || !formData.time) {
-        alert('Please select both date and time.');
-        return;
+        showToast('Please select both date and time.', ToastStatus.ERROR);
+        return false;
       }
 
       const dateStr = formData.date.toISOString().split('T')[0];
@@ -187,9 +190,12 @@ const Schedule: React.FC = () => {
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       console.error('Failed to create ride:', error);
-      alert('Failed to create ride. Please try again.');
+      const msg = error?.response?.data?.err || 'Please try again.';
+      showToast('Failed to create ride: ' + msg, ToastStatus.ERROR);
+      return false;
     }
   };
 

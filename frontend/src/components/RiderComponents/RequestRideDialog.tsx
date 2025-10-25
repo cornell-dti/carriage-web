@@ -50,7 +50,7 @@ type SelectionState = 'pickup' | 'dropoff' | 'complete';
 interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData) => Promise<boolean | void> | boolean | void;
   supportedLocations: Location[];
   ride?: Ride;
 }
