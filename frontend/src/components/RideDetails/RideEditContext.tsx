@@ -16,6 +16,7 @@ import {
 } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import { useRides } from '../../context/RidesContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 interface RideEditContextType {
   isEditing: boolean;
@@ -50,6 +51,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
   initialEditingState = false,
 }) => {
   const { updateRideInfo } = useRides();
+  const { showToast } = useToast();
 
   // For new rides, automatically start in editing mode
   const shouldStartEditing = initialEditingState || isNewRide(ride);
@@ -161,6 +163,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
+        const firstErr =
+          timeValidation.errors[0]?.message || 'Invalid time values';
+        showToast(firstErr, ToastStatus.ERROR);
         return false;
       }
     }
@@ -175,6 +180,10 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         !editedRide.endTime
       ) {
         console.error('Missing required fields for new ride');
+        showToast(
+          'Please select pickup, dropoff, start time, and end time.',
+          ToastStatus.ERROR
+        );
         return false;
       }
 
@@ -202,8 +211,13 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
         stopEditing();
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to create new ride:', error);
+        const msg =
+          error?.response?.data?.message ||
+          error?.response?.data?.err ||
+          'Failed to create ride.';
+        showToast(msg, ToastStatus.ERROR);
         return false;
       }
     } else {
@@ -253,8 +267,13 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
         stopEditing();
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to save ride changes:', error);
+        const msg =
+          error?.response?.data?.message ||
+          error?.response?.data?.err ||
+          'Failed to save changes.';
+        showToast(msg, ToastStatus.ERROR);
         return false;
       }
     }
@@ -266,6 +285,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     onRideUpdated,
     stopEditing,
     updateRideInfo,
+    showToast,
   ]);
 
   const contextValue: RideEditContextType = {

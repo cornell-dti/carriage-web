@@ -23,7 +23,7 @@ module.exports = {
     ecmaVersion: 6,
     sourceType: 'module',
   },
-  plugins: ['promise', '@typescript-eslint', 'import', 'react', 'react-hooks'],
+  plugins: ['promise', '@typescript-eslint', 'import', 'react', 'react-hooks', 'jest'],
   rules: {
     'import/extensions': [
       'error',
