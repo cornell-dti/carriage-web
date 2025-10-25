@@ -48,7 +48,7 @@ type SelectionState = 'pickup' | 'dropoff' | 'complete';
 interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData) => Promise<boolean | void> | boolean | void;
   supportedLocations: Location[];
   ride?: Ride;
 }
@@ -241,8 +241,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   const handleSubmit = async () => {
-    onSubmit(formData);
-    onClose();
+    try {
+      const result = await onSubmit(formData);
+      if (result !== false) {
+        onClose();
+      }
+    } catch (e) {
+      // Keep dialog open on errors thrown by onSubmit
+    }
   };
 
   const isFormValid = () => {

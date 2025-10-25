@@ -15,6 +15,7 @@ import { Driver, DayOfWeek } from 'types';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -33,6 +34,7 @@ interface FavoriteRide {
 
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
+  const { showToast } = useToast();
   const { locations } = useLocations();
   const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } =
     useRides();
@@ -113,17 +115,18 @@ const Schedule: React.FC = () => {
 
     // For now, block any recurring rides
     if (formData.repeatType !== 'none') {
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride.'
+      showToast(
+        'Recurring rides are not yet supported. Please create a single ride.',
+        ToastStatus.ERROR
       );
-      return;
+      return false;
     }
 
     try {
       // Build ISO datetimes
       if (!formData.date || !formData.time) {
-        alert('Please select both date and time.');
-        return;
+        showToast('Please select both date and time.', ToastStatus.ERROR);
+        return false;
       }
 
       const dateStr = formData.date.toISOString().split('T')[0];
@@ -149,9 +152,12 @@ const Schedule: React.FC = () => {
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       console.error('Failed to create ride:', error);
-      alert('Failed to create ride. Please try again.');
+      const msg = error?.response?.data?.err || 'Please try again.';
+      showToast('Failed to create ride: ' + msg, ToastStatus.ERROR);
+      return false;
     }
   };
 
