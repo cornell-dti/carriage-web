@@ -27,15 +27,16 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { Ride, Location } from 'types';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { LocationType } from '@carriage-web/shared/types/location';
 import axios from '../../util/axios';
 import { useLocations } from '../../context/LocationsContext';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
 export interface FormData {
-  pickupLocation: Location | null;
-  dropoffLocation: Location | null;
+  pickupLocation: LocationType | null;
+  dropoffLocation: LocationType | null;
   date: Date | null;
   time: Date | null;
   repeatType: RepeatOption;
@@ -49,8 +50,8 @@ interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: FormData) => void;
-  supportedLocations: Location[];
-  ride?: Ride;
+  supportedLocations: LocationType[];
+  ride?: RideType;
 }
 
 const repeatOptions: Array<{ value: RepeatOption; label: string }> = [
@@ -105,7 +106,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   // New state for the selection flow
   const [selectionState, setSelectionState] =
     useState<SelectionState>('pickup');
-  const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
+  const [pendingLocation, setPendingLocation] = useState<LocationType | null>(
+    null
+  );
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -142,7 +145,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   }, [open, ride]);
 
   // New handlers for map-based selection
-  const handleLocationSelect = (location: Location | null) => {
+  const handleLocationSelect = (location: LocationType | null) => {
     if (location) {
       setPendingLocation(location);
       setConfirmDialogOpen(true);
@@ -192,7 +195,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       // Show only selected locations
       return [formData.pickupLocation, formData.dropoffLocation].filter(
         Boolean
-      ) as Location[];
+      ) as LocationType[];
     }
   };
 

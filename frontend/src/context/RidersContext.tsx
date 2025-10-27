@@ -1,18 +1,21 @@
 import React, { useCallback, useState, useRef } from 'react';
-import { Rider } from '../types';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import axios from '../util/axios';
 
 type ridersState = {
-  riders: Array<Rider>;
+  riders: Array<RiderType>;
   refreshRiders: () => Promise<void>;
   loading: boolean;
   isOptimistic: boolean;
   pendingOperations: any[];
   updateRiderActive: (riderId: string, active: boolean) => Promise<void>;
-  updateRiderInfo: (riderId: string, updates: Partial<Rider>) => Promise<void>;
-  createRider: (rider: Omit<Rider, 'id'>) => Promise<void>;
+  updateRiderInfo: (
+    riderId: string,
+    updates: Partial<RiderType>
+  ) => Promise<void>;
+  createRider: (rider: Omit<RiderType, 'id'>) => Promise<void>;
   deleteRider: (riderId: string) => Promise<void>;
-  getRiderById: (riderId: string) => Rider | undefined;
+  getRiderById: (riderId: string) => RiderType | undefined;
   clearError: () => void;
   error: Error | null;
 };
@@ -40,19 +43,19 @@ type RidersProviderProps = {
 
 export const RidersProvider = ({ children }: RidersProviderProps) => {
   const componentMounted = useRef(true);
-  const [riders, setRiders] = useState<Array<Rider>>([]);
+  const [riders, setRiders] = useState<Array<RiderType>>([]);
   const [loading, setLoading] = useState(true);
 
   const refreshRiders = useCallback(async () => {
     setLoading(true);
     try {
-      const ridersData: Array<Rider> = await axios
+      const ridersData: Array<RiderType> = await axios
         .get('/api/riders')
         .then((res) => res.data)
         .then((data) => data.data);
 
       if (ridersData && componentMounted.current) {
-        ridersData.sort((a: Rider, b: Rider) => {
+        ridersData.sort((a: RiderType, b: RiderType) => {
           const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
           const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
           return aFull < bFull ? -1 : 1;
@@ -91,7 +94,7 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
   );
 
   const updateRiderInfo = useCallback(
-    async (riderId: string, updates: Partial<Rider>) => {
+    async (riderId: string, updates: Partial<RiderType>) => {
       const originalRiders = [...riders];
       try {
         // Optimistic update
@@ -121,9 +124,9 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
     [riders]
   );
 
-  const createRider = useCallback(async (rider: Omit<Rider, 'id'>) => {
+  const createRider = useCallback(async (rider: Omit<RiderType, 'id'>) => {
     const tempId = `temp-${Date.now()}`;
-    const tempRider: Rider = { ...rider, id: tempId };
+    const tempRider: RiderType = { ...rider, id: tempId };
 
     try {
       // Optimistic update
@@ -167,7 +170,7 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
   );
 
   const getRiderById = useCallback(
-    (riderId: string): Rider | undefined => {
+    (riderId: string): RiderType | undefined => {
       return riders.find((rider) => rider.id === riderId);
     },
     [riders]

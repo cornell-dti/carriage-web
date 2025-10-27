@@ -1,20 +1,10 @@
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
+import { RideType, SchedulingState, Status, Type } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { v4 as uuid } from 'uuid';
-import {
-  Ride,
-  Driver,
-  Rider,
-  Location,
-  Status,
-  SchedulingState,
-  Type,
-  Tag,
-} from '../types';
 
 // Type aliases for better readability
-type RideType = Ride;
-type DriverType = Driver;
-type RiderType = Rider;
-type LocationType = Location;
 
 /**
  * Model Fixtures - Default object creators for all data models

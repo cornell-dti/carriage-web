@@ -25,20 +25,15 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import RepeatIcon from '@mui/icons-material/Repeat';
-import {
-  RideType,
-  Status,
-  SchedulingState,
-  Type,
-  Driver,
-  Rider,
-} from '../../types';
 import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
+import { RideType, Status, SchedulingState, Type } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -118,12 +113,12 @@ const getTemporalTypeColor = (
 
 // Person card component for the overview
 const PersonCardOverview: React.FC<{
-  person: Driver | Rider;
+  person: DriverType | RiderType;
   type: 'driver' | 'rider';
   showAccessibility?: boolean;
 }> = ({ person, type, showAccessibility = false }) => {
   const isRider = type === 'rider';
-  const rider = isRider ? (person as Rider) : undefined;
+  const rider = isRider ? (person as RiderType) : undefined;
 
   return (
     <div className={styles.personCard}>

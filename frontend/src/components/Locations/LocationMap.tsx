@@ -11,13 +11,13 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import { OpenInFull } from '@mui/icons-material';
 import styles from './locations.module.css';
-import { Location } from 'types';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface LocationMapProps {
-  locations: Location[];
-  selectedLocation: Location | null;
-  onLocationSelect: (location: Location | null) => void;
-  onViewDetails: (location: Location) => void;
+  locations: LocationType[];
+  selectedLocation: LocationType | null;
+  onLocationSelect: (location: LocationType | null) => void;
+  onViewDetails: (location: LocationType) => void;
 }
 
 /* -------------------------------------------------------------------------- */

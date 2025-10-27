@@ -1,8 +1,10 @@
 import React from 'react';
-import { Driver, Rider, Location } from '../types';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Avatar, Typography, Chip, Box } from '@mui/material';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 export enum SearchableType {
   DRIVER = 'driver',
@@ -30,7 +32,7 @@ export interface SearchConfig<T> {
   getItemLabel: (item: T) => string;
 }
 
-const driverSearchConfig: SearchConfig<Driver> = {
+const driverSearchConfig: SearchConfig<DriverType> = {
   searchFields: [
     { key: 'firstName', weight: 1 },
     { key: 'lastName', weight: 1 },
@@ -67,7 +69,7 @@ const driverSearchConfig: SearchConfig<Driver> = {
   getItemLabel: (driver) => `${driver.firstName} ${driver.lastName}`,
 };
 
-const riderSearchConfig: SearchConfig<Rider> = {
+const riderSearchConfig: SearchConfig<RiderType> = {
   searchFields: [
     { key: 'firstName', weight: 1 },
     { key: 'lastName', weight: 1 },
@@ -116,7 +118,7 @@ const riderSearchConfig: SearchConfig<Rider> = {
   getItemLabel: (rider) => `${rider.firstName} ${rider.lastName}`,
 };
 
-const locationSearchConfig: SearchConfig<Location> = {
+const locationSearchConfig: SearchConfig<LocationType> = {
   searchFields: [
     { key: 'name', weight: 1 },
     { key: 'shortName', weight: 0.9 },

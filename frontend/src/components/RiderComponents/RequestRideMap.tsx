@@ -12,11 +12,11 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './requestridedialog.module.css';
 // Removed unused imports
-import { Location } from '../../types';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface RequestRideMapProps {
-  pickupLocation: Location | null;
-  dropoffLocation: Location | null;
+  pickupLocation: LocationType | null;
+  dropoffLocation: LocationType | null;
   dropoffOptions?: Array<{
     id?: string;
     lat: number;
@@ -24,9 +24,9 @@ interface RequestRideMapProps {
     name: string;
     address: string;
   }>;
-  availableLocations?: Location[];
-  onPickupSelect: (location: Location | null) => void;
-  onDropoffSelect: (location: Location | null) => void;
+  availableLocations?: LocationType[];
+  onPickupSelect: (location: LocationType | null) => void;
+  onDropoffSelect: (location: LocationType | null) => void;
 }
 
 const RequestRideMap: React.FC<RequestRideMapProps> = ({
@@ -41,7 +41,9 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markers = useRef<Record<string, Marker>>({});
-  const [markerWithPopup, setMarkerWithPopup] = useState<Location | null>(null);
+  const [markerWithPopup, setMarkerWithPopup] = useState<LocationType | null>(
+    null
+  );
 
   // Accept only real, finite numbers
   const isValidCoord = (v: unknown): v is number =>
@@ -143,7 +145,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     }
   };
 
-  const handleMarkerClick = (location: Location) => {
+  const handleMarkerClick = (location: LocationType) => {
     if (markerWithPopup?.address === location.address) {
       setMarkerWithPopup(null);
     } else {

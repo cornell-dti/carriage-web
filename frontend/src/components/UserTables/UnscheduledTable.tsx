@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Ride } from '../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 import RidesTable from './RidesTable';
 import { useRides } from '../../context/RidesContext';
 
 const Table = () => {
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [rides, setRides] = useState<RideType[]>([]);
   const { unscheduledRides } = useRides();
 
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;

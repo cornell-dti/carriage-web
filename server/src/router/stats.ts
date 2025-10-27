@@ -4,10 +4,11 @@ import { Condition } from 'dynamoose/dist/Condition';
 import * as csv from '@fast-csv/format';
 import { ObjectType } from 'dynamoose/dist/General';
 import { Stats, StatsType } from '../models/stats';
-import { Ride, RideType, Status } from '../models/ride';
+import { Ride } from '../models/ride';
 import * as db from './common';
 import { validateUser } from '../util';
 import { Driver } from '../models/driver';
+import { RideType, Status } from '@carriage-web/shared/types/ride';
 
 const router = express.Router();
 

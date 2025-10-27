@@ -1,32 +1,4 @@
-import { RiderType } from '../../../server/src/models/rider';
-import { DriverType } from '../../../server/src/models/driver';
-import { RideType } from '../../../server/src/models/ride';
-import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
-import { VehicleType } from '../../../server/src/models/vehicle';
-
-export type Rider = RiderType;
-
-export enum Accessibility {
-  ASSISTANT = 'Assistant',
-  CRUTCHES = 'Crutches',
-  WHEELCHAIR = 'Wheelchair',
-  MOTOR_SCOOTER = 'Motorized Scooter',
-  KNEE_SCOOTER = 'Knee Scooter',
-  LOW_VISION = 'Low Vision/Blind',
-  SERVICE_ANIMALS = 'Service Animal',
-}
-
-export enum DayOfWeek {
-  MONDAY = 'MON',
-  TUESDAY = 'TUE',
-  WEDNESDAY = 'WED',
-  THURSDAY = 'THURS',
-  FRIDAY = 'FRI',
-}
-export type Driver = DriverType;
-
-export type Admin = AdminType;
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 
 export type Employee = {
   id: string;
@@ -51,45 +23,6 @@ export type ObjectType = {
   [x: string]: any;
 };
 
-export type Vehicle = VehicleType;
-
-export enum Tag {
-  EAST = 'east',
-  CENTRAL = 'central',
-  NORTH = 'north',
-  WEST = 'west',
-  CTOWN = 'ctown',
-  DTOWN = 'dtown',
-  INACTIVE = 'inactive',
-  CUSTOM = 'custom',
-}
-
-export type Location = LocationType;
-
-export type Ride = RideType;
-
-export enum Type {
-  UPCOMING = 'upcoming',
-  PAST = 'past',
-  ACTIVE = 'active',
-}
-
-export enum Status {
-  NOT_STARTED = 'not_started',
-  ON_THE_WAY = 'on_the_way',
-  ARRIVED = 'arrived',
-  PICKED_UP = 'picked_up',
-  COMPLETED = 'completed',
-  NO_SHOW = 'no_show',
-  CANCELLED = 'cancelled',
-}
-
-// Scheduling state - separate from operational status
-export enum SchedulingState {
-  SCHEDULED = 'scheduled',
-  UNSCHEDULED = 'unscheduled',
-}
-
 export type TableData = {
   year: string;
   monthDay: string;
@@ -110,5 +43,3 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type { DriverType, AdminType, RideType };

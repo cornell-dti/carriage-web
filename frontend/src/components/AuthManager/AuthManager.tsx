@@ -16,7 +16,9 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
 import DriverRoutes from '../../pages/Driver/Routes';
-import { Admin, Rider, DriverType as Driver } from '../../types/index';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
@@ -41,7 +43,7 @@ export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
   const [id, setId] = useState(localStorage.getItem('userId') || '');
-  const [user, setUser] = useState<Rider | Admin | Driver>(
+  const [user, setUser] = useState<RiderType | AdminType | DriverType>(
     JSON.parse(localStorage.getItem('user') || '{}')
   );
   const [refreshUser, setRefreshUser] = useState(() =>

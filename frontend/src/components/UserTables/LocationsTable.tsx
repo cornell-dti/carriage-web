@@ -1,15 +1,15 @@
 import React from 'react';
-import { Location } from '../../types';
+import { LocationType } from '@carriage-web/shared/types/location';
 import LocationModal from '../LocationModal/LocationModal';
 import { Row, Table } from '../TableComponents/TableComponents';
 
 interface LocationsTableProps {
-  locations: Location[];
-  setLocations: (locations: Location[]) => void;
+  locations: LocationType[];
+  setLocations: (locations: LocationType[]) => void;
 }
 
 const LocationsTable = ({ locations, setLocations }: LocationsTableProps) => {
-  const handleEditLocation = (editedLocation: Location) => {
+  const handleEditLocation = (editedLocation: LocationType) => {
     setLocations(
       locations.map((location) => {
         if (location.id === editedLocation.id) {

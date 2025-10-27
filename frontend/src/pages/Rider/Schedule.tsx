@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
@@ -11,7 +11,7 @@ import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { Driver, DayOfWeek } from 'types';
+import { DriverType, DayOfWeek } from '@carriage-web/shared/types/driver';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
@@ -39,7 +39,7 @@ const Schedule: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
   const [loadingFavorites, setLoadingFavorites] = useState(false);
-  const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
+  const [allRiderRides, setAllRiderRides] = useState<RideType[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
   const fetchFavorites = async () => {
@@ -50,7 +50,7 @@ const Schedule: React.FC = () => {
       const favorites = response.data.data || [];
       // Convert rides to FavoriteRide format
       const formattedFavorites: FavoriteRide[] = favorites.map(
-        (ride: Ride) => ({
+        (ride: RideType) => ({
           id: ride.id,
           name: `Ride to ${ride.endLocation}`,
           startLocation: {

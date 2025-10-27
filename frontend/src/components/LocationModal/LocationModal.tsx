@@ -2,16 +2,17 @@ import { parseAddress } from 'addresser';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Location, ObjectType, Tag } from '../../types/index';
+import { ObjectType } from '../../types/index';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';
 import axios from '../../util/axios';
 
 type LocationModalProps = {
-  existingLocation?: Location;
-  onAddLocation?: (newLocation: Location) => void;
-  onEditLocation?: (editedLocation: Location) => void;
+  existingLocation?: LocationType;
+  onAddLocation?: (newLocation: LocationType) => void;
+  onEditLocation?: (editedLocation: LocationType) => void;
 };
 
 type FormData = {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { Ride, Type, SchedulingState } from '../../types/index';
+import { RideType, Type, SchedulingState } from '@carriage-web/shared/types/ride';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
@@ -9,13 +9,13 @@ import RequestRideModal from '../RequestRideModal/RequestRideModal';
 import RideDetailsModal from '../RideModal/RideDetailsModal';
 
 type RiderRidesTableProps = {
-  rides: Ride[];
+  rides: RideType[];
   isPast: boolean;
 };
 
 const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const colSizes = [1, 1, 1, 1, 1, 1];
 
