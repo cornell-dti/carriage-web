@@ -12,17 +12,30 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styles from '../Modal/modal.module.css';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const theme = createTheme();
 
-export default function BasicModal() {
-  const [open, setOpen] = React.useState(false);
+type StatsModalProps = {
+  initStartDate: string;
+  initEndDate: string;
+};
+
+const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { drivers } = useEmployees();
+  const [startDate, setStartDate] = useState(initStartDate);
+  const [endDate, setEndDate] = useState(initEndDate);
   const today = moment();
-  const [startDate, setStartDate] = React.useState(today.format('YYYY-MM-DD'));
-  const [endDate, setEndDate] = React.useState(today.format('YYYY-MM-DD'));
+  useEffect(() => {
+    if (open) {
+      setStartDate(initStartDate);
+      setEndDate(initEndDate);
+    }
+  }, [initStartDate, initEndDate, open]);
 
   //Creates csv column string
   const generateCols = () => {
@@ -78,24 +91,26 @@ export default function BasicModal() {
                 <div style={{ marginBottom: '1rem', marginTop: '1.5rem' }}>
                   <DatePicker
                     label="Start Date"
-                    value={dayjs(startDate)}
+                    defaultValue={dayjs(initStartDate)}
                     onChange={(newValue) => {
                       if (newValue) {
                         setStartDate(newValue.format('YYYY-MM-DD'));
                       }
                     }}
+                    maxDate={dayjs(today.format('YYYY-MM-DD'))} //data validation
                   />
                 </div>
                 <div style={{ marginBottom: '2rem' }}>
                   <DatePicker
                     label="End Date"
-                    value={dayjs(endDate)}
+                    defaultValue={dayjs(initEndDate)}
                     onChange={(newValue) => {
                       if (newValue) {
                         setEndDate(newValue.format('YYYY-MM-DD'));
                       }
                     }}
                     minDate={dayjs(startDate)} //data validation
+                    maxDate={dayjs(today.format('YYYY-MM-DD'))}
                   />
                 </div>
               </LocalizationProvider>
@@ -123,4 +138,6 @@ export default function BasicModal() {
       </div>
     </ThemeProvider>
   );
-}
+};
+
+export default StatsModal;
