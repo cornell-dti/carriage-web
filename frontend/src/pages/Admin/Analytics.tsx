@@ -34,7 +34,7 @@ const Analytics = () => {
 
   const renderRight = () => (
     <>
-      <StatsModal></StatsModal>
+      <StatsModal initStartDate={startDate} initEndDate={endDate}></StatsModal>
       <Notification />
     </>
   );
