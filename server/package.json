@@ -1,5 +1,5 @@
 {
-  "name": "carriage-web-backend",
+  "name": "@carriage-web/server",
   "version": "1.0.0",
   "description": "Frontend code for Carriage",
   "main": "app.js",
@@ -7,6 +7,7 @@
     "@aws-sdk/client-dynamodb": "^3.656.0",
     "@aws-sdk/client-s3": "^3.654.0",
     "@aws-sdk/client-sns": "^3.654.0",
+    "@carriage-web/shared": "*",
     "@fast-csv/format": "^5.0.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",

@@ -1,5 +1,5 @@
 {
-  "name": "carriage-web",
+  "name": "@carriage-web/shared",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,6 +7,11 @@
     "@typescript-eslint/parser": "^5.62.0",
     "typescript": "^4.9.5"
   },
+  "workspaces": [
+    "server",
+    "frontend",
+    "shared"
+  ],
   "devDependencies": {
     "@babel/core": "^7.22.20",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -27,7 +32,6 @@
     "build:server": "cd server && npm run build",
     "install:frontend": "cd frontend && npm install",
     "install:server": "cd server && npm install",
-    "postinstall": "npm run install:frontend && npm run install:server",
     "quiet-lint": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix --quiet",
     "lint": "npx eslint . --ignore-path .eslintignore --ext .js,.jsx,.ts,.tsx --fix",
     "format": "npx prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
