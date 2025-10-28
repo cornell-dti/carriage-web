@@ -1,5 +1,3 @@
-import React, { useState, useRef } from 'react';
-import { CSVLink } from 'react-csv';
 import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
 import styles from './exportButton.module.css';

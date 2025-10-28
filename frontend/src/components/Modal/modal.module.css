@@ -73,6 +73,23 @@
   margin-bottom: 1.5rem;
 }
 
+.colBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.rowBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 15px;
+}
+
 /* Common input styles */
 .inputContainer input[type='text'],
 .inputContainer input[type='tel'],
