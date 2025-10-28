@@ -205,7 +205,10 @@ const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
               </button>
             </div>
 
-            <div className={styles.buttonContainer} style = {{marginTop: '10px'}}>
+            <div
+              className={styles.buttonContainer}
+              style={{ marginTop: '10px' }}
+            >
               <button
                 type="button"
                 className={styles.closeBtn}
