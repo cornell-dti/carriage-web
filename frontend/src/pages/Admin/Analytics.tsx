@@ -8,6 +8,7 @@ import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
 import StatsModal from 'components/Modal/StatsModal';
+import styles from './page.module.css';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
@@ -33,10 +34,17 @@ const Analytics = () => {
   };
 
   const renderRight = () => (
-    <>
-      <StatsModal initStartDate={startDate} initEndDate={endDate}></StatsModal>
+    <div className={styles.rightSection}>
+      <div style={{ padding: '0rem 0.5rem 0.5rem' }}>
+        {' '}
+        {/*aligns button with notification bell*/}
+        <StatsModal
+          initStartDate={startDate}
+          initEndDate={endDate}
+        ></StatsModal>
+      </div>
       <Notification />
-    </>
+    </div>
   );
 
   const getLabel = () => {
