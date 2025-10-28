@@ -90,6 +90,29 @@
   gap: 15px;
 }
 
+.btnList {
+   display: grid;
+  grid-template-columns: auto auto auto;
+   gap: 10px;
+   padding: 5px;
+   margin-top: 15px;
+}
+
+.btnListItem {
+  padding: 8px 16px;
+          background-color: #d4d4d4;
+          border-radius: 25px;
+          text-align: center;
+          font-size: 14px;
+          min-height: auto;
+       border: #d4d4d4;
+}
+
+.btnListItem:focus {
+  box-shadow: 0 0 0 3px #0075db;
+}
+
+
 /* Common input styles */
 .inputContainer input[type='text'],
 .inputContainer input[type='tel'],
