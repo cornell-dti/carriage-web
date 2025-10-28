@@ -259,7 +259,7 @@ function computeStats(
         downloadStats(res, statsAcc, numDays);
       }
     } else if (err || !data) {
-      const conditionRidesDate = new Condition()
+      const conditionRidesDate = new Condition() //retrieve all rides with valid (night or day) start times and is NOT unschedules
         .where('startTime')
         .between(dayStart, nightEnd)
         .where('type')

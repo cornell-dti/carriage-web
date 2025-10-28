@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { Button } from '../../components/FormElements/FormElements';
 import Modal from '@mui/material/Modal';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { useEmployees } from 'context/EmployeesContext';
@@ -14,67 +13,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styles from '../Modal/modal.module.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
+import { Button } from 'components/FormElements/FormElements';
 
-const theme = createTheme({
-  //ListButton style as a theme because it is a material UI component
-  components: {
-    MuiList: {
-      styleOverrides: {
-        root: {
-          display: 'grid',
-          gridTemplateColumns: 'auto auto auto',
-          gap: '10px',
-          padding: '5px',
-        },
-      },
-    },
-    MuiListItem: {
-      styleOverrides: {
-        root: {
-          padding: 0,
-          width: 'auto',
-        },
-      },
-    },
-    MuiListItemButton: {
-      styleOverrides: {
-        root: {
-          // styles applied to the root element of ListItemButton
-          padding: '8px 16px',
-          backgroundColor: '#E5E5E5',
-          borderRadius: '25px',
-          textAlign: 'center',
-          fontSize: '14px',
-          minHeight: 'auto',
-          '&:hover': {
-            backgroundColor: '#D5D5D5',
-          },
-          '&.Mui-selected': {
-            backgroundColor: '#D5D5D5',
-            '&:hover': {
-              backgroundColor: '#C5C5C5',
-            },
-          },
-        },
-      },
-    },
-    MuiListItemText: {
-      styleOverrides: {
-        root: {
-          margin: 0,
-        },
-        primary: {
-          fontSize: '14px',
-          fontWeight: 400,
-        },
-      },
-    },
-  },
-});
+const theme = createTheme();
 
 type StatsModalProps = {
   initStartDate: string;
@@ -182,99 +123,89 @@ const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
                   />
                 </LocalizationProvider>
               </div>
-
-              <div style={{ marginBottom: '10px' }}>
-                <List>
-                  <ListItem>
-                    <ListItemButton
-                      selected
-                      onClick={(event) => {
-                        const newStartDate =
-                          handleShortcut('this week')?.newStartDate ??
-                          today.format('YYYY-MM-DD');
-                        const newEndDate =
-                          handleShortcut('this week')?.newEndDate ??
-                          today.format('YYYY-MM-DD');
-                        setStartDate(newStartDate);
-                        setEndDate(newEndDate);
-                      }}
-                    >
-                      <ListItemText primary="This Week" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton
-                      selected
-                      onClick={(event) => {
-                        const newStartDate =
-                          handleShortcut('last week')?.newStartDate ??
-                          today.format('YYYY-MM-DD');
-                        const newEndDate =
-                          handleShortcut('last week')?.newEndDate ??
-                          today.format('YYYY-MM-DD');
-                        setStartDate(newStartDate);
-                        setEndDate(newEndDate);
-                      }}
-                    >
-                      <ListItemText primary="Last Week" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton
-                      selected
-                      onClick={(event) => {
-                        const newStartDate =
-                          handleShortcut('last 7')?.newStartDate ??
-                          today.format('YYYY-MM-DD');
-                        const newEndDate =
-                          handleShortcut('last 7')?.newEndDate ??
-                          today.format('YYYY-MM-DD');
-                        setStartDate(newStartDate);
-                        setEndDate(newEndDate);
-                      }}
-                    >
-                      <ListItemText primary="Last 7 Days" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton
-                      selected
-                      onClick={(event) => {
-                        const newStartDate =
-                          handleShortcut('curr month')?.newStartDate ??
-                          today.format('YYYY-MM-DD');
-                        const newEndDate =
-                          handleShortcut('curr month')?.newEndDate ??
-                          today.format('YYYY-MM-DD');
-                        setStartDate(newStartDate);
-                        setEndDate(newEndDate);
-                      }}
-                    >
-                      <ListItemText primary="Current Month" />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem>
-                    <ListItemButton
-                      selected
-                      onClick={(event) => {
-                        const newStartDate =
-                          handleShortcut('curr year')?.newStartDate ??
-                          today.format('YYYY-MM-DD');
-                        const newEndDate =
-                          handleShortcut('curr year')?.newEndDate ??
-                          today.format('YYYY-MM-DD');
-                        setStartDate(newStartDate);
-                        setEndDate(newEndDate);
-                      }}
-                    >
-                      <ListItemText primary="Year to Date" />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </div>
             </div>
 
-            <div className={styles.buttonContainer}>
+            <div className={styles.btnList}>
+              <button
+                className={styles.btnListItem}
+                onClick={(event) => {
+                  const newStartDate =
+                    handleShortcut('this week')?.newStartDate ??
+                    today.format('YYYY-MM-DD');
+                  const newEndDate =
+                    handleShortcut('this week')?.newEndDate ??
+                    today.format('YYYY-MM-DD');
+                  setStartDate(newStartDate);
+                  setEndDate(newEndDate);
+                }}
+              >
+                This Week
+              </button>
+
+              <button
+                className={styles.btnListItem}
+                onClick={(event) => {
+                  const newStartDate =
+                    handleShortcut('last week')?.newStartDate ??
+                    today.format('YYYY-MM-DD');
+                  const newEndDate =
+                    handleShortcut('last week')?.newEndDate ??
+                    today.format('YYYY-MM-DD');
+                  setStartDate(newStartDate);
+                  setEndDate(newEndDate);
+                }}
+              >
+                Last Week{' '}
+              </button>
+
+              <button
+                className={styles.btnListItem}
+                onClick={(event) => {
+                  const newStartDate =
+                    handleShortcut('last 7')?.newStartDate ??
+                    today.format('YYYY-MM-DD');
+                  const newEndDate =
+                    handleShortcut('last 7')?.newEndDate ??
+                    today.format('YYYY-MM-DD');
+                  setStartDate(newStartDate);
+                  setEndDate(newEndDate);
+                }}
+              >
+                Last 7 Days
+              </button>
+              <button
+                className={styles.btnListItem}
+                onClick={(event) => {
+                  const newStartDate =
+                    handleShortcut('curr month')?.newStartDate ??
+                    today.format('YYYY-MM-DD');
+                  const newEndDate =
+                    handleShortcut('curr month')?.newEndDate ??
+                    today.format('YYYY-MM-DD');
+                  setStartDate(newStartDate);
+                  setEndDate(newEndDate);
+                }}
+              >
+                Current Month
+              </button>
+              <button
+                className={styles.btnListItem}
+                onClick={(event) => {
+                  const newStartDate =
+                    handleShortcut('curr year')?.newStartDate ??
+                    today.format('YYYY-MM-DD');
+                  const newEndDate =
+                    handleShortcut('curr year')?.newEndDate ??
+                    today.format('YYYY-MM-DD');
+                  setStartDate(newStartDate);
+                  setEndDate(newEndDate);
+                }}
+              >
+                Year to Date
+              </button>
+            </div>
+
+            <div className={styles.buttonContainer} style = {{marginTop: '10px'}}>
               <button
                 type="button"
                 className={styles.closeBtn}
