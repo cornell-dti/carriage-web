@@ -1,25 +1,92 @@
-import React from 'react';
-import { check, block } from '../../icons/other/index';
+import React, { useState, useEffect } from 'react';
+import { green_check, block, close } from '../../icons/other';
 import styles from './confirmationtoast.module.css';
 import { ToastStatus } from '../../context/toastContext';
+import FocusTrap from 'focus-trap-react';
+import { createPortal } from 'react-dom';
 
 type toastProps = {
   message: string;
   toastType?: ToastStatus;
+  onClose: () => void;
+  isOpen: boolean;
 };
 
-const Toast = ({ message, toastType }: toastProps) => {
-  return typeof toastType === 'undefined' ||
-    toastType == ToastStatus.SUCCESS ? (
-    <div className={`${styles.toast} ${styles.successToast}`}>
-      <img alt="toast check" src={check} />
-      <p className={styles.toasttext}>{message}</p>
-    </div>
+const Toast = ({ message, toastType, onClose, isOpen }: toastProps) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'initial';
+    }
+  }, [isOpen]);
+  return toastType == ToastStatus.SUCCESS ? (
+    <>
+      {isOpen &&
+        createPortal(
+          <FocusTrap
+            focusTrapOptions={{
+              onDeactivate: onClose,
+              returnFocusOnDeactivate: true,
+            }}
+          >
+            <div className={styles.background}>
+              <div
+                className={`${styles.toast} ${styles.successToast}`}
+                id="bruh"
+              >
+                <button
+                  onClick={() => {
+                    onClose();
+                  }}
+                  className={styles.closeButton}
+                >
+                  <img src={close} className={styles.closeImg}></img>
+                </button>
+                <div className={styles.toastContent}>
+                  <img alt="toast check" src={green_check} />
+                  <p className={styles.toasttext}>{message}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                  }}
+                  className={styles.continueButton}
+                >
+                  <p className={styles.continueText}>Continue</p>
+                </button>
+              </div>
+            </div>
+          </FocusTrap>,
+          document.body
+        )}
+    </>
   ) : (
-    <div className={`${styles.toast} ${styles.errorToast}`}>
-      <img alt="toast block" src={block} />
-      <p className={styles.toasttext}>{message}</p>
-    </div>
+    <>
+      {isOpen &&
+        createPortal(
+          <FocusTrap
+            focusTrapOptions={{
+              onDeactivate: onClose,
+              returnFocusOnDeactivate: true,
+            }}
+          >
+            <div className={`${styles.toast} ${styles.errorToast}`}>
+              <button onClick={onClose} className={styles.closeButton}>
+                <img src={close} className={styles.closeImg}></img>
+              </button>
+              <div className={styles.toastContent}>
+                <img alt="toast check" src={green_check} />
+                <p className={styles.toasttext}>{message}</p>
+              </div>
+              <button onClick={onClose} className={styles.continueButton}>
+                <p className={styles.continueText}>Continue</p>
+              </button>
+            </div>
+          </FocusTrap>,
+          document.body
+        )}
+    </>
   );
 };
 

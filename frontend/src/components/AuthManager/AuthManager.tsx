@@ -161,7 +161,7 @@ const AuthManager = () => {
     };
   }
 
-  const { visible, message, toastType } = useToast();
+  const { visible, message, toastType, setVisible } = useToast();
 
   if (!signedIn) {
     return (
@@ -210,6 +210,8 @@ const AuthManager = () => {
           <Toast
             message={message}
             toastType={toastType ? ToastStatus.SUCCESS : ToastStatus.ERROR}
+            onClose={() => setVisible(false)}
+            isOpen={visible}
           />,
           document.body
         )}
