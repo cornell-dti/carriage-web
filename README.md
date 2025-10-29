@@ -32,22 +32,23 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 
 #### Product Manager
 
-- Matthias Choi
+- Kathy Lim
 
 #### Technical Project Manager
 
-- Desmond Atikpui
+- Selena Liu
+- Matthew Kim
 
 ### Designer
 
+- Justina Gerald
 - Ryan Qiu
 
 #### Software Developers
 
+- Anika Chandra
+- Ben Koppe
 - Dwain Anderson
-- Nam Anh Dang
-- Raissa Ji
-- Selena Liu
 
 ---
 
@@ -58,6 +59,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Andrew Choi
 - Bryan Graeser
 - Nina Xie
+- Matthias Choi
 - Sam Steinberg
 - Stephy Chen
 
@@ -65,6 +67,7 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 
 - Christopher Hansen
 - Daniel Wei
+- Desmond Atikpui
 - Laura Sizemore
 - Matthew Guo
 - Michael Torku
@@ -75,7 +78,6 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Aaron Kang
 - Aiden Kim
 - Andrew Choi
-- Anika Chandra
 - Becky Hu
 - Bryan Graeser
 - Chelsea Wang
@@ -93,7 +95,9 @@ The **Rider App** branch can be found [here](https://github.com/cornell-dti/carr
 - Lucy Wang
 - Matthew Guo
 - Michael Ye
+- Nam Anh Dang
 - Pinxuan Huang
+- Raissa Ji
 - Rohit Valiveti
 - Simran Puri
 - Stuti Gupta

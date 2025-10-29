@@ -21,6 +21,7 @@ const Analytics = () => {
   }, []);
 
   const refreshTable = (start = startDate, end = endDate) => {
+    //WILL HAVE TO CHANGE WITH UPDATE BOOLEAN BELOW
     axios
       .get(`/api/stats/?from=${start}&to=${end}`)
       .then((res) => res.data)

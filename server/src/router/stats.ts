@@ -103,6 +103,7 @@ router.put('/', validateUser('Admin'), (req, res) => {
  * - JSON array of computed or existing stats
  */
 router.get('/', validateUser('Admin'), (req, res) => {
+  console.log('reached stats GET query');
   const {
     query: { from, to },
   } = req;
@@ -111,15 +112,18 @@ router.get('/', validateUser('Admin'), (req, res) => {
   const toMatch = to ? (to as string).match(regexp) : true;
 
   if (fromMatch && toMatch) {
+    console.log(from);
     let date = moment(from as string).format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
+      console.log(to);
       date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       while (date <= to) {
         dates.push(date);
         date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       }
     }
+    console.log('statFromDates called');
     statsFromDates(dates, res, false);
   } else {
     res.status(400).send({ err: 'Invalid from/to query date format' });
@@ -134,7 +138,7 @@ router.get('/', validateUser('Admin'), (req, res) => {
  */
 function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
-
+  console.log('reached statsFromDates');
   dates.forEach((currDate) => {
     const year = moment(currDate, 'YYYY-MM-DD').format('YYYY');
     const monthDay = moment(currDate, 'YYYY-MM-DD').format('MMDD');
@@ -149,6 +153,8 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
       .endOf('day')
       .toISOString();
 
+    console.log('before computeStats');
+    const update = true; //REPLACE
     computeStats(
       res,
       statsAcc,
@@ -159,7 +165,8 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
       nightEnd,
       year,
       monthDay,
-      download
+      download,
+      update
     );
   });
 }
@@ -237,6 +244,7 @@ function checkSend(res: Response, statsAcc: StatsType[], numDays: number) {
  * @param {string} year - Year string (YYYY)
  * @param {string} monthDay - Month and day string (MMDD)
  * @param {boolean} download - Whether to export as CSV or return JSON
+ * @param {boolean} update - Whether to update stats due to changed (or possibly changed) ride data
  */
 function computeStats(
   res: Response,
@@ -248,17 +256,21 @@ function computeStats(
   nightEnd: string,
   year: string,
   monthDay: string,
-  download: boolean
+  download: boolean,
+  update: boolean
 ) {
+  console.log('just after computeStats');
   Stats.get({ year, monthDay }, (err, data) => {
-    if (data) {
-      statsAcc.push(data.toJSON() as StatsType);
+    console.log('inside Stats.get');
+    if (data && !update) {
+      statsAcc.push(data.toJSON() as StatsType); //if there is data in stats db, send it
       if (!download) {
         checkSend(res, statsAcc, numDays);
       } else {
         downloadStats(res, statsAcc, numDays);
       }
-    } else if (err || !data) {
+    } else if (err || !data || update) {
+      //else find data from rides
       const conditionRidesDate = new Condition() //retrieve all rides with valid (night or day) start times and is NOT unschedules
         .where('startTime')
         .between(dayStart, nightEnd)
@@ -274,8 +286,10 @@ function computeStats(
         let nightNoShowStat = 0;
         let nightCancelStat = 0;
         const driversStat: { [name: string]: number } = {};
-
+        console.log('reached db scan');
+        console.log('dataDay' + dataDay);
         dataDay.forEach((rideData: RideType) => {
+          console.log('rideData' + rideData.status);
           const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
           if (rideData.status === Status.NO_SHOW) {
             if (rideData.startTime <= dayEnd) {
@@ -313,14 +327,29 @@ function computeStats(
           nightCancel: nightCancelStat,
           drivers: driversStat,
         });
-        Stats.create(stats).then((doc) => {
-          statsAcc.push(doc.toJSON() as StatsType);
-          if (!download) {
-            checkSend(res, statsAcc, numDays);
-          } else {
-            downloadStats(res, statsAcc, numDays);
-          }
-        });
+
+        if (!update) {
+          Stats.create(stats).then((doc) => {
+            statsAcc.push(doc.toJSON() as StatsType);
+            if (!download) {
+              checkSend(res, statsAcc, numDays);
+            } else {
+              downloadStats(res, statsAcc, numDays);
+            }
+          });
+        } else {
+          console.log('update logic here');
+          console.log(dayNoShowStat);
+          Stats.update(stats).then((doc) => {
+            statsAcc.push(doc.toJSON() as StatsType);
+            if (!download) {
+              checkSend(res, statsAcc, numDays);
+            } else {
+              downloadStats(res, statsAcc, numDays);
+            }
+          });
+          console.log('finish update');
+        }
       });
     } else {
       console.log('Should be unreachable');
