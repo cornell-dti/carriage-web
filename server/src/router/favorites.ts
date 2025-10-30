@@ -14,11 +14,17 @@ router.post('/', validateUser('User'), async (req, res) => {
   const { rideId } = req.body;
   const userId = res.locals.user.id;
 
+  console.log(rideId);
+
   if (!rideId) {
     return res.status(400).send({ err: 'rideId is required' });
   }
 
+  console.log(rideId);
+
   const ride = await new Promise((resolve) => {
+        console.log('reach1 getting ride id')
+
     db.getById(res, Ride, rideId, 'Rides', (rideData) => {
       resolve(rideData);
     });
@@ -30,23 +36,55 @@ router.post('/', validateUser('User'), async (req, res) => {
     });
   }
 
-  const existingFavorite = await new Promise((resolve) => {
-    db.getById(res, Favorite, { userId, rideId }, tableName, (fav) => {
-      resolve(fav);
-    });
-  });
+    console.log('reach2 before existing fav');
 
-  if (existingFavorite) {
-    return res.status(222).send({ msg: 'Ride already favorited' });
-  }
+    console.log("Checking Favorite.get key:", { userId, rideId });
 
+
+const existingFavorite = await Favorite.query('userId').eq(userId)
+  .filter('rideId').eq(rideId)
+  .exec();
+
+  
+  // await new Promise((resolve) => {
+  //       console.log('reach3 in existing favs');
+
+  //   db.getById(res, Favorite, { userId, rideId }, tableName, (fav) => {
+  //     resolve(fav);
+  //   });
+  //           console.log('reach4 after existing favs call');
+
+  // });
+
+            console.log('reach4.125 before checking existing');
+
+
+if (existingFavorite.count > 0) {
+  // already favorited
+}
+
+          console.log('reach4.25 before creating of new FavRid');
+
+
+
+  
   const favoriteRide = new Favorite({
     userId,
     rideId,
     favoritedAt: new Date(),
   });
 
-  db.create(res, favoriteRide, (doc) => res.send(doc));
+        console.log('reach4.5 before try');
+
+  
+  try {
+    console.log('reach5 before creating new fav ride')
+    db.create(res, favoriteRide, (doc) => res.send(doc));
+  } catch (err) {
+    console.log('reach5 after creating new fav ride');
+console.log(err);
+  }
+
 });
 
 // Get all favorite rides for the current user
