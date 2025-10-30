@@ -7,3 +7,4 @@ export { Admin as Admin } from './admin';
 export { Notification as Notification } from './notification';
 export { Stats as Stats } from './stats';
 export { Rider as Rider } from './rider';
+export { Favorite as Favorite } from './favorite';

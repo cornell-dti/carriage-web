@@ -24,8 +24,6 @@ If you have a disability that prevents you from walking around campus, getting a
 
 The **Rider App** branch can be found [here](https://github.com/cornell-dti/carriage-rider). The **Driver App** branch can be found [here](https://github.com/cornell-dti/carriage-driver).
 
-## Contributors:
-
 ## Contributors
 
 ### Current Contributors
