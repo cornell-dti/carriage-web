@@ -22,7 +22,7 @@ import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 
-const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
+const secretKey = `${import.meta.env.VITE_ENCRYPTION_KEY!}`;
 
 const encrypt = (data: string) => {
   const encrypted = CryptoJS.AES.encrypt(
