@@ -46,13 +46,12 @@
     "uuid": "^13.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "tsc": "../node_modules/.bin/tsc --noEmit false",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "type-check": "../node_modules/.bin/tsc --project tsconfig.json --pretty --noEmit"
   },
   "eslintConfig": {
     "extends": [
