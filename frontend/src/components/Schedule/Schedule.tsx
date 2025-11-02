@@ -144,7 +144,6 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
         display: 'flex',
         position: 'relative',
         flex: 1,
-        backgroundColor: 'white',
         flexDirection: 'column',
       }}
     >
@@ -157,8 +156,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           padding: '1rem',
-          border: 'solid 1px #aaaaaa',
+          border: 'solid 1px #dddddd',
           borderRadius: '0.5rem',
+          backgroundColor: '#fff',
+          filter: 'drop-shadow(0px 4px 3px #00000010)',
         }}
       >
         {/* timeline horizontal scroll */}
