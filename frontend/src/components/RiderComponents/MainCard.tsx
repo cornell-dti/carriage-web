@@ -40,7 +40,6 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  // Removed RequestRideDialog flow; using RideDetailsComponent instead
   const [contactOpen, setContactOpen] = useState(false);
   const [openDriverInfoDialog, setOpenDriverInfoDialog] = useState(false);
   const [adminContactOpen, setAdminContactOpen] = useState(false);
