@@ -15,14 +15,13 @@ import {
 } from 'react-big-calendar';
 import cn from 'classnames';
 import moment from 'moment';
-import { Ride, Driver } from '../../types';
+import { Ride } from '../../types';
 import { useDate } from '../../context/date';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
-import { newDate } from 'react-datepicker/dist/date_utils';
 import { Button } from '@mui/material';
 
 const colorMap = new Map<string, string[]>([
