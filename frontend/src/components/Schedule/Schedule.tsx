@@ -152,24 +152,6 @@ Rider: ${
     }
   };
 
-  const updateRides = (rideId: string, updatedDriver: Driver) => {
-    axios
-      .put(`/api/rides/${rideId}`, { driver: updatedDriver })
-      .then(refreshRides);
-  };
-
-  const onEventDrop = ({ event, resourceId }: any) => {
-    const nextEvents = events.map((old) =>
-      old.id === event.id ? { ...old, resourceId } : old
-    );
-
-    const updatedDriver = drivers.find((d: Driver) => d.id === resourceId);
-    if (updatedDriver !== undefined) {
-      updateRides(event.id, updatedDriver);
-    }
-    setEvents(nextEvents);
-  };
-
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
