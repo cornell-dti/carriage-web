@@ -32,6 +32,9 @@ import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
 import { error } from 'console';
+import { useLocations } from '../../context/LocationsContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { formatErrorMessage } from '../../context/errorModal';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -110,6 +113,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   //official locations with other added
   const supportLocsWithOther = [Other, ...supportedLocations];
 
+  const { locations } = useLocations();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
     dropoffLocation: null,
@@ -503,18 +508,22 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         setCustomDropoff(false);
         throw new Error('Start and end location are too simiilar');
       }
-
-      onSubmit({
+      
+      const result = await onSubmit({
         ...formData,
         pickupLocation: finalPickup,
         dropoffLocation: finalDropoff,
       });
-      setCustomPickup(false);
-      setCustomDropoff(false);
-      onClose();
-    } catch (err) {
-      console.error('Error submitting ride:', err);
-      alert('Failed to submit ride. Please try again.');
+      
+      if (result !== false) {
+        onClose();
+        showToast('Changes saved successfully', ToastStatus.SUCCESS);
+      } else {
+        showToast('Failed to save changes', ToastStatus.ERROR);
+      }
+    } catch(e) {
+      console.error('Error submitting ride:', e);
+      showToast('Failed to save changes: ' + formatErrorMessage(e), ToastStatus.ERROR);
     }
   };
 

@@ -21,6 +21,7 @@ import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
 import SearchPopup from './SearchPopup';
 import styles from './RideLocations.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RideLocationsProps {
   // No props needed - gets ride from context
@@ -214,6 +215,7 @@ const RideMap: React.FC<RideMapProps> = ({
     duration: string;
   } | null>(null);
   const mapsLibrary = useMapsLibrary('routes');
+  const { showError } = useErrorModal();
 
   const fetchAndDrawRoute = useCallback(async () => {
     if (!window.google || !map || !startLocation || !endLocation) {
@@ -277,6 +279,7 @@ const RideMap: React.FC<RideMapProps> = ({
       }
     } catch (error) {
       console.error('Error fetching route:', error);
+      showError(`Error fetching route: ${formatErrorMessage(error)}`, 'Maps Error');
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
         polylineRef.current = null;

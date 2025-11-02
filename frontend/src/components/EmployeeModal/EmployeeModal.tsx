@@ -12,6 +12,7 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 type AdminData = {
   type: string[];
@@ -76,6 +77,7 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const {
     updateAdminInfo,
     updateDriverInfo,
@@ -157,6 +159,7 @@ const EmployeeModal = ({
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
+      showError(`Error uploading photo: ${formatErrorMessage(error)}`, 'Employees Error');
       throw new Error('Failed to upload employee photo. Please try again.');
     }
   }
@@ -366,9 +369,9 @@ const EmployeeModal = ({
           setIsUploadingImage(true);
           await uploadEmployeePhoto(id, targetTable, imageBase64);
         } catch (uploadError) {
-          showToast(
-            'Employee created but photo upload failed. You can try uploading the photo again later.',
-            ToastStatus.ERROR
+          showError(
+            `Employee created but photo upload failed: ${formatErrorMessage(uploadError)}. You can try uploading the photo again later.`,
+            'Employees Error'
           );
           // Don't throw here - we want the employee creation to succeed even if photo upload fails
         } finally {
@@ -379,7 +382,10 @@ const EmployeeModal = ({
       // Note: No need to manually refresh - optimistic updates handle this automatically
       showToast(`Employee information processed`, ToastStatus.SUCCESS);
     } catch (error) {
-      showToast('An error occurred: ', ToastStatus.ERROR);
+      showError(
+        `An error occurred while saving employee: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
     } finally {
       closeModal();
     }
