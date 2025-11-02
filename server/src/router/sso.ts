@@ -11,14 +11,25 @@ const JWT_SECRET = process.env.JWT_SECRET!;
  * Initiates SAML authentication flow
  */
 router.get('/login', (req: Request, res: Response, next: NextFunction) => {
-  const redirectUri = (req.query.redirect_uri as string) || '/';
+  const redirectUri = (req.query.redirect_uri as string) || process.env.FRONTEND_URL || 'http://localhost:3000';
+  const userType = (req.query.userType as string) || 'Rider';
 
-  // Store redirect URI in session for post-login redirect
-  req.session.redirectUri = redirectUri;
+  // CRITICAL: Encode userType and redirectUri into RelayState to survive SAML redirect
+  // RelayState is the SAML standard way to preserve application state
+  const relayState = JSON.stringify({ userType, redirectUri });
+  console.log('[SSO Login] Creating RelayState:', relayState);
 
-  passport.authenticate('saml', {
-    failureRedirect: '/login?error=sso_failed',
-  })(req, res, next);
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+  // Use any type to bypass TypeScript limitation with additionalParams
+  const authOptions: any = {
+    failureRedirect: `${frontendUrl}/?error=sso_failed`,
+    additionalParams: {
+      RelayState: relayState,
+    },
+  };
+
+  passport.authenticate('saml', authOptions)(req, res, next);
 });
 
 /**
@@ -27,26 +38,59 @@ router.get('/login', (req: Request, res: Response, next: NextFunction) => {
  */
 router.post(
   '/callback',
-  passport.authenticate('saml', { failureRedirect: '/login?error=sso_failed' }),
+  passport.authenticate('saml', {
+    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/?error=sso_failed`
+  }),
   async (req: Request, res: Response) => {
     try {
       const samlUser = req.user as any;
       const netid = samlUser.netid;
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-      // Lookup user in database
-      const result = await findUserByNetID(netid);
+      // Extract RelayState from POST body (SAML standard for preserving state)
+      const relayStateString = req.body.RelayState;
+      console.log('[SSO Callback] RelayState received:', relayStateString);
+
+      if (!relayStateString) {
+        console.error('[SSO Callback] No RelayState found - cannot determine user type');
+        return res.redirect(`${frontendUrl}/?error=missing_user_type`);
+      }
+
+      let requestedUserType: string;
+      let redirectUri = frontendUrl;
+
+      try {
+        const relayState = JSON.parse(relayStateString);
+        requestedUserType = relayState.userType;
+        redirectUri = relayState.redirectUri || frontendUrl;
+
+        if (!requestedUserType) {
+          console.error('[SSO Callback] RelayState missing userType');
+          return res.redirect(`${frontendUrl}/?error=missing_user_type`);
+        }
+      } catch (e) {
+        console.error('[SSO Callback] Failed to parse RelayState:', e);
+        return res.redirect(`${frontendUrl}/?error=invalid_relay_state`);
+      }
+
+      console.log('[SSO Callback] NetID:', netid);
+      console.log('[SSO Callback] Requested UserType:', requestedUserType);
+
+      // Lookup user in database with specific userType filter
+      const result = await findUserByNetID(netid, requestedUserType);
+      console.log('[SSO Callback] findUserByNetID result:', JSON.stringify(result, null, 2));
 
       // Check if user lookup returned an error (e.g., inactive rider)
       if (result && 'error' in result) {
-        return res.redirect(`/login?error=${encodeURIComponent(result.error || 'access_denied')}`);
+        return res.redirect(`${frontendUrl}/?error=${encodeURIComponent(result.error || 'access_denied')}`);
       }
 
       // User must exist in database before SSO login is allowed
       if (!result) {
-        return res.redirect('/login?error=user_not_found');
+        return res.redirect(`${frontendUrl}/?error=user_not_found`);
       }
 
-      const { user, userType } = result as any;
+      const { userType } = result as any;
 
       // Store user in session
       req.session.user = {
@@ -56,16 +100,16 @@ router.post(
         lastName: samlUser.lastName,
       };
       req.session.authMethod = 'sso';
-
-      // Retrieve redirect URI from session
-      const redirectUri = req.session.redirectUri || '/';
-      delete req.session.redirectUri;
+      // CRITICAL: Store the validated userType in session for /profile endpoint
+      req.session.userType = userType;
+      console.log('[SSO Callback] Stored userType in session:', userType);
 
       // Redirect to frontend with success flag
       res.redirect(`${redirectUri}?auth=sso_success`);
     } catch (err) {
       console.error('SSO callback error:', err);
-      res.redirect('/login?error=sso_callback_failed');
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      res.redirect(`${frontendUrl}/?error=sso_callback_failed`);
     }
   }
 );
@@ -80,7 +124,13 @@ router.get('/profile', async (req: Request, res: Response) => {
   }
 
   const netid = req.session.user.netid;
-  const result = await findUserByNetID(netid);
+  const sessionUserType = req.session.userType;
+  console.log('[SSO Profile] NetID:', netid);
+  console.log('[SSO Profile] UserType from session:', sessionUserType);
+
+  // Use the validated userType from session (set during callback)
+  const result = await findUserByNetID(netid, sessionUserType);
+  console.log('[SSO Profile] findUserByNetID result:', JSON.stringify(result, null, 2));
 
   if (!result) {
     return res.status(404).json({ error: 'User not found' });
@@ -92,9 +142,12 @@ router.get('/profile', async (req: Request, res: Response) => {
   }
 
   const { user, userType } = result as any;
+  console.log('[SSO Profile] UserType from result:', userType);
+  console.log('[SSO Profile] User ID:', user.id);
 
   // Generate JWT with same payload format as Google OAuth
   const token = sign({ id: user.id, userType }, JWT_SECRET, { expiresIn: '7d' });
+  console.log('[SSO Profile] Generated JWT with userType:', userType);
 
   res.json({
     user: {
@@ -114,13 +167,14 @@ router.get('/profile', async (req: Request, res: Response) => {
  * Destroys SSO session and clears cookies
  */
 router.get('/logout', (req: Request, res: Response) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
   req.logout((err) => {
     if (err) {
       console.error('Logout error:', err);
     }
     req.session.destroy(() => {
       res.clearCookie('carriage.sid');
-      res.redirect('/login?logout=success');
+      res.redirect(`${frontendUrl}/?logout=success`);
     });
   });
 });

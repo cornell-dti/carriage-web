@@ -41,5 +41,7 @@ declare module 'express-session' {
     };
     authMethod?: 'sso' | 'google';
     redirectUri?: string;
+    requestedUserType?: string;
+    userType?: string;
   }
 }
