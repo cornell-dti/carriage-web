@@ -4,15 +4,12 @@ import React, {
   JSXElementConstructor,
   PropsWithChildren,
   ReactElement,
+  useCallback,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import {
-  Calendar,
-  EventWrapperProps,
-  momentLocalizer,
-} from 'react-big-calendar';
+import { EventWrapperProps, momentLocalizer } from 'react-big-calendar';
 import cn from 'classnames';
 import moment from 'moment';
 import { Ride } from '../../types';
@@ -67,7 +64,6 @@ const Schedule = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
 
-  console.log(scheduledRides);
   const getRides = () => {
     setEvents(
       scheduledRides
@@ -202,7 +198,12 @@ Rider: ${
         className={cn(styles.calendar_container, { [styles.long]: viewMore })}
       >
         <div className={cn(styles.left, { [styles.long]: viewMore })}>
-          <Calendar
+          <ScheduledTimeline
+            baseDate={scheduleDay}
+            rides={scheduledRides}
+            handleSelection={() => {}}
+          ></ScheduledTimeline>
+          {/* <Calendar
             formats={{ timeGutterFormat: 'h A' }}
             localizer={localizer}
             toolbar={false}
@@ -221,7 +222,7 @@ Rider: ${
             eventPropGetter={eventStyle}
             slotPropGetter={slotStyle}
             components={{ eventWrapper: TabbableEventWrapper }}
-          />
+          /> */}
         </div>
       </div>
       <button className={styles.view_state} onClick={handleChangeViewState}>
@@ -232,19 +233,19 @@ Rider: ${
 };
 
 interface ScheduledTimelineProps {
+  baseDate: Date;
   rides: Ride[];
-  selected: Ride | undefined;
+  selected?: Ride;
   handleSelection: (selectionChange: Ride | undefined) => void;
-  leftOffset?: number;
   halfHourWidth?: number;
 }
 
 const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
+  baseDate,
   rides,
   selected,
   handleSelection,
-  leftOffset = 16,
-  halfHourWidth = 300,
+  halfHourWidth = 100,
 }) => {
   const timeLabels = useMemo(() => {
     const labels = [];
@@ -252,7 +253,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
     startTime.setHours(7, 0, 0); // 7:00 AM
 
     const endTime = new Date();
-    endTime.setHours(15, 30, 0); // 3:30 PM
+    endTime.setHours(20, 30, 0); // 3:30 PM
 
     let currentTime = new Date(startTime);
 
@@ -267,49 +268,111 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 
   const minuteWidth = useMemo(() => halfHourWidth / 30, [halfHourWidth]);
 
-  const baseTime = new Date();
-  baseTime.setHours(7);
+  const baseTime: Date = useMemo<Date>(() => {
+    const baseTimeForToday = new Date(baseDate);
+    baseTimeForToday.setHours(7);
+    baseTimeForToday.setMinutes(0);
+    baseTimeForToday.setSeconds(0);
+    baseTimeForToday.setMilliseconds(0);
+    return baseTimeForToday;
+  }, [baseDate]);
 
-  const calculateRidePosition = (startTime: Date, endTime: Date) => {
-    // Calculate minutes from 7:00 AM
-    const startMinutesFromBase =
-      (startTime.getTime() - baseTime.getTime()) / (60 * 1000);
-    const endMinutesFromBase =
-      (endTime.getTime() - baseTime.getTime()) / (60 * 1000);
+  const calculateRidePosition = useCallback(
+    (startTime: Date, endTime: Date) => {
+      // Calculate minutes from 7:00 AM
+      const startMinutesFromBase =
+        (startTime.getTime() - baseTime.getTime()) / (60 * 1000);
+      const endMinutesFromBase =
+        (endTime.getTime() - baseTime.getTime()) / (60 * 1000);
 
-    // Calculate position and width
-    const positionFromLeft = startMinutesFromBase * minuteWidth;
-    const width = (endMinutesFromBase - startMinutesFromBase) * minuteWidth;
+      // Calculate position and width
+      const positionFromLeft = startMinutesFromBase * minuteWidth;
+      const width = (endMinutesFromBase - startMinutesFromBase) * minuteWidth;
 
-    return { positionFromLeft, width };
-  };
+      return { positionFromLeft, width };
+    },
+    [minuteWidth, baseTime]
+  );
 
   return (
-    <div className={styles.timelineOuterContainer}>
+    <div
+      style={{
+        width: '100%',
+        height: '30rem',
+        padding: '2rem',
+        display: 'flex',
+        position: 'relative',
+        flex: 1,
+        backgroundColor: 'white',
+        flexDirection: 'column',
+      }}
+    >
       {/* timeline container */}
-      <div className={styles.timelineContainer}>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1rem',
+          border: 'solid 1px #aaaaaa',
+          borderRadius: '0.5rem',
+        }}
+      >
         {/* timeline horizontal scroll */}
-        <div className={styles.timelineScroll}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            overflowX: 'scroll',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
           {/* tick labels */}
-          <div className={styles.tickLabels} style={{ marginLeft: leftOffset }}>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              pointerEvents: 'none',
+              marginLeft: 0,
+            }}
+          >
             {timeLabels.map((timeLabel, idx) => (
               <div
                 key={idx}
-                className={styles.tickLabel}
                 style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  paddingLeft: '0.125rem',
                   width: halfHourWidth,
                   maxWidth: halfHourWidth,
                   minWidth: halfHourWidth,
                 }}
               >
-                <p className={styles.tickLabelText}>{timeLabel}</p>
+                <p
+                  style={{
+                    color: 'rgb(163, 163, 163)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {timeLabel}
+                </p>
               </div>
             ))}
           </div>
           {/* timeline lines for rides */}
           <div
-            className={styles.timelineRidesContainer}
-            style={{ width: `${halfHourWidth * timeLabels.length}px` }}
+            style={{
+              maxHeight: '18rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.25rem',
+              position: 'relative',
+              width: `${halfHourWidth * timeLabels.length}px`,
+            }}
           >
             {rides.map((ride, idx) => {
               const { positionFromLeft, width } = calculateRidePosition(
@@ -320,33 +383,64 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               return (
                 <div
                   key={idx}
-                  className={styles.rideRow}
+                  style={{
+                    height: '2.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
                   id={`${ride.id}-timeline`}
                 >
                   {/* Student name on the left */}
                   <div
-                    className={styles.rideNameContainer}
                     style={{
-                      left: `${leftOffset}px`,
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'flex-end',
+                      alignItems: 'center',
+                      paddingRight: '0.5rem',
                       minWidth: `${positionFromLeft}px`,
                       maxWidth: `${positionFromLeft}px`,
                     }}
                   >
-                    <p className={styles.rideName}>
+                    <p
+                      style={{
+                        fontSize: '0.875rem',
+                        fontWeight: 500,
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'left',
+                      }}
+                    >
                       {ride.riders[0].firstName} {ride.riders[0].lastName}
                     </p>
                   </div>
 
                   {/* Ride block with start time */}
                   <button
-                    className={`${styles.rideBlock} ${
-                      rides[0].status === 'no_show'
-                        ? styles.rideBlockNoShow
-                        : styles.rideBlockNormal
-                    }`}
                     style={{
-                      left: `${leftOffset + positionFromLeft}px`,
-                      width: `${Math.max(width, 50)}px`, // Minimum width for visibility
+                      height: '100%',
+                      border: '1px solid',
+                      cursor: 'pointer',
+                      borderRadius: '0.375rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      padding: '0 0.5rem',
+                      overflow: 'hidden',
+                      backgroundColor:
+                        rides[0].status === 'no_show'
+                          ? 'rgb(229, 229, 229)'
+                          : 'rgb(23, 23, 23)',
+                      borderColor:
+                        rides[0].status === 'no_show'
+                          ? 'rgb(209, 213, 219)'
+                          : 'rgb(38, 38, 38)',
+                      color:
+                        rides[0].status === 'no_show'
+                          ? 'rgb(64, 64, 64)'
+                          : 'rgb(245, 245, 245)',
+                      left: `${positionFromLeft}px`,
+                      width: `${Math.max(width, 50)}px`,
                     }}
                     onClick={() =>
                       selected === ride
@@ -356,12 +450,13 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                   >
                     <div className="flex flex-col justify-center">
                       <p
-                        className={`${styles.rideTimeText} ${
-                          // status access
-                          rides[0].status === 'no_show'
-                            ? styles.rideTimeTextNoShow
-                            : styles.rideTimeTextNormal
-                        }`}
+                        style={{
+                          fontSize: '0.875rem',
+                          color:
+                            rides[0].status === 'no_show'
+                              ? 'rgb(38, 38, 38)'
+                              : 'rgb(245, 245, 245)',
+                        }}
                       >
                         {/* date cast*/}
                         {new Date(ride.startTime).getHours() % 12 || 12}:
@@ -383,15 +478,21 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           </div>
           {/* tick marks */}
           <div
-            className={styles.tickMarksContainer}
-            style={{ left: leftOffset }}
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              display: 'flex',
+              top: 0,
+              pointerEvents: 'none',
+            }}
           >
             {timeLabels.map((_timeLabel, idx) => (
               <div
                 key={idx}
-                className={styles.tickMark}
                 style={{
-                  left: `${leftOffset + idx * halfHourWidth}px`,
+                  height: '100%',
+                  borderLeft: '1px solid rgb(209, 213, 219)',
                   width: halfHourWidth,
                   maxWidth: halfHourWidth,
                   minWidth: halfHourWidth,
@@ -402,20 +503,52 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           {/* current line */}
           <div
             id="timeline-current-indicator"
-            className={styles.currentTimeLine}
             style={{
-              left:
-                leftOffset +
-                ((new Date().getTime() - baseTime.getTime()) / (60 * 1000)) *
-                  minuteWidth,
+              width: '0.25rem',
+              height: '100%',
+              position: 'absolute',
+              top: 0,
+              pointerEvents: 'none',
+              borderLeft: '4px dotted rgba(37, 99, 235, 0.5)',
+              left: (() => {
+                const sameTimeButOnTargetDay = new Date(baseDate);
+                const now = new Date();
+                sameTimeButOnTargetDay.setHours(now.getHours());
+                sameTimeButOnTargetDay.setMinutes(now.getMinutes());
+                sameTimeButOnTargetDay.setSeconds(now.getSeconds());
+                sameTimeButOnTargetDay.setMilliseconds(now.getMilliseconds());
+                return (
+                  ((sameTimeButOnTargetDay.getTime() - baseTime.getTime()) /
+                    (60 * 1000)) *
+                  minuteWidth
+                );
+              })(),
             }}
           ></div>
         </div>
       </div>
 
       {/* current time  */}
-      <Button
-        className={styles.currentTimeButton}
+      <button
+        style={{
+          cursor: 'pointer',
+          position: 'absolute',
+          backgroundColor: 'black',
+          border: 'none',
+          padding: '0.25rem 0.5rem',
+          borderRadius: '0.25rem',
+          outline: 'none',
+          color: 'white',
+          left: '4rem',
+          bottom: '4rem',
+          zIndex: 10,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#525252';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'black';
+        }}
         onClick={() => {
           const element = document.getElementById('timeline-current-indicator');
           const parentDiv =
@@ -438,8 +571,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           }
         }}
       >
-        <p>{`Now: ${moment(Date.now()).format('h:mm A')}`}</p>
-      </Button>
+        {`Now: ${moment(Date.now()).format('h:mm A')}`}
+      </button>
     </div>
   );
 };
