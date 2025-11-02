@@ -6,6 +6,12 @@ import {
   Routes,
   useSearchParams,
 } from 'react-router-dom';
+  useNavigate,
+  Navigate,
+  Route,
+  Routes,
+  useSearchParams,
+} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
@@ -84,12 +90,19 @@ const AuthManager = () => {
           credentials: 'include', // CRITICAL: Sends session cookie
         }
       );
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
+        {
+          credentials: 'include', // CRITICAL: Sends session cookie
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch SSO profile');
       }
 
       const data = await response.json();
+      const { user: ssoUser, token: serverJWT } = data;
       const { user: ssoUser, token: serverJWT } = data;
 
       if (serverJWT && ssoUser) {
@@ -111,10 +124,27 @@ const AuthManager = () => {
           decoded.userType,
           serverJWT
         );
+        const refreshFunc = createRefresh(
+          decoded.id,
+          decoded.userType,
+          serverJWT
+        );
         refreshFunc();
         setRefreshUser(() => refreshFunc);
         setSignedIn(true);
 
+        // Navigate to appropriate dashboard based on userType
+        if (decoded.userType === 'Admin') {
+          navigate('/admin/home', { replace: true });
+        } else if (decoded.userType === 'Driver') {
+          navigate('/driver/rides', { replace: true });
+        } else if (decoded.userType === 'Rider') {
+          navigate('/rider/schedule', { replace: true });
+        } else {
+          // Invalid userType - this should never happen if backend is working correctly
+          setSsoError('Invalid user type received. Please contact support.');
+          logout();
+        }
         // Navigate to appropriate dashboard based on userType
         if (decoded.userType === 'Admin') {
           navigate('/admin/home', { replace: true });
@@ -174,9 +204,15 @@ const AuthManager = () => {
 
       // Handle other SSO errors
       const errorMessages: { [key: string]: string } = {
+        user_not_found:
+          'Your Cornell account is not registered. Please contact support.',
         'User not active': 'Your account is inactive. Please contact support.',
         sso_failed: 'SSO authentication failed. Please try again.',
+        sso_failed: 'SSO authentication failed. Please try again.',
       };
+      setSsoError(
+        errorMessages[errorParam] || 'Authentication failed. Please try again.'
+      );
       setSsoError(
         errorMessages[errorParam] || 'Authentication failed. Please try again.'
       );
@@ -249,6 +285,13 @@ const AuthManager = () => {
     setAuthToken('');
     setSignedIn(false);
     window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
+    localStorage.removeItem('userType');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    deleteCookie('jwt');
+    setAuthToken('');
+    setSignedIn(false);
+    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
@@ -306,6 +349,19 @@ const AuthManager = () => {
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
+                <button
+                  onClick={() => handleSSOLogin(false, false)}
+                  className={styles.ssoBtn}
+                >
+                  <img
+                    src={studentLanding}
+                    className={styles.icon}
+                    alt="student logo"
+                  />
+                  <div className={styles.heading}>Students</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
               }
               admins={
                 <button
@@ -317,8 +373,26 @@ const AuthManager = () => {
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
+                <button
+                  onClick={() => handleSSOLogin(true, false)}
+                  className={styles.ssoBtn}
+                >
+                  <img src={admin} className={styles.icon} alt="admin logo" />
+                  <div className={styles.heading}>Admins</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
               }
               drivers={
+                <button
+                  onClick={() => handleSSOLogin(false, true)}
+                  className={styles.ssoBtn}
+                >
+                  <img src={car} className={styles.icon} alt="car logo" />
+                  <div className={styles.heading}>Drivers</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
                 <button
                   onClick={() => handleSSOLogin(false, true)}
                   className={styles.ssoBtn}
