@@ -33,11 +33,15 @@ const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
     if (location) {
       setCurrent(location);
 
-      // Set up images for the carousel
-      if (location.imagesList && location.imagesList.length > 0) {
+      // Prefer images array from backend; fall back to imagesList or photoLink
+      if ((location as any).images && (location as any).images.length > 0) {
+        const mapped = ((location as any).images as string[]).map((u) => ({
+          url: u,
+        }));
+        setImages(mapped);
+      } else if (location.imagesList && location.imagesList.length > 0) {
         setImages(location.imagesList);
       } else if (location.photoLink) {
-        // Handle backward compatibility with single photoLink
         setImages([{ url: location.photoLink }]);
       } else {
         setImages([]);
@@ -52,7 +56,10 @@ const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
     setCurrent(upd);
 
     // Update the images for the carousel
-    if (upd.imagesList && upd.imagesList.length > 0) {
+    if ((upd as any).images && (upd as any).images.length > 0) {
+      const mapped = ((upd as any).images as string[]).map((u) => ({ url: u }));
+      setImages(mapped);
+    } else if (upd.imagesList && upd.imagesList.length > 0) {
       setImages(upd.imagesList);
     } else if (upd.photoLink) {
       setImages([{ url: upd.photoLink }]);
@@ -130,17 +137,24 @@ const LocationDialog: React.FC<Props> = ({ location, onClose, onSave }) => {
 
             {/* Right Column - Image */}
             <Grid item xs={5}>
-              {images.length > 0 && (
-                <Box
-                  sx={{
-                    height: '200px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
+              <Box
+                sx={{
+                  height: '200px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: images.length === 0 ? '#fafafa' : 'transparent',
+                  borderRadius: 1,
+                }}
+              >
+                {images.length > 0 ? (
                   <PaginatedImageCarousel images={images} />
-                </Box>
-              )}
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    Images are processing…
+                  </Typography>
+                )}
+              </Box>
             </Grid>
           </Grid>
 

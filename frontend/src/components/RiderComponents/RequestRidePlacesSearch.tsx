@@ -5,12 +5,16 @@ import styles from './requestridedialog.module.css';
 
 interface RequestRidePlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   onAddressSelect,
+  value: controlledValue,
+  onValueChange,
 }) => {
-  const [value, setValue] = useState('');
+  const [uncontrolledValue, setUncontrolledValue] = useState('');
   const [results, setResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,9 +23,18 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
 
   const searchPlace = useCallback(
     async (query: string) => {
+      console.log('Searching for:', query);
+      console.log('Map available:', !!map);
+      console.log('Google Maps available:', !!google?.maps?.places);
+
       if (!map || !query) {
         setResults([]);
         setError('Map not initialized or empty query');
+        return;
+      }
+
+      if (!google?.maps?.places) {
+        setError('Google Maps Places API not available');
         return;
       }
 
@@ -34,7 +47,10 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
           fields: ['name', 'geometry', 'formatted_address'],
         };
 
+        console.log('Making places request:', request);
+
         service.findPlaceFromQuery(request, (results, status) => {
+          console.log('Places response:', { results, status });
           setIsLoading(false);
           if (
             status === google.maps.places.PlacesServiceStatus.OK &&
@@ -44,7 +60,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
             setResults(results);
           } else {
             setResults([]);
-            setError('No matching address found');
+            setError(`No matching address found. Status: ${status}`);
           }
         });
       } catch (error) {
@@ -60,11 +76,12 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   const handleSubmit = useCallback(
     (event: React.FormEvent) => {
       event.preventDefault();
-      if (value.trim()) {
-        searchPlace(value);
+      const current = (controlledValue ?? uncontrolledValue).trim();
+      if (current) {
+        searchPlace(current);
       }
     },
-    [value, searchPlace]
+    [controlledValue, uncontrolledValue, searchPlace]
   );
 
   const handleSelect = useCallback(
@@ -74,14 +91,17 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
         const lng = place.geometry.location.lng();
         const address = place.formatted_address || place.name || '';
         onAddressSelect(address, lat, lng);
-
-        setValue(address);
+        if (onValueChange) {
+          onValueChange(address);
+        } else {
+          setUncontrolledValue(address);
+        }
 
         setResults([]);
         setError('');
       }
     },
-    [onAddressSelect]
+    [onAddressSelect, onValueChange]
   );
 
   return (
@@ -89,9 +109,13 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
-          value={value}
+          value={controlledValue ?? uncontrolledValue}
           onChange={(e) => {
-            setValue(e.target.value);
+            if (onValueChange) {
+              onValueChange(e.target.value);
+            } else {
+              setUncontrolledValue(e.target.value);
+            }
             setError('');
           }}
           placeholder="Enter pickup address and press Enter to search"
