@@ -1,48 +1,12 @@
-import React, {
-  ComponentType,
-  FC,
-  JSXElementConstructor,
-  PropsWithChildren,
-  ReactElement,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { EventWrapperProps, momentLocalizer } from 'react-big-calendar';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
 import { Ride } from '../../types';
 import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
-import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 
-const colorMap = new Map<string, string[]>([
-  ['red', ['FFA26B', 'FFC7A6']],
-  ['blue', ['0084F4', '66B5F8']],
-  ['yellow', ['FFCF5C', 'FFE29D']],
-  ['green', ['00C48C', '7DDFC3']],
-  ['black', ['1A051D', 'FBE4E8']],
-]);
-const colorIds = ['red', 'blue', 'yellow', 'green', 'black'];
-
-type CalEvent = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  resourceId: string;
-  ride: Ride;
-};
-
-type CalendarDriver = {
-  resourceId: string;
-  resourceTitle: string;
-};
-
 const Schedule = () => {
-  const localizer = momentLocalizer(moment);
   const { scheduledRides, refreshRides } = useRides();
 
   const scheduleDay = useDate().curDate;
@@ -51,82 +15,10 @@ const Schedule = () => {
   const maxTime = new Date(scheduleDay);
   maxTime.setHours(23, 0, 0, 0);
 
-  const [events, setEvents] = useState<CalEvent[]>([]);
-  const [calDrivers, setCalDrivers] = useState<CalendarDriver[]>([]);
-  const { drivers } = useEmployees();
-  const [viewMore, setViewMore] = useState(false);
   const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
-  const [colorIdMap, setColorIdMap] = useState(new Map<string, string>());
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
-
-  const getRides = () => {
-    setEvents(
-      scheduledRides
-        .filter((ride: Ride) => ride && ride.id)
-        .map((ride: Ride) => ({
-          id: ride.id,
-          title: `${ride.startLocation.name} to ${ride.endLocation.name}
-Rider: ${
-            ride.riders && ride.riders.length > 0
-              ? ride.riders.length === 1
-                ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
-                : `${ride.riders[0].firstName} ${ride.riders[0].lastName} +${
-                    ride.riders.length - 1
-                  } more`
-              : 'No rider assigned'
-          }`,
-          start: new Date(ride.startTime.toString()),
-          end: new Date(ride.endTime.toString()),
-          resourceId: ride.driver!.id,
-          ride,
-        }))
-    );
-  };
-
-  useEffect(() => {
-    getRides();
-  }, [scheduledRides]);
-
-  useEffect(() => {
-    setCalDrivers(
-      drivers.map((driver: any) => ({
-        resourceId: driver.id,
-        resourceTitle: driver.firstName.toUpperCase(),
-      }))
-    );
-  }, [drivers]);
-
-  useEffect(() => {
-    const newColorIdMap = new Map<string, string>();
-    calDrivers.map((resource, idx) => {
-      const pos = idx % colorIds.length;
-      newColorIdMap.set(resource.resourceId, colorIds[pos]);
-      return true;
-    });
-    setColorIdMap(newColorIdMap);
-  }, [calDrivers]);
-
-  const eventStyle = (event: CalEvent) => {
-    const colorName = colorIdMap.get(event.resourceId) || 'black';
-    const color = colorMap.get(colorName) || ['1A051D', 'FBE4E8'];
-    return {
-      style: {
-        borderLeft: `0.2rem solid #${color[0]}`,
-        backgroundColor: `#${color[1]}`,
-        borderRadius: 0,
-        color: 'black',
-      },
-    };
-  };
-
-  const slotStyle = (d: Date) => ({
-    style: {
-      borderTop:
-        d.getMinutes() !== 0 ? 'none' : '0.05rem solid rgba(0, 0, 0, 15%)',
-    },
-  });
 
   const cancelRide = (ride: Ride) => {
     const rideId = ride.id;
@@ -153,41 +45,6 @@ Rider: ${
       setCurrentRide(selection);
     }
   };
-
-  const onSelectEvent = (event: any) => {
-    setIsOpen(true);
-    setCurrentRide(event.ride);
-  };
-
-  const TabbableEventWrapper: ComponentType<
-    PropsWithChildren<EventWrapperProps<CalEvent>>
-  > = useMemo(
-    () => (props) => {
-      const child = React.Children.only(props.children) as ReactElement<
-        any,
-        string | JSXElementConstructor<any>
-      >;
-      return (
-        <div>
-          {React.cloneElement(child, {
-            tabIndex: 0,
-            onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>): void => {
-              if (
-                event.key === 'Enter' ||
-                event.key === ' ' ||
-                event.key === 'Spacebar'
-              ) {
-                // Prevents spacebar from scroll event
-                event.preventDefault();
-                onSelectEvent(props.event);
-              }
-            },
-          })}
-        </div>
-      );
-    },
-    []
-  );
 
   useEffect(() => {
     console.log(currentRide);
