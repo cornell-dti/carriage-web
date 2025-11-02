@@ -153,7 +153,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         editedRide.startTime,
         editedRide.endTime,
         {
-          allowPastTimes: !isNewRide(editedRide),
+          allowPastTimes: false,
           maxDurationHours: 24,
           minDurationMinutes: 5,
         }

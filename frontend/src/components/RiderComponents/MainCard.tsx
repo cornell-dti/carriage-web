@@ -19,8 +19,7 @@ import CallIcon from '@mui/icons-material/Call';
 import CancelIcon from '@mui/icons-material/Cancel';
 import styles from './maincard.module.css';
 import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
-import RequestRideDialog from './RequestRideDialog';
-import { useLocations } from 'context/LocationsContext';
+import RideDetailsComponent from 'components/RideDetails/RideDetailsComponent';
 import DriverInfoDialog from './DriverInfoDialog';
 import {
   Dialog,
@@ -41,12 +40,11 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
+  // Removed RequestRideDialog flow; using RideDetailsComponent instead
   const [contactOpen, setContactOpen] = useState(false);
   const [openDriverInfoDialog, setOpenDriverInfoDialog] = useState(false);
   const [adminContactOpen, setAdminContactOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const { locations } = useLocations();
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return {
@@ -139,29 +137,13 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
           >
             <EditIcon fontSize="small" />
           </button>
-          <RequestRideDialog
+          <RideDetailsComponent
             open={editOpen}
             onClose={() => {
               setEditOpen(!editOpen);
             }}
-            onSubmit={() => {
-              setOpenEditModal(!openEditModal);
-            }}
             ride={ride}
-            supportedLocations={locations
-              .map((l) => ({
-                id: String(l.id),
-                name: l.name,
-                address: l.address,
-                shortName: l.shortName,
-                info: l.info ?? '',
-                tag: (l.tag as any) ?? '',
-                lat: Number(l.lat),
-                lng: Number(l.lng),
-                photoLink: l.photoLink,
-                images: l.images,
-              }))
-              .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
+            initialEditingState={true}
           />
           {ride.driver && (
             <>

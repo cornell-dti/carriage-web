@@ -36,6 +36,28 @@ export const validateRideTimes = (
   const end = dayjs(endTime);
   const now = dayjs();
 
+  // Validate that parsed dates are valid
+  if (!start.isValid()) {
+    errors.push({
+      type: 'invalid_time',
+      message: 'Start date/time is invalid',
+    });
+  }
+
+  if (!end.isValid()) {
+    errors.push({
+      type: 'invalid_time',
+      message: 'End date/time is invalid',
+    });
+  }
+
+  if (errors.length > 0) {
+    return {
+      isValid: false,
+      errors,
+    };
+  }
+
   // Check if start time is in the past
   if (!allowPastTimes && start.isBefore(now, 'minute')) {
     errors.push({
