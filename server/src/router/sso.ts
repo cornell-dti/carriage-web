@@ -11,7 +11,10 @@ const JWT_SECRET = process.env.JWT_SECRET!;
  * Initiates SAML authentication flow
  */
 router.get('/login', (req: Request, res: Response, next: NextFunction) => {
-  const redirectUri = (req.query.redirect_uri as string) || process.env.FRONTEND_URL || 'http://localhost:3000';
+  const redirectUri =
+    (req.query.redirect_uri as string) ||
+    process.env.FRONTEND_URL ||
+    'http://localhost:3000';
   const userType = (req.query.userType as string) || 'Rider';
 
   // CRITICAL: Encode userType and redirectUri into RelayState to survive SAML redirect
@@ -39,7 +42,9 @@ router.get('/login', (req: Request, res: Response, next: NextFunction) => {
 router.post(
   '/callback',
   passport.authenticate('saml', {
-    failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/?error=sso_failed`
+    failureRedirect: `${
+      process.env.FRONTEND_URL || 'http://localhost:3000'
+    }/?error=sso_failed`,
   }),
   async (req: Request, res: Response) => {
     try {
@@ -52,7 +57,9 @@ router.post(
       console.log('[SSO Callback] RelayState received:', relayStateString);
 
       if (!relayStateString) {
-        console.error('[SSO Callback] No RelayState found - cannot determine user type');
+        console.error(
+          '[SSO Callback] No RelayState found - cannot determine user type'
+        );
         return res.redirect(`${frontendUrl}/?error=missing_user_type`);
       }
 
@@ -78,11 +85,18 @@ router.post(
 
       // Lookup user in database with specific userType filter
       const result = await findUserByNetID(netid, requestedUserType);
-      console.log('[SSO Callback] findUserByNetID result:', JSON.stringify(result, null, 2));
+      console.log(
+        '[SSO Callback] findUserByNetID result:',
+        JSON.stringify(result, null, 2)
+      );
 
       // Check if user lookup returned an error (e.g., inactive rider)
       if (result && 'error' in result) {
-        return res.redirect(`${frontendUrl}/?error=${encodeURIComponent(result.error || 'access_denied')}`);
+        return res.redirect(
+          `${frontendUrl}/?error=${encodeURIComponent(
+            result.error || 'access_denied'
+          )}`
+        );
       }
 
       // User must exist in database before SSO login is allowed
@@ -130,7 +144,10 @@ router.get('/profile', async (req: Request, res: Response) => {
 
   // Use the validated userType from session (set during callback)
   const result = await findUserByNetID(netid, sessionUserType);
-  console.log('[SSO Profile] findUserByNetID result:', JSON.stringify(result, null, 2));
+  console.log(
+    '[SSO Profile] findUserByNetID result:',
+    JSON.stringify(result, null, 2)
+  );
 
   if (!result) {
     return res.status(404).json({ error: 'User not found' });
@@ -146,7 +163,9 @@ router.get('/profile', async (req: Request, res: Response) => {
   console.log('[SSO Profile] User ID:', user.id);
 
   // Generate JWT with same payload format as Google OAuth
-  const token = sign({ id: user.id, userType }, JWT_SECRET, { expiresIn: '7d' });
+  const token = sign({ id: user.id, userType }, JWT_SECRET, {
+    expiresIn: '7d',
+  });
   console.log('[SSO Profile] Generated JWT with userType:', userType);
 
   res.json({
@@ -187,7 +206,10 @@ router.get('/metadata', (req: Request, res: Response) => {
   res.type('application/xml');
   // Access the SAML strategy instance
   const strategy = (passport as any)._strategy('saml') as any;
-  if (strategy && typeof strategy.generateServiceProviderMetadata === 'function') {
+  if (
+    strategy &&
+    typeof strategy.generateServiceProviderMetadata === 'function'
+  ) {
     res.send(strategy.generateServiceProviderMetadata());
   } else {
     res.status(500).send('SAML strategy not configured');

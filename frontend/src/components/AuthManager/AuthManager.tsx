@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  useGoogleLogin as googleAuth,
-  googleLogout,
-} from '@react-oauth/google';
-import { useNavigate, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
+  useNavigate,
+  Navigate,
+  Route,
+  Routes,
+  useSearchParams,
+} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
@@ -62,16 +64,19 @@ const AuthManager = () => {
   // SSO Callback handler - fetches profile and JWT after successful SSO login
   const handleSSOCallback = async () => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/sso/profile`, {
-        credentials: 'include', // CRITICAL: Sends session cookie
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
+        {
+          credentials: 'include', // CRITICAL: Sends session cookie
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to fetch SSO profile');
       }
 
       const data = await response.json();
-      const { user: ssoUser, token: serverJWT, authMethod } = data;
+      const { user: ssoUser, token: serverJWT } = data;
 
       if (serverJWT && ssoUser) {
         // Store JWT in encrypted cookie (matching Google OAuth pattern)
@@ -84,19 +89,30 @@ const AuthManager = () => {
         setId(decoded.id);
         localStorage.setItem('userId', decoded.id);
         localStorage.setItem('userType', decoded.userType);
-        localStorage.setItem('authMethod', authMethod || 'sso');
         setAuthToken(serverJWT);
 
         // Refresh user data
-        const refreshFunc = createRefresh(decoded.id, decoded.userType, serverJWT);
+        const refreshFunc = createRefresh(
+          decoded.id,
+          decoded.userType,
+          serverJWT
+        );
         refreshFunc();
         setRefreshUser(() => refreshFunc);
         setSignedIn(true);
 
-        // Navigate to appropriate dashboard
-        navigate(decoded.userType === 'Admin' ? '/admin/home' : '/rider/home', {
-          replace: true,
-        });
+        // Navigate to appropriate dashboard based on userType
+        if (decoded.userType === 'Admin') {
+          navigate('/admin/home', { replace: true });
+        } else if (decoded.userType === 'Driver') {
+          navigate('/driver/rides', { replace: true });
+        } else if (decoded.userType === 'Rider') {
+          navigate('/rider/schedule', { replace: true });
+        } else {
+          // Invalid userType - this should never happen if backend is working correctly
+          setSsoError('Invalid user type received. Please contact support.');
+          logout();
+        }
       } else {
         setSsoError('Failed to complete SSO login. Please try again.');
         logout();
@@ -116,11 +132,14 @@ const AuthManager = () => {
     if (errorParam) {
       // Handle SSO errors
       const errorMessages: { [key: string]: string } = {
-        'user_not_found': 'Your Cornell account is not registered. Please contact support.',
+        user_not_found:
+          'Your Cornell account is not registered. Please contact support.',
         'User not active': 'Your account is inactive. Please contact support.',
-        'sso_failed': 'SSO authentication failed. Please try again.',
+        sso_failed: 'SSO authentication failed. Please try again.',
       };
-      setSsoError(errorMessages[errorParam] || 'Authentication failed. Please try again.');
+      setSsoError(
+        errorMessages[errorParam] || 'Authentication failed. Please try again.'
+      );
       navigate('/', { replace: true });
       return;
     }
@@ -165,65 +184,6 @@ const AuthManager = () => {
     document.cookie = `${cookieName}=${encrypt(value)};secure=true;path=/;`;
   }
 
-  function signIn(userType: 'Admin' | 'Rider' | 'Driver', code: string) {
-    const table = `${userType}s`;
-    const localUserType = localStorage.getItem('userType');
-    if (!localUserType || localUserType === userType) {
-      axios
-        .post('/api/auth', { code, table })
-        .then((res) => res.data.jwt)
-        .then((serverJWT) => {
-          if (serverJWT) {
-            setCookie('jwt', serverJWT);
-            const decoded: any = jwtDecode(serverJWT);
-            setId(decoded.id);
-            localStorage.setItem('userId', decoded.id);
-            localStorage.setItem('userType', decoded.userType);
-            localStorage.setItem('authMethod', 'google');
-            setAuthToken(serverJWT);
-            console.log('Auth Token : ', serverJWT);
-            const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
-            refreshFunc();
-            setRefreshUser(() => refreshFunc);
-            setSignedIn(true);
-
-            // Navigate based on user type
-            if (userType === 'Admin') {
-              navigate('/admin/home', { replace: true });
-            } else if (userType === 'Driver') {
-              navigate('/driver/rides', { replace: true });
-            } else {
-              navigate('/rider/schedule', { replace: true });
-            }
-          } else {
-            logout();
-          }
-        })
-        .catch((error) => {
-          console.error('Login error:', error);
-          logout();
-        });
-    }
-  }
-
-  const adminLogin = googleAuth({
-    flow: 'auth-code',
-    onSuccess: async (res) => signIn('Admin', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
-  });
-
-  const studentLogin = googleAuth({
-    flow: 'auth-code',
-    onSuccess: async (res) => signIn('Rider', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
-  });
-
-  const driverLogin = googleAuth({
-    flow: 'auth-code',
-    onSuccess: async (res) => signIn('Driver', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
-  });
-
   // SSO Login handlers
   function handleSSOLogin(isAdmin: boolean = false, isDriver: boolean = false) {
     const frontendUrl = window.location.origin;
@@ -242,31 +202,13 @@ const AuthManager = () => {
   }
 
   function logout() {
-    const authMethod = localStorage.getItem('authMethod');
-
-    // If SSO login, redirect to backend logout to destroy session
-    if (authMethod === 'sso') {
-      localStorage.removeItem('userType');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authMethod');
-      deleteCookie('jwt');
-      setAuthToken('');
-      setSignedIn(false);
-      // Redirect to backend SSO logout endpoint
-      window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
-    } else {
-      // Google OAuth logout
-      googleLogout();
-      localStorage.removeItem('userType');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('user');
-      localStorage.removeItem('authMethod');
-      deleteCookie('jwt');
-      setAuthToken('');
-      setSignedIn(false);
-      navigate('/', { replace: true });
-    }
+    localStorage.removeItem('userType');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('user');
+    deleteCookie('jwt');
+    setAuthToken('');
+    setSignedIn(false);
+    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
@@ -302,78 +244,41 @@ const AuthManager = () => {
             <LandingPage
               ssoError={ssoError}
               students={
-                <>
-                  <button onClick={() => studentLogin()} className={styles.btn}>
-                    <img
-                      src={studentLanding}
-                      className={styles.icon}
-                      alt="student logo"
-                    />
-                    <div className={styles.heading}>Students</div>
-                    Sign in with Google
-                  </button>
-                  <button
-                    onClick={() => handleSSOLogin(false, false)}
-                    className={styles.btn}
-                    style={{
-                      backgroundColor: '#B31B1B',
-                      color: 'white',
-                      marginTop: '10px'
-                    }}
-                  >
-                    <img
-                      src={studentLanding}
-                      className={styles.icon}
-                      alt="student logo"
-                    />
-                    <div className={styles.heading}>Students</div>
-                    Sign in with Cornell NetID
-                  </button>
-                </>
+                <button
+                  onClick={() => handleSSOLogin(false, false)}
+                  className={styles.ssoBtn}
+                >
+                  <img
+                    src={studentLanding}
+                    className={styles.icon}
+                    alt="student logo"
+                  />
+                  <div className={styles.heading}>Students</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
               }
               admins={
-                <>
-                  <button onClick={() => adminLogin()} className={styles.btn}>
-                    <img src={admin} className={styles.icon} alt="admin logo" />
-                    <div className={styles.heading}>Admins</div>
-                    Sign in with Google
-                  </button>
-                  <button
-                    onClick={() => handleSSOLogin(true, false)}
-                    className={styles.btn}
-                    style={{
-                      backgroundColor: '#B31B1B',
-                      color: 'white',
-                      marginTop: '10px'
-                    }}
-                  >
-                    <img src={admin} className={styles.icon} alt="admin logo" />
-                    <div className={styles.heading}>Admins</div>
-                    Sign in with Cornell NetID
-                  </button>
-                </>
+                <button
+                  onClick={() => handleSSOLogin(true, false)}
+                  className={styles.ssoBtn}
+                >
+                  <img src={admin} className={styles.icon} alt="admin logo" />
+                  <div className={styles.heading}>Admins</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
               }
               drivers={
-                <>
-                  <button onClick={() => driverLogin()} className={styles.btn}>
-                    <img src={car} className={styles.icon} alt="car logo" />
-                    <div className={styles.heading}>Drivers</div>
-                    Sign in with Google
-                  </button>
-                  <button
-                    onClick={() => handleSSOLogin(false, true)}
-                    className={styles.btn}
-                    style={{
-                      backgroundColor: '#B31B1B',
-                      color: 'white',
-                      marginTop: '10px'
-                    }}
-                  >
-                    <img src={car} className={styles.icon} alt="car logo" />
-                    <div className={styles.heading}>Drivers</div>
-                    Sign in with Cornell NetID
-                  </button>
-                </>
+                <button
+                  onClick={() => handleSSOLogin(false, true)}
+                  className={styles.ssoBtn}
+                >
+                  <img src={car} className={styles.icon} alt="car logo" />
+                  <div className={styles.heading}>Drivers</div>
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
+                </button>
               }
             />
           }

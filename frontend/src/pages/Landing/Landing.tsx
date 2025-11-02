@@ -42,14 +42,16 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
             <div className={styles.spacing_container}>
               <h1 className={styles.heading}>Login</h1>
               {ssoError && (
-                <div style={{
-                  backgroundColor: '#ffebee',
-                  color: '#c62828',
-                  padding: '12px 16px',
-                  borderRadius: '4px',
-                  marginBottom: '16px',
-                  border: '1px solid #ef5350'
-                }}>
+                <div
+                  style={{
+                    backgroundColor: '#ffebee',
+                    color: '#c62828',
+                    padding: '12px 16px',
+                    borderRadius: '4px',
+                    marginBottom: '16px',
+                    border: '1px solid #ef5350',
+                  }}
+                >
                   {ssoError}
                 </div>
               )}

@@ -59,7 +59,9 @@ async function checkUserExists() {
 
     console.log('⚠️  User NOT found in any table!');
     console.log('\n📝 To test SSO, you need to:');
-    console.log('   1. Add a user with email "dka34@cornell.edu" to one of the tables');
+    console.log(
+      '   1. Add a user with email "dka34@cornell.edu" to one of the tables'
+    );
     console.log('   2. For Riders: ensure active=true');
     console.log('   3. Then try SSO login again');
   } catch (error) {

@@ -24,7 +24,10 @@ export function extractNetIDFromEmail(email: string): string | null {
  * @param requestedUserType - Optional: specific user type to search for (Rider, Admin, Driver)
  * @returns User object and type, or error message if validation fails
  */
-export async function findUserByNetID(netid: string, requestedUserType?: string) {
+export async function findUserByNetID(
+  netid: string,
+  requestedUserType?: string
+) {
   const cornellEmail = `${netid}@cornell.edu`;
 
   try {
@@ -105,4 +108,3 @@ export async function findUserByNetID(netid: string, requestedUserType?: string)
     return null;
   }
 }
-

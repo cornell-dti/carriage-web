@@ -11,7 +11,8 @@ interface SamlProfile extends Profile {
 }
 
 // Load IdP certificate
-const idpCertPath = process.env.SAML_IDP_CERT_PATH || './config/cornell-idp-test.crt';
+const idpCertPath =
+  process.env.SAML_IDP_CERT_PATH || './config/cornell-idp-test.crt';
 const idpCert = fs.readFileSync(path.resolve(idpCertPath), 'utf-8');
 
 // Configure SAML strategy
@@ -28,7 +29,9 @@ const samlStrategy = new SamlStrategy(
     wantAuthnResponseSigned: false,
     // Accept unsigned for testing
     acceptedClockSkewMs: -1,
-    authnContext: ['urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport'],
+    authnContext: [
+      'urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport',
+    ],
     passReqToCallback: false,
   },
   async (profile: Profile | null | undefined, done: any) => {
