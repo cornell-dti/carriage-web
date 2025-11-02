@@ -194,10 +194,8 @@ Rider: ${
           cancel={cancelRide}
         />
       )}
-      <div
-        className={cn(styles.calendar_container, { [styles.long]: viewMore })}
-      >
-        <div className={cn(styles.left, { [styles.long]: viewMore })}>
+      <div>
+        <div>
           <ScheduledTimeline
             baseDate={scheduleDay}
             rides={scheduledRides}
@@ -225,9 +223,6 @@ Rider: ${
           /> */}
         </div>
       </div>
-      <button className={styles.view_state} onClick={handleChangeViewState}>
-        view {viewMore ? 'less' : 'more'}
-      </button>
     </>
   );
 };
