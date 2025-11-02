@@ -21,6 +21,7 @@ import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
@@ -49,6 +50,7 @@ const AuthManager = () => {
   );
 
   const navigate = useNavigate();
+  const { showError } = useErrorModal();
 
   useEffect(() => {
     const token = jwtValue();
@@ -75,6 +77,7 @@ const AuthManager = () => {
       }
     } catch (error) {
       console.error('Error decrypting JWT:', error);
+      showError(`Error decrypting JWT: ${formatErrorMessage(error)}`, 'Authentication Error');
     }
     return '';
   }
@@ -125,6 +128,7 @@ const AuthManager = () => {
         })
         .catch((error) => {
           console.error('Login error:', error);
+          showError(`Login error: ${formatErrorMessage(error)}`, 'Authentication Error');
           logout();
         });
     }
@@ -133,19 +137,28 @@ const AuthManager = () => {
   const adminLogin = googleAuth({
     flow: 'auth-code',
     onSuccess: async (res) => signIn('Admin', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
+    onError: (errorResponse) => {
+      console.error(errorResponse);
+      showError(`Google authentication failed: ${formatErrorMessage(errorResponse)}`, 'Authentication Error');
+    },
   });
 
   const studentLogin = googleAuth({
     flow: 'auth-code',
     onSuccess: async (res) => signIn('Rider', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
+    onError: (errorResponse) => {
+      console.error(errorResponse);
+      showError(`Google authentication failed: ${formatErrorMessage(errorResponse)}`, 'Authentication Error');
+    },
   });
 
   const driverLogin = googleAuth({
     flow: 'auth-code',
     onSuccess: async (res) => signIn('Driver', res.code),
-    onError: (errorResponse) => console.error(errorResponse),
+    onError: (errorResponse) => {
+      console.error(errorResponse);
+      showError(`Google authentication failed: ${formatErrorMessage(errorResponse)}`, 'Authentication Error');
+    },
   });
 
   function logout() {

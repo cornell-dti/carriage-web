@@ -16,6 +16,7 @@ import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -43,6 +44,7 @@ const Schedule: React.FC = () => {
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
+  const { showError } = useErrorModal();
 
   const fetchFavorites = async () => {
     if (!id) return;
@@ -73,6 +75,7 @@ const Schedule: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch favorites:', error);
       setFavoriteRides([]);
+      // showError(`Failed to fetch favorites: ${formatErrorMessage(error)}`, 'Favorites Error');
     } finally {
       setLoadingFavorites(false);
     }
@@ -88,6 +91,7 @@ const Schedule: React.FC = () => {
           setAllRiderRides(rides);
         } catch (error) {
           console.error('Failed to fetch rider rides:', error);
+        showError(`Failed to fetch rider rides: ${formatErrorMessage(error)}`, 'Rides Error');
         } finally {
           setLoadingRides(false);
         }
@@ -137,7 +141,7 @@ const Schedule: React.FC = () => {
         new Date(startISO).getTime() + 30 * 60 * 1000
       ).toISOString();
 
-      await axios.post('/api/rides', {
+      const result = await axios.post('/api/rides', {
         // Send location IDs (matching Admin flow)
         startLocation: formData.pickupLocation.id,
         endLocation: formData.dropoffLocation.id,
@@ -149,6 +153,8 @@ const Schedule: React.FC = () => {
         schedulingState: 'unscheduled',
       });
 
+      console.log('Result:', result);
+
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
@@ -156,7 +162,7 @@ const Schedule: React.FC = () => {
     } catch (error: any) {
       console.error('Failed to create ride:', error);
       const msg = error?.response?.data?.err || 'Please try again.';
-      showToast('Failed to create ride: ' + msg, ToastStatus.ERROR);
+      showError('Failed to create ride: ' + msg, 'Rides Error');
       return false;
     }
   };

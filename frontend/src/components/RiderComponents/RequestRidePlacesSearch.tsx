@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
 import { useMap } from '@vis.gl/react-google-maps';
 import styles from './requestridedialog.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RequestRidePlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
@@ -20,6 +21,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   const [error, setError] = useState('');
 
   const map = useMap();
+  const { showError } = useErrorModal();
 
   const searchPlace = useCallback(
     async (query: string) => {
@@ -68,6 +70,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
         setIsLoading(false);
         setError('Error searching for address');
         setResults([]);
+        showError(`Error searching for address: ${formatErrorMessage(error)}`, 'Address Search Error');
       }
     },
     [map]

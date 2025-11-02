@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastProvider } from './context/toastContext';
+import { ErrorModalProvider } from './context/errorModal';
 import { GoogleAuth } from './components/AuthManager/GoogleAuth';
 import './styles/App.css';
 import { setAuthToken } from './util/axios';
@@ -18,9 +19,11 @@ const App = () => {
 
   return (
     <Router>
-      <ToastProvider>
-        <GoogleAuth />
-      </ToastProvider>
+      <ErrorModalProvider>
+        <ToastProvider>
+          <GoogleAuth />
+        </ToastProvider>
+      </ErrorModalProvider>
     </Router>
   );
 };

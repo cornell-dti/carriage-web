@@ -30,6 +30,8 @@ import styles from './requestridedialog.module.css';
 import { Ride, Location } from 'types';
 import axios from '../../util/axios';
 import { useLocations } from '../../context/LocationsContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { formatErrorMessage } from '../../context/errorModal';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -92,6 +94,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   ride,
 }) => {
   const { locations } = useLocations();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
     dropoffLocation: null,
@@ -245,9 +248,12 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       const result = await onSubmit(formData);
       if (result !== false) {
         onClose();
+        showToast('Changes saved successfully', ToastStatus.SUCCESS);
+      } else {
+        showToast('Failed to save changes', ToastStatus.ERROR);
       }
     } catch (e) {
-      // Keep dialog open on errors thrown by onSubmit
+      showToast('Failed to save changes: ' + formatErrorMessage(e), ToastStatus.ERROR);
     }
   };
 

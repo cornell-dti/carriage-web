@@ -41,6 +41,7 @@ import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import { isNewRide } from '../../util/modelFixtures';
 import axios from '../../util/axios';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RideActionsProps {
   userRole: UserRole;
@@ -85,6 +86,7 @@ const RideActions: React.FC<RideActionsProps> = ({
   const { showToast } = useToast();
   const { refreshRides } = useRides();
   const { curDate } = useDate();
+  const { showError } = useErrorModal();
 
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
@@ -109,6 +111,7 @@ const RideActions: React.FC<RideActionsProps> = ({
       setSelectedStatus(null);
     } catch (error) {
       console.error('Failed to update status:', error);
+      showError(`Failed to update status: ${formatErrorMessage(error)}`, 'Rides Error');
     } finally {
       setUpdating(false);
     }
@@ -144,7 +147,7 @@ const RideActions: React.FC<RideActionsProps> = ({
       showToast('Ride Cancelled', ToastStatus.SUCCESS);
     } catch (error) {
       console.error('Failed to cancel ride:', error);
-      showToast('Failed to cancel ride', ToastStatus.ERROR);
+      showError(`Failed to cancel ride: ${formatErrorMessage(error)}`, 'Rides Error');
     }
   };
 
@@ -179,17 +182,17 @@ const RideActions: React.FC<RideActionsProps> = ({
           onClose(); // Close modal after creating new ride
         }
       } else {
-        const message = isNewRide(ride)
-          ? 'Failed to create ride'
-          : 'Failed to save ride';
-        showToast(message, ToastStatus.ERROR);
+        // const message = isNewRide(ride)
+        //   ? 'Failed to create ride'
+        //   : 'Failed to save ride';
+        // showToast(message, ToastStatus.ERROR);
       }
     } catch (error) {
       console.error('Error saving ride:', error);
       const message = isNewRide(ride)
-        ? 'Failed to create ride'
-        : 'Failed to save ride';
-      showToast(message, ToastStatus.ERROR);
+        ? 'Failed to create ride: ' + formatErrorMessage(error)
+        : 'Failed to save ride: ' + formatErrorMessage(error);
+      showError(message, 'Rides Error');
     } finally {
       setSaving(false);
     }

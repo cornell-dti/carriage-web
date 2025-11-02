@@ -39,6 +39,7 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import styles from './RideOverview.module.css';
 import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -206,6 +207,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   const temporalType = getTemporalType(ride);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
   const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString);
     return {
@@ -252,7 +254,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updateRideField('startTime', updatedStartTime.toISOString());
     } catch (error) {
       console.error('Failed to update ride time:', error);
-      showToast(`Error updating ride time: ${error}`, ToastStatus.ERROR);
+      showError(`Error updating ride time: ${formatErrorMessage(error)}`, 'Ride Edit Error');
     }
   };
 
