@@ -4,18 +4,15 @@ FROM node:16-alpine
 # Create a directory for the app
 WORKDIR /app
 
-# Set production environment for node
-ENV NODE_ENV=production
-
 # Read build-time environment variables
 ARG REACT_APP_SERVER_URL
-ENV REACT_APP_SERVER_URL ${REACT_APP_SERVER_URL}
+ENV REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
 ARG REACT_APP_CLIENT_ID
-ENV REACT_APP_CLIENT_ID ${REACT_APP_CLIENT_ID}
+ENV REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
 ARG REACT_APP_PUBLIC_VAPID_KEY
-ENV REACT_APP_PUBLIC_VAPID_KEY ${REACT_APP_PUBLIC_VAPID_KEY}
+ENV REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
 ARG REACT_APP_ENCRYPTION_KEY
-ENV REACT_APP_ENCRYPTION_KEY ${REACT_APP_ENCRYPTION_KEY}
+ENV REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
 
 # Copy package.jsons first to install
 COPY package.json package-lock.json /app/
@@ -35,6 +32,9 @@ RUN npm run build
 # Install dependencies for the server
 WORKDIR /app/server
 RUN npm run build
+
+# Set production environment after build
+ENV NODE_ENV=production
 
 # Expose port 3001 for the server
 EXPOSE 3001
