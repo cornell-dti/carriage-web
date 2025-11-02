@@ -144,6 +144,16 @@ Rider: ${
     }
   };
 
+  const handleRideSelected = (selection: Ride | undefined) => {
+    if (selection === undefined) {
+      setIsOpen(false);
+      setCurrentRide(undefined);
+    } else {
+      setIsOpen(true);
+      setCurrentRide(selection);
+    }
+  };
+
   const onSelectEvent = (event: any) => {
     setIsOpen(true);
     setCurrentRide(event.ride);
@@ -179,7 +189,9 @@ Rider: ${
     []
   );
 
-  const handleChangeViewState = () => setViewMore(!viewMore);
+  useEffect(() => {
+    console.log(currentRide);
+  }, [currentRide]);
 
   return (
     <>
@@ -196,28 +208,8 @@ Rider: ${
           <ScheduledTimeline
             baseDate={scheduleDay}
             rides={scheduledRides}
-            handleSelection={() => {}}
+            handleSelection={handleRideSelected}
           ></ScheduledTimeline>
-          {/* <Calendar
-            formats={{ timeGutterFormat: 'h A' }}
-            localizer={localizer}
-            toolbar={false}
-            step={5}
-            defaultDate={scheduleDay}
-            timeslots={12}
-            showMultiDayTimes={true}
-            events={events}
-            defaultView="day"
-            onSelectEvent={onSelectEvent}
-            min={minTime}
-            max={maxTime}
-            resources={calDrivers}
-            resourceIdAccessor="resourceId"
-            resourceTitleAccessor="resourceTitle"
-            eventPropGetter={eventStyle}
-            slotPropGetter={slotStyle}
-            components={{ eventWrapper: TabbableEventWrapper }}
-          /> */}
         </div>
       </div>
     </>
