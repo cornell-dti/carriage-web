@@ -1,5 +1,6 @@
 import React, {
   ComponentType,
+  FC,
   JSXElementConstructor,
   PropsWithChildren,
   ReactElement,
@@ -16,14 +17,13 @@ import cn from 'classnames';
 import moment from 'moment';
 import { Ride, Driver } from '../../types';
 import { useDate } from '../../context/date';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './big_calendar_override.css';
 import styles from './schedule.module.css';
 import Modal from '../RideStatus/SModal';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import { newDate } from 'react-datepicker/dist/date_utils';
+import { Button } from '@mui/material';
 
 const colorMap = new Map<string, string[]>([
   ['red', ['FFA26B', 'FFC7A6']],
@@ -68,6 +68,7 @@ const Schedule = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
 
+  console.log(scheduledRides);
   const getRides = () => {
     setEvents(
       scheduledRides
@@ -246,6 +247,219 @@ Rider: ${
         view {viewMore ? 'less' : 'more'}
       </button>
     </>
+  );
+};
+
+interface ScheduledTimelineProps {
+  rides: Ride[];
+  selected: Ride | undefined;
+  handleSelection: (selectionChange: Ride | undefined) => void;
+  leftOffset?: number;
+  halfHourWidth?: number;
+}
+
+const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
+  rides,
+  selected,
+  handleSelection,
+  leftOffset = 16,
+  halfHourWidth = 300,
+}) => {
+  const timeLabels = useMemo(() => {
+    const labels = [];
+    const startTime = new Date();
+    startTime.setHours(7, 0, 0); // 7:00 AM
+
+    const endTime = new Date();
+    endTime.setHours(15, 30, 0); // 3:30 PM
+
+    let currentTime = new Date(startTime);
+
+    while (currentTime <= endTime) {
+      labels.push(moment(currentTime).format('h:mm A'));
+
+      currentTime = new Date(currentTime.getTime() + 30 * 60000);
+    }
+
+    return labels;
+  }, []);
+
+  const minuteWidth = useMemo(() => halfHourWidth / 30, [halfHourWidth]);
+
+  const baseTime = new Date();
+  baseTime.setHours(7);
+
+  const calculateRidePosition = (startTime: Date, endTime: Date) => {
+    // Calculate minutes from 7:00 AM
+    const startMinutesFromBase =
+      (startTime.getTime() - baseTime.getTime()) / (60 * 1000);
+    const endMinutesFromBase =
+      (endTime.getTime() - baseTime.getTime()) / (60 * 1000);
+
+    // Calculate position and width
+    const positionFromLeft = startMinutesFromBase * minuteWidth;
+    const width = (endMinutesFromBase - startMinutesFromBase) * minuteWidth;
+
+    return { positionFromLeft, width };
+  };
+
+  return (
+    <div className={styles.timelineOuterContainer}>
+      {/* timeline container */}
+      <div className={styles.timelineContainer}>
+        {/* timeline horizontal scroll */}
+        <div className={styles.timelineScroll}>
+          {/* tick labels */}
+          <div className={styles.tickLabels} style={{ marginLeft: leftOffset }}>
+            {timeLabels.map((timeLabel, idx) => (
+              <div
+                key={idx}
+                className={styles.tickLabel}
+                style={{
+                  width: halfHourWidth,
+                  maxWidth: halfHourWidth,
+                  minWidth: halfHourWidth,
+                }}
+              >
+                <p className={styles.tickLabelText}>{timeLabel}</p>
+              </div>
+            ))}
+          </div>
+          {/* timeline lines for rides */}
+          <div
+            className={styles.timelineRidesContainer}
+            style={{ width: `${halfHourWidth * timeLabels.length}px` }}
+          >
+            {rides.map((ride, idx) => {
+              const { positionFromLeft, width } = calculateRidePosition(
+                new Date(ride.startTime),
+                new Date(ride.endTime)
+              );
+
+              return (
+                <div
+                  key={idx}
+                  className={styles.rideRow}
+                  id={`${ride.id}-timeline`}
+                >
+                  {/* Student name on the left */}
+                  <div
+                    className={styles.rideNameContainer}
+                    style={{
+                      left: `${leftOffset}px`,
+                      minWidth: `${positionFromLeft}px`,
+                      maxWidth: `${positionFromLeft}px`,
+                    }}
+                  >
+                    <p className={styles.rideName}>
+                      {ride.riders[0].firstName} {ride.riders[0].lastName}
+                    </p>
+                  </div>
+
+                  {/* Ride block with start time */}
+                  <button
+                    className={`${styles.rideBlock} ${
+                      rides[0].status === 'no_show'
+                        ? styles.rideBlockNoShow
+                        : styles.rideBlockNormal
+                    }`}
+                    style={{
+                      left: `${leftOffset + positionFromLeft}px`,
+                      width: `${Math.max(width, 50)}px`, // Minimum width for visibility
+                    }}
+                    onClick={() =>
+                      selected === ride
+                        ? handleSelection(undefined)
+                        : handleSelection(ride)
+                    }
+                  >
+                    <div className="flex flex-col justify-center">
+                      <p
+                        className={`${styles.rideTimeText} ${
+                          // status access
+                          rides[0].status === 'no_show'
+                            ? styles.rideTimeTextNoShow
+                            : styles.rideTimeTextNormal
+                        }`}
+                      >
+                        {/* date cast*/}
+                        {new Date(ride.startTime).getHours() % 12 || 12}:
+                        {/* date cast */}
+                        {new Date(ride.startTime)
+                          .getMinutes()
+                          .toString()
+                          .padStart(2, '0')}
+                        {/* date cast */}
+                        {new Date(ride.startTime).getHours() >= 12
+                          ? 'PM'
+                          : 'AM'}
+                      </p>
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          {/* tick marks */}
+          <div
+            className={styles.tickMarksContainer}
+            style={{ left: leftOffset }}
+          >
+            {timeLabels.map((_timeLabel, idx) => (
+              <div
+                key={idx}
+                className={styles.tickMark}
+                style={{
+                  left: `${leftOffset + idx * halfHourWidth}px`,
+                  width: halfHourWidth,
+                  maxWidth: halfHourWidth,
+                  minWidth: halfHourWidth,
+                }}
+              ></div>
+            ))}
+          </div>
+          {/* current line */}
+          <div
+            id="timeline-current-indicator"
+            className={styles.currentTimeLine}
+            style={{
+              left:
+                leftOffset +
+                ((new Date().getTime() - baseTime.getTime()) / (60 * 1000)) *
+                  minuteWidth,
+            }}
+          ></div>
+        </div>
+      </div>
+
+      {/* current time  */}
+      <Button
+        className={styles.currentTimeButton}
+        onClick={() => {
+          const element = document.getElementById('timeline-current-indicator');
+          const parentDiv =
+            element?.closest('.overflow-x-scroll') || element?.parentElement;
+
+          if (element && parentDiv) {
+            // Get the parent's dimensions and scroll position
+            const parentRect = parentDiv.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+
+            // Calculate the scroll position to center the element
+            const scrollLeft =
+              element.offsetLeft - parentRect.width / 2 + elementRect.width / 2;
+
+            // Scroll smoothly to the calculated position
+            parentDiv.scrollTo({
+              left: scrollLeft,
+              behavior: 'smooth',
+            });
+          }
+        }}
+      >
+        <p>{`Now: ${moment(Date.now()).format('h:mm A')}`}</p>
+      </Button>
+    </div>
   );
 };
 
