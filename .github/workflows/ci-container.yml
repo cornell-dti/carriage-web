@@ -19,5 +19,7 @@ jobs:
         org.opencontainers.image.title=PR-${{ github.event.pull_request.number }}
         org.opencontainers.image.description=${{ github.event.pull_request.title }}
       registry: ghcr.io
-      username: ${{ github.actor }}
-      password: ${{ secrets.GITHUB_TOKEN }}
+    secrets:
+      inherit: true
+      username: ${{ secrets.DOCKERHUB_USERNAME }}
+      password: ${{ secrets.DOCKERHUB_TOKEN }}
