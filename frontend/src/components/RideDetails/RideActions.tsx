@@ -30,6 +30,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
 import { useRideEdit } from './RideEditContext';
+import { validateRideTimes, TimeValidationError } from './TimeValidation';
 import {
   canUpdateStatus,
   canCancelRide,
@@ -92,6 +93,8 @@ const RideActions: React.FC<RideActionsProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const [updating, setUpdating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [timeErrorOpen, setTimeErrorOpen] = useState(false);
+  const [timeErrors, setTimeErrors] = useState<TimeValidationError[]>([]);
 
   const ride = editedRide!; // We know this exists from the context
   const rideCompleted = ride.status === Status.COMPLETED;
@@ -159,6 +162,24 @@ const RideActions: React.FC<RideActionsProps> = ({
   };
 
   const handleSave = async () => {
+    // Validate times before saving; show modal with errors if invalid
+    const allowPastTimes = false;
+    const timeValidation = validateRideTimes(
+      ride.startTime,
+      ride.endTime,
+      {
+        allowPastTimes,
+        maxDurationHours: 24,
+        minDurationMinutes: 5,
+      }
+    );
+
+    if (!timeValidation.isValid) {
+      setTimeErrors(timeValidation.errors);
+      setTimeErrorOpen(true);
+      return;
+    }
+
     setSaving(true);
     try {
       const success = await saveChanges();
@@ -524,6 +545,34 @@ const RideActions: React.FC<RideActionsProps> = ({
           >
             Cancel Ride
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Time Validation Errors Modal */}
+      <Dialog
+        open={timeErrorOpen}
+        onClose={() => setTimeErrorOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>Cannot Save – Please Fix Time Settings</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            The following issues were found:
+          </Typography>
+          <List>
+            {timeErrors.map((err, idx) => (
+              <ListItem key={idx}>
+                <ListItemIcon>
+                  <ReportIcon color="error" />
+                </ListItemIcon>
+                <ListItemText primary={err.message} />
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTimeErrorOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
 
