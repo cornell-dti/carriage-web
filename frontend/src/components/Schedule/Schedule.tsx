@@ -5,6 +5,7 @@ import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import styles from './schedule.module.css';
 
 const Schedule = () => {
   const { scheduledRides, refreshRides } = useRides();
@@ -88,6 +89,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
   handleSelection,
   halfHourWidth = 100,
 }) => {
+  const [nameDisplayMode, setNameDisplayMode] = useState<'student' | 'driver'>(
+    'student'
+  );
+
   const timeLabels = useMemo(() => {
     const labels = [];
     const startTime = new Date();
@@ -145,8 +150,62 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
         position: 'relative',
         flex: 1,
         flexDirection: 'column',
+        gap: '.5rem',
       }}
     >
+      {/* current time and name display mode */}
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '0.25rem',
+        }}
+      >
+        <button
+          className={styles.topControlButton}
+          onClick={() => {
+            const element = document.getElementById(
+              'timeline-current-indicator'
+            );
+            const parentDiv =
+              element?.closest('.overflow-x-scroll') || element?.parentElement;
+
+            if (element && parentDiv) {
+              // Get the parent's dimensions and scroll position
+              const parentRect = parentDiv.getBoundingClientRect();
+              const elementRect = element.getBoundingClientRect();
+
+              // Calculate the scroll position to center the element
+              const scrollLeft =
+                element.offsetLeft -
+                parentRect.width / 2 +
+                elementRect.width / 2;
+
+              // Scroll smoothly to the calculated position
+              parentDiv.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth',
+              });
+            }
+          }}
+        >
+          {`Now: ${moment(Date.now()).format('h:mm A')}`}
+        </button>
+        <button
+          className={styles.topControlButton}
+          onClick={() => {
+            setNameDisplayMode(
+              nameDisplayMode === 'driver' ? 'student' : 'driver'
+            );
+          }}
+        >
+          {nameDisplayMode === 'driver'
+            ? 'Showing Driver Names'
+            : 'Showing Student Names'}
+        </button>
+      </div>
       {/* timeline container */}
       <div
         style={{
@@ -155,11 +214,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '1rem',
           border: 'solid 1px #dddddd',
           borderRadius: '0.5rem',
           backgroundColor: '#fff',
-          filter: 'drop-shadow(0px 4px 3px #00000010)',
+          padding: '1rem 1rem 0.5rem 1rem',
         }}
       >
         {/* timeline horizontal scroll */}
@@ -232,12 +290,12 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                   }}
                   id={`${ride.id}-timeline`}
                 >
-                  {/* Student name on the left */}
+                  {/* Student/Driver name */}
                   <div
                     style={{
                       height: '100%',
                       display: 'flex',
-                      justifyContent: 'flex-end',
+                      justifyContent: 'end',
                       alignItems: 'center',
                       paddingRight: '0.5rem',
                       minWidth: `${positionFromLeft}px`,
@@ -246,15 +304,20 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                   >
                     <p
                       style={{
-                        fontSize: '0.875rem',
-                        fontWeight: 500,
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
-                        textAlign: 'left',
                       }}
                     >
-                      {ride.riders[0].firstName} {ride.riders[0].lastName}
+                      {nameDisplayMode === 'driver'
+                        ? ride.driver
+                          ? ride.driver.firstName
+                          : 'No Driver Assigned'
+                        : ride.riders[0]
+                        ? ride.riders[0].firstName +
+                          ' ' +
+                          ride.riders[0].lastName
+                        : 'No Student'}
                     </p>
                   </div>
 
@@ -270,15 +333,15 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                       padding: '0 0.5rem',
                       overflow: 'hidden',
                       backgroundColor:
-                        rides[0].status === 'no_show'
+                        rides[0] === undefined || rides[0].status === 'no_show'
                           ? 'rgb(229, 229, 229)'
                           : 'rgb(23, 23, 23)',
                       borderColor:
-                        rides[0].status === 'no_show'
+                        rides[0] === undefined || rides[0].status === 'no_show'
                           ? 'rgb(209, 213, 219)'
                           : 'rgb(38, 38, 38)',
                       color:
-                        rides[0].status === 'no_show'
+                        rides[0] === undefined || rides[0].status === 'no_show'
                           ? 'rgb(64, 64, 64)'
                           : 'rgb(245, 245, 245)',
                       left: `${positionFromLeft}px`,
@@ -295,6 +358,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                         style={{
                           fontSize: '0.875rem',
                           color:
+                            rides[0] === undefined ||
                             rides[0].status === 'no_show'
                               ? 'rgb(38, 38, 38)'
                               : 'rgb(245, 245, 245)',
@@ -369,52 +433,6 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           ></div>
         </div>
       </div>
-
-      {/* current time  */}
-      <button
-        style={{
-          cursor: 'pointer',
-          position: 'absolute',
-          backgroundColor: 'black',
-          border: 'none',
-          padding: '0.25rem 0.5rem',
-          borderRadius: '0.25rem',
-          outline: 'none',
-          color: 'white',
-          left: '4rem',
-          bottom: '4rem',
-          zIndex: 10,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#525252';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'black';
-        }}
-        onClick={() => {
-          const element = document.getElementById('timeline-current-indicator');
-          const parentDiv =
-            element?.closest('.overflow-x-scroll') || element?.parentElement;
-
-          if (element && parentDiv) {
-            // Get the parent's dimensions and scroll position
-            const parentRect = parentDiv.getBoundingClientRect();
-            const elementRect = element.getBoundingClientRect();
-
-            // Calculate the scroll position to center the element
-            const scrollLeft =
-              element.offsetLeft - parentRect.width / 2 + elementRect.width / 2;
-
-            // Scroll smoothly to the calculated position
-            parentDiv.scrollTo({
-              left: scrollLeft,
-              behavior: 'smooth',
-            });
-          }
-        }}
-      >
-        {`Now: ${moment(Date.now()).format('h:mm A')}`}
-      </button>
     </div>
   );
 };

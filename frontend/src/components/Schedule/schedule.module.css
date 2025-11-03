@@ -1,0 +1,15 @@
+.topControlButton {
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  outline: none;
+  color: black;
+  width: 12rem;
+  transition: background-color 0.05s;
+}
+
+.topControlButton:hover {
+  background-color: #f5f5f5;
+}
