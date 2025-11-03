@@ -34,7 +34,9 @@ const Home = () => {
         </div>
       </div>
 
-      <Schedule />
+      <div className={styles.scheduleContainer}>
+        <Schedule />
+      </div>
 
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable />

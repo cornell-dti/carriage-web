@@ -145,7 +145,6 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
       style={{
         width: '100%',
         height: '30rem',
-        padding: '2rem',
         display: 'flex',
         position: 'relative',
         flex: 1,
