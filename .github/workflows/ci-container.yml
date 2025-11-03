@@ -4,46 +4,20 @@ on: pull_request
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        # don't push on forks
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          # don't push on forks
-          push: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-          tags: |
-            ghcr.io/${{ github.repository }}/pr-${{ github.event.pull_request.number }}:latest
-            ghcr.io/${{ github.repository }}/pr-${{ github.event.pull_request.number }}-${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }}
-            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
-            REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
-            REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
-            REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
-            REACT_APP_GOOGLE_MAPS_MAP_ID=${{ secrets.REACT_APP_GOOGLE_MAPS_MAP_ID }}
-          labels: |
-            org.opencontainers.image.source=${{ github.event.pull_request.html_url }}
-            org.opencontainers.image.title=PR-${{ github.event.pull_request.number }}
-            org.opencontainers.image.description=${{ github.event.pull_request.title }}
+    uses: ./.github/workflows/docker-build-push.yml
+    with:
+      push: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+      tags: |
+        ghcr.io/${{ github.repository }}/pr-${{ github.event.pull_request.number }}:latest
+        ghcr.io/${{ github.repository }}/pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+      labels: |
+        org.opencontainers.image.source=${{ github.event.pull_request.html_url }}
+        org.opencontainers.image.title=PR-${{ github.event.pull_request.number }}
+        org.opencontainers.image.description=${{ github.event.pull_request.title }}
+      registry: ghcr.io
+      username: ${{ github.actor }}
+      password: ${{ secrets.GITHUB_TOKEN }}
