@@ -92,8 +92,6 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
   handleSelection,
   halfHourWidth = 100,
 }) => {
-  console.log(rides);
-
   const [nameDisplayMode, setNameDisplayMode] = useState<'student' | 'driver'>(
     'student'
   );
