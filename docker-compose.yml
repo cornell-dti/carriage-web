@@ -28,5 +28,5 @@ services:
         - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
     ports:
       - '3001:3001'
-    image: dticarriage/carriage-service:latest
+    image: ghcr.io/cornell-dti/carriage-web:${IMAGE_TAG:-latest}
     restart: always
