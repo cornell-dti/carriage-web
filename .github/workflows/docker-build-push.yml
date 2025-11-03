@@ -1,4 +1,5 @@
 name: Docker Build and Push
+# must be run with `secrets: inherit` to ensure secrets are given
 
 on:
   workflow_call:
@@ -16,17 +17,10 @@ on:
         required: false
         default: ''
         type: string
-      registry:
-        description: 'Registry URL (optional)'
-        required: false
-        type: string
-    secrets:
-      username:
-        description: 'Registry password (optional)'
-        required: false
-      password:
-        description: 'Registry password (optional)'
-        required: false
+
+permissions:
+  contents: write
+  packages: write
 
 jobs:
   build:
@@ -42,9 +36,9 @@ jobs:
       - name: Log in to registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ inputs.registry }}
-          username: ${{ inputs.username }}
-          password: ${{ inputs.password }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
