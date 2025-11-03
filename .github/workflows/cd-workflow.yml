@@ -2,7 +2,7 @@ name: Continuous Deployment of Master
 
 on:
   push:
-    branches: [master]
+    branches: [master, bek76/docker-ci]
 
 jobs:
   deploy:
