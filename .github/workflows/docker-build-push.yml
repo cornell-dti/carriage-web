@@ -24,11 +24,9 @@ on:
       username:
         description: 'Registry password (optional)'
         required: false
-        type: string
       password:
         description: 'Registry password (optional)'
         required: false
-        type: string
 
 jobs:
   build:
