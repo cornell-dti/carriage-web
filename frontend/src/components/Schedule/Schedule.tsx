@@ -47,10 +47,6 @@ const Schedule = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(currentRide);
-  }, [currentRide]);
-
   return (
     <>
       {currentRide && (
@@ -65,7 +61,14 @@ const Schedule = () => {
         <div>
           <ScheduledTimeline
             baseDate={scheduleDay}
-            rides={scheduledRides}
+            rides={scheduledRides.filter((ride) => {
+              if (ride === undefined) {
+                console.error(ride, 'ride undefined!');
+                return false;
+              }
+
+              return true;
+            })}
             handleSelection={handleRideSelected}
           ></ScheduledTimeline>
         </div>
@@ -89,6 +92,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
   handleSelection,
   halfHourWidth = 100,
 }) => {
+  console.log(rides);
+
   const [nameDisplayMode, setNameDisplayMode] = useState<'student' | 'driver'>(
     'student'
   );
