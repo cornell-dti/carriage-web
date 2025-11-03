@@ -11,5 +11,7 @@ jobs:
       push: true
       tags: dticarriage/carriage-service:latest
       registry: docker.io
+    secrets:
+      inherit: true
       username: ${{ secrets.DOCKERHUB_USERNAME }}
       password: ${{ secrets.DOCKERHUB_TOKEN }}

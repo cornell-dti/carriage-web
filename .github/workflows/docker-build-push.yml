@@ -20,6 +20,7 @@ on:
         description: 'Registry URL (optional)'
         required: false
         type: string
+    secrets:
       username:
         description: 'Registry password (optional)'
         required: false
