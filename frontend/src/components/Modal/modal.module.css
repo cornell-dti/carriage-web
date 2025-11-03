@@ -73,6 +73,45 @@
   margin-bottom: 1.5rem;
 }
 
+.colBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.rowBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 15px;
+}
+
+.btnList {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+  padding: 5px;
+  margin-top: 15px;
+}
+
+.btnListItem {
+  padding: 8px 16px;
+  background-color: #d4d4d4;
+  border-radius: 25px;
+  text-align: center;
+  font-size: 14px;
+  min-height: auto;
+  border: #d4d4d4;
+}
+
+.btnListItem:focus {
+  box-shadow: 0 0 0 3px #0075db;
+}
+
 /* Common input styles */
 .inputContainer input[type='text'],
 .inputContainer input[type='tel'],
