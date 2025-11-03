@@ -29,4 +29,6 @@ jobs:
             REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
             REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
             REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+            REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+            REACT_APP_GOOGLE_MAPS_MAP_ID=${{ secrets.REACT_APP_GOOGLE_MAPS_MAP_ID }}
           tags: dticarriage/carriage-service:latest
