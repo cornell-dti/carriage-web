@@ -14,7 +14,7 @@ const urlBase64ToUint8Array = (base64String: string) => {
 };
 
 const convertedVapidKey = urlBase64ToUint8Array(
-  process.env.REACT_APP_PUBLIC_VAPID_KEY!
+  import.meta.env.VITE_PUBLIC_VAPID_KEY!
 );
 
 const sendSubscription = (
