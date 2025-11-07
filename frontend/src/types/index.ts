@@ -66,6 +66,7 @@ export enum Tag {
 
 export type Location = LocationType;
 
+// TODO: After creating RideType2 in the backend, create a new type here
 export type Ride = RideType;
 
 export enum Type {
