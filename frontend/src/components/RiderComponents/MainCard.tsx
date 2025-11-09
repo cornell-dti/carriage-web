@@ -22,6 +22,7 @@ import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
 import RequestRideDialog from './RequestRideDialog';
 import { useLocations } from 'context/LocationsContext';
 import DriverInfoDialog from './DriverInfoDialog';
+import { getRiderDisplayState } from '../../util/rideValidation';
 import {
   Dialog,
   DialogTitle,
@@ -248,7 +249,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
                   <span>{ride.driver.email}</span>
                 </div>
                 <div className={styles.status}>
-                  Status: {ride.status.replace('_', ' ')}
+                  Status: {getRiderDisplayState(ride)}
                 </div>
               </div>
             </div>
@@ -261,7 +262,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
                   <span>Unscheduled</span>
                 </div>
                 <div className={styles.status}>
-                  Status: {ride.status.replace('_', ' ')}
+                  Status: {getRiderDisplayState(ride)}
                 </div>
               </div>
             </div>

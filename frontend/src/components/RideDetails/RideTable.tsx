@@ -35,6 +35,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { RideType, Status, SchedulingState } from '../../types';
 import AuthContext from '../../context/auth';
 import RideDetailsComponent from './RideDetailsComponent';
+import { getRiderDisplayState } from '../../util/rideValidation';
 
 interface RideTableProps {
   rides: RideType[];
@@ -251,7 +252,6 @@ const RideTable: React.FC<RideTableProps> = ({
       { key: 'endTime', label: 'End Time', sortable: true },
       { key: 'from', label: 'From', sortable: false },
       { key: 'to', label: 'To', sortable: false },
-      { key: 'status', label: 'Status', sortable: true },
     ];
 
     switch (userRole) {
@@ -268,11 +268,13 @@ const RideTable: React.FC<RideTableProps> = ({
       case 'driver':
         return [
           ...baseColumns,
+          { key: 'status', label: 'Status', sortable: true },
           { key: 'type', label: 'Type', sortable: false },
         ];
       case 'admin':
         return [
           ...baseColumns,
+          { key: 'status', label: 'Status', sortable: true },
           {
             key: 'schedulingState',
             label: 'Scheduling State',
@@ -634,38 +636,99 @@ const RideTable: React.FC<RideTableProps> = ({
                       }}
                       aria-label="Open ride details"
                     >
-                      <TableCell>{formatDate(ride.startTime)}</TableCell>
-                      <TableCell>{formatTime(ride.startTime)}</TableCell>
-                      <TableCell>{formatTime(ride.endTime)}</TableCell>
-                      <TableCell>{ride.startLocation.name}</TableCell>
-                      <TableCell>{ride.endLocation.name}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={ride.status.replace(/_/g, ' ')}
-                          color={getStatusColor(ride.status)}
-                          size="small"
-                        />
-                      </TableCell>
-                      {userRole !== 'driver' && (
-                        <TableCell>
-                          <Chip
-                            label={ride.schedulingState}
-                            color={getSchedulingStateColor(
-                              ride.schedulingState
-                            )}
-                            size="small"
-                            variant="outlined"
-                          />
-                        </TableCell>
-                      )}
-                      <TableCell>
-                        <Chip
-                          label={temporalType}
-                          color={getTemporalTypeColor(temporalType)}
-                          size="small"
-                          variant="outlined"
-                        />
-                      </TableCell>
+                      {columns.map((column) => {
+                        switch (column.key) {
+                          case 'date':
+                            return (
+                              <TableCell key={column.key}>
+                                {formatDate(ride.startTime)}
+                              </TableCell>
+                            );
+                          case 'startTime':
+                            return (
+                              <TableCell key={column.key}>
+                                {formatTime(ride.startTime)}
+                              </TableCell>
+                            );
+                          case 'endTime':
+                            return (
+                              <TableCell key={column.key}>
+                                {formatTime(ride.endTime)}
+                              </TableCell>
+                            );
+                          case 'from':
+                            return (
+                              <TableCell key={column.key}>
+                                {ride.startLocation.name}
+                              </TableCell>
+                            );
+                          case 'to':
+                            return (
+                              <TableCell key={column.key}>
+                                {ride.endLocation.name}
+                              </TableCell>
+                            );
+                          case 'status':
+                            return (
+                              <TableCell key={column.key}>
+                                <Chip
+                                  label={ride.status.replace(/_/g, ' ')}
+                                  color={getStatusColor(ride.status)}
+                                  size="small"
+                                />
+                              </TableCell>
+                            );
+                          case 'schedulingState':
+                            return (
+                              <TableCell key={column.key}>
+                                <Chip
+                                  label={
+                                    userRole === 'rider'
+                                      ? getRiderDisplayState(ride)
+                                      : ride.schedulingState
+                                  }
+                                  color={
+                                    userRole === 'rider'
+                                      ? getRiderDisplayState(ride) ===
+                                          'Cancelled' ||
+                                        getRiderDisplayState(ride) ===
+                                          'Rejected'
+                                        ? 'error'
+                                        : getRiderDisplayState(ride) ===
+                                            'Scheduled' ||
+                                          getRiderDisplayState(ride) ===
+                                            'Scheduled (Modified)'
+                                        ? 'success'
+                                        : getRiderDisplayState(ride) ===
+                                          'Requested'
+                                        ? 'warning'
+                                        : 'default'
+                                      : getSchedulingStateColor(
+                                          ride.schedulingState
+                                        )
+                                  }
+                                  size="small"
+                                  variant={
+                                    userRole === 'rider' ? 'filled' : 'outlined'
+                                  }
+                                />
+                              </TableCell>
+                            );
+                          case 'type':
+                            return (
+                              <TableCell key={column.key}>
+                                <Chip
+                                  label={temporalType}
+                                  color={getTemporalTypeColor(temporalType)}
+                                  size="small"
+                                  variant="outlined"
+                                />
+                              </TableCell>
+                            );
+                          default:
+                            return null;
+                        }
+                      })}
                     </TableRow>
                   );
                 })}

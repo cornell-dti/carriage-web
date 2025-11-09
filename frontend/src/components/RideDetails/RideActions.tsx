@@ -25,7 +25,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import UpdateIcon from '@mui/icons-material/Update';
-import ReportIcon from '@mui/icons-material/Report';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
@@ -115,6 +114,13 @@ const RideActions: React.FC<RideActionsProps> = ({
   };
 
   const handleCancel = () => {
+    // If ride has a driver (scheduled) and user is a rider, show admin contact modal
+    if (ride.driver && userRole === 'rider') {
+      setContactAdminOpen(true);
+      return;
+    }
+
+    // Otherwise, proceed with normal cancel flow
     setCancelConfirmOpen(true);
   };
 
@@ -125,8 +131,40 @@ const RideActions: React.FC<RideActionsProps> = ({
       return;
     }
 
+    // Only admins can reject rides; riders can only cancel
+    // If ride has no driver (unscheduled) AND user is admin, reject it
+    if (!ride.driver && userRole === 'admin') {
+      try {
+        // Set schedulingState to REJECTED
+        await axios.put(`/api/rides/${ride.id}`, {
+          schedulingState: SchedulingState.REJECTED,
+        });
+
+        // Close the cancel confirmation modal
+        setCancelConfirmOpen(false);
+
+        // Close the main ride details dialog
+        if (onClose) {
+          onClose();
+        }
+
+        // Refresh the rides data
+        refreshRides();
+
+        // Show success message
+        showToast('Ride Rejected', ToastStatus.SUCCESS);
+      } catch (error) {
+        console.error('Failed to reject ride:', error);
+        showToast('Failed to reject ride', ToastStatus.ERROR);
+      }
+      return;
+    }
+
+    // All other cases: call DELETE endpoint
+    // Backend will handle:
+    //   - If unscheduled ride + user is rider: physically delete the ride
+    //   - If scheduled ride (has driver) + user is admin: set status to CANCELLED
     try {
-      // Call the DELETE endpoint like DeleteOrEditTypeModal does
       await axios.delete(`/api/rides/${ride.id}`);
 
       // Close the cancel confirmation modal
@@ -199,10 +237,6 @@ const RideActions: React.FC<RideActionsProps> = ({
     stopEditing();
   };
 
-  const handleReport = () => {
-    // In a real app, open report issue dialog
-  };
-
   const renderRiderActions = () => {
     if (canEdit) {
       return (
@@ -253,23 +287,24 @@ const RideActions: React.FC<RideActionsProps> = ({
                 onClick={handleCancel}
                 fullWidth={isMobile}
                 disabled={!canCancelThisRide}
-                aria-label="Cancel ride"
+                aria-label={
+                  !ride.driver && userRole === 'admin'
+                    ? 'Reject ride'
+                    : 'Cancel ride'
+                }
                 title={
                   !canCancelThisRide
                     ? getRestrictionMessage(ride, 'cancel', userRole)
                     : undefined
                 }
               >
-                {isMobile ? <CancelIcon /> : 'Cancel Ride'}
-              </Button>
-              <Button
-                variant="outlined"
-                startIcon={!isMobile ? <ReportIcon /> : undefined}
-                onClick={handleReport}
-                fullWidth={isMobile}
-                aria-label="Report issue"
-              >
-                {isMobile ? <ReportIcon /> : 'Report'}
+                {isMobile ? (
+                  <CancelIcon />
+                ) : !ride.driver && userRole === 'admin' ? (
+                  'Reject Ride'
+                ) : (
+                  'Cancel Ride'
+                )}
               </Button>
             </>
           )}
@@ -286,15 +321,6 @@ const RideActions: React.FC<RideActionsProps> = ({
             aria-label="Contact Admin"
           >
             {isMobile ? <AdminPanelSettingsIcon /> : 'Contact Admin'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={!isMobile ? <ReportIcon /> : undefined}
-            onClick={handleReport}
-            fullWidth={isMobile}
-            aria-label="Report issue"
-          >
-            {isMobile ? <ReportIcon /> : 'Report'}
           </Button>
         </Stack>
       );
@@ -317,15 +343,6 @@ const RideActions: React.FC<RideActionsProps> = ({
         }
       >
         {isMobile ? <UpdateIcon /> : 'Update Status'}
-      </Button>
-      <Button
-        variant="outlined"
-        startIcon={!isMobile ? <ReportIcon /> : undefined}
-        onClick={handleReport}
-        fullWidth={isMobile}
-        aria-label="Report issue"
-      >
-        {isMobile ? <ReportIcon /> : 'Report'}
       </Button>
     </Stack>
   );
@@ -378,14 +395,24 @@ const RideActions: React.FC<RideActionsProps> = ({
             onClick={() => setCancelConfirmOpen(true)}
             fullWidth={isMobile}
             disabled={!canCancelThisRide}
-            aria-label="Cancel ride"
+            aria-label={
+              !ride.driver && userRole === 'admin'
+                ? 'Reject ride'
+                : 'Cancel ride'
+            }
             title={
               !canCancelThisRide
                 ? getRestrictionMessage(ride, 'cancel', userRole)
                 : undefined
             }
           >
-            {isMobile ? <CancelIcon /> : 'Cancel Ride'}
+            {isMobile ? (
+              <CancelIcon />
+            ) : !ride.driver && userRole === 'admin' ? (
+              'Reject Ride'
+            ) : (
+              'Cancel Ride'
+            )}
           </Button>
         </>
       )}
@@ -490,11 +517,14 @@ const RideActions: React.FC<RideActionsProps> = ({
         fullWidth
         maxWidth="xs"
       >
-        <DialogTitle>Cancel Ride</DialogTitle>
+        <DialogTitle>
+          {!ride.driver && userRole === 'admin' ? 'Reject Ride' : 'Cancel Ride'}
+        </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to cancel this ride? This action cannot be
-            undone.
+            {!ride.driver && userRole === 'admin'
+              ? 'Are you sure you want to reject this ride? This will mark the ride as rejected and notify the rider.'
+              : 'Are you sure you want to cancel this ride? This action cannot be undone.'}
           </Typography>
           <Box
             sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 1 }}
@@ -522,7 +552,9 @@ const RideActions: React.FC<RideActionsProps> = ({
             variant="contained"
             color="error"
           >
-            Cancel Ride
+            {!ride.driver && userRole === 'admin'
+              ? 'Reject Ride'
+              : 'Cancel Ride'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -533,30 +565,28 @@ const RideActions: React.FC<RideActionsProps> = ({
         onClose={() => setContactAdminOpen(false)}
         fullWidth
         maxWidth="xs"
+        aria-labelledby="admin-contact-dialog-title"
       >
-        <DialogTitle>Contact Admin</DialogTitle>
+        <DialogTitle id="admin-contact-dialog-title">
+          Contact Administrator
+        </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" gutterBottom>
-            Need help with your ride? Contact our admin team using the
-            information below.
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            This ride has been scheduled and a driver has been assigned. To
+            cancel or edit this ride, please contact the administrator.
           </Typography>
-          <List>
-            <ListItem>
-              <ListItemIcon>
-                <PhoneIcon />
-              </ListItemIcon>
-              <ListItemText primary="Phone" secondary="(555) 123-4567" />
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <EmailIcon />
-              </ListItemIcon>
-              <ListItemText primary="Email" secondary="admin@carriage.com" />
-            </ListItem>
-          </List>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
+              Administrator Contact:
+            </Typography>
+            <Typography variant="body2">Email: admin@carriage.com</Typography>
+            <Typography variant="body2">Phone: 555-123-4567</Typography>
+          </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setContactAdminOpen(false)}>Close</Button>
+          <Button onClick={() => setContactAdminOpen(false)} color="primary">
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>

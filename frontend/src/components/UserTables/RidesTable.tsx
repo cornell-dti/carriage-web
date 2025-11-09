@@ -191,27 +191,64 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             valueEditAssign,
           ];
 
-          const handleRowClick = () => {
+          const handleCellClick = () => {
+            // Open ride details modal when clicking on specific cells
             setSelectedRide(ride);
             setDetailsModalOpen(true);
           };
 
+          // Wrap clickable cells in a span with onClick handler
+          const makeClickable = (cellData: any) => {
+            return {
+              ...cellData,
+              data: (
+                <span
+                  onClick={handleCellClick}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                >
+                  {cellData.data}
+                </span>
+              ),
+            };
+          };
+
+          // For scheduled rides: make pickup (1), dropoff (2), needs (3), rider (4) clickable
+          const scheduledRideDataClickable = [
+            startEndTime, // 0 - Time (not clickable)
+            makeClickable(valuePickup), // 1 - Pickup (clickable)
+            makeClickable(valueDropoff), // 2 - Dropoff (clickable)
+            makeClickable({ data: needs }), // 3 - Needs (clickable)
+            makeClickable({ data: riderName }), // 4 - Rider (clickable)
+            valueEditReassign, // 5 - Buttons (not clickable)
+          ];
+
+          // For unscheduled rides: make rider (2), pickup (3), dropoff (4), needs (5) clickable
+          const unscheduledRideDataClickable = [
+            timeframe, // 0 - Timeframe (not clickable)
+            startEndTime, // 1 - Time (not clickable)
+            makeClickable({ data: riderName }), // 2 - Rider (clickable)
+            makeClickable(valuePickup), // 3 - Pickup (clickable)
+            makeClickable(valueDropoff), // 4 - Dropoff (clickable)
+            makeClickable({ data: needs }), // 5 - Needs (clickable)
+            valueEditAssign, // 6 - Buttons (not clickable)
+          ];
+
           const scheduledRow = () => (
             <Row
               key={ride.id}
-              data={scheduledRideData}
+              data={scheduledRideDataClickable}
               colSizes={scheduledColSizes}
-              onClick={handleRowClick}
             />
           );
 
           const unscheduledRow = () => (
             <Row
               key={ride.id}
-              data={unscheduledRideData}
+              data={unscheduledRideDataClickable}
               colSizes={unscheduledColSizes}
               groupStart={2}
-              onClick={handleRowClick}
             />
           );
 

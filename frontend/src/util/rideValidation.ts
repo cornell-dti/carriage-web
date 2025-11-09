@@ -245,6 +245,33 @@ export function canCancelRide(ride: RideType, userRole: UserRole): boolean {
 }
 
 /**
+ * Gets the display state for students/riders
+ * Shows "Cancelled" if status is CANCELLED, otherwise shows scheduling state
+ * @param ride The ride to get display state for
+ * @returns User-friendly display state string
+ */
+export function getRiderDisplayState(ride: RideType): string {
+  // If ride is cancelled, show "Cancelled" regardless of scheduling state
+  if (ride.status === Status.CANCELLED) {
+    return 'Cancelled';
+  }
+
+  // Otherwise, map scheduling state to user-friendly text
+  switch (ride.schedulingState) {
+    case SchedulingState.SCHEDULED:
+      return 'Scheduled';
+    case SchedulingState.SCHEDULED_WITH_MODIFICATION:
+      return 'Scheduled (Modified)';
+    case SchedulingState.REJECTED:
+      return 'Rejected';
+    case SchedulingState.UNSCHEDULED:
+      return 'Requested';
+    default:
+      return 'Unknown';
+  }
+}
+
+/**
  * Determines if a ride requires immediate attention based on its status and timing
  * @param ride The ride to check
  * @returns True if the ride needs attention
