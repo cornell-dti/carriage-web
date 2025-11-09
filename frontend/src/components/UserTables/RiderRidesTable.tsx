@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { Ride, Type } from '../../types/index';
+import { Ride, Type, SchedulingState } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
 import styles from './table.module.css';
 import RequestRideModal from '../RequestRideModal/RequestRideModal';
+import RideDetailsModal from '../RideModal/RideDetailsModal';
 
 type RiderRidesTableProps = {
   rides: Ride[];
@@ -14,7 +15,14 @@ type RiderRidesTableProps = {
 
 const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const colSizes = [1, 1, 1, 1, 1, 1];
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedRide(null);
+  };
   const headers = [
     'Time',
     'Pickup Location',
@@ -57,11 +65,9 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             return letters.join(', ');
           };
 
-          const isRecurring = ride.recurring;
-          const recurringDays = isRecurring
-            ? formatWeekdays(ride.recurringDays!)
-            : 'Not repeating';
-          const endDate = isRecurring ? formatDate(ride.endDate!) : 'N/A';
+          const isRecurring = ride.isRecurring;
+          const recurringDays = 'Not repeating'; // Recurring rides disabled for now
+          const endDate = 'N/A'; // End date only relevant for recurring rides
           const recurringDateRange = isRecurring
             ? `${startDate}-${endDate}`
             : undefined;
@@ -86,15 +92,12 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           };
 
           let valueStatus;
-          switch (ride.type) {
-            case Type.UNSCHEDULED:
-              valueStatus = 'Requested';
-              break;
-            case Type.ACTIVE:
-              valueStatus = 'Confirmed';
-              break;
-            default:
-              valueStatus = 'Past';
+          if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
+            valueStatus = 'Requested';
+          } else if (ride.type === 'active') {
+            valueStatus = 'Confirmed';
+          } else {
+            valueStatus = 'Past';
           }
 
           const editButton = <RequestRideModal ride={ride} />;
@@ -119,7 +122,8 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const valueEditDelete = {
             data: !isPast ? (
               <>
-                {ride.type === Type.UNSCHEDULED && editButton}
+                {ride.schedulingState === SchedulingState.UNSCHEDULED &&
+                  editButton}
                 {isOneHourBeforeRideStart && deleteButton}
               </>
             ) : null,
@@ -134,6 +138,11 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             valueEditDelete,
           ];
 
+          const handleRowClick = () => {
+            setSelectedRide(ride);
+            setDetailsModalOpen(true);
+          };
+
           return (
             <span key={ride.id}>
               <DeleteOrEditTypeModal
@@ -142,11 +151,24 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
                 onClose={onClose}
                 deleting={true}
               />
-              <Row data={unscheduledRideData} colSizes={colSizes} />
+              <Row
+                data={unscheduledRideData}
+                colSizes={colSizes}
+                onClick={handleRowClick}
+              />
             </span>
           );
         })}
       </Table>
+
+      {/* Ride Details Modal */}
+      {selectedRide && (
+        <RideDetailsModal
+          open={detailsModalOpen}
+          close={handleCloseDetailsModal}
+          ride={selectedRide}
+        />
+      )}
     </>
   );
 };

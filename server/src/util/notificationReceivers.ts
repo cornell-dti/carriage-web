@@ -13,6 +13,7 @@ export const getReceivers = (
     switch (notifEvent) {
       case Change.EDITED:
       case Status.CANCELLED:
+      case Change.CANCELLED:
         receivers.push(UserType.ADMIN);
         if (hasDriver) receivers.push(UserType.DRIVER);
         break;
@@ -43,6 +44,7 @@ export const getReceivers = (
       case Change.SCHEDULED:
       case Change.EDITED:
       case Status.CANCELLED:
+      case Change.CANCELLED:
         receivers.push(UserType.RIDER);
         if (hasDriver) receivers.push(UserType.DRIVER);
         break;

@@ -15,9 +15,10 @@ type LandingPropType = {
   students: ReactElement;
   admins: ReactElement;
   drivers: ReactElement;
+  ssoError?: string;
 };
 
-const Landing = ({ students, admins, drivers }: LandingPropType) => {
+const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
   useEffect(() => {
     document.title = 'Login - Carriage';
   }, []);
@@ -25,7 +26,7 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
     <main id="main">
       <div className={styles.home}>
         <div className={styles.tosButtonContainer}>
-          <a href={cuLiftTerms} target="_blank">
+          <a href={cuLiftTerms} target="_blank" rel="noreferrer">
             <button className={styles.tosButton}>Terms of Service</button>
           </a>
         </div>
@@ -37,6 +38,20 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
           <div className={styles.right}>
             <div className={styles.spacing_container}>
               <h1 className={styles.heading}>Login</h1>
+              {ssoError && (
+                <div
+                  style={{
+                    backgroundColor: '#ffebee',
+                    color: '#c62828',
+                    padding: '12px 16px',
+                    borderRadius: '4px',
+                    marginBottom: '16px',
+                    border: '1px solid #ef5350',
+                  }}
+                >
+                  {ssoError}
+                </div>
+              )}
               <div className={styles.container}>
                 <div className={styles.container_item}>{students}</div>
                 <div className={styles.container_item}>{admins}</div>
@@ -85,7 +100,11 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
 
       <div className={styles.footer}>
         <div className={styles.dti_container}>
-          <a href="https://www.cornelldti.org/" target="_blank">
+          <a
+            href="https://www.cornelldti.org/"
+            target="_blank"
+            rel="noreferrer"
+          >
             <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
           </a>
         </div>

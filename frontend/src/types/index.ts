@@ -18,15 +18,13 @@ export enum Accessibility {
   SERVICE_ANIMALS = 'Service Animal',
 }
 
-export type Availability = {
-  startTime: string;
-  endTime: string;
-};
-
-export type AvailabilityType = {
-  [day: string]: Availability;
-};
-
+export enum DayOfWeek {
+  MONDAY = 'MON',
+  TUESDAY = 'TUE',
+  WEDNESDAY = 'WED',
+  THURSDAY = 'THURS',
+  FRIDAY = 'FRI',
+}
 export type Driver = DriverType;
 
 export type Admin = AdminType;
@@ -39,7 +37,7 @@ export type Employee = {
   isDriver?: boolean;
   phoneNumber: string;
   email: string;
-  availability?: AvailabilityType;
+  availability?: DayOfWeek[];
   photoLink?: string;
   startDate?: string;
 };
@@ -72,9 +70,9 @@ export type Location = LocationType;
 export type Ride = RideType;
 
 export enum Type {
-  ACTIVE = 'active',
+  UPCOMING = 'upcoming',
   PAST = 'past',
-  UNSCHEDULED = 'unscheduled',
+  ACTIVE = 'active',
 }
 
 export enum Status {
@@ -85,6 +83,12 @@ export enum Status {
   COMPLETED = 'completed',
   NO_SHOW = 'no_show',
   CANCELLED = 'cancelled',
+}
+
+// Scheduling state - separate from operational status
+export enum SchedulingState {
+  SCHEDULED = 'scheduled',
+  UNSCHEDULED = 'unscheduled',
 }
 
 export type TableData = {

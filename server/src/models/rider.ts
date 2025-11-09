@@ -29,7 +29,6 @@ export type RiderType = {
   description?: string;
   joinDate: string;
   endDate: string;
-  pronouns?: string;
   address: string;
   favoriteLocations: string[];
   photoLink?: string;
@@ -83,11 +82,6 @@ const schema = new dynamoose.Schema({
     type: String,
     required: true,
     validate: /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/,
-  },
-  pronouns: {
-    type: String,
-    required: false,
-    validate: /^\w*\/\w*\/\w*$/,
   },
   address: {
     type: String,

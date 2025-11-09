@@ -22,6 +22,7 @@ export type LocationType = {
   lat: number;
   lng: number;
   photoLink?: string;
+  images?: string[];
 };
 
 const schema = new dynamoose.Schema({
@@ -60,6 +61,10 @@ const schema = new dynamoose.Schema({
   },
   photoLink: {
     type: String,
+  },
+  images: {
+    type: Array,
+    schema: [String],
   },
 });
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  useGoogleLogin as googleAuth,
-  googleLogout,
-} from '@react-oauth/google';
-import { useNavigate, Navigate, Route, Routes } from 'react-router-dom';
+  useNavigate,
+  Navigate,
+  Route,
+  Routes,
+  useSearchParams,
+} from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
@@ -15,7 +17,8 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { Admin, Rider, UnregisteredUser } from '../../types/index';
+import { Admin, Rider, UnregisteredUser, DriverType as Driver } from '../../types/index';
+import DriverRoutes from '../../pages/Driver/Routes';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
@@ -41,7 +44,7 @@ export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
   const [id, setId] = useState(localStorage.getItem('userId') || '');
-  const [user, setUser] = useState<Rider | Admin>(
+  const [user, setUser] = useState<Rider | Admin | Driver>(
     JSON.parse(localStorage.getItem('user') || '{}')
   );
   const [refreshUser, setRefreshUser] = useState(() =>
@@ -49,8 +52,10 @@ const AuthManager = () => {
   );
   const [unregisteredUser, setUnregisteredUser] =
     useState<UnregisteredUser | null>(null);
+  const [ssoError, setSsoError] = useState<string>('');
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Handler to go back from unregistered screen
   const handleBackFromUnregistered = () => {
@@ -64,6 +69,96 @@ const AuthManager = () => {
       setAuthToken(token);
     }
   }, []);
+
+  // SSO Callback handler - fetches profile and JWT after successful SSO login
+  const handleSSOCallback = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
+        {
+          credentials: 'include', // CRITICAL: Sends session cookie
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch SSO profile');
+      }
+
+      const data = await response.json();
+      const { user: ssoUser, token: serverJWT } = data;
+
+      if (serverJWT && ssoUser) {
+        // Store JWT in encrypted cookie (matching Google OAuth pattern)
+        setCookie('jwt', serverJWT);
+
+        // Decode JWT to get user info
+        const decoded: any = jwtDecode(serverJWT);
+
+        // Set auth state
+        setId(decoded.id);
+        localStorage.setItem('userId', decoded.id);
+        localStorage.setItem('userType', decoded.userType);
+        setAuthToken(serverJWT);
+
+        // Refresh user data
+        const refreshFunc = createRefresh(
+          decoded.id,
+          decoded.userType,
+          serverJWT
+        );
+        refreshFunc();
+        setRefreshUser(() => refreshFunc);
+        setSignedIn(true);
+
+        // Navigate to appropriate dashboard based on userType
+        if (decoded.userType === 'Admin') {
+          navigate('/admin/home', { replace: true });
+        } else if (decoded.userType === 'Driver') {
+          navigate('/driver/rides', { replace: true });
+        } else if (decoded.userType === 'Rider') {
+          navigate('/rider/schedule', { replace: true });
+        } else {
+          // Invalid userType - this should never happen if backend is working correctly
+          setSsoError('Invalid user type received. Please contact support.');
+          logout();
+        }
+      } else {
+        setSsoError('Failed to complete SSO login. Please try again.');
+        logout();
+      }
+    } catch (error) {
+      console.error('SSO callback error:', error);
+      setSsoError('Failed to complete login. Please try again.');
+      logout();
+    }
+  };
+
+  // SSO callback handler
+  useEffect(() => {
+    const authParam = searchParams.get('auth');
+    const errorParam = searchParams.get('error');
+
+    if (errorParam) {
+      // Handle SSO errors
+      const errorMessages: { [key: string]: string } = {
+        user_not_found:
+          'Your Cornell account is not registered. Please contact support.',
+        'User not active': 'Your account is inactive. Please contact support.',
+        sso_failed: 'SSO authentication failed. Please try again.',
+      };
+      setSsoError(
+        errorMessages[errorParam] || 'Authentication failed. Please try again.'
+      );
+      navigate('/', { replace: true });
+      return;
+    }
+
+    if (authParam === 'sso_success') {
+      // Fetch profile and JWT token from backend
+      handleSSOCallback();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   function getCookie(name: string) {
     return document.cookie.split(';').some((c) => {
@@ -98,77 +193,44 @@ const AuthManager = () => {
     document.cookie = `${cookieName}=${encrypt(value)};secure=true;path=/;`;
   }
 
-  function signIn(isAdmin: boolean, code: string) {
-    const userType = isAdmin ? 'Admin' : 'Rider';
-    const table = `${userType}s`;
-    const localUserType = localStorage.getItem('userType');
-    if (!localUserType || localUserType === userType) {
-      axios
-        .post('/api/auth', { code, table })
-        .then((res) => res.data.jwt)
-        .then((serverJWT) => {
-          if (serverJWT) {
-            setCookie('jwt', serverJWT);
-            const decoded: any = jwtDecode(serverJWT);
-            setId(decoded.id);
-            localStorage.setItem('userId', decoded.id);
-            localStorage.setItem('userType', decoded.userType);
-            setAuthToken(serverJWT);
-            console.log('Auth Token : ', serverJWT);
-            const refreshFunc = createRefresh(decoded.id, userType, serverJWT);
-            refreshFunc();
-            setRefreshUser(() => refreshFunc);
-            setSignedIn(true);
-            navigate(isAdmin ? '/admin/home' : '/rider/home', {
-              replace: true,
-            });
-          } else {
-            logout();
-          }
-        })
-        .catch((error) => {
-          console.error('Login error:', error);
+  // SSO Login handlers
+  function handleSSOLogin(isAdmin: boolean = false, isDriver: boolean = false) {
+    const frontendUrl = window.location.origin;
+    const redirectUri = encodeURIComponent(`${frontendUrl}/`);
 
-          if (
-            error.response?.status === 400 &&
-            error.response?.data?.err === 'User not found'
-          ) {
-            setUnregisteredUser({
-              ...error.response?.data?.user,
-            });
-          } else {
-            logout();
-          }
-        });
+    // Determine user type based on button clicked (matching Google OAuth pattern)
+    let userType = 'Rider';
+    if (isAdmin) {
+      userType = 'Admin';
+    } else if (isDriver) {
+      userType = 'Driver';
     }
+
+    const ssoUrl = `${process.env.REACT_APP_SERVER_URL}/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
+    window.location.href = ssoUrl;
   }
 
-  const adminLogin = googleAuth({
-    flow: 'auth-code',
-    onSuccess: async (res) => signIn(true, res.code),
-    onError: (errorResponse) => console.error(errorResponse),
-  });
-
-  const studentLogin = googleAuth({
-    flow: 'auth-code',
-    onSuccess: async (res) => signIn(false, res.code),
-    onError: (errorResponse) => console.error(errorResponse),
-  });
-
   function logout() {
-    googleLogout();
     localStorage.removeItem('userType');
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
     deleteCookie('jwt');
     setAuthToken('');
     setSignedIn(false);
-    navigate('/', { replace: true });
+    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
-    const endpoint =
-      userType === 'Admin' ? `/api/admins/${userId}` : `/api/riders/${userId}`;
+    let endpoint = '';
+
+    if (userType === 'Admin') {
+      endpoint = `/api/admins/${userId}`;
+    } else if (userType === 'Driver') {
+      endpoint = `/api/drivers/${userId}`;
+    } else {
+      endpoint = `/api/riders/${userId}`;
+    }
+
     return () => {
       axios
         .get(endpoint)
@@ -198,29 +260,42 @@ const AuthManager = () => {
           path="/"
           element={
             <LandingPage
+              ssoError={ssoError}
               students={
-                <button onClick={() => studentLogin()} className={styles.btn}>
+                <button
+                  onClick={() => handleSSOLogin(false, false)}
+                  className={styles.ssoBtn}
+                >
                   <img
                     src={studentLanding}
                     className={styles.icon}
                     alt="student logo"
                   />
                   <div className={styles.heading}>Students</div>
-                  Sign in with Google
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
                 </button>
               }
               admins={
-                <button onClick={() => adminLogin()} className={styles.btn}>
+                <button
+                  onClick={() => handleSSOLogin(true, false)}
+                  className={styles.ssoBtn}
+                >
                   <img src={admin} className={styles.icon} alt="admin logo" />
                   <div className={styles.heading}>Admins</div>
-                  Sign in with Google
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
                 </button>
               }
               drivers={
-                <button className={styles.btn}>
+                <button
+                  onClick={() => handleSSOLogin(false, true)}
+                  className={styles.ssoBtn}
+                >
                   <img src={car} className={styles.icon} alt="car logo" />
                   <div className={styles.heading}>Drivers</div>
-                  Sign in with Google
+                  <div>Sign in with</div>
+                  <div>Cornell NetID</div>
                 </button>
               }
             />
@@ -246,6 +321,7 @@ const AuthManager = () => {
           <Routes>
             <Route path="/admin/*" element={<AdminRoutes />} />
             <Route path="/rider/*" element={<RiderRoutes />} />
+            <Route path="/driver/*" element={<DriverRoutes />} />
             <Route
               path="/"
               element={
@@ -253,7 +329,9 @@ const AuthManager = () => {
                   to={
                     localStorage.getItem('userType') === 'Admin'
                       ? '/admin/home'
-                      : '/rider/home'
+                      : localStorage.getItem('userType') === 'Driver'
+                      ? '/driver/rides'
+                      : '/rider/schedule'
                   }
                   replace
                 />

@@ -4,7 +4,10 @@ import { RideType, Status } from '../models/ride';
 import { timeTo12Hr, timeToMDY } from './index';
 
 const getCancelledMessage = (receiver: UserType, ride: RideType) => {
-  const { rider, startTime, startLocation, endLocation } = ride;
+  // Use primary rider (first in array) for message templates
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const { startTime, startLocation, endLocation } = ride;
   if (receiver === UserType.DRIVER) {
     return `Rides have been removed from your schedule for ${timeToMDY(
       startTime
@@ -15,8 +18,8 @@ const getCancelledMessage = (receiver: UserType, ride: RideType) => {
       startLocation.name
     } to ${endLocation.name} at ${timeTo12Hr(startTime)} has been cancelled.`;
   }
-  return `${rider.firstName} ${
-    rider.lastName
+  return `${primaryRider?.firstName || 'A rider'} ${
+    primaryRider?.lastName || ''
   } cancelled their ride on ${timeToMDY(startTime)} from ${
     startLocation.name
   } to ${endLocation.name} at ${timeTo12Hr(startTime)}.`;
@@ -41,10 +44,12 @@ const getEditedMessage = (
   receiver: UserType,
   ride: RideType
 ) => {
-  const { rider, startTime } = ride;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+  const { startTime } = ride;
   if (sender === UserType.RIDER) {
-    return `${rider.firstName} ${
-      rider.lastName
+    return `${primaryRider?.firstName || 'A rider'} ${
+      primaryRider?.lastName || ''
     } made changes to their ride on ${timeToMDY(startTime)} at ${timeTo12Hr(
       startTime
     )}`;
@@ -67,11 +72,14 @@ const getLateMessage = (receiver: UserType, ride: RideType) => {
 };
 
 const getNoShowMessage = (receiver: UserType, ride: RideType) => {
-  const { rider } = ride;
+  const primaryRider =
+    ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
   if (receiver === UserType.RIDER) {
     return 'Your driver cancelled the ride because the driver was unable to find you.';
   } else {
-    return `${rider?.firstName} ${rider?.lastName} missed a ride.`;
+    return `${primaryRider?.firstName || 'A rider'} ${
+      primaryRider?.lastName || ''
+    } missed a ride.`;
   }
 };
 
@@ -98,6 +106,7 @@ export const getMessage = (
     case Status.ARRIVED:
       return 'Your driver is here! Meet your driver at the pickup point.';
     case Status.CANCELLED:
+    case Change.CANCELLED:
       return getCancelledMessage(receiver, ride);
     case Change.CREATED:
       return getCreatedMessage(receiver, ride);
