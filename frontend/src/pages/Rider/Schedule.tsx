@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride } from '../../types';
+import { Ride, SchedulingState, Status } from '../../types';
 import AuthContext from '../../context/auth';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import Notification from '../../components/Notification/Notification';
@@ -165,10 +165,14 @@ const Schedule: React.FC = () => {
   const currRides = allRides.filter((ride) => {
     const rideEndDate = ride.endTime.split('T')[0];
     const isCurrent = ride.endTime >= now;
+    // Exclude rejected or cancelled rides from next ride cards
+    const isRejected = ride.schedulingState === SchedulingState.REJECTED;
+    const isCancelled = ride.status === Status.CANCELLED;
+    const isValid = !isRejected && !isCancelled;
     console.log(
-      `Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}`
+      `Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}, isValid=${isValid}`
     );
-    return isCurrent;
+    return isCurrent && isValid;
   });
   const pastRides = allRides.filter((ride) => ride.endTime < now);
 
