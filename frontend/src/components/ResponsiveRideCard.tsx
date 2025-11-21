@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, ReactNode, useState } from 'react';
 import { Ride, SchedulingState, Status } from '../types';
 import { Place, SubdirectoryArrowRight, WatchLater } from '@mui/icons-material';
 
@@ -6,6 +6,54 @@ interface ResponsiveRideCardProps {
   ride: Ride;
   handleEdit: (rideToEdit: Ride) => any;
 }
+
+type FormattedTime = { time: string; meridiem: 'AM' | 'PM' };
+
+const formatTime = (time: Date): FormattedTime => {
+  const options: Intl.DateTimeFormatOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true, // ensures AM/PM
+  };
+
+  const formatter = new Intl.DateTimeFormat(undefined, options);
+  const parts = formatter.formatToParts(time);
+
+  const hour = parts.find((p) => p.type === 'hour')?.value ?? '00';
+  const minute = parts.find((p) => p.type === 'minute')?.value ?? '00';
+  const meridiem: 'AM' | 'PM' = (parts
+    .find((p) => p.type === 'dayPeriod')
+    ?.value.toUpperCase() ?? 'AM') as 'AM' | 'PM';
+
+  return {
+    time: `${hour}:${minute}`,
+    meridiem,
+  };
+};
+
+const renderFormattedTime = (time: Date): ReactNode => {
+  const formattedTime = formatTime(time);
+  return (
+    <span
+      style={{
+        display: 'flex',
+        gap: '0.25rem',
+        alignItems: 'flex-end',
+      }}
+    >
+      <p>{formattedTime.time}</p>
+      <p
+        style={{
+          fontSize: '0.75rem',
+          color: '707070',
+          fontWeight: 'lighter',
+        }}
+      >
+        {formattedTime.meridiem}
+      </p>
+    </span>
+  );
+};
 
 const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   ride,
@@ -20,13 +68,13 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       style={{
         width: '100%',
         height: 'min-content',
-        maxWidth: '40rem',
+        maxWidth: '32rem',
         background: 'white',
         borderRadius: '0.25rem',
         display: 'flex',
         flexDirection: 'column',
         padding: '1.5rem',
-        border: '#dddddd 1px solid',
+        border: '#e0e0e0 1px solid',
         cursor: 'pointer',
         fontSize: '1rem',
       }}
@@ -93,7 +141,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             }}
           >
             <WatchLater></WatchLater>
-            <p>{ride.startTime}</p>
+            {renderFormattedTime(new Date(ride.startTime))}
           </span>
           <span
             style={{
@@ -104,7 +152,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             }}
           >
             <SubdirectoryArrowRight></SubdirectoryArrowRight>
-            <p>{ride.endTime}</p>
+            {renderFormattedTime(new Date(ride.endTime))}
           </span>
         </div>
         {/* location-related */}
