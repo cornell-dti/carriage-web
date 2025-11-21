@@ -1,9 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Ride, SchedulingState, Status } from '../types';
 import {
-  Flag,
   FlagRounded,
-  Height,
   Place,
   SubdirectoryArrowRight,
   WatchLater,
@@ -162,7 +160,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             }}
             className={`${styles.button} ${styles.buttonSecondary}`}
           >
-            Close
+            Hide Details
           </button>
           <button
             onClick={(e) => {
@@ -175,13 +173,14 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
           </button>
         </div>
       ) : (
-        <button
-          onClick={() => setExpanded(true)}
-          className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
-        >
-          Details
-        </button>
+        <></>
       )}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
+      >
+        {expanded ? 'Hide Details' : 'Details'}
+      </button>
     </div>
   );
 };
