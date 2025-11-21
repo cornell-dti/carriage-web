@@ -30,8 +30,8 @@ const UnregisteredUserPage: React.FC<UnregisteredUserProps> = ({
           </p>
           <p className={styles.contact}>
             Call <a href="tel:607-254-4545">607-254-4545</a> or email{' '}
-            <a href="mailto:carriage@cornell.edu">carriage@cornell.edu</a> if
-            you have any questions.
+            <a href="mailto:culift@cornell.edu">culift@cornell.edu</a> if you
+            have any questions.
           </p>
         </div>
 
