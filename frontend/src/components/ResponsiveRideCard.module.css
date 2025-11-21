@@ -7,22 +7,20 @@
   border-radius: 0.25rem;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 1rem;
   border: #e0e0e0 1px solid;
   font-size: 1rem;
   gap: 1rem;
 }
 
 .statusBadge {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
   width: 8rem;
-  height: min-content;
+  height: 1.75rem;
   border-radius: 0.1275rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 0.8rem;
 }
 
 .statusRequested {
@@ -45,13 +43,13 @@
 .contentWrapperExpanded {
   flex-direction: column;
   justify-content: normal;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .contentWrapperCollapsed {
   flex-direction: row;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .infoSection {
@@ -184,10 +182,18 @@
   height: 3rem;
 }
 
+.expandedDetailsButton {
+  background-color: white;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  width: 8rem;
+}
+
 @media (max-width: 576px) {
   .infoSection {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .labelWrapper {
@@ -197,6 +203,14 @@
 }
 
 @media (max-width: 768px) {
+  .expandedDetailsButton {
+    background-color: white;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    width: 8rem;
+    display: none;
+  }
   .detailsButton {
     background-color: white;
     position: static;

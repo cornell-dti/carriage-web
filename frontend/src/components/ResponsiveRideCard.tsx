@@ -177,7 +177,9 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       )}
       <button
         onClick={() => setExpanded(!expanded)}
-        className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
+        className={`${styles.button} ${styles.buttonSecondary} ${
+          styles.detailsButton
+        } ${expanded ? styles.expandedDetailsButton : styles.detailsButton}`}
       >
         {expanded ? 'Hide Details' : 'Details'}
       </button>
