@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button } from '@mui/material';
 import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
@@ -29,6 +29,51 @@ interface FavoriteRide {
   };
   preferredTime: string;
 }
+
+type DayRideCollection = [string, Ride[]][];
+
+const partitionRides = (rides: Ride[]): DayRideCollection => {
+  const sortedRides = [...rides].sort(
+    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+  );
+
+  const formatReadableDate = (date: Date) => {
+    const weekday = date.toLocaleString(undefined, { weekday: 'long' });
+    const month = date.toLocaleString(undefined, { month: 'long' });
+    const day = date.getDate();
+
+    const suffix =
+      day % 10 === 1 && day % 100 !== 11
+        ? 'st'
+        : day % 10 === 2 && day % 100 !== 12
+        ? 'nd'
+        : day % 10 === 3 && day % 100 !== 13
+        ? 'rd'
+        : 'th';
+
+    return `${weekday}, ${month} ${day}${suffix}`;
+  };
+
+  const dayMap = new Map<string, Ride[]>();
+
+  sortedRides.forEach((ride) => {
+    const day = formatReadableDate(new Date(ride.startTime));
+    const ridesForDay = dayMap.get(day);
+    if (ridesForDay) {
+      ridesForDay.push(ride); // just push
+    } else {
+      dayMap.set(day, [ride]);
+    }
+  });
+
+  const flattened: DayRideCollection = [...dayMap].sort(
+    ([_aStr, aRides], [_bStr, bRides]) =>
+      new Date(aRides[0].startTime).getTime() -
+      new Date(bRides[0].startTime).getTime()
+  );
+
+  return flattened;
+};
 
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
@@ -182,6 +227,10 @@ const Schedule: React.FC = () => {
 
   const hasUpcomingRide = nextUpcomingRide !== undefined;
 
+  const rideDayMap: DayRideCollection = useMemo(() => {
+    return partitionRides(allRides);
+  }, [allRides]);
+
   return (
     <APIProvider
       apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
@@ -232,12 +281,44 @@ const Schedule: React.FC = () => {
             flexDirection: 'column',
             justifyContent: 'start',
             alignItems: 'center',
-            gap: '0.5rem',
+            gap: '1rem',
           }}
         >
-          {allRides.map((ride, idx) => (
+          {rideDayMap.map(([day, rides]) => {
+            return (
+              <div
+                key={day}
+                style={{
+                  height: 'min-content',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'start',
+                  alignItems: 'start',
+                  gap: '0.25rem',
+                }}
+              >
+                <h2
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 'lighter',
+                    color: '#707070',
+                  }}
+                >
+                  {day}
+                </h2>
+                {rides.map((ride, rideIdx) => (
+                  <ResponsiveRideCard
+                    ride={ride}
+                    handleEdit={() => {}}
+                    key={rideIdx}
+                  />
+                ))}
+              </div>
+            );
+          })}
+          {/* {currRides.map((ride, idx) => (
             <ResponsiveRideCard ride={ride} handleEdit={() => {}} key={idx} />
-          ))}
+          ))} */}
         </div>
 
         {/* <div className={styles.tableSection}>
