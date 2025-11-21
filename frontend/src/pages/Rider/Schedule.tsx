@@ -15,6 +15,7 @@ import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import ResponsiveRideCard from '../../components/ResponsiveRideCard';
 import { RideDetailsComponent } from 'components/RideDetails';
+import buttonStyles from '../../components/ResponsiveRideCard.module.css';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -88,6 +89,60 @@ const Schedule: React.FC = () => {
   const [loadingRides, setLoadingRides] = useState(false);
 
   const [editingRide, setEditingRide] = useState<null | Ride>(null);
+
+  // Get the start of the current week (Sunday in local timezone)
+  const getStartOfWeek = (date: Date): Date => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day; // Sunday is 0
+    const startOfWeek = new Date(d.setDate(diff));
+    startOfWeek.setHours(0, 0, 0, 0);
+    return startOfWeek;
+  };
+
+  const [weekStartDate, setWeekStartDate] = useState<Date>(() =>
+    getStartOfWeek(new Date())
+  );
+
+  // Calculate end of week
+  const getEndOfWeek = (startDate: Date): Date => {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 7);
+    endDate.setHours(0, 0, 0, 0);
+    return endDate;
+  };
+
+  const goToPreviousWeek = () => {
+    setWeekStartDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() - 7);
+      return newDate;
+    });
+  };
+
+  const goToNextWeek = () => {
+    setWeekStartDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() + 7);
+      return newDate;
+    });
+  };
+
+  const formatWeekRange = (startDate: Date): string => {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+
+    const startMonth = startDate.toLocaleString(undefined, { month: 'short' });
+    const endMonth = endDate.toLocaleString(undefined, { month: 'short' });
+    const startDay = startDate.getDate();
+    const endDay = endDate.getDate();
+
+    if (startMonth === endMonth) {
+      return `${startMonth} ${startDay} - ${endDay}`;
+    } else {
+      return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
+    }
+  };
 
   const fetchFavorites = async () => {
     if (!id) return;
@@ -231,8 +286,13 @@ const Schedule: React.FC = () => {
   const hasUpcomingRide = nextUpcomingRide !== undefined;
 
   const rideDayMap: DayRideCollection = useMemo(() => {
-    return partitionRides(allRides);
-  }, [allRides]);
+    const weekEnd = getEndOfWeek(weekStartDate);
+    const ridesInWeek = allRides.filter((ride) => {
+      const rideDate = new Date(ride.startTime);
+      return rideDate >= weekStartDate && rideDate < weekEnd;
+    });
+    return partitionRides(ridesInWeek);
+  }, [allRides, weekStartDate]);
 
   return (
     <APIProvider
@@ -244,6 +304,32 @@ const Schedule: React.FC = () => {
           {user && (
             <h1 className={styles.header}>{user.firstName}'s Schedule</h1>
           )}
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              fontSize: '1rem',
+              alignItems: 'center',
+            }}
+          >
+            <button
+              onClick={goToPreviousWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: 'auto', padding: '0 1rem' }}
+            >
+              Previous Week
+            </button>
+            <p style={{ width: '12rem', textAlign: 'center' }}>
+              Week of {formatWeekRange(weekStartDate)}
+            </p>
+            <button
+              onClick={goToNextWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: 'auto', padding: '0 1rem' }}
+            >
+              Next Week
+            </button>
+          </div>
           <div className={styles.rightSection}>
             <Button
               variant="contained"
