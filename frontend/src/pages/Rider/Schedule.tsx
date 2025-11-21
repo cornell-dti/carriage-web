@@ -304,32 +304,6 @@ const Schedule: React.FC = () => {
           {user && (
             <h1 className={styles.header}>{user.firstName}'s Schedule</h1>
           )}
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              fontSize: '1rem',
-              alignItems: 'center',
-            }}
-          >
-            <button
-              onClick={goToPreviousWeek}
-              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: 'auto', padding: '0 1rem' }}
-            >
-              Previous Week
-            </button>
-            <p style={{ width: '12rem', textAlign: 'center' }}>
-              Week of {formatWeekRange(weekStartDate)}
-            </p>
-            <button
-              onClick={goToNextWeek}
-              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: 'auto', padding: '0 1rem' }}
-            >
-              Next Week
-            </button>
-          </div>
           <div className={styles.rightSection}>
             <Button
               variant="contained"
@@ -346,6 +320,7 @@ const Schedule: React.FC = () => {
             </Button>
           </div>
         </div>
+
         {/* <div className={styles.topRow}>
           <div className={styles.mainCardContainer}>
             {allRides.length > 0 && nextUpcomingRide && hasUpcomingRide && (
@@ -372,6 +347,32 @@ const Schedule: React.FC = () => {
             gap: '2rem',
           }}
         >
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              fontSize: '1rem',
+              alignItems: 'center',
+            }}
+          >
+            <button
+              onClick={goToPreviousWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: 'auto', padding: '0 1rem' }}
+            >
+              Previous Week
+            </button>
+            <p style={{ width: '12rem', textAlign: 'center' }}>
+              Week of {formatWeekRange(weekStartDate)}
+            </p>
+            <button
+              onClick={goToNextWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: 'auto', padding: '0 1rem' }}
+            >
+              Next Week
+            </button>
+          </div>
           {rideDayMap.map(([day, rides]) => {
             return (
               <div
