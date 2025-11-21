@@ -14,6 +14,7 @@ import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import ResponsiveRideCard from '../../components/ResponsiveRideCard';
+import { RideDetailsComponent } from 'components/RideDetails';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -85,6 +86,8 @@ const Schedule: React.FC = () => {
   const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
+
+  const [editingRide, setEditingRide] = useState<null | Ride>(null);
 
   const fetchFavorites = async () => {
     if (!id) return;
@@ -289,6 +292,8 @@ const Schedule: React.FC = () => {
               <div
                 key={day}
                 style={{
+                  width: '100%',
+                  maxWidth: '32rem',
                   height: 'min-content',
                   display: 'flex',
                   flexDirection: 'column',
@@ -309,7 +314,7 @@ const Schedule: React.FC = () => {
                 {rides.map((ride, rideIdx) => (
                   <ResponsiveRideCard
                     ride={ride}
-                    handleEdit={() => {}}
+                    handleEdit={setEditingRide}
                     key={rideIdx}
                   />
                 ))}
@@ -343,6 +348,13 @@ const Schedule: React.FC = () => {
             }))
             .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
         />
+        {editingRide && (
+          <RideDetailsComponent
+            ride={editingRide}
+            open={editingRide !== null}
+            onClose={() => setEditingRide(null)}
+          ></RideDetailsComponent>
+        )}
       </main>
     </APIProvider>
   );

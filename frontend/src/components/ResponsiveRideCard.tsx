@@ -65,7 +65,8 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
     <button
       onClick={() => setExpanded(!expanded)}
       style={{
-        width: '32rem',
+        width: '100%',
+        maxWidth: '32rem',
         height: 'min-content',
         minWidth: '20rem',
         background: 'white',
@@ -278,7 +279,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleEdit(ride);
+              setExpanded(false);
             }}
             style={{
               width: '100%',
