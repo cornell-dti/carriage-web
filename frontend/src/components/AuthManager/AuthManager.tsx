@@ -23,7 +23,13 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { Admin, Rider, UnregisteredUser } from '../../types/index';
+import {
+  Admin,
+  Rider,
+  UnregisteredUser,
+  DriverType as Driver,
+} from '../../types/index';
+import DriverRoutes from '../../pages/Driver/Routes';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
@@ -197,8 +203,6 @@ const AuthManager = () => {
 
       // Handle other SSO errors
       const errorMessages: { [key: string]: string } = {
-        user_not_found:
-          'Your Cornell account is not registered. Please contact support.',
         'User not active': 'Your account is inactive. Please contact support.',
         sso_failed: 'SSO authentication failed. Please try again.',
         sso_failed: 'SSO authentication failed. Please try again.',
