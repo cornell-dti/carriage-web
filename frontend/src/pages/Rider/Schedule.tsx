@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride } from '../../types';
+import { Ride, SchedulingState, Status } from '../../types';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
@@ -9,56 +9,276 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
-import ResponsiveRideCard from '../../components/ResponsiveRideCard';
-import { RideDetailsComponent } from 'components/RideDetails';
-import buttonStyles from '../../components/ResponsiveRideCard.module.css';
-import { NavigateBefore, NavigateNext } from '@mui/icons-material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { Place, SubdirectoryArrowRight, WatchLater } from '@mui/icons-material';
 
-type DayRideCollection = [string, Ride[]][];
-
-const partitionRides = (rides: Ride[]): DayRideCollection => {
-  const sortedRides = [...rides].sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-  );
-
-  const formatReadableDate = (date: Date) => {
-    const weekday = date.toLocaleString(undefined, { weekday: 'long' });
-    const month = date.toLocaleString(undefined, { month: 'long' });
-    const day = date.getDate();
-
-    const suffix =
-      day % 10 === 1 && day % 100 !== 11
-        ? 'st'
-        : day % 10 === 2 && day % 100 !== 12
-        ? 'nd'
-        : day % 10 === 3 && day % 100 !== 13
-        ? 'rd'
-        : 'th';
-
-    return `${weekday}, ${month} ${day}${suffix}`;
+// Favorite ride type
+interface FavoriteRide {
+  id: string;
+  name: string;
+  startLocation: {
+    name: string;
+    address: string;
   };
+  endLocation: {
+    name: string;
+    address: string;
+  };
+  preferredTime: string;
+}
 
-  const dayMap = new Map<string, Ride[]>();
+interface RideCardProps {
+  ride: Ride;
+  handleEdit: (rideToEdit: Ride) => any;
+}
 
-  sortedRides.forEach((ride) => {
-    const day = formatReadableDate(new Date(ride.startTime));
-    const ridesForDay = dayMap.get(day);
-    if (ridesForDay) {
-      ridesForDay.push(ride); // just push
-    } else {
-      dayMap.set(day, [ride]);
-    }
-  });
+const RideCardComponent: FC<RideCardProps> = ({ ride, handleEdit }) => {
+  const [expanded, setExpanded] = useState<boolean>(false);
 
-  const flattened: DayRideCollection = [...dayMap].sort(
-    ([_aStr, aRides], [_bStr, bRides]) =>
-      new Date(aRides[0].startTime).getTime() -
-      new Date(bRides[0].startTime).getTime()
+  console.log(ride);
+  return (
+    <button
+      onClick={() => setExpanded(!expanded)}
+      style={{
+        width: '100%',
+        height: 'min-content',
+        maxWidth: '32rem',
+        background: 'white',
+        borderRadius: '0.25rem',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '1.5rem',
+        border: '#dddddd 1px solid',
+        cursor: 'pointer',
+      }}
+    >
+      {/* ride status, check if scheduled. If not, display card indicating */}
+      {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
+        <div
+          style={{
+            width: '100%',
+            height: 'min-content',
+            borderRadius: '0.1275rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: '#707070',
+          }}
+        >
+          <p>Requested</p>
+        </div>
+      ) : ride.status === Status.CANCELLED ? (
+        <div
+          style={{
+            width: '100%',
+            height: 'min-content',
+            borderRadius: '0.1275rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff0f0',
+            color: '#c10000',
+          }}
+        >
+          <p>Canceled</p>
+        </div>
+      ) : (
+        <></>
+      )}
+      <div
+        style={{
+          width: '100%',
+          height: 'min-content',
+          display: 'flex',
+          flexDirection: expanded ? 'column' : 'row',
+          justifyContent: expanded ? 'normal' : 'space-between',
+          gap: expanded ? 'auto' : '1.5rem',
+          textWrap: 'nowrap',
+        }}
+      >
+        {/* time-related */}
+        <div
+          style={{
+            width: 'min-content',
+            height: 'min-content',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+          }}
+        >
+          <span
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              alignItems: 'center',
+            }}
+          >
+            <WatchLater></WatchLater>
+            <p>{ride.startTime}</p>
+          </span>
+          <span
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              alignItems: 'center',
+              color: '#707070',
+            }}
+          >
+            <SubdirectoryArrowRight></SubdirectoryArrowRight>
+            <p>{ride.endTime}</p>
+          </span>
+        </div>
+        {/* location-related */}
+        {!expanded && (
+          <div
+            style={{
+              width: '8rem',
+              height: 'min-content',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center',
+              }}
+            >
+              <Place></Place>
+              <p>{ride.startLocation.shortName}</p>
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center',
+                color: '#707070',
+              }}
+            >
+              <SubdirectoryArrowRight></SubdirectoryArrowRight>
+              <p>{ride.endLocation.shortName}</p>
+            </span>
+          </div>
+        )}
+        {/* expanded location view */}
+        {expanded && (
+          <div
+            style={{
+              width: '100%',
+              height: 'min-content',
+              display: 'flex',
+              gap: '0.5rem',
+            }}
+          >
+            {/* start location + map */}
+            <div
+              style={{
+                width: 'flex-1',
+                height: 'min-content',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'flex',
+                  gap: '0.5rem',
+                  alignItems: 'center',
+                }}
+              >
+                <Place></Place>
+                <p>{ride.startLocation.shortName}</p>
+              </span>
+
+              {/* map placeholder */}
+              <div
+                style={{
+                  width: '100%',
+                  height: '32rem',
+                  background: '#8888ff',
+                }}
+              ></div>
+            </div>
+            {/* end location + map */}
+            <div
+              style={{
+                width: 'flex-1',
+                height: 'min-content',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+              }}
+            >
+              <span
+                style={{
+                  display: 'flex',
+                  gap: '0.5rem',
+                  alignItems: 'center',
+                  color: '#707070',
+                }}
+              >
+                <SubdirectoryArrowRight></SubdirectoryArrowRight>
+                <p>{ride.endLocation.shortName}</p>
+              </span>
+
+              {/* map placeholder */}
+              <div
+                style={{
+                  width: '100%',
+                  height: '32rem',
+                  background: '#8888ff',
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
+      </div>
+      {/* expanded buttons */}
+      {expanded && (
+        <div
+          style={{
+            width: '100%',
+            height: 'min-content',
+            display: 'flex',
+            gap: '0.5rem',
+          }}
+        >
+          <button
+            style={{
+              width: '100%',
+              height: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: '#707070 1px solid',
+              borderRadius: '0.25rem',
+            }}
+          >
+            Close
+          </button>
+          <button
+            style={{
+              width: '100%',
+              height: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: '#303030 1px solid',
+              borderRadius: '0.25rem',
+              backgroundColor: '#000',
+              color: '#fff',
+            }}
+          >
+            Edit
+          </button>
+        </div>
+      )}
+    </button>
   );
-
-  return flattened;
 };
 
 const Schedule: React.FC = () => {
@@ -328,66 +548,37 @@ const Schedule: React.FC = () => {
               <NavigateNext></NavigateNext>
             </button>
           </div>
-
-          {rideDayMap.length > 0 ? (
-            rideDayMap.map(([day, rides]) => {
-              return (
-                <div
-                  key={day}
-                  style={{
-                    width: '100%',
-                    maxWidth: '48rem',
-                    height: 'min-content',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'start',
-                    alignItems: 'start',
-                    gap: '0.25rem',
-                  }}
-                >
-                  <h2
-                    style={{
-                      fontSize: '1rem',
-                      fontWeight: 'lighter',
-                      color: '#707070',
-                    }}
-                  >
-                    {day}
-                  </h2>
-                  {rides.map((ride, rideIdx) => (
-                    <ResponsiveRideCard
-                      ride={ride}
-                      handleEdit={setEditingRide}
-                      key={rideIdx}
-                    />
-                  ))}
-                </div>
-              );
-            })
-          ) : (
-            <div
-              style={{
-                width: '16rem',
-                height: '4rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '#ddd 1px solid',
-                borderRadius: '0.25rem',
-              }}
-            >
-              <p
-                style={{
-                  width: 'min-content',
-                  textWrap: 'nowrap',
-                }}
-              >
-                {loadingRides ? 'Loading Rides...' : 'No rides this week'}
-              </p>
-            </div>
-          )}
+          <div className={styles.favoritesCardContainer}>
+            <FavoritesCard
+              favorites={favoriteRides}
+              onAddNew={() => {}}
+              onQuickRequest={() => {}}
+            />
+          </div>
+        </div>
+        <div
+          style={{
+            width: '100%',
+            height: 'min-content',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'start',
+            alignItems: 'center',
+            gap: '0.5rem',
+          }}
+        >
+          {allRides.map((ride, idx) => (
+            <RideCardComponent
+              ride={ride}
+              handleEdit={() => {}}
+              key={idx}
+            ></RideCardComponent>
+          ))}
         </div>
 
+        {/* <div className={styles.tableSection}>
+          <RideTable rides={allRides} userRole="rider" />
+        </div> */}
         <RequestRideDialog
           open={isDialogOpen}
           onClose={handleDialogClose}
