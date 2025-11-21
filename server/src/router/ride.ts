@@ -392,12 +392,12 @@ router.post('/', validateUser('User'), (req, res) => {
   db.create(res, ride, async (doc) => {
     const createdRide = doc as RideType;
     const { userType } = res.locals.user;
-    
+
     // Send emails if needed (for scheduled, rejected, cancelled)
     sendRideEmails(createdRide).catch((error) => {
       console.error('Failed to send ride emails:', error);
     });
-    
+
     // Send notification
     notify(createdRide, body, userType, Change.CREATED)
       .then(() => res.send(createdRide))
@@ -456,39 +456,49 @@ router.put('/:id', validateUser('User'), (req, res) => {
     ) {
       // Detect if ride is being modified (has driver and time/location changed)
       const rideHasDriver = originalRide.driver && originalRide.driver.id;
-      const willHaveDriver = body.driver || (!body.$REMOVE?.includes('driver') && rideHasDriver);
-      
+      const willHaveDriver =
+        body.driver || (!body.$REMOVE?.includes('driver') && rideHasDriver);
+
       // Check if time, pickup, or dropoff changed
-      const timeChanged = body.startTime && 
-        new Date(body.startTime).getTime() !== new Date(originalRide.startTime).getTime();
-      const pickupChanged = body.startLocation && 
-        (typeof body.startLocation === 'string' 
+      const timeChanged =
+        body.startTime &&
+        new Date(body.startTime).getTime() !==
+          new Date(originalRide.startTime).getTime();
+      const pickupChanged =
+        body.startLocation &&
+        (typeof body.startLocation === 'string'
           ? body.startLocation !== originalRide.startLocation?.id
           : body.startLocation.id !== originalRide.startLocation?.id);
-      const dropoffChanged = body.endLocation && 
+      const dropoffChanged =
+        body.endLocation &&
         (typeof body.endLocation === 'string'
           ? body.endLocation !== originalRide.endLocation?.id
           : body.endLocation.id !== originalRide.endLocation?.id);
-      
-      const isModified = (timeChanged || pickupChanged || dropoffChanged) && 
-                         rideHasDriver && 
-                         willHaveDriver;
+
+      const isModified =
+        (timeChanged || pickupChanged || dropoffChanged) &&
+        rideHasDriver &&
+        willHaveDriver;
 
       // If ride is being modified and has/will have a driver, override to SCHEDULED_WITH_MODIFICATION
       // (This overrides the SCHEDULED state that was set earlier based on driver assignment)
-      if (isModified && (!body.schedulingState || body.schedulingState === SchedulingState.SCHEDULED)) {
+      if (
+        isModified &&
+        (!body.schedulingState ||
+          body.schedulingState === SchedulingState.SCHEDULED)
+      ) {
         body.schedulingState = SchedulingState.SCHEDULED_WITH_MODIFICATION;
       }
 
       db.update(res, Ride, { id }, body, tableName, async (doc) => {
         const updatedRide = doc as RideType;
         const { userType } = res.locals.user;
-        
+
         // Send emails if needed (for scheduled, rejected, cancelled, or modified)
         sendRideEmails(updatedRide, originalRide).catch((error) => {
           console.error('Failed to send ride emails:', error);
         });
-        
+
         // send ride even if notification failed since it was actually updated
         notify(updatedRide, body, userType)
           .then(() => res.send(updatedRide))
@@ -569,30 +579,41 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     if (!ride.driver) {
       // Only admins can reject unscheduled rides (set schedulingState to REJECTED)
       if (userIsAdmin) {
-        db.update(res, Ride, { id }, { schedulingState: SchedulingState.REJECTED }, tableName, async (doc) => {
-          const updatedRide = doc as RideType;
-          const { userType } = res.locals.user;
-          
-          // Send emails for rejected ride
-          sendRideEmails(updatedRide).catch((error) => {
-            console.error('Failed to send ride rejection emails:', error);
-          });
-          
-          // Send notification (if still needed for other purposes)
-          notify(updatedRide, { schedulingState: SchedulingState.REJECTED }, userType)
-            .then(() => res.send(updatedRide))
-            .catch(() => res.send(updatedRide));
-        });
+        db.update(
+          res,
+          Ride,
+          { id },
+          { schedulingState: SchedulingState.REJECTED },
+          tableName,
+          async (doc) => {
+            const updatedRide = doc as RideType;
+            const { userType } = res.locals.user;
+
+            // Send emails for rejected ride
+            sendRideEmails(updatedRide).catch((error) => {
+              console.error('Failed to send ride rejection emails:', error);
+            });
+
+            // Send notification (if still needed for other purposes)
+            notify(
+              updatedRide,
+              { schedulingState: SchedulingState.REJECTED },
+              userType
+            )
+              .then(() => res.send(updatedRide))
+              .catch(() => res.send(updatedRide));
+          }
+        );
         return;
       }
-      
+
       // Riders can cancel their own unscheduled ride requests
       // For unscheduled rides, we'll physically delete them since they haven't been scheduled yet
       if (userIsRider) {
         db.deleteById(res, Ride, id, tableName);
         return;
       }
-      
+
       // If user is neither admin nor rider, they can't cancel unscheduled rides
       res.status(403).send({
         err: 'You do not have permission to cancel this ride.',
@@ -601,26 +622,38 @@ router.delete('/:id', validateUser('User'), (req, res) => {
     }
 
     // If ride has a driver (scheduled ride), set status to CANCELLED instead of deleting
-    db.update(res, Ride, { id }, { status: Status.CANCELLED }, tableName, async (doc) => {
-      const updatedRide = doc as RideType;
-      const { userType } = res.locals.user;
-      
-      // Send emails for cancelled ride
-      sendRideEmails(updatedRide).catch((error) => {
-        console.error('Failed to send ride cancellation emails:', error);
-      });
-      
-      // Send cancellation notification
-      try {
-        await notify(updatedRide, { status: Status.CANCELLED }, userType, Change.CANCELLED);
-      } catch (notificationError) {
-        console.error(
-          'Failed to send cancellation notification:',
-          notificationError
-        );
+    db.update(
+      res,
+      Ride,
+      { id },
+      { status: Status.CANCELLED },
+      tableName,
+      async (doc) => {
+        const updatedRide = doc as RideType;
+        const { userType } = res.locals.user;
+
+        // Send emails for cancelled ride
+        sendRideEmails(updatedRide).catch((error) => {
+          console.error('Failed to send ride cancellation emails:', error);
+        });
+
+        // Send cancellation notification
+        try {
+          await notify(
+            updatedRide,
+            { status: Status.CANCELLED },
+            userType,
+            Change.CANCELLED
+          );
+        } catch (notificationError) {
+          console.error(
+            'Failed to send cancellation notification:',
+            notificationError
+          );
+        }
+        res.send(updatedRide);
       }
-      res.send(updatedRide);
-    });
+    );
   });
 });
 

@@ -171,9 +171,7 @@ export async function sendRideEmails(
           );
         }
       } catch (emailError) {
-        console.error(
-          `📧 EMAIL: ❌ Failed to send email to ${email}:`
-        );
+        console.error(`📧 EMAIL: ❌ Failed to send email to ${email}:`);
         // Don't throw here - we want to continue with other emails
       }
     });

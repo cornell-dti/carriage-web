@@ -1,6 +1,6 @@
 /**
  * mailer.ts - Email service using Nodemailer
- * 
+ *
  * Transporter configuration:
  * - Development: Uses streamTransport (captures emails, doesn't send)
  * - Production: Uses Cornell SMTP server (appsmtp.mail.cornell.edu)
@@ -98,10 +98,13 @@ export async function sendRejectedEmail(to: string, ride: RideDetails) {
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    console.log("📧 MAILER: ✅ Rejection email sent successfully:", info.response);
+    console.log(
+      '📧 MAILER: ✅ Rejection email sent successfully:',
+      info.response
+    );
     return info;
   } catch (error) {
-    console.error("📧 MAILER: ❌ Error sending rejection email");
+    console.error('📧 MAILER: ❌ Error sending rejection email');
     throw error;
   }
 }
@@ -152,9 +155,7 @@ export async function sendScheduledWithModificationEmail(
   // Build the changes list
   const changes: string[] = [];
   if (ride.originalPickup !== ride.newPickup) {
-    changes.push(
-      `Pickup location: ${ride.originalPickup} → ${ride.newPickup}`
-    );
+    changes.push(`Pickup location: ${ride.originalPickup} → ${ride.newPickup}`);
   }
   if (ride.originalDropoff !== ride.newDropoff) {
     changes.push(
