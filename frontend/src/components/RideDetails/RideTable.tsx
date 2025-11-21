@@ -293,10 +293,12 @@ const RideTable: React.FC<RideTableProps> = ({
   const filteredRides = useMemo(() => {
     let filtered = rides;
 
-    // For drivers, only show scheduled rides
+    // For drivers, only show scheduled rides (including modified ones)
     if (userRole === 'driver') {
       filtered = filtered.filter(
-        (ride) => ride.schedulingState === SchedulingState.SCHEDULED
+        (ride) =>
+          ride.schedulingState === SchedulingState.SCHEDULED ||
+          ride.schedulingState === SchedulingState.SCHEDULED_WITH_MODIFICATION
       );
     }
 

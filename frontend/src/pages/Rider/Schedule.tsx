@@ -158,27 +158,31 @@ const Schedule: React.FC = () => {
   // Use the fetched rider rides instead of filtering from context
   const allRides = allRiderRides;
 
-  // Using the date portion only for comparisons
-  const now = new Date().toISOString().split('T')[0];
-  console.log('Current date (YYYY-MM-DD):', now);
+  // Get current timestamp for comparison
+  const now = new Date().getTime();
 
+  // Filter for upcoming rides (endTime is in the future) and exclude rejected/cancelled
   const currRides = allRides.filter((ride) => {
-    const rideEndDate = ride.endTime.split('T')[0];
-    const isCurrent = ride.endTime >= now;
-    // Exclude rejected or cancelled rides from next ride cards
+    const rideEndTime = new Date(ride.endTime).getTime();
+    const isFuture = rideEndTime > now; // Ride hasn't ended yet
+    // Exclude rejected or cancelled rides
     const isRejected = ride.schedulingState === SchedulingState.REJECTED;
     const isCancelled = ride.status === Status.CANCELLED;
     const isValid = !isRejected && !isCancelled;
     console.log(
-      `Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}, isValid=${isValid}`
+      `Ride ${ride.id}: endTime=${ride.endTime}, isFuture=${isFuture}, isValid=${isValid}`
     );
-    return isCurrent && isValid;
+    return isFuture && isValid;
   });
-  const pastRides = allRides.filter((ride) => ride.endTime < now);
+  const pastRides = allRides.filter((ride) => {
+    const rideEndTime = new Date(ride.endTime).getTime();
+    return rideEndTime <= now;
+  });
 
   console.log('Current rides:', currRides);
   console.log('Past rides:', pastRides);
 
+  // Sort by startTime (closest to now first) and get the next upcoming ride
   const sortedCurrRides = [...currRides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );

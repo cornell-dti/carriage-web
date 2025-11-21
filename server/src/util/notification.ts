@@ -17,9 +17,6 @@ import { RideType, Type } from '../models/ride';
 import { Change, NotificationEvent } from './types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';
-import { sendApprovedEmail, sendRejectedEmail } from "../mailer"; // your AppSMTP mailer
-import { SchedulingState } from "../models/ride";
-import { Rider } from "../models/rider";
 
 const snsClient = new SNS({
   credentials: {
@@ -42,33 +39,6 @@ type SubscriptionRequest = {
   token?: string;
   webSub?: webpush.PushSubscription;
   preferences?: string[];
-};
-
-// Helper function to fetch rider emails from rider IDs
-const fetchRiderEmails = async (riderIds: string[]): Promise<string[]> => {
-  if (riderIds.length === 0) return [];
-  
-  try {
-    console.log('📧 EMAIL: Fetching emails for rider IDs:', riderIds);
-    const riders = await Promise.all(
-      riderIds.map(async (riderId) => {
-        try {
-          const rider = await Rider.get(riderId);
-          return rider ? rider.email : null;
-        } catch (error) {
-          console.error(`📧 EMAIL: Failed to fetch rider ${riderId}:`, error);
-          return null;
-        }
-      })
-    );
-    
-    const emails = riders.filter((email): email is string => Boolean(email));
-    console.log('📧 EMAIL: Fetched rider emails:', emails);
-    return emails;
-  } catch (error) {
-    console.error('📧 EMAIL: Error fetching rider emails:', error);
-    return [];
-  }
 };
 
 const addSub = (sub: SubscriptionType) =>
@@ -267,15 +237,18 @@ export const notify = (
   new Promise((resolve, reject) => {
     // Handle multiple riders - collect all rider IDs
     // Riders can be either string IDs or full rider objects
-    const riderIds = updatedRide.riders?.map((rider) => {
-      if (typeof rider === 'string') {
-        return rider; // Already an ID
-      } else if (rider && typeof rider === 'object' && rider.id) {
-        return rider.id; // Extract ID from rider object
-      }
-      return undefined;
-    }).filter((id): id is string => Boolean(id)) || [];
-    
+    const riderIds =
+      updatedRide.riders
+        ?.map((rider) => {
+          if (typeof rider === 'string') {
+            return rider; // Already an ID
+          } else if (rider && typeof rider === 'object' && rider.id) {
+            return rider.id; // Extract ID from rider object
+          }
+          return undefined;
+        })
+        .filter((id): id is string => Boolean(id)) || [];
+
     const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
     const notifEvent = change || getNotificationEvent(body);
@@ -316,81 +289,10 @@ export const notify = (
         return [];
       })
     )
-    .then(async () => {
-      console.log('📧 EMAIL: Starting email automation...');
-      console.log('📧 EMAIL: Scheduling State:', updatedRide.schedulingState);
-      
-      // Send emails based on scheduling state
-      try {
-        const rideDetails = {
-          pickup: updatedRide.startLocation?.name || 'Unknown location',
-          dropoff: updatedRide.endLocation?.name || 'Unknown location',
-          time: new Date(updatedRide.startTime),
-          modified: change === Change.EDITED,
-        };
-        
-        console.log('📧 EMAIL: Ride Details:', rideDetails);
-        
-        // Extract rider emails - handle both string IDs and populated objects
-        let riderEmails: string[] = [];
-        
-        // Check if riders are string IDs or populated objects
-        const hasStringIds = updatedRide.riders && updatedRide.riders.length > 0 && typeof updatedRide.riders[0] === 'string';
-        
-        if (hasStringIds) {
-          // Riders are string IDs, fetch emails from database
-          const stringRiderIds = updatedRide.riders as unknown as string[];
-          riderEmails = await fetchRiderEmails(stringRiderIds);
-        } else {
-          // Riders are populated objects, extract emails directly
-          riderEmails = (updatedRide.riders || [])
-            .map((r) => {
-              if (r && typeof r === 'object' && r.email) {
-                return r.email;
-              }
-              return undefined;
-            })
-            .filter((email): email is string => Boolean(email));
-        }
-
-        console.log('📧 EMAIL: Rider Emails:', riderEmails);
-
-        if (riderEmails.length === 0) {
-          console.log('📧 EMAIL: No rider emails found, skipping email sending');
-          resolve(updatedRide);
-          return;
-        }
-
-        // Send emails to all riders
-        const emailPromises = riderEmails.map(async (email) => {
-          try {
-            console.log(`📧 EMAIL: Attempting to send email to ${email}...`);
-            if (updatedRide.schedulingState === SchedulingState.SCHEDULED) {
-              console.log(`📧 EMAIL: Sending APPROVAL email to ${email}`);
-              await sendApprovedEmail(email, rideDetails);
-              console.log(`📧 EMAIL: ✅ Approval email sent successfully to ${email}`);
-            } else if (updatedRide.schedulingState === SchedulingState.REJECTED) {
-              console.log(`📧 EMAIL: Sending REJECTION email to ${email}`);
-              await sendRejectedEmail(email, rideDetails);
-              console.log(`📧 EMAIL: ✅ Rejection email sent successfully to ${email}`);
-            } else {
-              console.log(`📧 EMAIL: ⏭️  Skipping email to ${email} - scheduling state is ${updatedRide.schedulingState}`);
-            }
-          } catch (emailError) {
-            console.error(`📧 EMAIL: ❌ Failed to send email to ${email}:`, emailError);
-            // Don't throw here - we want to continue with other emails
-          }
-        });
-
-        await Promise.allSettled(emailPromises);
-        console.log('📧 EMAIL: Email automation completed');
+      .then(() => {
+        // Push notifications sent successfully
         resolve(updatedRide);
-      } catch (error) {
-        console.error('📧 EMAIL: ❌ Error in email automation:', error);
-        // Still resolve the notification even if emails fail
-        resolve(updatedRide);
-      }
-    })
+      })
       .catch(reject);
   });
 
