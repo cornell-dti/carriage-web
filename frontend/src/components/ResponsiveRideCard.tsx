@@ -1,12 +1,14 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Ride, SchedulingState, Status } from '../types';
 import {
+  Flag,
+  FlagRounded,
   Height,
   Place,
   SubdirectoryArrowRight,
   WatchLater,
 } from '@mui/icons-material';
-import { AdvancedMarker, Map } from '@vis.gl/react-google-maps';
+import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 
 interface ResponsiveRideCardProps {
   ride: Ride;
@@ -130,44 +132,50 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
           textWrap: 'nowrap',
         }}
       >
-        {/* time-related */}
         <div
           style={{
-            width: 'min-content',
+            width: '100%',
             height: 'min-content',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
           }}
         >
-          <span
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              alignItems: 'center',
-            }}
-          >
-            <WatchLater></WatchLater>
-            {renderFormattedTime(new Date(ride.startTime))}
-          </span>
-          <span
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              alignItems: 'center',
-              color: '#707070',
-            }}
-          >
-            <SubdirectoryArrowRight></SubdirectoryArrowRight>
-            {renderFormattedTime(new Date(ride.endTime))}
-          </span>
-        </div>
-
-        {/* location-related */}
-        {!expanded && (
+          {/* time-related */}
           <div
             style={{
-              width: '8rem',
+              width: '100%',
+              height: 'min-content',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
+            <span
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center',
+              }}
+            >
+              <WatchLater></WatchLater>
+              {renderFormattedTime(new Date(ride.startTime))}
+            </span>
+            <span
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center',
+                color: '#707070',
+              }}
+            >
+              <SubdirectoryArrowRight></SubdirectoryArrowRight>
+              {renderFormattedTime(new Date(ride.endTime))}
+            </span>
+          </div>
+
+          {/* location-related */}
+          <div
+            style={{
+              width: '10rem',
               height: 'min-content',
               display: 'flex',
               flexDirection: 'column',
@@ -196,7 +204,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               <p>{ride.endLocation.shortName}</p>
             </span>
           </div>
-        )}
+        </div>
         {/* expanded location view */}
         {expanded && (
           <div
@@ -207,79 +215,50 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               gap: '0.5rem',
             }}
           >
-            {/* start location + map */}
-            <div
-              style={{
-                width: '100%',
-                height: 'min-content',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
+            <Map
+              style={{ width: '100%', height: '12rem' }}
+              defaultCenter={{
+                lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
+                lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
               }}
+              defaultZoom={13}
+              gestureHandling="greedy"
+              disableDefaultUI
+              mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
             >
-              <span
-                style={{
-                  display: 'flex',
-                  gap: '0.5rem',
-                  alignItems: 'center',
-                }}
-              >
-                <Place></Place>
-                <p>{ride.startLocation.shortName}</p>
-              </span>
-
-              {/* map placeholder */}
-              <Map
-                style={{ width: '100%', height: '8rem' }}
-                defaultCenter={{
+              <AdvancedMarker
+                position={{
                   lat: ride.startLocation.lat,
                   lng: ride.startLocation.lng,
                 }}
-                defaultZoom={15}
-                gestureHandling="greedy"
-                disableDefaultUI
-                mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+                clickable={true}
+                title={ride.startLocation.shortName}
               >
-                <AdvancedMarker
-                  position={{
-                    lat: ride.startLocation.lat,
-                    lng: ride.startLocation.lng,
+                {
+                  <Pin
+                    background={'#222'}
+                    glyphColor="#fff"
+                    borderColor="#222"
+                  />
+                }
+              </AdvancedMarker>
+              <AdvancedMarker
+                position={{
+                  lat: ride.endLocation.lat,
+                  lng: ride.endLocation.lng,
+                }}
+                clickable={true}
+                title={ride.endLocation.shortName}
+              >
+                <FlagRounded
+                  style={{
+                    color: '#222',
+                    width: '3rem',
+                    height: '3rem',
                   }}
-                  clickable={false}
-                ></AdvancedMarker>
-              </Map>
-            </div>
-            {/* end location + map */}
-            <div
-              style={{
-                width: '100%',
-                height: 'min-content',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
-              }}
-            >
-              <span
-                style={{
-                  display: 'flex',
-                  gap: '0.5rem',
-                  alignItems: 'center',
-                  color: '#707070',
-                }}
-              >
-                <SubdirectoryArrowRight></SubdirectoryArrowRight>
-                <p>{ride.endLocation.shortName}</p>
-              </span>
-
-              {/* map placeholder */}
-              <div
-                style={{
-                  width: '100%',
-                  height: '8rem',
-                  background: '#8888ff',
-                }}
-              ></div>
-            </div>
+                ></FlagRounded>
+              </AdvancedMarker>
+            </Map>
           </div>
         )}
       </div>
