@@ -9,7 +9,6 @@ import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
-import { LocationsProvider } from '../../context/LocationsContext';
 import axios from '../../util/axios';
 
 type CreateOrEditRideModalProps = {
@@ -36,7 +35,8 @@ const CreateOrEditRideModal = ({
         return format_date(ride.startTime);
       }
       if (modalType === 'EDIT_ALL_RECURRING') {
-        return format_date(ride.parentRide?.startTime);
+        // For now, recurring rides aren't supported - treat as regular edit
+        return format_date(ride.startTime);
       }
     }
     return format_date();
@@ -44,11 +44,10 @@ const CreateOrEditRideModal = ({
 
   const defaultValues = {
     startDate: defaultStartDate(),
-    whenRepeat: ride?.recurring ? 'custom' : undefined,
-    endDate: ride?.endDate ?? '',
+    whenRepeat: ride?.isRecurring ? 'custom' : undefined,
     pickupTime: ride ? moment(ride.startTime).format('HH:mm') : '',
     dropoffTime: ride ? moment(ride.endTime).format('HH:mm') : '',
-    recurring: ride?.recurring ?? false,
+    recurring: ride?.isRecurring ?? false,
   };
 
   const methods = useForm({ defaultValues });
@@ -97,58 +96,21 @@ const CreateOrEditRideModal = ({
         : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
     let rideData: ObjectType;
     if (recurring || whenRepeat) {
-      // Add a repeating ride
-      let recurringDays: number[] = [];
-      switch (whenRepeat) {
-        case 'daily': {
-          recurringDays = [1, 2, 3, 4, 5];
-          break;
-        }
-        case 'weekly': {
-          recurringDays = [moment(`${startDate}`).toDate().getDay()];
-          break;
-        }
-        case 'custom': {
-          if (Number(Mon) !== -1) {
-            recurringDays.push(Number(Mon));
-          }
-          if (Number(Tue) !== -1) {
-            recurringDays.push(Number(Tue));
-          }
-          if (Number(Wed) !== -1) {
-            recurringDays.push(Number(Wed));
-          }
-          if (Number(Thu) !== -1) {
-            recurringDays.push(Number(Thu));
-          }
-          if (Number(Fri) !== -1) {
-            recurringDays.push(Number(Fri));
-          }
-          break;
-        }
-        default: {
-          recurringDays = [moment(`${startDate}`).toDate().getDay()];
-          break;
-        }
-      }
-      rideData = {
-        startLocation: startLoc,
-        endLocation: endLoc,
-        rider: id,
-        startTime,
-        endTime,
-        recurring,
-        recurringDays,
-        endDate,
-      };
+      // For now, block recurring rides as they're not fully implemented
+      alert(
+        'Recurring rides are not yet supported. Please create a single ride instead.'
+      );
+      return;
     } else {
-      // Not repeating
+      // Single ride (non-recurring)
       rideData = {
         startLocation: startLoc,
         endLocation: endLoc,
         rider: id,
         startTime,
         endTime,
+        isRecurring: false,
+        timezone: 'America/New_York',
       };
     }
 
@@ -161,11 +123,13 @@ const CreateOrEditRideModal = ({
 
     if (!ride) {
       // create ride
-      rideData.type = 'unscheduled';
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios.post('/api/rides', rideData).then(afterSubmit);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
-      rideData.type = 'unscheduled';
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios
         .put(`/api/rides/${ride.id}/edits`, {
           deleteOnly: false,
@@ -174,41 +138,35 @@ const CreateOrEditRideModal = ({
         })
         .then(afterSubmit);
     } else {
-      // edit regular ride or all recurring rides by editing parent ride
-      if (
-        !ride.parentRide ||
-        (ride.parentRide && ride.parentRide.type === 'active')
-      ) {
-        rideData.type = 'unscheduled';
-      }
+      // edit single ride - for now all rides are treated as single rides
+      rideData.type = 'upcoming';
+      rideData.schedulingState = 'unscheduled';
       axios.put(`/api/rides/${ride.id}`, rideData).then(afterSubmit);
     }
   };
 
   return (
-    <LocationsProvider>
-      <Modal
-        title={!ride ? 'Request a Ride' : 'Edit Ride'}
-        isOpen={isOpen}
-        onClose={closeModal}
-      >
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)}>
-            <div className={styles.inputContainer}>
-              <RequestRideInfo
-                ride={ride}
-                showRepeatingCheckbox={!ride}
-                showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
-                modalType={modalType}
-              />
-              <Button className={styles.submit} type="submit">
-                {!ride ? 'Request a Ride' : 'Edit Ride'}
-              </Button>
-            </div>
-          </form>
-        </FormProvider>
-      </Modal>
-    </LocationsProvider>
+    <Modal
+      title={!ride ? 'Request a Ride' : 'Edit Ride'}
+      isOpen={isOpen}
+      onClose={closeModal}
+    >
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(handleSubmit)}>
+          <div className={styles.inputContainer}>
+            <RequestRideInfo
+              ride={ride}
+              showRepeatingCheckbox={!ride}
+              showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
+              modalType={modalType}
+            />
+            <Button className={styles.submit} type="submit">
+              {!ride ? 'Request a Ride' : 'Edit Ride'}
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+    </Modal>
   );
 };
 export default CreateOrEditRideModal;

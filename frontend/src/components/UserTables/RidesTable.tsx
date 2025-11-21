@@ -4,6 +4,7 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
+import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
@@ -22,7 +23,15 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [rideEditOpenIndex, setRideEditOpenIndex] = useState(-1);
   let buttonRef = useRef(null);
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedRide(null);
+  };
 
   const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
   const unscheduledHeaders = [
@@ -62,13 +71,19 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             hour: '2-digit',
             minute: '2-digit',
           });
-          const { rider } = ride;
-          const riderName = rider ? `${rider.firstName} ${rider.lastName}` : '';
+          // Use primary rider (first in array) for table display
+          const primaryRider =
+            ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+          const riderName = primaryRider
+            ? `${primaryRider.firstName} ${primaryRider.lastName}`
+            : '';
 
           // Convert accessibility array to string
           const needs =
-            rider && rider.accessibility && rider.accessibility.length > 0
-              ? rider.accessibility.join(', ')
+            primaryRider &&
+            primaryRider.accessibility &&
+            primaryRider.accessibility.length > 0
+              ? primaryRider.accessibility.join(', ')
               : 'None';
 
           const pickupLocation = ride.startLocation.name;
@@ -114,10 +129,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               outline
               small
               onClick={() => {
-                if (rides[index].recurring) {
+                if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
                 } else {
-                  setOpenEditModal(index);
+                  setRideEditOpenIndex(index);
                 }
               }}
             >
@@ -176,11 +191,17 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             valueEditAssign,
           ];
 
+          const handleRowClick = () => {
+            setSelectedRide(ride);
+            setDetailsModalOpen(true);
+          };
+
           const scheduledRow = () => (
             <Row
               key={ride.id}
               data={scheduledRideData}
               colSizes={scheduledColSizes}
+              onClick={handleRowClick}
             />
           );
 
@@ -190,6 +211,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               data={unscheduledRideData}
               colSizes={unscheduledColSizes}
               groupStart={2}
+              onClick={handleRowClick}
             />
           );
 
@@ -229,6 +251,25 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           );
         })}
       </Table>
+
+      {/* Ride Details Modal */}
+      {selectedRide && (
+        <RideDetailsComponent
+          open={detailsModalOpen}
+          onClose={handleCloseDetailsModal}
+          ride={selectedRide}
+        />
+      )}
+
+      {/* Ride Edit Modal */}
+      {rideEditOpenIndex >= 0 && (
+        <RideDetailsComponent
+          open={rideEditOpenIndex >= 0}
+          onClose={() => setRideEditOpenIndex(-1)}
+          ride={rides[rideEditOpenIndex]}
+          initialEditingState={true}
+        />
+      )}
     </>
   );
 };

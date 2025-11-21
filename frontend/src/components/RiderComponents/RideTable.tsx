@@ -18,6 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
+import RideDetailsModal from '../RideModal/RideDetailsModal';
 
 type Order = 'asc' | 'desc';
 
@@ -49,7 +50,7 @@ function mapRidesToData(rides: Ride[]): Data[] {
       startLocationName: ride.startLocation.name,
       endLocationName: ride.endLocation.name,
       status: ride.status,
-      type: ride.type,
+      type: ride.type as any,
     };
   });
 }
@@ -79,12 +80,22 @@ function getComparator<Key extends keyof Data>(
   orderBy: Key
 ): (a: Data, b: Data) => number {
   return (a, b) => {
-    // If sorting by 'date' or 'time', we actually sort by 'startTime'
-    let sortField = orderBy;
+    // If sorting by 'date' or 'time', we actually sort by 'startTime' chronologically
     if (orderBy === 'date' || orderBy === 'time') {
-      sortField = 'startTime' as Key;
+      const aDate = new Date(a.startTime);
+      const bDate = new Date(b.startTime);
+
+      // Handle invalid dates
+      if (isNaN(aDate.getTime()) || isNaN(bDate.getTime())) {
+        return 0;
+      }
+
+      const diff = bDate.getTime() - aDate.getTime();
+      return order === 'desc' ? diff : -diff;
     }
 
+    // For other fields, use the original logic
+    const sortField = orderBy;
     const cmp = descendingComparator(a, b, sortField);
     return order === 'desc' ? cmp : -cmp;
   };
@@ -223,6 +234,8 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [statusFilter, setStatusFilter] = React.useState<Status | 'All'>('All');
+  const [selectedRide, setSelectedRide] = React.useState<Ride | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = React.useState(false);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -233,7 +246,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
     setOrderBy(property);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_event: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -242,6 +255,20 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleRowClick = (row: Data) => {
+    // Find the original ride object from the rides array
+    const originalRide = rides.find((ride) => ride.startTime === row.startTime);
+    if (originalRide) {
+      setSelectedRide(originalRide);
+      setDetailsModalOpen(true);
+    }
+  };
+
+  const handleCloseDetailsModal = () => {
+    setDetailsModalOpen(false);
+    setSelectedRide(null);
   };
 
   const filteredRows = React.useMemo(() => {
@@ -291,7 +318,19 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
               {visibleRows.map((row, index) => {
                 const labelId = `enhanced-table-row-${index}`;
                 return (
-                  <TableRow hover role="row" tabIndex={-1} key={index}>
+                  <TableRow
+                    hover
+                    role="row"
+                    tabIndex={-1}
+                    key={index}
+                    onClick={() => handleRowClick(row)}
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: alpha('#000', 0.04),
+                      },
+                    }}
+                  >
                     <TableCell component="th" id={labelId} scope="row">
                       {row.date}
                     </TableCell>
@@ -321,6 +360,15 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      {/* Ride Details Modal */}
+      {selectedRide && (
+        <RideDetailsModal
+          open={detailsModalOpen}
+          close={handleCloseDetailsModal}
+          ride={selectedRide}
+        />
+      )}
     </Box>
   );
 }

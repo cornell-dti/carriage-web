@@ -72,5 +72,17 @@ scripts
 
 server/.env
 
+# Secret certificates (should not be committed)
+server/config/*.crt
+
 # build
 build/
+
+# Claude Code
+.claude/
+
+# Husky
+.husky/
+
+# Documentation
+docs/

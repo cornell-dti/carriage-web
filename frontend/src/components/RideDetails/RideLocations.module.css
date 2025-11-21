@@ -1,0 +1,165 @@
+.container {
+  max-width: 1000px;
+}
+
+.locationsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: start;
+}
+
+.locationBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.locationHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.locationCard {
+  flex: 1;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+}
+
+.locationCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.locationInfo {
+  flex: 1;
+}
+
+.copyButton {
+  margin-left: 8px;
+}
+
+.locationTag {
+  margin-top: 8px;
+}
+
+/* Left side container for pickup/dropoff locations */
+.locationsContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
+  justify-content: space-between;
+}
+
+/* Right side container for map and trip info */
+.mapAndInfoContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
+}
+
+.mapContainer {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  min-height: 320px;
+}
+
+.tripInfo {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+}
+
+.tripInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.tripInfoItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Edit mode styles */
+.editLocationsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.editLocationHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.editLocationCard {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* New styles for changing state */
+.locationCardChanging {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.locationActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 4px;
+}
+
+.changingActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .locationsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .tripInfoGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .editLocationCard {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .locationActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
-import { ObjectType } from '../../types/index';
+import { DayOfWeek } from '../../types/index';
 import EmployeeInfo from './EmployeeInfo';
 import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
@@ -12,14 +12,6 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
-
-enum DayOfWeek {
-  MONDAY = 'MON',
-  TUESDAY = 'TUE',
-  WEDNESDAY = 'WED',
-  THURSDAY = 'THURS',
-  FRIDAY = 'FRI',
-}
 
 type AdminData = {
   type: string[];
@@ -49,8 +41,11 @@ function extractAdminData(employeeData: EmployeeEntity) {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
-    type: employeeData.admin?.type,
-    isDriver: employeeData.admin?.isDriver,
+    type: (employeeData.admin?.type || []) as (
+      | 'sds-admin'
+      | 'redrunner-admin'
+    )[],
+    isDriver: employeeData.admin?.isDriver || false,
     phoneNumber: employeeData.phoneNumber,
     email: employeeData.email,
     photoLink: employeeData.photoLink,
@@ -61,9 +56,9 @@ function extractDriverData(employeeData: EmployeeEntity) {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
-    availability: employeeData.driver?.availability,
+    availability: employeeData.driver?.availability || [],
     phoneNumber: employeeData.phoneNumber,
-    startDate: employeeData.driver?.startDate,
+    joinDate: employeeData.driver?.startDate,
     email: employeeData.email,
     photoLink: employeeData.photoLink,
   };
@@ -81,13 +76,62 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
-  const { refreshAdmins, refreshDrivers } = useEmployees();
+  const {
+    updateAdminInfo,
+    updateDriverInfo,
+    createAdmin,
+    createDriver,
+    deleteAdmin,
+    deleteDriver,
+  } = useEmployees();
   const [selectedRoles, setSelectedRole] = useState<string[]>([]);
   const [imageBase64, setImageBase64] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const methods = useForm();
+
+  // Initialize form and roles when modal opens or existing employee changes
+  React.useEffect(() => {
+    if (existingEmployee && isOpen) {
+      // Initialize roles
+      const roles: string[] = [];
+      if (existingEmployee.admin) {
+        // Add admin roles
+        if (existingEmployee.admin.type) {
+          roles.push(...existingEmployee.admin.type);
+        }
+      }
+      if (existingEmployee.driver) {
+        roles.push('driver');
+      }
+      setSelectedRole(roles);
+
+      // Initialize form values
+      methods.reset({
+        firstName: existingEmployee.firstName,
+        lastName: existingEmployee.lastName,
+        netid: existingEmployee.netId,
+        phoneNumber: existingEmployee.phoneNumber,
+        startDate: existingEmployee.driver?.startDate,
+        availability: existingEmployee.driver?.availability || [],
+      });
+    } else if (!existingEmployee) {
+      // Reset for new employee
+      setSelectedRole([]);
+      methods.reset({
+        firstName: '',
+        lastName: '',
+        netid: '',
+        phoneNumber: '',
+        startDate: '',
+        availability: [],
+      });
+    }
+  }, [existingEmployee, isOpen, methods]);
 
   const closeModal = () => {
     methods.clearErrors();
+    setImageBase64(''); // Reset image state
+    setIsUploadingImage(false); // Reset upload state
     setIsOpen(false);
   };
 
@@ -113,6 +157,7 @@ const EmployeeModal = ({
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
+      throw new Error('Failed to upload employee photo. Please try again.');
     }
   }
 
@@ -131,22 +176,14 @@ const EmployeeModal = ({
     let res: any;
     switch (endpoint) {
       case '/api/drivers':
-        const {
-          data: { data: createdDriver },
-        } = await axios.post(endpoint, {
-          ...extractDriverData(employeeData),
-          eid: employeeData.id || '',
-        });
-        res = createdDriver;
+        // Use optimistic create from context
+        await createDriver(extractDriverData(employeeData));
+        res = employeeData; // The context will handle server response and ID assignment
         break;
       case '/api/admins':
-        const {
-          data: { data: createdAdmin },
-        } = await axios.post(endpoint, {
-          ...extractAdminData(employeeData),
-          eid: employeeData.id || '',
-        });
-        res = createdAdmin;
+        // Use optimistic create from context
+        await createAdmin(extractAdminData(employeeData));
+        res = employeeData; // The context will handle server response and ID assignment
         break;
       default:
         break;
@@ -168,27 +205,22 @@ const EmployeeModal = ({
     let res: any;
     switch (endpoint) {
       case '/api/drivers':
-        const {
-          data: { data: updatedDriver },
-        } = await axios.put(
-          `${endpoint}/${employeeData.id}`,
+        // Use optimistic update from context
+        await updateDriverInfo(
+          employeeData.id,
           extractDriverData(employeeData)
         );
-        res = updatedDriver;
+        res = employeeData; // Since optimistic update handles the server response
         break;
       case '/api/admins':
-        const {
-          data: { data: updatedAdmin },
-        } = await axios.put(
-          `${endpoint}/${employeeData.id}`,
-          extractDriverData(employeeData)
-        );
-        res = updatedAdmin;
+        // Use optimistic update from context
+        await updateAdminInfo(employeeData.id, extractAdminData(employeeData));
+        res = employeeData; // Since optimistic update handles the server response
         break;
       default:
         break;
     }
-    return res; // Return the updated employee data, remove double nested later
+    return res;
   }
 
   /**
@@ -199,7 +231,12 @@ const EmployeeModal = ({
    * @returns A promise that resolves when the deletion is complete.
    */
   async function deleteEmployee(id: string, endpoint: string): Promise<void> {
-    await axios.delete(`${endpoint}/${id}`);
+    // Use optimistic delete from context
+    if (endpoint === '/api/admins') {
+      await deleteAdmin(id);
+    } else if (endpoint === '/api/drivers') {
+      await deleteDriver(id);
+    }
   }
 
   /**
@@ -325,13 +362,21 @@ const EmployeeModal = ({
           selectedRoles.includes('redrunner-admin')
             ? 'Admins'
             : 'Drivers';
-        await uploadEmployeePhoto(id, targetTable, imageBase64);
+        try {
+          setIsUploadingImage(true);
+          await uploadEmployeePhoto(id, targetTable, imageBase64);
+        } catch (uploadError) {
+          showToast(
+            'Employee created but photo upload failed. You can try uploading the photo again later.',
+            ToastStatus.ERROR
+          );
+          // Don't throw here - we want the employee creation to succeed even if photo upload fails
+        } finally {
+          setIsUploadingImage(false);
+        }
       }
 
-      // Refresh both admin and driver data once after processing.
-      await refreshAdmins();
-      await refreshDrivers();
-
+      // Note: No need to manually refresh - optimistic updates handle this automatically
       showToast(`Employee information processed`, ToastStatus.SUCCESS);
     } catch (error) {
       showToast('An error occurred: ', ToastStatus.ERROR);
@@ -375,6 +420,7 @@ const EmployeeModal = ({
               ? `${existingEmployee?.photoLink}?t=${new Date().getTime()}`
               : ''
           }
+          isUploading={isUploadingImage}
         />
 
         <FormProvider {...methods}>
