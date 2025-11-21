@@ -72,18 +72,26 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       )}
       <div
         className={`${styles.contentWrapper} ${
-          expanded ? styles.contentWrapperExpanded : styles.contentWrapperCollapsed
+          expanded
+            ? styles.contentWrapperExpanded
+            : styles.contentWrapperCollapsed
         }`}
       >
         <div className={styles.infoSection}>
           {/* time-related */}
           <div className={styles.column}>
             <span className={styles.row}>
-              <WatchLater />
+              <span className={styles.labelWrapper}>
+                <WatchLater />
+                <p className={styles.labelText}>Start</p>
+              </span>
               {renderFormattedTime(new Date(ride.startTime))}
             </span>
             <span className={styles.rowSecondary}>
-              <SubdirectoryArrowRight />
+              <span className={styles.labelWrapper}>
+                <SubdirectoryArrowRight />
+                <p className={styles.labelText}>End</p>
+              </span>
               {renderFormattedTime(new Date(ride.endTime))}
             </span>
           </div>
@@ -169,9 +177,9 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       ) : (
         <button
           onClick={() => setExpanded(true)}
-          className={`${styles.button} ${styles.buttonSecondary}`}
+          className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
         >
-          Show More
+          Details
         </button>
       )}
     </div>

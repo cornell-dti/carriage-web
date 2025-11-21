@@ -293,7 +293,7 @@ const Schedule: React.FC = () => {
                 key={day}
                 style={{
                   width: '100%',
-                  maxWidth: '32rem',
+                  maxWidth: '48rem',
                   height: 'min-content',
                   display: 'flex',
                   flexDirection: 'column',
