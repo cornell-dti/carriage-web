@@ -101,6 +101,11 @@ router.post(
 
       // User must exist in database before SSO login is allowed
       if (!result) {
+        // Store unregistered user info in session for frontend to retrieve
+        req.session.unregisteredUser = {
+          email: samlUser.email,
+          name: `${samlUser.firstName} ${samlUser.lastName}`.trim() || 'User',
+        };
         return res.redirect(`${frontendUrl}/?error=user_not_found`);
       }
 
@@ -196,6 +201,21 @@ router.get('/logout', (req: Request, res: Response) => {
       res.redirect(`${frontendUrl}/?logout=success`);
     });
   });
+});
+
+/**
+ * GET /api/sso/unregistered-user
+ * Returns unregistered user info from session (if available)
+ */
+router.get('/unregistered-user', (req: Request, res: Response) => {
+  if (req.session.unregisteredUser) {
+    const userInfo = req.session.unregisteredUser;
+    // Clear it from session after retrieving
+    delete req.session.unregisteredUser;
+    res.json({ user: userInfo });
+  } else {
+    res.status(404).json({ error: 'No unregistered user info found' });
+  }
 });
 
 /**

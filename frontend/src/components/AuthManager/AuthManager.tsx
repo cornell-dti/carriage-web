@@ -17,7 +17,12 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { Admin, Rider, UnregisteredUser, DriverType as Driver } from '../../types/index';
+import {
+  Admin,
+  Rider,
+  UnregisteredUser,
+  DriverType as Driver,
+} from '../../types/index';
 import DriverRoutes from '../../pages/Driver/Routes';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
@@ -139,10 +144,36 @@ const AuthManager = () => {
     const errorParam = searchParams.get('error');
 
     if (errorParam) {
-      // Handle SSO errors
+      // Handle user_not_found specially - fetch unregistered user info
+      if (errorParam === 'user_not_found') {
+        fetch(`${process.env.REACT_APP_SERVER_URL}/api/sso/unregistered-user`, {
+          credentials: 'include', // Send session cookie
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.user) {
+              setUnregisteredUser(data.user);
+              navigate('/', { replace: true });
+            } else {
+              // Fallback if no user info available
+              setSsoError(
+                'Your Cornell account is not registered. Please contact support.'
+              );
+              navigate('/', { replace: true });
+            }
+          })
+          .catch((error) => {
+            console.error('Error fetching unregistered user info:', error);
+            setSsoError(
+              'Your Cornell account is not registered. Please contact support.'
+            );
+            navigate('/', { replace: true });
+          });
+        return;
+      }
+
+      // Handle other SSO errors
       const errorMessages: { [key: string]: string } = {
-        user_not_found:
-          'Your Cornell account is not registered. Please contact support.',
         'User not active': 'Your account is inactive. Please contact support.',
         sso_failed: 'SSO authentication failed. Please try again.',
       };
