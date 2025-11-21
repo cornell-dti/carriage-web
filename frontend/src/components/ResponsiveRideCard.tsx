@@ -1,6 +1,12 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Ride, SchedulingState, Status } from '../types';
-import { Place, SubdirectoryArrowRight, WatchLater } from '@mui/icons-material';
+import {
+  Height,
+  Place,
+  SubdirectoryArrowRight,
+  WatchLater,
+} from '@mui/icons-material';
+import { AdvancedMarker, Map } from '@vis.gl/react-google-maps';
 
 interface ResponsiveRideCardProps {
   ride: Ride;
@@ -62,8 +68,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   const [expanded, setExpanded] = useState<boolean>(false);
 
   return (
-    <button
-      onClick={() => setExpanded(!expanded)}
+    <div
       style={{
         width: '100%',
         maxWidth: '32rem',
@@ -224,13 +229,25 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               </span>
 
               {/* map placeholder */}
-              <div
-                style={{
-                  width: '100%',
-                  height: '8rem',
-                  background: '#8888ff',
+              <Map
+                style={{ width: '100%', height: '8rem' }}
+                defaultCenter={{
+                  lat: ride.startLocation.lat,
+                  lng: ride.startLocation.lng,
                 }}
-              ></div>
+                defaultZoom={15}
+                gestureHandling="greedy"
+                disableDefaultUI
+                mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+              >
+                <AdvancedMarker
+                  position={{
+                    lat: ride.startLocation.lat,
+                    lng: ride.startLocation.lng,
+                  }}
+                  clickable={false}
+                ></AdvancedMarker>
+              </Map>
             </div>
             {/* end location + map */}
             <div
@@ -267,7 +284,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         )}
       </div>
       {/* expanded buttons */}
-      {expanded && (
+      {expanded ? (
         <div
           style={{
             width: '100%',
@@ -317,8 +334,26 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             Edit
           </button>
         </div>
+      ) : (
+        <button
+          onClick={() => setExpanded(true)}
+          style={{
+            width: '100%',
+            height: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            border: '#ddd 1px solid',
+            borderRadius: '0.25rem',
+            background: 'white',
+            outline: 'none',
+          }}
+        >
+          Show More
+        </button>
       )}
-    </button>
+    </div>
   );
 };
 
