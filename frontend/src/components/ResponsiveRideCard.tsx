@@ -90,6 +90,8 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             justifyContent: 'center',
             alignItems: 'center',
             color: '#707070',
+            backgroundColor: '#f5f5f5',
+            marginBottom: '1rem',
           }}
         >
           <p>Requested</p>
@@ -155,6 +157,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             {renderFormattedTime(new Date(ride.endTime))}
           </span>
         </div>
+
         {/* location-related */}
         {!expanded && (
           <div
