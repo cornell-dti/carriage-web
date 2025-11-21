@@ -9,6 +9,7 @@ import {
   WatchLater,
 } from '@mui/icons-material';
 import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
+import styles from './ResponsiveRideCard.module.css';
 
 interface ResponsiveRideCardProps {
   ride: Ride;
@@ -42,23 +43,9 @@ const formatTime = (time: Date): FormattedTime => {
 const renderFormattedTime = (time: Date): ReactNode => {
   const formattedTime = formatTime(time);
   return (
-    <span
-      style={{
-        display: 'flex',
-        gap: '0.25rem',
-        alignItems: 'flex-end',
-      }}
-    >
+    <span className={styles.timeWrapper}>
       <p>{formattedTime.time}</p>
-      <p
-        style={{
-          fontSize: '0.75rem',
-          color: '707070',
-          fontWeight: 'lighter',
-        }}
-      >
-        {formattedTime.meridiem}
-      </p>
+      <p className={styles.timeMeridiem}>{formattedTime.meridiem}</p>
     </span>
   );
 };
@@ -70,153 +57,60 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   const [expanded, setExpanded] = useState<boolean>(false);
 
   return (
-    <div
-      style={{
-        width: '100%',
-        maxWidth: '32rem',
-        height: 'min-content',
-        minWidth: '20rem',
-        background: 'white',
-        borderRadius: '0.25rem',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '1.5rem',
-        border: '#e0e0e0 1px solid',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        gap: '1rem',
-      }}
-    >
+    <div className={styles.card}>
       {/* ride status, check if scheduled. If not, display card indicating */}
       {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
-        <div
-          style={{
-            width: '100%',
-            height: 'min-content',
-            borderRadius: '0.1275rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: '#707070',
-            backgroundColor: '#f5f5f5',
-          }}
-        >
+        <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
           <p>Requested</p>
         </div>
       ) : ride.status === Status.CANCELLED ? (
-        <div
-          style={{
-            width: '100%',
-            height: 'min-content',
-            borderRadius: '0.1275rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff0f0',
-            color: '#c10000',
-          }}
-        >
+        <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
           <p>Canceled</p>
         </div>
       ) : (
         <></>
       )}
       <div
-        style={{
-          width: '100%',
-          height: 'min-content',
-          display: 'flex',
-          flexDirection: expanded ? 'column' : 'row',
-          justifyContent: expanded ? 'normal' : 'space-between',
-          gap: expanded ? 'auto' : '1.5rem',
-          textWrap: 'nowrap',
-        }}
+        className={`${styles.contentWrapper} ${
+          expanded ? styles.contentWrapperExpanded : styles.contentWrapperCollapsed
+        }`}
       >
-        <div
-          style={{
-            width: '100%',
-            height: 'min-content',
-            display: 'flex',
-          }}
-        >
+        <div className={styles.infoSection}>
           {/* time-related */}
-          <div
-            style={{
-              width: '100%',
-              height: 'min-content',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-            }}
-          >
-            <span
-              style={{
-                display: 'flex',
-                gap: '0.5rem',
-                alignItems: 'center',
-              }}
-            >
-              <WatchLater></WatchLater>
+          <div className={styles.column}>
+            <span className={styles.row}>
+              <WatchLater />
               {renderFormattedTime(new Date(ride.startTime))}
             </span>
-            <span
-              style={{
-                display: 'flex',
-                gap: '0.5rem',
-                alignItems: 'center',
-                color: '#707070',
-              }}
-            >
-              <SubdirectoryArrowRight></SubdirectoryArrowRight>
+            <span className={styles.rowSecondary}>
+              <SubdirectoryArrowRight />
               {renderFormattedTime(new Date(ride.endTime))}
             </span>
           </div>
 
           {/* location-related */}
-          <div
-            style={{
-              width: '10rem',
-              height: 'min-content',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-            }}
-          >
-            <span
-              style={{
-                display: 'flex',
-                gap: '0.5rem',
-                alignItems: 'center',
-              }}
-            >
-              <Place></Place>
+          <div className={styles.column}>
+            <span className={styles.row}>
+              <span className={styles.labelWrapper}>
+                <Place />
+                <p className={styles.labelText}>Pickup</p>
+              </span>
               <p>{ride.startLocation.shortName}</p>
             </span>
-            <span
-              style={{
-                display: 'flex',
-                gap: '0.5rem',
-                alignItems: 'center',
-                color: '#707070',
-              }}
-            >
-              <SubdirectoryArrowRight></SubdirectoryArrowRight>
+            <span className={styles.rowSecondary}>
+              <span className={styles.labelWrapper}>
+                <FlagRounded />
+                <p className={styles.labelText}>Dropoff</p>
+              </span>
               <p>{ride.endLocation.shortName}</p>
             </span>
           </div>
         </div>
         {/* expanded location view */}
         {expanded && (
-          <div
-            style={{
-              width: '100%',
-              height: 'min-content',
-              display: 'flex',
-              gap: '0.5rem',
-            }}
-          >
+          <div className={styles.mapContainer}>
             <Map
-              style={{ width: '100%', height: '12rem' }}
+              className={styles.map}
               defaultCenter={{
                 lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
                 lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
@@ -234,13 +128,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 clickable={true}
                 title={ride.startLocation.shortName}
               >
-                {
-                  <Pin
-                    background={'#222'}
-                    glyphColor="#fff"
-                    borderColor="#222"
-                  />
-                }
+                <Pin background={'#222'} glyphColor="#fff" borderColor="#222" />
               </AdvancedMarker>
               <AdvancedMarker
                 position={{
@@ -250,13 +138,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 clickable={true}
                 title={ride.endLocation.shortName}
               >
-                <FlagRounded
-                  style={{
-                    color: '#222',
-                    width: '3rem',
-                    height: '3rem',
-                  }}
-                ></FlagRounded>
+                <FlagRounded className={styles.flagIcon} />
               </AdvancedMarker>
             </Map>
           </div>
@@ -264,51 +146,22 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       </div>
       {/* expanded buttons */}
       {expanded ? (
-        <div
-          style={{
-            width: '100%',
-            height: 'min-content',
-            display: 'flex',
-            gap: '0.5rem',
-          }}
-        >
+        <div className={styles.buttonContainer}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               setExpanded(false);
             }}
-            style={{
-              width: '100%',
-              height: '1.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              border: '#ddd 1px solid',
-              borderRadius: '0.25rem',
-              background: 'white',
-              outline: 'none',
-            }}
+            className={`${styles.button} ${styles.buttonSecondary}`}
           >
             Close
           </button>
           <button
-            style={{
-              width: '100%',
-              height: '1.5rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              border: '#303030 1px solid',
-              borderRadius: '0.25rem',
-              backgroundColor: '#000',
-              color: '#fff',
-            }}
             onClick={(e) => {
               e.stopPropagation();
               handleEdit(ride);
             }}
+            className={`${styles.button} ${styles.buttonPrimary}`}
           >
             Edit
           </button>
@@ -316,18 +169,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       ) : (
         <button
           onClick={() => setExpanded(true)}
-          style={{
-            width: '100%',
-            height: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            border: '#ddd 1px solid',
-            borderRadius: '0.25rem',
-            background: 'white',
-            outline: 'none',
-          }}
+          className={`${styles.button} ${styles.buttonSecondary}`}
         >
           Show More
         </button>

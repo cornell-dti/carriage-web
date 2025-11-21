@@ -1,0 +1,150 @@
+.card {
+  width: 100%;
+  max-width: 32rem;
+  height: min-content;
+  min-width: 20rem;
+  background: white;
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border: #e0e0e0 1px solid;
+  cursor: pointer;
+  font-size: 1rem;
+  gap: 1rem;
+}
+
+.statusBadge {
+  width: 100%;
+  height: min-content;
+  border-radius: 0.1275rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.statusRequested {
+  color: #707070;
+  background-color: #f5f5f5;
+}
+
+.statusCanceled {
+  background-color: #fff0f0;
+  color: #c10000;
+}
+
+.contentWrapper {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  text-wrap: nowrap;
+}
+
+.contentWrapperExpanded {
+  flex-direction: column;
+  justify-content: normal;
+  gap: 1.5rem;
+}
+
+.contentWrapperCollapsed {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.infoSection {
+  width: 100%;
+  height: min-content;
+  display: flex;
+}
+
+.column {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.rowSecondary {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: #707070;
+}
+
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 5rem;
+}
+
+.labelText {
+  font-size: 0.75rem;
+}
+
+.timeWrapper {
+  display: flex;
+  gap: 0.25rem;
+  align-items: flex-end;
+}
+
+.timeMeridiem {
+  font-size: 0.75rem;
+  color: #707070;
+  font-weight: lighter;
+}
+
+.mapContainer {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.map {
+  width: 100%;
+  height: 12rem;
+}
+
+.buttonContainer {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.button {
+  width: 100%;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  outline: none;
+}
+
+.buttonSecondary {
+  border: #ddd 1px solid;
+  background: white;
+}
+
+.buttonPrimary {
+  border: #303030 1px solid;
+  background-color: #000;
+  color: #fff;
+}
+
+.flagIcon {
+  color: #666;
+  width: 3rem;
+  height: 3rem;
+}
