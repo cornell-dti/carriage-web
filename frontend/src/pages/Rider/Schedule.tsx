@@ -258,10 +258,9 @@ const Schedule: React.FC = () => {
             >
               Request Ride
             </Button>
-            <Notification />
           </div>
         </div>
-        <div className={styles.topRow}>
+        {/* <div className={styles.topRow}>
           <div className={styles.mainCardContainer}>
             {allRides.length > 0 && nextUpcomingRide && hasUpcomingRide && (
               <MainCard ride={nextUpcomingRide} />
@@ -275,7 +274,7 @@ const Schedule: React.FC = () => {
               onQuickRequest={() => {}}
             />
           </div>
-        </div>
+        </div> */}
         <div
           style={{
             width: '100%',
