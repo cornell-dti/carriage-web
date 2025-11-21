@@ -107,11 +107,15 @@
   height: min-content;
   display: flex;
   gap: 0.5rem;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  border: #e0e0e0 1px solid;
 }
 
 .map {
   width: 100%;
   height: 12rem;
+  border-radius: 0.25rem;
 }
 
 .buttonContainer {
