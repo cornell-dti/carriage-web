@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { Ride, SchedulingState, Status } from '../types';
 import {
+  BadgeRounded,
   FlagRounded,
   Place,
   SubdirectoryArrowRight,
@@ -112,6 +113,22 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             </span>
           </div>
         </div>
+        {/* driver info */}
+        {expanded && (
+          <div>
+            <span className={styles.row}>
+              <span className={styles.labelWrapper}>
+                <BadgeRounded></BadgeRounded>
+                <p className={styles.labelText}>Driver</p>
+              </span>
+              <p>
+                {ride.driver !== undefined
+                  ? `${ride.driver.firstName} ${ride.driver.lastName}`
+                  : 'Not Assigned'}
+              </p>
+            </span>
+          </div>
+        )}
         {/* expanded location view */}
         {expanded && (
           <div className={styles.mapContainer}>

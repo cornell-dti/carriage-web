@@ -284,7 +284,7 @@ const Schedule: React.FC = () => {
             flexDirection: 'column',
             justifyContent: 'start',
             alignItems: 'center',
-            gap: '1rem',
+            gap: '2rem',
           }}
         >
           {rideDayMap.map(([day, rides]) => {
@@ -304,7 +304,7 @@ const Schedule: React.FC = () => {
               >
                 <h2
                   style={{
-                    fontSize: '0.8rem',
+                    fontSize: '1rem',
                     fontWeight: 'lighter',
                     color: '#707070',
                   }}
