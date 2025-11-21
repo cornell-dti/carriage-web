@@ -77,6 +77,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         border: '#e0e0e0 1px solid',
         cursor: 'pointer',
         fontSize: '1rem',
+        gap: '1rem',
       }}
     >
       {/* ride status, check if scheduled. If not, display card indicating */}
@@ -91,7 +92,6 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             alignItems: 'center',
             color: '#707070',
             backgroundColor: '#f5f5f5',
-            marginBottom: '1rem',
           }}
         >
           <p>Requested</p>
@@ -205,7 +205,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             {/* start location + map */}
             <div
               style={{
-                width: 'flex-1',
+                width: '100%',
                 height: 'min-content',
                 display: 'flex',
                 flexDirection: 'column',
@@ -227,7 +227,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               <div
                 style={{
                   width: '100%',
-                  height: '32rem',
+                  height: '8rem',
                   background: '#8888ff',
                 }}
               ></div>
@@ -235,7 +235,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             {/* end location + map */}
             <div
               style={{
-                width: 'flex-1',
+                width: '100%',
                 height: 'min-content',
                 display: 'flex',
                 flexDirection: 'column',
@@ -258,7 +258,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               <div
                 style={{
                   width: '100%',
-                  height: '32rem',
+                  height: '8rem',
                   background: '#8888ff',
                 }}
               ></div>
@@ -284,8 +284,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              border: '#707070 1px solid',
+              border: '#ddd 1px solid',
               borderRadius: '0.25rem',
+              background: 'white',
+              outline: 'none',
             }}
           >
             Close
@@ -302,6 +304,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               borderRadius: '0.25rem',
               backgroundColor: '#000',
               color: '#fff',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(ride);
             }}
           >
             Edit
