@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
-import { useMap } from '@vis.gl/react-google-maps';
 import styles from './requestridedialog.module.css';
 
 interface RequestRidePlacesSearchProps {
@@ -18,16 +17,26 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   const [results, setResults] = useState<google.maps.places.PlaceResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const mapDivRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
-  const map = useMap();
+  // hidden map element for PlacesService
+  useEffect(() => {
+    if (mapDivRef.current && !mapRef.current && window.google?.maps) {
+      mapRef.current = new google.maps.Map(mapDivRef.current, {
+        center: { lat: 42.4534531, lng: -76.4760776 },
+        zoom: 13,
+      });
+    }
+  }, []);
 
   const searchPlace = useCallback(
     async (query: string) => {
       console.log('Searching for:', query);
-      console.log('Map available:', !!map);
+      console.log('Map available:', !!mapRef.current);
       console.log('Google Maps available:', !!google?.maps?.places);
 
-      if (!map || !query) {
+      if (!mapRef.current || !query) {
         setResults([]);
         setError('Map not initialized or empty query');
         return;
@@ -41,7 +50,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       try {
         setIsLoading(true);
         setError('');
-        const service = new google.maps.places.PlacesService(map);
+        const service = new google.maps.places.PlacesService(mapRef.current);
         const request = {
           query,
           fields: ['name', 'geometry', 'formatted_address'],
@@ -70,7 +79,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
         setResults([]);
       }
     },
-    [map]
+    []
   );
 
   const handleSubmit = useCallback(
@@ -106,6 +115,9 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
 
   return (
     <div className={styles.placesSearch}>
+      {/* Hidden map div for PlacesService */}
+      <div ref={mapDivRef} style={{ display: 'none' }} />
+      
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
