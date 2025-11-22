@@ -106,15 +106,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   supportedLocations,
   ride,
 }) => {
-
-  const [allLocations, setAllLocations] = useState<Location[]>(supportedLocations);
+  const [allLocations, setAllLocations] =
+    useState<Location[]>(supportedLocations);
 
   // sync with prop updates
   useEffect(() => {
     setAllLocations(supportedLocations);
   }, [supportedLocations]);
 
-   const supportLocWithOther = [
+  const supportLocWithOther = [
     ...(allLocations.filter((l) => l.tag !== Tag.CUSTOM) ?? []),
     Other,
   ];
@@ -136,7 +136,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
   const [customDroppoff, setCustomDroppoff] = useState(false);
-  
 
   useEffect(() => {
     if (ride && open) {
@@ -190,6 +189,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
    *
    * Pprogresses the state machine to the next step.
    */
+   * Finalizes  pending location selection after user confirms
+   *
+   * Depending on the current 'selectionState':
+   *  - Saves as the pickup location or
+   *  - Saves as the dropoff location
+   *
+   * Pprogresses the state machine to the next step.
+   */
   const confirmLocationSelection = () => {
     if (!pendingLocation) return;
 
@@ -211,6 +218,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   /**
+   * Resets the pickup/dropoff flow back to the beginning.
+   *
+   * Clears both selected locations and returns to the "pickup" phase.
+   */
    * Resets the pickup/dropoff flow back to the beginning.
    *
    * Clears both selected locations and returns to the "pickup" phase.
@@ -259,10 +270,37 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  /**
+   * Creates a new custom Location in the database OR returns an existing one
+   * if it matches the provided address/coordinates.
+   *
+   * @async
+   * @function createOrGetLocation
+   *
+   * @param {string} address
+   * @param {number} lat
+   * @param {number} lng
+   * @returns {Promise<Location>}
+   *          A resolved Location object — either:
+   *          - an existing Location already stored in `allLocations`, OR
+   *          - a newly created custom Location saved to the backend.
+   * @description
+   * This function ensures that the system does not create duplicate custom
+   * locations. It does this by:
+   *
+   * 1. Normalizing the address
+   *
+   * 2. Searching for an existing Location via address or lat/lng matching
+   *
+   * 3. Creating a new Location if needed
+   * This prevents multiple users from creating duplicate “custom” entries
+   * for the exact same geolocation.
+   *
+   */
   const createOrGetLocation = async (
     address: string,
     lat: number,
-    lng: number,
+    lng: number
   ): Promise<Location> => {
     const LOCATION_TOLERANCE = 0.0002; // ~20 meters
     const normalizeAddress = (addr: string) =>
@@ -270,8 +308,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
     const normalized = normalizeAddress(address);
 
-      // checking db for if it already exists in Locations quack
-     console.log('All locations:', allLocations);
+    // checking db for if it already exists in Locations quack
+    console.log('All locations:', allLocations);
     console.log('Checking for address:', normalized);
 
     // check against allLocations (includes newly created custom ones)
@@ -279,17 +317,19 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
       const latMatch = Math.abs(loc.lat - lat) < LOCATION_TOLERANCE; // 2) are lat/long similar
       const lngMatch = Math.abs(loc.lng - lng) < LOCATION_TOLERANCE;
-      console.log(`Checking ${loc.name}: addrMatch=${addrMatch}, latMatch=${latMatch}, lngMatch=${lngMatch}`); //quack
+      console.log(
+        `Checking ${loc.name}: addrMatch=${addrMatch}, latMatch=${latMatch}, lngMatch=${lngMatch}`
+      ); //quack
       return addrMatch || (latMatch && lngMatch);
     });
 
     if (matched) {
       console.log('Found matching location:', matched);
-return matched; //if this location already exists, return it
+      return matched; //if this location already exists, return it
     }
 
     console.log('No match found, creating new location');
-    
+
     // else create new custom location
     const payload: Partial<Location> = {
       name: address.split(',')[0], // short name
@@ -304,11 +344,18 @@ return matched; //if this location already exists, return it
     const response = await axios.post('/api/locations/custom', payload); //add to locations
     const created: Location = response.data.data || response.data;
 
-    setAllLocations(prev => [...prev, created]);
+    setAllLocations((prev) => [...prev, created]);
 
     return created;
-    
   };
+
+  /**
+   * handlePickupSelect and handleDropoffSelect
+   *
+   * Store a custom pickup or dropoff location selected through Google Places search.
+   * Creates a temporary placeholder based on the "Other" template.
+   * Actual DB-backed Location is created later in handleSubmit via createOrGetLocation().
+   */
 
   const handlePickupSelect = (address: string, lat: number, lng: number) => {
     setFormData((prev) => ({
@@ -378,8 +425,7 @@ return matched; //if this location already exists, return it
         const createdPickup = await createOrGetLocation(
           finalPickup.address,
           finalPickup.lat,
-          finalPickup.lng,
-          
+          finalPickup.lng
         );
         finalPickup = createdPickup;
       }
@@ -389,8 +435,7 @@ return matched; //if this location already exists, return it
         const createdDropoff = await createOrGetLocation(
           finalDropoff.address,
           finalDropoff.lat,
-          finalDropoff.lng,
-          
+          finalDropoff.lng
         );
         finalDropoff = createdDropoff;
       }

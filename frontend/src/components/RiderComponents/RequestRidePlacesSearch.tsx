@@ -31,57 +31,54 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
     }
   }, []);
 
-  const searchPlace = useCallback(
-    async (query: string) => {
-      console.log('Searching for:', query);
-      console.log('Map available:', !!mapRef.current);
-      console.log('Google Maps available:', !!google?.maps?.places);
+  const searchPlace = useCallback(async (query: string) => {
+    console.log('Searching for:', query);
+    console.log('Map available:', !!mapRef.current);
+    console.log('Google Maps available:', !!google?.maps?.places);
 
-      if (!mapRef.current || !query) {
-        setResults([]);
-        setError('Map not initialized or empty query');
-        return;
-      }
+    if (!mapRef.current || !query) {
+      setResults([]);
+      setError('Map not initialized or empty query');
+      return;
+    }
 
     if (!google?.maps?.places) {
       setError('Google Maps Places API not available');
       return;
     }
 
-      try {
-        setIsLoading(true);
-        setError('');
-        const service = new google.maps.places.PlacesService(mapRef.current);
-        const request = {
-          query,
-          fields: ['name', 'geometry', 'formatted_address'],
-        };
+    try {
+      setIsLoading(true);
+      setError('');
+      const service = new google.maps.places.PlacesService(mapRef.current);
+      const request = {
+        query,
+        fields: ['name', 'geometry', 'formatted_address'],
+      };
 
       console.log('Making places request:', request);
 
-        service.findPlaceFromQuery(request, (results, status) => {
-          console.log('Places response:', { results, status });
-          setIsLoading(false);
-          if (
-            status === google.maps.places.PlacesServiceStatus.OK &&
-            results &&
-            results.length > 0
-          ) {
-            setResults(results);
-          } else {
-            setResults([]);
-            setError(`No matching address found. Status: ${status}`);
-          }
-        });
-      } catch (error) {
-        console.error('Error searching place:', error);
+      service.findPlaceFromQuery(request, (results, status) => {
+        console.log('Places response:', { results, status });
         setIsLoading(false);
-        setError('Error searching for address');
-        setResults([]);
-      }
-    },
-    []
-  );
+        if (
+          status === google.maps.places.PlacesServiceStatus.OK &&
+          results &&
+          results.length > 0
+        ) {
+          setResults(results);
+        } else {
+          setResults([]);
+          setError(`No matching address found. Status: ${status}`);
+        }
+      });
+    } catch (error) {
+      console.error('Error searching place:', error);
+      setIsLoading(false);
+      setError('Error searching for address');
+      setResults([]);
+    }
+  }, []);
 
   const handleSubmit = useCallback(
     (event: React.FormEvent) => {
@@ -118,7 +115,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
     <div className={styles.placesSearch}>
       {/* Hidden map div for PlacesService */}
       <div ref={mapDivRef} style={{ display: 'none' }} />
-      
+
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
