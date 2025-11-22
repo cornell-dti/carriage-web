@@ -28,10 +28,8 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
-import axios from '../../util/axios';
-import { useLocations } from '../../context/LocationsContext';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
-import PlacesSearch from 'components/Locations/PlacesSearch';
+import axios from '../../util/axios';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -73,7 +71,7 @@ const fullDayNames = {
 
 //Other for dropdown
 const Other = {
-  id: 'other',
+  id: 'custom_other',
   name: 'Other',
   address: '',
   shortName: '',
@@ -107,7 +105,19 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   supportedLocations,
   ride,
 }) => {
-  const supportLocWithOther = [...(supportedLocations ?? []), Other];
+
+  const [allLocations, setAllLocations] = useState<Location[]>(supportedLocations);
+
+  // sync with prop updates
+  useEffect(() => {
+    setAllLocations(supportedLocations);
+  }, [supportedLocations]);
+
+   const supportLocWithOther = [
+    ...(allLocations.filter((l) => l.tag !== Tag.CUSTOM) ?? []),
+    Other,
+  ];
+
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
     dropoffLocation: null,
@@ -124,7 +134,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
-
+  const [customDroppoff, setCustomDroppoff] = useState(false);
+  
 
   useEffect(() => {
     if (ride && open) {
@@ -143,6 +154,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       });
       setSelectionState('complete');
     }
+
     if (!open) {
       setFormData({
         pickupLocation: null,
@@ -214,6 +226,71 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  const createOrGetLocation = async (
+    address: string,
+    lat: number,
+    lng: number,
+  ): Promise<Location> => {
+    const LOCATION_TOLERANCE = 0.0002; // ~20 meters
+    const normalizeAddress = (addr: string) =>
+      addr.trim().toLowerCase().replace(/\s+/g, ' ');
+
+    const normalized = normalizeAddress(address);
+
+      // checking db for if it already exists in Locations quack
+     console.log('All locations:', allLocations);
+    console.log('Checking for address:', normalized);
+
+    // check against allLocations (includes newly created custom ones)
+    const matched = allLocations.find((loc) => {
+      const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
+      const latMatch = Math.abs(loc.lat - lat) < LOCATION_TOLERANCE; // 2) are lat/long similar
+      const lngMatch = Math.abs(loc.lng - lng) < LOCATION_TOLERANCE;
+      console.log(`Checking ${loc.name}: addrMatch=${addrMatch}, latMatch=${latMatch}, lngMatch=${lngMatch}`); //quack
+      return addrMatch || (latMatch && lngMatch);
+    });
+
+    if (matched) {
+      console.log('Found matching location:', matched);
+return matched; //if this location already exists, return it
+    }
+
+    console.log('No match found, creating new location');
+    
+    // else create new custom location
+    const payload: Partial<Location> = {
+      name: address.split(',')[0], // short name
+      shortName: '',
+      address,
+      info: '',
+      tag: Tag.CUSTOM,
+      lat,
+      lng,
+    };
+
+    const response = await axios.post('/api/locations/custom', payload); //add to locations
+    const created: Location = response.data.data || response.data;
+
+    setAllLocations(prev => [...prev, created]);
+
+    return created;
+    
+  };
+
+  const handlePickupSelect = (address: string, lat: number, lng: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      pickupLocation: { ...Other, address: address, lat: lat, lng: lng },
+    }));
+  };
+
+  const handleDropoffSelect = (address: string, lat: number, lng: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      dropoffLocation: { ...Other, address: address, lat: lat, lng: lng },
+    }));
+  };
+
   // Legacy handler for dropdown (keeping for backward compatibility)
   const handleDropoffChange = (event: SelectChangeEvent<string>) => {
     const locationId = event.target.value as string;
@@ -259,8 +336,43 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   const handleSubmit = async () => {
-    onSubmit(formData);
-    onClose();
+    try {
+      let finalPickup = formData.pickupLocation;
+      let finalDropoff = formData.dropoffLocation;
+
+      // only create custom pickup if it's "Other"
+      if (finalPickup?.name === Other.name) {
+        const createdPickup = await createOrGetLocation(
+          finalPickup.address,
+          finalPickup.lat,
+          finalPickup.lng,
+          
+        );
+        finalPickup = createdPickup;
+      }
+
+      // only create custom dropoff if it's "Other"
+      if (finalDropoff?.name === Other.name) {
+        const createdDropoff = await createOrGetLocation(
+          finalDropoff.address,
+          finalDropoff.lat,
+          finalDropoff.lng,
+          
+        );
+        finalDropoff = createdDropoff;
+      }
+
+      onSubmit({
+        ...formData,
+        pickupLocation: finalPickup,
+        dropoffLocation: finalDropoff,
+      });
+
+      onClose();
+    } catch (err) {
+      console.error('Error submitting ride:', err);
+      alert('Failed to submit ride. Please try again.');
+    }
   };
 
   const isFormValid = () => {
@@ -284,18 +396,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   // Prevent "Other" from being sent to the map
+  const safePickup =
+    formData.pickupLocation?.lat && formData.pickupLocation?.lng
+      ? formData.pickupLocation
+      : null;
 
-        const safePickup =
-    formData.pickupLocation?.id === 'other' ||
-    (formData.pickupLocation?.lat === 0 && formData.pickupLocation?.lng === 0)
-      ? null
-      : formData.pickupLocation;
-
-    const safeDropoff =
-    formData.dropoffLocation?.id === 'other' ||
-    (formData.dropoffLocation?.lat === 0 && formData.dropoffLocation?.lng === 0)
-      ? null
-      : formData.dropoffLocation;
+  const safeDropoff =
+    formData.dropoffLocation?.lat && formData.dropoffLocation?.lng
+      ? formData.dropoffLocation
+      : null;
 
   //TODO: add edit dialog functionality that prepopulates the form with existing ride data
   return (
@@ -479,16 +588,21 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                   </FormControl>
 
                   {customPickup === true && (
-                   <div >
+                    <div>
+                      <label className={styles.fieldLabel}>
+                        Pickup Location
+                      </label>
+                      <RequestRidePlacesSearch
+                        onAddressSelect={handlePickupSelect}
+                      />
                     </div>
-
-                    //add here!!!! quack
                   )}
 
                   <FormControl fullWidth>
                     <InputLabel>Drop-off Location</InputLabel>
                     <Select<string>
                       value={formData.dropoffLocation?.id || ''}
+                      disabled={!formData.pickupLocation} //makes ensuring start and end locations are different simpler
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
@@ -503,11 +617,20 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         if (selectedLocation && formData.pickupLocation) {
                           setSelectionState('complete');
                         }
+                        if (selectedLocation?.name === Other.name) {
+                          setCustomDroppoff(true);
+                        } else {
+                          setCustomDroppoff(false);
+                        }
                       }}
                       label="Drop-off Location"
                     >
                       {supportLocWithOther
-                        .filter((loc) => loc.id !== formData.pickupLocation?.id) // Don't show pickup location as dropoff option
+                        .filter(
+                          (loc) =>
+                            loc.id !== formData.pickupLocation?.id ||
+                            loc.id === 'custom_other'
+                        ) // Don't show pickup location as dropoff option (except Cther)
                         .map((location) => (
                           <MenuItem key={location.id} value={location.id}>
                             {location.name}
@@ -515,6 +638,17 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         ))}
                     </Select>
                   </FormControl>
+
+                  {customDroppoff === true && (
+                    <div>
+                      <label className={styles.fieldLabel}>
+                        Dropoff Location
+                      </label>
+                      <RequestRidePlacesSearch
+                        onAddressSelect={handleDropoffSelect}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
