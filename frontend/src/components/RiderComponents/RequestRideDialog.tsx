@@ -179,6 +179,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  /**
+ * Finalizes  pending location selection after user confirms
+ *
+ * Depending on the current 'selectionState':
+ *  - Saves as the pickup location or
+ *  - Saves as the dropoff location
+ *
+ * Pprogresses the state machine to the next step.
+ */
   const confirmLocationSelection = () => {
     if (!pendingLocation) return;
 
@@ -198,6 +207,12 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setPendingLocation(null);
     setConfirmDialogOpen(false);
   };
+
+  /**
+ * Resets the pickup/dropoff flow back to the beginning.
+ *
+ * Clears both selected locations and returns to the "pickup" phase.
+ */
 
   const resetSelection = () => {
     setFormData((prev) => ({
@@ -226,6 +241,33 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  /**
+ * Creates a new custom Location in the database OR returns an existing one
+ * if it matches the provided address/coordinates.
+ *
+ * @async
+ * @function createOrGetLocation
+ *
+ * @param {string} address 
+ * @param {number} lat 
+ * @param {number} lng 
+ * @returns {Promise<Location>}
+ *          A resolved Location object — either:
+ *          - an existing Location already stored in `allLocations`, OR
+ *          - a newly created custom Location saved to the backend.
+ * @description
+ * This function ensures that the system does not create duplicate custom
+ * locations. It does this by:
+ *
+ * 1. Normalizing the address
+ *  
+ * 2. Searching for an existing Location via address or lat/lng matching
+ *
+ * 3. Creating a new Location if needed
+ * This prevents multiple users from creating duplicate “custom” entries
+ * for the exact same geolocation.
+ *
+ */
   const createOrGetLocation = async (
     address: string,
     lat: number,
@@ -276,6 +318,14 @@ return matched; //if this location already exists, return it
     return created;
     
   };
+
+/**
+ * handlePickupSelect and handleDropoffSelect
+ * 
+ * Store a custom pickup or dropoff location selected through Google Places search.
+ * Creates a temporary placeholder based on the "Other" template.
+ * Actual DB-backed Location is created later in handleSubmit via createOrGetLocation().
+ */
 
   const handlePickupSelect = (address: string, lat: number, lng: number) => {
     setFormData((prev) => ({
@@ -395,7 +445,7 @@ return matched; //if this location already exists, return it
     );
   };
 
-  // Prevent "Other" from being sent to the map
+  // Ensures the map only receives valid coordinates; prevents rendering issues
   const safePickup =
     formData.pickupLocation?.lat && formData.pickupLocation?.lng
       ? formData.pickupLocation
@@ -625,12 +675,13 @@ return matched; //if this location already exists, return it
                       }}
                       label="Drop-off Location"
                     >
+                      
                       {supportLocWithOther
                         .filter(
                           (loc) =>
                             loc.id !== formData.pickupLocation?.id ||
                             loc.id === 'custom_other'
-                        ) // Don't show pickup location as dropoff option (except Cther)
+                        ) // Don't show pickup location as dropoff option (except Other)
                         .map((location) => (
                           <MenuItem key={location.id} value={location.id}>
                             {location.name}
