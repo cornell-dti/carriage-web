@@ -183,8 +183,8 @@
 
 .flagIcon {
   color: #666;
-  width: 3rem;
-  height: 3rem;
+  width: 5rem;
+  height: 5rem;
 }
 
 @media (max-width: 576px) {

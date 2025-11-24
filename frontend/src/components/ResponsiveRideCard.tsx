@@ -178,6 +178,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
           </div>
         )}
       </div>
+
       {/* expanded buttons */}
       {expanded ? (
         <div className={styles.buttonContainer}>

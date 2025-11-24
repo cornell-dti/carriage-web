@@ -428,7 +428,7 @@ const Schedule: React.FC = () => {
                   textWrap: 'nowrap',
                 }}
               >
-                No rides this week
+                {loadingRides ? 'Loading Rides...' : 'No rides this week'}
               </p>
             </div>
           )}
