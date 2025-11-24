@@ -58,7 +58,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   return (
     <div className={styles.card}>
       <div className={styles.statusContainer}>
-        {/* ride status, check if scheduled. If not, display card indicating */}
+        {/* ride status chip */}
         {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
           <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
             <p>Requested</p>
@@ -68,8 +68,11 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
             <p>Canceled</p>
           </div>
         ) : (
-          <span></span>
+          <div className={`${styles.statusBadge} ${styles.statusScheduled}`}>
+            <p>Approved</p>
+          </div>
         )}
+
         <button
           onClick={() => setExpanded(!expanded)}
           className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}

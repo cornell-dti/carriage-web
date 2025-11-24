@@ -12,6 +12,7 @@ import axios from '../../util/axios';
 import ResponsiveRideCard from '../../components/ResponsiveRideCard';
 import { RideDetailsComponent } from 'components/RideDetails';
 import buttonStyles from '../../components/ResponsiveRideCard.module.css';
+import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 
 // Favorite ride type
 interface FavoriteRide {
@@ -354,19 +355,23 @@ const Schedule: React.FC = () => {
             <button
               onClick={goToPreviousWeek}
               className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: 'auto', padding: '0 1rem' }}
+              style={{ width: '3rem' }}
+              aria-label="Previous Week"
+              aria-hidden="true"
             >
-              Previous Week
+              <NavigateBefore></NavigateBefore>
             </button>
-            <p style={{ width: '12rem', textAlign: 'center' }}>
+            <p style={{ width: '14rem', textAlign: 'center' }}>
               Week of {formatWeekRange(weekStartDate)}
             </p>
             <button
               onClick={goToNextWeek}
               className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: 'auto', padding: '0 1rem' }}
+              style={{ width: '3rem' }}
+              aria-label="Next Week"
+              aria-hidden="true"
             >
-              Next Week
+              <NavigateNext></NavigateNext>
             </button>
           </div>
 
