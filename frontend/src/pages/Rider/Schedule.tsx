@@ -14,21 +14,6 @@ import { RideDetailsComponent } from 'components/RideDetails';
 import buttonStyles from '../../components/ResponsiveRideCard.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 
-// Favorite ride type
-interface FavoriteRide {
-  id: string;
-  name: string;
-  startLocation: {
-    name: string;
-    address: string;
-  };
-  endLocation: {
-    name: string;
-    address: string;
-  };
-  preferredTime: string;
-}
-
 type DayRideCollection = [string, Ride[]][];
 
 const partitionRides = (rides: Ride[]): DayRideCollection => {
@@ -77,11 +62,8 @@ const partitionRides = (rides: Ride[]): DayRideCollection => {
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
   const { locations } = useLocations();
-  const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } =
-    useRides();
+  const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
-  const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
@@ -141,40 +123,6 @@ const Schedule: React.FC = () => {
     }
   };
 
-  const fetchFavorites = async () => {
-    if (!id) return;
-    setLoadingFavorites(true);
-    try {
-      const response = await axios.get('/api/favorites');
-      const favorites = response.data.data || [];
-      // Convert rides to FavoriteRide format
-      const formattedFavorites: FavoriteRide[] = favorites.map(
-        (ride: Ride) => ({
-          id: ride.id,
-          name: `Ride to ${ride.endLocation}`,
-          startLocation: {
-            name: ride.startLocation,
-            address: ride.startLocation,
-          },
-          endLocation: {
-            name: ride.endLocation,
-            address: ride.endLocation,
-          },
-          preferredTime: new Date(ride.startTime).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        })
-      );
-      setFavoriteRides(formattedFavorites);
-    } catch (error) {
-      console.error('Failed to fetch favorites:', error);
-      setFavoriteRides([]);
-    } finally {
-      setLoadingFavorites(false);
-    }
-  };
-
   // Fetch all rider rides on component mount
   useEffect(() => {
     const fetchRiderRides = async () => {
@@ -196,7 +144,6 @@ const Schedule: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
-    fetchFavorites();
   }, [id]);
 
   const handleDialogOpen = () => {
@@ -261,27 +208,6 @@ const Schedule: React.FC = () => {
   const now = new Date().toISOString().split('T')[0];
   console.log('Current date (YYYY-MM-DD):', now);
 
-  const currRides = allRides.filter((ride) => {
-    const rideEndDate = ride.endTime.split('T')[0];
-    const isCurrent = ride.endTime >= now;
-    console.log(
-      `Ride ${ride.id}: endTime=${ride.endTime}, endDate=${rideEndDate}, isCurrent=${isCurrent}`
-    );
-    return isCurrent;
-  });
-  const pastRides = allRides.filter((ride) => ride.endTime < now);
-
-  console.log('Current rides:', currRides);
-  console.log('Past rides:', pastRides);
-
-  const sortedCurrRides = [...currRides].sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-  );
-
-  const nextUpcomingRide = sortedCurrRides[0];
-
-  const hasUpcomingRide = nextUpcomingRide !== undefined;
-
   const rideDayMap: DayRideCollection = useMemo(() => {
     const weekEnd = getEndOfWeek(weekStartDate);
     const ridesInWeek = allRides.filter((ride) => {
@@ -318,21 +244,6 @@ const Schedule: React.FC = () => {
           </div>
         </div>
 
-        {/* <div className={styles.topRow}>
-          <div className={styles.mainCardContainer}>
-            {allRides.length > 0 && nextUpcomingRide && hasUpcomingRide && (
-              <MainCard ride={nextUpcomingRide} />
-            )}
-            {(allRides.length === 0 || !hasUpcomingRide) && <NoRidesView />}
-          </div>
-          <div className={styles.favoritesCardContainer}>
-            <FavoritesCard
-              favorites={favoriteRides}
-              onAddNew={() => {}}
-              onQuickRequest={() => {}}
-            />
-          </div>
-        </div> */}
         <div
           style={{
             width: '100%',
