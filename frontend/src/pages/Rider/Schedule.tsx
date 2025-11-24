@@ -343,14 +343,8 @@ const Schedule: React.FC = () => {
               </p>
             </div>
           )}
-          {/* {currRides.map((ride, idx) => (
-            <ResponsiveRideCard ride={ride} handleEdit={() => {}} key={idx} />
-          ))} */}
         </div>
 
-        {/* <div className={styles.tableSection}>
-          <RideTable rides={allRides} userRole="rider" />
-        </div> */}
         <RequestRideDialog
           open={isDialogOpen}
           onClose={handleDialogClose}
