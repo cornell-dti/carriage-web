@@ -13,6 +13,8 @@ import ResponsiveRideCard from '../../components/ResponsiveRideCard';
 import { RideDetailsComponent } from 'components/RideDetails';
 import buttonStyles from '../../components/ResponsiveRideCard.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 type DayRideCollection = [string, Ride[]][];
 
@@ -83,6 +85,12 @@ const Schedule: React.FC = () => {
     getStartOfWeek(new Date())
   );
 
+  const handleDateChange = (newValue: Date | null) => {
+    if (newValue) {
+      setWeekStartDate(getStartOfWeek(newValue));
+    }
+  };
+
   // Calculate end of week
   const getEndOfWeek = (startDate: Date): Date => {
     const endDate = new Date(startDate);
@@ -105,22 +113,6 @@ const Schedule: React.FC = () => {
       newDate.setDate(newDate.getDate() + 7);
       return newDate;
     });
-  };
-
-  const formatWeekRange = (startDate: Date): string => {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 6);
-
-    const startMonth = startDate.toLocaleString(undefined, { month: 'short' });
-    const endMonth = endDate.toLocaleString(undefined, { month: 'short' });
-    const startDay = startDate.getDate();
-    const endDay = endDate.getDate();
-
-    if (startMonth === endMonth) {
-      return `${startMonth} ${startDay} - ${endDay}`;
-    } else {
-      return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
-    }
   };
 
   // Fetch all rider rides on component mount
@@ -204,10 +196,6 @@ const Schedule: React.FC = () => {
   // Use the fetched rider rides instead of filtering from context
   const allRides = allRiderRides;
 
-  // Using the date portion only for comparisons
-  const now = new Date().toISOString().split('T')[0];
-  console.log('Current date (YYYY-MM-DD):', now);
-
   const rideDayMap: DayRideCollection = useMemo(() => {
     const weekEnd = getEndOfWeek(weekStartDate);
     const ridesInWeek = allRides.filter((ride) => {
@@ -266,19 +254,74 @@ const Schedule: React.FC = () => {
             <button
               onClick={goToPreviousWeek}
               className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: '3rem' }}
+              style={{ width: '3rem', height: '2.5rem' }}
               aria-label="Previous Week"
               aria-hidden="true"
             >
               <NavigateBefore></NavigateBefore>
             </button>
-            <p style={{ width: '14rem', textAlign: 'center' }}>
-              Week of {formatWeekRange(weekStartDate)}
-            </p>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Week of"
+                value={weekStartDate}
+                onAccept={handleDateChange}
+                slotProps={{
+                  textField: {
+                    sx: {
+                      width: '14rem',
+                      '& .MuiInputBase-root': {
+                        height: '2.5rem',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '0.5rem',
+                        paddingX: '1rem',
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#ddd',
+                          transition: 'border 0.1s',
+                        },
+                      },
+                    },
+                    onBlur: (e) => {
+                      const inputValue = e.target.value;
+                      if (inputValue) {
+                        const parsedDate = new Date(inputValue);
+                        if (!isNaN(parsedDate.getTime())) {
+                          handleDateChange(parsedDate);
+                        }
+                      }
+                    },
+                  },
+                  popper: {
+                    sx: {
+                      '& .MuiPaper-root': {
+                        border: '1px solid #ddd',
+                        boxShadow: 'none',
+                      },
+                      '& .MuiPickersDay-root': {
+                        '&.Mui-selected': {
+                          backgroundColor: '#333',
+                          '&:hover': {
+                            backgroundColor: '#444',
+                          },
+                        },
+                      },
+                      '& .MuiDayCalendar-weekContainer': {
+                        '&:has(.Mui-selected)': {
+                          backgroundColor: '#f5f5f5',
+                        },
+                      },
+                    },
+                  },
+                }}
+                format="MM/dd/yyyy"
+              />
+            </LocalizationProvider>
             <button
               onClick={goToNextWeek}
               className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: '3rem' }}
+              style={{ width: '3rem', height: '2.5rem' }}
               aria-label="Next Week"
               aria-hidden="true"
             >
