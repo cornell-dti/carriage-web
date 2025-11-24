@@ -13,6 +13,14 @@
   gap: 1rem;
 }
 
+.statusContainer {
+  width: 100%;
+  height: min-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .statusBadge {
   width: 8rem;
   height: 1.75rem;
@@ -169,9 +177,6 @@
 
 .detailsButton {
   background-color: white;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
   width: 8rem;
 }
 
@@ -179,14 +184,6 @@
   color: #666;
   width: 3rem;
   height: 3rem;
-}
-
-.expandedDetailsButton {
-  background-color: white;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-  width: 8rem;
 }
 
 @media (max-width: 576px) {
@@ -198,22 +195,5 @@
   .labelWrapper {
     gap: 0.5rem;
     width: 50%;
-  }
-}
-
-@media (max-width: 768px) {
-  .expandedDetailsButton {
-    background-color: white;
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    width: 8rem;
-    display: none;
-  }
-  .detailsButton {
-    background-color: white;
-    position: static;
-    width: 100%;
-    opacity: 50%;
   }
 }

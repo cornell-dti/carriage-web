@@ -57,18 +57,26 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
   return (
     <div className={styles.card}>
-      {/* ride status, check if scheduled. If not, display card indicating */}
-      {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
-        <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
-          <p>Requested</p>
-        </div>
-      ) : ride.status === Status.CANCELLED ? (
-        <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
-          <p>Canceled</p>
-        </div>
-      ) : (
-        <></>
-      )}
+      <div className={styles.statusContainer}>
+        {/* ride status, check if scheduled. If not, display card indicating */}
+        {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
+          <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
+            <p>Requested</p>
+          </div>
+        ) : ride.status === Status.CANCELLED ? (
+          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
+            <p>Canceled</p>
+          </div>
+        ) : (
+          <span></span>
+        )}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
+        >
+          {expanded ? 'Hide Details' : 'Details'}
+        </button>
+      </div>
       <div
         className={`${styles.contentWrapper} ${
           expanded
@@ -102,14 +110,14 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 <Place />
                 <p className={styles.labelText}>Pickup</p>
               </span>
-              <p>{ride.startLocation.shortName}</p>
+              <p>{ride.startLocation.name}</p>
             </span>
             <span className={styles.rowSecondary}>
               <span className={styles.labelWrapper}>
                 <FlagRounded />
                 <p className={styles.labelText}>Dropoff</p>
               </span>
-              <p>{ride.endLocation.shortName}</p>
+              <p>{ride.endLocation.name}</p>
             </span>
           </div>
         </div>
@@ -149,7 +157,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                   lng: ride.startLocation.lng,
                 }}
                 clickable={true}
-                title={ride.startLocation.shortName}
+                title={ride.startLocation.name}
               >
                 <Pin background={'#222'} glyphColor="#fff" borderColor="#222" />
               </AdvancedMarker>
@@ -159,7 +167,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                   lng: ride.endLocation.lng,
                 }}
                 clickable={true}
-                title={ride.endLocation.shortName}
+                title={ride.endLocation.name}
               >
                 <FlagRounded className={styles.flagIcon} />
               </AdvancedMarker>
@@ -192,14 +200,6 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
       ) : (
         <></>
       )}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className={`${styles.button} ${styles.buttonSecondary} ${
-          styles.detailsButton
-        } ${expanded ? styles.expandedDetailsButton : styles.detailsButton}`}
-      >
-        {expanded ? 'Hide Details' : 'Details'}
-      </button>
     </div>
   );
 };
