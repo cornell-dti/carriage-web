@@ -2,10 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button } from '@mui/material';
 import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
-import NoRidesView from '../../components/NoRidesView/NoRidesView';
-import Notification from '../../components/Notification/Notification';
-import MainCard from '../../components/RiderComponents/MainCard';
-import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
@@ -373,40 +369,64 @@ const Schedule: React.FC = () => {
               Next Week
             </button>
           </div>
-          {rideDayMap.map(([day, rides]) => {
-            return (
-              <div
-                key={day}
-                style={{
-                  width: '100%',
-                  maxWidth: '48rem',
-                  height: 'min-content',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'start',
-                  alignItems: 'start',
-                  gap: '0.25rem',
-                }}
-              >
-                <h2
+
+          {rideDayMap.length > 0 ? (
+            rideDayMap.map(([day, rides]) => {
+              return (
+                <div
+                  key={day}
                   style={{
-                    fontSize: '1rem',
-                    fontWeight: 'lighter',
-                    color: '#707070',
+                    width: '100%',
+                    maxWidth: '48rem',
+                    height: 'min-content',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'start',
+                    alignItems: 'start',
+                    gap: '0.25rem',
                   }}
                 >
-                  {day}
-                </h2>
-                {rides.map((ride, rideIdx) => (
-                  <ResponsiveRideCard
-                    ride={ride}
-                    handleEdit={setEditingRide}
-                    key={rideIdx}
-                  />
-                ))}
-              </div>
-            );
-          })}
+                  <h2
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'lighter',
+                      color: '#707070',
+                    }}
+                  >
+                    {day}
+                  </h2>
+                  {rides.map((ride, rideIdx) => (
+                    <ResponsiveRideCard
+                      ride={ride}
+                      handleEdit={setEditingRide}
+                      key={rideIdx}
+                    />
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <div
+              style={{
+                width: '16rem',
+                height: '4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '#ddd 1px solid',
+                borderRadius: '0.25rem',
+              }}
+            >
+              <p
+                style={{
+                  width: 'min-content',
+                  textWrap: 'nowrap',
+                }}
+              >
+                No rides this week
+              </p>
+            </div>
+          )}
           {/* {currRides.map((ride, idx) => (
             <ResponsiveRideCard ride={ride} handleEdit={() => {}} key={idx} />
           ))} */}
