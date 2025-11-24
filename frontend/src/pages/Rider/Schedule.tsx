@@ -548,32 +548,67 @@ const Schedule: React.FC = () => {
               <NavigateNext></NavigateNext>
             </button>
           </div>
-          <div className={styles.favoritesCardContainer}>
-            <FavoritesCard
-              favorites={favoriteRides}
-              onAddNew={() => {}}
-              onQuickRequest={() => {}}
-            />
-          </div>
-        </div>
-        <div
-          style={{
-            width: '100%',
-            height: 'min-content',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'start',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          {allRides.map((ride, idx) => (
-            <RideCardComponent
-              ride={ride}
-              handleEdit={() => {}}
-              key={idx}
-            ></RideCardComponent>
-          ))}
+
+          {rideDayMap.length > 0 ? (
+            rideDayMap.map(([day, rides]) => {
+              return (
+                <div
+                  key={day}
+                  style={{
+                    width: '100%',
+                    maxWidth: '48rem',
+                    height: 'min-content',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'start',
+                    alignItems: 'start',
+                    gap: '0.25rem',
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'lighter',
+                      color: '#707070',
+                    }}
+                  >
+                    {day}
+                  </h2>
+                  {rides.map((ride, rideIdx) => (
+                    <ResponsiveRideCard
+                      ride={ride}
+                      handleEdit={setEditingRide}
+                      key={rideIdx}
+                    />
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <div
+              style={{
+                width: '16rem',
+                height: '4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '#ddd 1px solid',
+                borderRadius: '0.25rem',
+              }}
+            >
+              <p
+                style={{
+                  width: 'min-content',
+                  textWrap: 'nowrap',
+                }}
+              >
+                No rides this week
+              </p>
+            </div>
+          )}
+          {/* {currRides.map((ride, idx) => (
+            <ResponsiveRideCard ride={ride} handleEdit={() => {}} key={idx} />
+          ))} */}
         </div>
 
         {/* <div className={styles.tableSection}>
