@@ -67,6 +67,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
           <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
             <p>Canceled</p>
           </div>
+        ) : ride.status === Status.NO_SHOW ? (
+          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
+            <p>No Show</p>
+          </div>
         ) : (
           <div className={`${styles.statusBadge} ${styles.statusScheduled}`}>
             <p>Approved</p>

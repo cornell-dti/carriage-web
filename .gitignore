@@ -86,3 +86,6 @@ build/
 
 # Documentation
 docs/
+
+# session code
+private/
