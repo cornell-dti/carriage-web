@@ -51,6 +51,7 @@ interface RequestRideDialogProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   supportedLocations: Location[];
+  refreshLocations: () => Promise<void>;  
   ride?: Ride;
 }
 
@@ -104,6 +105,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   onClose,
   onSubmit,
   supportedLocations,
+  refreshLocations,
   ride,
 }) => {
   const [allLocations, setAllLocations] =
@@ -343,6 +345,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
     const response = await axios.post('/api/locations/custom', payload); //add to locations
     const created: Location = response.data.data || response.data;
+
+    await refreshLocations(); //program sees added location
 
     setAllLocations((prev) => [...prev, created]);
 
@@ -908,5 +912,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     </Dialog>
   );
 };
+
+
 
 export default RequestRideDialog;

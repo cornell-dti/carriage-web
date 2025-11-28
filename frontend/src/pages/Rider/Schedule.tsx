@@ -425,6 +425,9 @@ const Schedule: React.FC = () => {
     return partitionRides(ridesInWeek);
   }, [allRides, weekStartDate]);
 
+  const { refreshLocations } = useLocations();
+
+
   return (
     <APIProvider
       apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
@@ -632,6 +635,7 @@ const Schedule: React.FC = () => {
               images: l.images,
             }))
             .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
+          refreshLocations={refreshLocations}
         />
         {editingRide && (
           <RideDetailsComponent
