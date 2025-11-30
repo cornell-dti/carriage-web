@@ -50,7 +50,6 @@ interface RequestRideDialogProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   supportedLocations: Location[];
-  refreshLocations: () => Promise<void>;  
   ride?: Ride;
 }
 
@@ -72,7 +71,7 @@ const fullDayNames = {
 
 //Other for dropdown
 const Other = {
-  id: 'custom_other',
+  id: 'custom' + crypto.randomUUID(),
   name: 'Other',
   address: '',
   shortName: '',
@@ -104,21 +103,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   onClose,
   onSubmit,
   supportedLocations,
-  refreshLocations,
   ride,
 }) => {
-  const [allLocations, setAllLocations] =
-    useState<Location[]>(supportedLocations);
-
-  // sync with prop updates
-  useEffect(() => {
-    setAllLocations(supportedLocations);
-  }, [supportedLocations]);
-
-  const supportLocWithOther = [
-    ...(allLocations.filter((l) => l.tag !== Tag.CUSTOM) ?? []),
-    Other,
-  ];
+  //official locations with other added
+  const supportLocsWithOther = [...supportedLocations, Other];
 
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
@@ -228,10 +216,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const getAvailableLocations = () => {
     if (selectionState === 'pickup') {
       // Show all locations for pickup selection
-      return supportLocWithOther;
+      return supportLocsWithOther;
     } else if (selectionState === 'dropoff') {
       // Show all locations except the selected pickup location
-      return supportLocWithOther.filter(
+      return supportLocsWithOther.filter(
         (loc) => loc.id !== formData.pickupLocation?.id
       );
     } else {
@@ -240,6 +228,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         Boolean
       ) as Location[];
     }
+  };
+
+  const getAllLocs = async () => {
+    const locationsData: Array<Location> = await axios
+      .get('/api/locations')
+      .then((res) => res.data)
+      .then((data) => data.data);
+    return locationsData;
   };
 
   /**
@@ -279,13 +275,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       addr.trim().toLowerCase().replace(/\s+/g, ' ');
 
     const normalized = normalizeAddress(address);
+    const allLocs = getAllLocs();
 
-    // checking db for if it already exists in Locations quack
-    console.log('All locations:', allLocations);
+    // checking db for if it already exists in Locations quack MUST CHANGE HERE
+    console.log('All locations:', allLocs);
     console.log('Checking for address:', normalized);
 
     // check against allLocations (includes newly created custom ones)
-    const matched = allLocations.find((loc) => {
+    const matched = (await allLocs).find((loc) => {
       const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
       const latMatch = Math.abs(loc.lat - lat) < LOCATION_TOLERANCE; // 2) are lat/long similar
       const lngMatch = Math.abs(loc.lng - lng) < LOCATION_TOLERANCE;
@@ -315,11 +312,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
     const response = await axios.post('/api/locations/custom', payload); //add to locations
     const created: Location = response.data.data || response.data;
-
-    await refreshLocations(); //program sees added location
-
-    setAllLocations((prev) => [...prev, created]);
-
     return created;
   };
 
@@ -607,7 +599,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
-                          supportLocWithOther.find(
+                          supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
                         setFormData((prev) => ({
@@ -631,7 +623,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       }}
                       label="Pickup Location"
                     >
-                      {supportLocWithOther.map((location) => (
+                      {supportLocsWithOther.map((location) => (
                         <MenuItem key={location.id} value={location.id}>
                           {location.name}
                         </MenuItem>
@@ -658,7 +650,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
-                          supportLocWithOther.find(
+                          supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
                         setFormData((prev) => ({
@@ -677,7 +669,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       }}
                       label="Drop-off Location"
                     >
-                      {supportLocWithOther
+                      {supportLocsWithOther
                         .filter(
                           (loc) =>
                             loc.id !== formData.pickupLocation?.id ||
@@ -862,7 +854,5 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     </Dialog>
   );
 };
-
-
 
 export default RequestRideDialog;

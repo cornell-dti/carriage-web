@@ -46,7 +46,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   const [openDriverInfoDialog, setOpenDriverInfoDialog] = useState(false);
   const [adminContactOpen, setAdminContactOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const { locations, refreshLocations } = useLocations();
+  const { locations } = useLocations();
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     return {
@@ -147,7 +147,6 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
             onSubmit={() => {
               setOpenEditModal(!openEditModal);
             }}
-            refreshLocations={refreshLocations}
             ride={ride}
             supportedLocations={locations
               .map((l) => ({
