@@ -1,0 +1,120 @@
+.container {
+  position: relative;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(../../pages/Landing/campus.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 1.25rem;
+}
+
+.card {
+  border: 1px solid black;
+  border-radius: 16px;
+  background: white;
+  max-width: 700px;
+  width: 100%;
+  margin-top: 7.5rem;
+  padding: 48px;
+  text-align: center;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1), 0px 10px 10px rgba(0, 0, 0, 0.16);
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+}
+
+.greeting {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+
+.message {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.message p {
+  margin-bottom: 16px;
+}
+
+.contact {
+  margin-top: 24px;
+}
+
+.contact a {
+  color: #0075db;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact a:hover {
+  text-decoration: underline;
+}
+
+.backButton {
+  color: white;
+  background-color: black;
+  border: 0.063rem solid #000000;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  min-width: 6.563rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.backButton:focus {
+  box-shadow: 0 0 0 3px #0075db;
+}
+
+.backButton:hover {
+  background-color: #333;
+}
+
+.customShape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  height: 15%;
+  z-index: 10;
+}
+
+.customShape svg {
+  position: absolute;
+  display: block;
+  width: calc(142% + 1.3px);
+}
+
+.shapeFill {
+  fill: white;
+}
+
+@media (max-width: 600px) {
+  .card {
+    margin-top: 2rem;
+    padding: 32px 24px;
+  }
+
+  .greeting {
+    font-size: 24px;
+  }
+}
