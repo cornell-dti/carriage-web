@@ -9,7 +9,6 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Driver, Rider } from '../../types';
 import AuthContext from '../../context/auth';
 import RideOverview from './RideOverview';

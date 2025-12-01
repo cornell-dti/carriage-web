@@ -476,9 +476,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
           : body.endLocation.id !== originalRide.endLocation?.id);
 
       const isModified =
-        (timeChanged || pickupChanged || dropoffChanged) &&
-        rideHasDriver &&
-        willHaveDriver;
+        (timeChanged || pickupChanged || dropoffChanged) && willHaveDriver;
 
       // If ride is being modified and has/will have a driver, override to SCHEDULED_WITH_MODIFICATION
       // (This overrides the SCHEDULED state that was set earlier based on driver assignment)

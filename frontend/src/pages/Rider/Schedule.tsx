@@ -1,79 +1,118 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button } from '@mui/material';
 import { Ride, SchedulingState, Status } from '../../types';
 import AuthContext from '../../context/auth';
-import NoRidesView from '../../components/NoRidesView/NoRidesView';
-import Notification from '../../components/Notification/Notification';
-import MainCard from '../../components/RiderComponents/MainCard';
-import FavoritesCard from '../../components/RiderComponents/FavoritesCard';
-import { RideTable } from '../../components/RideDetails';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
 import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
-import { Driver, DayOfWeek } from 'types';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
+import ResponsiveRideCard from '../../components/ResponsiveRideCard';
+import { RideDetailsComponent } from 'components/RideDetails';
+import buttonStyles from '../../components/ResponsiveRideCard.module.css';
+import { NavigateBefore, NavigateNext } from '@mui/icons-material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-// Favorite ride type
-interface FavoriteRide {
-  id: string;
-  name: string;
-  startLocation: {
-    name: string;
-    address: string;
+type DayRideCollection = [string, Ride[]][];
+
+const partitionRides = (rides: Ride[]): DayRideCollection => {
+  const sortedRides = [...rides].sort(
+    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+  );
+
+  const formatReadableDate = (date: Date) => {
+    const weekday = date.toLocaleString(undefined, { weekday: 'long' });
+    const month = date.toLocaleString(undefined, { month: 'long' });
+    const day = date.getDate();
+
+    const suffix =
+      day % 10 === 1 && day % 100 !== 11
+        ? 'st'
+        : day % 10 === 2 && day % 100 !== 12
+        ? 'nd'
+        : day % 10 === 3 && day % 100 !== 13
+        ? 'rd'
+        : 'th';
+
+    return `${weekday}, ${month} ${day}${suffix}`;
   };
-  endLocation: {
-    name: string;
-    address: string;
-  };
-  preferredTime: string;
-}
+
+  const dayMap = new Map<string, Ride[]>();
+
+  sortedRides.forEach((ride) => {
+    const day = formatReadableDate(new Date(ride.startTime));
+    const ridesForDay = dayMap.get(day);
+    if (ridesForDay) {
+      ridesForDay.push(ride); // just push
+    } else {
+      dayMap.set(day, [ride]);
+    }
+  });
+
+  const flattened: DayRideCollection = [...dayMap].sort(
+    ([_aStr, aRides], [_bStr, bRides]) =>
+      new Date(aRides[0].startTime).getTime() -
+      new Date(bRides[0].startTime).getTime()
+  );
+
+  return flattened;
+};
 
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
   const { locations } = useLocations();
-  const { unscheduledRides, scheduledRides, refreshRides, refreshRidesByUser } =
-    useRides();
+  const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [favoriteRides, setFavoriteRides] = useState<FavoriteRide[]>([]);
-  const [loadingFavorites, setLoadingFavorites] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
-  const fetchFavorites = async () => {
-    if (!id) return;
-    setLoadingFavorites(true);
-    try {
-      const response = await axios.get('/api/favorites');
-      const favorites = response.data.data || [];
-      // Convert rides to FavoriteRide format
-      const formattedFavorites: FavoriteRide[] = favorites.map(
-        (ride: Ride) => ({
-          id: ride.id,
-          name: `Ride to ${ride.endLocation}`,
-          startLocation: {
-            name: ride.startLocation,
-            address: ride.startLocation,
-          },
-          endLocation: {
-            name: ride.endLocation,
-            address: ride.endLocation,
-          },
-          preferredTime: new Date(ride.startTime).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        })
-      );
-      setFavoriteRides(formattedFavorites);
-    } catch (error) {
-      console.error('Failed to fetch favorites:', error);
-      setFavoriteRides([]);
-    } finally {
-      setLoadingFavorites(false);
+  const [editingRide, setEditingRide] = useState<null | Ride>(null);
+
+  // Get the start of the current week (Sunday in local timezone)
+  const getStartOfWeek = (date: Date): Date => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day; // Sunday is 0
+    const startOfWeek = new Date(d.setDate(diff));
+    startOfWeek.setHours(0, 0, 0, 0);
+    return startOfWeek;
+  };
+
+  const [weekStartDate, setWeekStartDate] = useState<Date>(() =>
+    getStartOfWeek(new Date())
+  );
+
+  const handleDateChange = (newValue: Date | null) => {
+    if (newValue) {
+      setWeekStartDate(getStartOfWeek(newValue));
     }
+  };
+
+  // Calculate end of week
+  const getEndOfWeek = (startDate: Date): Date => {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 7);
+    endDate.setHours(0, 0, 0, 0);
+    return endDate;
+  };
+
+  const goToPreviousWeek = () => {
+    setWeekStartDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() - 7);
+      return newDate;
+    });
+  };
+
+  const goToNextWeek = () => {
+    setWeekStartDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(newDate.getDate() + 7);
+      return newDate;
+    });
   };
 
   // Fetch all rider rides on component mount
@@ -97,7 +136,6 @@ const Schedule: React.FC = () => {
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
-    fetchFavorites();
   }, [id]);
 
   const handleDialogOpen = () => {
@@ -158,38 +196,14 @@ const Schedule: React.FC = () => {
   // Use the fetched rider rides instead of filtering from context
   const allRides = allRiderRides;
 
-  // Get current timestamp for comparison
-  const now = new Date().getTime();
-
-  // Filter for upcoming rides (endTime is in the future) and exclude rejected/cancelled
-  const currRides = allRides.filter((ride) => {
-    const rideEndTime = new Date(ride.endTime).getTime();
-    const isFuture = rideEndTime > now; // Ride hasn't ended yet
-    // Exclude rejected or cancelled rides
-    const isRejected = ride.schedulingState === SchedulingState.REJECTED;
-    const isCancelled = ride.status === Status.CANCELLED;
-    const isValid = !isRejected && !isCancelled;
-    console.log(
-      `Ride ${ride.id}: endTime=${ride.endTime}, isFuture=${isFuture}, isValid=${isValid}`
-    );
-    return isFuture && isValid;
-  });
-  const pastRides = allRides.filter((ride) => {
-    const rideEndTime = new Date(ride.endTime).getTime();
-    return rideEndTime <= now;
-  });
-
-  console.log('Current rides:', currRides);
-  console.log('Past rides:', pastRides);
-
-  // Sort by startTime (closest to now first) and get the next upcoming ride
-  const sortedCurrRides = [...currRides].sort(
-    (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-  );
-
-  const nextUpcomingRide = sortedCurrRides[0];
-
-  const hasUpcomingRide = nextUpcomingRide !== undefined;
+  const rideDayMap: DayRideCollection = useMemo(() => {
+    const weekEnd = getEndOfWeek(weekStartDate);
+    const ridesInWeek = allRides.filter((ride) => {
+      const rideDate = new Date(ride.startTime);
+      return rideDate >= weekStartDate && rideDate < weekEnd;
+    });
+    return partitionRides(ridesInWeek);
+  }, [allRides, weekStartDate]);
 
   return (
     <APIProvider
@@ -215,27 +229,165 @@ const Schedule: React.FC = () => {
             >
               Request Ride
             </Button>
-            <Notification />
           </div>
         </div>
-        <div className={styles.topRow}>
-          <div className={styles.mainCardContainer}>
-            {allRides.length > 0 && nextUpcomingRide && hasUpcomingRide && (
-              <MainCard ride={nextUpcomingRide} />
-            )}
-            {(allRides.length === 0 || !hasUpcomingRide) && <NoRidesView />}
+
+        <div
+          style={{
+            width: '100%',
+            height: 'min-content',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'start',
+            alignItems: 'center',
+            gap: '2rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.5rem',
+              fontSize: '1rem',
+              alignItems: 'center',
+            }}
+          >
+            <button
+              onClick={goToPreviousWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: '3rem', height: '2.5rem' }}
+              aria-label="Previous Week"
+              aria-hidden="true"
+            >
+              <NavigateBefore></NavigateBefore>
+            </button>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Week of"
+                value={weekStartDate}
+                onAccept={handleDateChange}
+                slotProps={{
+                  textField: {
+                    sx: {
+                      width: '14rem',
+                      '& .MuiInputBase-root': {
+                        height: '2.5rem',
+                      },
+                      '& .MuiInputBase-input': {
+                        padding: '0.5rem',
+                        paddingX: '1rem',
+                      },
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: '#ddd',
+                          transition: 'border 0.1s',
+                        },
+                      },
+                    },
+                    onBlur: (e) => {
+                      const inputValue = e.target.value;
+                      if (inputValue) {
+                        const parsedDate = new Date(inputValue);
+                        if (!isNaN(parsedDate.getTime())) {
+                          handleDateChange(parsedDate);
+                        }
+                      }
+                    },
+                  },
+                  popper: {
+                    sx: {
+                      '& .MuiPaper-root': {
+                        border: '1px solid #ddd',
+                        boxShadow: 'none',
+                      },
+                      '& .MuiPickersDay-root': {
+                        '&.Mui-selected': {
+                          backgroundColor: '#333',
+                          '&:hover': {
+                            backgroundColor: '#444',
+                          },
+                        },
+                      },
+                      '& .MuiDayCalendar-weekContainer': {
+                        '&:has(.Mui-selected)': {
+                          backgroundColor: '#f5f5f5',
+                        },
+                      },
+                    },
+                  },
+                }}
+                format="MM/dd/yyyy"
+              />
+            </LocalizationProvider>
+            <button
+              onClick={goToNextWeek}
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              style={{ width: '3rem', height: '2.5rem' }}
+              aria-label="Next Week"
+              aria-hidden="true"
+            >
+              <NavigateNext></NavigateNext>
+            </button>
           </div>
-          <div className={styles.favoritesCardContainer}>
-            <FavoritesCard
-              favorites={favoriteRides}
-              onAddNew={() => {}}
-              onQuickRequest={() => {}}
-            />
-          </div>
+
+          {rideDayMap.length > 0 ? (
+            rideDayMap.map(([day, rides]) => {
+              return (
+                <div
+                  key={day}
+                  style={{
+                    width: '100%',
+                    maxWidth: '48rem',
+                    height: 'min-content',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'start',
+                    alignItems: 'start',
+                    gap: '0.25rem',
+                  }}
+                >
+                  <h2
+                    style={{
+                      fontSize: '1rem',
+                      fontWeight: 'lighter',
+                      color: '#707070',
+                    }}
+                  >
+                    {day}
+                  </h2>
+                  {rides.map((ride, rideIdx) => (
+                    <ResponsiveRideCard
+                      ride={ride}
+                      handleEdit={setEditingRide}
+                      key={rideIdx}
+                    />
+                  ))}
+                </div>
+              );
+            })
+          ) : (
+            <div
+              style={{
+                width: '16rem',
+                height: '4rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '#ddd 1px solid',
+                borderRadius: '0.25rem',
+              }}
+            >
+              <p
+                style={{
+                  width: 'min-content',
+                  textWrap: 'nowrap',
+                }}
+              >
+                {loadingRides ? 'Loading Rides...' : 'No rides this week'}
+              </p>
+            </div>
+          )}
         </div>
-        <div className={styles.tableSection}>
-          <RideTable rides={allRides} userRole="rider" />
-        </div>
+
         <RequestRideDialog
           open={isDialogOpen}
           onClose={handleDialogClose}
@@ -255,6 +407,13 @@ const Schedule: React.FC = () => {
             }))
             .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
         />
+        {editingRide && (
+          <RideDetailsComponent
+            ride={editingRide}
+            open={editingRide !== null}
+            onClose={() => setEditingRide(null)}
+          ></RideDetailsComponent>
+        )}
       </main>
     </APIProvider>
   );
