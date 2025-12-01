@@ -4,6 +4,7 @@ import { RideType } from '../../../server/src/models/ride';
 import { AdminType } from '../../../server/src/models/admin';
 import { LocationType } from '../../../server/src/models/location';
 import { VehicleType } from '../../../server/src/models/vehicle';
+import { UnregisteredUserType } from '../../../server/src/util/types';
 
 export type Rider = RiderType;
 
@@ -114,3 +115,5 @@ export enum RepeatValues {
 }
 
 export type { DriverType, AdminType, RideType };
+
+export type UnregisteredUser = UnregisteredUserType;

@@ -19,3 +19,8 @@ export enum Change {
 }
 
 export type NotificationEvent = Change | Status;
+
+export type UnregisteredUserType = {
+  name: string;
+  email: string;
+};
