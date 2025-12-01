@@ -30,6 +30,7 @@ import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
+import { error } from 'console';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -220,7 +221,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     } else if (selectionState === 'dropoff') {
       // Show all locations except the selected pickup location
       return supportLocsWithOther.filter(
-        (loc) => loc.id !== formData.pickupLocation?.id
+        (loc) =>
+          loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
       );
     } else {
       // Show only selected locations
@@ -236,6 +238,51 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       .then((res) => res.data)
       .then((data) => data.data);
     return locationsData;
+  };
+
+  /**
+   * Strips address of variation
+   * @function normalizeAddress
+   *
+   * @param {string} addr
+   *
+   * @returns {string}
+   * An address in all lowercase with no punctuation with variations
+   * between place names (such as USA vs United States) unified
+   *
+   * @description
+   * This function ensures that the system properly normalizes an address
+   * to make comparison simpler
+   */
+  const normalizeAddress = (addr: string) => {
+    if (!addr) return '';
+
+    //everything lowercase
+    let a = addr.trim().toLowerCase();
+
+    // collapse whitespace
+    a = a.replace(/\s+/g, ' ');
+
+    // remove punctuation
+    a = a.replace(/[.,]/g, '');
+
+    // country name variations unified
+    a = a
+      .replace(/\busa\b/g, 'united states')
+      .replace(/\bus\b/g, 'united states');
+
+    // state name variations unified
+    a = a.replace(/\bny\b/g, 'new york');
+
+    // road names variations unified
+    a = a
+      .replace(/\brd\b/g, 'road')
+      .replace(/\bst\b/g, 'street')
+      .replace(/\bave\b/g, 'avenue')
+      .replace(/\bblvd\b/g, 'boulevard')
+      .replace(/\bdr\b/g, 'drive');
+
+    return a;
   };
 
   /**
@@ -270,26 +317,28 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     lat: number,
     lng: number
   ): Promise<Location> => {
-    const LOCATION_TOLERANCE = 0.0002; // ~20 meters
-    const normalizeAddress = (addr: string) =>
-      addr.trim().toLowerCase().replace(/\s+/g, ' ');
+    const LOCATION_TOLERANCE = 0.00025; // ~25 meters
 
     const normalized = normalizeAddress(address);
     const allLocs = getAllLocs();
 
     // checking db for if it already exists in Locations quack MUST CHANGE HERE
-    console.log('All locations:', allLocs);
     console.log('Checking for address:', normalized);
 
     // check against allLocations (includes newly created custom ones)
     const matched = (await allLocs).find((loc) => {
       const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
+      const addrSimilar1 = normalizeAddress(loc.address).includes(normalized);
+      const addrSimilar2 = normalized.includes(normalizeAddress(loc.address));
       const latMatch = Math.abs(loc.lat - lat) < LOCATION_TOLERANCE; // 2) are lat/long similar
       const lngMatch = Math.abs(loc.lng - lng) < LOCATION_TOLERANCE;
       console.log(
-        `Checking ${loc.name}: addrMatch=${addrMatch}, latMatch=${latMatch}, lngMatch=${lngMatch}`
-      ); //quack
-      return addrMatch || (latMatch && lngMatch);
+        `Checking ${loc.name}: addrMatch=${addrMatch}, addrSimilar1=${addrSimilar1}, addrSimilar2=${addrSimilar2}, latMatch=${latMatch}, lngMatch=${lngMatch}`
+      );
+      console.log(normalized + '     ' + normalizeAddress(loc.address));
+      return (
+        addrMatch || addrSimilar1 || addrSimilar2 || (latMatch && lngMatch)
+      );
     });
 
     if (matched) {
@@ -406,12 +455,23 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         finalDropoff = createdDropoff;
       }
 
+      //additional check to ensure pickup and dropoff addresses are different
+      if (
+        finalDropoff !== null &&
+        finalPickup !== null &&
+        normalizeAddress(finalDropoff?.address) ===
+          normalizeAddress(finalPickup.address)
+      ) {
+        console.error('Start and end location are the same');
+      }
+
       onSubmit({
         ...formData,
         pickupLocation: finalPickup,
         dropoffLocation: finalDropoff,
       });
-
+      setCustomPickup(false);
+      setCustomDroppoff(false);
       onClose();
     } catch (err) {
       console.error('Error submitting ride:', err);
@@ -587,7 +647,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 )}
 
                 {/* Dropdown selectors as alternative to map selection */}
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '5px' }}>
                   <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
                     Or select from dropdown:
                   </h4>
@@ -633,9 +693,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
                   {customPickup === true && (
                     <div>
-                      <label className={styles.fieldLabel}>
-                        Pickup Location
-                      </label>
                       <RequestRidePlacesSearch
                         onAddressSelect={handlePickupSelect}
                       />
@@ -672,8 +729,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       {supportLocsWithOther
                         .filter(
                           (loc) =>
-                            loc.id !== formData.pickupLocation?.id ||
-                            loc.id === 'custom_other'
+                            loc.id.startsWith('custom') ||
+                            loc.id !== formData.pickupLocation?.id
                         ) // Don't show pickup location as dropoff option (except Other)
                         .map((location) => (
                           <MenuItem key={location.id} value={location.id}>
@@ -684,10 +741,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                   </FormControl>
 
                   {customDroppoff === true && (
-                    <div>
-                      <label className={styles.fieldLabel}>
-                        Dropoff Location
-                      </label>
+                    <div style={{ marginTop: '16px' }}>
                       <RequestRidePlacesSearch
                         onAddressSelect={handleDropoffSelect}
                       />
