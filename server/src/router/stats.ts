@@ -24,7 +24,6 @@ const router = express.Router();
  * response:
  * - CSV file containing aggregated ride and driver statistics for date range
  */
-
 router.get('/download', validateUser('Admin'), (req, res) => {
   const {
     query: { from, to },
@@ -112,18 +111,19 @@ router.get('/', validateUser('Admin'), (req, res) => {
   const toMatch = to ? (to as string).match(regexp) : true;
 
   if (fromMatch && toMatch) {
-    console.log(from);
+    console.log('from:', from);
     let date = moment(from as string).format('YYYY-MM-DD');
     const dates = [date];
     if (to) {
-      console.log(to);
+      console.log('to:', to);
       date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       while (date <= to) {
         dates.push(date);
         date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       }
     }
-    console.log('statFromDates called');
+
+    console.log('calling statsFromDates with dates:', dates);
     statsFromDates(dates, res, false);
   } else {
     res.status(400).send({ err: 'Invalid from/to query date format' });
@@ -139,22 +139,28 @@ router.get('/', validateUser('Admin'), (req, res) => {
 function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
   console.log('reached statsFromDates');
+
   dates.forEach((currDate) => {
+    console.log('processing date:', currDate);
+
     const year = moment(currDate, 'YYYY-MM-DD').format('YYYY');
     const monthDay = moment(currDate, 'YYYY-MM-DD').format('MMDD');
 
     const dateMoment = moment(currDate);
-    // day = 12am to 5:00pm
     const dayStart = dateMoment.toISOString();
-    const dayEnd = dateMoment.add(17, 'hours').toISOString();
-    // night = 5:01pm to 11:59:59pm
-    const nightStart = moment(dayEnd).add(1, 'seconds').toISOString();
-    const nightEnd = moment(currDate as string)
-      .endOf('day')
-      .toISOString();
+    const dayEnd = moment(currDate + 'T16:59:59Z').toISOString();
+    const nightStart = moment(currDate + 'T17:00:00Z').toISOString();
+    const nightEnd = moment(currDate).endOf('day').toISOString();
 
-    console.log('before computeStats');
-    const update = true; //REPLACE
+    console.log('dayStart:', dayStart);
+    console.log('dayEnd:', dayEnd);
+    console.log('nightStart:', nightStart);
+    console.log('nightEnd:', nightEnd);
+
+    const update = true; // IMPORTANT NOTE!!!! update decides whether you overwrite existing stats in the database or reuse them, 
+                         //this was primarily for implementing a 'refresh' button on the stats page so we don't have to parse every ride every time
+                         //and an admin can decide when to refresh based off if data has changed
+
     computeStats(
       res,
       statsAcc,
@@ -184,8 +190,7 @@ function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
       .then((scanRes) => {
         const defaultDrivers = scanRes.reduce((acc, curr) => {
           const { firstName, lastName } = curr;
-          const fullName = `${firstName} ${lastName}`;
-          acc[fullName] = 0;
+          acc[`${firstName} ${lastName}`] = 0;
           return acc;
         }, {} as ObjectType);
 
@@ -212,22 +217,16 @@ function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
             };
             return row;
           });
-
         csv
           .writeToBuffer(dataToExport, { headers: true })
-          .then((data) => {
-            res.send(data);
-            // console.log(data.toString());
-          })
+          .then((data) => res.send(data))
           .catch((err) => res.send(err));
       });
   }
 }
 
 function checkSend(res: Response, statsAcc: StatsType[], numDays: number) {
-  if (statsAcc.length === numDays) {
-    res.send(statsAcc);
-  }
+  if (statsAcc.length === numDays) res.send(statsAcc);
 }
 
 /**
@@ -260,100 +259,101 @@ function computeStats(
   update: boolean
 ) {
   console.log('just after computeStats');
+
   Stats.get({ year, monthDay }, (err, data) => {
-    console.log('inside Stats.get');
+    console.log('inside Stats.get. existing data:', data);
+
     if (data && !update) {
-      statsAcc.push(data.toJSON() as StatsType); //if there is data in stats db, send it
-      if (!download) {
-        checkSend(res, statsAcc, numDays);
-      } else {
-        downloadStats(res, statsAcc, numDays);
-      }
-    } else if (err || !data || update) {
-      //else find data from rides
-      const conditionRidesDate = new Condition() //retrieve all rides with valid (night or day) start times and is NOT unschedules
-        .where('startTime')
-        .between(dayStart, nightEnd)
-        .where('type')
-        .not()
-        .eq('unscheduled');
+      statsAcc.push(data.toJSON() as StatsType);
+      return download
+        ? downloadStats(res, statsAcc, numDays)
+        : checkSend(res, statsAcc, numDays);
+    }
 
-      db.scan(res, Ride, conditionRidesDate, (dataDay: RideType[]) => {
-        let dayCountStat = 0;
-        let dayNoShowStat = 0;
-        let dayCancelStat = 0;
-        let nightCountStat = 0;
-        let nightNoShowStat = 0;
-        let nightCancelStat = 0;
-        const driversStat: { [name: string]: number } = {};
-        console.log('reached db scan');
-        console.log('dataDay' + dataDay);
-        dataDay.forEach((rideData: RideType) => {
-          console.log('rideData' + rideData.status);
-          const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
-          if (rideData.status === Status.NO_SHOW) {
-            if (rideData.startTime <= dayEnd) {
-              dayNoShowStat += 1;
-            } else {
-              nightNoShowStat += 1;
-            }
-          } else if (rideData.status === Status.COMPLETED) {
-            if (rideData.startTime <= dayEnd) {
-              dayCountStat += 1;
-            } else {
-              nightCountStat += 1;
-            }
-            if (driversStat[driverName]) {
-              driversStat[driverName] += 1;
-            } else {
-              driversStat[driverName] = 1;
-            }
-          } else if (rideData.status === Status.CANCELLED) {
-            if (rideData.startTime <= dayEnd) {
-              dayCancelStat += 1;
-            } else {
-              nightCancelStat += 1;
-            }
-          }
-        });
-        const stats = new Stats({
-          year,
-          monthDay,
-          dayCount: dayCountStat,
-          dayNoShow: dayNoShowStat,
-          dayCancel: dayCancelStat,
-          nightCount: nightCountStat,
-          nightNoShow: nightNoShowStat,
-          nightCancel: nightCancelStat,
-          drivers: driversStat,
-        });
+    console.log('fetching rides from DB...');
 
-        if (!update) {
-          Stats.create(stats).then((doc) => {
-            statsAcc.push(doc.toJSON() as StatsType);
-            if (!download) {
-              checkSend(res, statsAcc, numDays);
-            } else {
-              downloadStats(res, statsAcc, numDays);
-            }
-          });
-        } else {
-          console.log('update logic here');
-          console.log(dayNoShowStat);
-          Stats.update(stats).then((doc) => {
-            statsAcc.push(doc.toJSON() as StatsType);
-            if (!download) {
-              checkSend(res, statsAcc, numDays);
-            } else {
-              downloadStats(res, statsAcc, numDays);
-            }
-          });
-          console.log('finish update');
+    const conditionRidesDate = new Condition()
+      .where('startTime')
+      .between(dayStart, nightEnd)
+      .where('type')
+      .not()
+      .eq('unscheduled');
+
+    db.scan(res, Ride, conditionRidesDate, (dataDay: RideType[]) => {
+      console.log('reached db scan');
+      console.log('dataDay raw:', dataDay);
+      console.log(
+        'ALL STATUSES:',
+        dataDay.map((r) => r.status)
+      );
+
+      let dayCountStat = 0;
+      let dayNoShowStat = 0;
+      let dayCancelStat = 0;
+      let nightCountStat = 0;
+      let nightNoShowStat = 0;
+      let nightCancelStat = 0;
+      const driversStat: { [name: string]: number } = {};
+
+      dataDay.forEach((rideData: RideType) => {
+        console.log('--- Ride ---');
+        console.log('status:', rideData.status);
+        console.log('type:', rideData.type);
+        console.log('startTime:', rideData.startTime);
+
+        const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
+
+        if (rideData.status === Status.NO_SHOW) {
+          rideData.startTime <= dayEnd ? dayNoShowStat++ : nightNoShowStat++;
+        } else if (rideData.status === Status.COMPLETED) {
+          rideData.startTime <= dayEnd ? dayCountStat++ : nightCountStat++;
+
+          driversStat[driverName] = (driversStat[driverName] || 0) + 1;
+        } else if (rideData.status === Status.CANCELLED) {
+          rideData.startTime <= dayEnd ? dayCancelStat++ : nightCancelStat++;
         }
       });
-    } else {
-      console.log('Should be unreachable');
-    }
+
+      console.log('calculated stats:', {
+        dayCountStat,
+        dayNoShowStat,
+        dayCancelStat,
+        nightCountStat,
+        nightNoShowStat,
+        nightCancelStat,
+        driversStat,
+      });
+
+      const stats = new Stats({
+        year,
+        monthDay,
+        dayCount: dayCountStat,
+        dayNoShow: dayNoShowStat,
+        dayCancel: dayCancelStat,
+        nightCount: nightCountStat,
+        nightNoShow: nightNoShowStat,
+        nightCancel: nightCancelStat,
+        drivers: driversStat,
+      });
+
+      if (!update) {
+        Stats.create(stats).then((doc) => {
+          statsAcc.push(doc.toJSON() as StatsType);
+          return download
+            ? downloadStats(res, statsAcc, numDays)
+            : checkSend(res, statsAcc, numDays);
+        });
+      } else {
+        console.log('update logic here');
+        Stats.update(stats).then((doc) => {
+          statsAcc.push(doc.toJSON() as StatsType);
+          return download
+            ? downloadStats(res, statsAcc, numDays)
+            : checkSend(res, statsAcc, numDays);
+        });
+        console.log('finish update');
+      }
+    });
   });
 }
 
