@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import cn from 'classnames';
 import { SRLabel } from '../FormElements/FormElements';
 import { ObjectType, TableData } from '../../types';
@@ -86,7 +86,6 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   const [rideTableData, setRideTableData] = useState<Cell[][]>();
   const [driverTableData, setDriverTableData] = useState<Cell[][]>();
   const [editData, setEditData] = useState<ObjectType>({ dates: {} });
-  const [driverNames, setDriverNames] = useState<string[]>([]);
   const { drivers } = useEmployees();
 
   const sharedCols = ['Date', 'Daily Total'];
@@ -100,11 +99,10 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     'Night Cancels',
   ]);
 
-  useEffect(() => {
-    if (drivers && !driverNames.length) {
-      setDriverNames(drivers.map((d) => `${d.firstName} ${d.lastName}`));
-    }
-  }, [driverNames, drivers]);
+  const driverNames = useMemo(
+    () => (drivers ? drivers.map((d) => `${d.firstName} ${d.lastName}`) : []),
+    [drivers]
+  );
 
   const driverTableHeader = sharedCols.concat(
     driverNames.map((name) => {
@@ -172,32 +170,32 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
     if (drivers && data) {
       const rideData: Cell[][] = [];
       const driverData: Cell[][] = [];
-      data
+      const sortedData = [...data]
         .sort((a, b) => (a.year + a.monthDay < b.year + b.monthDay ? 1 : -1))
-        .forEach((d) => {
-          const month = d.monthDay.substring(0, 2);
-          const day = d.monthDay.substring(2);
-          const date = `${month}/${day}/${d.year}`;
-          const dailyTotal = d.dayCount + d.nightCount;
-          if (type === 'ride') {
-            rideData.push([
-              date,
-              dailyTotal,
-              d.dayCount,
-              d.dayNoShow,
-              d.dayCancel,
-              d.nightCount,
-              d.nightNoShow,
-              d.nightCancel,
-            ]);
-          } else {
-            const driverRow = [date, dailyTotal];
-            driverNames.forEach((driver) => {
-              driverRow.push(d.drivers[driver] || 0);
-            });
-            driverData.push(driverRow);
-          }
-        });
+      sortedData.forEach((d) => {
+        const month = d.monthDay.substring(0, 2);
+        const day = d.monthDay.substring(2);
+        const date = `${month}/${day}/${d.year}`;
+        const dailyTotal = d.dayCount + d.nightCount;
+        if (type === 'ride') {
+          rideData.push([
+            date,
+            dailyTotal,
+            d.dayCount,
+            d.dayNoShow,
+            d.dayCancel,
+            d.nightCount,
+            d.nightNoShow,
+            d.nightCancel,
+          ]);
+        } else {
+          const driverRow = [date, dailyTotal];
+          driverNames.forEach((driver) => {
+            driverRow.push(d.drivers[driver] || 0);
+          });
+          driverData.push(driverRow);
+        }
+      });
       setRideTableData(rideData);
       setDriverTableData(driverData);
     }

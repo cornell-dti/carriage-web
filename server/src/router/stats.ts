@@ -313,14 +313,44 @@ function computeStats(
           nightCancel: nightCancelStat,
           drivers: driversStat,
         });
-        Stats.create(stats).then((doc) => {
-          statsAcc.push(doc.toJSON() as StatsType);
-          if (!download) {
-            checkSend(res, statsAcc, numDays);
-          } else {
-            downloadStats(res, statsAcc, numDays);
-          }
-        });
+        Stats.create(stats)
+          .then((doc) => {
+            statsAcc.push(doc.toJSON() as StatsType);
+            if (!download) {
+              checkSend(res, statsAcc, numDays);
+            } else {
+              downloadStats(res, statsAcc, numDays);
+            }
+          })
+          .catch((err) => {
+            // If a concurrent process already created this item, fall back to fetching it
+            if (
+              err?.name === 'ConditionalCheckFailedException' ||
+              err?.code === 'ConditionalCheckFailedException' ||
+              err?.message?.includes('ConditionalCheckFailedException')
+            ) {
+              Stats.get({ year, monthDay })
+                .then((existing) => {
+                  if (existing) {
+                    statsAcc.push(existing.toJSON() as StatsType);
+                    if (!download) {
+                      checkSend(res, statsAcc, numDays);
+                    } else {
+                      downloadStats(res, statsAcc, numDays);
+                    }
+                  } else {
+                    res
+                      .status(409)
+                      .send({ err: 'Stats item exists but could not be retrieved.' });
+                  }
+                })
+                .catch((getErr) => {
+                  res.status(getErr?.statusCode || 500).send({ err: getErr?.message || 'Failed to retrieve existing stats item.' });
+                });
+            } else {
+              res.status(err?.statusCode || 500).send({ err: err?.message || 'Failed to create stats.' });
+            }
+          });
       });
     } else {
       console.log('Should be unreachable');
