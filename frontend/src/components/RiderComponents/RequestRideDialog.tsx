@@ -462,7 +462,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         normalizeAddress(finalDropoff?.address) ===
           normalizeAddress(finalPickup.address)
       ) {
-        console.error('Start and end location are the same');
+        throw new Error("Start and end location are too simiilar")
       }
 
       onSubmit({
