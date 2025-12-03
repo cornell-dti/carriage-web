@@ -17,6 +17,8 @@ import {
   MenuItem,
   InputLabel,
   SelectChangeEvent,
+  Switch,
+  Alert,
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
@@ -24,13 +26,13 @@ import {
   DatePicker,
   TimePicker,
 } from '@mui/x-date-pickers';
+
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
-import { error } from 'console';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -126,6 +128,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
   const [customDroppoff, setCustomDroppoff] = useState(false);
+  const [overlayRadius, setOverlayRadius] = useState(false);
+  const [kmlLink, setKMLLink] = useState<string | null>(null);
+  const [isInvalidTime, setIsInvalidTime] = useState(false);
 
   useEffect(() => {
     if (ride && open) {
@@ -400,11 +405,30 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const handleDateChange =
     (field: keyof Pick<FormData, 'date' | 'time' | 'repeatEndDate'>) =>
     (newDate: Date | null) => {
+      if (field === 'time') {
+        const isValid =
+          newDate !== null
+            ? isValidTime(newDate)
+            : setFormData({
+                ...formData,
+                [field]: newDate,
+              });
+        setIsInvalidTime(!isValid);
+      }
+
       setFormData({
         ...formData,
         [field]: newDate,
       });
     };
+
+  const isValidTime = (time: Date) => {
+    if (!time) return true;
+    const input_minutes = time.getHours() * 60 + time.getMinutes(); //converts input time to min
+    const start = 7 * 60 + 45; // 7:45 AM in min
+    const end = 22 * 60; // 10:00 PM in min
+    return input_minutes >= start && input_minutes <= end;
+  };
 
   const handleRepeatTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -487,7 +511,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       formData.time &&
       (formData.repeatType !== 'custom' || formData.selectedDays.length > 0) &&
       (formData.repeatType === 'none' || formData.repeatEndDate) &&
-      selectionState === 'complete'
+      selectionState === 'complete' &&
+      isInvalidTime === false
     );
   };
 
@@ -510,10 +535,26 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       ? formData.dropoffLocation
       : null;
 
+  useEffect(() => {
+    if (overlayRadius) {
+      setKMLLink(
+        'https://www.google.com/maps/d/u/1/kml?forcekml=1&mid=1jE3AC5mAzZK0i29WGiOQiLkkb0ViXrU&lid=0ZWUOMlDE24'
+      );
+    } else {
+      setKMLLink(null);
+    }
+  }, [overlayRadius]);
+
+  const isWeekend = (date: Date) => {
+    const day = date.getDay();
+    return day === 0 || day === 6;
+  };
+
   //TODO: add edit dialog functionality that prepopulates the form with existing ride data
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
+
       <DialogContent>
         {/* Wrap everything in a single APIProvider */}
         <APIProvider
@@ -755,6 +796,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       label="Date"
                       value={formData.date}
                       onChange={handleDateChange('date')}
+                      shouldDisableDate={isWeekend}
                       slotProps={{
                         textField: {
                           fullWidth: true,
@@ -772,6 +814,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       }}
                     />
                   </Stack>
+                  {isInvalidTime && (
+                    <Alert severity="error" sx={{ mt: 1 }}>
+                      Invalid time! CU Lift operates between 7:45 AM and 10 PM.
+                    </Alert>
+                  )}
                 </LocalizationProvider>
 
                 <FormControl component="fieldset">
@@ -835,14 +882,26 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 )}
               </div>
             </div>
-
             <div className={styles.mapColumn}>
+              <div style={{ marginBottom: '12px' }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={overlayRadius}
+                      onChange={(e) => setOverlayRadius(e.target.checked)}
+                    />
+                  }
+                  label="CULift Service Radius"
+                />
+              </div>
+
               <RequestRideMap
                 pickupLocation={safePickup}
                 dropoffLocation={safeDropoff}
                 availableLocations={getAvailableLocations()}
                 onPickupSelect={handleLocationSelect}
                 onDropoffSelect={handleLocationSelect}
+                kmlLink={kmlLink}
               />
             </div>
           </div>

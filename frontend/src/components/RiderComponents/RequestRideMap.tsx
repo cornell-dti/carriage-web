@@ -27,6 +27,7 @@ interface RequestRideMapProps {
   availableLocations?: Location[];
   onPickupSelect: (location: Location | null) => void;
   onDropoffSelect: (location: Location | null) => void;
+  kmlLink: string | null;
 }
 
 const RequestRideMap: React.FC<RequestRideMapProps> = ({
@@ -36,6 +37,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   availableLocations = [],
   onPickupSelect,
   onDropoffSelect,
+  kmlLink,
 }) => {
   const map = useMap();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
@@ -58,6 +60,23 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       clusterer.current = null;
     };
   }, [map]);
+
+  //adds CU-Lift radius to map
+  useEffect(() => {
+  if (!map || !kmlLink) return;
+
+  const kmlLayer = new google.maps.KmlLayer({
+    url: kmlLink,
+    map: map,
+    preserveViewport: true, 
+    suppressInfoWindows: true,
+  });
+
+  return () => {
+    kmlLayer.setMap(null);
+  };
+}, [map, kmlLink]);
+
 
   const handleMarkerRef = useCallback((marker: Marker | null, id: string) => {
     if (marker) markers.current[id] = marker;
@@ -164,6 +183,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         gestureHandling={'greedy'}
         disableDefaultUI={false}
         className={styles.mapContainer}
+        
       >
         {/* Pickup Location Marker */}
         {pickupLocation && (
