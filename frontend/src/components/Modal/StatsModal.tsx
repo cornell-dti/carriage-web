@@ -20,9 +20,14 @@ const theme = createTheme();
 type StatsModalProps = {
   initStartDate: string;
   initEndDate: string;
+  fromWho: string;
 };
 
-const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
+const StatsModal = ({
+  initStartDate,
+  initEndDate,
+  fromWho,
+}: StatsModalProps) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -49,6 +54,22 @@ const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
     );
     return finalCols;
   };
+
+  const colsByPerson = (fromWho: string) => {
+    if (fromWho === 'admin') return generateCols();
+    else {
+      return 'Date, Start Time, End Time, From, To, Status, Type';
+    }
+  };
+
+  const endpointByPerson = (fromWho: string) => {
+    if (fromWho === 'admin') return `/api/stats/download?from=${startDate}&to=${endDate}`;
+    else {
+      return `/api/rides/download/driver?from=${startDate}&to=${endDate}`;
+    }
+  };
+
+
 
   //logic for handling when start and end dates are for shortcut buttons
   const handleShortcut = (shortcut: string) => {
@@ -219,8 +240,8 @@ const StatsModal = ({ initStartDate, initEndDate }: StatsModalProps) => {
               <div className={styles.submit}>
                 <ExportButton
                   toastMsg={`${startDate} to ${endDate} data has been downloaded.`}
-                  endpoint={`/api/stats/download?from=${startDate}&to=${endDate}`}
-                  csvCols={generateCols()}
+                  endpoint={endpointByPerson(fromWho)}
+                  csvCols={colsByPerson(fromWho)}
                   filename={`${startDate}_${endDate}_analytics.csv`}
                 />
               </div>

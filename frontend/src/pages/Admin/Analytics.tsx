@@ -41,6 +41,7 @@ const Analytics = () => {
         <StatsModal
           initStartDate={startDate}
           initEndDate={endDate}
+          fromWho={'admin'}
         ></StatsModal>
       </div>
       <Notification />
