@@ -17,6 +17,7 @@ import {
   MenuItem,
   InputLabel,
   SelectChangeEvent,
+  FormHelperText,
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
@@ -73,7 +74,7 @@ const fullDayNames = {
 //Other for dropdown
 const Other = {
   id: 'custom' + crypto.randomUUID(),
-  name: 'Other',
+  name: 'Custom',
   address: '',
   shortName: '',
   info: '',
@@ -107,7 +108,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   ride,
 }) => {
   //official locations with other added
-  const supportLocsWithOther = [...supportedLocations, Other];
+  const supportLocsWithOther = [Other, ...supportedLocations];
 
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
@@ -125,7 +126,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
-  const [customDroppoff, setCustomDroppoff] = useState(false);
+  const [customDroppoff, setCustomDropoff] = useState(false);
+  const [inputPickUpError, setInputPickUpError] = useState(false);
+  const [inputDropOffError, setInputDropOffError] = useState(false);
+  const [inputErrorText, setInputErrorText] = useState('');
 
   useEffect(() => {
     if (ride && open) {
@@ -211,6 +215,21 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       dropoffLocation: null,
     }));
     setSelectionState('pickup');
+  };
+
+  const handleCancel = () => {
+    // reset custom picker flags
+    setCustomPickup(false);
+    setCustomDropoff(false);
+
+    // clear any inputs/error
+    setInputPickUpError(false);
+    setInputDropOffError(false);
+    setInputErrorText('');
+    resetSelection();
+
+    // close dialog
+    onClose();
   };
 
   // Get available locations based on current selection state
@@ -315,11 +334,23 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const createOrGetLocation = async (
     address: string,
     lat: number,
-    lng: number
+    lng: number,
+    isPickUp: boolean
   ): Promise<Location> => {
     const LOCATION_TOLERANCE = 0.00025; // ~25 meters
 
     const normalized = normalizeAddress(address);
+
+    if (normalized === '') {
+      if (isPickUp) {
+        setInputPickUpError(true);
+      } else {
+        setInputDropOffError(true);
+      }
+      setInputErrorText('Attempted to submit an empty location');
+      throw new Error('User tried to submit empty custom location');
+    }
+
     const allLocs = getAllLocs();
 
     // checking db for if it already exists in Locations quack MUST CHANGE HERE
@@ -440,7 +471,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         const createdPickup = await createOrGetLocation(
           finalPickup.address,
           finalPickup.lat,
-          finalPickup.lng
+          finalPickup.lng,
+          true //isPickUp
         );
         finalPickup = createdPickup;
       }
@@ -450,7 +482,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         const createdDropoff = await createOrGetLocation(
           finalDropoff.address,
           finalDropoff.lat,
-          finalDropoff.lng
+          finalDropoff.lng,
+          false //isPickUp
         );
         finalDropoff = createdDropoff;
       }
@@ -462,6 +495,12 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         normalizeAddress(finalDropoff?.address) ===
           normalizeAddress(finalPickup.address)
       ) {
+        setInputPickUpError(true);
+        setInputDropOffError(true);
+        setInputErrorText('Start and end location are too simiilar');
+        resetSelection();
+        setCustomPickup(false);
+        setCustomDropoff(false);
         throw new Error('Start and end location are too simiilar');
       }
 
@@ -471,7 +510,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         dropoffLocation: finalDropoff,
       });
       setCustomPickup(false);
-      setCustomDroppoff(false);
+      setCustomDropoff(false);
       onClose();
     } catch (err) {
       console.error('Error submitting ride:', err);
@@ -680,8 +719,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         } else {
                           setCustomPickup(false);
                         }
+                        //remove error if user changes location
+                        setInputPickUpError(false);
                       }}
                       label="Pickup Location"
+                      error={inputPickUpError}
                     >
                       {supportLocsWithOther.map((location) => (
                         <MenuItem key={location.id} value={location.id}>
@@ -689,6 +731,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         </MenuItem>
                       ))}
                     </Select>
+                    {inputPickUpError && (
+                      <FormHelperText error>{inputErrorText}</FormHelperText>
+                    )}
                   </FormControl>
 
                   {customPickup === true && (
@@ -719,12 +764,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           setSelectionState('complete');
                         }
                         if (selectedLocation?.name === Other.name) {
-                          setCustomDroppoff(true);
+                          setCustomDropoff(true);
                         } else {
-                          setCustomDroppoff(false);
+                          setCustomDropoff(false);
                         }
+                        //remove error if user changes locatoin
+                        setInputDropOffError(false);
                       }}
                       label="Drop-off Location"
+                      error={inputDropOffError}
                     >
                       {supportLocsWithOther
                         .filter(
@@ -738,6 +786,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           </MenuItem>
                         ))}
                     </Select>
+                    {inputDropOffError && (
+                      <FormHelperText error>{inputErrorText}</FormHelperText>
+                    )}
+                    {!formData.pickupLocation && (
+                      <FormHelperText>
+                        {'Please select pickup location'}
+                      </FormHelperText>
+                    )}
                   </FormControl>
 
                   {customDroppoff === true && (
@@ -849,7 +905,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         </APIProvider>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
