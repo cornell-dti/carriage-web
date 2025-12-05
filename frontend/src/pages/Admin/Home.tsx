@@ -7,6 +7,7 @@ import MiniCal from '../../components/MiniCal/MiniCal';
 import styles from './page.module.css';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import { CSVFromRidesButton } from 'components/CSVFromRidesButton/CSVFromRidesButton';
+import { DayNavigation } from 'components/DayNavigation/DayNavigation';
 
 const Home = () => {
   useEffect(() => {
@@ -17,7 +18,7 @@ const Home = () => {
     <main id="main">
       <div className={styles.pageTitle}>
         <h1 className={styles.header}>Ride Schedule</h1>
-        <MiniCal />
+        <DayNavigation></DayNavigation>
         <div className={styles.rightSection}>
           <CSVFromRidesButton></CSVFromRidesButton>
           <AddRideButton />

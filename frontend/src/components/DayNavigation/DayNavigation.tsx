@@ -5,14 +5,44 @@ import { useDate } from 'context/date';
 import buttonStyles from '../../styles/button.module.css';
 
 export const DayNavigation = () => {
-  const { curDate } = useDate();
+  const { curDate, setCurDate } = useDate();
 
-  const previousBusinessDay = () => {};
-  const nextBusinessDay = () => {};
-  const handleDateChange = () => {};
+  const previousBusinessDay = () => {
+    const newDate = new Date(curDate);
+    newDate.setDate(newDate.getDate() - 1);
+
+    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
+      newDate.setDate(newDate.getDate() - 1);
+    }
+
+    setCurDate(newDate);
+  };
+
+  const nextBusinessDay = () => {
+    const newDate = new Date(curDate);
+    newDate.setDate(newDate.getDate() + 1);
+
+    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+
+    setCurDate(newDate);
+  };
+
+  const handleDateChange = (newDate: Date | null) => {
+    if (newDate) {
+      setCurDate(newDate);
+    }
+  };
 
   return (
-    <>
+    <div
+      style={{
+        width: '18rem',
+        display: 'flex',
+        gap: '0.25rem',
+      }}
+    >
       <button
         onClick={previousBusinessDay}
         className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
@@ -24,7 +54,7 @@ export const DayNavigation = () => {
       </button>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
-          label="Day"
+          label="Viewing Rides for"
           value={curDate}
           onAccept={handleDateChange}
           slotProps={{
@@ -75,6 +105,6 @@ export const DayNavigation = () => {
       >
         <NavigateNext></NavigateNext>
       </button>
-    </>
+    </div>
   );
 };
