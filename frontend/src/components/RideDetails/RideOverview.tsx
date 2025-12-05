@@ -37,6 +37,7 @@ import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
+import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
 import { useToast, ToastStatus } from '../../context/toastContext';
 
@@ -393,10 +394,35 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       // For editing existing rides, allow past times; for new rides, don't
                       const allowPastTimes = !isNewRide(ride);
 
-                      // Inline date/time validation removed; handled on Save
-                      const hasStartTimeError = false;
-                      const hasEndTimeError = false;
+                      const validation = validateRideTimes(
+                        ride.startTime,
+                        ride.endTime,
+                        {
+                          allowPastTimes,
+                          maxDurationHours: 24,
+                          minDurationMinutes: 5,
+                        }
+                      );
 
+                      // Check for specific error types
+                      const startTimePastError = validation.errors.find(
+                        (e) => e.type === 'start_time_past'
+                      );
+                      const endTimeBeforeStartError = validation.errors.find(
+                        (e) =>
+                          e.type === 'end_time_before_start' ||
+                          e.type === 'same_time'
+                      );
+                      const durationError = validation.errors.find(
+                        (e) => e.type === 'too_long_duration'
+                      );
+
+                      const hasStartTimeError =
+                        startTimePastError !== undefined;
+                      const hasEndTimeError =
+                        endTimeBeforeStartError !== undefined ||
+                        durationError !== undefined;
+                        
                       return (
                         <>
                           <div className={styles.dateTimeRow}>
@@ -472,8 +498,23 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                                   },
                                 }}
                               />
-                              {/* End time specific errors - directly below end time field */}
-                              {/* Field-level error messaging removed; errors surface on Save */}
+                              {(endTimeBeforeStartError || durationError) && (
+                                <Typography
+                                  variant="caption"
+                                  color="error"
+                                  sx={{
+                                    display: 'block',
+                                    fontSize: '0.75rem',
+                                    marginTop: 0.5,
+                                    marginLeft: 1,
+                                  }}
+                                >
+                                  {
+                                    (endTimeBeforeStartError || durationError)
+                                      ?.message
+                                  }
+                                </Typography>
+                              )}
                             </div>
                           </div>
                         </>

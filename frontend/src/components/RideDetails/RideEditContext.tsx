@@ -227,10 +227,8 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
       }
 
       try {
-        // Prepare the update payload - only include changed fields (like the previous implementation)
         const updatePayload: any = {};
 
-        // Only include changed fields - include riders for single rider updates
         const fieldsToCheck: (keyof RideType)[] = [
           'startTime',
           'endTime',
@@ -257,10 +255,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
           updatePayload.$REMOVE = ['driver'];
         }
 
-        // Use optimistic update from RidesContext
         await updateRideInfo(ride.id, updatePayload);
-
-        // Update the context with the optimistically updated ride
         if (onRideUpdated) {
           onRideUpdated({ ...editedRide } as RideType);
         }
