@@ -10,7 +10,7 @@
   display: grid;
   grid-template-columns: 400px 1fr;
   gap: 1rem;
-  padding: 0 2rem 2rem;
+  padding: 0 2rem;
   position: relative;
 }
 
