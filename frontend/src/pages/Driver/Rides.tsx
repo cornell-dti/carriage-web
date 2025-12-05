@@ -450,7 +450,8 @@ const Rides = () => {
       .filter(
         (ride) =>
           ride.driver?.id === authContext.id &&
-          new Date(ride.startTime) > new Date()
+          new Date(ride.startTime) > new Date() &&
+          ride.status !== Status.CANCELLED
       )
       .sort(
         (a, b) =>
