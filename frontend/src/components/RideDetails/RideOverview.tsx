@@ -37,7 +37,6 @@ import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
-import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
 
 interface RideOverviewProps {
@@ -208,6 +207,9 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) {
+      return { date: '', time: '' };
+    }
     return {
       date: date.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -228,34 +230,25 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
   // Helper functions for date/time editing
   const handleStartDateChange = (newDate: Dayjs | null) => {
-    if (!newDate) return;
+    if (!newDate || !newDate.isValid()) return;
 
     const currentStartTime = dayjs(ride.startTime);
+    const startHour = currentStartTime.isValid() ? currentStartTime.hour() : 0;
+    const startMinute = currentStartTime.isValid() ? currentStartTime.minute() : 0;
     const updatedStartTime = newDate
-      .hour(currentStartTime.hour())
-      .minute(currentStartTime.minute())
+      .hour(startHour)
+      .minute(startMinute)
       .second(0)
       .millisecond(0);
-
-    const currentEndTime = dayjs(ride.endTime);
-
-    // Ensure end time is after start time
-    if (
-      updatedStartTime.isAfter(currentEndTime) ||
-      updatedStartTime.isSame(currentEndTime)
-    ) {
-      const newEndTime = updatedStartTime.add(30, 'minute');
-      updateRideField('endTime', newEndTime.toISOString());
-    }
-
     updateRideField('startTime', updatedStartTime.toISOString());
   };
 
   const handleStartTimeChange = (newTime: Dayjs | null) => {
-    if (!newTime) return;
+    if (!newTime || !newTime.isValid()) return;
 
     const currentStartDate = dayjs(ride.startTime);
-    const updatedStartTime = currentStartDate
+    const base = currentStartDate.isValid() ? currentStartDate : dayjs();
+    const updatedStartTime = base
       .hour(newTime.hour())
       .minute(newTime.minute())
       .second(0)
@@ -276,12 +269,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   const handleEndDateChange = (newDate: Dayjs | null) => {
-    if (!newDate) return;
+    if (!newDate || !newDate.isValid()) return;
 
     const currentEndTime = dayjs(ride.endTime);
+    const endHour = currentEndTime.isValid() ? currentEndTime.hour() : 0;
+    const endMinute = currentEndTime.isValid() ? currentEndTime.minute() : 0;
     const updatedEndTime = newDate
-      .hour(currentEndTime.hour())
-      .minute(currentEndTime.minute())
+      .hour(endHour)
+      .minute(endMinute)
       .second(0)
       .millisecond(0);
 
@@ -289,10 +284,11 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   const handleEndTimeChange = (newTime: Dayjs | null) => {
-    if (!newTime) return;
+    if (!newTime || !newTime.isValid()) return;
 
     const currentEndDate = dayjs(ride.endTime);
-    const updatedEndTime = currentEndDate
+    const base = currentEndDate.isValid() ? currentEndDate : dayjs();
+    const updatedEndTime = base
       .hour(newTime.hour())
       .minute(newTime.minute())
       .second(0)
@@ -384,150 +380,65 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
               {isEditing ? (
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <div className={styles.editFormFields}>
-                    {(() => {
-                      // For editing existing rides, allow past times; for new rides, don't
-                      const allowPastTimes = !isNewRide(ride);
+                    <>
+                      <div className={styles.dateTimeRow}>
+                        <div style={{ flex: 1 }}>
+                          <DatePicker
+                            label="Start Date"
+                            value={dayjs(ride.startTime)}
+                            onChange={handleStartDateChange}
+                            slotProps={{
+                              textField: {
+                                size: 'small',
+                                fullWidth: true,
+                              },
+                            }}
+                          />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <TimePicker
+                            label="Start Time"
+                            value={dayjs(ride.startTime)}
+                            onChange={handleStartTimeChange}
+                            slotProps={{
+                              textField: {
+                                size: 'small',
+                                fullWidth: true,
+                              },
+                            }}
+                          />
+                        </div>
+                      </div>
 
-                      const validation = validateRideTimes(
-                        ride.startTime,
-                        ride.endTime,
-                        {
-                          allowPastTimes,
-                          maxDurationHours: 24,
-                          minDurationMinutes: 5,
-                        }
-                      );
-
-                      // Check for specific error types
-                      const startTimePastError = validation.errors.find(
-                        (e) => e.type === 'start_time_past'
-                      );
-                      const endTimeBeforeStartError = validation.errors.find(
-                        (e) =>
-                          e.type === 'end_time_before_start' ||
-                          e.type === 'same_time'
-                      );
-                      const durationError = validation.errors.find(
-                        (e) => e.type === 'too_long_duration'
-                      );
-
-                      const hasStartTimeError =
-                        startTimePastError !== undefined;
-                      const hasEndTimeError =
-                        endTimeBeforeStartError !== undefined ||
-                        durationError !== undefined;
-
-                      return (
-                        <>
-                          <div className={styles.dateTimeRow}>
-                            <div style={{ flex: 1 }}>
-                              <DatePicker
-                                label="Start Date"
-                                value={dayjs(ride.startTime)}
-                                onChange={handleStartDateChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasStartTimeError,
-                                    helperText: hasStartTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <TimePicker
-                                label="Start Time"
-                                value={dayjs(ride.startTime)}
-                                onChange={handleStartTimeChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasStartTimeError,
-                                    helperText: hasStartTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                              {/* Start time specific error - directly below start time field */}
-                              {startTimePastError && (
-                                <Typography
-                                  variant="caption"
-                                  color="error"
-                                  sx={{
-                                    display: 'block',
-                                    fontSize: '0.75rem',
-                                    marginTop: 0.5,
-                                    marginLeft: 1,
-                                  }}
-                                >
-                                  {startTimePastError.message}
-                                </Typography>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className={styles.dateTimeRow}>
-                            <div style={{ flex: 1 }}>
-                              <DatePicker
-                                label="End Date"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndDateChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <TimePicker
-                                label="End Time"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndTimeChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                              {/* End time specific errors - directly below end time field */}
-                              {(endTimeBeforeStartError || durationError) && (
-                                <Typography
-                                  variant="caption"
-                                  color="error"
-                                  sx={{
-                                    display: 'block',
-                                    fontSize: '0.75rem',
-                                    marginTop: 0.5,
-                                    marginLeft: 1,
-                                  }}
-                                >
-                                  {
-                                    (endTimeBeforeStartError || durationError)
-                                      ?.message
-                                  }
-                                </Typography>
-                              )}
-                            </div>
-                          </div>
-                        </>
-                      );
-                    })()}
+                      <div className={styles.dateTimeRow}>
+                        <div style={{ flex: 1 }}>
+                          <DatePicker
+                            label="End Date"
+                            value={dayjs(ride.endTime)}
+                            onChange={handleEndDateChange}
+                            slotProps={{
+                              textField: {
+                                size: 'small',
+                                fullWidth: true,
+                              },
+                            }}
+                          />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <TimePicker
+                            label="End Time"
+                            value={dayjs(ride.endTime)}
+                            onChange={handleEndTimeChange}
+                            slotProps={{
+                              textField: {
+                                size: 'small',
+                                fullWidth: true,
+                              },
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </>
                   </div>
                 </LocalizationProvider>
               ) : (
