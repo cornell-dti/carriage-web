@@ -16,16 +16,23 @@ const Home = () => {
 
   return (
     <main id="main">
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Ride Schedule</h1>
-        <DayNavigation></DayNavigation>
-        <div className={styles.rightSection}>
-          <CSVFromRidesButton></CSVFromRidesButton>
-          <AddRideButton />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          padding: '2rem 3rem',
+        }}
+      >
+        <div className={styles.pageTitle}>
+          <h1 className={styles.header}>Ride Schedule</h1>
+          <DayNavigation></DayNavigation>
+          <div className={styles.rightSection}>
+            <CSVFromRidesButton></CSVFromRidesButton>
+            <AddRideButton />
+          </div>
         </div>
-      </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         <div className={styles.scheduleContainer}>
           <Schedule />
         </div>

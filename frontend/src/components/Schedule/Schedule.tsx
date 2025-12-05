@@ -282,6 +282,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           borderRadius: '0.5rem',
           backgroundColor: '#fff',
           padding: '2rem',
+          boxShadow: '0px 5px 14px -7px rgba(0,0,0,0.13)',
         }}
       >
         {/* timeline horizontal scroll */}
