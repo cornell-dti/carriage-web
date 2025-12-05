@@ -3,6 +3,7 @@
 }
 
 .header {
+  width: 100%;
   text-align: left;
   font-size: 1.75rem;
   margin: 0;
@@ -25,9 +26,15 @@
 }
 
 .rightSection {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: end;
   gap: 0.5rem;
+}
+
+.rightSection > button {
+  width: 14rem;
 }
 
 .rightSection > div {
