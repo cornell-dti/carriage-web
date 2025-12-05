@@ -182,10 +182,10 @@ const RideActions: React.FC<RideActionsProps> = ({
           onClose(); // Close modal after creating new ride
         }
       } else {
-        // const message = isNewRide(ride)
-        //   ? 'Failed to create ride'
-        //   : 'Failed to save ride';
-        // showToast(message, ToastStatus.ERROR);
+        const message = isNewRide(ride)
+          ? 'Failed to create ride'
+          : 'Failed to save ride';
+        showError(message, 'Rides Error');
       }
     } catch (error) {
       console.error('Error saving ride:', error);
