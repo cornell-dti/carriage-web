@@ -11,7 +11,7 @@ import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import ResponsiveRideCard from '../../components/ResponsiveRideCard';
 import { RideDetailsComponent } from 'components/RideDetails';
-import buttonStyles from '../../components/ResponsiveRideCard.module.css';
+import buttonStyles from '../../styles/button.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';

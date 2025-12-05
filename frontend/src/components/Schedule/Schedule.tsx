@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import moment from 'moment';
 import { Ride } from '../../types';
 import { useDate } from '../../context/date';
@@ -6,7 +6,6 @@ import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import styles from './schedule.module.css';
-import ResponsiveRideCard from '../ResponsiveRideCard';
 
 const Schedule = () => {
   const { scheduledRides, refreshRides } = useRides();
