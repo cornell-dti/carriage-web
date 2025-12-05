@@ -8,6 +8,12 @@
   margin: 0;
 }
 
+.scheduleContainer {
+  width: 100%;
+  height: min-content;
+  padding: 0 2rem 2rem 2rem;
+}
+
 .pageTitle {
   text-align: left;
   font-size: 1.75rem;
