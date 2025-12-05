@@ -9,10 +9,13 @@
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1), 0px 10px 10px rgba(0, 0, 0, 0.16);
   margin: 8px;
   padding: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btn:hover {
   cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15), 0px 15px 15px rgba(0, 0, 0, 0.2);
 }
 
 .ssoBtn {
@@ -27,10 +30,16 @@
   margin: 8px;
   padding: 16px;
   min-width: 180px;
+  width: 100%;
+  max-width: 280px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .ssoBtn:hover {
   cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15), 0px 15px 15px rgba(0, 0, 0, 0.2);
 }
 
 .heading {
@@ -43,4 +52,83 @@
   height: 45px;
   width: 45px;
   margin: 2px;
+}
+
+/* Tablet styles */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .ssoBtn {
+    max-width: 100%;
+    width: 100%;
+    min-width: auto;
+    padding: 14px;
+    margin: 4px 0;
+  }
+
+  .heading {
+    font-size: 17px;
+    padding: 10px;
+  }
+
+  .icon {
+    height: 42px;
+    width: 42px;
+  }
+}
+
+/* Large phones */
+@media (max-width: 767px) and (min-width: 481px) {
+  .ssoBtn {
+    max-width: 260px;
+    padding: 14px;
+    margin: 6px 0;
+  }
+
+  .heading {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .icon {
+    height: 40px;
+    width: 40px;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .ssoBtn {
+    min-width: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+  }
+
+  .heading {
+    font-size: 15px;
+    padding: 6px;
+  }
+
+  .icon {
+    height: 38px;
+    width: 38px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 320px) {
+  .ssoBtn {
+    padding: 10px;
+    margin: 4px 0;
+  }
+
+  .heading {
+    font-size: 14px;
+    padding: 4px;
+  }
+
+  .icon {
+    height: 35px;
+    width: 35px;
+  }
 }
