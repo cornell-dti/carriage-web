@@ -30,7 +30,7 @@ const AddRideButton: React.FC = () => {
     <>
       <button
         onClick={handleOpenModal}
-        className={`${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
+        className={`${buttonStyles.buttonLarge} ${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
       >
         + Add ride
       </button>

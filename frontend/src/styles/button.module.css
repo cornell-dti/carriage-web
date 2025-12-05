@@ -8,8 +8,14 @@
   border-radius: 0.25rem;
   font-size: 1rem;
   text-wrap-mode: nowrap;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.buttonLarge {
+  height: 2.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .buttonSecondary {

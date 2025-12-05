@@ -81,7 +81,7 @@ export const CSVFromRidesButton: FC = () => {
     <>
       <button
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
-        className={`${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
+        className={`${buttonStyles.buttonLarge} ${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
       >
         Export Rides to CSV
       </button>
