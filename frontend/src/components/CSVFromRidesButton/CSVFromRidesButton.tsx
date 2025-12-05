@@ -85,7 +85,9 @@ export const CSVFromRidesButton: FC = () => {
         className={`${buttonStyles.buttonLarge} ${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-          <FileDownload></FileDownload>
+          <FileDownload
+            sx={{ width: '1.2rem', height: '1.2rem' }}
+          ></FileDownload>
           Export Rides to CSV
         </span>
       </button>
