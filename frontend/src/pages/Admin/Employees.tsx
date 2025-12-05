@@ -3,12 +3,12 @@ import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
-import { Button } from '../../components/FormElements/FormElements';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
 import { AdminType, DriverType } from '../../types';
+import buttonStyles from '../../styles/button.module.css';
 
 const Employees = () => {
   const { admins, drivers } = useEmployees();
@@ -124,7 +124,13 @@ const Employees = () => {
         <div className={styles.pageTitle}>
           <h1 className={styles.header}>Employees</h1>
           <div className={styles.rightSection}>
-            <Button onClick={() => setIsOpen(true)}>+ Add Employee</Button>
+            <button
+              style={{ width: '10rem' }}
+              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+              onClick={() => setIsOpen(true)}
+            >
+              + Add Employee
+            </button>
             <EmployeeModal
               isOpen={isOpen}
               setIsOpen={setIsOpen}
