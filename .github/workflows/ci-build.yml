@@ -11,8 +11,8 @@ jobs:
         with:
           node-version: '20.x'
       - name: Install Dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
       - name: Build Frontend
-        run: CI='' npm run build:frontend
+        run: CI='' pnpm run build:frontend
       - name: Build Server
-        run: CI='' npm run build:server
+        run: CI='' pnpm run build:server

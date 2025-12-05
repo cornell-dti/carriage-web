@@ -11,23 +11,20 @@ jobs:
           node-version: '20.x'
       - name: Clean Install
         run: |
-          rm -rf node_modules
-          rm -rf package-lock.json
-          npm cache clean --force
-          npm install
+          pnpm install --frozen-lockfile
           echo "Prettier version:"
-          npx prettier --version
+          pnpm prettier --version
       - name: Debug Prettier
         run: |
           echo "Files to be checked:"
-          npx prettier --list-different "**/*.{ts,js,tsx,jsx,css}"
+          pnpm prettier --list-different "**/*.{ts,js,tsx,jsx,css}"
           echo "Checking specific file:"
-          npx prettier --check "frontend/src/pages/Landing/Landing.tsx"
+          pnpm prettier --check "frontend/src/pages/Landing/Landing.tsx"
           echo "Running full check:"
           ls -la frontend/src/pages/Landing/
           cat frontend/src/pages/Landing/Landing.tsx | od -c
-          npm run format:check
+          pnpm run format:check
       - name: Run Linter
-        run: npm run lint
+        run: pnpm run lint
       - name: Run Type Check
-        run: npm run type-check
+        run: pnpm run type-check

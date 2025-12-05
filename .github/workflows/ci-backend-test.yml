@@ -27,6 +27,6 @@ jobs:
         with:
           node-version: '20.x'
       - name: Install Server Dependencies
-        run: npm run install:server
+        run: pnpm install --frozen-lockfile
       # - name: Test Server
       #   run: npm run test:server
