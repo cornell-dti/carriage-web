@@ -94,6 +94,13 @@ export const CSVFromRidesButton: FC = () => {
           list: {
             'aria-labelledby': 'basic-button',
           },
+          paper: {
+            style: {
+              borderRadius: '0.25rem',
+              boxShadow: 'none',
+              border: '1px solid #e0e0e0',
+            },
+          },
         }}
       >
         <MenuItem onClick={() => handleExportOption('scheduled')}>
