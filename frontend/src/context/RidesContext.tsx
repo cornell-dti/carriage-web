@@ -179,7 +179,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     (rideId: string): Ride | undefined => {
       const allRides = [...unscheduledRides, ...scheduledRides, ...cancelledRides];
       allRides.forEach((ride, index) => {});
-      const foundRide = allRides.find((ride) => ride.id === rideId);
+      const foundRide = allRides.find((ride) => ride && ride.id === rideId);
       return foundRide;
     },
     [unscheduledRides, scheduledRides, cancelledRides]
