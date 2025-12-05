@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
-import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
@@ -36,8 +35,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
 
   const scheduledColSizes = [1, 1, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
-    'Start Time',
-    'End Time',
+    'Pickup Time',
+    'Dropoff Time',
     'Pickup Location',
     'Dropoff Location',
     'Needs',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import { useRides } from '../../context/RidesContext';

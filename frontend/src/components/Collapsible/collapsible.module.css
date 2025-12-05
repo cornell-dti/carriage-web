@@ -9,7 +9,6 @@
   display: flex;
   width: 100%;
   padding: 0.9375rem 2.25rem;
-  background-color: #f3f3f3;
 }
 
 .title {
@@ -21,8 +20,4 @@
 
 .icon {
   margin-left: 0.75rem;
-}
-
-.contentContainer {
-  background-color: #ffffff;
 }
