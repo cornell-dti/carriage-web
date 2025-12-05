@@ -84,7 +84,9 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
             schedulingState === SchedulingState.UNSCHEDULED
         );
         const scheduled = ridesData.filter(
-          ({ schedulingState }) => schedulingState === SchedulingState.SCHEDULED
+          ({ schedulingState }) =>
+            schedulingState === SchedulingState.SCHEDULED ||
+            schedulingState === SchedulingState.SCHEDULED_WITH_MODIFICATION
         );
 
         setUnscheduledRides(unscheduled);
