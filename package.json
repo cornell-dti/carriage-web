@@ -19,6 +19,13 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.8"
   },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "onFail": "error",
+      "version": ">=10"
+    }
+  },
   "scripts": {
     "start:frontend": "cd frontend && pnpm run start",
     "start:server": "cd server && pnpm run dev",
