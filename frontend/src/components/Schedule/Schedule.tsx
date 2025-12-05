@@ -7,6 +7,7 @@ import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import styles from './schedule.module.css';
 import buttonStyles from '../../styles/button.module.css';
+import { Replay, ZoomIn, ZoomOut } from '@mui/icons-material';
 
 const Schedule = () => {
   const { scheduledRides, refreshRides } = useRides();
@@ -97,6 +98,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
     'student'
   );
 
+  const [localHalfHourWidth, setLocalHalfHourWidth] = useState(halfHourWidth);
+
   const timeLabels = useMemo(() => {
     const labels = [];
     const startTime = new Date();
@@ -116,7 +119,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
     return labels;
   }, []);
 
-  const minuteWidth = useMemo(() => halfHourWidth / 30, [halfHourWidth]);
+  const minuteWidth = useMemo(
+    () => localHalfHourWidth / 30,
+    [localHalfHourWidth]
+  );
 
   const baseTime: Date = useMemo<Date>(() => {
     const baseTimeForToday = new Date(baseDate);
@@ -144,6 +150,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
     [minuteWidth, baseTime]
   );
 
+  const alternateTickThreshold = 100;
+
   return (
     <div
       style={{
@@ -161,55 +169,106 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
         style={{
           width: '100%',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '0.25rem',
         }}
       >
-        <button
-          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-          style={{ width: '16rem' }}
-          onClick={() => {
-            const element = document.getElementById(
-              'timeline-current-indicator'
-            );
-            const parentDiv =
-              element?.closest('.overflow-x-scroll') || element?.parentElement;
+        <div
+          style={{
+            width: 'min-content',
+            display: 'flex',
+            gap: '0.25rem',
+          }}
+        >
+          <button
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+            style={{ width: '16rem' }}
+            onClick={() => {
+              const element = document.getElementById(
+                'timeline-current-indicator'
+              );
+              const parentDiv =
+                element?.closest('.overflow-x-scroll') ||
+                element?.parentElement;
 
-            if (element && parentDiv) {
-              // Get the parent's dimensions and scroll position
-              const parentRect = parentDiv.getBoundingClientRect();
-              const elementRect = element.getBoundingClientRect();
+              if (element && parentDiv) {
+                // Get the parent's dimensions and scroll position
+                const parentRect = parentDiv.getBoundingClientRect();
+                const elementRect = element.getBoundingClientRect();
 
-              // Calculate the scroll position to center the element
-              const scrollLeft =
-                element.offsetLeft -
-                parentRect.width / 2 +
-                elementRect.width / 2;
+                // Calculate the scroll position to center the element
+                const scrollLeft =
+                  element.offsetLeft -
+                  parentRect.width / 2 +
+                  elementRect.width / 2;
 
-              // Scroll smoothly to the calculated position
-              parentDiv.scrollTo({
-                left: scrollLeft,
-                behavior: 'smooth',
+                // Scroll smoothly to the calculated position
+                parentDiv.scrollTo({
+                  left: scrollLeft,
+                  behavior: 'smooth',
+                });
+              }
+            }}
+          >
+            {`Now: ${moment(Date.now()).format('h:mm A')}`}
+          </button>
+          <button
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+            style={{ width: '16rem' }}
+            onClick={() => {
+              setNameDisplayMode(
+                nameDisplayMode === 'driver' ? 'student' : 'driver'
+              );
+            }}
+          >
+            {nameDisplayMode === 'driver'
+              ? 'Showing Driver Names'
+              : 'Showing Student Names'}
+          </button>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            width: 'min-content',
+          }}
+        >
+          {localHalfHourWidth !== halfHourWidth ? (
+            <button
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+              aria-label="Restore Default"
+              onClick={() => setLocalHalfHourWidth(halfHourWidth)}
+            >
+              <Replay></Replay>
+            </button>
+          ) : (
+            <></>
+          )}
+          <button
+            onClick={() => {
+              setLocalHalfHourWidth((value) => {
+                return Math.min(value + 10, 500);
               });
-            }
-          }}
-        >
-          {`Now: ${moment(Date.now()).format('h:mm A')}`}
-        </button>
-        <button
-          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-          style={{ width: '16rem' }}
-          onClick={() => {
-            setNameDisplayMode(
-              nameDisplayMode === 'driver' ? 'student' : 'driver'
-            );
-          }}
-        >
-          {nameDisplayMode === 'driver'
-            ? 'Showing Driver Names'
-            : 'Showing Student Names'}
-        </button>
+            }}
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+            aria-label="zoom-in"
+          >
+            <ZoomIn></ZoomIn>
+          </button>
+          <p>{((localHalfHourWidth / halfHourWidth) * 100).toFixed(0)}%</p>
+          <button
+            onClick={() => {
+              setLocalHalfHourWidth((value) => {
+                return Math.max(value - 10, 30);
+              });
+            }}
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+            aria-label="zoom-out"
+          >
+            <ZoomOut></ZoomOut>
+          </button>
+        </div>
       </div>
       {/* timeline container */}
       <div
@@ -245,28 +304,46 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               marginLeft: 0,
             }}
           >
-            {timeLabels.map((timeLabel, idx) => (
-              <div
-                key={idx}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-start',
-                  paddingLeft: '0.125rem',
-                  width: halfHourWidth,
-                  maxWidth: halfHourWidth,
-                  minWidth: halfHourWidth,
-                }}
-              >
-                <p
+            {timeLabels.map((timeLabel, idx) =>
+              // skip a label once zoomed out enough
+              localHalfHourWidth < alternateTickThreshold && idx % 2 === 1 ? (
+                <span
                   style={{
-                    color: 'rgb(163, 163, 163)',
-                    whiteSpace: 'nowrap',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    paddingLeft: '0.125rem',
+                    width: localHalfHourWidth,
+                    maxWidth: localHalfHourWidth,
+                    minWidth: localHalfHourWidth,
+                  }}
+                ></span>
+              ) : (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    paddingLeft: '0.125rem',
+                    width: localHalfHourWidth,
+                    maxWidth: localHalfHourWidth,
+                    minWidth: localHalfHourWidth,
                   }}
                 >
-                  {timeLabel}
-                </p>
-              </div>
-            ))}
+                  <p
+                    style={{
+                      fontSize:
+                        localHalfHourWidth < alternateTickThreshold
+                          ? '.7rem'
+                          : '1rem',
+                      color: 'rgb(163, 163, 163)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {timeLabel}
+                  </p>
+                </div>
+              )
+            )}
           </div>
           {/* timeline lines for rides */}
           <div
@@ -276,7 +353,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               flexDirection: 'column',
               gap: '0.25rem',
               position: 'relative',
-              width: `${halfHourWidth * timeLabels.length}px`,
+              width: `${localHalfHourWidth * timeLabels.length}px`,
             }}
           >
             {rides.map((ride, idx) => {
@@ -351,7 +428,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                           ? 'rgb(64, 64, 64)'
                           : 'rgb(245, 245, 245)',
                       left: `${positionFromLeft}px`,
-                      width: `${Math.max(width, 50)}px`,
+                      width: `${Math.max(width, 5)}px`,
                     }}
                     onClick={() =>
                       selected === ride
@@ -406,10 +483,13 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                 key={idx}
                 style={{
                   height: '100%',
-                  borderLeft: '1px solid rgb(209, 213, 219)',
-                  width: halfHourWidth,
-                  maxWidth: halfHourWidth,
-                  minWidth: halfHourWidth,
+                  borderLeft:
+                    idx % 2 === 1 && localHalfHourWidth < alternateTickThreshold
+                      ? 'none'
+                      : '1px solid rgb(209, 213, 219)',
+                  width: localHalfHourWidth,
+                  maxWidth: localHalfHourWidth,
+                  minWidth: localHalfHourWidth,
                 }}
               ></div>
             ))}

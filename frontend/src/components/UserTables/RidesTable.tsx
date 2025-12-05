@@ -33,7 +33,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
-  const scheduledColSizes = [1, 1, 1, 1, 1, 1, 1];
+  const scheduledColSizes = [0.5, 0.5, 1, 1, 0.6, 1, 1];
   const scheduledHeaders = [
     'Pickup Time',
     'Dropoff Time',
@@ -65,12 +65,26 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             : '';
 
           // Convert accessibility array to string
-          const needs =
-            primaryRider &&
-            primaryRider.accessibility &&
-            primaryRider.accessibility.length > 0
-              ? primaryRider.accessibility.join(', ')
-              : 'None';
+          const needsRenderer = () => {
+            if (
+              primaryRider &&
+              primaryRider.accessibility &&
+              primaryRider.accessibility.length > 0
+            ) {
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {primaryRider.accessibility.map((accessibility) => (
+                    <p>{accessibility}</p>
+                  ))}
+                </div>
+              );
+            }
+            return <p>None</p>;
+          };
+
+          const needs = {
+            data: needsRenderer(),
+          };
 
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
