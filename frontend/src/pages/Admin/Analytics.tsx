@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
-import { useEmployees } from '../../context/EmployeesContext';
-import { Driver, TableData } from '../../types';
-import ExportButton from '../../components/ExportButton/ExportButton';
+import { TableData } from '../../types';
 import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
+import StatsModal from 'components/Modal/StatsModal';
+import styles from './page.module.css';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
-  const { drivers } = useEmployees();
   const today = moment();
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
@@ -34,27 +33,18 @@ const Analytics = () => {
     refreshTable(start, end);
   };
 
-  const generateCols = () => {
-    const cols =
-      'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
-    const finalCols = drivers.reduce(
-      (acc: string, curr: Driver) =>
-        `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`,
-      cols
-    );
-    return finalCols;
-  };
-
   const renderRight = () => (
-    <>
-      <ExportButton
-        toastMsg={`${startDate} to ${endDate} data has been downloaded.`}
-        endpoint={`/api/stats/download?from=${startDate}&to=${endDate}`}
-        csvCols={generateCols()}
-        filename={`${startDate}_${endDate}_analytics.csv`}
-      />
+    <div className={styles.rightSection}>
+      <div style={{ padding: '0rem 0.5rem 0.5rem' }}>
+        {' '}
+        {/*aligns button with notification bell*/}
+        <StatsModal
+          initStartDate={startDate}
+          initEndDate={endDate}
+        ></StatsModal>
+      </div>
       <Notification />
-    </>
+    </div>
   );
 
   const getLabel = () => {

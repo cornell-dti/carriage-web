@@ -1,5 +1,3 @@
-import React, { useState, useRef } from 'react';
-import { CSVLink } from 'react-csv';
 import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
 import styles from './exportButton.module.css';
@@ -19,30 +17,34 @@ const ExportButton = ({
   csvCols,
   filename,
 }: clickHandler) => {
-  const [downloadData, setDownloadData] = useState<string>('');
   const { showToast } = useToast();
-  const csvLink = useRef<
-    CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
-  >(null);
 
-  const downloadCSV = () => {
-    axios
-      .get(endpoint, {
+  const downloadCSV = async () => {
+    try {
+      // fetch csv string from stats table in backend
+      const res = await axios.get(endpoint, {
         responseType: 'text',
         transformResponse: [(data) => data],
-      })
-      .then((res) => res.data)
-      .then((data) => {
-        if (data === '') {
-          setDownloadData(csvCols);
-        } else {
-          setDownloadData(data);
-        }
-        if (csvLink.current) {
-          csvLink.current.link.click();
-        }
-      })
-      .then(() => showToast(toastMsg, ToastStatus.SUCCESS));
+      });
+      const data = res.data || csvCols;
+
+      // generate a download link and initiate the download
+      const blob = new Blob([data], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename || 'download.csv';
+      document.body.appendChild(link);
+      link.click();
+
+      //cleanup
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast(toastMsg, ToastStatus.SUCCESS);
+    } catch (error) {
+      showToast('Failed to download CSV', ToastStatus.ERROR);
+    }
   };
 
   return (
@@ -54,13 +56,6 @@ const ExportButton = ({
       >
         <img src={download} alt="capacity icon" /> Export
       </Button>
-      <CSVLink
-        data={downloadData}
-        filename={filename}
-        className={styles.hidden}
-        ref={csvLink}
-        target="_blank"
-      />
     </>
   );
 };

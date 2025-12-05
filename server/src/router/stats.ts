@@ -11,6 +11,20 @@ import { Driver } from '../models/driver';
 
 const router = express.Router();
 
+/**
+ * GET /download
+ *
+ * protected route for admins that generates & downloads CSV stats
+ * for a given date range.
+ *
+ * query params:
+ * - `from` (string): Start date in 'YYYY-MM-DD' format <- required
+ * - `to` (string): End date in 'YYYY-MM-DD' format <- optional
+ *
+ * response:
+ * - CSV file containing aggregated ride and driver statistics for date range
+ */
+
 router.get('/download', validateUser('Admin'), (req, res) => {
   const {
     query: { from, to },
@@ -28,6 +42,28 @@ router.get('/download', validateUser('Admin'), (req, res) => {
   statsFromDates(dates, res, true);
 });
 
+/**
+ * PUT
+ *
+ * route for admin users to manually edit or update stats entries for
+ * multiple dates
+ *
+ * request body:
+ * - `dates` (object): key-value pairs where each key is a date string and the value
+ *   is an object with the updated stats fields
+ *
+ * Example:
+ * json
+ * {
+ *   "dates": {
+ *     "01/20/2024": { "dayCount": 5, "nightCount": 7 },
+ *     "01/21/2024": { "dayCount": 3, "nightCount": 9 }
+ *   }
+ * }
+ *
+ * Response:
+ * - JSON array of updated `Stats` objects
+ */
 router.put('/', validateUser('Admin'), (req, res) => {
   const {
     body: { dates },
@@ -54,6 +90,18 @@ router.put('/', validateUser('Admin'), (req, res) => {
   });
 });
 
+/**
+ * GET
+ *
+ * protected route for admins to retrieve stats within a date range
+ *
+ * query params:
+ * - `from` (string): Start date in 'YYYY-MM-DD' format <- required
+ * - `to` (string): End date in 'YYYY-MM-DD' format <- optional
+ *
+ * response:
+ * - JSON array of computed or existing stats
+ */
 router.get('/', validateUser('Admin'), (req, res) => {
   const {
     query: { from, to },
@@ -78,6 +126,12 @@ router.get('/', validateUser('Admin'), (req, res) => {
   }
 });
 
+/**
+ * Builds and processes stats for a list of dates.
+ * @param {string[]} dates - array of date strings in (YYYY-MM-DD) format
+ * @param {Response} res - express response object
+ * @param {boolean} download - whether to trigger CSV download (true) or return JSON (false)
+ */
 function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
 
@@ -110,6 +164,12 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
   });
 }
 
+/**
+ * generates and sends a CSV file containing daily and driver statistics.
+ * @param {Response} res - Express response object
+ * @param {StatsType[]} statsAcc - array of accumulated stats data
+ * @param {number} numDays - number of days requested
+ */
 function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
   if (statsAcc.length === numDays) {
     Driver.scan()
@@ -121,6 +181,7 @@ function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
           acc[fullName] = 0;
           return acc;
         }, {} as ObjectType);
+
         const dataToExport = statsAcc
           .sort(
             (a: any, b: any) =>
@@ -144,9 +205,13 @@ function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
             };
             return row;
           });
+
         csv
           .writeToBuffer(dataToExport, { headers: true })
-          .then((data) => res.send(data))
+          .then((data) => {
+            res.send(data);
+            // console.log(data.toString());
+          })
           .catch((err) => res.send(err));
       });
   }
@@ -158,6 +223,21 @@ function checkSend(res: Response, statsAcc: StatsType[], numDays: number) {
   }
 }
 
+/**
+ * computes stats for a single date. attempts to retrieve existing stats from
+ * DynamoDB; if none exist, computes from rides and saves new stats
+ *
+ * @param {Response} res - Express response object
+ * @param {StatsType[]} statsAcc - Accumulator for stats results
+ * @param {number} numDays - Total number of requested days
+ * @param {string} dayStart - Start timestamp for the day (00:00)
+ * @param {string} dayEnd - End timestamp for day period (17:00)
+ * @param {string} nightStart - Start timestamp for night period (17:01)
+ * @param {string} nightEnd - End timestamp for night period (23:59)
+ * @param {string} year - Year string (YYYY)
+ * @param {string} monthDay - Month and day string (MMDD)
+ * @param {boolean} download - Whether to export as CSV or return JSON
+ */
 function computeStats(
   res: Response,
   statsAcc: StatsType[],
@@ -179,7 +259,7 @@ function computeStats(
         downloadStats(res, statsAcc, numDays);
       }
     } else if (err || !data) {
-      const conditionRidesDate = new Condition()
+      const conditionRidesDate = new Condition() //retrieve all rides with valid (night or day) start times and is NOT unschedules
         .where('startTime')
         .between(dayStart, nightEnd)
         .where('type')
@@ -233,14 +313,44 @@ function computeStats(
           nightCancel: nightCancelStat,
           drivers: driversStat,
         });
-        Stats.create(stats).then((doc) => {
-          statsAcc.push(doc.toJSON() as StatsType);
-          if (!download) {
-            checkSend(res, statsAcc, numDays);
-          } else {
-            downloadStats(res, statsAcc, numDays);
-          }
-        });
+        Stats.create(stats)
+          .then((doc) => {
+            statsAcc.push(doc.toJSON() as StatsType);
+            if (!download) {
+              checkSend(res, statsAcc, numDays);
+            } else {
+              downloadStats(res, statsAcc, numDays);
+            }
+          })
+          .catch((err) => {
+            // If a concurrent process already created this item, fall back to fetching it
+            if (
+              err?.name === 'ConditionalCheckFailedException' ||
+              err?.code === 'ConditionalCheckFailedException' ||
+              err?.message?.includes('ConditionalCheckFailedException')
+            ) {
+              Stats.get({ year, monthDay })
+                .then((existing) => {
+                  if (existing) {
+                    statsAcc.push(existing.toJSON() as StatsType);
+                    if (!download) {
+                      checkSend(res, statsAcc, numDays);
+                    } else {
+                      downloadStats(res, statsAcc, numDays);
+                    }
+                  } else {
+                    res
+                      .status(409)
+                      .send({ err: 'Stats item exists but could not be retrieved.' });
+                  }
+                })
+                .catch((getErr) => {
+                  res.status(getErr?.statusCode || 500).send({ err: getErr?.message || 'Failed to retrieve existing stats item.' });
+                });
+            } else {
+              res.status(err?.statusCode || 500).send({ err: err?.message || 'Failed to create stats.' });
+            }
+          });
       });
     } else {
       console.log('Should be unreachable');
