@@ -11,7 +11,6 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import { useDate } from '../../context/date';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import { format_date } from '../../util/index';
-import { RideType } from '../../types';
 
 const Home = () => {
   const { curDate } = useDate();
@@ -35,7 +34,9 @@ const Home = () => {
         </div>
       </div>
 
-      <Schedule />
+      <div className={styles.scheduleContainer}>
+        <Schedule />
+      </div>
 
       <Collapsible title={'Unscheduled Rides'}>
         <UnscheduledTable />

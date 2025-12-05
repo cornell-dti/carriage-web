@@ -72,6 +72,9 @@ scripts
 
 server/.env
 
+# Secret certificates (should not be committed)
+server/config/*.crt
+
 # build
 build/
 
@@ -83,3 +86,6 @@ build/
 
 # Documentation
 docs/
+
+# session code
+private/

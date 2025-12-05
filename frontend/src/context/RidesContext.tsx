@@ -344,6 +344,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         // Make API call
         const response = await axios.put(`/api/rides/${rideId}`, updates);
         const serverRide = response.data.data;
+        console.log(serverRide, 'serverride');
 
         if (rideInContext) {
           // Update with server data if ride is in current context

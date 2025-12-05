@@ -5,7 +5,8 @@ jobs:
   warn-big-diff:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - uses: cornell-dti/big-diff-warning@master
+        continue-on-error: true
         env:
           BOT_TOKEN: '${{ secrets.BOT_TOKEN }}'
