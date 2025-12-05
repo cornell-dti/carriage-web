@@ -9,6 +9,7 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import buttonStyles from '../../styles/button.module.css';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -111,7 +112,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
 
           const assignButton = (shouldReassign: boolean) => (
             <Button
-              className={styles.assignButton}
+              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
               ref={buttonRef}
               onClick={(e) => {
                 e.stopPropagation();
@@ -125,9 +126,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           );
 
           const editButton = (
-            <Button
-              outline
-              small
+            <button
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
               onClick={() => {
                 if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
@@ -137,7 +137,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               }}
             >
               Edit
-            </Button>
+            </button>
           );
 
           const deleteButton = (
@@ -154,7 +154,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
 
           const valueEditAssign = {
             data: (
-              <div className={styles.dataValues}>
+              <div
+                className={styles.dataValues}
+                style={{ display: 'flex', gap: '0.5rem' }}
+              >
                 {editButton}
                 {assignButton(false)}
                 {deleteButton}
