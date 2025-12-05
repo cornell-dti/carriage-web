@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
-import Notification from '../../components/Notification/Notification';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
@@ -127,7 +126,6 @@ const Employees = () => {
                 : null
             }
           />
-          <Notification />
         </div>
       </div>
 

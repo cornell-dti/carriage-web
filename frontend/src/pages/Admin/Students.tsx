@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import StudentsTable from '../../components/UserTables/StudentsTable';
 import RiderModal from '../../components/Modal/RiderModal';
 import CopyButton from '../../components/CopyButton/CopyButton';
-import Notification from '../../components/Notification/Notification';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
@@ -59,7 +58,6 @@ const Riders = () => {
             + Add Student
           </Button>
           <RiderModal isOpen={isOpen} setIsOpen={setIsOpen} />
-          <Notification />
         </div>
       </div>
 

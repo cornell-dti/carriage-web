@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
 import { Driver, TableData } from '../../types';
 import ExportButton from '../../components/ExportButton/ExportButton';
-import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
@@ -17,7 +16,7 @@ const Analytics = () => {
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'Analytics - Carriage';
   }, []);
 
@@ -53,7 +52,6 @@ const Analytics = () => {
         csvCols={generateCols()}
         filename={`${startDate}_${endDate}_analytics.csv`}
       />
-      <Notification />
     </>
   );
 

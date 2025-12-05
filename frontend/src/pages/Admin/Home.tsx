@@ -4,7 +4,6 @@ import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
-import Notification from '../../components/Notification/Notification';
 import styles from './page.module.css';
 import Collapsible from '../../components/Collapsible/Collapsible';
 import { CSVFromRidesButton } from 'components/CSVFromRidesButton/CSVFromRidesButton';
@@ -21,7 +20,6 @@ const Home = () => {
         <div className={styles.rightSection}>
           <CSVFromRidesButton></CSVFromRidesButton>
           <AddRideButton />
-          <Notification />
         </div>
       </div>
 

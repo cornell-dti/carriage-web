@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '../../components/FormElements/FormElements';
 import CopyButton from '../../components/CopyButton/CopyButton';
-import Notification from '../../components/Notification/Notification';
 import LocationsContent from 'components/Locations/LocationsContent';
 import styles from './page.module.css';
 import { LocationFormModal } from 'components/Locations/LocationFormModal';
@@ -146,7 +145,6 @@ const Locations = () => {
           >
             + Add Location
           </Button>
-          <Notification />
           {isUploading && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
               <CircularProgress size={18} />
