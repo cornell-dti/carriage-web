@@ -34,20 +34,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
-  const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
-  const unscheduledHeaders = [
-    '',
-    'Time',
-    'Passenger',
-    'Pickup Location',
-    'Dropoff Location',
-    'Needs',
-    '',
-  ];
-
-  const scheduledColSizes = [1, 1, 1, 1, 1, 1];
+  const scheduledColSizes = [1, 1, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
-    'Time',
+    'Start Time',
+    'End Time',
     'Pickup Location',
     'Dropoff Location',
     'Needs',
@@ -58,11 +48,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   return (
     <>
       <Table>
-        <Row
-          header
-          colSizes={hasButtons ? unscheduledColSizes : scheduledColSizes}
-          data={hasButtons ? unscheduledHeaders : scheduledHeaders}
-        />
+        <Row header colSizes={scheduledColSizes} data={scheduledHeaders} />
         {rides.map((ride, index) => {
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
             hour: '2-digit',
@@ -92,18 +78,17 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           const dropoffLocation = ride.endLocation.name;
           const dropoffTag = ride.endLocation.tag;
 
-          const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
-            hour: 'numeric',
-            hour12: true,
-          });
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
-          const startEndTime = {
+          const startTimeElement = {
+            data: <p>{startTime}</p>,
+          };
+
+          const endTimeElement = {
             data: (
               <span>
-                <p className={styles.bold}>{startTime}</p>
-                <p className={styles.gray}> -- {endTime}</p>
+                <p> {endTime}</p>
               </span>
             ),
           };
@@ -111,18 +96,21 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           // Task1
 
           const assignButton = (shouldReassign: boolean) => (
-            <Button
-              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
+            <button
+              className={`${buttonStyles.button} ${
+                shouldReassign
+                  ? buttonStyles.buttonSecondary
+                  : buttonStyles.buttonPrimary
+              }`}
               ref={buttonRef}
               onClick={(e) => {
                 e.stopPropagation();
                 setOpenAssignModal(openAssignModal === index ? -1 : index);
                 setReassign(shouldReassign);
               }}
-              small
             >
               {shouldReassign ? 'Reassign' : 'Assign'}
-            </Button>
+            </button>
           );
 
           const editButton = (
@@ -144,7 +132,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             <button
               className={styles.deleteIcon}
               onClick={() => {
-                //buttonRef = null;
                 setDeleteOpen(index);
               }}
             >
@@ -152,46 +139,27 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             </button>
           );
 
-          const valueEditAssign = {
+          const valueEdit = {
             data: (
               <div
                 className={styles.dataValues}
                 style={{ display: 'flex', gap: '0.5rem' }}
               >
                 {editButton}
-                {assignButton(false)}
-                {deleteButton}
-              </div>
-            ),
-          };
-
-          const valueEditReassign = {
-            data: (
-              <div className={styles.dataValues}>
-                {editButton}
-                {assignButton(true)}
+                {assignButton(ride.driver !== undefined)}
                 {deleteButton}
               </div>
             ),
           };
 
           const scheduledRideData = [
-            startEndTime,
+            startTimeElement,
+            endTimeElement,
             valuePickup,
             valueDropoff,
             needs,
             riderName,
-            valueEditReassign,
-          ];
-
-          const unscheduledRideData = [
-            timeframe,
-            startEndTime,
-            riderName,
-            valuePickup,
-            valueDropoff,
-            needs,
-            valueEditAssign,
+            valueEdit,
           ];
 
           const handleRowClick = () => {
@@ -208,19 +176,9 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             />
           );
 
-          const unscheduledRow = () => (
-            <Row
-              key={ride.id}
-              data={unscheduledRideData}
-              colSizes={unscheduledColSizes}
-              groupStart={2}
-              onClick={handleRowClick}
-            />
-          );
-
           return (
             <React.Fragment key={ride.id}>
-              {hasButtons ? unscheduledRow() : scheduledRow()}
+              {scheduledRow()}
               <DeleteOrEditTypeModal
                 key={`delete-edit-modal-${ride.id}`}
                 open={deleteOpen === index}
