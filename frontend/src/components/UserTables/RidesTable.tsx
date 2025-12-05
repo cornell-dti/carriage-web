@@ -33,7 +33,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
-  const scheduledColSizes = [0.5, 0.5, 1, 1, 0.6, 1, 1];
+  const scheduledColSizes = [0.5, 0.5, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
     'Pickup Time',
     'Dropoff Time',
@@ -74,7 +74,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               return (
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {primaryRider.accessibility.map((accessibility) => (
-                    <p>{accessibility}</p>
+                    <p style={{ textWrap: 'nowrap' }}>{accessibility}</p>
                   ))}
                 </div>
               );
@@ -95,15 +95,11 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
           const startTimeElement = {
-            data: <p>{startTime}</p>,
+            data: <p style={{ textWrap: 'nowrap' }}>{startTime}</p>,
           };
 
           const endTimeElement = {
-            data: (
-              <span>
-                <p> {endTime}</p>
-              </span>
-            ),
+            data: <p style={{ textWrap: 'nowrap' }}>{endTime}</p>,
           };
 
           // Task1
@@ -141,17 +137,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             </button>
           );
 
-          const deleteButton = (
-            <button
-              className={styles.deleteIcon}
-              onClick={() => {
-                setDeleteOpen(index);
-              }}
-            >
-              <img src={trashbig} alt="delete ride" />
-            </button>
-          );
-
           const valueEdit = {
             data: (
               <div
@@ -160,7 +145,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               >
                 {editButton}
                 {assignButton(ride.driver !== undefined)}
-                {deleteButton}
               </div>
             ),
           };

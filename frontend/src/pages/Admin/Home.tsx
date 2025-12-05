@@ -21,7 +21,7 @@ const Home = () => {
           display: 'flex',
           flexDirection: 'column',
           gap: '2rem',
-          padding: '2rem 3rem',
+          padding: '2rem 4rem',
         }}
       >
         <div className={styles.pageTitle}>
