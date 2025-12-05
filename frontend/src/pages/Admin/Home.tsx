@@ -23,16 +23,18 @@ const Home = () => {
         </div>
       </div>
 
-      <div className={styles.scheduleContainer}>
-        <Schedule />
-      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className={styles.scheduleContainer}>
+          <Schedule />
+        </div>
 
-      <Collapsible title={'Unscheduled Rides'}>
-        <UnscheduledTable />
-      </Collapsible>
-      <Collapsible title={'Scheduled Rides'}>
-        <ScheduledTable />
-      </Collapsible>
+        <Collapsible title={'Unscheduled Rides'}>
+          <UnscheduledTable />
+        </Collapsible>
+        <Collapsible title={'Scheduled Rides'}>
+          <ScheduledTable />
+        </Collapsible>
+      </div>
     </main>
   );
 };

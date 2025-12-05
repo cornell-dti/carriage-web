@@ -219,10 +219,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          border: 'solid 1px #dddddd',
+          border: 'solid 1px #ddd',
           borderRadius: '0.5rem',
           backgroundColor: '#fff',
-          padding: '1rem 1rem 0.5rem 1rem',
+          padding: '2rem',
         }}
       >
         {/* timeline horizontal scroll */}
@@ -230,7 +230,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           style={{
             width: '100%',
             height: '100%',
-            overflowX: 'scroll',
+            overflowX: 'auto',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',

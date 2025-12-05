@@ -1,8 +1,12 @@
 .collapsible {
+  width: 100%;
+  padding: 0 2rem;
+}
+.collapsibleContent {
   display: inline-block;
   width: 100%;
   border-radius: 0.5rem;
-  margin-bottom: 0.5rem;
+  border: 1px solid #ddd;
 }
 
 .banner {
