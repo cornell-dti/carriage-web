@@ -6,6 +6,7 @@ import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import styles from './schedule.module.css';
+import buttonStyles from '../../styles/button.module.css';
 
 const Schedule = () => {
   const { scheduledRides, refreshRides } = useRides();
@@ -166,7 +167,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
         }}
       >
         <button
-          className={styles.topControlButton}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+          style={{ width: '16rem' }}
           onClick={() => {
             const element = document.getElementById(
               'timeline-current-indicator'
@@ -196,7 +198,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           {`Now: ${moment(Date.now()).format('h:mm A')}`}
         </button>
         <button
-          className={styles.topControlButton}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+          style={{ width: '16rem' }}
           onClick={() => {
             setNameDisplayMode(
               nameDisplayMode === 'driver' ? 'student' : 'driver'
