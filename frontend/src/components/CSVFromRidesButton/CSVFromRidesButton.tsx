@@ -4,6 +4,7 @@ import { useRides } from 'context/RidesContext';
 import { FC, useState } from 'react';
 import { format_date } from '../../util/index';
 import buttonStyles from '../../styles/button.module.css';
+import { FileDownload } from '@mui/icons-material';
 
 export const CSVFromRidesButton: FC = () => {
   const { curDate } = useDate();
@@ -83,7 +84,10 @@ export const CSVFromRidesButton: FC = () => {
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
         className={`${buttonStyles.buttonLarge} ${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
       >
-        Export Rides to CSV
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+          <FileDownload></FileDownload>
+          Export Rides to CSV
+        </span>
       </button>
       <Menu
         id="basic-menu"
