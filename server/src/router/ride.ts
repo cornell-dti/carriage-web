@@ -201,7 +201,8 @@ router.get('/', validateUser('User'), (req, res) => {
     schedulingState,
     allDates,
   } = req.query;
-  let condition = new Condition('status').not().eq(Status.CANCELLED);
+
+  let condition = new Condition();
 
   if (type) {
     condition = condition.where('type').eq(type);

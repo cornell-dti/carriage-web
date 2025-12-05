@@ -3,6 +3,7 @@ import moment from 'moment';
 import AddRideButton from '../../components/AddRideButton/AddRideButton';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
+import CancelledTable from '../../components/UserTables/CancelledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import MiniCal from '../../components/MiniCal/MiniCal';
 import Notification from '../../components/Notification/Notification';
@@ -43,6 +44,9 @@ const Home = () => {
       </Collapsible>
       <Collapsible title={'Scheduled Rides'}>
         <ScheduledTable />
+      </Collapsible>
+      <Collapsible title={'Cancelled Rides'}>
+        <CancelledTable />
       </Collapsible>
     </main>
   );

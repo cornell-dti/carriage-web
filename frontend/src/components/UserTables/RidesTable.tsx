@@ -7,6 +7,7 @@ import RideModal from '../RideModal/RideModal';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
+import { useRides } from '../../context/RidesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
 
@@ -17,6 +18,7 @@ type RidesTableProps = {
 
 const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const { drivers } = useEmployees();
+  const { getRideById } = useRides();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
   const [openEditModal, setOpenEditModal] = useState(-1);
   const [openDeleteOrEditModal, setOpenDeleteOrEditModal] = useState(-1);
@@ -25,7 +27,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [deleteOpen, setDeleteOpen] = useState(-1);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [rideEditOpenIndex, setRideEditOpenIndex] = useState(-1);
+  const [rideEditOpenId, setRideEditOpenId] = useState<string | null>(null);
   let buttonRef = useRef(null);
 
   const handleCloseDetailsModal = () => {
@@ -62,7 +64,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           colSizes={hasButtons ? unscheduledColSizes : scheduledColSizes}
           data={hasButtons ? unscheduledHeaders : scheduledHeaders}
         />
-        {rides.map((ride, index) => {
+        {rides.filter((ride) => ride !== undefined).map((ride, index) => {
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -132,7 +134,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
                 if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
                 } else {
-                  setRideEditOpenIndex(index);
+                  setRideEditOpenId(ride.id);
                 }
               }}
             >
@@ -262,11 +264,11 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       )}
 
       {/* Ride Edit Modal */}
-      {rideEditOpenIndex >= 0 && (
+      {rideEditOpenId && getRideById(rideEditOpenId) && (
         <RideDetailsComponent
-          open={rideEditOpenIndex >= 0}
-          onClose={() => setRideEditOpenIndex(-1)}
-          ride={rides[rideEditOpenIndex]}
+          open={!!rideEditOpenId}
+          onClose={() => setRideEditOpenId(null)}
+          ride={getRideById(rideEditOpenId)!}
           initialEditingState={true}
         />
       )}
