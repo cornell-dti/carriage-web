@@ -81,6 +81,7 @@ export const CSVFromRidesButton: FC = () => {
   return (
     <>
       <button
+        style={{ width: '14rem' }}
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
         className={`${buttonStyles.buttonLarge} ${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
       >

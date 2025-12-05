@@ -29,6 +29,9 @@ const AddRideButton: React.FC = () => {
   return (
     <>
       <button
+        style={{
+          width: '8rem',
+        }}
         onClick={handleOpenModal}
         className={`${buttonStyles.buttonLarge} ${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
       >

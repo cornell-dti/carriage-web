@@ -113,60 +113,69 @@ const Employees = () => {
 
   return (
     <main id="main">
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Employees</h1>
-        <div className={styles.rightSection}>
-          <Button onClick={() => setIsOpen(true)}>+ Add Employee</Button>
-          <EmployeeModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            existingEmployee={
-              selectedEmployee
-                ? convertToEmployeeEntity(selectedEmployee)
-                : null
-            }
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          padding: '2rem 4rem',
+        }}
+      >
+        <div className={styles.pageTitle}>
+          <h1 className={styles.header}>Employees</h1>
+          <div className={styles.rightSection}>
+            <Button onClick={() => setIsOpen(true)}>+ Add Employee</Button>
+            <EmployeeModal
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              existingEmployee={
+                selectedEmployee
+                  ? convertToEmployeeEntity(selectedEmployee)
+                  : null
+              }
+            />
+          </div>
+        </div>
+
+        <div className={styles.statsAndSearch}>
+          <div className={styles.searchFilter}>
+            <SearchAndFilter
+              items={displayEmployees}
+              searchFields={['firstName', 'lastName']}
+              filterOptions={[
+                {
+                  field: 'roleType',
+                  label: 'Role',
+                  options: [
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'driver', label: 'Driver' },
+                  ],
+                },
+              ]}
+              onFilterApply={handleFilterApply}
+            />
+          </div>
+          <div className={styles.statsBoxContainer}>
+            {employeeStats.map((stat, idx) => (
+              <StatsBox key={idx} {...stat} />
+            ))}
+          </div>
+        </div>
+
+        <div className={styles.employeeCards}>
+          <EmployeeCards employees={paginatedEmployees} />
+        </div>
+
+        <div className={styles.paginationContainer}>
+          <Pagination
+            count={Math.ceil(filteredEmployees.length / pageSize)}
+            page={page}
+            onChange={handlePageChange}
+            size="large"
+            showFirstButton
+            showLastButton
           />
         </div>
-      </div>
-
-      <div className={styles.statsAndSearch}>
-        <div className={styles.searchFilter}>
-          <SearchAndFilter
-            items={displayEmployees}
-            searchFields={['firstName', 'lastName']}
-            filterOptions={[
-              {
-                field: 'roleType',
-                label: 'Role',
-                options: [
-                  { value: 'admin', label: 'Admin' },
-                  { value: 'driver', label: 'Driver' },
-                ],
-              },
-            ]}
-            onFilterApply={handleFilterApply}
-          />
-        </div>
-        <div className={styles.statsBoxContainer}>
-          {employeeStats.map((stat, idx) => (
-            <StatsBox key={idx} {...stat} />
-          ))}
-        </div>
-      </div>
-
-      <div className={styles.employeeCards}>
-        <EmployeeCards employees={paginatedEmployees} />
-      </div>
-
-      <div className={styles.paginationContainer}>
-        <Pagination
-          count={Math.ceil(filteredEmployees.length / pageSize)}
-          page={page}
-          onChange={handlePageChange}
-          size="large"
-          showFirstButton
-          showLastButton
-        />
       </div>
     </main>
   );

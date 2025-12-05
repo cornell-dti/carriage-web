@@ -1,11 +1,12 @@
 .card {
   display: inline-block;
-  width: 17.2rem;
-  /* height: 23rem; */
+  width: 17rem;
+  height: 20rem;
   background-color: white;
   border-radius: 0.5rem;
+  border: solid 1px #ddd;
   overflow: hidden;
-  box-shadow: 0 0.25rem 2.2rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
 }
 
 .image {
