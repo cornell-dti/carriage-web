@@ -47,14 +47,7 @@ const Riders = () => {
 
   return (
     <main id="main">
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '2rem',
-          padding: '2rem 4rem',
-        }}
-      >
+      <div className={styles.mainContent}>
         <div className={styles.pageTitle}>
           <h1 className={styles.header}>Students</h1>
           <div className={styles.rightSection}>

@@ -8,6 +8,7 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
+import styles from './page.module.css';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
@@ -65,45 +66,47 @@ const Analytics = () => {
   };
 
   return (
-    <TabSwitcher
-      labels={['Ride Data', 'Driver Data']}
-      renderRight={renderRight}
-    >
-      <>
-        <DateFilter
-          initStartDate={startDate}
-          initEndDate={endDate}
-          onSubmit={onSelectDates}
-        />
-        <AnalyticsOverview
-          type="ride"
-          data={analyticsData}
-          label={getLabel()}
-        />
-        <AnalyticsTable
-          type="ride"
-          data={analyticsData}
-          refreshTable={refreshTable}
-        />
-      </>
-      <>
-        <DateFilter
-          initStartDate={startDate}
-          initEndDate={endDate}
-          onSubmit={onSelectDates}
-        />
-        <AnalyticsOverview
-          type="driver"
-          data={analyticsData}
-          label={getLabel()}
-        />
-        <AnalyticsTable
-          type="driver"
-          data={analyticsData}
-          refreshTable={refreshTable}
-        />
-      </>
-    </TabSwitcher>
+    <div className={styles.mainContent}>
+      <TabSwitcher
+        labels={['Ride Data', 'Driver Data']}
+        renderRight={renderRight}
+      >
+        <>
+          <DateFilter
+            initStartDate={startDate}
+            initEndDate={endDate}
+            onSubmit={onSelectDates}
+          />
+          <AnalyticsOverview
+            type="ride"
+            data={analyticsData}
+            label={getLabel()}
+          />
+          <AnalyticsTable
+            type="ride"
+            data={analyticsData}
+            refreshTable={refreshTable}
+          />
+        </>
+        <>
+          <DateFilter
+            initStartDate={startDate}
+            initEndDate={endDate}
+            onSubmit={onSelectDates}
+          />
+          <AnalyticsOverview
+            type="driver"
+            data={analyticsData}
+            label={getLabel()}
+          />
+          <AnalyticsTable
+            type="driver"
+            data={analyticsData}
+            refreshTable={refreshTable}
+          />
+        </>
+      </TabSwitcher>
+    </div>
   );
 };
 

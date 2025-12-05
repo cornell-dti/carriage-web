@@ -133,14 +133,8 @@ const Locations = () => {
   };
 
   return (
-    <main id="main" className={styles.main}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '2rem',
-        }}
-      >
+    <main id="main">
+      <div className={styles.mainContent} style={{ gap: 0 }}>
         <div className={styles.pageTitle}>
           <h1 className={styles.header}>Locations</h1>
           <div className={styles.rightSection}>

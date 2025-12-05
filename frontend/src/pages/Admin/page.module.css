@@ -1,3 +1,10 @@
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
 .pageContainer {
   margin: 0 2rem;
 }
