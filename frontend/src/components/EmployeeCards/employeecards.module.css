@@ -1,7 +1,6 @@
 .cardsContainer {
   display: flex;
   flex-wrap: wrap;
-  height: 38rem;
   padding: 1rem 2rem;
   gap: 2rem;
 }

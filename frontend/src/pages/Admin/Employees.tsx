@@ -161,9 +161,7 @@ const Employees = () => {
           </div>
         </div>
 
-        <div className={styles.employeeCards}>
-          <EmployeeCards employees={paginatedEmployees} />
-        </div>
+        <EmployeeCards employees={paginatedEmployees} />
 
         <div className={styles.paginationContainer}>
           <Pagination

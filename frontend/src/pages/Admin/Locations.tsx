@@ -18,7 +18,6 @@ const Locations = () => {
   }, [loc]);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const { refreshLocations } = useLocations();
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadLocationImage = async (
