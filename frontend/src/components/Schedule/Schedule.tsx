@@ -100,10 +100,10 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
   const timeLabels = useMemo(() => {
     const labels = [];
     const startTime = new Date();
-    startTime.setHours(7, 0, 0); // 7:00 AM
+    startTime.setHours(0, 0, 0);
 
     const endTime = new Date();
-    endTime.setHours(20, 30, 0); // 3:30 PM
+    endTime.setHours(24, 0, 0);
 
     let currentTime = new Date(startTime);
 
@@ -120,7 +120,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 
   const baseTime: Date = useMemo<Date>(() => {
     const baseTimeForToday = new Date(baseDate);
-    baseTimeForToday.setHours(7);
+    baseTimeForToday.setHours(0);
     baseTimeForToday.setMinutes(0);
     baseTimeForToday.setSeconds(0);
     baseTimeForToday.setMilliseconds(0);
@@ -337,6 +337,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
                       alignItems: 'center',
                       padding: '0 0.5rem',
                       overflow: 'hidden',
+                      zIndex: '1',
                       backgroundColor:
                         rides[0] === undefined || rides[0].status === 'no_show'
                           ? 'rgb(229, 229, 229)'
@@ -391,10 +392,12 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
           <div
             style={{
               width: '100%',
-              height: '100%',
+              minHeight: '100%',
+              height: `${rides.length * 6}rem`,
               position: 'absolute',
               display: 'flex',
               top: 0,
+              zIndex: '0',
               pointerEvents: 'none',
             }}
           >
