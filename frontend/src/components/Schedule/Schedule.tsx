@@ -470,7 +470,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
             style={{
               width: '100%',
               minHeight: '100%',
-              height: `${rides.length * 6}rem`,
+              height: `${rides.length * 3}rem`,
               position: 'absolute',
               display: 'flex',
               top: 0,
@@ -482,7 +482,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               <div
                 key={idx}
                 style={{
-                  height: '100%',
+                  minHeight: '100%',
+                  height: `${rides.length * 3}rem`, // scale based on how many rows need to be rendered
                   borderLeft:
                     idx % 2 === 1 && localHalfHourWidth < alternateTickThreshold
                       ? 'none'
@@ -499,7 +500,8 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
             id="timeline-current-indicator"
             style={{
               width: '0.25rem',
-              height: '100%',
+              minHeight: '100%',
+              height: `${rides.length * 3}rem`, // scale based on how many rows need to be rendered
               position: 'absolute',
               top: 0,
               pointerEvents: 'none',
