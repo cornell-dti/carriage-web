@@ -687,7 +687,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                           color="textSecondary"
                           sx={{ fontStyle: 'italic' }}
                         >
-                          Note: Full recurrence functionality coming soon
+                          Full recurrence functionality coming soon
                         </Typography>
                       </>
                     )}

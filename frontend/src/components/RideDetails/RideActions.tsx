@@ -204,6 +204,7 @@ const RideActions: React.FC<RideActionsProps> = ({
 
   const handleReport = () => {
     // In a real app, open report issue dialog
+    showError('Contact admin to report issues with a ride.', 'Report Feature Not Available');
   };
 
   const renderRiderActions = () => {
