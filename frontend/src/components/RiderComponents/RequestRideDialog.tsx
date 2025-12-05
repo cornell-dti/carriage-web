@@ -791,7 +791,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     )}
                     {!formData.pickupLocation && (
                       <FormHelperText>
-                        {'Please select pickup location'}
+                        {'Please choose pickup location first'}
                       </FormHelperText>
                     )}
                   </FormControl>
