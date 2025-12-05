@@ -5,8 +5,7 @@
 .collapsibleContent {
   display: inline-block;
   width: 100%;
-  border-radius: 0.5rem;
-  border: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .banner {
