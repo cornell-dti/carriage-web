@@ -402,7 +402,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                         {
                           allowPastTimes,
                           maxDurationHours: 24,
-                          minDurationMinutes: 5,
+                          minDurationMinutes: 1,
                         }
                       );
 
