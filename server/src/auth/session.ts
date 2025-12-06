@@ -43,5 +43,9 @@ declare module 'express-session' {
     redirectUri?: string;
     requestedUserType?: string;
     userType?: string;
+    unregisteredUser?: {
+      email: string;
+      name: string;
+    };
   }
 }

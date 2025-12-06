@@ -6,6 +6,7 @@ import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import styles from './schedule.module.css';
+import ResponsiveRideCard from '../ResponsiveRideCard';
 
 const Schedule = () => {
   const { scheduledRides, refreshRides } = useRides();
