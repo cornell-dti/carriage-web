@@ -34,7 +34,6 @@ import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
-import { error } from 'console';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -128,13 +127,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     useState<SelectionState>('pickup');
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [customPickup, setCustomPickup] = useState(false);
-  const [customDroppoff, setCustomDropoff] = useState(false);
   const [inputPickUpError, setInputPickUpError] = useState(false);
   const [inputDropOffError, setInputDropOffError] = useState(false);
   const [inputErrorText, setInputErrorText] = useState('');
   const [customPickup, setCustomPickup] = useState(false);
-  const [customDroppoff, setCustomDroppoff] = useState(false);
+  const [customDropoff, setCustomDropoff] = useState(false);
   const [overlayRadius, setOverlayRadius] = useState(false);
   const [kmlLink, setKMLLink] = useState<string | null>(null);
   const [isInvalidTime, setIsInvalidTime] = useState(false);
@@ -156,7 +153,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       });
       setSelectionState('complete');
     }
-
 
     if (!open) {
       setFormData({
@@ -264,9 +260,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       return supportLocsWithOther;
     } else if (selectionState === 'dropoff') {
       // Show all locations except the selected pickup location
-      return supportLocsWithOther.filter(
-        (loc) =>
-          loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
       return supportLocsWithOther.filter(
         (loc) =>
           loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
@@ -751,256 +744,249 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
                 {/* Dropdown selectors as alternative to map selection */}
                 <div style={{ marginBottom: '5px' }}>
-                <div style={{ marginBottom: '5px' }}>
-                  <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
-                    Or select from dropdown:
-                  </h4>
+                  <div style={{ marginBottom: '5px' }}>
+                    <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
+                      Or select from dropdown:
+                    </h4>
 
-                  <FormControl fullWidth style={{ marginBottom: '16px' }}>
-                    <InputLabel>Pickup Location</InputLabel>
-                    <Select<string>
-                      value={formData.pickupLocation?.id || ''}
-                      onChange={(event) => {
-                        const locationId = event.target.value as string;
-                        const selectedLocation =
-                          supportLocsWithOther.find(
-                          supportLocsWithOther.find(
-                            (loc) => loc.id === locationId
-                          ) || null;
-                        setFormData((prev) => ({
-                          ...prev,
-                          pickupLocation: selectedLocation,
-                        }));
-                        // Update selection state
-                        if (selectedLocation && !formData.dropoffLocation) {
-                          setSelectionState('dropoff');
-                        } else if (
-                          selectedLocation &&
-                          formData.dropoffLocation
-                        ) {
-                          setSelectionState('complete');
-                        }
-                        if (selectedLocation?.name === Other.name) {
-                          setCustomPickup(true);
-                        } else {
-                          setCustomPickup(false);
-                        }
-                        //remove error if user changes location
-                        setInputPickUpError(false);
-                      }}
-                      label="Pickup Location"
-                      error={inputPickUpError}
-                    >
-                      {supportLocsWithOther.map((location) => (
-                        <MenuItem key={location.id} value={location.id}>
-                          {location.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {inputPickUpError && (
-                      <FormHelperText error>{inputErrorText}</FormHelperText>
-                    )}
-                  </FormControl>
-
-                  {customPickup === true && (
-                    <div>
-                      <RequestRidePlacesSearch
-                        onAddressSelect={handlePickupSelect}
-                      />
-                    </div>
-                  )}
-
-                  <FormControl fullWidth>
-                    <InputLabel>Drop-off Location</InputLabel>
-                    <Select<string>
-                      value={formData.dropoffLocation?.id || ''}
-                      disabled={!formData.pickupLocation} //makes ensuring start and end locations are different simpler
-                      onChange={(event) => {
-                        const locationId = event.target.value as string;
-                        const selectedLocation =
-                          supportLocsWithOther.find(
-                            (loc) => loc.id === locationId
-                          ) || null;
-                        setFormData((prev) => ({
-                          ...prev,
-                          dropoffLocation: selectedLocation,
-                        }));
-                        // Update selection state
-                        if (selectedLocation && formData.pickupLocation) {
-                          setSelectionState('complete');
-                        }
-                        if (selectedLocation?.name === Other.name) {
-                          setCustomDropoff(true);
-                        } else {
-                          setCustomDropoff(false);
-                        }
-                        //remove error if user changes locatoin
-                        setInputDropOffError(false);
-                      }}
-                      label="Drop-off Location"
-                      error={inputDropOffError}
-                    >
-                      {supportLocsWithOther
-                        .filter(
-                          (loc) =>
-                            loc.id.startsWith('custom') ||
-                            loc.id !== formData.pickupLocation?.id
-                        ) // Don't show pickup location as dropoff option (except Other)
-                      {supportLocsWithOther
-                        .filter(
-                          (loc) =>
-                            loc.id.startsWith('custom') ||
-                            loc.id !== formData.pickupLocation?.id
-                        ) // Don't show pickup location as dropoff option (except Other)
-                        .map((location) => (
+                    <FormControl fullWidth style={{ marginBottom: '16px' }}>
+                      <InputLabel>Pickup Location</InputLabel>
+                      <Select<string>
+                        value={formData.pickupLocation?.id || ''}
+                        onChange={(event) => {
+                          const locationId = event.target.value as string;
+                          const selectedLocation =
+                            supportLocsWithOther.find(
+                              (loc) => loc.id === locationId
+                            ) || null;
+                          setFormData((prev) => ({
+                            ...prev,
+                            pickupLocation: selectedLocation,
+                          }));
+                          // Update selection state
+                          if (selectedLocation && !formData.dropoffLocation) {
+                            setSelectionState('dropoff');
+                          } else if (
+                            selectedLocation &&
+                            formData.dropoffLocation
+                          ) {
+                            setSelectionState('complete');
+                          }
+                          if (selectedLocation?.name === Other.name) {
+                            setCustomPickup(true);
+                          } else {
+                            setCustomPickup(false);
+                          }
+                          //remove error if user changes location
+                          setInputPickUpError(false);
+                        }}
+                        label="Pickup Location"
+                        error={inputPickUpError}
+                      >
+                        {supportLocsWithOther.map((location) => (
                           <MenuItem key={location.id} value={location.id}>
                             {location.name}
                           </MenuItem>
                         ))}
-                    </Select>
-                    {inputDropOffError && (
-                      <FormHelperText error>{inputErrorText}</FormHelperText>
+                      </Select>
+                      {inputPickUpError && (
+                        <FormHelperText error>{inputErrorText}</FormHelperText>
+                      )}
+                    </FormControl>
+
+                    {customPickup === true && (
+                      <div>
+                        <RequestRidePlacesSearch
+                          onAddressSelect={handlePickupSelect}
+                        />
+                      </div>
                     )}
-                    {!formData.pickupLocation && (
-                      <FormHelperText>
-                        {'Please choose pickup location first'}
-                      </FormHelperText>
+
+                    <FormControl fullWidth>
+                      <InputLabel>Drop-off Location</InputLabel>
+                      <Select<string>
+                        value={formData.dropoffLocation?.id || ''}
+                        disabled={!formData.pickupLocation} //makes ensuring start and end locations are different simpler
+                        onChange={(event) => {
+                          const locationId = event.target.value as string;
+                          const selectedLocation =
+                            supportLocsWithOther.find(
+                              (loc) => loc.id === locationId
+                            ) || null;
+                          setFormData((prev) => ({
+                            ...prev,
+                            dropoffLocation: selectedLocation,
+                          }));
+                          // Update selection state
+                          if (selectedLocation && formData.pickupLocation) {
+                            setSelectionState('complete');
+                          }
+                          if (selectedLocation?.name === Other.name) {
+                            setCustomDropoff(true);
+                          } else {
+                            setCustomDropoff(false);
+                          }
+                          //remove error if user changes locatoin
+                          setInputDropOffError(false);
+                        }}
+                        label="Drop-off Location"
+                        error={inputDropOffError}
+                      >
+                        {supportLocsWithOther
+                          .filter(
+                            (loc) =>
+                              loc.id.startsWith('custom') ||
+                              loc.id !== formData.pickupLocation?.id
+                          ) // Don't show pickup location as dropoff option (except Other)
+                          .map((location) => (
+                            <MenuItem key={location.id} value={location.id}>
+                              {location.name}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                      {inputDropOffError && (
+                        <FormHelperText error>{inputErrorText}</FormHelperText>
+                      )}
+                      {!formData.pickupLocation && (
+                        <FormHelperText>
+                          {'Please choose pickup location first'}
+                        </FormHelperText>
+                      )}
+                    </FormControl>
+
+                    {customDropoff === true && (
+                      <div style={{ marginTop: '16px' }}>
+                        <RequestRidePlacesSearch
+                          onAddressSelect={handleDropoffSelect}
+                        />
+                      </div>
                     )}
+
+                    {customDropoff === true && (
+                      <div style={{ marginTop: '16px' }}>
+                        <RequestRidePlacesSearch
+                          onAddressSelect={handleDropoffSelect}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <Stack direction="row" spacing={2}>
+                      <DatePicker
+                        label="Date"
+                        value={formData.date}
+                        onChange={handleDateChange('date')}
+                        shouldDisableDate={isWeekend}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
+                      />
+                      <TimePicker
+                        label="Time"
+                        value={formData.time}
+                        onChange={handleDateChange('time')}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
+                      />
+                    </Stack>
+                    {isInvalidTime && (
+                      <Alert severity="error" sx={{ mt: 1 }}>
+                        Invalid time! CU Lift operates between 7:45 AM and 10
+                        PM.
+                      </Alert>
+                    )}
+                  </LocalizationProvider>
+
+                  <FormControl component="fieldset">
+                    <FormLabel component="legend">Repeat Options</FormLabel>
+                    <RadioGroup
+                      value={formData.repeatType}
+                      onChange={handleRepeatTypeChange}
+                    >
+                      {repeatOptions.map((option) => (
+                        <FormControlLabel
+                          key={option.value}
+                          value={option.value}
+                          control={<Radio />}
+                          label={option.label}
+                        />
+                      ))}
+                    </RadioGroup>
                   </FormControl>
 
-                  {customDroppoff === true && (
-                    <div style={{ marginTop: '16px' }}>
-                      <RequestRidePlacesSearch
-                        onAddressSelect={handleDropoffSelect}
+                  {formData.repeatType !== 'none' && (
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        label="Repeat End Date"
+                        value={formData.repeatEndDate}
+                        onChange={handleDateChange('repeatEndDate')}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                          },
+                        }}
                       />
-                    </div>
+                    </LocalizationProvider>
                   )}
 
-                  {customDroppoff === true && (
-                    <div style={{ marginTop: '16px' }}>
-                      <RequestRidePlacesSearch
-                        onAddressSelect={handleDropoffSelect}
-                      />
+                  {formData.repeatType === 'custom' && (
+                    <div className={styles.daySelectionContainer}>
+                      <FormLabel
+                        component="legend"
+                        className={styles.daySelectionLabel}
+                      >
+                        Select Days
+                      </FormLabel>
+                      <ToggleButtonGroup
+                        value={formData.selectedDays.map(getShortDay)}
+                        onChange={handleDaysChange}
+                        aria-label="select days"
+                        className={styles.toggleButtonGroup}
+                      >
+                        {daysOfWeek.map((day) => (
+                          <ToggleButton
+                            key={day}
+                            value={day}
+                            aria-label={fullDayNames[day]}
+                            className={styles.dayToggleButton}
+                          >
+                            {day}
+                          </ToggleButton>
+                        ))}
+                      </ToggleButtonGroup>
                     </div>
                   )}
                 </div>
-
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <Stack direction="row" spacing={2}>
-                    <DatePicker
-                      label="Date"
-                      value={formData.date}
-                      onChange={handleDateChange('date')}
-                      shouldDisableDate={isWeekend}
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                    <TimePicker
-                      label="Time"
-                      value={formData.time}
-                      onChange={handleDateChange('time')}
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                  </Stack>
-                  {isInvalidTime && (
-                    <Alert severity="error" sx={{ mt: 1 }}>
-                      Invalid time! CU Lift operates between 7:45 AM and 10 PM.
-                    </Alert>
-                  )}
-                </LocalizationProvider>
-
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Repeat Options</FormLabel>
-                  <RadioGroup
-                    value={formData.repeatType}
-                    onChange={handleRepeatTypeChange}
-                  >
-                    {repeatOptions.map((option) => (
-                      <FormControlLabel
-                        key={option.value}
-                        value={option.value}
-                        control={<Radio />}
-                        label={option.label}
-                      />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-
-                {formData.repeatType !== 'none' && (
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="Repeat End Date"
-                      value={formData.repeatEndDate}
-                      onChange={handleDateChange('repeatEndDate')}
-                      slotProps={{
-                        textField: {
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                  </LocalizationProvider>
-                )}
-
-                {formData.repeatType === 'custom' && (
-                  <div className={styles.daySelectionContainer}>
-                    <FormLabel
-                      component="legend"
-                      className={styles.daySelectionLabel}
-                    >
-                      Select Days
-                    </FormLabel>
-                    <ToggleButtonGroup
-                      value={formData.selectedDays.map(getShortDay)}
-                      onChange={handleDaysChange}
-                      aria-label="select days"
-                      className={styles.toggleButtonGroup}
-                    >
-                      {daysOfWeek.map((day) => (
-                        <ToggleButton
-                          key={day}
-                          value={day}
-                          aria-label={fullDayNames[day]}
-                          className={styles.dayToggleButton}
-                        >
-                          {day}
-                        </ToggleButton>
-                      ))}
-                    </ToggleButtonGroup>
-                  </div>
-                )}
               </div>
-            </div>
 
-            <div className={styles.mapColumn}>
-              <div style={{ marginBottom: '12px' }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={overlayRadius}
-                      onChange={(e) => setOverlayRadius(e.target.checked)}
-                    />
-                  }
-                  label="CULift Service Radius"
+              <div className={styles.mapColumn}>
+                <div style={{ marginBottom: '12px' }}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={overlayRadius}
+                        onChange={(e) => setOverlayRadius(e.target.checked)}
+                      />
+                    }
+                    label="CULift Service Radius"
+                  />
+                </div>
+
+                <RequestRideMap
+                  pickupLocation={safePickup}
+                  dropoffLocation={safeDropoff}
+                  availableLocations={getAvailableLocations()}
+                  onPickupSelect={handleLocationSelect}
+                  onDropoffSelect={handleLocationSelect}
+                  kmlLink={kmlLink}
                 />
               </div>
-
-              <RequestRideMap
-                pickupLocation={safePickup}
-                dropoffLocation={safeDropoff}
-                pickupLocation={safePickup}
-                dropoffLocation={safeDropoff}
-                availableLocations={getAvailableLocations()}
-                onPickupSelect={handleLocationSelect}
-                onDropoffSelect={handleLocationSelect}
-                kmlLink={kmlLink}
-              />
             </div>
           </div>
         </APIProvider>
