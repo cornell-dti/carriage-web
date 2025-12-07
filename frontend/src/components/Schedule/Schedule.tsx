@@ -236,6 +236,25 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               ? 'Showing Driver Names'
               : 'Showing Student Names'}
           </button>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '2rem',
+              padding: '0 1rem',
+              backgroundColor: '#eee',
+              borderRadius: '0.25rem',
+            }}
+          >
+            <p style={{ textWrap: 'nowrap' }}>
+              {rides.length > 0
+                ? rides.length > 1
+                  ? `${rides.length} Rides Scheduled`
+                  : `1 Ride Scheduled`
+                : 'No Rides Scheduled'}
+            </p>
+          </div>
         </div>
         <div
           style={{
