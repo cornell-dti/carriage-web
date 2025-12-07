@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '../../components/FormElements/FormElements';
-import CopyButton from '../../components/CopyButton/CopyButton';
-import Notification from '../../components/Notification/Notification';
+import { useState, useEffect } from 'react';
 import LocationsContent from 'components/Locations/LocationsContent';
 import styles from './page.module.css';
 import { LocationFormModal } from 'components/Locations/LocationFormModal';
@@ -10,6 +7,7 @@ import { useLocations } from 'context/LocationsContext';
 import axios from '../../util/axios';
 import { LocationImage } from 'components/Locations/LocationImagesUpload';
 import { Box, CircularProgress } from '@mui/material';
+import buttonStyles from '../../styles/button.module.css';
 
 const Locations = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -20,7 +18,6 @@ const Locations = () => {
   }, [loc]);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const { refreshLocations } = useLocations();
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadLocationImage = async (
@@ -135,38 +132,41 @@ const Locations = () => {
   };
 
   return (
-    <main id="main" className={styles.main}>
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Locations</h1>
-        <div className={styles.rightSection}>
-          <CopyButton />
-          <Button
-            onClick={() => setIsAddDialogOpen(true)}
-            className={styles.addButton}
-          >
-            + Add Location
-          </Button>
-          <Notification />
-          {isUploading && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
-              <CircularProgress size={18} />
-              <span>Uploading images…</span>
-            </Box>
-          )}
+    <main id="main">
+      <div className={styles.mainContent} style={{ gap: 0 }}>
+        <div className={styles.pageTitle}>
+          <h1 className={styles.header}>Locations</h1>
+          <div className={styles.rightSection}>
+            <button
+              style={{ width: '10rem' }}
+              onClick={() => setIsAddDialogOpen(true)}
+              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+            >
+              + Add Location
+            </button>
+            {isUploading && (
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}
+              >
+                <CircularProgress size={18} />
+                <span>Uploading images…</span>
+              </Box>
+            )}
+          </div>
         </div>
+
+        <LocationsContent
+          locations={locations}
+          onUpdateLocation={handleUpdateLocation}
+        />
+
+        <LocationFormModal
+          open={isAddDialogOpen}
+          onClose={() => setIsAddDialogOpen(false)}
+          onSubmit={handleAddLocation}
+          mode="add"
+        />
       </div>
-
-      <LocationsContent
-        locations={locations}
-        onUpdateLocation={handleUpdateLocation}
-      />
-
-      <LocationFormModal
-        open={isAddDialogOpen}
-        onClose={() => setIsAddDialogOpen(false)}
-        onSubmit={handleAddLocation}
-        mode="add"
-      />
     </main>
   );
 };
