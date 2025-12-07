@@ -25,9 +25,9 @@ const Home = () => {
         <div className={styles.rightSection}>
           <ExportButton
             toastMsg={`${today} data has been downloaded.`}
-            endpoint={`/api/rides/download?date=${today}`}
+            endpoint={`/api/rides/download/home?date=${today}`}
             csvCols={'Name,Pick Up,From,To,Drop Off,Needs,Driver'}
-            filename={`scheduledRides_${today}.csv`}
+            filename={`Rides_${today}.csv`}
           />
           <AddRideButton />
           <Notification />

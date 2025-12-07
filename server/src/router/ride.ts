@@ -62,7 +62,7 @@ router.get('/diagnose', async (_req, res) => {
   }
 });
 
-router.get('/download', (req, res) => {
+router.get('/download/home', (req, res) => {
   const dateStart = moment(req.query.date as string).toISOString();
   const dateEnd = moment(req.query.date as string)
     .endOf('day')
@@ -113,6 +113,71 @@ router.get('/download', (req, res) => {
           Driver: doc.driver ? fullName(doc.driver) : '',
         }));
       });
+    csv
+      .writeToBuffer(dataToExport, { headers: true })
+      .then((data) => res.send(data))
+      .catch((err) => res.send(err));
+  };
+  db.scan(res, Ride, condition, callback);
+});
+
+router.get('/download/driver', (req, res) => {
+  const { from, to } = req.query;
+
+  // Validate dates
+  const start = moment(from as string, moment.ISO_8601, true);
+  const end = moment(to as string, moment.ISO_8601, true);
+
+  // If invalid date → return 400 instead of crashing
+  if (!start.isValid()) {
+    return res.status(400).send({ error: `Invalid 'from' date: ${from}` });
+  }
+  if (to && !end.isValid()) {
+    return res.status(400).send({ error: `Invalid 'to' date: ${to}` });
+  }
+
+  const dateStart = start.format('YYYY-MM-DD');
+  const dateEnd = end.format('YYYY-MM-DD');
+  console.log('from date: ' + dateStart);
+  console.log('from date: ' + dateEnd);
+
+  let date = dateStart;
+  const dates = [dateStart];
+  if (to) {
+    date = moment(date).add(1, 'days').format('YYYY-MM-DD');
+    while (date <= to) {
+      dates.push(date);
+      date = moment(date).add(1, 'days').format('YYYY-MM-DD');
+    }
+  }
+  console.log('dates array (every date from -> to): ' + dates);
+
+  const condition = new Condition()
+    .where('startTime')
+    .between(dateStart, dateEnd)
+    .where('status')
+    .not()
+    .eq(Status.CANCELLED);
+
+  const callback = (value: any) => {
+    const dataToExport = value
+      .sort((a: any, b: any) => moment(a.startTime).diff(moment(b.startTime)))
+      .flatMap((doc: any) => {
+        const start = moment(doc.startTime);
+        const end = moment(doc.endTime);
+        return [
+          {
+            Date: start.format('YYYY/MM/DD'),
+            'Start Time': start.format('h:mm A'),
+            'End Time': end.format('h:mm A'),
+            From: doc.startLocation.name,
+            To: doc.endLocation.name,
+            Status: doc.status,
+            Type: doc.type,
+          },
+        ];
+      });
+    console.log(dataToExport);
     csv
       .writeToBuffer(dataToExport, { headers: true })
       .then((data) => res.send(data))
@@ -256,42 +321,6 @@ router.get('/', validateUser('User'), (req, res) => {
   } else {
     // No rider filter, can use direct scan
     db.scan(res, Ride, condition);
-  }
-});
-
-// Diagnostic endpoint to find corrupted rides that fail populate
-router.get('/diagnose', async (_req, res) => {
-  try {
-    Ride.scan(new Condition()).exec(async (err, data) => {
-      if (err) {
-        res.status(500).send({ err: err.message });
-        return;
-      }
-      const items = data || [];
-      const bad: any[] = [];
-      const goodIds: string[] = [];
-      for (const item of items) {
-        if (!item) continue;
-        let id: string | undefined = undefined;
-        try {
-          id =
-            (item as any).id || ((item as any).get && (item as any).get('id'));
-        } catch (e) {
-          // Ignore error when getting item ID
-        }
-        try {
-          const populated = await (item as any).populate();
-          if (id) goodIds.push(id);
-        } catch (e: any) {
-          bad.push({ id, error: e?.message || String(e) });
-        }
-      }
-      res
-        .status(200)
-        .send({ total: items.length, goodCount: goodIds.length, bad });
-    });
-  } catch (e: any) {
-    res.status(500).send({ err: e?.message || 'diagnostic failed' });
   }
 });
 

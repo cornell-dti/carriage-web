@@ -89,6 +89,38 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, frontendBuild, 'index.html'));
 });
 
+//web scraper for CU-Lift official locations
+// import axios from 'axios';
+// import * as cheerio from 'cheerio';
+// const website = 'https://news.sky.com';
+
+// try {
+//   axios(website).then((res) => {
+//     const data = res.data;
+//     const $ = cheerio.load(data);
+
+//     const content: Array<{ title: string; url: string }> = [];
+
+//     $('a').each(function () {
+//       const title = $(this).text().trim();
+//       const url = $(this).attr('href') ?? '';
+
+//       content.push({
+//         title,
+//         url,
+//       });
+
+//       console.log(content);
+
+//       app.get('/', (req, res) => {
+//         res.json(content);
+//       });
+//     });
+//   });
+// } catch (error) {
+//   console.log(error);
+// }
+
 initSchedule();
 
 if (useHostname) {

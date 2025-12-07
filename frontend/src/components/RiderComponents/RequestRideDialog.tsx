@@ -52,6 +52,7 @@ interface RequestRideDialogProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   supportedLocations: Location[];
+  refreshLocations: () => Promise<void>;  
   ride?: Ride;
 }
 
@@ -73,8 +74,8 @@ const fullDayNames = {
 
 //Other for dropdown
 const Other = {
-  id: 'custom' + crypto.randomUUID(),
-  name: 'Custom',
+  id: 'custom_other',
+  name: 'Other',
   address: '',
   shortName: '',
   info: '',
@@ -105,10 +106,21 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   onClose,
   onSubmit,
   supportedLocations,
+  refreshLocations,
   ride,
 }) => {
-  //official locations with other added
-  const supportLocsWithOther = [Other, ...supportedLocations];
+  const [allLocations, setAllLocations] =
+    useState<Location[]>(supportedLocations);
+
+  // sync with prop updates
+  useEffect(() => {
+    setAllLocations(supportedLocations);
+  }, [supportedLocations]);
+
+  const supportLocWithOther = [
+    ...(allLocations.filter((l) => l.tag !== Tag.CUSTOM) ?? []),
+    Other,
+  ];
 
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
@@ -126,10 +138,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
-  const [customDroppoff, setCustomDropoff] = useState(false);
-  const [inputPickUpError, setInputPickUpError] = useState(false);
-  const [inputDropOffError, setInputDropOffError] = useState(false);
-  const [inputErrorText, setInputErrorText] = useState('');
+  const [customDroppoff, setCustomDroppoff] = useState(false);
 
   useEffect(() => {
     if (ride && open) {
@@ -148,6 +157,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       });
       setSelectionState('complete');
     }
+
 
     if (!open) {
       setFormData({
@@ -182,6 +192,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
    *
    * Pprogresses the state machine to the next step.
    */
+   * Finalizes  pending location selection after user confirms
+   *
+   * Depending on the current 'selectionState':
+   *  - Saves as the pickup location or
+   *  - Saves as the dropoff location
+   *
+   * Pprogresses the state machine to the next step.
+   */
   const confirmLocationSelection = () => {
     if (!pendingLocation) return;
 
@@ -203,6 +221,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   /**
+   * Resets the pickup/dropoff flow back to the beginning.
+   *
+   * Clears both selected locations and returns to the "pickup" phase.
+   */
    * Resets the pickup/dropoff flow back to the beginning.
    *
    * Clears both selected locations and returns to the "pickup" phase.
@@ -240,6 +262,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     } else if (selectionState === 'dropoff') {
       // Show all locations except the selected pickup location
       return supportLocsWithOther.filter(
+        (loc) =>
+          loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
         (loc) =>
           loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
       );
@@ -334,30 +358,17 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   const createOrGetLocation = async (
     address: string,
     lat: number,
-    lng: number,
-    isPickUp: boolean
+    lng: number
   ): Promise<Location> => {
     const LOCATION_TOLERANCE = 0.00025; // ~25 meters
 
     const normalized = normalizeAddress(address);
 
-    if (normalized === '') {
-      if (isPickUp) {
-        setInputPickUpError(true);
-      } else {
-        setInputDropOffError(true);
-      }
-      setInputErrorText('Attempted to submit an empty location');
-      throw new Error('User tried to submit empty custom location');
-    }
-
-    const allLocs = getAllLocs();
-
     // checking db for if it already exists in Locations quack MUST CHANGE HERE
     console.log('Checking for address:', normalized);
 
     // check against allLocations (includes newly created custom ones)
-    const matched = (await allLocs).find((loc) => {
+    const matched = allLocations.find((loc) => {
       const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
       const addrSimilar1 = normalizeAddress(loc.address).includes(normalized);
       const addrSimilar2 = normalized.includes(normalizeAddress(loc.address));
@@ -392,6 +403,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
     const response = await axios.post('/api/locations/custom', payload); //add to locations
     const created: Location = response.data.data || response.data;
+
+    await refreshLocations(); //program sees added location
+
+    setAllLocations((prev) => [...prev, created]);
+
     return created;
   };
 
@@ -471,8 +487,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         const createdPickup = await createOrGetLocation(
           finalPickup.address,
           finalPickup.lat,
-          finalPickup.lng,
-          true //isPickUp
+          finalPickup.lng
         );
         finalPickup = createdPickup;
       }
@@ -482,8 +497,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         const createdDropoff = await createOrGetLocation(
           finalDropoff.address,
           finalDropoff.lat,
-          finalDropoff.lng,
-          false //isPickUp
+          finalDropoff.lng
         );
         finalDropoff = createdDropoff;
       }
@@ -495,13 +509,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         normalizeAddress(finalDropoff?.address) ===
           normalizeAddress(finalPickup.address)
       ) {
-        setInputPickUpError(true);
-        setInputDropOffError(true);
-        setInputErrorText('Start and end location are too simiilar');
-        resetSelection();
-        setCustomPickup(false);
-        setCustomDropoff(false);
-        throw new Error('Start and end location are too simiilar');
+        console.error('Start and end location are the same');
       }
 
       onSubmit({
@@ -510,7 +518,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         dropoffLocation: finalDropoff,
       });
       setCustomPickup(false);
-      setCustomDropoff(false);
+      setCustomDroppoff(false);
       onClose();
     } catch (err) {
       console.error('Error submitting ride:', err);
@@ -538,12 +546,16 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     );
   };
 
-  // Ensures the map only receives valid coordinates; prevents rendering issues
+  // Prevent "Other" from being sent to the map
   const safePickup =
     formData.pickupLocation?.lat && formData.pickupLocation?.lng
       ? formData.pickupLocation
       : null;
 
+  const safeDropoff =
+    formData.dropoffLocation?.lat && formData.dropoffLocation?.lng
+      ? formData.dropoffLocation
+      : null;
   const safeDropoff =
     formData.dropoffLocation?.lat && formData.dropoffLocation?.lng
       ? formData.dropoffLocation
@@ -687,6 +699,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
                 {/* Dropdown selectors as alternative to map selection */}
                 <div style={{ marginBottom: '5px' }}>
+                <div style={{ marginBottom: '5px' }}>
                   <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
                     Or select from dropdown:
                   </h4>
@@ -749,6 +762,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     <Select<string>
                       value={formData.dropoffLocation?.id || ''}
                       disabled={!formData.pickupLocation} //makes ensuring start and end locations are different simpler
+                      disabled={!formData.pickupLocation} //makes ensuring start and end locations are different simpler
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
@@ -764,17 +778,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           setSelectionState('complete');
                         }
                         if (selectedLocation?.name === Other.name) {
-                          setCustomDropoff(true);
+                          setCustomDroppoff(true);
                         } else {
-                          setCustomDropoff(false);
+                          setCustomDroppoff(false);
                         }
-                        //remove error if user changes locatoin
-                        setInputDropOffError(false);
                       }}
                       label="Drop-off Location"
                       error={inputDropOffError}
                     >
-                      {supportLocsWithOther
+                      {supportLocWithOther
                         .filter(
                           (loc) =>
                             loc.id.startsWith('custom') ||
@@ -964,5 +976,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     </Dialog>
   );
 };
+
+
 
 export default RequestRideDialog;

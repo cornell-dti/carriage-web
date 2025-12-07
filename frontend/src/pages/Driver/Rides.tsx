@@ -13,8 +13,6 @@ import {
   Stack,
 } from '@mui/material';
 import PhoneIcon from '@mui/icons-material/Phone';
-import DownloadIcon from '@mui/icons-material/Download';
-import EmailIcon from '@mui/icons-material/Email';
 import PlaceIcon from '@mui/icons-material/Place';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -23,12 +21,12 @@ import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
 import { Ride, Status } from '../../types';
-import axios from '../../util/axios';
 import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import ContactInfoModal from '../../components/ContactInfoModal/ContactInfoModal';
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
 import UpdateStatusModal from '../../components/UpdateStatusModal/UpdateStatusModal';
+import StatsModal from 'components/Modal/StatsModal';
 
 const getStatusColor = (
   status: Status
@@ -399,7 +397,7 @@ const RideDetailCard = ({
 };
 
 const Rides = () => {
-  const { scheduledRides, refreshRides, refreshRidesByUser, updateRideStatus } =
+  const { refreshRidesByUser, updateRideStatus } =
     useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
@@ -407,6 +405,7 @@ const Rides = () => {
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
   const [allDriverRides, setAllDriverRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
+
 
   // Fetch all driver rides on component mount
   useEffect(() => {
@@ -513,12 +512,11 @@ const Rides = () => {
               My Rides
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button variant="outlined" startIcon={<DownloadIcon />}>
-                Export
-              </Button>
-              <Button variant="outlined" startIcon={<EmailIcon />}>
-                Send Email
-              </Button>
+              <StatsModal
+                initStartDate={`${curDate}`}
+                initEndDate={`${curDate}`}
+                fromWho={'driver'}
+              ></StatsModal>
             </Box>
           </Box>
 
