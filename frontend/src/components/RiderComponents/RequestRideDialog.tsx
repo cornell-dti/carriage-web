@@ -964,29 +964,28 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                   )}
                 </div>
               </div>
-
-              <div className={styles.mapColumn}>
-                <div style={{ marginBottom: '12px' }}>
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={overlayRadius}
-                        onChange={(e) => setOverlayRadius(e.target.checked)}
-                      />
-                    }
-                    label="CULift Service Radius"
-                  />
-                </div>
-
-                <RequestRideMap
-                  pickupLocation={safePickup}
-                  dropoffLocation={safeDropoff}
-                  availableLocations={getAvailableLocations()}
-                  onPickupSelect={handleLocationSelect}
-                  onDropoffSelect={handleLocationSelect}
-                  kmlLink={kmlLink}
+            </div>
+            <div className={styles.mapColumn}>
+              <div style={{ marginBottom: '12px' }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={overlayRadius}
+                      onChange={(e) => setOverlayRadius(e.target.checked)}
+                    />
+                  }
+                  label="CULift Service Radius"
                 />
               </div>
+
+              <RequestRideMap
+                pickupLocation={safePickup}
+                dropoffLocation={safeDropoff}
+                availableLocations={getAvailableLocations()}
+                onPickupSelect={handleLocationSelect}
+                onDropoffSelect={handleLocationSelect}
+                kmlLink={kmlLink}
+              />
             </div>
           </div>
         </APIProvider>
