@@ -452,6 +452,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             availableLocations={locations}
             onPickupSelect={handlePickupSelect}
             onDropoffSelect={handleDropoffSelect}
+            kmlLink={null}
           />
         </div>
       </div>
