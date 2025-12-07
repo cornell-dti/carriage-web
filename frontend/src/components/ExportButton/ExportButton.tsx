@@ -11,6 +11,26 @@ type clickHandler = {
   filename: string;
 };
 
+
+/**
+ * ExportButton
+ *
+ * A reusable button that fetches CSV data from a backend endpoint and triggers
+ * a download in the browser. Displays a toast on success or failure.
+ *
+ * @component
+ *
+ * @param toastMsg - The message to display in the toast on successful download.
+ * @param endpoint - The backend API endpoint to fetch CSV data from.
+ * @param csvCols -  CSV string to use if the backend response is empty.
+ * @param filename - the filename for the downloaded CSV file.
+ *
+ * - Fetches CSV data from the specified `endpoint`.
+ * - Uses `csvCols` as fallback if the server returns empty.
+ * - Initiates download of CSV with the given `filename`.
+ * - Shows toast notifications for success or error with `useToast` context.
+ */
+
 const ExportButton = ({
   toastMsg,
   endpoint,

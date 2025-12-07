@@ -23,6 +23,19 @@ type StatsModalProps = {
   fromWho: string;
 };
 
+/**
+ * StatsModal Component
+ *
+ * A modal dialog that allows users to export ride statistics as a CSV file.
+ * Includes date range selection, shortcut buttons for common ranges,
+ * and conditional logic depending on whether the user is an admin or driver.
+ *
+ * @param initStartDate - Initial start date for the export (YYYY-MM-DD).
+ * @param initEndDate - Initial end date for the export (YYYY-MM-DD).
+ * @param fromWho - Determines user type: 'admin' or 'driver', affects CSV structure and endpoint.
+ 
+ */
+
 const StatsModal = ({
   initStartDate,
   initEndDate,
