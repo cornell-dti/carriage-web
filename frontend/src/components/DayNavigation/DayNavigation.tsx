@@ -11,20 +11,12 @@ export const DayNavigation = () => {
     const newDate = new Date(curDate);
     newDate.setDate(newDate.getDate() - 1);
 
-    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
-      newDate.setDate(newDate.getDate() - 1);
-    }
-
     setCurDate(newDate);
   };
 
   const nextBusinessDay = () => {
     const newDate = new Date(curDate);
     newDate.setDate(newDate.getDate() + 1);
-
-    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
-      newDate.setDate(newDate.getDate() + 1);
-    }
 
     setCurDate(newDate);
   };
