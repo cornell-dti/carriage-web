@@ -14,11 +14,9 @@ type clickHandler = {
 
 /**
  * ExportButton
- *
+ * 
  * A reusable button that fetches CSV data from a backend endpoint and triggers
  * a download in the browser. Displays a toast on success or failure.
- *
- * @component
  *
  * @param toastMsg - The message to display in the toast on successful download.
  * @param endpoint - The backend API endpoint to fetch CSV data from.

@@ -33,7 +33,6 @@ type StatsModalProps = {
  * @param initStartDate - Initial start date for the export (YYYY-MM-DD).
  * @param initEndDate - Initial end date for the export (YYYY-MM-DD).
  * @param fromWho - Determines user type: 'admin' or 'driver', affects CSV structure and endpoint.
- 
  */
 
 const StatsModal = ({
