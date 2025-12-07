@@ -5,6 +5,8 @@ import { Button } from '../FormElements/FormElements';
 import styles from './exportButton.module.css';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { formatErrorMessage } from '../../context/errorModal';
+import { useErrorModal } from '../../context/errorModal';
 
 type clickHandler = {
   toastMsg: string;
@@ -21,6 +23,7 @@ const ExportButton = ({
 }: clickHandler) => {
   const [downloadData, setDownloadData] = useState<string>('');
   const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const csvLink = useRef<
     CSVLink & HTMLAnchorElement & { link: HTMLAnchorElement }
   >(null);
@@ -42,7 +45,10 @@ const ExportButton = ({
           csvLink.current.link.click();
         }
       })
-      .then(() => showToast(toastMsg, ToastStatus.SUCCESS));
+      .then(() => showToast(toastMsg, ToastStatus.SUCCESS))
+      .catch((error) => {
+        showError(`Failed to download data: ${formatErrorMessage(error)}`, 'Export Error');
+      });
   };
 
   return (

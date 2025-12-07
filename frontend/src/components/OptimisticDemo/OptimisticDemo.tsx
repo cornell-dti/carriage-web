@@ -1,9 +1,11 @@
 import React from 'react';
 import { useRiders } from '../../context/RidersContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 const OptimisticDemo: React.FC = () => {
   const { riders, isOptimistic, pendingOperations, updateRiderActive, error } =
     useRiders();
+  const { showError } = useErrorModal();
 
   const handleDemoToggle = async () => {
     if (riders.length > 0) {
@@ -12,6 +14,7 @@ const OptimisticDemo: React.FC = () => {
         await updateRiderActive(firstRider.id, !firstRider.active);
       } catch (err) {
         console.error('Demo failed:', err);
+        showError(`Demo failed: ${formatErrorMessage(err)}`, 'Demo Error');
       }
     }
   };

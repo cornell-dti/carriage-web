@@ -13,6 +13,7 @@ import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './requestridedialog.module.css';
 // Removed unused imports
 import { Location } from '../../types';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RequestRideMapProps {
   pickupLocation: Location | null;
@@ -38,6 +39,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   onDropoffSelect,
 }) => {
   const map = useMap();
+  const { showError } = useErrorModal();
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markers = useRef<Record<string, Marker>>({});
@@ -110,6 +112,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       }
     } catch (error) {
       console.error('Error fetching route:', error);
+      showError(`Error fetching route: ${formatErrorMessage(error)}`, 'Maps Error');
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
         polylineRef.current = null;

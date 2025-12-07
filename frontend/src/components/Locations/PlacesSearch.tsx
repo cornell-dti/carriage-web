@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
 import { useMap, Map } from '@vis.gl/react-google-maps';
 import styles from './locations.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface PlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
@@ -18,6 +19,7 @@ const PlacesSearch = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const map = useMap();
+  const { showError } = useErrorModal();
 
   const searchPlace = useCallback(
     async (query: string) => {
@@ -54,6 +56,7 @@ const PlacesSearch = ({
         setIsLoading(false);
         setError('Error searching for address');
         setResults([]);
+        showError(`Error searching for address: ${formatErrorMessage(error)}`, 'Address Search Error');
       }
     },
     [map]

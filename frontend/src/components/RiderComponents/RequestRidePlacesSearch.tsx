@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
 import styles from './requestridedialog.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RequestRidePlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
@@ -29,6 +30,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       });
     }
   }, []);
+  const { showError } = useErrorModal();
 
   const searchPlace = useCallback(async (query: string) => {
     console.log('Searching for:', query);
@@ -76,6 +78,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       setIsLoading(false);
       setError('Error searching for address');
       setResults([]);
+      showError(`Error searching for address: ${formatErrorMessage(error)}`, 'Address Search Error');
     }
   }, []);
 

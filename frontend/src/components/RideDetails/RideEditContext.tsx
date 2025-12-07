@@ -16,6 +16,8 @@ import {
 } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import { useRides } from '../../context/RidesContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RideEditContextType {
   isEditing: boolean;
@@ -50,6 +52,8 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
   initialEditingState = false,
 }) => {
   const { updateRideInfo } = useRides();
+  const { showToast } = useToast();
+  const { showError } = useErrorModal();
 
   // For new rides, automatically start in editing mode
   const shouldStartEditing = initialEditingState || isNewRide(ride);
@@ -155,12 +159,15 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         {
           allowPastTimes: !isNewRide(editedRide),
           maxDurationHours: 24,
-          minDurationMinutes: 5,
+          minDurationMinutes: 1,
         }
       );
 
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
+        const firstErr =
+          timeValidation.errors[0]?.message || 'Invalid time values';
+        showError(firstErr, 'Ride Edit Error');
         return false;
       }
     }
@@ -175,6 +182,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         !editedRide.endTime
       ) {
         console.error('Missing required fields for new ride');
+        showError('Please select pickup, dropoff, start time, and end time.', 'Ride Edit Error');
         return false;
       }
 
@@ -202,8 +210,13 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
         stopEditing();
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to create new ride:', error);
+        const msg =
+          error?.response?.data?.message ||
+          error?.response?.data?.err ||
+          'Failed to create ride.';
+        showError(msg, 'Rides Error');
         return false;
       }
     } else {
@@ -213,10 +226,8 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
       }
 
       try {
-        // Prepare the update payload - only include changed fields (like the previous implementation)
         const updatePayload: any = {};
 
-        // Only include changed fields - include riders for single rider updates
         const fieldsToCheck: (keyof RideType)[] = [
           'startTime',
           'endTime',
@@ -243,18 +254,20 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
           updatePayload.$REMOVE = ['driver'];
         }
 
-        // Use optimistic update from RidesContext
         await updateRideInfo(ride.id, updatePayload);
-
-        // Update the context with the optimistically updated ride
         if (onRideUpdated) {
           onRideUpdated({ ...editedRide } as RideType);
         }
 
         stopEditing();
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to save ride changes:', error);
+        const msg =
+          error?.response?.data?.message ||
+          error?.response?.data?.err ||
+          'Failed to save changes.';
+        showError(msg, 'Rides Error');
         return false;
       }
     }
@@ -266,6 +279,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     onRideUpdated,
     stopEditing,
     updateRideInfo,
+    showToast,
   ]);
 
   const contextValue: RideEditContextType = {

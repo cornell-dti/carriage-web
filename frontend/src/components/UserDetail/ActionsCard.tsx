@@ -12,6 +12,7 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import styles from './UserDetailCards.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface ActionsCardProps {
   user: Employee | Rider;
@@ -32,6 +33,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
 
   const { updateRiderActive } = useRiders();
   const { toastType } = useToast();
+  const { showError } = useErrorModal();
 
   // Auto-dismiss toast after 3 seconds
   useEffect(() => {
@@ -92,6 +94,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
         // triggers the useUserDetailData hook to update the local user state
       } catch (error) {
         console.error('Error updating rider status:', error);
+        showError(`Error updating rider status: ${formatErrorMessage(error)}`, 'Rider Error');
         setToastMessage(
           `Failed to ${newActiveStatus ? 'activate' : 'deactivate'} rider.`
         );

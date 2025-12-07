@@ -5,6 +5,7 @@ import {
   OptimisticUpdateOptions,
 } from './useOptimisticUpdate';
 import axios from '../util/axios';
+import { showGlobalError, formatErrorMessage } from '../context/errorModal';
 
 export interface RiderOperations {
   updateRiderActive: (riderId: string, active: boolean) => Promise<string>;
@@ -230,6 +231,10 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
       optimisticState.updateServerData(serverRiders);
     } catch (error) {
       console.error('Failed to refresh riders from server:', error);
+      showGlobalError(
+        `Failed to refresh riders from server: ${formatErrorMessage(error)}`,
+        'Riders Error'
+      );
       throw error;
     }
   }, [optimisticState]);

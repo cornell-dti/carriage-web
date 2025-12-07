@@ -39,6 +39,8 @@ import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import styles from './RideOverview.module.css';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -205,7 +207,8 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   const ride = editedRide!;
   const temporalType = getTemporalType(ride);
   const showRecurrence = userRole !== 'driver'; // Hide recurrence for drivers
-
+  const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const formatDateTime = (dateTimeString: string) => {
     const date = new Date(dateTimeString);
     return {
@@ -240,15 +243,20 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     const currentEndTime = dayjs(ride.endTime);
 
     // Ensure end time is after start time
-    if (
-      updatedStartTime.isAfter(currentEndTime) ||
-      updatedStartTime.isSame(currentEndTime)
-    ) {
-      const newEndTime = updatedStartTime.add(30, 'minute');
-      updateRideField('endTime', newEndTime.toISOString());
-    }
+    try {
+      if (
+        updatedStartTime.isAfter(currentEndTime) ||
+        updatedStartTime.isSame(currentEndTime)
+      ) {
+        const newEndTime = updatedStartTime.add(30, 'minute');
+        updateRideField('endTime', newEndTime.toISOString());
+      }
 
-    updateRideField('startTime', updatedStartTime.toISOString());
+      updateRideField('startTime', updatedStartTime.toISOString());
+    } catch (error) {
+      console.error('Failed to update ride time:', error);
+      showError(`Error updating ride time: ${formatErrorMessage(error)}`, 'Ride Edit Error');
+    }
   };
 
   const handleStartTimeChange = (newTime: Dayjs | null) => {
@@ -394,7 +402,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                         {
                           allowPastTimes,
                           maxDurationHours: 24,
-                          minDurationMinutes: 5,
+                          minDurationMinutes: 1,
                         }
                       );
 
@@ -416,7 +424,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       const hasEndTimeError =
                         endTimeBeforeStartError !== undefined ||
                         durationError !== undefined;
-
+                        
                       return (
                         <>
                           <div className={styles.dateTimeRow}>
@@ -454,20 +462,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                                 }}
                               />
                               {/* Start time specific error - directly below start time field */}
-                              {startTimePastError && (
-                                <Typography
-                                  variant="caption"
-                                  color="error"
-                                  sx={{
-                                    display: 'block',
-                                    fontSize: '0.75rem',
-                                    marginTop: 0.5,
-                                    marginLeft: 1,
-                                  }}
-                                >
-                                  {startTimePastError.message}
-                                </Typography>
-                              )}
+                              {/* Field-level error messaging removed; errors surface on Save */}
                             </div>
                           </div>
 
@@ -505,7 +500,6 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                                   },
                                 }}
                               />
-                              {/* End time specific errors - directly below end time field */}
                               {(endTimeBeforeStartError || durationError) && (
                                 <Typography
                                   variant="caption"
@@ -693,7 +687,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                           color="textSecondary"
                           sx={{ fontStyle: 'italic' }}
                         >
-                          Note: Full recurrence functionality coming soon
+                          Full recurrence functionality coming soon
                         </Typography>
                       </>
                     )}
