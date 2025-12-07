@@ -1,11 +1,10 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import moment from 'moment';
 import { Ride } from '../../types';
 import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
-import styles from './schedule.module.css';
 import buttonStyles from '../../styles/button.module.css';
 import { Replay, ZoomIn, ZoomOut } from '@mui/icons-material';
 
@@ -152,6 +151,18 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
 
   const alternateTickThreshold = 100;
 
+  const firstRideRef = useRef<HTMLParagraphElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (firstRideRef.current && containerRef.current) {
+      containerRef.current.scrollTo({
+        left: firstRideRef.current.offsetLeft,
+        top: firstRideRef.current.offsetTop,
+      });
+    }
+  }, [rides]);
+
   return (
     <div
       style={{
@@ -295,6 +306,7 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
             flexDirection: 'column',
             position: 'relative',
           }}
+          ref={containerRef}
         >
           {/* tick labels */}
           <div
@@ -357,114 +369,127 @@ const ScheduledTimeline: FC<ScheduledTimelineProps> = ({
               width: `${localHalfHourWidth * timeLabels.length}px`,
             }}
           >
-            {rides.map((ride, idx) => {
-              const { positionFromLeft, width } = calculateRidePosition(
-                new Date(ride.startTime),
-                new Date(ride.endTime)
-              );
+            {[...rides]
+              .sort(
+                (a, b) =>
+                  new Date(a.startTime).getTime() -
+                  new Date(b.startTime).getTime()
+              )
+              .map((ride, idx) => {
+                const { positionFromLeft, width } = calculateRidePosition(
+                  new Date(ride.startTime),
+                  new Date(ride.endTime)
+                );
 
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    height: '2.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                  id={`${ride.id}-timeline`}
-                >
-                  {/* Student/Driver name */}
+                // rider block
+                return (
                   <div
+                    key={idx}
                     style={{
-                      height: '100%',
+                      height: '2.5rem',
                       display: 'flex',
-                      justifyContent: 'end',
                       alignItems: 'center',
-                      paddingRight: '0.5rem',
-                      minWidth: `${positionFromLeft}px`,
-                      maxWidth: `${positionFromLeft}px`,
                     }}
+                    id={`${ride.id}-timeline`}
                   >
-                    <p
+                    {/* Student/Driver name */}
+                    <div
                       style={{
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
+                        height: '100%',
+                        display: 'flex',
+                        justifyContent: 'end',
+                        alignItems: 'center',
+                        paddingRight: '0.5rem',
+                        minWidth: `${positionFromLeft}px`,
+                        maxWidth: `${positionFromLeft}px`,
                       }}
                     >
-                      {nameDisplayMode === 'driver'
-                        ? ride.driver
-                          ? ride.driver.firstName
-                          : 'No Driver Assigned'
-                        : ride.riders[0]
-                        ? ride.riders[0].firstName +
-                          ' ' +
-                          ride.riders[0].lastName
-                        : 'No Student'}
-                    </p>
-                  </div>
-
-                  {/* Ride block with start time */}
-                  <button
-                    style={{
-                      height: '100%',
-                      border: '1px solid',
-                      cursor: 'pointer',
-                      borderRadius: '0.375rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      padding: '0 0.5rem',
-                      overflow: 'hidden',
-                      zIndex: '1',
-                      backgroundColor:
-                        rides[0] === undefined || rides[0].status === 'no_show'
-                          ? 'rgb(229, 229, 229)'
-                          : 'rgb(23, 23, 23)',
-                      borderColor:
-                        rides[0] === undefined || rides[0].status === 'no_show'
-                          ? 'rgb(209, 213, 219)'
-                          : 'rgb(38, 38, 38)',
-                      color:
-                        rides[0] === undefined || rides[0].status === 'no_show'
-                          ? 'rgb(64, 64, 64)'
-                          : 'rgb(245, 245, 245)',
-                      left: `${positionFromLeft}px`,
-                      width: `${Math.max(width, 5)}px`,
-                    }}
-                    onClick={() =>
-                      selected === ride
-                        ? handleSelection(undefined)
-                        : handleSelection(ride)
-                    }
-                  >
-                    <div className="flex flex-col justify-center">
                       <p
                         style={{
-                          fontSize: '0.875rem',
-                          color:
-                            rides[0] === undefined ||
-                            rides[0].status === 'no_show'
-                              ? 'rgb(38, 38, 38)'
-                              : 'rgb(245, 245, 245)',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                        }}
+                        ref={(ref) => {
+                          if (idx === 0) firstRideRef.current = ref;
                         }}
                       >
-                        {/* date cast*/}
-                        {new Date(ride.startTime).getHours() % 12 || 12}:
-                        {/* date cast */}
-                        {new Date(ride.startTime)
-                          .getMinutes()
-                          .toString()
-                          .padStart(2, '0')}
-                        {/* date cast */}
-                        {new Date(ride.startTime).getHours() >= 12
-                          ? 'PM'
-                          : 'AM'}
+                        {nameDisplayMode === 'driver'
+                          ? ride.driver
+                            ? ride.driver.firstName
+                            : 'No Driver Assigned'
+                          : ride.riders[0]
+                          ? ride.riders[0].firstName +
+                            ' ' +
+                            ride.riders[0].lastName
+                          : 'No Student'}
                       </p>
                     </div>
-                  </button>
-                </div>
-              );
-            })}
+
+                    {/* Ride block with start time */}
+                    <button
+                      style={{
+                        height: '100%',
+                        border: '1px solid',
+                        cursor: 'pointer',
+                        borderRadius: '0.375rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '0 0.5rem',
+                        overflow: 'hidden',
+                        zIndex: '1',
+                        backgroundColor:
+                          rides[0] === undefined ||
+                          rides[0].status === 'no_show'
+                            ? 'rgb(229, 229, 229)'
+                            : 'rgb(23, 23, 23)',
+                        borderColor:
+                          rides[0] === undefined ||
+                          rides[0].status === 'no_show'
+                            ? 'rgb(209, 213, 219)'
+                            : 'rgb(38, 38, 38)',
+                        color:
+                          rides[0] === undefined ||
+                          rides[0].status === 'no_show'
+                            ? 'rgb(64, 64, 64)'
+                            : 'rgb(245, 245, 245)',
+                        left: `${positionFromLeft}px`,
+                        width: `${Math.max(width, 5)}px`,
+                      }}
+                      onClick={() =>
+                        selected === ride
+                          ? handleSelection(undefined)
+                          : handleSelection(ride)
+                      }
+                    >
+                      <div className="flex flex-col justify-center">
+                        <p
+                          style={{
+                            fontSize: '0.875rem',
+                            color:
+                              rides[0] === undefined ||
+                              rides[0].status === 'no_show'
+                                ? 'rgb(38, 38, 38)'
+                                : 'rgb(245, 245, 245)',
+                          }}
+                        >
+                          {/* date cast*/}
+                          {new Date(ride.startTime).getHours() % 12 || 12}:
+                          {/* date cast */}
+                          {new Date(ride.startTime)
+                            .getMinutes()
+                            .toString()
+                            .padStart(2, '0')}
+                          {/* date cast */}
+                          {new Date(ride.startTime).getHours() >= 12
+                            ? 'PM'
+                            : 'AM'}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                );
+              })}
           </div>
           {/* tick marks */}
           <div
