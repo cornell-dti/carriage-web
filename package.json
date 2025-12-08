@@ -21,16 +21,10 @@
   },
   "packageManager": "pnpm@10.23.0",
   "scripts": {
-    "start:frontend": "cd frontend && pnpm run start",
-    "start:server": "cd server && pnpm run dev",
-    "build:frontend": "cd frontend && pnpm run build",
-    "build:server": "cd server && pnpm run build",
     "quiet-lint": "pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix --quiet",
     "lint": "pnpm eslint . --ignore-path .eslintignore --ext .js,.jsx,.ts,.tsx --fix",
     "format": "pnpm prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
-    "format:check": "pnpm prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
-    "type-check": "cd frontend && pnpm run type-check && cd ../server && pnpm run type-check",
-    "test:server": "cd server && pnpm run test"
+    "format:check": "pnpm prettier --check \"**/*.{ts,js,tsx,jsx,css}\""
   },
   "repository": {
     "type": "git",
