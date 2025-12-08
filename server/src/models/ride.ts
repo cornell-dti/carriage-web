@@ -29,6 +29,23 @@ export enum Status {
 
 // Use the proper LocationType instead of custom RideLocation
 
+/* TODO: Create new type `RideType2` that contains
+- id
+- riders
+- driver?
+- requestedPickupTime
+- finalPickupTime?
+- requestedDropoffTime
+- finalDropoffTime?
+- requestedPickupLocation
+- finalPickupLocation?
+- requestedDropoffLocation
+- finalDropoffLocation?
+- schedulingState: create type
+- operationalStatus: create type
+- recurrenceId?
+- breaksRecurrence?
+*/
 export type RideType = {
   id: string;
   type: Type;
