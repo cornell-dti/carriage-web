@@ -9,3 +9,5 @@ build
 .dockerignore
 Dockerfile
 LICENSE
+
+.github
