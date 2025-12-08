@@ -5,3 +5,7 @@ build
 *.gz
 
 **/.env
+
+.dockerignore
+Dockerfile
+LICENSE
