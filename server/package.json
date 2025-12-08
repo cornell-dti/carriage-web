@@ -1,5 +1,5 @@
 {
-  "name": "carriage-web-backend",
+  "name": "@carriage-web/server",
   "version": "1.0.0",
   "description": "Frontend code for Carriage",
   "main": "app.js",
