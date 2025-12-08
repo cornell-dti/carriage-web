@@ -29,4 +29,4 @@ jobs:
       - name: Run Linter
         run: pnpm run lint
       - name: Run Type Check
-        run: pnpm run type-check
+        run: pnpm run -r type-check

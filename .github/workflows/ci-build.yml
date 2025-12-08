@@ -15,6 +15,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
       - name: Build Frontend
-        run: CI='' pnpm run build:frontend
+        run: CI='' pnpm run build --filter frontend
       - name: Build Server
-        run: CI='' pnpm run build:server
+        run: CI='' pnpm run build --filter server
