@@ -24,6 +24,7 @@ RUN pnpm fetch
 FROM build-base AS build-server
 COPY . .
 RUN pnpm install -r --offline --filter server...
+# Build with CI=false to avoid treat warnings as errors
 RUN CI=false pnpm run -r --filter server... build
 
 FROM build-base AS build-frontend
@@ -41,6 +42,7 @@ ENV REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
 ARG REACT_APP_ENCRYPTION_KEY
 ENV REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
 
+# Build with CI=false to avoid treat warnings as errors
 RUN CI=false pnpm run -r --filter frontend... build
 
 FROM base AS prod
