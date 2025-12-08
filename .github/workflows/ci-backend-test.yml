@@ -31,4 +31,4 @@ jobs:
       - name: Install Server Dependencies
         run: pnpm install --frozen-lockfile
       # - name: Test Server
-      #   run: npm run test:server
+      #   run: npm run test --filter server
