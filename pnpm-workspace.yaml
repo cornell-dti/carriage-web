@@ -1,6 +1,7 @@
 packages:
   - frontend
   - server
+  - shared
 
 syncInjectedDepsAfterScripts:
   - build
