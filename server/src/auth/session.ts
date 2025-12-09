@@ -27,6 +27,8 @@ export const sessionMiddleware = session({
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
     sameSite: 'lax',
     maxAge: sessionTTL,
+    domain: process.env.COOKIE_DOMAIN || undefined, // Allow subdomain cookies
+    path: '/',
   },
 });
 
