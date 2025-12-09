@@ -29,8 +29,7 @@ RUN CI=false pnpm run -r --filter server... build
 
 FROM build-base AS build-frontend
 COPY . .
-# TODO: filter only frontend dependencies. until we add a shared package, we need all dependencies
-RUN pnpm install -r --offline
+RUN pnpm install -r --offline --filter frontend...
 
 # Read build-time environment variables
 ARG REACT_APP_SERVER_URL
