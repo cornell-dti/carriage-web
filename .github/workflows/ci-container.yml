@@ -54,8 +54,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            REACT_APP_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
-            REACT_APP_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
-            REACT_APP_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
-            REACT_APP_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
-            REACT_APP_GOOGLE_MAPS_MAP_ID=${{ secrets.REACT_APP_GOOGLE_MAPS_MAP_ID }}
+            VITE_CLIENT_ID=${{ secrets.REACT_APP_CLIENT_ID }}
+            VITE_PUBLIC_VAPID_KEY=${{ secrets.REACT_APP_PUBLIC_VAPID_KEY }}
+            VITE_ENCRYPTION_KEY=${{ secrets.REACT_APP_ENCRYPTION_KEY }}
+            VITE_GOOGLE_MAPS_API_KEY=${{ secrets.REACT_APP_GOOGLE_MAPS_API_KEY }}
+            VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.REACT_APP_GOOGLE_MAPS_MAP_ID }}
