@@ -45,10 +45,11 @@ services:
       WATCHTOWER_POLL_INTERVAL: 30
       WATCHTOWER_CLEANUP: true # Remove redundant images after updates
       WATCHTOWER_LABEL_ENABLE: true # Require label for auto-updates
-      WATCHTOWER_AUTH_REGISTRY: ghcr.io
       DOCKER_HOST: tcp://docker-proxy:2375
-    env_file:
-      - ./.watchtower.env
+    volumes:
+      # create a config.json with `docker login` and symlink it to this directory.
+      # for more information, see https://containrrr.dev/watchtower/private-registries/
+      - ./config.json:/config.json
     depends_on:
       - docker-proxy
     networks:
