@@ -13,6 +13,10 @@ services:
       - 'traefik.http.routers.carriage.tls.certresolver=le'
       - 'traefik.http.routers.carriage.entrypoints=websecure'
       - 'traefik.http.services.carriage.loadbalancer.server.port=3001'
+      - 'com.centurylinklabs.watchtower.enable=true'
+    networks:
+      - reverse-proxy
+
   traefik:
     image: traefik:v3.6
     command:
@@ -32,3 +36,47 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - './letsencrypt:/letsencrypt'
     restart: always
+    networks:
+      - reverse-proxy
+
+  watchtower:
+    image: containrrr/watchtower
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 30
+      WATCHTOWER_CLEANUP: true # Remove redundant images after updates
+      WATCHTOWER_LABEL_ENABLE: true # Require label for auto-updates
+      WATCHTOWER_AUTH_REGISTRY: ghcr.io
+      DOCKER_HOST: tcp://docker-proxy:2375
+    env_file:
+      - ./.watchtower.env
+    depends_on:
+      - docker-proxy
+    networks:
+      - docker-proxy
+
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    privileged: true
+    environment:
+      POST: 1
+      CONTAINERS: 1
+      DELETE: 1
+      IMAGES: 1
+      NETWORKS: 1
+      CONTAINERS_CREATE: 1
+      CONTAINERS_START: 1
+      CONTAINERS_UPDATE: 1
+      CONTAINERS_DELETE: 1
+      IMAGES_DELETE: 1
+      ALLOW_START: 1
+      ALLOW_RESTART: 1
+      ALLOW_STOP: 1
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    restart: unless-stopped
+    networks:
+      - docker-proxy
+
+networks:
+  reverse-proxy:
+  docker-proxy:
