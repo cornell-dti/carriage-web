@@ -2,8 +2,6 @@ services:
   carriage:
     image: ghcr.io/cornell-dti/carriage-web:${IMAGE_TAG:-latest}
     restart: always
-    ports:
-      - '3001:3001'
     build:
       context: .
       args:
