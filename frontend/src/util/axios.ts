@@ -2,7 +2,7 @@ import axios from 'axios';
 import { decrypt } from 'components/AuthManager/AuthManager';
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
+  baseURL: import.meta.env.VITE_SERVER_URL,
 });
 
 export const setAuthToken = (token: string) => {
