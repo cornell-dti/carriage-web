@@ -1,5 +1,5 @@
 import React from 'react';
-import { Rider } from '../types';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import PersonIcon from '@mui/icons-material/Person';
@@ -69,7 +69,7 @@ const driverSearchConfig: SearchConfig<DriverType> = {
   getItemLabel: (driver) => `${driver.firstName} ${driver.lastName}`,
 };
 
-const riderSearchConfig: SearchConfig<Rider> = {
+const riderSearchConfig: SearchConfig<RiderType> = {
   searchFields: [
     { key: 'firstName', weight: 1 },
     { key: 'lastName', weight: 1 },

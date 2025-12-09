@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Box, Typography, Card, CardContent } from '@mui/material';
 import cn from 'classnames';
-import { Rider } from '../../../types/index';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { user as defaultUserIcon } from '../../../icons/userInfo/index';
 import styles from './userDetail.module.css';
@@ -49,7 +49,7 @@ type UserDetailProps = {
   role?: string;
   photoLink?: string;
   isRider?: boolean;
-  rider?: Rider;
+  rider?: RiderType;
   driver?: DriverType;
 };
 

@@ -2,7 +2,7 @@ import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
 import { Location } from './location';
 import { LocationType } from '@carriage-web/shared/src/types/location';
-import { Rider, RiderType } from './rider';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { Driver } from './driver';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import defaultModelConfig from '../util/modelConfig';

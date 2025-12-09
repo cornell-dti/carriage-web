@@ -12,11 +12,12 @@ import useUserStatistics, {
   StatisticsFilters,
 } from './hooks/useUserStatistics';
 import StatisticsFilter from './StatisticsFilter';
-import { Rider, Employee, Ride } from '../../types/index';
+import { Employee, Ride } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import styles from './UserDetailCards.module.css';
 
 interface StatisticsCardProps {
-  user: Employee | Rider;
+  user: Employee | RiderType;
   userType: 'employee' | 'rider';
   rides: Ride[];
 }

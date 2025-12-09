@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Employee, Rider, Ride } from '../../../types/index';
+import { Employee, Ride } from '../../../types/index';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRiders } from '../../../context/RidersContext';
@@ -7,7 +8,7 @@ import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
 
 interface UserDetailData {
-  user: Employee | Rider | null;
+  user: Employee | RiderType | null;
   rides: Ride[];
   statistics: {
     rideCount: number;
@@ -22,7 +23,7 @@ const useUserDetailData = (
   userId: string | undefined,
   userType: 'employee' | 'rider'
 ): UserDetailData => {
-  const [user, setUser] = useState<Employee | Rider | null>(null);
+  const [user, setUser] = useState<Employee | RiderType | null>(null);
   const [rides, setRides] = useState<Ride[]>([]);
   const [statistics, setStatistics] = useState({
     rideCount: -1,
@@ -242,7 +243,7 @@ const useUserDetailData = (
       const updatedRider = riders.find((r) => r.id === userId);
       if (updatedRider && user) {
         // Check if any properties have changed to avoid unnecessary updates
-        const currentRider = user as Rider;
+        const currentRider = user as RiderType;
         const hasChanges =
           JSON.stringify(updatedRider) !== JSON.stringify(currentRider);
 

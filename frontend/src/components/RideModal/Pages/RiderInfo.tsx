@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { ObjectType, Rider } from '../../../types';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { ObjectType } from '../../../types';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { ModalPageProps } from '../../Modal/types';
 import {
   Button,
@@ -55,7 +55,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   };
 
   useEffect(() => {
-    const nameToIdObj = riders.reduce((acc: ObjectType, r: Rider) => {
+    const nameToIdObj = riders.reduce((acc: ObjectType, r: RiderType) => {
       const fullName = `${r.firstName} ${r.lastName}`.toLowerCase();
       acc[fullName] = r.id;
       return acc;

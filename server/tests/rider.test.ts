@@ -4,7 +4,7 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Rider, Location, Vehicle } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { Organization } from '../src/models/rider';
+import { Organization } from '@carriage-web/shared/src/types/rider';
 import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { Ride, Status, Type } from '../src/models/ride';

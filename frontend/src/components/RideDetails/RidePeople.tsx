@@ -12,7 +12,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Rider } from '../../types';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRideEdit } from './RideEditContext';
 import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
@@ -28,7 +28,7 @@ interface RidePeopleProps {
 }
 
 interface PersonCardProps {
-  person: DriverType | Rider;
+  person: DriverType | RiderType;
   type: 'driver' | 'rider';
   showAccessibility?: boolean;
 }
@@ -39,7 +39,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
   showAccessibility = false,
 }) => {
   const isRider = type === 'rider';
-  const rider = isRider ? (person as Rider) : undefined;
+  const rider = isRider ? (person as RiderType) : undefined;
 
   return (
     <div className={styles.personCard}>
@@ -128,7 +128,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     ride.driver || null
   );
 
-  const [riders, setRiders] = useState<Rider[]>([]);
+  const [riders, setRiders] = useState<RiderType[]>([]);
   const [loadingRiders, setLoadingRiders] = useState(false);
   const [riderSelectOpen, setRiderSelectOpen] = useState(false);
   const [ridersError, setRidersError] = useState<string | null>(null);
@@ -220,7 +220,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     setDriverSelectOpen(false);
   };
 
-  const handleRiderSelect = (rider: Rider) => {
+  const handleRiderSelect = (rider: RiderType) => {
     const currentRiders = ride.riders || [];
     if (!currentRiders.find((r) => r.id === rider.id)) {
       updateRideField('riders', [...currentRiders, rider]);
@@ -228,7 +228,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     setRiderSelectOpen(false);
   };
 
-  const handleRemoveRider = (rider: Rider) => {
+  const handleRemoveRider = (rider: RiderType) => {
     const currentRiders = ride.riders || [];
     updateRideField(
       'riders',
@@ -405,7 +405,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
         />
 
         {/* Rider Selection Popup */}
-        <SearchPopup<Rider>
+        <SearchPopup<RiderType>
           open={riderSelectOpen}
           onClose={() => setRiderSelectOpen(false)}
           onSelect={handleRiderSelect}

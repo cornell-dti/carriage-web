@@ -1,9 +1,6 @@
-import { RiderType } from '../../../server/src/models/rider';
 import { RideType } from '../../../server/src/models/ride';
 import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
-
-export type Rider = RiderType;
 
 export enum Accessibility {
   ASSISTANT = 'Assistant',

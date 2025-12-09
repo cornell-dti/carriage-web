@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, SchedulingState, Status, Rider } from '../types';
+import { Ride, SchedulingState, Status } from '../types';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
@@ -29,7 +30,10 @@ type ridesState = {
   getRideById: (rideId: string) => Ride | undefined;
   getAllRides: () => Ride[];
   // Available riders functions
-  getAvailableRiders: (startTime: string, endTime: string) => Promise<Rider[]>;
+  getAvailableRiders: (
+    startTime: string,
+    endTime: string
+  ) => Promise<RiderType[]>;
   // Error handling
   clearError: () => void;
   error: Error | null;
@@ -493,7 +497,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   );
 
   const getAvailableRiders = useCallback(
-    async (startTime: string, endTime: string): Promise<Rider[]> => {
+    async (startTime: string, endTime: string): Promise<RiderType[]> => {
       try {
         // Fetch all riders
         const ridersResponse = await axios.get('/api/riders');

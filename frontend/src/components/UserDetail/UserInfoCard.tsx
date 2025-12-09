@@ -16,12 +16,13 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Rider, Employee } from '../../types/index';
+import { Employee } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { getUserNetId } from '../../util';
 import styles from './UserDetailCards.module.css';
 
 interface UserInfoCardProps {
-  user: Employee | Rider;
+  user: Employee | RiderType;
   userType: 'employee' | 'rider';
 }
 
@@ -52,11 +53,15 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
           {userType === 'rider' ? (
             <Chip
               icon={
-                (user as Rider).active ? <CheckCircleIcon /> : <CancelIcon />
+                (user as RiderType).active ? (
+                  <CheckCircleIcon />
+                ) : (
+                  <CancelIcon />
+                )
               }
-              label={(user as Rider).active ? 'Active' : 'Inactive'}
+              label={(user as RiderType).active ? 'Active' : 'Inactive'}
               size="small"
-              color={(user as Rider).active ? 'success' : 'error'}
+              color={(user as RiderType).active ? 'success' : 'error'}
               variant="outlined"
               className="text-xs"
             />
@@ -141,7 +146,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
                   <div className="flex items-center gap-1">
                     <EmailIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
                     <span className="font-medium text-gray-900 truncate">
-                      {(user as Rider).email || 'N/A'}
+                      {(user as RiderType).email || 'N/A'}
                     </span>
                   </div>
                   <span className="text-gray-400">•</span>
@@ -156,7 +161,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
                 <div className="flex items-center gap-2 text-xs">
                   <HomeIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
                   <span className="font-medium text-gray-900">
-                    {(user as Rider).address || 'N/A'}
+                    {(user as RiderType).address || 'N/A'}
                   </span>
                 </div>
                 {/* Third row: Active dates */}
@@ -164,8 +169,8 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
                   <CalendarTodayIcon className="w-3 h-3 text-gray-400 flex-shrink-0" />
                   <span className="font-medium text-gray-900">
                     {formatDateRange(
-                      (user as Rider).joinDate,
-                      (user as Rider).endDate
+                      (user as RiderType).joinDate,
+                      (user as RiderType).endDate
                     )}
                   </span>
                 </div>

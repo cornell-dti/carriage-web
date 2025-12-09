@@ -9,7 +9,7 @@ import { Ride, Status, Type, RideType, SchedulingState } from '../models/ride';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
-import { RiderType } from '../models/rider';
+import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { notify } from '../util/notification';
 import { Change } from '../util/types';
 import { UserType } from '../models/subscription';

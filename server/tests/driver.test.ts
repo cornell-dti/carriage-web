@@ -6,12 +6,12 @@ import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
+import { Rider } from '../src/models/rider';
 import {
+  RiderType,
   Accessibility,
   Organization,
-  Rider,
-  RiderType,
-} from '../src/models/rider';
+} from '@carriage-web/shared/src/types/rider';
 import { Ride, Status, Type } from '../src/models/ride';
 import { Location } from '../src/models/location';
 import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
