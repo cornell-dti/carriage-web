@@ -113,10 +113,15 @@
     min-height: 6rem;
     flex-direction: row;
     padding: 0 1.75rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
   }
   .menuItems {
     display: flex;
     flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
   }
   .sidebarLinks {
     display: flex;
@@ -129,8 +134,25 @@
     display: flex;
     width: initial;
     margin: 0;
+    flex-shrink: 0;
+    margin-left: auto;
+    padding-left: 1.75rem;
   }
   .icon {
     margin: 0;
+  }
+  .sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    background: linear-gradient(
+      to left,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
+    pointer-events: none;
   }
 }
