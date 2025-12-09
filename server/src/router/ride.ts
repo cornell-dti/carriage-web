@@ -17,7 +17,7 @@ import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { notify } from '../util/notification';
-import { Change } from '../util/types';
+import { Change } from '@carriage-web/shared/src/types';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();

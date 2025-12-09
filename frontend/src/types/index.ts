@@ -1,5 +1,3 @@
-import { UnregisteredUserType } from '../../../server/src/util/types';
-
 export enum Accessibility {
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
@@ -94,5 +92,3 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type UnregisteredUser = UnregisteredUserType;

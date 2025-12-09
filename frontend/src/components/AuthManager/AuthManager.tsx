@@ -17,7 +17,7 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { UnregisteredUser } from '../../types/index';
+import { UnregisteredUserType } from '@carriage-web/shared/src/types';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
@@ -54,7 +54,7 @@ const AuthManager = () => {
     createRefresh(id, localStorage.getItem('userType') || '', jwtValue())
   );
   const [unregisteredUser, setUnregisteredUser] =
-    useState<UnregisteredUser | null>(null);
+    useState<UnregisteredUserType | null>(null);
   const [ssoError, setSsoError] = useState<string>('');
 
   const navigate = useNavigate();

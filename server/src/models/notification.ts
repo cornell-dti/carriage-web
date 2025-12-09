@@ -1,5 +1,5 @@
 import dynamoose from 'dynamoose';
-import { NotificationEvent, Change } from '../util/types';
+import { NotificationEvent, Change } from '@carriage-web/shared/src/types';
 import { Status } from '@carriage-web/shared/src/types/ride';
 import defaultModelConfig from '../util/modelConfig';
 

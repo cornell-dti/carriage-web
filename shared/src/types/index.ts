@@ -1,4 +1,4 @@
-import { Status } from '@carriage-web/shared/src/types/ride';
+import { Status } from './ride';
 
 export type UserType = 'User' | 'Rider' | 'Driver' | 'Admin';
 

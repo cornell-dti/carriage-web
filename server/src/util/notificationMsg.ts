@@ -1,5 +1,5 @@
 import { UserType } from '../models/subscription';
-import { Change, NotificationEvent } from './types';
+import { Change, NotificationEvent } from '@carriage-web/shared/src/types';
 import { RideType, Status } from '@carriage-web/shared/src/types/ride';
 import { timeTo12Hr, timeToMDY } from './index';
 

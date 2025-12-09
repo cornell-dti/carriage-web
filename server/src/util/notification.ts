@@ -14,7 +14,7 @@ import {
   PlatformType,
 } from '../models/subscription';
 import { RideType, Type } from '@carriage-web/shared/src/types/ride';
-import { Change, NotificationEvent } from './types';
+import { Change, NotificationEvent } from '@carriage-web/shared/src/types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';
 

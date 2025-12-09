@@ -1,4 +1,4 @@
-import { Change, NotificationEvent } from './types';
+import { Change, NotificationEvent } from '@carriage-web/shared/src/types';
 import { UserType } from '../models/subscription';
 import { Status } from '@carriage-web/shared/src/types/ride';
 
