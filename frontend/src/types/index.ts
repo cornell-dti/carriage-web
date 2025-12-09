@@ -1,4 +1,3 @@
-import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
 
 export enum Accessibility {
@@ -41,8 +40,6 @@ export type User = {
 export type ObjectType = {
   [x: string]: any;
 };
-
-export type Vehicle = VehicleType;
 
 export enum Tag {
   EAST = 'east',

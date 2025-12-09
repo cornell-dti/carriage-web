@@ -4,7 +4,8 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { Vehicle, VehicleType } from '../src/models/vehicle';
+import { Vehicle } from '../src/models/vehicle';
+import { VehicleType } from '@carriage-web/shared/src/types/vehicle';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { Rider } from '../src/models/rider';
 import {
