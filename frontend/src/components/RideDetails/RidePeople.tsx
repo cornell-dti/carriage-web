@@ -12,7 +12,8 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Driver, Rider } from '../../types';
+import { Rider } from '../../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRideEdit } from './RideEditContext';
 import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
 import { useRides } from '../../context/RidesContext';
@@ -27,7 +28,7 @@ interface RidePeopleProps {
 }
 
 interface PersonCardProps {
-  person: Driver | Rider;
+  person: DriverType | Rider;
   type: 'driver' | 'rider';
   showAccessibility?: boolean;
 }
@@ -113,17 +114,17 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const { getAvailableRiders } = useRides();
   const ride = editedRide!;
 
-  const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [drivers, setDrivers] = useState<DriverType[]>([]);
   const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [driverSelectOpen, setDriverSelectOpen] = useState(false);
   const [driversError, setDriversError] = useState<string | null>(null);
   const driverButtonRef = useRef<HTMLButtonElement>(null);
 
   // Ref to store the driver assigned when editing started
-  const originalDriverRef = useRef<Driver | null>(null);
+  const originalDriverRef = useRef<DriverType | null>(null);
 
   // Track the temp driver changes (before saving)
-  const [tempCurrentDriver, setTempCurrentDriver] = useState<Driver | null>(
+  const [tempCurrentDriver, setTempCurrentDriver] = useState<DriverType | null>(
     ride.driver || null
   );
 
@@ -213,7 +214,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     }
   };
 
-  const handleDriverSelect = (driver: Driver) => {
+  const handleDriverSelect = (driver: DriverType) => {
     setTempCurrentDriver(driver);
     updateRideField('driver', driver);
     setDriverSelectOpen(false);
@@ -372,7 +373,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
         </div>
 
         {/* Driver Selection Popup */}
-        <SearchPopup<Driver>
+        <SearchPopup<DriverType>
           open={driverSelectOpen}
           onClose={() => setDriverSelectOpen(false)}
           onSelect={handleDriverSelect}

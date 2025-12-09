@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
-import { Admin, Driver } from '../../types';
+import { Admin } from '../../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 
 const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {
@@ -16,13 +17,13 @@ const formatPhone = (phoneNumber: string | undefined) => {
   }
 };
 
-type Employee = Admin | Driver;
+type Employee = Admin | DriverType;
 
 function isAdmin(employee: Employee): employee is Admin {
   return 'isDriver' in employee;
 }
 
-function isDriver(employee: Employee): employee is Driver {
+function isDriver(employee: Employee): employee is DriverType {
   return 'availability' in employee && !('isDriver' in employee);
 }
 

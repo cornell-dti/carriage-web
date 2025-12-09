@@ -9,7 +9,8 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { RideType, Driver, Rider } from '../../types';
+import { RideType, Rider } from '../../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import AuthContext from '../../context/auth';
 import RideOverview from './RideOverview';
 import RidePeople from './RidePeople';

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Employee, Rider, Ride } from '../../../types/index';
 import { AdminType } from '../../../../../server/src/models/admin';
-import { DriverType } from '../../../../../server/src/models/driver';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';

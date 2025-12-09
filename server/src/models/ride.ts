@@ -2,7 +2,8 @@ import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
 import { Tag, LocationType, Location } from './location';
 import { Rider, RiderType } from './rider';
-import { Driver, DriverType } from './driver';
+import { Driver } from './driver';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import defaultModelConfig from '../util/modelConfig';
 
 export enum Type {

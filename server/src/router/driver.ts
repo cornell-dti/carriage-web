@@ -3,11 +3,12 @@ import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Driver, DriverType } from '../models/driver';
+import { Driver } from '../models/driver';
 import { validateUser } from '../util';
 import { Ride, Status } from '../models/ride';
 import { UserType } from '../models/subscription';
 import { Item } from 'dynamoose/dist/Item';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 
 const router = express.Router();
 const tableName = 'Drivers';

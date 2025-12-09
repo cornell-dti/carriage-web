@@ -1,7 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import {
   Ride,
-  Driver,
   Rider,
   Location,
   Status,
@@ -9,10 +8,10 @@ import {
   Type,
   Tag,
 } from '../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 
 // Type aliases for better readability
 type RideType = Ride;
-type DriverType = Driver;
 type RiderType = Rider;
 type LocationType = Location;
 

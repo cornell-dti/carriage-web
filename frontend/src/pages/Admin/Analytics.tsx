@@ -3,7 +3,8 @@ import moment from 'moment';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
-import { Driver, TableData } from '../../types';
+import { TableData } from '../../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
@@ -38,7 +39,7 @@ const Analytics = () => {
     const cols =
       'Date,Daily Total,Daily Ride Count,Day No Shows,Day Cancels,Night Ride Count, Night No Shows, Night Cancels';
     const finalCols = drivers.reduce(
-      (acc: string, curr: Driver) =>
+      (acc: string, curr: DriverType) =>
         `${acc},${curr.firstName} ${curr.lastName.substring(0, 1)}.`,
       cols
     );

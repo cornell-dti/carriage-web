@@ -25,14 +25,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import RepeatIcon from '@mui/icons-material/Repeat';
-import {
-  RideType,
-  Status,
-  SchedulingState,
-  Type,
-  Driver,
-  Rider,
-} from '../../types';
+import { RideType, Status, SchedulingState, Type, Rider } from '../../types';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRideEdit } from './RideEditContext';
 import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
@@ -118,7 +112,7 @@ const getTemporalTypeColor = (
 
 // Person card component for the overview
 const PersonCardOverview: React.FC<{
-  person: Driver | Rider;
+  person: DriverType | Rider;
   type: 'driver' | 'rider';
   showAccessibility?: boolean;
 }> = ({ person, type, showAccessibility = false }) => {

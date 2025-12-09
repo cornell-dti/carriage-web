@@ -1,7 +1,8 @@
 import React from 'react';
 import { Avatar, Box, Typography, Card, CardContent } from '@mui/material';
 import cn from 'classnames';
-import { Rider, DriverType as Driver } from '../../../types/index';
+import { Rider } from '../../../types/index';
+import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { user as defaultUserIcon } from '../../../icons/userInfo/index';
 import styles from './userDetail.module.css';
 
@@ -49,7 +50,7 @@ type UserDetailProps = {
   photoLink?: string;
   isRider?: boolean;
   rider?: Rider;
-  driver?: Driver;
+  driver?: DriverType;
 };
 
 const UserDetail = ({
