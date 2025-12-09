@@ -184,17 +184,38 @@
   column-gap: 4rem;
 }
 
+.topLaptop {
+  max-width: 100%;
+  height: auto;
+}
+
 .bottomLaptop {
   width: 670px;
+  max-width: 100%;
   height: auto;
 }
 
 .phone {
   width: 220px;
-  height: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
 /* Landing page is almost fully responsive. It still needs to vertical media queries. */
+
+@media (max-width: 320px) {
+  .home {
+    padding: 0 0.5rem;
+  }
+
+  .adminInfo {
+    padding: 2rem 1rem;
+  }
+
+  .studentInfo {
+    padding: 2rem 1rem;
+  }
+}
 
 @media (max-width: 400px) {
   .container {
@@ -223,6 +244,24 @@
 
   .adminInfo p {
     font-size: 24px;
+  }
+
+  .studentInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .studentImgContainer {
+    max-width: 100%;
+  }
+
+  .bottomLaptop {
+    width: 60%;
+    max-width: 200px;
+  }
+
+  .phone {
+    width: 30%;
+    max-width: 100px;
   }
 }
 
@@ -260,7 +299,7 @@
   .adminInfo {
     flex-direction: column;
     row-gap: 3rem;
-    padding: 6rem 6rem 6rem 6rem;
+    padding: 4rem 1.5rem;
   }
 
   .adminInfo p {
@@ -270,7 +309,7 @@
 
 @media (max-width: 1000px) {
   .studentInfo {
-    padding: 6rem 3rem 6rem 3rem;
+    padding: 4rem 1.5rem;
   }
 
   .studentImgContainer {
