@@ -1,4 +1,3 @@
-import { RideType } from '../../../server/src/models/ride';
 import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
 
@@ -56,8 +55,6 @@ export enum Tag {
   CUSTOM = 'custom',
 }
 
-export type Ride = RideType;
-
 export enum Type {
   UPCOMING = 'upcoming',
   PAST = 'past',
@@ -100,7 +97,5 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type { RideType };
 
 export type UnregisteredUser = UnregisteredUserType;

@@ -12,7 +12,8 @@ import {
   Accessibility,
   Organization,
 } from '@carriage-web/shared/src/types/rider';
-import { Ride, Status, Type } from '../src/models/ride';
+import { Ride } from '../src/models/ride';
+import { Status, Type } from '@carriage-web/shared/src/types/ride';
 import { Location } from '../src/models/location';
 import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
 import moment from 'moment';

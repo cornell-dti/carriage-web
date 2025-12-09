@@ -7,7 +7,8 @@ import { clearDB, populateDB } from './utils/db';
 import { Organization } from '@carriage-web/shared/src/types/rider';
 import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
-import { Ride, Status, Type } from '../src/models/ride';
+import { Ride } from '../src/models/ride';
+import { Status, Type } from '@carriage-web/shared/src/types/ride';
 import moment from 'moment';
 
 const testLocations: LocationType[] = [

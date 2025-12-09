@@ -1,4 +1,9 @@
-import { RideType, Status, Type, SchedulingState } from '../../models/ride';
+import {
+  RideType,
+  Status,
+  Type,
+  SchedulingState,
+} from '@carriage-web/shared/src/types/ride';
 import { UserType } from '../../models/subscription';
 import { Tag } from '@carriage-web/shared/src/types/location';
 import { RiderType } from '@carriage-web/shared/src/types/rider';

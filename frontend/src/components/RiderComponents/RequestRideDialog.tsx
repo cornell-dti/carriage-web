@@ -28,7 +28,8 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { Ride, Tag } from 'types';
+import { Tag } from 'types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
@@ -53,7 +54,7 @@ interface RequestRideDialogProps {
   onClose: () => void;
   onSubmit: (data: FormData) => void;
   supportedLocations: LocationType[];
-  ride?: Ride;
+  ride?: RideType;
 }
 
 const repeatOptions: Array<{ value: RepeatOption; label: string }> = [

@@ -12,14 +12,15 @@ import useUserStatistics, {
   StatisticsFilters,
 } from './hooks/useUserStatistics';
 import StatisticsFilter from './StatisticsFilter';
-import { Employee, Ride } from '../../types/index';
+import { Employee } from '../../types/index';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import styles from './UserDetailCards.module.css';
 
 interface StatisticsCardProps {
   user: Employee | RiderType;
   userType: 'employee' | 'rider';
-  rides: Ride[];
+  rides: RideType[];
 }
 
 const StatisticsCard: React.FC<StatisticsCardProps> = ({

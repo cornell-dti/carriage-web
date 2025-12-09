@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Employee, Ride } from '../../../types/index';
+import { Employee } from '../../../types/index';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
@@ -9,7 +10,7 @@ import axios from '../../../util/axios';
 
 interface UserDetailData {
   user: Employee | RiderType | null;
-  rides: Ride[];
+  rides: RideType[];
   statistics: {
     rideCount: number;
     workingHours: number;
@@ -24,7 +25,7 @@ const useUserDetailData = (
   userType: 'employee' | 'rider'
 ): UserDetailData => {
   const [user, setUser] = useState<Employee | RiderType | null>(null);
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [rides, setRides] = useState<RideType[]>([]);
   const [statistics, setStatistics] = useState({
     rideCount: -1,
     workingHours: -1,
@@ -103,7 +104,7 @@ const useUserDetailData = (
     return res.data.data;
   };
 
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;

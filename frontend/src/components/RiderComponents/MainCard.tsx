@@ -7,7 +7,7 @@ import {
   setSeconds,
   subDays,
 } from 'date-fns';
-import { Ride } from 'types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -34,7 +34,7 @@ import {
 } from '@mui/material';
 
 interface MainCardProps {
-  ride: Ride;
+  ride: RideType;
 }
 
 const MainCard: React.FC<MainCardProps> = ({ ride }) => {

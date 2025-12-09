@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Button, Typography, IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
-import { Ride } from '../../../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import UserStatistics from './UserStatistics';
 import UserActions from './UserActions';
@@ -108,7 +108,7 @@ const EmployeeDetail = () => {
   const pathArr = location.pathname.split('/');
   const [userType, setUserType] = useState<string>(pathArr[2]);
 
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [rides, setRides] = useState<RideType[]>([]);
   const [rideCount, setRideCount] = useState(-1);
   const [workingHours, setWorkingHours] = useState(-1);
 
@@ -121,7 +121,7 @@ const EmployeeDetail = () => {
    * @param b the second ride to compare
    * @returns -1, 1, or 0 if the start time of [a] is before, after, or the same as [b]
    */
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;

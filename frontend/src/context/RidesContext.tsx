@@ -1,19 +1,20 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, SchedulingState, Status } from '../types';
+import { SchedulingState, Status } from '../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
 
 type ridesState = {
-  unscheduledRides: Ride[];
-  scheduledRides: Ride[];
+  unscheduledRides: RideType[];
+  scheduledRides: RideType[];
   loading: boolean;
   refreshRides: () => Promise<void>;
   refreshRidesByUser: (
     userId: string,
     userType: 'rider' | 'driver'
-  ) => Promise<Ride[]>;
+  ) => Promise<RideType[]>;
   // Optimistic ride operations
   updateRideStatus: (rideId: string, status: Status) => Promise<void>;
   updateRideScheduling: (
@@ -22,13 +23,13 @@ type ridesState = {
     driverId?: string
   ) => Promise<void>;
   assignDriver: (rideId: string, driverId: string) => Promise<void>;
-  updateRideInfo: (rideId: string, updates: Partial<Ride>) => Promise<void>;
-  createRide: (ride: Omit<Ride, 'id'>) => Promise<void>;
+  updateRideInfo: (rideId: string, updates: Partial<RideType>) => Promise<void>;
+  createRide: (ride: Omit<RideType, 'id'>) => Promise<void>;
   cancelRide: (rideId: string) => Promise<void>;
   deleteRide: (rideId: string) => Promise<void>;
   // Helper functions
-  getRideById: (rideId: string) => Ride | undefined;
-  getAllRides: () => Ride[];
+  getRideById: (rideId: string) => RideType | undefined;
+  getAllRides: () => RideType[];
   // Available riders functions
   getAvailableRiders: (
     startTime: string,
@@ -67,8 +68,8 @@ type RidesProviderProps = {
 };
 
 export const RidesProvider = ({ children }: RidesProviderProps) => {
-  const [unscheduledRides, setUnscheduledRides] = useState<Ride[]>([]);
-  const [scheduledRides, setScheduledRides] = useState<Ride[]>([]);
+  const [unscheduledRides, setUnscheduledRides] = useState<RideType[]>([]);
+  const [scheduledRides, setScheduledRides] = useState<RideType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { curDate } = useDate();
@@ -80,7 +81,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       // Fetch rides filtered by the selected date
       const response = await axios.get(`/api/rides?date=${formattedDate}`);
 
-      const ridesData: Ride[] = response.data.data;
+      const ridesData: RideType[] = response.data.data;
 
       if (ridesData) {
         const unscheduled = ridesData.filter(
@@ -103,7 +104,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   }, [curDate]);
 
   const refreshRidesByUser = useCallback(
-    async (userId: string, userType: 'rider' | 'driver'): Promise<Ride[]> => {
+    async (
+      userId: string,
+      userType: 'rider' | 'driver'
+    ): Promise<RideType[]> => {
       try {
         // Fetch all rides for the user across all dates
         const queryParam = userType === 'rider' ? 'rider' : 'driver';
@@ -111,7 +115,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           `/api/rides?${queryParam}=${userId}&allDates=true`
         );
 
-        const ridesData: Ride[] = response.data.data || [];
+        const ridesData: RideType[] = response.data.data || [];
 
         return ridesData;
       } catch (error) {
@@ -125,7 +129,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   // Helper functions to manage ride state
   const updateRideInLists = (
     rideId: string,
-    updateFn: (ride: Ride) => Ride
+    updateFn: (ride: RideType) => RideType
   ) => {
     setUnscheduledRides((prev) =>
       prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
@@ -139,7 +143,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     rideId: string,
     fromScheduled: boolean,
     toScheduled: boolean,
-    updateFn?: (ride: Ride) => Ride
+    updateFn?: (ride: RideType) => RideType
   ) => {
     if (fromScheduled === toScheduled) {
       // Same list, just update
@@ -168,7 +172,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   };
 
   const getRideById = useCallback(
-    (rideId: string): Ride | undefined => {
+    (rideId: string): RideType | undefined => {
       const allRides = [...unscheduledRides, ...scheduledRides];
       allRides.forEach((ride, index) => {});
       const foundRide = allRides.find((ride) => ride.id === rideId);
@@ -177,7 +181,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     [unscheduledRides, scheduledRides]
   );
 
-  const getAllRides = useCallback((): Ride[] => {
+  const getAllRides = useCallback((): RideType[] => {
     return [...unscheduledRides, ...scheduledRides];
   }, [unscheduledRides, scheduledRides]);
 
@@ -290,8 +294,8 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   );
 
   const updateRideInfo = useCallback(
-    async (rideId: string, updates: Partial<Ride>) => {
-      let originalRide: Ride | undefined = getRideById(rideId);
+    async (rideId: string, updates: Partial<RideType>) => {
+      let originalRide: RideType | undefined = getRideById(rideId);
 
       // If ride not found in current context, fetch it from the server first
       if (!originalRide) {
@@ -363,7 +367,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
             rideId,
             willBeScheduled,
             wasScheduled,
-            () => originalRide as Ride
+            () => originalRide as RideType
           );
         }
         setError(error as Error);
@@ -373,9 +377,9 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     [getRideById, scheduledRides, unscheduledRides]
   );
 
-  const createRide = useCallback(async (ride: Omit<Ride, 'id'>) => {
+  const createRide = useCallback(async (ride: Omit<RideType, 'id'>) => {
     const tempId = `temp-ride-${Date.now()}`;
-    const tempRide: Ride = { ...ride, id: tempId };
+    const tempRide: RideType = { ...ride, id: tempId };
     const isScheduled = ride.schedulingState === SchedulingState.SCHEDULED;
 
     try {

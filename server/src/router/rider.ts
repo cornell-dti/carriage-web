@@ -7,7 +7,8 @@ import { Rider } from '../models/rider';
 import { RiderType } from '@carriage-web/shared/src/types/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
-import { Ride, RideType, Type, Status } from '../models/ride';
+import { Ride } from '../models/ride';
+import { RideType, Type, Status } from '@carriage-web/shared/src/types/ride';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();

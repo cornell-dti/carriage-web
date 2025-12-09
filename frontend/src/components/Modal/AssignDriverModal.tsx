@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Ride } from '../../types/index';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close';
 type AssignModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Ride;
+  ride: RideType;
   allDrivers: DriverType[];
   reassign: boolean;
   buttonRef: any;

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Row, Table } from '../../TableComponents/TableComponents';
-import { Ride } from '../../../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import styles from './userDetail.module.css';
 
 type PastRideProps = {
   isStudent: boolean;
-  rides: Ride[];
+  rides: RideType[];
 };
 
 const PastRides = ({ isStudent, rides }: PastRideProps) => {

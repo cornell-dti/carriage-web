@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
 import moment from 'moment';
 import styles from './requestridemodal.module.css';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
@@ -14,7 +14,7 @@ import { useLocations } from '../../context/LocationsContext';
 import RequestRideMap from '../RiderComponents/RequestRideMap';
 
 type RequestRideInfoProps = {
-  ride?: Ride;
+  ride?: RideType;
   showRepeatingCheckbox: boolean;
   showRepeatingInfo: boolean;
   modalType: RideModalType;

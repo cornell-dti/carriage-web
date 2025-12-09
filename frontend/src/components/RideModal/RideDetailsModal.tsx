@@ -12,13 +12,14 @@ import {
   Divider,
   Grid,
 } from '@mui/material';
-import { Ride, SchedulingState } from '../../types/index';
+import { SchedulingState } from '../../types/index';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { format_date } from '../../util/index';
 
 type RideDetailsModalProps = {
   open: boolean;
   close: () => void;
-  ride: Ride;
+  ride: RideType;
 };
 
 const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {

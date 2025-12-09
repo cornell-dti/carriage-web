@@ -28,7 +28,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import ReportIcon from '@mui/icons-material/Report';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
-import { RideType, Status, SchedulingState } from '../../types';
+import { Status } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import {
   canUpdateStatus,

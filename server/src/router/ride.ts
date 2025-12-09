@@ -5,7 +5,13 @@ import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
-import { Ride, Status, Type, RideType, SchedulingState } from '../models/ride';
+import { Ride } from '../models/ride';
+import {
+  Status,
+  Type,
+  RideType,
+  SchedulingState,
+} from '@carriage-web/shared/src/types/ride';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '@carriage-web/shared/src/types/driver';

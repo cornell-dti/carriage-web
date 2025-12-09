@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
@@ -17,12 +17,14 @@ const Schedule = () => {
   const maxTime = new Date(scheduleDay);
   maxTime.setHours(23, 0, 0, 0);
 
-  const [currentRide, setCurrentRide] = useState<Ride | undefined>(undefined);
+  const [currentRide, setCurrentRide] = useState<RideType | undefined>(
+    undefined
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(false);
 
-  const cancelRide = (ride: Ride) => {
+  const cancelRide = (ride: RideType) => {
     const rideId = ride.id;
     const recurring = ride.isRecurring;
     if (recurring) {
@@ -38,7 +40,7 @@ const Schedule = () => {
     }
   };
 
-  const handleRideSelected = (selection: Ride | undefined) => {
+  const handleRideSelected = (selection: RideType | undefined) => {
     if (selection === undefined) {
       setIsOpen(false);
       setCurrentRide(undefined);
@@ -80,9 +82,9 @@ const Schedule = () => {
 
 interface ScheduledTimelineProps {
   baseDate: Date;
-  rides: Ride[];
-  selected?: Ride;
-  handleSelection: (selectionChange: Ride | undefined) => void;
+  rides: RideType[];
+  selected?: RideType;
+  handleSelection: (selectionChange: RideType | undefined) => void;
   halfHourWidth?: number;
 }
 

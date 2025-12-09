@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import Tag from '../Tag/Tag';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/src/types/ride';
 import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
 import { trash, x } from '../../icons/other/index';
@@ -10,8 +10,8 @@ import { trash, x } from '../../icons/other/index';
 type SModalProps = {
   isOpen: boolean;
   close: () => void;
-  ride: Ride;
-  cancel: (ride: Ride) => void;
+  ride: RideType;
+  cancel: (ride: RideType) => void;
 };
 
 const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
