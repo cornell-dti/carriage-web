@@ -5,7 +5,7 @@ import authorize from './utils/auth';
 import { Driver } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Vehicle, VehicleType } from '../src/models/vehicle';
-import { AdminType } from '../src/models/admin';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import {
   Accessibility,
   Organization,

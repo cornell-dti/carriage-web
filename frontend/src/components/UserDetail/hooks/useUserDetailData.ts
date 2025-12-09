@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Employee, Rider, Ride } from '../../../types/index';
-import { AdminType } from '../../../../../server/src/models/admin';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';

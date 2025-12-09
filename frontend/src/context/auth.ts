@@ -1,8 +1,9 @@
 import { createContext } from 'react';
-import { Admin, Rider } from '../types/index';
+import { Rider } from '../types/index';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 
-export type ValidUser = Admin | Rider | DriverType;
+export type ValidUser = AdminType | Rider | DriverType;
 
 type AuthState = {
   logout: () => void;

@@ -6,7 +6,7 @@ import { Rider, Location, Vehicle } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
 import { Organization } from '../src/models/rider';
 import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
-import { AdminType } from '../src/models/admin';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { Ride, Status, Type } from '../src/models/ride';
 import moment from 'moment';
 

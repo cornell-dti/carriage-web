@@ -1,11 +1,12 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Admin, Employee } from '../types';
+import { Employee } from '../types';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import axios from '../util/axios';
 
 type employeesState = {
   drivers: Array<DriverType>;
-  admins: Array<Admin>;
+  admins: Array<AdminType>;
   loading: boolean;
   refreshDrivers: () => Promise<void>;
   refreshAdmins: () => Promise<void>;
@@ -17,12 +18,15 @@ type employeesState = {
   createDriver: (driver: Omit<DriverType, 'id'>) => Promise<void>;
   deleteDriver: (driverId: string) => Promise<void>;
   // Optimistic operations for admins
-  updateAdminInfo: (adminId: string, updates: Partial<Admin>) => Promise<void>;
-  createAdmin: (admin: Omit<Admin, 'id'>) => Promise<void>;
+  updateAdminInfo: (
+    adminId: string,
+    updates: Partial<AdminType>
+  ) => Promise<void>;
+  createAdmin: (admin: Omit<AdminType, 'id'>) => Promise<void>;
   deleteAdmin: (adminId: string) => Promise<void>;
   // Helper functions
   getDriverById: (driverId: string) => DriverType | undefined;
-  getAdminById: (adminId: string) => Admin | undefined;
+  getAdminById: (adminId: string) => AdminType | undefined;
   // Error handling
   clearError: () => void;
   error: Error | null;
@@ -65,7 +69,7 @@ const sortByName = (
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const componentMounted = useRef(true);
   const [drivers, setDrivers] = useState<Array<DriverType>>([]);
-  const [admins, setAdmins] = useState<Array<Admin>>([]);
+  const [admins, setAdmins] = useState<Array<AdminType>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -86,7 +90,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   const refreshAdmins = useCallback(async () => {
     try {
-      const adminsData: Array<Admin> = await axios
+      const adminsData: Array<AdminType> = await axios
         .get('/api/admins')
         .then((res) => res.data)
         .then((data) => data.data);
@@ -187,7 +191,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   // Optimistic Admin Operations
   const updateAdminInfo = useCallback(
-    async (adminId: string, updates: Partial<Admin>) => {
+    async (adminId: string, updates: Partial<AdminType>) => {
       const originalAdmins = [...admins];
       try {
         // Optimistic update
@@ -220,9 +224,9 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [admins]
   );
 
-  const createAdmin = useCallback(async (admin: Omit<Admin, 'id'>) => {
+  const createAdmin = useCallback(async (admin: Omit<AdminType, 'id'>) => {
     const tempId = `temp-admin-${Date.now()}`;
-    const tempAdmin: Admin = { ...admin, id: tempId };
+    const tempAdmin: AdminType = { ...admin, id: tempId };
 
     try {
       // Optimistic update
@@ -278,7 +282,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   );
 
   const getAdminById = useCallback(
-    (adminId: string): Admin | undefined => {
+    (adminId: string): AdminType | undefined => {
       return admins.find((admin) => admin.id === adminId);
     },
     [admins]

@@ -15,7 +15,7 @@ import {
 } from '../../../icons/userInfo/index';
 import { RideTable } from '../../RideDetails';
 import styles from './userDetail.module.css';
-import { AdminType } from '../../../../../server/src/models/admin';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import axios from '../../../util/axios';
 

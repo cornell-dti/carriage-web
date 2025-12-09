@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Admin, Tag } from '../types';
+import { Tag } from '../types';
+import { AdminType } from '@carriage-web/shared/src/types/admin';
 import { LocationType } from '@carriage-web/shared/src/types/location';
 import axios from '../util/axios';
 

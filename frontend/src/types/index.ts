@@ -1,6 +1,5 @@
 import { RiderType } from '../../../server/src/models/rider';
 import { RideType } from '../../../server/src/models/ride';
-import { AdminType } from '../../../server/src/models/admin';
 import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
 
@@ -23,8 +22,6 @@ export enum DayOfWeek {
   THURSDAY = 'THURS',
   FRIDAY = 'FRI',
 }
-
-export type Admin = AdminType;
 
 export type Employee = {
   id: string;
@@ -107,6 +104,6 @@ export enum RepeatValues {
   Custom = 'Custom',
 }
 
-export type { AdminType, RideType };
+export type { RideType };
 
 export type UnregisteredUser = UnregisteredUserType;
