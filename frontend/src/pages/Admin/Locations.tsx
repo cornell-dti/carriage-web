@@ -5,14 +5,14 @@ import Notification from '../../components/Notification/Notification';
 import LocationsContent from 'components/Locations/LocationsContent';
 import styles from './page.module.css';
 import { LocationFormModal } from 'components/Locations/LocationFormModal';
-import { Location } from 'types';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import { useLocations } from 'context/LocationsContext';
 import axios from '../../util/axios';
 import { LocationImage } from 'components/Locations/LocationImagesUpload';
 import { Box, CircularProgress } from '@mui/material';
 
 const Locations = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<LocationType[]>([]);
   const loc = useLocations().locations;
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Locations = () => {
   const uploadLocationImage = async (
     id: string,
     images?: LocationImage[]
-  ): Promise<Location | null> => {
+  ): Promise<LocationType | null> => {
     if (!images || images.length === 0) return null;
     const buffers: string[] = [];
     for (const img of images) {
@@ -53,10 +53,10 @@ const Locations = () => {
   };
 
   const handleAddLocation = async (
-    newLocation: Location & { imagesList?: LocationImage[] }
+    newLocation: LocationType & { imagesList?: LocationImage[] }
   ) => {
     // Create location
-    const payload: Partial<Location> = {
+    const payload: Partial<LocationType> = {
       name: newLocation.name,
       shortName: newLocation.shortName,
       address: newLocation.address,
@@ -65,7 +65,7 @@ const Locations = () => {
       lat: newLocation.lat,
       lng: newLocation.lng,
     };
-    const created: Location = await axios
+    const created: LocationType = await axios
       .post('/api/locations', payload)
       .then((r) => r.data)
       .then((d) => d.data);
@@ -98,10 +98,10 @@ const Locations = () => {
   }, []);
 
   const handleUpdateLocation = async (
-    updatedLocation: Location & { imagesList?: LocationImage[] }
+    updatedLocation: LocationType & { imagesList?: LocationImage[] }
   ) => {
     const { id, imagesList, ...rest } = updatedLocation;
-    const payload: Partial<Location> = {
+    const payload: Partial<LocationType> = {
       name: rest.name,
       shortName: rest.shortName,
       address: rest.address,
@@ -111,7 +111,7 @@ const Locations = () => {
       lng: rest.lng,
       // photoLink is updated via upload endpoint
     };
-    const updated: Location = await axios
+    const updated: LocationType = await axios
       .put(`/api/locations/${id}`, payload)
       .then((r) => r.data)
       .then((d) => d.data);

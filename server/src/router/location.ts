@@ -2,7 +2,8 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose/dist/Condition';
 import * as db from './common';
-import { Location, Tag } from '../models/location';
+import { Location } from '../models/location';
+import { Tag } from '@carriage-web/shared/src/types/location';
 import { validateUser } from '../util';
 
 const router = express.Router();

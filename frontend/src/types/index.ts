@@ -1,7 +1,6 @@
 import { RiderType } from '../../../server/src/models/rider';
 import { RideType } from '../../../server/src/models/ride';
 import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
 import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
 
@@ -62,8 +61,6 @@ export enum Tag {
   INACTIVE = 'inactive',
   CUSTOM = 'custom',
 }
-
-export type Location = LocationType;
 
 export type Ride = RideType;
 

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
-import { ObjectType, Location, Rider } from '../../../types';
+import { ObjectType, Rider } from '../../../types';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import { ModalPageProps } from '../../Modal/types';
 import {
   Button,

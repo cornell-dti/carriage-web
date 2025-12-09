@@ -1,6 +1,7 @@
 import dynamoose from 'dynamoose';
 import isISO8601 from 'validator/lib/isISO8601';
-import { Tag, LocationType, Location } from './location';
+import { Location } from './location';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import { Rider, RiderType } from './rider';
 import { Driver } from './driver';
 import { DriverType } from '@carriage-web/shared/src/types/driver';

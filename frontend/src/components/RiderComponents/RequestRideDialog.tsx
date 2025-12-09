@@ -28,7 +28,8 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { Ride, Location, Tag } from 'types';
+import { Ride, Tag } from 'types';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
 import { error } from 'console';
@@ -36,8 +37,8 @@ import { error } from 'console';
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
 export interface FormData {
-  pickupLocation: Location | null;
-  dropoffLocation: Location | null;
+  pickupLocation: LocationType | null;
+  dropoffLocation: LocationType | null;
   date: Date | null;
   time: Date | null;
   repeatType: RepeatOption;
@@ -51,7 +52,7 @@ interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: FormData) => void;
-  supportedLocations: Location[];
+  supportedLocations: LocationType[];
   ride?: Ride;
 }
 
@@ -83,7 +84,7 @@ const Other = {
   lng: 0,
   photoLink: '',
   images: [''],
-} as Location;
+} as LocationType;
 
 /**
  * RequestRideDialog component - A dialog for Riders to request a ride.
@@ -123,7 +124,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   // New state for the selection flow
   const [selectionState, setSelectionState] =
     useState<SelectionState>('pickup');
-  const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
+  const [pendingLocation, setPendingLocation] = useState<LocationType | null>(
+    null
+  );
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
   const [customDroppoff, setCustomDropoff] = useState(false);
@@ -166,7 +169,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   }, [open, ride]);
 
   // New handlers for map-based selection
-  const handleLocationSelect = (location: Location | null) => {
+  const handleLocationSelect = (location: LocationType | null) => {
     if (location) {
       setPendingLocation(location);
       setConfirmDialogOpen(true);
@@ -247,12 +250,12 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       // Show only selected locations
       return [formData.pickupLocation, formData.dropoffLocation].filter(
         Boolean
-      ) as Location[];
+      ) as LocationType[];
     }
   };
 
   const getAllLocs = async () => {
-    const locationsData: Array<Location> = await axios
+    const locationsData: Array<LocationType> = await axios
       .get('/api/locations')
       .then((res) => res.data)
       .then((data) => data.data);
@@ -314,7 +317,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
    * @param {string} address
    * @param {number} lat
    * @param {number} lng
-   * @returns {Promise<Location>}
+   * @returns {Promise<LocationType>}
    *          A resolved Location object — either:
    *          - an existing Location already stored in `allLocations`, OR
    *          - a newly created custom Location saved to the backend.
@@ -336,7 +339,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     lat: number,
     lng: number,
     isPickUp: boolean
-  ): Promise<Location> => {
+  ): Promise<LocationType> => {
     const LOCATION_TOLERANCE = 0.00025; // ~25 meters
 
     const normalized = normalizeAddress(address);
@@ -380,7 +383,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     console.log('No match found, creating new location');
 
     // else create new custom location
-    const payload: Partial<Location> = {
+    const payload: Partial<LocationType> = {
       name: address.split(',')[0], // short name
       shortName: '',
       address,
@@ -391,7 +394,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     };
 
     const response = await axios.post('/api/locations/custom', payload); //add to locations
-    const created: Location = response.data.data || response.data;
+    const created: LocationType = response.data.data || response.data;
     return created;
   };
 

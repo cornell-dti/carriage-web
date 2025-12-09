@@ -13,7 +13,8 @@ import {
   RiderType,
 } from '../src/models/rider';
 import { Ride, Status, Type } from '../src/models/ride';
-import { Location, LocationType, Tag } from '../src/models/location';
+import { Location } from '../src/models/location';
+import { LocationType, Tag } from '@carriage-web/shared/src/types/location';
 import moment from 'moment';
 
 const testAdmin: Omit<AdminType, 'id'> = {

@@ -4,7 +4,8 @@ import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
 import moment from 'moment';
 import styles from './requestridemodal.module.css';
-import { Location, Ride } from '../../types';
+import { Ride } from '../../types';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import { Label, Input } from '../FormElements/FormElements';
 import CustomRepeatingRides from './CustomRepeatingRides';
 import { RideModalType } from './types';
@@ -49,10 +50,14 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
     watch,
     setValue,
   } = useFormContext<FormData>();
-  const [locations, setLocations] = useState<Location[]>([]);
+  const [locations, setLocations] = useState<LocationType[]>([]);
   const [custom, setCustom] = useState(false);
-  const [pickupLocation, setPickupLocation] = useState<Location | null>(null);
-  const [dropoffLocation, setDropoffLocation] = useState<Location | null>(null);
+  const [pickupLocation, setPickupLocation] = useState<LocationType | null>(
+    null
+  );
+  const [dropoffLocation, setDropoffLocation] = useState<LocationType | null>(
+    null
+  );
   const watchRepeating = watch('recurring', false);
   const watchPickupCustom = watch('startLocation');
   const watchDropoffCustom = watch('endLocation');
@@ -94,7 +99,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   }, [watchPickupCustom, watchDropoffCustom, ride, setValue]);
 
   // Handle pickup location selection from map
-  const handlePickupSelect = (location: Location | null) => {
+  const handlePickupSelect = (location: LocationType | null) => {
     setPickupLocation(location);
     if (location) {
       // Find the location in our locations list and set the form value
@@ -113,7 +118,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   };
 
   // Handle dropoff location selection from map
-  const handleDropoffSelect = (location: Location | null) => {
+  const handleDropoffSelect = (location: LocationType | null) => {
     setDropoffLocation(location);
     if (location) {
       // Find the location in our locations list and set the form value

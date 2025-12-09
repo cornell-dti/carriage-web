@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import { ObjectType } from 'dynamoose/dist/General';
 import * as db from './common';
 import { Ride, Status, Type, RideType, SchedulingState } from '../models/ride';
-import { Tag, LocationType } from '../models/location';
+import { LocationType } from '@carriage-web/shared/src/types/location';
 import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '@carriage-web/shared/src/types/driver';
 import { RiderType } from '../models/rider';
