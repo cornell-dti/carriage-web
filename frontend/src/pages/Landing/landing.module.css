@@ -6,7 +6,7 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -18,7 +18,7 @@
   border: 1px solid black;
   border-radius: 16px;
   max-width: 850px;
-  height: 550px;
+  min-height: 550px;
   display: flex;
   flex-grow: 1;
   margin-top: 7.5rem;
@@ -199,6 +199,30 @@
 @media (max-width: 400px) {
   .container {
     flex-direction: column;
+  }
+
+  .main {
+    max-width: 95%;
+    min-height: auto;
+    height: auto;
+  }
+
+  .home {
+    min-height: 100vh;
+    height: auto;
+    padding-bottom: 80px;
+  }
+
+  .information {
+    margin-top: 60px;
+  }
+
+  .adminInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .adminInfo p {
+    font-size: 24px;
   }
 }
 
