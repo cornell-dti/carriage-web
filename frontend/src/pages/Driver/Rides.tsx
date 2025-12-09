@@ -499,7 +499,7 @@ const Rides = () => {
   }, []);
 
   return (
-    <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}>
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <main id="main">
         <Box sx={{ p: 3 }}>
           <Box

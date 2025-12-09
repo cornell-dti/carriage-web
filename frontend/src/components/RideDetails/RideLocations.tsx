@@ -345,7 +345,7 @@ const RideMap: React.FC<RideMapProps> = ({
         <Map
           defaultZoom={12}
           defaultCenter={getMapCenter()}
-          mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+          mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
           onClick={handleMapClick}
@@ -447,7 +447,7 @@ const RideMap: React.FC<RideMapProps> = ({
 
 const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   <APIProvider
-    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
     libraries={['places']}
   >
     <RideMap {...props} />
