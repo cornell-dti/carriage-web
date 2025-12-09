@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Shared code for Carriage",
   "main": "./src/index.ts",
-  "exports": {
-    "./*": "./src/*"
-  },
   "dependencies": {},
   "scripts": {
     "type-check": "tsc --noEmit --project tsconfig.json --pretty"
