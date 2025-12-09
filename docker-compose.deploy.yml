@@ -1,0 +1,34 @@
+services:
+  carriage:
+    extends:
+      file: ./docker-compose.yml
+      service: carriage
+    volumes:
+      - './cornell-idp-test.crt:/app/server/config/cornell-idp-test.crt:ro'
+    env_file:
+      - ./.env
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.carriage.rule=Host(`carriage.thekoppe.com`)'
+      - 'traefik.http.routers.carriage.tls.certresolver=le'
+      - 'traefik.http.routers.carriage.entrypoints=websecure'
+      - 'traefik.http.services.carriage.loadbalancer.server.port=3001'
+  traefik:
+    image: traefik:v3.6
+    command:
+      - '--api.dashboard=true'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.le.acme.httpchallenge=true'
+      - '--certificatesresolvers.le.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.le.acme.email=carriage@thekoppe.com'
+      - '--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - './letsencrypt:/letsencrypt'
+    restart: always
