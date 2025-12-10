@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import {
   useOptimisticUpdate,
   OptimisticUpdateOptions,

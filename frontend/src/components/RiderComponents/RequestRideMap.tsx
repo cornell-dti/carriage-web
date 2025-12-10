@@ -12,7 +12,7 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './requestridedialog.module.css';
 // Removed unused imports
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface RequestRideMapProps {
   pickupLocation: LocationType | null;

@@ -1,6 +1,6 @@
 import dynamoose from 'dynamoose';
 import defaultModelConfig from '../util/modelConfig';
-import { Tag } from '@carriage-web/shared/src/types/location';
+import { Tag } from '@carriage-web/shared/types/location';
 
 const schema = new dynamoose.Schema({
   id: {

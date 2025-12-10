@@ -17,10 +17,10 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import { UnregisteredUserType } from '@carriage-web/shared/src/types';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
-import { AdminType } from '@carriage-web/shared/src/types/admin';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import DriverRoutes from '../../pages/Driver/Routes';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';

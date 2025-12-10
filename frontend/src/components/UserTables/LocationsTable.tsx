@@ -1,5 +1,5 @@
 import React from 'react';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 import LocationModal from '../LocationModal/LocationModal';
 import { Row, Table } from '../TableComponents/TableComponents';
 

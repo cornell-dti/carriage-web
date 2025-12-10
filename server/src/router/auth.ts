@@ -7,7 +7,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
 import { ModelType } from 'dynamoose/dist/General';
 import { Item } from 'dynamoose/dist/Item';
-import { UnregisteredUserType } from '@carriage-web/shared/src/types';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
 
 const router = express.Router();
 

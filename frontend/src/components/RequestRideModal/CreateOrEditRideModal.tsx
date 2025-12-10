@@ -5,7 +5,7 @@ import AuthContext from '../../context/auth';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';

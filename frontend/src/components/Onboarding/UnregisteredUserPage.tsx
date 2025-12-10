@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './unregistereduserpage.module.css';
 import { logo } from '../../icons/other';
 import { WAVE_PATH } from '../../util/constants';
-import { UnregisteredUserType } from '@carriage-web/shared/src/types';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
 
 interface UnregisteredUserProps {
   user: UnregisteredUserType;

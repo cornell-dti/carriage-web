@@ -3,7 +3,7 @@ import { ToastStatus, useToast } from '../../context/toastContext';
 import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ObjectType, Tag } from '../../types/index';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
 import styles from './locationmodal.module.css';

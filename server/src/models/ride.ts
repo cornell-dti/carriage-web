@@ -7,7 +7,7 @@ import {
   Type,
   Status,
   SchedulingState,
-} from '@carriage-web/shared/src/types/ride';
+} from '@carriage-web/shared/types/ride';
 
 const schema = new dynamoose.Schema({
   id: {

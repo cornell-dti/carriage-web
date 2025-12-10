@@ -5,7 +5,7 @@ import * as csv from '@fast-csv/format';
 import { ObjectType } from 'dynamoose/dist/General';
 import { Stats, StatsType } from '../models/stats';
 import { Ride } from '../models/ride';
-import { RideType, Status } from '@carriage-web/shared/src/types/ride';
+import { RideType, Status } from '@carriage-web/shared/types/ride';
 import * as db from './common';
 import { validateUser } from '../util';
 import { Driver } from '../models/driver';

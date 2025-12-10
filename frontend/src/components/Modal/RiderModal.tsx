@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
 import { ObjectType } from '../../types/index';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useRiders } from '../../context/RidersContext';

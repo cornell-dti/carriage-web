@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Status, SchedulingState } from '../../../types/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 interface StatisticsFilters {
   dateFrom: Date | null;

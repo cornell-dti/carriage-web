@@ -1,5 +1,5 @@
 import { Employee } from '../types/index';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 /**
  * Extracts NetID from email address

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 import { ObjectType } from '../../types/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import RiderRidesTable from './RiderRidesTable';
 import styles from './table.module.css';
 import { useDate } from '../../context/date';

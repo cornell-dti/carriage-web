@@ -13,7 +13,7 @@ import {
   Grid,
 } from '@mui/material';
 import { SchedulingState } from '../../types/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { format_date } from '../../util/index';
 
 type RideDetailsModalProps = {

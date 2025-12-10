@@ -1,7 +1,7 @@
 import React from 'react';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { LocationType } from '@carriage-web/shared/types/location';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceIcon from '@mui/icons-material/Place';
 import { Avatar, Typography, Chip, Box } from '@mui/material';

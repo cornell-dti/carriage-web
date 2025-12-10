@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { RideType } from '@carriage-web/shared/src/types/ride';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import SearchPopup from '../RideDetails/SearchPopup';

@@ -7,7 +7,7 @@ import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
 import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 const NotifPreferences = () => (
   <div className={styles.settings}>

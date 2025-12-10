@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Condition } from 'dynamoose';
 import schedule from 'node-schedule';
 import { Ride } from '../models/ride';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 export default function initSchedule() {
   // run function at 10:05:00am every day

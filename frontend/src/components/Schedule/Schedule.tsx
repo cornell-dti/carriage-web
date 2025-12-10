@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import moment from 'moment';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
