@@ -53,6 +53,8 @@ COPY --from=build-frontend /app/frontend/build /app/frontend/build
 
 COPY --from=build-server /app/server/build /app/server/build
 COPY --from=build-server /app/server/package.json /app/server/package.json
+COPY --from=build-server /app/shared/build /app/shared/build
+COPY --from=build-server /app/shared/package.json /app/shared/package.json
 
 # Set production environment after build
 ENV NODE_ENV=production
