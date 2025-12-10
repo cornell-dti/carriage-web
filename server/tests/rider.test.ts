@@ -4,10 +4,11 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Rider, Location, Vehicle } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { Organization } from '../src/models/rider';
-import { LocationType, Tag } from '../src/models/location';
-import { AdminType } from '../src/models/admin';
-import { Ride, Status, Type } from '../src/models/ride';
+import { Organization } from '@carriage-web/shared/types/rider';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { Ride } from '../src/models/ride';
+import { Status, Type } from '@carriage-web/shared/types/ride';
 import moment from 'moment';
 
 const testLocations: LocationType[] = [

@@ -17,12 +17,10 @@ import Toast from '../ConfirmationToast/ConfirmationToast';
 
 import AdminRoutes from '../../pages/Admin/Routes';
 import RiderRoutes from '../../pages/Rider/Routes';
-import {
-  Admin,
-  Rider,
-  UnregisteredUser,
-  DriverType as Driver,
-} from '../../types/index';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import DriverRoutes from '../../pages/Driver/Routes';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import { createPortal } from 'react-dom';
@@ -49,14 +47,14 @@ export const decrypt = (hash: string | CryptoJS.lib.CipherParams) => {
 const AuthManager = () => {
   const [signedIn, setSignedIn] = useState(getCookie('jwt'));
   const [id, setId] = useState(localStorage.getItem('userId') || '');
-  const [user, setUser] = useState<Rider | Admin | Driver>(
+  const [user, setUser] = useState<RiderType | AdminType | DriverType>(
     JSON.parse(localStorage.getItem('user') || '{}')
   );
   const [refreshUser, setRefreshUser] = useState(() =>
     createRefresh(id, localStorage.getItem('userType') || '', jwtValue())
   );
   const [unregisteredUser, setUnregisteredUser] =
-    useState<UnregisteredUser | null>(null);
+    useState<UnregisteredUserType | null>(null);
   const [ssoError, setSsoError] = useState<string>('');
 
   const navigate = useNavigate();

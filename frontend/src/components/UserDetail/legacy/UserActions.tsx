@@ -20,7 +20,8 @@ import EmployeeModal from '../../EmployeeModal/EmployeeModal';
 import RiderModal from '../../Modal/RiderModal';
 import ConfirmationModal from '../../Modal/ConfirmationModal';
 import Toast from '../../ConfirmationToast/ConfirmationToast';
-import { Rider, DriverType as Driver } from '../../../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { ToastStatus, useToast } from '../../../context/toastContext';
 import axios from '../../../util/axios';
@@ -44,8 +45,8 @@ type EmployeeDetailProps = {
 type UserActionsProps = {
   role: UserRole;
   employee?: EmployeeDetailProps;
-  rider?: Rider;
-  driver?: Driver;
+  rider?: RiderType;
+  driver?: DriverType;
   isRiderView?: boolean;
 };
 

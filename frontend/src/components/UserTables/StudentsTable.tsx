@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { Row, Table } from '../TableComponents/TableComponents';
 import styles from './table.module.css';
-import { Rider } from 'types';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 type StudentsTableProps = {
-  students: Rider[];
+  students: RiderType[];
 };
 
 const StudentsTable = ({ students }: StudentsTableProps) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { RideModalType } from './types';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Button } from '../FormElements/FormElements';
@@ -9,7 +9,7 @@ import styles from './requestridemodal.module.css';
 
 type RequestRideModalProps = {
   onSubmit?: () => void;
-  ride?: Ride;
+  ride?: RideType;
 };
 
 const RequestRideModal = ({

@@ -29,8 +29,7 @@ RUN CI=false pnpm run -r --filter server... build
 
 FROM build-base AS build-frontend
 COPY . .
-# TODO: filter only frontend dependencies. until we add a shared package, we need all dependencies
-RUN pnpm install -r --offline
+RUN pnpm install -r --offline --filter frontend...
 
 # Read build-time environment variables
 ARG REACT_APP_SERVER_URL
@@ -41,6 +40,10 @@ ARG REACT_APP_PUBLIC_VAPID_KEY
 ENV REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
 ARG REACT_APP_ENCRYPTION_KEY
 ENV REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
+ARG REACT_APP_GOOGLE_MAPS_API_KEY
+ENV REACT_APP_GOOGLE_MAPS_API_KEY=${REACT_APP_GOOGLE_MAPS_API_KEY}
+ARG REACT_APP_GOOGLE_MAPS_MAP_ID
+ENV REACT_APP_GOOGLE_MAPS_MAP_ID=${REACT_APP_GOOGLE_MAPS_MAP_ID}
 
 # Build with CI=false to avoid treat warnings as errors
 RUN CI=false pnpm run -r --filter frontend... build
@@ -54,6 +57,8 @@ COPY --from=build-frontend /app/frontend/build /app/frontend/build
 
 COPY --from=build-server /app/server/build /app/server/build
 COPY --from=build-server /app/server/package.json /app/server/package.json
+COPY --from=build-server /app/shared/build /app/shared/build
+COPY --from=build-server /app/shared/package.json /app/shared/package.json
 
 # Set production environment after build
 ENV NODE_ENV=production

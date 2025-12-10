@@ -7,7 +7,7 @@ import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
 import styles from './settings.module.css';
 import Notification from '../../components/Notification/Notification';
-import { Rider } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 const NotifPreferences = () => (
   <div className={styles.settings}>
@@ -63,7 +63,7 @@ const Settings = () => {
         netId={netId}
         photoLink={user?.photoLink}
         isRider={true}
-        rider={user as Rider}
+        rider={user as RiderType}
       >
         <UserContactInfo
           icon={phone}

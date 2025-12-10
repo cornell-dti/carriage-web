@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { Ride, SchedulingState, Status } from '../types';
+import { SchedulingState, Status } from '../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import {
   BadgeRounded,
   FlagRounded,
@@ -11,8 +12,8 @@ import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 import styles from './ResponsiveRideCard.module.css';
 
 interface ResponsiveRideCardProps {
-  ride: Ride;
-  handleEdit: (rideToEdit: Ride) => any;
+  ride: RideType;
+  handleEdit: (rideToEdit: RideType) => any;
 }
 
 type FormattedTime = { time: string; meridiem: 'AM' | 'PM' };

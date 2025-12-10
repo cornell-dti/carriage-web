@@ -7,21 +7,22 @@ import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
-import { Rider, Accessibility } from '../../types';
+import { Accessibility } from '../../types';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
 
 const Riders = () => {
   const { riders } = useRiders();
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredStudents, setFilteredStudents] = useState<Rider[]>(riders);
+  const [filteredStudents, setFilteredStudents] = useState<RiderType[]>(riders);
 
   useEffect(() => {
     document.title = 'Students - Carriage';
     setFilteredStudents(riders);
   }, [riders]);
 
-  const handleFilterApply = (filteredItems: Rider[]) => {
+  const handleFilterApply = (filteredItems: RiderType[]) => {
     setFilteredStudents(filteredItems);
   };
 

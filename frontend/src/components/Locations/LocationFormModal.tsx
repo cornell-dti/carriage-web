@@ -20,7 +20,8 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import LocationPickerMap from './LocationMapPicker';
 import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
-import { Location, Tag } from 'types';
+import { Tag } from 'types';
+import { LocationType } from '@carriage-web/shared/types/location';
 import styles from './locations.module.css';
 import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
 
@@ -38,8 +39,8 @@ const CAMPUS_OPTIONS = [
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSubmit: (loc: Location & { imagesList?: LocationImage[] }) => void;
-  initialData?: Location & { imagesList?: LocationImage[] };
+  onSubmit: (loc: LocationType & { imagesList?: LocationImage[] }) => void;
+  initialData?: LocationType & { imagesList?: LocationImage[] };
   mode: 'add' | 'edit';
 }
 
@@ -50,7 +51,7 @@ export const LocationFormModal: React.FC<Props> = ({
   initialData,
   mode,
 }) => {
-  const EMPTY: Location = {
+  const EMPTY: LocationType = {
     id: '',
     name: '',
     shortName: '',
@@ -62,7 +63,7 @@ export const LocationFormModal: React.FC<Props> = ({
     photoLink: '',
   };
 
-  const [form, setForm] = useState<Location>(EMPTY);
+  const [form, setForm] = useState<LocationType>(EMPTY);
   const [mapKey, setMapKey] = useState(0);
   const [loadingAddr, setLoadingAddr] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +86,7 @@ export const LocationFormModal: React.FC<Props> = ({
     }
   }, [open, initialData, mode]);
 
-  const update = (patch: Partial<Location>) =>
+  const update = (patch: Partial<LocationType>) =>
     setForm((prev) => ({ ...prev, ...patch }));
 
   const selectPoint = (lat: number, lng: number) => update({ lat, lng });

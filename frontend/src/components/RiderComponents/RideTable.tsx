@@ -13,7 +13,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { Ride, Type, Status } from '../../types';
+import { Type, Status } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -40,7 +41,7 @@ function formatDateAndTime(isoString: string): { date: string; time: string } {
   };
 }
 
-function mapRidesToData(rides: Ride[]): Data[] {
+function mapRidesToData(rides: RideType[]): Data[] {
   return rides.map((ride) => {
     const { date, time } = formatDateAndTime(ride.startTime);
     return {
@@ -223,7 +224,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 
 interface EnhancedTableComponentProps {
-  rides: Ride[];
+  rides: RideType[];
 }
 
 export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
@@ -234,7 +235,7 @@ export default function EnhancedTable({ rides }: EnhancedTableComponentProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [statusFilter, setStatusFilter] = React.useState<Status | 'All'>('All');
-  const [selectedRide, setSelectedRide] = React.useState<Ride | null>(null);
+  const [selectedRide, setSelectedRide] = React.useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = React.useState(false);
 
   const handleRequestSort = (

@@ -1,12 +1,6 @@
 import dynamoose from 'dynamoose';
 import defaultModelConfig from '../util/modelConfig';
 
-export type VehicleType = {
-  id: string;
-  name: string;
-  capacity: number;
-};
-
 const schema = new dynamoose.Schema({
   id: {
     type: String,
