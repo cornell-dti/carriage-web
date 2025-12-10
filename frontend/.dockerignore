@@ -1,5 +1,0 @@
-# Files and directories to ignore when building Docker images
-node_modules
-build
-*.log
-*.gz
