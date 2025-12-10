@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
 import { Condition } from 'dynamoose';
-import schedule from 'node-schedule';
+import * as schedule from 'node-schedule';
 import { Ride } from '../models/ride';
 import { RideType } from '@carriage-web/shared/types/ride';
 

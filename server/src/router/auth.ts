@@ -1,5 +1,5 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { Rider } from '../models/rider';
 import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';

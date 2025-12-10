@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
+import { config } from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.join(__dirname, '../.env') });
+config({ path: path.join(__dirname, '../.env') });
 
 export default {
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
