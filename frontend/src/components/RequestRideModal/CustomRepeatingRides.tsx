@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './requestridemodal.module.css';
 import { Label, SRLabel } from '../FormElements/FormElements';
 

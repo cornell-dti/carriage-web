@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Tag } from '../types';
-import { AdminType } from '@carriage-web/shared/src/types/admin';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { LocationType } from '@carriage-web/shared/types/location';
 import axios from '../util/axios';
 
 type locationsState = {

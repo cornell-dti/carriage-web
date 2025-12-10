@@ -23,7 +23,7 @@ import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
 import { Status } from '../../types';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import axios from '../../util/axios';
 import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';

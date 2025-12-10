@@ -6,10 +6,10 @@ import * as db from './common';
 import { Driver } from '../models/driver';
 import { validateUser } from '../util';
 import { Ride } from '../models/ride';
-import { Status } from '@carriage-web/shared/src/types/ride';
+import { Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
 import { Item } from 'dynamoose/dist/Item';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 const router = express.Router();
 const tableName = 'Drivers';

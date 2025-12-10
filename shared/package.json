@@ -2,21 +2,23 @@
   "name": "@carriage-web/shared",
   "version": "1.0.0",
   "description": "Shared code for Carriage",
-  "main": "./src/index.ts",
+  "main": "./dist/types/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/types/index.js"
+    },
+    "./types/*": {
+      "types": "./dist/types/*.d.ts",
+      "default": "./dist/types/*.js"
+    }
+  },
   "dependencies": {},
   "scripts": {
+    "build": "tsc --project tsconfig.json",
     "type-check": "tsc --noEmit --project tsconfig.json --pretty"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cornell-dti/carriage-web.git"
-  },
-  "author": "",
-  "license": "AGPL-3.0",
-  "bugs": {
-    "url": "https://github.com/cornell-dti/carriage-web/issues"
-  },
-  "homepage": "https://github.com/cornell-dti/carriage-web#readme",
   "devDependencies": {
     "typescript": "catalog:"
   }

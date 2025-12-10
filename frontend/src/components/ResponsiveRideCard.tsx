@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { SchedulingState, Status } from '../types';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import {
   BadgeRounded,
   FlagRounded,

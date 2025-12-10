@@ -1,6 +1,6 @@
-import { Change, NotificationEvent } from '@carriage-web/shared/src/types';
+import { Change, NotificationEvent } from '@carriage-web/shared/types';
 import { UserType } from '../models/subscription';
-import { Status } from '@carriage-web/shared/src/types/ride';
+import { Status } from '@carriage-web/shared/types/ride';
 
 export const getReceivers = (
   sender: UserType,

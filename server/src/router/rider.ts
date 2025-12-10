@@ -4,11 +4,11 @@ import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
 import * as db from './common';
 import { Rider } from '../models/rider';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser } from '../util';
 import { Ride } from '../models/ride';
-import { RideType, Type, Status } from '@carriage-web/shared/src/types/ride';
+import { RideType, Type, Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();

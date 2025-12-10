@@ -6,7 +6,7 @@ import { ArrowBack } from '@mui/icons-material';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import UserActions from './UserActions';
 import { phone, home, calendar } from '../../../icons/userInfo/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './userDetail.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import axios from '../../../util/axios';

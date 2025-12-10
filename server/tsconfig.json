@@ -4,8 +4,14 @@
     "target": "es6",
     "outDir": "build",
     "allowJs": true,
-    "module": "commonjs"
+    "module": "node16",
+    "moduleResolution": "node16"
   },
   "include": ["src", "tests"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "../shared"
+    }
+  ]
 }

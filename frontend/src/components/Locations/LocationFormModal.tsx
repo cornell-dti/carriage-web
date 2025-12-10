@@ -21,7 +21,7 @@ import LocationPickerMap from './LocationMapPicker';
 import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
 import { Tag } from 'types';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 import styles from './locations.module.css';
 import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
 

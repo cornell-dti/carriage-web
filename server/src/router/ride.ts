@@ -11,13 +11,13 @@ import {
   Type,
   RideType,
   SchedulingState,
-} from '@carriage-web/shared/src/types/ride';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+} from '@carriage-web/shared/types/ride';
+import { LocationType } from '@carriage-web/shared/types/location';
 import { validateUser, daysUntilWeekday } from '../util';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { notify } from '../util/notification';
-import { Change } from '@carriage-web/shared/src/types';
+import { Change } from '@carriage-web/shared/types';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();

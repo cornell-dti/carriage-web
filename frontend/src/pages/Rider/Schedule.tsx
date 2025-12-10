@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button } from '@mui/material';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';

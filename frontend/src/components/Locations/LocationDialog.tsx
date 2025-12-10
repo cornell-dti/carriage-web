@@ -12,7 +12,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import { LocationFormModal } from './LocationFormModal';
-import { LocationType } from '@carriage-web/shared/src/types/location';
+import { LocationType } from '@carriage-web/shared/types/location';
 import PaginatedImageCarousel from './ImageCarousel';
 import { LocationImage } from './LocationImagesUpload';
 

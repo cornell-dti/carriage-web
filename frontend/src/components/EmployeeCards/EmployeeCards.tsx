@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
-import { AdminType } from '@carriage-web/shared/src/types/admin';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {

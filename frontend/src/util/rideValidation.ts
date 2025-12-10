@@ -1,5 +1,5 @@
 import { Status, SchedulingState } from '../types';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 export type UserRole = 'admin' | 'driver' | 'rider';
 

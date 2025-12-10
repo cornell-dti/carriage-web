@@ -5,7 +5,7 @@ import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility } from '../../types/index';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 type ModalFormProps = {
   onSubmit: (data: ObjectType) => void;

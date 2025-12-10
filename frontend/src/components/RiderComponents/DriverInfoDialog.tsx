@@ -15,7 +15,7 @@ import {
   Link,
   Box,
 } from '@mui/material';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';

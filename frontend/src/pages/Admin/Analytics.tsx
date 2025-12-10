@@ -4,7 +4,7 @@ import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
 import { TableData } from '../../types';
-import { DriverType } from '@carriage-web/shared/src/types/driver';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import ExportButton from '../../components/ExportButton/ExportButton';
 import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';

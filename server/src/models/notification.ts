@@ -1,6 +1,6 @@
 import dynamoose from 'dynamoose';
-import { NotificationEvent, Change } from '@carriage-web/shared/src/types';
-import { Status } from '@carriage-web/shared/src/types/ride';
+import { NotificationEvent, Change } from '@carriage-web/shared/types';
+import { Status } from '@carriage-web/shared/types/ride';
 import defaultModelConfig from '../util/modelConfig';
 
 export type NotificationType = {

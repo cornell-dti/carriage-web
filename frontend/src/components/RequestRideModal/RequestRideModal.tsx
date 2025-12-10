@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { RideModalType } from './types';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { Button } from '../FormElements/FormElements';

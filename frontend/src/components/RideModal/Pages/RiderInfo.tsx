@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import cn from 'classnames';
 import { ObjectType } from '../../../types';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { ModalPageProps } from '../../Modal/types';
 import {
   Button,

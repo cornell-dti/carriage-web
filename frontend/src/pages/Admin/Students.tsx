@@ -8,7 +8,7 @@ import styles from './page.module.css';
 import { Button } from '../../components/FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
 import { Accessibility } from '../../types';
-import { RiderType } from '@carriage-web/shared/src/types/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
 

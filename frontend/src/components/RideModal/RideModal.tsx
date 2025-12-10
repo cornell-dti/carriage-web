@@ -4,7 +4,7 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
 import { ObjectType, RepeatValues } from '../../types/index';
-import { RideType } from '@carriage-web/shared/src/types/ride';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
 import { ToastStatus, useToast } from '../../context/toastContext';

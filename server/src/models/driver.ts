@@ -1,7 +1,7 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import defaultModelConfig from '../util/modelConfig';
-import { DayOfWeek } from '@carriage-web/shared/src/types/driver';
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 
 const schema = new dynamoose.Schema({
   id: {
