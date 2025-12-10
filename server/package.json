@@ -40,7 +40,6 @@
     "build": "tsc --project tsconfig.build.json",
     "start": "node build/app.js",
     "dev": "nodemon --exec \"ts-node\" src/app.ts",
-    "lint": "eslint . --ext .js --ext .jsx --ext .ts --ext .tsx --fix",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
     "test": "cross-env NODE_ENV=test mocha -r ts-node/register \"tests/**/*.ts\" --exit --timeout 30000",
     "test:watch": "cross-env NODE_ENV=test nodemon --watch . --exec 'mocha -r ts-node/register \"tests/**/*.ts\" --timeout 10000' --ext ts"
