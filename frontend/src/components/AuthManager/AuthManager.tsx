@@ -28,7 +28,7 @@ import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
 
-const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
+const secretKey = `${import.meta.env.VITE_ENCRYPTION_KEY!}`;
 
 const encrypt = (data: string) => {
   const encrypted = CryptoJS.AES.encrypt(
@@ -77,7 +77,7 @@ const AuthManager = () => {
   const handleSSOCallback = async () => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
+        `${import.meta.env.VITE_SERVER_URL}/api/sso/profile`,
         {
           credentials: 'include', // CRITICAL: Sends session cookie
         }
@@ -144,7 +144,7 @@ const AuthManager = () => {
     if (errorParam) {
       // Handle user_not_found specially - fetch unregistered user info
       if (errorParam === 'user_not_found') {
-        fetch(`${process.env.REACT_APP_SERVER_URL}/api/sso/unregistered-user`, {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/api/sso/unregistered-user`, {
           credentials: 'include', // Send session cookie
         })
           .then((res) => res.json())
@@ -235,7 +235,9 @@ const AuthManager = () => {
       userType = 'Driver';
     }
 
-    const ssoUrl = `${process.env.REACT_APP_SERVER_URL}/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
+    const ssoUrl = `${
+      import.meta.env.VITE_SERVER_URL
+    }/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
     window.location.href = ssoUrl;
   }
 
@@ -246,7 +248,7 @@ const AuthManager = () => {
     deleteCookie('jwt');
     setAuthToken('');
     setSignedIn(false);
-    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
+    window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
