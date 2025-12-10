@@ -3,11 +3,7 @@ import isISO8601 from 'validator/lib/isISO8601';
 import { Location } from './location';
 import { Driver } from './driver';
 import defaultModelConfig from '../util/modelConfig';
-import {
-  Type,
-  Status,
-  SchedulingState,
-} from '@carriage-web/shared/types/ride';
+import { Type, Status, SchedulingState } from '@carriage-web/shared/types/ride';
 
 const schema = new dynamoose.Schema({
   id: {
