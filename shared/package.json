@@ -16,6 +16,7 @@
   },
   "dependencies": {},
   "scripts": {
+    "dev": "pnpm run build --preserveWatchOutput --watch",
     "build": "tsc --project tsconfig.json",
     "type-check": "tsc --noEmit --project tsconfig.json --pretty"
   },
