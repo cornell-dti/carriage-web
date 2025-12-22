@@ -6,6 +6,7 @@ import './datepicker_override.css';
 import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 import { isHoliday } from 'util/holidays';
+import buttonStyles from '../../styles/button.module.css';
 
 const isWeekday = (date: Date) => {
   return 0 < date.getDay() && date.getDay() < 6;
@@ -61,7 +62,10 @@ const MiniCal = () => {
           <span aria-live="polite" className={styles.modal_state}>
             Modal is{isExpanded}
           </span>
-          <button className={styles.customInput} onClick={this.props.onClick}>
+          <button
+            className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+            onClick={this.props.onClick}
+          >
             <span className={styles.primary}>
               {isToday(curDate) ? 'Today ' : ' '}
               {isTomorrow(curDate) ? 'Tomorrow ' : ' '}

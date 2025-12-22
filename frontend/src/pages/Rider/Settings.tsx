@@ -1,45 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import UserDetail, {
   UserContactInfo,
 } from '../../components/UserDetail/legacy/UserDetail';
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
-import styles from './settings.module.css';
-import Notification from '../../components/Notification/Notification';
 import { Rider } from '../../types/index';
-
-const NotifPreferences = () => (
-  <div className={styles.settings}>
-    <div>
-      <h3>Notifications</h3>
-      <div>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="confirm" /> Ride request confirmed
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="cancel" /> Ride info cancelled/edited
-        </label>
-      </div>
-      <hr className={styles.divider} />
-    </div>
-    <div>
-      <h3>Email Preferences</h3>
-      <div>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="confirm" /> Ride confirmation
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="edit" /> Ride information edited
-        </label>
-        <label className={styles.checkbox}>
-          <input type="checkbox" value="cancel" /> Ride Ride cancelled
-        </label>
-      </div>
-      <hr className={styles.divider} />
-    </div>
-  </div>
-);
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
@@ -53,9 +19,7 @@ const Settings = () => {
     <main id="main">
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
-        <div className={pageStyles.rightSection}>
-          <Notification />
-        </div>
+        <div className={pageStyles.rightSection}></div>
       </div>
       <UserDetail
         firstName={user?.firstName || ''}
@@ -72,7 +36,6 @@ const Settings = () => {
         />
         <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
-      {/* <NotifPreferences /> */}
     </main>
   );
 };

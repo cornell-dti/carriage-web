@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 import styles from './ResponsiveRideCard.module.css';
+import buttonStyles from '../styles/button.module.css';
 
 interface ResponsiveRideCardProps {
   ride: Ride;
@@ -79,7 +80,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
         <button
           onClick={() => setExpanded(!expanded)}
-          className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.detailsButton}`}
         >
           {expanded ? 'Hide Details' : 'Details'}
         </button>
@@ -191,7 +192,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               e.stopPropagation();
               setExpanded(false);
             }}
-            className={`${styles.button} ${styles.buttonSecondary}`}
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
           >
             Hide Details
           </button>
@@ -200,7 +201,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               e.stopPropagation();
               handleEdit(ride);
             }}
-            className={`${styles.button} ${styles.buttonPrimary}`}
+            className={`${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
           >
             Edit
           </button>
