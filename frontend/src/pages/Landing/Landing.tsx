@@ -1,6 +1,5 @@
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styles from './landing.module.css';
-import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import topLaptop from './landing-images/laptop1.svg';

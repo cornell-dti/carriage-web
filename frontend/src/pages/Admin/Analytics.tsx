@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import AnalyticsTable from '../../components/AnalyticsTable/AnalyticsTable';
 import TabSwitcher from '../../components/TabSwitcher/TabSwitcher';
 import { useEmployees } from '../../context/EmployeesContext';
 import { Driver, TableData } from '../../types';
 import ExportButton from '../../components/ExportButton/ExportButton';
-import Notification from '../../components/Notification/Notification';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
+import styles from './page.module.css';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
@@ -17,7 +17,7 @@ const Analytics = () => {
   const [startDate, setStartDate] = useState(today.format('YYYY-MM-DD'));
   const [endDate, setEndDate] = useState(today.format('YYYY-MM-DD'));
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'Analytics - Carriage';
   }, []);
 
@@ -53,7 +53,6 @@ const Analytics = () => {
         csvCols={generateCols()}
         filename={`${startDate}_${endDate}_analytics.csv`}
       />
-      <Notification />
     </>
   );
 
@@ -67,45 +66,47 @@ const Analytics = () => {
   };
 
   return (
-    <TabSwitcher
-      labels={['Ride Data', 'Driver Data']}
-      renderRight={renderRight}
-    >
-      <>
-        <DateFilter
-          initStartDate={startDate}
-          initEndDate={endDate}
-          onSubmit={onSelectDates}
-        />
-        <AnalyticsOverview
-          type="ride"
-          data={analyticsData}
-          label={getLabel()}
-        />
-        <AnalyticsTable
-          type="ride"
-          data={analyticsData}
-          refreshTable={refreshTable}
-        />
-      </>
-      <>
-        <DateFilter
-          initStartDate={startDate}
-          initEndDate={endDate}
-          onSubmit={onSelectDates}
-        />
-        <AnalyticsOverview
-          type="driver"
-          data={analyticsData}
-          label={getLabel()}
-        />
-        <AnalyticsTable
-          type="driver"
-          data={analyticsData}
-          refreshTable={refreshTable}
-        />
-      </>
-    </TabSwitcher>
+    <div className={styles.mainContent}>
+      <TabSwitcher
+        labels={['Ride Data', 'Driver Data']}
+        renderRight={renderRight}
+      >
+        <>
+          <DateFilter
+            initStartDate={startDate}
+            initEndDate={endDate}
+            onSubmit={onSelectDates}
+          />
+          <AnalyticsOverview
+            type="ride"
+            data={analyticsData}
+            label={getLabel()}
+          />
+          <AnalyticsTable
+            type="ride"
+            data={analyticsData}
+            refreshTable={refreshTable}
+          />
+        </>
+        <>
+          <DateFilter
+            initStartDate={startDate}
+            initEndDate={endDate}
+            onSubmit={onSelectDates}
+          />
+          <AnalyticsOverview
+            type="driver"
+            data={analyticsData}
+            label={getLabel()}
+          />
+          <AnalyticsTable
+            type="driver"
+            data={analyticsData}
+            refreshTable={refreshTable}
+          />
+        </>
+      </TabSwitcher>
+    </div>
   );
 };
 

@@ -5,8 +5,6 @@ import UserDetail, {
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
-import styles from './settings.module.css';
-import Notification from '../../components/Notification/Notification';
 import { DriverType as Driver } from 'types';
 
 const Settings = () => {
@@ -21,9 +19,7 @@ const Settings = () => {
     <main id="main">
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
-        <div className={pageStyles.rightSection}>
-          <Notification />
-        </div>
+        <div className={pageStyles.rightSection}></div>
       </div>
       <UserDetail
         firstName={user?.firstName || ''}

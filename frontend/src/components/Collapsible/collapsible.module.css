@@ -1,15 +1,16 @@
 .collapsible {
+  width: 100%;
+}
+.collapsibleContent {
   display: inline-block;
   width: 100%;
-  border-radius: 0.5rem;
-  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #ddd;
 }
 
 .banner {
   display: flex;
   width: 100%;
   padding: 0.9375rem 2.25rem;
-  background-color: #f3f3f3;
 }
 
 .title {
@@ -21,8 +22,4 @@
 
 .icon {
   margin-left: 0.75rem;
-}
-
-.contentContainer {
-  background-color: #ffffff;
 }
