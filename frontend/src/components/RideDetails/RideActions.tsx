@@ -175,7 +175,7 @@ const RideActions: React.FC<RideActionsProps> = ({
           refreshRides();
         }
 
-        if (isNewRide(ride) && onClose) {
+        if (onClose) {
           onClose(); // Close modal after creating new ride
         }
       } else {
