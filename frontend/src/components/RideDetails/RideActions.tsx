@@ -164,7 +164,7 @@ const RideActions: React.FC<RideActionsProps> = ({
   const handleSave = async () => {
     setSaving(true);
     try {
-      const success = await saveChanges();
+      const [success, errMessage] = await saveChanges();
       if (success) {
         const message = isNewRide(ride)
           ? 'Ride created successfully'
@@ -183,8 +183,8 @@ const RideActions: React.FC<RideActionsProps> = ({
         }
       } else {
         const message = isNewRide(ride)
-          ? 'Failed to create ride'
-          : 'Failed to save ride';
+          ? 'Failed to create ride due to the following errors: ' + errMessage + '.'
+          : 'Failed to save ride due to the following errors: ' + errMessage + '.';
         showError(message, 'Rides Error');
       }
     } catch (error) {

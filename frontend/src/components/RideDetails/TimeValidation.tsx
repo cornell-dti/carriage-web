@@ -89,17 +89,23 @@ export const validateRideTimes = (
   }
 
   // Check that rides must be scheduled between 7:45am and 10:00 pm
-  if (start.isBefore(now.hour(7).minute(45)) || end.isAfter(now.hour(22))) {
+  if (start.isBefore(start.hour(7).minute(45)) || end.isAfter(end.hour(22))) {
     errors.push({
       type: 'invalid_time',
       message: 'Ride must be scheduled between 7:45am and 10:00 pm',
     });
   }
 
-  // Check that rides must be scheduled by 10am the previous business day
-  const rideStartTime = dayjs(startTime);
-  
-  let previousBusinessDay = rideStartTime.subtract(1, 'day');
+  // Check that ride times are scheduled in five-minute intervals
+  if (start.minute() % 5 !== 0 || end.minute() % 5 !== 0) {
+    errors.push({
+      type: 'invalid_time',
+      message: 'Start and end time must be in five-minute intervals',
+    });
+  }
+
+  // Check that rides must be scheduled by 10am the previous business day  
+  let previousBusinessDay = start.subtract(1, 'day');
   while (previousBusinessDay.day() === 0 || previousBusinessDay.day() === 6) {
     previousBusinessDay = previousBusinessDay.subtract(1, 'day');
   }
@@ -108,7 +114,7 @@ export const validateRideTimes = (
   if (now.isAfter(deadline)) {
     errors.push({
       type: 'scheduling_deadline_passed',
-      message: `Ride must be scheduled by 10am on ${previousBusinessDay.format('dddd')} (${previousBusinessDay.format('MM/DD/YYYY')})`,
+      message: `Ride must be scheduled by 10am on previous day (${previousBusinessDay.format('dddd')} ${previousBusinessDay.format('MM/DD/YYYY')})`,
     });
   }
 

@@ -12,12 +12,11 @@ import { canEditRide, UserRole } from '../../util/rideValidation';
 import {
   isNewRide,
   hasRideChanges,
-  getRideChanges,
 } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import { useRides } from '../../context/RidesContext';
-import { useToast, ToastStatus } from '../../context/toastContext';
-import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
+import { useToast } from '../../context/toastContext';
+import { useErrorModal } from '../../context/errorModal';
 
 interface RideEditContextType {
   isEditing: boolean;
@@ -26,7 +25,7 @@ interface RideEditContextType {
   startEditing: () => void;
   stopEditing: () => void;
   updateRideField: (field: keyof RideType, value: any) => void;
-  saveChanges: () => Promise<boolean>;
+  saveChanges: () => Promise<[boolean, string]>;
   hasChanges: boolean;
   canEdit: boolean;
   userRole: UserRole;
@@ -146,9 +145,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     return hasChangesResult;
   }, [editedRide, originalRide]);
 
-  const saveChanges = useCallback(async (): Promise<boolean> => {
+  const saveChanges = useCallback(async (): Promise<[boolean, string]> => {
     if (!editedRide) {
-      return false;
+      return [false, 'No ride to save'];
     }
 
     // Validate ride times
@@ -165,10 +164,11 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
+        const errMessages = timeValidation.errors.map((err) => err.message).join(', ');
         const firstErr =
           timeValidation.errors[0]?.message || 'Invalid time values';
-        showError(firstErr, 'Ride Edit Error');
-        return false;
+        showError(errMessages || firstErr, 'Ride Edit Error');
+        return [false, errMessages || firstErr];
       }
     }
 
@@ -183,7 +183,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
       ) {
         console.error('Missing required fields for new ride');
         showError('Please select pickup, dropoff, start time, and end time.', 'Ride Edit Error');
-        return false;
+        return [false, 'Missing required fields for new ride'];
       }
 
       try {
@@ -209,7 +209,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         }
 
         stopEditing();
-        return true;
+        return [true, ''];
       } catch (error: any) {
         console.error('Failed to create new ride:', error);
         const msg =
@@ -217,12 +217,12 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
           error?.response?.data?.err ||
           'Failed to create ride.';
         showError(msg, 'Rides Error');
-        return false;
+        return [false, msg];
       }
     } else {
       // Existing ride update logic
       if (!originalRide || !hasChanges()) {
-        return false;
+        return [false, 'No changes to save'];
       }
 
       try {
@@ -260,7 +260,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         }
 
         stopEditing();
-        return true;
+        return [true, ''];
       } catch (error: any) {
         console.error('Failed to save ride changes:', error);
         const msg =
@@ -268,7 +268,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
           error?.response?.data?.err ||
           'Failed to save changes.';
         showError(msg, 'Rides Error');
-        return false;
+        return [false, msg];
       }
     }
   }, [
