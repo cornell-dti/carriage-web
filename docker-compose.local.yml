@@ -7,3 +7,5 @@ services:
       - './server/config/cornell-idp-test.crt:/app/server/config/cornell-idp-test.crt:ro'
     env_file:
       - ./server/.env
+    ports:
+      - '3001:3001'
