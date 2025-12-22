@@ -52,6 +52,19 @@ export function isRideCompleted(ride: RideType): boolean {
  * @returns True if the user can edit the ride
  */
 export function canEditRide(ride: RideType, userRole: UserRole): boolean {
+  // Past or completed rides cannot be edited
+  if (isRidePast(ride) || isRideCompleted(ride) || isRideActive(ride)) {
+    return false;
+  }
+
+  // Time-based check for past/active ride
+  const now = new Date();
+  const rideStartTime = new Date(ride.startTime);
+
+  if (now > rideStartTime) {
+    return false;
+  }
+
   // Drivers cannot edit rides
   if (userRole === 'driver') {
     return false;
