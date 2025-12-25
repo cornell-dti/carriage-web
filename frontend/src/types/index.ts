@@ -88,6 +88,8 @@ export enum Status {
 // Scheduling state - separate from operational status
 export enum SchedulingState {
   SCHEDULED = 'scheduled',
+  SCHEDULED_WITH_MODIFICATION = 'scheduled_with_modification',
+  REJECTED = 'rejected',
   UNSCHEDULED = 'unscheduled',
 }
 
