@@ -18,15 +18,27 @@ interface CancelRideConfirmationDialogProps {
   open: boolean;
   onClose: () => void;
   ride: RideType;
-  userRole: UserRole;
+  userRole?: UserRole;
   onSuccess?: () => void;
 }
 
 const CancelRideConfirmationDialog: React.FC<
   CancelRideConfirmationDialogProps
-> = ({ open, onClose, ride, userRole, onSuccess }) => {
+> = ({ open, onClose, ride, userRole: propUserRole, onSuccess }) => {
   const { showToast } = useToast();
   const { refreshRides } = useRides();
+
+  // Get user role from localStorage if not provided as prop
+  const getUserRole = (): UserRole => {
+    if (propUserRole) return propUserRole;
+    const userType = localStorage.getItem('userType');
+    if (userType === 'Admin') return 'admin';
+    if (userType === 'Driver') return 'driver';
+    if (userType === 'Rider') return 'rider';
+    return 'rider';
+  };
+
+  const userRole = getUserRole();
 
   const handleCancelConfirm = async () => {
     // Check for recurring rides (not supported yet)

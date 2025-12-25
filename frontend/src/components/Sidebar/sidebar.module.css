@@ -19,11 +19,12 @@
   width: 6rem;
   min-height: 100vh;
   position: fixed;
-  box-shadow: 0 0.25rem 100px rgba(0, 0, 0, 0.06);
+  border-right: 1px solid #ddd;
   justify-content: space-between;
   flex-direction: column;
   z-index: 100;
   padding: 1.75rem 0;
+  box-shadow: 0px 5px 32px -7px rgba(0, 0, 0, 0.05);
 }
 
 .icon {
