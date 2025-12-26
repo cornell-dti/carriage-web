@@ -9,13 +9,60 @@ import { Ride, Status, Type, RideType, SchedulingState } from '../models/ride';
 import { Tag, LocationType } from '../models/location';
 import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
-import { RiderType } from '../models/rider';
+import { Rider, RiderType } from '../models/rider';
 import { notify } from '../util/notification';
 import { Change } from '../util/types';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();
 const tableName = 'Rides';
+
+/**
+ * Ensure that all riders attached to a ride are still eligible based on their endDate.
+ * - A rider must be active (if the flag exists)
+ * - The ride's start date (in America/New_York) must be on or before the rider's endDate
+ */
+async function ensureRidersEligibleForRide(
+  riderIds: string[],
+  rideStartTimeIso: string
+) {
+  if (!riderIds.length) return;
+
+  const uniqueIds = Array.from(new Set(riderIds));
+  const keys = uniqueIds.map((id) => ({ id }));
+
+  const docs = (await Rider.batchGet(keys)) as any[];
+  if (!docs || !docs.length) {
+    throw new Error('No riders found for this ride.');
+  }
+
+  const rideDateNy = moment
+    .tz(rideStartTimeIso, 'America/New_York')
+    .format('YYYY-MM-DD');
+
+  for (const doc of docs) {
+    if (!doc) continue;
+    const riderJson = doc.toJSON ? doc.toJSON() : doc;
+    const { id, email, active, endDate } = riderJson as {
+      id: string;
+      email: string;
+      active?: boolean;
+      endDate?: string;
+    };
+
+    if (active === false) {
+      throw new Error(
+        `Rider with email ${email} is not active and cannot be scheduled for rides.`
+      );
+    }
+
+    if (endDate && endDate < rideDateNy) {
+      throw new Error(
+        `Rider with email ${email} has an end date of ${endDate} and cannot be scheduled for a ride on ${rideDateNy}. Please contact admin to extend your end date`
+      );
+    }
+  }
+}
 
 // Debug endpoint to get current user's JWT token
 router.get('/debug/token', validateUser('User'), (req, res) => {
@@ -296,7 +343,7 @@ router.get('/diagnose', async (_req, res) => {
 });
 
 // Create a new ride
-router.post('/', validateUser('User'), (req, res) => {
+router.post('/', validateUser('User'), async (req, res) => {
   const { body } = req;
   const {
     startLocation,
@@ -344,6 +391,33 @@ router.post('/', validateUser('User'), (req, res) => {
   if (endTime <= startTime) {
     res.status(400).send({
       err: 'End time must be after start time.',
+    });
+    return;
+  }
+
+  // Enforce rider end dates: all riders on this ride must still be eligible.
+  // Accept both legacy single rider and new riders array formats.
+  const riderIdsForValidation: string[] = [];
+  if (body.riders && Array.isArray(body.riders) && body.riders.length > 0) {
+    body.riders.forEach((r: any) => {
+      if (typeof r === 'string') riderIdsForValidation.push(r);
+      else if (r && typeof r.id === 'string') riderIdsForValidation.push(r.id);
+    });
+  } else if (body.rider) {
+    if (typeof body.rider === 'string') {
+      riderIdsForValidation.push(body.rider);
+    } else if (body.rider.id) {
+      riderIdsForValidation.push(body.rider.id);
+    }
+  }
+
+  try {
+    await ensureRidersEligibleForRide(riderIdsForValidation, body.startTime);
+  } catch (error: any) {
+    res.status(400).send({
+      err:
+        error?.message ||
+        'One or more riders are not eligible to be scheduled for this ride.',
     });
     return;
   }
@@ -437,7 +511,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
   }
 
   //Check if id matches or user is admin
-  db.getById(res, Ride, id, tableName, (ride: RideType) => {
+  db.getById(res, Ride, id, tableName, async (ride: RideType) => {
     const { riders, driver } = ride;
     const userIsRider =
       riders && riders.some((rider) => rider.id === res.locals.user.id);
@@ -447,6 +521,47 @@ router.put('/:id', validateUser('User'), (req, res) => {
       userIsRider ||
       (driver && res.locals.user.id === driver.id)
     ) {
+      // Before applying the update, ensure all riders will still be eligible
+      // at the (possibly updated) startTime.
+      const updatedStartTime = body.startTime || ride.startTime;
+
+      const riderIdsForValidation: string[] = [];
+      if (body.riders && Array.isArray(body.riders)) {
+        body.riders.forEach((r: any) => {
+          if (typeof r === 'string') riderIdsForValidation.push(r);
+          else if (r && typeof r.id === 'string')
+            riderIdsForValidation.push(r.id);
+        });
+      } else if (body.rider) {
+        if (typeof body.rider === 'string') {
+          riderIdsForValidation.push(body.rider);
+        } else if (body.rider.id) {
+          riderIdsForValidation.push(body.rider.id);
+        }
+      } else if (riders && Array.isArray(riders)) {
+        riders.forEach((r: any) => {
+          if (!r) return;
+          if (typeof r === 'string') riderIdsForValidation.push(r);
+          else if (r.id) riderIdsForValidation.push(r.id);
+        });
+      } else if ((ride as any).rider && (ride as any).rider.id) {
+        riderIdsForValidation.push((ride as any).rider.id);
+      }
+
+      try {
+        await ensureRidersEligibleForRide(
+          riderIdsForValidation,
+          updatedStartTime
+        );
+      } catch (error: any) {
+        res.status(400).send({
+          err:
+            error?.message ||
+            'One or more riders are not eligible to be scheduled for this ride.',
+        });
+        return;
+      }
+
       db.update(res, Ride, { id }, body, tableName, async (doc) => {
         const ride = doc;
         const { userType } = res.locals.user;
