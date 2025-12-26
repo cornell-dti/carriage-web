@@ -80,6 +80,9 @@ const RideActions: React.FC<RideActionsProps> = ({
     try {
       await updateRideStatus(ride.id, newStatus);
       showToast('Ride status updated', ToastStatus.SUCCESS);
+
+      // Ensure any date-based ride views stay in sync with the latest status
+      await refreshRides();
     } catch (error) {
       console.error('Failed to update status:', error);
       showToast('Failed to update ride status', ToastStatus.ERROR);
