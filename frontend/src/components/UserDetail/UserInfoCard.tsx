@@ -27,8 +27,14 @@ interface UserInfoCardProps {
 
 const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
   const getEmployeeRole = (employee: Employee) => {
-    if (!employee.type || employee.type.length === 0) return 'N/A';
-    return employee.type.join(', ');
+    const roles: string[] = [];
+    if (employee.isDriver) {
+      roles.push('driver');
+    }
+    if (employee.type && employee.type.length > 0) {
+      roles.push(...employee.type);
+    }
+    return roles.length > 0 ? roles.join(' • ') : 'N/A';
   };
 
   const formatAvailability = (availability: string[] | undefined) => {
