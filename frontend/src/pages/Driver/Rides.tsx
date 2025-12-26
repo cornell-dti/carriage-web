@@ -29,6 +29,8 @@ import NoRidesView from '../../components/NoRidesView/NoRidesView';
 import ContactInfoModal from '../../components/ContactInfoModal/ContactInfoModal';
 import { APIProvider, useMapsLibrary } from '@vis.gl/react-google-maps';
 import UpdateStatusModal from '../../components/UpdateStatusModal/UpdateStatusModal';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 const getStatusColor = (
   status: Status
@@ -403,6 +405,8 @@ const Rides = () => {
     useRides();
   const { curDate } = useDate();
   const authContext = useContext(AuthContext);
+  const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const [updating, setUpdating] = useState(false);
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
   const [allDriverRides, setAllDriverRides] = useState<Ride[]>([]);
@@ -418,6 +422,7 @@ const Rides = () => {
           setAllDriverRides(rides);
         } catch (error) {
           console.error('Failed to fetch driver rides:', error);
+        showError(`Failed to fetch driver rides: ${formatErrorMessage(error)}`, 'Rides Error');
         } finally {
           setLoadingRides(false);
         }
@@ -487,7 +492,7 @@ const Rides = () => {
       const errorMessage =
         error.response?.data?.message ||
         'Could not update ride status. Please try again.';
-      alert(`Error: ${errorMessage}`);
+      showError(`Error: ${errorMessage}`, 'Rides Error');
     } finally {
       setUpdating(false);
     }

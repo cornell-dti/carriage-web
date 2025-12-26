@@ -29,6 +29,7 @@ import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 const secretKey = `${process.env.REACT_APP_ENCRYPTION_KEY!}`;
 
@@ -67,6 +68,7 @@ const AuthManager = () => {
     setUnregisteredUser(null);
     logout();
   };
+  const { showError } = useErrorModal();
 
   useEffect(() => {
     const token = jwtValue();
@@ -209,6 +211,7 @@ const AuthManager = () => {
       }
     } catch (error) {
       console.error('Error decrypting JWT:', error);
+      showError(`Error decrypting JWT: ${formatErrorMessage(error)}`, 'Authentication Error');
     }
     return '';
   }

@@ -15,6 +15,8 @@ import buttonStyles from '../../styles/button.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 type DayRideCollection = [string, Ride[]][];
 
@@ -63,11 +65,13 @@ const partitionRides = (rides: Ride[]): DayRideCollection => {
 
 const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
+  const { showToast } = useToast();
   const { locations } = useLocations();
   const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
+  const { showError } = useErrorModal();
 
   const [editingRide, setEditingRide] = useState<null | Ride>(null);
 
@@ -125,6 +129,7 @@ const Schedule: React.FC = () => {
           setAllRiderRides(rides);
         } catch (error) {
           console.error('Failed to fetch rider rides:', error);
+        showError(`Failed to fetch rider rides: ${formatErrorMessage(error)}`, 'Rides Error');
         } finally {
           setLoadingRides(false);
         }
@@ -151,17 +156,18 @@ const Schedule: React.FC = () => {
 
     // For now, block any recurring rides
     if (formData.repeatType !== 'none') {
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride.'
+      showToast(
+        'Recurring rides are not yet supported. Please create a single ride.',
+        ToastStatus.ERROR
       );
-      return;
+      return false;
     }
 
     try {
       // Build ISO datetimes
       if (!formData.date || !formData.time) {
-        alert('Please select both date and time.');
-        return;
+        showToast('Please select both date and time.', ToastStatus.ERROR);
+        return false;
       }
 
       const dateStr = formData.date.toISOString().split('T')[0];
@@ -172,7 +178,7 @@ const Schedule: React.FC = () => {
         new Date(startISO).getTime() + 30 * 60 * 1000
       ).toISOString();
 
-      await axios.post('/api/rides', {
+      const result = await axios.post('/api/rides', {
         // Send location IDs (matching Admin flow)
         startLocation: formData.pickupLocation.id,
         endLocation: formData.dropoffLocation.id,
@@ -184,12 +190,17 @@ const Schedule: React.FC = () => {
         schedulingState: 'unscheduled',
       });
 
+      console.log('Result:', result);
+
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       console.error('Failed to create ride:', error);
-      alert('Failed to create ride. Please try again.');
+      const msg = error?.response?.data?.err || 'Please try again.';
+      showError('Failed to create ride: ' + msg, 'Rides Error');
+      return false;
     }
   };
 

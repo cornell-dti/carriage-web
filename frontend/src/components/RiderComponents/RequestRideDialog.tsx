@@ -26,12 +26,17 @@ import {
   TimePicker,
 } from '@mui/x-date-pickers';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import dayjs from 'dayjs';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
-import { error } from 'console';
+import { useLocations } from '../../context/LocationsContext';
+import { useToast, ToastStatus } from '../../context/toastContext';
+import { formatErrorMessage } from '../../context/errorModal';
+import { validateRideTimes } from 'components/RideDetails/TimeValidation';
+import { useErrorModal } from '../../context/errorModal';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -50,7 +55,7 @@ type SelectionState = 'pickup' | 'dropoff' | 'complete';
 interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: FormData) => Promise<boolean | void> | boolean | void;
   supportedLocations: Location[];
   ride?: Ride;
 }
@@ -110,6 +115,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   //official locations with other added
   const supportLocsWithOther = [Other, ...supportedLocations];
 
+  const { locations } = useLocations();
+  const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
     dropoffLocation: null,
@@ -465,6 +473,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     try {
       let finalPickup = formData.pickupLocation;
       let finalDropoff = formData.dropoffLocation;
+      let result: boolean | void = false;
 
       // only create custom pickup if it's "Other"
       if (finalPickup?.name === Other.name) {
@@ -504,17 +513,45 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         throw new Error('Start and end location are too simiilar');
       }
 
-      onSubmit({
-        ...formData,
-        pickupLocation: finalPickup,
-        dropoffLocation: finalDropoff,
-      });
-      setCustomPickup(false);
-      setCustomDropoff(false);
-      onClose();
-    } catch (err) {
-      console.error('Error submitting ride:', err);
-      alert('Failed to submit ride. Please try again.');
+      const datetime = dayjs(formData.time)
+                      .set('date', formData.date!.getDate())
+                      .set('month', formData.date!.getMonth())
+                      .set('year', formData.date!.getFullYear());
+
+      const timeValidation = validateRideTimes(
+        datetime, // start time
+        datetime.add(30, 'minute'), // end time
+        {
+          allowPastTimes: false,
+          maxDurationHours: 24,
+          minDurationMinutes: 5,
+        }
+      );
+
+      if (!timeValidation.isValid) {
+        console.error('Time validation failed:', timeValidation.errors);
+        const errMessages = timeValidation.errors.map((err) => err.message).join(', ');
+        const firstErr =
+          timeValidation.errors[0]?.message || 'Invalid time values';
+        showError("Could not create ride due to following time validation issues: " + (errMessages || firstErr), 'Time Validation Error');
+        result = false;
+      }
+      else {
+        result = await onSubmit({
+          ...formData,
+          pickupLocation: finalPickup,
+          dropoffLocation: finalDropoff,
+        });
+      }      
+      if (result !== false) {
+        onClose();
+        showToast('Changes saved successfully', ToastStatus.SUCCESS);
+      } else {
+        showToast('Failed to save changes', ToastStatus.ERROR);
+      }
+    } catch(e) {
+      console.error('Error submitting ride:', e);
+      showToast('Failed to save changes: ' + formatErrorMessage(e), ToastStatus.ERROR);
     }
   };
 

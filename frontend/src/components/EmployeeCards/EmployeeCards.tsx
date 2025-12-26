@@ -11,7 +11,6 @@ const formatPhone = (phoneNumber: string | undefined) => {
     const secondPart = phoneNumber.substring(6, 10);
     return `${areaCode}-${firstPart}-${secondPart}`;
   } else {
-    console.error('Undefined PhoneNumber');
     return '';
   }
 };

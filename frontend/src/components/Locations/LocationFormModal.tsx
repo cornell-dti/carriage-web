@@ -23,6 +23,8 @@ import GeocoderService from './GeocoderService';
 import { Location, Tag } from 'types';
 import styles from './locations.module.css';
 import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 const CAMPUS_OPTIONS = [
   { value: Tag.NORTH, label: 'North Campus' },
@@ -67,7 +69,9 @@ export const LocationFormModal: React.FC<Props> = ({
   const [loadingAddr, setLoadingAddr] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [locationImages, setLocationImages] = useState<LocationImage[]>([]);
-
+  const { showError } = useErrorModal();
+  const { showToast } = useToast();
+  
   useEffect(() => {
     if (!open) return;
 
@@ -98,6 +102,10 @@ export const LocationFormModal: React.FC<Props> = ({
     } catch (e) {
       setError("Couldn't retrieve address for this location");
       console.error(e);
+      showError(
+        `Couldn't retrieve address for this location: ${formatErrorMessage(e)}`,
+        'Locations Error'
+      );
     } finally {
       setLoadingAddr(false);
     }
@@ -114,6 +122,10 @@ export const LocationFormModal: React.FC<Props> = ({
     } catch (e) {
       setError("Couldn't find coordinates for this address");
       console.error(e);
+      showError(
+        `Couldn't find coordinates for this address: ${formatErrorMessage(e)}`,
+        'Locations Error'
+      );
     } finally {
       setLoadingAddr(false);
     }
@@ -147,6 +159,7 @@ export const LocationFormModal: React.FC<Props> = ({
       imagesList: locationImages,
     };
     onSubmit(updatedLocation);
+    showToast('Location saved successfully', ToastStatus.SUCCESS);
     onClose();
   };
 

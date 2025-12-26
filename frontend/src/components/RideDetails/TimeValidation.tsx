@@ -6,7 +6,9 @@ export interface TimeValidationError {
     | 'end_time_before_start'
     | 'same_time'
     | 'too_long_duration'
-    | 'invalid_time';
+    | 'invalid_time'
+    | 'weekend_occurrence'
+    | 'scheduling_deadline_passed';
   message: string;
 }
 
@@ -27,7 +29,7 @@ export const validateRideTimes = (
   const {
     allowPastTimes = false,
     maxDurationHours = 24,
-    minDurationMinutes = 5,
+    minDurationMinutes = 1,
   } = options;
 
   const errors: TimeValidationError[] = [];
@@ -75,6 +77,44 @@ export const validateRideTimes = (
     errors.push({
       type: 'too_long_duration',
       message: `Ride duration cannot exceed ${maxDurationHours} hours`,
+    });
+  }
+
+  // Check weekends
+  if (start.day() === 0 || start.day() === 6 || end.day() === 0 || end.day() === 6) {
+    errors.push({
+      type: 'weekend_occurrence',
+      message: 'Ride cannot occur on a weekend',
+    });
+  }
+
+  // Check that rides must be scheduled between 7:45am and 10:00 pm
+  if (start.isBefore(start.hour(7).minute(45)) || end.isAfter(end.hour(22))) {
+    errors.push({
+      type: 'invalid_time',
+      message: 'Ride must be scheduled between 7:45am and 10:00 pm',
+    });
+  }
+
+  // Check that ride times are scheduled in five-minute intervals
+  if (start.minute() % 5 !== 0 || end.minute() % 5 !== 0) {
+    errors.push({
+      type: 'invalid_time',
+      message: 'Start and end time must be in five-minute intervals',
+    });
+  }
+
+  // Check that rides must be scheduled by 10am the previous business day  
+  let previousBusinessDay = start.subtract(1, 'day');
+  while (previousBusinessDay.day() === 0 || previousBusinessDay.day() === 6) {
+    previousBusinessDay = previousBusinessDay.subtract(1, 'day');
+  }
+  const deadline = previousBusinessDay.set('hour', 10).set('minute', 0).set('second', 0);
+  
+  if (now.isAfter(deadline)) {
+    errors.push({
+      type: 'scheduling_deadline_passed',
+      message: `Ride must be scheduled by 10am on previous day (${previousBusinessDay.format('dddd')} ${previousBusinessDay.format('MM/DD/YYYY')})`,
     });
   }
 

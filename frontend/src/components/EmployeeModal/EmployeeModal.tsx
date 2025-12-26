@@ -12,6 +12,7 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 type AdminData = {
   type: string[];
@@ -76,6 +77,7 @@ const EmployeeModal = ({
   setIsOpen,
 }: EmployeeModalProps) => {
   const { showToast } = useToast();
+  const { showError } = useErrorModal();
   const {
     updateAdminInfo,
     updateDriverInfo,
@@ -157,6 +159,7 @@ const EmployeeModal = ({
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
+      showError(`Error uploading photo: ${formatErrorMessage(error)}`, 'Employees Error');
       throw new Error('Failed to upload employee photo. Please try again.');
     }
   }
@@ -182,7 +185,9 @@ const EmployeeModal = ({
         break;
       case '/api/admins':
         // Use optimistic create from context
-        await createAdmin(extractAdminData(employeeData));
+        await createAdmin(extractAdminData(employeeData)).catch((error) => {
+          showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+        });
         res = employeeData; // The context will handle server response and ID assignment
         break;
       default:
@@ -233,9 +238,13 @@ const EmployeeModal = ({
   async function deleteEmployee(id: string, endpoint: string): Promise<void> {
     // Use optimistic delete from context
     if (endpoint === '/api/admins') {
-      await deleteAdmin(id);
+      await deleteAdmin(id).catch((error) => {
+        showError(`Failed to delete admin: ${formatErrorMessage(error)}`, 'Employees Error');
+      });
     } else if (endpoint === '/api/drivers') {
-      await deleteDriver(id);
+      await deleteDriver(id).catch((error) => {
+        showError(`Failed to delete driver: ${formatErrorMessage(error)}`, 'Employees Error');
+      });
     }
   }
 
@@ -262,42 +271,74 @@ const EmployeeModal = ({
     // If no employee exists, create one using a primary role.
     if (!currentId || currentId === '') {
       if (hasAdmin) {
-        employeeData.id = (
-          await createEmployee(employeeData, '/api/admins')
-        ).id;
-        showToast(
-          `Created a new employee with the admin role`,
-          ToastStatus.SUCCESS
-        );
+        try {
+          employeeData.id = (
+            await createEmployee(employeeData, '/api/admins')
+          ).id;
+          showToast(
+            `Created a new employee with the admin role`,
+            ToastStatus.SUCCESS
+          );
+        } catch (error) {
+          showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+        }
       }
       if (hasDriver) {
-        employeeData.id = (
-          await createEmployee(employeeData, '/api/drivers')
-        ).id;
-        showToast(
-          `Created a new employee with the driver role`,
-          ToastStatus.SUCCESS
-        );
+        try {
+          employeeData.id = (
+            await createEmployee(employeeData, '/api/drivers')
+          ).id;
+          showToast(
+            `Created a new employee with the driver role`,
+            ToastStatus.SUCCESS
+          );
+        } catch (error) {
+          showError(`Failed to create driver: ${formatErrorMessage(error)}`, 'Employees Error');
+        }
       }
     } else {
       if (hasAdmin) {
         if (employeeData.admin) {
-          await updateEmployee(employeeData, '/api/admins');
+          try {
+            await updateEmployee(employeeData, '/api/admins');
+          } catch (error) {
+            showError(`Failed to update admin: ${formatErrorMessage(error)}`, 'Employees Error');
+          }
         } else {
-          await createEmployee(employeeData, '/api/admins');
+          try {
+            await createEmployee(employeeData, '/api/admins');
+          } catch (error) {
+            showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+          }
         }
       } else if (employeeData.admin) {
-        await deleteEmployee(employeeData.id, '/api/admins');
+        try {
+          await deleteEmployee(employeeData.id, '/api/admins');
+        } catch (error) {
+          showError(`Failed to delete admin: ${formatErrorMessage(error)}`, 'Employees Error');
+        }
       }
 
       if (hasDriver) {
         if (employeeData.driver) {
-          await updateEmployee(employeeData, '/api/drivers');
+          try {
+            await updateEmployee(employeeData, '/api/drivers');
+          } catch (error) {
+            showError(`Failed to update driver: ${formatErrorMessage(error)}`, 'Employees Error');
+          }
         } else {
-          await createEmployee(employeeData, '/api/drivers');
+          try {
+            await createEmployee(employeeData, '/api/drivers');
+          } catch (error) {
+            showError(`Failed to create driver: ${formatErrorMessage(error)}`, 'Employees Error');
+          }
         }
       } else if (employeeData.driver) {
-        await deleteEmployee(employeeData.id, '/api/drivers');
+        try {
+          await deleteEmployee(employeeData.id, '/api/drivers');
+        } catch (error) {
+          showError(`Failed to delete driver: ${formatErrorMessage(error)}`, 'Employees Error');
+        }
       }
     }
     let id = employeeData.id;
@@ -364,11 +405,13 @@ const EmployeeModal = ({
             : 'Drivers';
         try {
           setIsUploadingImage(true);
-          await uploadEmployeePhoto(id, targetTable, imageBase64);
+          await uploadEmployeePhoto(id, targetTable, imageBase64).catch((error) => {
+            showError(`Failed to upload photo: ${formatErrorMessage(error)}`, 'Employees Error');
+          });
         } catch (uploadError) {
-          showToast(
-            'Employee created but photo upload failed. You can try uploading the photo again later.',
-            ToastStatus.ERROR
+          showError(
+            `Employee created but photo upload failed: ${formatErrorMessage(uploadError)}. You can try uploading the photo again later.`,
+            'Employees Error'
           );
           // Don't throw here - we want the employee creation to succeed even if photo upload fails
         } finally {
@@ -377,9 +420,12 @@ const EmployeeModal = ({
       }
 
       // Note: No need to manually refresh - optimistic updates handle this automatically
-      showToast(`Employee information processed`, ToastStatus.SUCCESS);
+      showToast('Employee information processed', ToastStatus.SUCCESS);
     } catch (error) {
-      showToast('An error occurred: ', ToastStatus.ERROR);
+      showError(
+        `An error occurred while saving employee: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
     } finally {
       closeModal();
     }
