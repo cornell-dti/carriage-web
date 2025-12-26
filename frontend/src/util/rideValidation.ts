@@ -83,9 +83,10 @@ export function canUpdateStatus(ride: RideType, userRole: UserRole): boolean {
   }
 
   // Completed rides cannot have status updates
-  if (isRideCompleted(ride)) {
-    return false;
-  }
+  // COMMENTED OUT: in case of misclick/etc, drivers should be able to update the status
+  // if (isRideCompleted(ride)) {
+  //   return false;
+  // }
 
   // Only drivers and admins can update status
   if (userRole === 'rider') {
