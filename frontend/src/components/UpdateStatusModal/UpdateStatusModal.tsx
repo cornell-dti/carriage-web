@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
   Typography,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  CircularProgress,
 } from '@mui/material';
 import { Status } from '../../types';
 
@@ -30,8 +32,17 @@ const UpdateStatusModal: React.FC<UpdateStatusModalProps> = ({
   onUpdate,
   updating,
 }) => {
-  const handleStatusSelect = async (newStatus: Status) => {
-    await onUpdate(newStatus);
+  const [selectedStatus, setSelectedStatus] = useState<Status | ''>('');
+
+  useEffect(() => {
+    if (!open) {
+      setSelectedStatus('');
+    }
+  }, [open]);
+
+  const handleSubmit = async () => {
+    if (!selectedStatus) return;
+    await onUpdate(selectedStatus as Status);
   };
 
   return (
@@ -41,31 +52,44 @@ const UpdateStatusModal: React.FC<UpdateStatusModalProps> = ({
         <Typography variant="body2" gutterBottom>
           Current status: <strong>{currentStatus.replace(/_/g, ' ')}</strong>
         </Typography>
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          Select the status:
-        </Typography>
-        <List>
-          {nextStatuses.length > 0 ? (
-            nextStatuses.map((status) => (
-              <ListItem key={status} disablePadding>
-                <ListItemButton
-                  onClick={() => handleStatusSelect(status)}
-                  disabled={updating}
-                >
-                  <ListItemText primary={status.replace(/_/g, ' ')} />
-                </ListItemButton>
-              </ListItem>
-            ))
-          ) : (
-            <ListItem>
-              <ListItemText primary="No status options available." />
-            </ListItem>
-          )}
-        </List>
+        <FormControl
+          component="fieldset"
+          sx={{ mt: 2 }}
+          disabled={updating || nextStatuses.length === 0}
+        >
+          <FormLabel component="legend">Select new status</FormLabel>
+          <RadioGroup
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value as Status)}
+          >
+            {nextStatuses.length > 0 ? (
+              nextStatuses.map((status) => (
+                <FormControlLabel
+                  key={status}
+                  value={status}
+                  control={<Radio />}
+                  label={status.replace(/_/g, ' ')}
+                />
+              ))
+            ) : (
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                No status options available.
+              </Typography>
+            )}
+          </RadioGroup>
+        </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} disabled={updating}>
           Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={!selectedStatus || updating || nextStatuses.length === 0}
+          startIcon={updating ? <CircularProgress size={20} /> : undefined}
+        >
+          {updating ? 'Updating...' : 'Update'}
         </Button>
       </DialogActions>
     </Dialog>
