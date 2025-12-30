@@ -50,16 +50,16 @@ export async function sendApprovedEmail(to: string, ride: RideDetails) {
   console.log('📧 MAILER: To:', to);
   console.log('📧 MAILER: Ride:', ride);
 
-  const day = format(ride.time, 'EEEE');
-  const hhmm = format(ride.time, 'HH:mm');
+  const date = format(ride.time, 'EEEE, MMMM dd');
+  const time = format(ride.time, 'h:mm aa');
 
   const mailOptions = {
     from: 'carriage@cornell.edu', // must be your EGA
     to,
     subject: 'Carriage Ride Approved',
-    text: `Your ride on ${day} from ${ride.pickup} to ${
+    text: `Your ride on ${date} from ${ride.pickup} to ${
       ride.dropoff
-    } at ${hhmm} was approved.${
+    } at ${time} was approved.${
       ride.modified ? '\n\nNote: This ride was modified.' : ''
     }`,
   };
@@ -84,14 +84,14 @@ export async function sendRejectedEmail(to: string, ride: RideDetails) {
   console.log('📧 MAILER: To:', to);
   console.log('📧 MAILER: Ride:', ride);
 
-  const day = format(ride.time, 'EEEE');
-  const hhmm = format(ride.time, 'HH:mm');
+  const date = format(ride.time, 'EEEE, MMMM dd');
+  const time = format(ride.time, 'h:mm aa');
 
   const mailOptions = {
     from: 'carriage@cornell.edu',
     to,
     subject: 'Carriage Ride Rejected',
-    text: `Your ride on ${day} from ${ride.pickup} to ${ride.dropoff} at ${hhmm} was rejected.`,
+    text: `Your ride on ${date} from ${ride.pickup} to ${ride.dropoff} at ${time} was rejected.`,
   };
 
   console.log('📧 MAILER: Mail options:', mailOptions);
@@ -114,14 +114,14 @@ export async function sendCancelledEmail(to: string, ride: RideDetails) {
   console.log('📧 MAILER: To:', to);
   console.log('📧 MAILER: Ride:', ride);
 
-  const day = format(ride.time, 'EEEE');
-  const hhmm = format(ride.time, 'HH:mm');
+  const date = format(ride.time, 'EEEE, MMMM dd');
+  const time = format(ride.time, 'h:mm aa');
 
   const mailOptions = {
     from: 'carriage@cornell.edu',
     to,
     subject: 'Carriage Ride Cancelled',
-    text: `Your ride on ${day} from ${ride.pickup} to ${ride.dropoff} at ${hhmm} has been cancelled.`,
+    text: `Your ride on ${date} from ${ride.pickup} to ${ride.dropoff} at ${time} has been cancelled.`,
   };
 
   console.log('📧 MAILER: Mail options:', mailOptions);
@@ -147,10 +147,10 @@ export async function sendScheduledWithModificationEmail(
   console.log('📧 MAILER: To:', to);
   console.log('📧 MAILER: Ride:', ride);
 
-  const originalDay = format(ride.originalTime, 'EEEE');
-  const originalHhmm = format(ride.originalTime, 'HH:mm');
-  const newDay = format(ride.newTime, 'EEEE');
-  const newHhmm = format(ride.newTime, 'HH:mm');
+  const originalDay = format(ride.originalTime, 'EEEE, MMMM dd');
+  const originalTime = format(ride.originalTime, 'h:mm aa');
+  const newDay = format(ride.newTime, 'EEEE, MMMM dd');
+  const newTime = format(ride.newTime, 'h:mm aa');
 
   // Build the changes list
   const changes: string[] = [];
@@ -164,7 +164,7 @@ export async function sendScheduledWithModificationEmail(
   }
   if (ride.originalTime.getTime() !== ride.newTime.getTime()) {
     changes.push(
-      `Time: ${originalDay} at ${originalHhmm} → ${newDay} at ${newHhmm}`
+      `Time: ${originalDay} at ${originalTime} → ${newDay} at ${newTime}`
     );
   }
 
@@ -182,12 +182,12 @@ export async function sendScheduledWithModificationEmail(
 Original ride:
 - Pickup: ${ride.originalPickup}
 - Dropoff: ${ride.originalDropoff}
-- Time: ${originalDay} at ${originalHhmm}
+- Time: ${originalDay} at ${originalTime}
 
 Updated ride:
 - Pickup: ${ride.newPickup}
 - Dropoff: ${ride.newDropoff}
-- Time: ${newDay} at ${newHhmm}${changesText}`,
+- Time: ${newDay} at ${newTime}${changesText}`,
   };
 
   console.log('📧 MAILER: Mail options:', mailOptions);

@@ -127,26 +127,45 @@ export async function sendRideEmails(
         ) {
           // Check for scheduled with modification - requires original ride data
           if (originalRide) {
-            console.log(
-              `📧 EMAIL: Sending SCHEDULED WITH MODIFICATION email to ${email}`
-            );
-            const modifiedRideDetails: ModifiedRideDetails = {
-              originalPickup:
-                originalRide.startLocation?.name || 'Unknown location',
-              originalDropoff:
-                originalRide.endLocation?.name || 'Unknown location',
-              originalTime: new Date(originalRide.startTime),
-              newPickup: ride.startLocation?.name || 'Unknown location',
-              newDropoff: ride.endLocation?.name || 'Unknown location',
-              newTime: new Date(ride.startTime),
-            };
-            await sendScheduledWithModificationEmail(
-              email,
-              modifiedRideDetails
-            );
-            console.log(
-              `📧 EMAIL: ✅ Scheduled with modification email sent successfully to ${email}`
-            );
+            // Check if time, pickup, or dropoff actually changed
+            const timeChanged =
+              new Date(ride.startTime).getTime() !==
+              new Date(originalRide.startTime).getTime();
+            const pickupChanged =
+              ride.startLocation?.id !== originalRide.startLocation?.id ||
+              ride.startLocation?.name !== originalRide.startLocation?.name;
+            const dropoffChanged =
+              ride.endLocation?.id !== originalRide.endLocation?.id ||
+              ride.endLocation?.name !== originalRide.endLocation?.name;
+
+            const hasActualChanges = timeChanged || pickupChanged || dropoffChanged;
+
+            if (hasActualChanges) {
+              console.log(
+                `📧 EMAIL: Sending SCHEDULED WITH MODIFICATION email to ${email}`
+              );
+              const modifiedRideDetails: ModifiedRideDetails = {
+                originalPickup:
+                  originalRide.startLocation?.name || 'Unknown location',
+                originalDropoff:
+                  originalRide.endLocation?.name || 'Unknown location',
+                originalTime: new Date(originalRide.startTime),
+                newPickup: ride.startLocation?.name || 'Unknown location',
+                newDropoff: ride.endLocation?.name || 'Unknown location',
+                newTime: new Date(ride.startTime),
+              };
+              await sendScheduledWithModificationEmail(
+                email,
+                modifiedRideDetails
+              );
+              console.log(
+                `📧 EMAIL: ✅ Scheduled with modification email sent successfully to ${email}`
+              );
+            } else {
+              console.log(
+                `📧 EMAIL: ⏭️  Skipping modification email to ${email} - ride has SCHEDULED_WITH_MODIFICATION state but no actual changes detected (time, pickup, or dropoff unchanged)`
+              );
+            }
           } else {
             console.warn(
               `📧 EMAIL: ⚠️  Ride has SCHEDULED_WITH_MODIFICATION state but no originalRide provided. Falling back to regular approval email.`
@@ -154,11 +173,23 @@ export async function sendRideEmails(
             await sendApprovedEmail(email, rideDetails);
           }
         } else if (ride.schedulingState === SchedulingState.SCHEDULED) {
-          console.log(`📧 EMAIL: Sending APPROVAL email to ${email}`);
-          await sendApprovedEmail(email, rideDetails);
-          console.log(
-            `📧 EMAIL: ✅ Approval email sent successfully to ${email}`
-          );
+          // Only send approval email if this is a new approval (state transition)
+          // Don't send if ride was already scheduled (to avoid confusing "approval" emails for updates)
+          const wasAlreadyScheduled =
+            originalRide &&
+            originalRide.schedulingState === SchedulingState.SCHEDULED;
+
+          if (!wasAlreadyScheduled) {
+            console.log(`📧 EMAIL: Sending APPROVAL email to ${email}`);
+            await sendApprovedEmail(email, rideDetails);
+            console.log(
+              `📧 EMAIL: ✅ Approval email sent successfully to ${email}`
+            );
+          } else {
+            console.log(
+              `📧 EMAIL: ⏭️  Skipping approval email to ${email} - ride was already scheduled (no state transition)`
+            );
+          }
         } else if (ride.schedulingState === SchedulingState.REJECTED) {
           console.log(`📧 EMAIL: Sending REJECTION email to ${email}`);
           await sendRejectedEmail(email, rideDetails);

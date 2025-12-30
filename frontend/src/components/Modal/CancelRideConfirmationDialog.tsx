@@ -116,6 +116,19 @@ const CancelRideConfirmationDialog: React.FC<
               minute: '2-digit',
             })}
           </Typography>
+          {ride.riders && ride.riders.length > 0 && (
+            <Typography variant="body2">
+              Rider:{' '}
+              {ride.riders
+                .map((rider) => rider.firstName + ' ' + rider.lastName)
+                .join(', ')}
+            </Typography>
+          )}
+          {ride.driver && (
+            <Typography variant="body2">
+              Driver: {ride.driver?.firstName + ' ' + ride.driver?.lastName}
+            </Typography>
+          )}
           <Typography variant="body2">
             From: {ride.startLocation.name}
           </Typography>

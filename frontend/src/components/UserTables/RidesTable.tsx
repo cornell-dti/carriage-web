@@ -52,6 +52,11 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       <Table>
         <Row header colSizes={scheduledColSizes} data={scheduledHeaders} />
         {rides.map((ride, index) => {
+          // Defensive check: skip if ride is undefined or missing required properties
+          if (!ride || !ride.startTime || !ride.endTime) {
+            return null;
+          }
+
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',

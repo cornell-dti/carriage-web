@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button } from '@mui/material';
-import { Ride, SchedulingState, Status } from '../../types';
+import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
