@@ -74,6 +74,7 @@ server/.env
 
 # Secret certificates (should not be committed)
 server/config/*.crt
+server/private/sessions
 
 # build
 build/
