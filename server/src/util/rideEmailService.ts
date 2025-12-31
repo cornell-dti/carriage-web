@@ -138,7 +138,8 @@ export async function sendRideEmails(
               ride.endLocation?.id !== originalRide.endLocation?.id ||
               ride.endLocation?.name !== originalRide.endLocation?.name;
 
-            const hasActualChanges = timeChanged || pickupChanged || dropoffChanged;
+            const hasActualChanges =
+              timeChanged || pickupChanged || dropoffChanged;
 
             if (hasActualChanges) {
               console.log(
