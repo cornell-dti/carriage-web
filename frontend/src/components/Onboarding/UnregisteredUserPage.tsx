@@ -18,16 +18,15 @@ const UnregisteredUserPage: React.FC<UnregisteredUserProps> = ({
       <div className={styles.card}>
         <img src={logo} className={styles.logo} alt="Carriage logo" />
 
-
         <h1 className={styles.greeting}>
           Hello {user.name}, you are not registered for CULift.
         </h1>
 
         <div className={styles.message}>
           <p>
-            To sign up, before you can use the CULift service, 
-            you need to submit a formal request to Student Disability Services
-            and be approved.
+            To sign up, before you can use the CULift service, you need to
+            submit a formal request to Student Disability Services and be
+            approved.
           </p>
           <p className={styles.contact}>
             Call <a href="tel:607-254-4545">607-254-4545</a> or email{' '}
