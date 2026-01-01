@@ -11,6 +11,7 @@ import { RideModalType } from './types';
 import { checkBounds, isTimeValid } from '../../util/index';
 import { useLocations } from '../../context/LocationsContext';
 import RequestRideMap from '../RiderComponents/RequestRideMap';
+import { ENABLE_ADD_RIDE_MAPS } from '../../config/googleMaps';
 
 type RequestRideInfoProps = {
   ride?: Ride;
@@ -443,18 +444,20 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       </div>
 
       {/* Map for location selection */}
-      <div className={styles.mapSection}>
-        <Label className={styles.largeLabel}>Select Locations on Map</Label>
-        <div className={styles.mapContainer}>
-          <RequestRideMap
-            pickupLocation={pickupLocation}
-            dropoffLocation={dropoffLocation}
-            availableLocations={locations}
-            onPickupSelect={handlePickupSelect}
-            onDropoffSelect={handleDropoffSelect}
-          />
+      {ENABLE_ADD_RIDE_MAPS && (
+        <div className={styles.mapSection}>
+          <Label className={styles.largeLabel}>Select Locations on Map</Label>
+          <div className={styles.mapContainer}>
+            <RequestRideMap
+              pickupLocation={pickupLocation}
+              dropoffLocation={dropoffLocation}
+              availableLocations={locations}
+              onPickupSelect={handlePickupSelect}
+              onDropoffSelect={handleDropoffSelect}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {watchDropoffCustom === 'Other' ? (
         <div className={styles.box}>

@@ -25,13 +25,13 @@ import {
   DatePicker,
   TimePicker,
 } from '@mui/x-date-pickers';
-import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
 import { Ride, Location, Tag } from 'types';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
 import { error } from 'console';
+import { ENABLE_ADD_RIDE_MAPS } from '../../config/googleMaps';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -554,12 +554,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
-        {/* Wrap everything in a single APIProvider */}
-        <APIProvider
-          apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
-          libraries={['places']}
-        >
-          <div className={styles.formContainer}>
+        <div className={styles.formContainer}>
             <div className={styles.formColumn}>
               <div className={styles.formSection}>
                 {/* Selection Progress Indicator */}
@@ -892,17 +887,18 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
               </div>
             </div>
 
-            <div className={styles.mapColumn}>
-              <RequestRideMap
-                pickupLocation={safePickup}
-                dropoffLocation={safeDropoff}
-                availableLocations={getAvailableLocations()}
-                onPickupSelect={handleLocationSelect}
-                onDropoffSelect={handleLocationSelect}
-              />
-            </div>
+            {ENABLE_ADD_RIDE_MAPS && (
+              <div className={styles.mapColumn}>
+                <RequestRideMap
+                  pickupLocation={safePickup}
+                  dropoffLocation={safeDropoff}
+                  availableLocations={getAvailableLocations()}
+                  onPickupSelect={handleLocationSelect}
+                  onDropoffSelect={handleLocationSelect}
+                />
+              </div>
+            )}
           </div>
-        </APIProvider>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCancel}>Cancel</Button>
