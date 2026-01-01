@@ -25,7 +25,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import UpdateIcon from '@mui/icons-material/Update';
-import ReportIcon from '@mui/icons-material/Report';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Status, SchedulingState } from '../../types';
@@ -175,7 +174,7 @@ const RideActions: React.FC<RideActionsProps> = ({
           refreshRides();
         }
 
-        if (isNewRide(ride) && onClose) {
+        if (onClose) {
           onClose(); // Close modal after creating new ride
         }
       } else {
@@ -197,10 +196,6 @@ const RideActions: React.FC<RideActionsProps> = ({
 
   const handleCancelEdit = () => {
     stopEditing();
-  };
-
-  const handleReport = () => {
-    // In a real app, open report issue dialog
   };
 
   const renderRiderActions = () => {
@@ -262,15 +257,6 @@ const RideActions: React.FC<RideActionsProps> = ({
               >
                 {isMobile ? <CancelIcon /> : 'Cancel Ride'}
               </Button>
-              <Button
-                variant="outlined"
-                startIcon={!isMobile ? <ReportIcon /> : undefined}
-                onClick={handleReport}
-                fullWidth={isMobile}
-                aria-label="Report issue"
-              >
-                {isMobile ? <ReportIcon /> : 'Report'}
-              </Button>
             </>
           )}
         </Stack>
@@ -286,15 +272,6 @@ const RideActions: React.FC<RideActionsProps> = ({
             aria-label="Contact Admin"
           >
             {isMobile ? <AdminPanelSettingsIcon /> : 'Contact Admin'}
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={!isMobile ? <ReportIcon /> : undefined}
-            onClick={handleReport}
-            fullWidth={isMobile}
-            aria-label="Report issue"
-          >
-            {isMobile ? <ReportIcon /> : 'Report'}
           </Button>
         </Stack>
       );
@@ -317,15 +294,6 @@ const RideActions: React.FC<RideActionsProps> = ({
         }
       >
         {isMobile ? <UpdateIcon /> : 'Update Status'}
-      </Button>
-      <Button
-        variant="outlined"
-        startIcon={!isMobile ? <ReportIcon /> : undefined}
-        onClick={handleReport}
-        fullWidth={isMobile}
-        aria-label="Report issue"
-      >
-        {isMobile ? <ReportIcon /> : 'Report'}
       </Button>
     </Stack>
   );
