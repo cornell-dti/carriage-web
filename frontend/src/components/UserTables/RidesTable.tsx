@@ -7,6 +7,7 @@ import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
+import CancelRideConfirmationDialog from '../Modal/CancelRideConfirmationDialog';
 import { trashbig } from '../../icons/other/index';
 import buttonStyles from '../../styles/button.module.css';
 
@@ -23,6 +24,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
+  const [rideToCancel, setRideToCancel] = useState<Ride | null>(null);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rideEditOpenIndex, setRideEditOpenIndex] = useState(-1);
@@ -49,6 +52,11 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       <Table>
         <Row header colSizes={scheduledColSizes} data={scheduledHeaders} />
         {rides.map((ride, index) => {
+          // Defensive check: skip if ride is undefined or missing required properties
+          if (!ride || !ride.startTime || !ride.endTime) {
+            return null;
+          }
+
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
             hour: '2-digit',
             minute: '2-digit',
@@ -137,6 +145,19 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             </button>
           );
 
+          const deleteButton = (
+            <button
+              className={styles.deleteIcon}
+              onClick={(e) => {
+                e.stopPropagation();
+                setRideToCancel(rides[index]);
+                setCancelConfirmOpen(true);
+              }}
+            >
+              <img src={trashbig} alt="delete ride" />
+            </button>
+          );
+
           const valueEdit = {
             data: (
               <div
@@ -145,6 +166,7 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               >
                 {editButton}
                 {assignButton(ride.driver !== undefined)}
+                {deleteButton}
               </div>
             ),
           };
@@ -226,6 +248,22 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
           onClose={() => setRideEditOpenIndex(-1)}
           ride={rides[rideEditOpenIndex]}
           initialEditingState={true}
+        />
+      )}
+
+      {/* Cancel Ride Confirmation Modal */}
+      {rideToCancel && (
+        <CancelRideConfirmationDialog
+          open={cancelConfirmOpen}
+          onClose={() => {
+            setCancelConfirmOpen(false);
+            setRideToCancel(null);
+          }}
+          ride={rideToCancel}
+          onSuccess={() => {
+            setCancelConfirmOpen(false);
+            setRideToCancel(null);
+          }}
         />
       )}
     </>

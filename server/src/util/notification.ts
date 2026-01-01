@@ -236,11 +236,26 @@ export const notify = (
 ) =>
   new Promise((resolve, reject) => {
     // Handle multiple riders - collect all rider IDs
-    const riderIds = updatedRide.riders?.map((rider) => rider.id) || [];
+    // Riders can be either string IDs or full rider objects
+    const riderIds =
+      updatedRide.riders
+        ?.map((rider) => {
+          if (typeof rider === 'string') {
+            return rider; // Already an ID
+          } else if (rider && typeof rider === 'object' && rider.id) {
+            return rider.id; // Extract ID from rider object
+          }
+          return undefined;
+        })
+        .filter((id): id is string => Boolean(id)) || [];
+
     const hasDriver = Boolean(updatedRide.driver);
     const driverId = hasDriver ? updatedRide.driver!.id : '';
     const notifEvent = change || getNotificationEvent(body);
     const receivers = getReceivers(sender, notifEvent, hasDriver);
+    console.log('🔔 NOTIFY: Rider IDs:', riderIds);
+    console.log('🔔 NOTIFY: Has Driver:', hasDriver);
+    console.log('🔔 NOTIFY: Notification Event:', notifEvent);
 
     Promise.all(
       receivers.flatMap((receiver) => {
@@ -274,7 +289,10 @@ export const notify = (
         return [];
       })
     )
-      .then(() => resolve(updatedRide))
+      .then(() => {
+        // Push notifications sent successfully
+        resolve(updatedRide);
+      })
       .catch(reject);
   });
 

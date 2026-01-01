@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import moment from 'moment';
-import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
+import CancelRideConfirmationDialog from '../Modal/CancelRideConfirmationDialog';
 import Tag from '../Tag/Tag';
 import { Ride } from '../../types';
 import styles from './smodal.module.css';
@@ -15,7 +15,7 @@ type SModalProps = {
 };
 
 const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   function useOutsideAlerter(ref: any) {
     useEffect(() => {
       function handleClickOutside(event: any) {
@@ -35,11 +35,12 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
 
   return (
     <>
-      <DeleteOrEditTypeModal
-        open={deleteOpen}
+      <CancelRideConfirmationDialog
+        open={cancelConfirmOpen}
+        onClose={() => setCancelConfirmOpen(false)}
         ride={ride}
-        deleting={true}
-        onClose={() => setDeleteOpen(false)}
+        userRole="admin"
+        onSuccess={close}
       />
       {isOpen && (
         <div className={styles.modal} ref={wrapperRef}>
@@ -47,7 +48,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
             <div className={styles.modalOptions}>
               <button
                 className={styles.cancel}
-                onClick={() => setDeleteOpen(true)}
+                onClick={() => setCancelConfirmOpen(true)}
               >
                 <img src={trash} alt="trash" />
               </button>

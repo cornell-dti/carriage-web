@@ -28,15 +28,15 @@ async function buildEntityMapsFromSets(
   const riderMap = new Map<string, any>();
   const driverMap = new Map<string, any>();
 
-  for (const l of (locationsArr as any[])) {
+  for (const l of locationsArr as any[]) {
     const j = l && l.toJSON ? l.toJSON() : l;
     if (j && j.id) locationMap.set(j.id, j);
   }
-  for (const r of (ridersArr as any[])) {
+  for (const r of ridersArr as any[]) {
     const j = r && r.toJSON ? r.toJSON() : r;
     if (j && j.id) riderMap.set(j.id, j);
   }
-  for (const d of (driversArr as any[])) {
+  for (const d of driversArr as any[]) {
     const j = d && d.toJSON ? d.toJSON() : d;
     if (j && j.id) driverMap.set(j.id, j);
   }
@@ -47,7 +47,11 @@ async function buildEntityMapsFromSets(
 // Helper: apply maps to a single ride JSON object
 function applyMapsToRide(
   rideJson: any,
-  maps: { locationMap: Map<string, any>; riderMap: Map<string, any>; driverMap: Map<string, any> }
+  maps: {
+    locationMap: Map<string, any>;
+    riderMap: Map<string, any>;
+    driverMap: Map<string, any>;
+  }
 ) {
   const { locationMap, riderMap, driverMap } = maps;
 
@@ -64,8 +68,10 @@ function applyMapsToRide(
       ? rideJson.endLocation.id
       : undefined;
 
-  if (startId && locationMap.has(startId)) rideJson.startLocation = locationMap.get(startId);
-  if (endId && locationMap.has(endId)) rideJson.endLocation = locationMap.get(endId);
+  if (startId && locationMap.has(startId))
+    rideJson.startLocation = locationMap.get(startId);
+  if (endId && locationMap.has(endId))
+    rideJson.endLocation = locationMap.get(endId);
 
   if (rideJson.riders && Array.isArray(rideJson.riders)) {
     rideJson.riders = rideJson.riders
@@ -81,7 +87,12 @@ function applyMapsToRide(
   }
 
   if (rideJson.driver) {
-    const dId = typeof rideJson.driver === 'string' ? rideJson.driver : rideJson.driver && rideJson.driver.id ? rideJson.driver.id : undefined;
+    const dId =
+      typeof rideJson.driver === 'string'
+        ? rideJson.driver
+        : rideJson.driver && rideJson.driver.id
+        ? rideJson.driver.id
+        : undefined;
     if (dId && driverMap.has(dId)) rideJson.driver = driverMap.get(dId);
   }
 
@@ -94,7 +105,11 @@ function applyMapsToRide(
 
 // Helper function to populate riders for ride objects (optimized - uses batchGet)
 async function populateRiders(rideJson: any) {
-  if (!rideJson.riders || !Array.isArray(rideJson.riders) || rideJson.riders.length === 0) {
+  if (
+    !rideJson.riders ||
+    !Array.isArray(rideJson.riders) ||
+    rideJson.riders.length === 0
+  ) {
     rideJson.riders = rideJson.riders || [];
     return rideJson;
   }
@@ -102,14 +117,22 @@ async function populateRiders(rideJson: any) {
   try {
     // If riders are just IDs (strings), use a batchGet to avoid N+1 reads
     if (typeof rideJson.riders[0] === 'string') {
-      const uniqueIds = Array.from(new Set(rideJson.riders)).filter((id) => typeof id === 'string') as string[];
+      const uniqueIds = Array.from(new Set(rideJson.riders)).filter(
+        (id) => typeof id === 'string'
+      ) as string[];
       if (uniqueIds.length === 0) {
         rideJson.riders = [];
         return rideJson;
       }
 
-      const maps = await buildEntityMapsFromSets(new Set(), new Set(uniqueIds), new Set());
-      rideJson.riders = uniqueIds.map((id: string) => maps.riderMap.get(id)).filter((r: any) => r !== undefined && r !== null);
+      const maps = await buildEntityMapsFromSets(
+        new Set(),
+        new Set(uniqueIds),
+        new Set()
+      );
+      rideJson.riders = uniqueIds
+        .map((id: string) => maps.riderMap.get(id))
+        .filter((r: any) => r !== undefined && r !== null);
     }
     // If riders are already objects, leave them as-is
   } catch (error) {
@@ -358,7 +381,9 @@ export function scan(
       // Normalize raw items
       const items = Array.isArray(data) ? data : [data];
       const rawItems = items
-        .map((item) => (item && (item as any).toJSON ? (item as any).toJSON() : item))
+        .map((item) =>
+          item && (item as any).toJSON ? (item as any).toJSON() : item
+        )
         .filter(Boolean);
 
       // Collect unique IDs for batch fetches
@@ -393,14 +418,21 @@ export function scan(
         }
 
         if (ride.driver) {
-          const dId = typeof ride.driver === 'string' ? ride.driver : ride.driver.id;
+          const dId =
+            typeof ride.driver === 'string' ? ride.driver : ride.driver.id;
           if (dId) driverIds.add(dId);
         }
       }
 
-      const maps = await buildEntityMapsFromSets(locationIds, riderIds, driverIds);
+      const maps = await buildEntityMapsFromSets(
+        locationIds,
+        riderIds,
+        driverIds
+      );
 
-      const results = rawItems.map((rideJson: any) => applyMapsToRide(rideJson, maps));
+      const results = rawItems.map((rideJson: any) =>
+        applyMapsToRide(rideJson, maps)
+      );
 
       if (callback) callback(results);
       else res.status(200).send({ data: results });

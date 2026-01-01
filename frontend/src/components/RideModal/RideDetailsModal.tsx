@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Ride, SchedulingState } from '../../types/index';
 import { format_date } from '../../util/index';
+import { getRiderDisplayState } from '../../util/rideValidation';
 
 type RideDetailsModalProps = {
   open: boolean;
@@ -56,15 +57,8 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
   const needs = getAllAccessibilityNeeds();
 
   const getStatusText = () => {
-    if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
-      return 'Requested';
-    } else if (ride.type === 'active') {
-      return 'Confirmed';
-    } else if (ride.type === 'past') {
-      return 'Completed';
-    } else {
-      return 'Unknown';
-    }
+    // Use the utility function for student-friendly display
+    return getRiderDisplayState(ride);
   };
 
   const getStatusColor = ():
@@ -75,7 +69,18 @@ const RideDetailsModal = ({ open, close, ride }: RideDetailsModalProps) => {
     | 'info'
     | 'success'
     | 'warning' => {
-    if (ride.schedulingState === SchedulingState.UNSCHEDULED) {
+    const displayState = getRiderDisplayState(ride);
+
+    if (displayState === 'Cancelled') {
+      return 'error';
+    } else if (displayState === 'Rejected') {
+      return 'error';
+    } else if (
+      displayState === 'Scheduled' ||
+      displayState === 'Scheduled (Modified)'
+    ) {
+      return 'success';
+    } else if (displayState === 'Requested') {
       return 'warning';
     } else if (ride.type === 'active') {
       return 'success';

@@ -230,6 +230,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         ];
 
         for (const field of fieldsToCheck) {
+          // Skip driver field - handle it separately below
+          if (field === 'driver') continue;
+
           if (
             JSON.stringify(editedRide[field]) !==
             JSON.stringify(originalRide[field])
