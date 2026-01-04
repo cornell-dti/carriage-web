@@ -165,14 +165,16 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
       const startTimeStr = startTime.toTimeString().slice(0, 5);
       const endTimeStr = endTime.toTimeString().slice(0, 5);
 
-      const response = await axios.get('/api/drivers/available', {
-        params: {
-          date,
-          startTime: startTimeStr,
-          endTime: endTimeStr,
-          timezone: 'America/New_York',
-        },
-      });
+      const response = await axios.get('/api/drivers/available');
+
+      // const response = await axios.get('/api/drivers/available', {
+      //   params: {
+      //     date,
+      //     startTime: startTimeStr,
+      //     endTime: endTimeStr,
+      //     timezone: 'America/New_York',
+      //   },
+      // });
 
       const driversData = response.data?.data || response.data;
       const driversArray = Array.isArray(driversData) ? driversData : [];
