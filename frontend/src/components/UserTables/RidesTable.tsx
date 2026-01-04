@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Ride } from '../../types/index';
 import { Row, Table } from '../TableComponents/TableComponents';
-import { Button } from '../FormElements/FormElements';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
@@ -10,6 +9,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import { trashbig } from '../../icons/other/index';
+import buttonStyles from '../../styles/button.module.css';
 
 type RidesTableProps = {
   rides: Ride[];
@@ -35,20 +35,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
-  const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
-  const unscheduledHeaders = [
-    '',
-    'Time',
-    'Passenger',
-    'Pickup Location',
-    'Dropoff Location',
-    'Needs',
-    '',
-  ];
-
-  const scheduledColSizes = [1, 1, 1, 1, 1, 1];
+  const scheduledColSizes = [0.5, 0.5, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
-    'Time',
+    'Pickup Time',
+    'Dropoff Time',
     'Pickup Location',
     'Dropoff Location',
     'Needs',
@@ -81,55 +71,66 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             : '';
 
           // Convert accessibility array to string
-          const needs =
-            primaryRider &&
-            primaryRider.accessibility &&
-            primaryRider.accessibility.length > 0
-              ? primaryRider.accessibility.join(', ')
-              : 'None';
+          const needsRenderer = () => {
+            if (
+              primaryRider &&
+              primaryRider.accessibility &&
+              primaryRider.accessibility.length > 0
+            ) {
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {primaryRider.accessibility.map((accessibility) => (
+                    <p style={{ textWrap: 'nowrap' }}>{accessibility}</p>
+                  ))}
+                </div>
+              );
+            }
+            return <p>None</p>;
+          };
+
+          const needs = {
+            data: needsRenderer(),
+          };
 
           const pickupLocation = ride.startLocation.name;
           const pickupTag = ride.startLocation.tag;
           const dropoffLocation = ride.endLocation.name;
           const dropoffTag = ride.endLocation.tag;
 
-          const timeframe = new Date(ride.startTime).toLocaleString('en-US', {
-            hour: 'numeric',
-            hour12: true,
-          });
           const valuePickup = { data: pickupLocation, tag: pickupTag };
           const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
-          const startEndTime = {
-            data: (
-              <span>
-                <p className={styles.bold}>{startTime}</p>
-                <p className={styles.gray}> -- {endTime}</p>
-              </span>
-            ),
+          const startTimeElement = {
+            data: <p style={{ textWrap: 'nowrap' }}>{startTime}</p>,
+          };
+
+          const endTimeElement = {
+            data: <p style={{ textWrap: 'nowrap' }}>{endTime}</p>,
           };
 
           // Task1
 
           const assignButton = (shouldReassign: boolean) => (
-            <Button
-              className={styles.assignButton}
+            <button
+              className={`${buttonStyles.button} ${
+                shouldReassign
+                  ? buttonStyles.buttonSecondary
+                  : buttonStyles.buttonPrimary
+              }`}
               ref={buttonRef}
               onClick={(e) => {
                 e.stopPropagation();
                 setOpenAssignModal(openAssignModal === index ? -1 : index);
                 setReassign(shouldReassign);
               }}
-              small
             >
               {shouldReassign ? 'Reassign' : 'Assign'}
-            </Button>
+            </button>
           );
 
           const editButton = (
-            <Button
-              outline
-              small
+            <button
+              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
               onClick={() => {
                 if (rides[index].isRecurring) {
                   setOpenDeleteOrEditModal(index);
@@ -139,58 +140,29 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
               }}
             >
               Edit
-            </Button>
-          );
-
-          const deleteButton = (
-            <button
-              className={styles.deleteIcon}
-              onClick={() => {
-                //buttonRef = null;
-                setDeleteOpen(index);
-              }}
-            >
-              <img src={trashbig} alt="delete ride" />
             </button>
           );
 
-          const valueEditAssign = {
+          const valueEdit = {
             data: (
-              <div className={styles.dataValues}>
+              <div
+                className={styles.dataValues}
+                style={{ display: 'flex', gap: '0.5rem' }}
+              >
                 {editButton}
-                {assignButton(false)}
-                {deleteButton}
-              </div>
-            ),
-          };
-
-          const valueEditReassign = {
-            data: (
-              <div className={styles.dataValues}>
-                {editButton}
-                {assignButton(true)}
-                {deleteButton}
+                {assignButton(ride.driver !== undefined)}
               </div>
             ),
           };
 
           const scheduledRideData = [
-            startEndTime,
+            startTimeElement,
+            endTimeElement,
             valuePickup,
             valueDropoff,
             needs,
             riderName,
-            valueEditReassign,
-          ];
-
-          const unscheduledRideData = [
-            timeframe,
-            startEndTime,
-            riderName,
-            valuePickup,
-            valueDropoff,
-            needs,
-            valueEditAssign,
+            valueEdit,
           ];
 
           const handleRowClick = () => {
@@ -207,19 +179,9 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
             />
           );
 
-          const unscheduledRow = () => (
-            <Row
-              key={ride.id}
-              data={unscheduledRideData}
-              colSizes={unscheduledColSizes}
-              groupStart={2}
-              onClick={handleRowClick}
-            />
-          );
-
           return (
             <React.Fragment key={ride.id}>
-              {hasButtons ? unscheduledRow() : scheduledRow()}
+              {scheduledRow()}
               <DeleteOrEditTypeModal
                 key={`delete-edit-modal-${ride.id}`}
                 open={deleteOpen === index}
