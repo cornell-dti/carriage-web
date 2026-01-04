@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { Ride, SchedulingState, Status } from '../types';
+import { Ride, SchedulingState, Status, Tag } from '../types';
 import {
   BadgeRounded,
   FlagRounded,
@@ -40,6 +40,7 @@ const formatTime = (time: Date): FormattedTime => {
   };
 };
 
+
 const renderFormattedTime = (time: Date): ReactNode => {
   const formattedTime = formatTime(time);
   return (
@@ -55,6 +56,17 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   handleEdit,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
+
+  // Check if either location is a custom location (with no valid coordinates)
+  const hasCustomLocation = () => {
+    const isPickupCustom = ride.startLocation.tag === Tag.CUSTOM || 
+                          ride.startLocation.lat === 0 || 
+                          ride.startLocation.lng === 0;
+    const isDropoffCustom = ride.endLocation.tag === Tag.CUSTOM || 
+                           ride.endLocation.lat === 0 || 
+                           ride.endLocation.lng === 0;
+    return isPickupCustom || isDropoffCustom;
+  };
 
   return (
     <div className={styles.card}>
@@ -148,6 +160,29 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* expanded location view */}
         {expanded && (
           <div className={styles.mapContainer}>
+             {hasCustomLocation() ? (
+              <div style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px',
+                padding: '20px',
+                textAlign: 'center',
+                minHeight: '200px'
+              }}>
+                <div>
+                  <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
+                    📍 Custom Location
+                  </p>
+                  <p style={{ fontSize: '14px', color: '#999' }}>
+                    Map not available for custom locations
+                  </p>
+                </div>
+              </div>
+            ) : (
             <Map
               className={styles.map}
               defaultCenter={{
@@ -180,6 +215,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 <FlagRounded className={styles.flagIcon} />
               </AdvancedMarker>
             </Map>
+               )}
           </div>
         )}
       </div>

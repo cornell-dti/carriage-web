@@ -147,6 +147,7 @@ const Schedule: React.FC = () => {
   };
 
   const handleRideSubmit = async (formData: FormData) => {
+    console.log('reached handleRideSubmit');
     if (!formData.pickupLocation || !formData.dropoffLocation) return;
 
     // For now, block any recurring rides
@@ -172,6 +173,8 @@ const Schedule: React.FC = () => {
         new Date(startISO).getTime() + 30 * 60 * 1000
       ).toISOString();
 
+       console.log('about to post to rides');
+
       await axios.post('/api/rides', {
         // Send location IDs (matching Admin flow)
         startLocation: formData.pickupLocation.id,
@@ -183,6 +186,8 @@ const Schedule: React.FC = () => {
         status: 'not_started',
         schedulingState: 'unscheduled',
       });
+
+      console.log('posted to rides');
 
       // Refresh rides after successful creation
       await refreshRides();
