@@ -35,6 +35,17 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
+  const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
+  const unscheduledHeaders = [
+    '',
+    'Time',
+    'Passenger',
+    'Pickup Location',
+    'Dropoff Location',
+    'Needs',
+    '',
+  ];
+
   const scheduledColSizes = [0.5, 0.5, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
     'Pickup Time',
