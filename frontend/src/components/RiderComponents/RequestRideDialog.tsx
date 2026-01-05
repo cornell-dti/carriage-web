@@ -85,6 +85,21 @@ const Other = {
   images: [''],
 } as Location;
 
+/**
+ * RequestRideDialog component - A dialog for Riders to request a ride.
+ *
+ * @remarks
+ * This component is used to on the rider page when they request or edit a ride,
+ * where it asks the user to input/edit pickup and drop-off locations, date, time,
+ * and repeat options. It uses Material-UI components for consistent styling.
+ *
+ * @param props - Contains:
+ *  - open: boolean - Controls the visibility of the dialog.
+ *  -  onClose: function - Function to close the dialog.
+ *  - onSubmit: function - Function to handle form submission.
+ *  - supportedLocations: array of Location - List of locations available for drop-off.
+ *  - ride: Ride - Optional ride object to prepopulate the form for editing.
+ */
 const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   open,
   onClose,
@@ -100,7 +115,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     dropoffLocation: null,
     date: null,
     time: null,
-    repeatType: 'none',
+    repeatType: 'none', // Default to no repeat for editing
     repeatEndDate: null,
     selectedDays: [],
   });
@@ -162,6 +177,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  /**
+   * Finalizes  pending location selection after user confirms
+   *
+   * Depending on the current 'selectionState':
+   *  - Saves as the pickup location or
+   *  - Saves as the dropoff location
+   *
+   * Progresses the state machine to the next step.
+   */
   const confirmLocationSelection = () => {
     if (!pendingLocation) return;
 
@@ -182,6 +206,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setConfirmDialogOpen(false);
   };
 
+    /**
+   * Resets the pickup/dropoff flow back to the beginning.
+   *
+   * Clears both selected locations and returns to the "pickup" phase.
+   */
   const resetSelection = () => {
     setFormData((prev) => ({
       ...prev,
@@ -197,6 +226,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setInputDropOffError(false);
   };
 
+  // clear any inputs/error
   const handleCancel = () => {
     setCustomPickup(false);
     setCustomDropoff(false);
@@ -206,6 +236,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setInputDropOffError(false);
     setInputErrorText('');
     resetSelection();
+
+    // close dialog
     onClose();
   };
 
@@ -214,6 +246,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     return customPickup || customDropoff;
   };
 
+  // Get available locations based on current selection state
   const getAvailableLocations = () => {
     if (selectionState === 'pickup') {
       return supportLocsWithOther;
@@ -229,6 +262,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  // Reset selected days when changing repeat type
   const handleDateChange =
     (field: keyof Pick<FormData, 'date' | 'time' | 'repeatEndDate'>) =>
     (newDate: Date | null) => {
