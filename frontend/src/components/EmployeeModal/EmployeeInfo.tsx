@@ -27,7 +27,7 @@ const EmployeeInfo = ({
   return (
     <div className={styles.inputContainer}>
       <div className={styles.col1}>
-        <Label htmlFor="firstName">First Name</Label>
+        <Label htmlFor="firstName" required>First Name</Label>
         <Input
           id="firstName"
           type="text"
@@ -41,7 +41,7 @@ const EmployeeInfo = ({
         )}
       </div>
       <div className={styles.col2}>
-        <Label htmlFor="lastName">Last Name</Label>
+        <Label htmlFor="lastName" required>Last Name</Label>
         <Input
           id="lastName"
           type="text"
@@ -55,7 +55,7 @@ const EmployeeInfo = ({
         )}
       </div>
       <div className={styles.col1}>
-        <Label htmlFor="netid">NetID</Label>
+        <Label htmlFor="netid" required>NetID</Label>
         <Input
           id="netid"
           type="text"
@@ -69,7 +69,7 @@ const EmployeeInfo = ({
         )}
       </div>
       <div className={styles.col2}>
-        <Label htmlFor="phoneNumber">Phone Number</Label>
+        <Label htmlFor="phoneNumber" required>Phone Number</Label>
         <Input
           id="phoneNumber"
           type="tel"

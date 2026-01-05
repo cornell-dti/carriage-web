@@ -180,7 +180,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="name">
+          <Label className={styles.label} htmlFor="name" required>
             Name:{' '}
           </Label>
           <Input
@@ -196,7 +196,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="netid">
+          <Label className={styles.label} htmlFor="netid" required>
             NetID:{' '}
           </Label>
           <Input
@@ -216,7 +216,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
+          <Label className={styles.label} htmlFor="phoneNumber" required>
             Phone Number:{' '}
           </Label>
           <Input
@@ -235,7 +235,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="needs">
+          <Label className={styles.label} htmlFor="needs" required>
             Needs:{' '}
           </Label>
           <div className={styles.needsContainer}>
@@ -300,7 +300,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor="address">
+          <Label className={styles.label} htmlFor="address" required>
             Address:{' '}
           </Label>
           <Input
@@ -322,7 +322,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <p>Duration</p>
           <div className={styles.lastRow}>
             <div>
-              <Label className={styles.label} htmlFor="joinDate">
+              <Label className={styles.label} htmlFor="joinDate" required>
                 Join Date:{' '}
               </Label>
               <Input
@@ -341,7 +341,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               <p>→</p>
             </div>
             <div>
-              <Label className={styles.label} htmlFor="endDate">
+              <Label className={styles.label} htmlFor="endDate" required>
                 End Date:{' '}
               </Label>
               <Input
