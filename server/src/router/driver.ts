@@ -4,7 +4,7 @@ import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
 import * as db from './common';
 import { Driver, DriverType } from '../models/driver';
-import { validateUser } from '../util';
+import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
 import { Ride, Status } from '../models/ride';
 import { UserType } from '../models/subscription';
 import { Item } from 'dynamoose/dist/Item';
@@ -84,9 +84,9 @@ router.get('/available', validateUser('User'), (req, res) => {
       // Filter by weekday availability if we have a valid token
       const dayFilteredDrivers = dayToken
         ? activeDrivers.filter(
-            (d) =>
-              Array.isArray(d.availability) && d.availability.includes(dayToken)
-          )
+          (d) =>
+            Array.isArray(d.availability) && d.availability.includes(dayToken)
+        )
         : activeDrivers;
 
       const reqStart = requestedStartIso;
@@ -141,51 +141,79 @@ router.get('/:id/profile', validateUser('User'), (req, res) => {
 });
 
 // Put a driver in Drivers table
-router.post('/', validateUser('Admin'), (req, res) => {
-  const { body } = req;
+router.post('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const { body } = req;
 
-  // Map startDate from payload to joinDate in model
-  const joinDate = body.startDate || body.joinDate;
+    const emailExists = await checkNetIDExists(body.email);
+    if (emailExists) {
+      return res.status(409).send({
+        err: 'An employee with this NetID already exists'
+      });
+    }
 
-  const admin = new Driver({
-    id: !body.eid || body.eid === '' ? uuid() : body.eid,
-    firstName: body.firstName,
-    lastName: body.lastName,
-    availability: body.availability,
-    phoneNumber: body.phoneNumber,
-    joinDate,
-    email: body.email,
-  });
-  if (!Array.isArray(body.availability)) {
-    res.status(469).send({
-      err:
-        'Expected availability to be of type array, instead found type ' +
-        typeof body.availability +
-        '.',
+    // Map startDate from payload to joinDate in model
+    const joinDate = body.startDate || body.joinDate;
+
+    const admin = new Driver({
+      id: !body.eid || body.eid === '' ? uuid() : body.eid,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      availability: body.availability,
+      phoneNumber: body.phoneNumber,
+      joinDate,
+      email: body.email,
     });
-  } else {
-    db.create(res, admin);
+    if (!Array.isArray(body.availability)) {
+      res.status(469).send({
+        err:
+          'Expected availability to be of type array, instead found type ' +
+          typeof body.availability +
+          '.',
+      });
+    } else {
+      db.create(res, admin);
+    }
+  } catch (error) {
+    console.error('Error creating driver:', error);
+    res.status(500).send({ err: 'Failed to create driver' });
   }
 });
 
 // Update an existing driver
-router.put('/:id', validateUser('Driver'), (req, res) => {
-  const {
-    params: { id },
-    body,
-  } = req;
-  // Allow startDate in payload by mapping to joinDate
-  if (body.startDate && !body.joinDate) {
-    body.joinDate = body.startDate;
-    delete body.startDate;
-  }
-  if (
-    res.locals.user.userType === UserType.ADMIN ||
-    id === res.locals.user.id
-  ) {
-    db.update(res, Driver, { id }, body, tableName);
-  } else {
-    res.status(400).send({ err: 'User ID does not match request ID' });
+router.put('/:id', validateUser('Driver'), async (req, res) => {
+  try {
+    const {
+      params: { id },
+      body,
+    } = req;
+
+    // Check if email is being changed and if it conflicts with another employee
+    if (body.email) {
+      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      if (emailExists) {
+        return res.status(409).send({
+          err: 'An employee with this NetID already exists'
+        });
+      }
+    }
+
+    // Allow startDate in payload by mapping to joinDate
+    if (body.startDate && !body.joinDate) {
+      body.joinDate = body.startDate;
+      delete body.startDate;
+    }
+    if (
+      res.locals.user.userType === UserType.ADMIN ||
+      id === res.locals.user.id
+    ) {
+      db.update(res, Driver, { id }, body, tableName);
+    } else {
+      res.status(400).send({ err: 'User ID does not match request ID' });
+    }
+  } catch (error) {
+    console.error('Error updating driver:', error);
+    res.status(500).send({ err: 'Failed to update driver' });
   }
 });
 
@@ -199,6 +227,6 @@ router.delete('/:id', validateUser('Admin'), (req, res) => {
 
 // Get a driver's weekly stats
 
-router.get('/:id/stats', validateUser('Admin'), (req, res) => {});
+router.get('/:id/stats', validateUser('Admin'), (req, res) => { });
 
 export default router;

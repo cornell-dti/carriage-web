@@ -5,6 +5,9 @@ import { UserType, JWTPayload } from './types';
 import moment from 'moment-timezone';
 import { ValueType } from 'dynamoose/dist/Schema';
 import { Location } from '../models/location';
+import { Admin } from '../models/admin';
+import { Driver } from '../models/driver';
+import { Rider } from '../models/rider';
 
 export function createKeys(property: string, values: string[]) {
   return values.map((v) => ({ [property]: v }));
@@ -27,11 +30,11 @@ export function isAddress(address: string) {
   } = parsedAddr;
   return Boolean(
     streetNumber &&
-      streetName &&
-      streetSuffix &&
-      placeName &&
-      stateName &&
-      zipCode
+    streetName &&
+    streetSuffix &&
+    placeName &&
+    stateName &&
+    zipCode
   );
 }
 
@@ -124,3 +127,30 @@ export const getRideLocation = (value: ValueType) => {
   }
   return value;
 };
+
+// Check if email (NetID) already exists in Admins or Drivers tables
+export async function checkNetIDExists(email: string): Promise<boolean> {
+  const [admins, drivers, riders] = await Promise.all([
+    Admin.scan('email').eq(email).exec(),
+    Driver.scan('email').eq(email).exec(),
+    Rider.scan('email').eq(email).exec(),
+  ]);
+
+  return admins.length > 0 || drivers.length > 0 || riders.length > 0;
+}
+
+
+export async function checkNetIDExistsForOtherEmployee(
+  email: string,
+  currentEmployeeId: string
+): Promise<boolean> {
+  const [admins, drivers, riders] = await Promise.all([
+    Admin.scan('email').eq(email).exec(),
+    Driver.scan('email').eq(email).exec(),
+    Rider.scan('email').eq(email).exec(),
+  ]);
+
+  // Check if any found employee has a different ID
+  const allEmployees = [...admins, ...drivers, ...riders];
+  return allEmployees.some(emp => emp.id !== currentEmployeeId);
+}

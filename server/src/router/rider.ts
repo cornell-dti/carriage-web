@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 import * as db from './common';
 import { Rider, RiderType } from '../models/rider';
 import { Location } from '../models/location';
-import { createKeys, validateUser } from '../util';
+import { createKeys, validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
 import { Ride, RideType, Type, Status } from '../models/ride';
 import { UserType } from '../models/subscription';
 
@@ -192,6 +192,15 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
 router.post('/', validateUser('Admin'), async (req, res) => {
   try {
     const { body } = req;
+
+    // Check if NetID already exists
+    const emailExists = await checkNetIDExists(body.email);
+    if (emailExists) {
+      return res.status(409).send({
+        err: 'A user with this NetID already exists'
+      });
+    }
+
     const rider = new Rider({
       ...body,
       id: uuid(),
@@ -205,18 +214,34 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 });
 
 // Update a rider in Riders table
-router.put('/:id', validateUser('Rider'), (req, res) => {
-  const {
-    params: { id },
-    body,
-  } = req;
-  if (
-    res.locals.user.userType === UserType.ADMIN ||
-    id === res.locals.user.id
-  ) {
-    db.update(res, Rider, { id }, body, tableName);
-  } else {
-    res.status(400).send({ err: 'User ID does not match request ID' });
+router.put('/:id', validateUser('Rider'), async (req, res) => {
+  try {
+    const {
+      params: { id },
+      body,
+    } = req;
+
+    // Check if email is being changed and if it conflicts with another user
+    if (body.email) {
+      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      if (emailExists) {
+        return res.status(409).send({
+          err: 'A user with this NetID already exists'
+        });
+      }
+    }
+
+    if (
+      res.locals.user.userType === UserType.ADMIN ||
+      id === res.locals.user.id
+    ) {
+      db.update(res, Rider, { id }, body, tableName);
+    } else {
+      res.status(400).send({ err: 'User ID does not match request ID' });
+    }
+  } catch (error) {
+    console.error('Error updating rider:', error);
+    res.status(500).send({ err: 'Failed to update rider' });
   }
 });
 
