@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import { Typography, IconButton, Chip, Box, Button } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -217,14 +223,16 @@ const RideMap: React.FC<RideMapProps> = ({
 
   // Check if either location is a custom location
   const hasCustomLocation = useMemo(() => {
-    const isPickupCustom = startLocation.tag === Tag.CUSTOM || 
-                          startLocation.lat === 0 || 
-                          startLocation.lng === 0 ||
-                          !startLocation.address;
-    const isDropoffCustom = endLocation.tag === Tag.CUSTOM || 
-                           endLocation.lat === 0 || 
-                           endLocation.lng === 0 ||
-                           !endLocation.address;
+    const isPickupCustom =
+      startLocation.tag === Tag.CUSTOM ||
+      startLocation.lat === 0 ||
+      startLocation.lng === 0 ||
+      !startLocation.address;
+    const isDropoffCustom =
+      endLocation.tag === Tag.CUSTOM ||
+      endLocation.lat === 0 ||
+      endLocation.lng === 0 ||
+      !endLocation.address;
     return isPickupCustom || isDropoffCustom;
   }, [startLocation, endLocation]);
 
@@ -305,8 +313,12 @@ const RideMap: React.FC<RideMapProps> = ({
         polylineRef.current = null;
       }
       // only do  approximate calculation if we have valid coordinates
-      if (startLocation.lat !== 0 && startLocation.lng !== 0 &&
-          endLocation.lat !== 0 && endLocation.lng !== 0) {
+      if (
+        startLocation.lat !== 0 &&
+        startLocation.lng !== 0 &&
+        endLocation.lat !== 0 &&
+        endLocation.lng !== 0
+      ) {
         const distance = getApproximateDistance(
           startLocation.lat,
           startLocation.lng,
@@ -367,18 +379,20 @@ const RideMap: React.FC<RideMapProps> = ({
   if (hasCustomLocation) {
     return (
       <div className={styles.mapContainer}>
-        <div style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#f5f5f5',
-          borderRadius: '8px',
-          padding: '20px',
-          textAlign: 'center',
-          minHeight: '400px'
-        }}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f5f5f5',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center',
+            minHeight: '400px',
+          }}
+        >
           <div>
             <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
               📍 Custom Location

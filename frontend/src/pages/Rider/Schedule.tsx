@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState, useCallback } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from 'react';
 import { Button } from '@mui/material';
 import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
@@ -173,7 +179,7 @@ const Schedule: React.FC = () => {
         new Date(startISO).getTime() + 30 * 60 * 1000
       ).toISOString();
 
-       console.log('about to post to rides');
+      console.log('about to post to rides');
 
       await axios.post('/api/rides', {
         // Send location IDs (matching Admin flow)

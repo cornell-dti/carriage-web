@@ -40,7 +40,6 @@ const formatTime = (time: Date): FormattedTime => {
   };
 };
 
-
 const renderFormattedTime = (time: Date): ReactNode => {
   const formattedTime = formatTime(time);
   return (
@@ -59,12 +58,14 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
   // Check if either location is a custom location (with no valid coordinates)
   const hasCustomLocation = () => {
-    const isPickupCustom = ride.startLocation.tag === Tag.CUSTOM || 
-                          ride.startLocation.lat === 0 || 
-                          ride.startLocation.lng === 0;
-    const isDropoffCustom = ride.endLocation.tag === Tag.CUSTOM || 
-                           ride.endLocation.lat === 0 || 
-                           ride.endLocation.lng === 0;
+    const isPickupCustom =
+      ride.startLocation.tag === Tag.CUSTOM ||
+      ride.startLocation.lat === 0 ||
+      ride.startLocation.lng === 0;
+    const isDropoffCustom =
+      ride.endLocation.tag === Tag.CUSTOM ||
+      ride.endLocation.lat === 0 ||
+      ride.endLocation.lng === 0;
     return isPickupCustom || isDropoffCustom;
   };
 
@@ -160,21 +161,29 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* expanded location view */}
         {expanded && (
           <div className={styles.mapContainer}>
-             {hasCustomLocation() ? (
-              <div style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#f5f5f5',
-                borderRadius: '8px',
-                padding: '20px',
-                textAlign: 'center',
-                minHeight: '200px'
-              }}>
+            {hasCustomLocation() ? (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  minHeight: '200px',
+                }}
+              >
                 <div>
-                  <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
+                  <p
+                    style={{
+                      fontSize: '18px',
+                      color: '#666',
+                      marginBottom: '8px',
+                    }}
+                  >
                     📍 Custom Location
                   </p>
                   <p style={{ fontSize: '14px', color: '#999' }}>
@@ -183,39 +192,43 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 </div>
               </div>
             ) : (
-            <Map
-              className={styles.map}
-              defaultCenter={{
-                lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
-                lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
-              }}
-              defaultZoom={13}
-              gestureHandling="greedy"
-              disableDefaultUI
-              mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
-            >
-              <AdvancedMarker
-                position={{
-                  lat: ride.startLocation.lat,
-                  lng: ride.startLocation.lng,
+              <Map
+                className={styles.map}
+                defaultCenter={{
+                  lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
+                  lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
                 }}
-                clickable={true}
-                title={ride.startLocation.name}
+                defaultZoom={13}
+                gestureHandling="greedy"
+                disableDefaultUI
+                mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
               >
-                <Pin background={'#222'} glyphColor="#fff" borderColor="#222" />
-              </AdvancedMarker>
-              <AdvancedMarker
-                position={{
-                  lat: ride.endLocation.lat,
-                  lng: ride.endLocation.lng,
-                }}
-                clickable={true}
-                title={ride.endLocation.name}
-              >
-                <FlagRounded className={styles.flagIcon} />
-              </AdvancedMarker>
-            </Map>
-               )}
+                <AdvancedMarker
+                  position={{
+                    lat: ride.startLocation.lat,
+                    lng: ride.startLocation.lng,
+                  }}
+                  clickable={true}
+                  title={ride.startLocation.name}
+                >
+                  <Pin
+                    background={'#222'}
+                    glyphColor="#fff"
+                    borderColor="#222"
+                  />
+                </AdvancedMarker>
+                <AdvancedMarker
+                  position={{
+                    lat: ride.endLocation.lat,
+                    lng: ride.endLocation.lng,
+                  }}
+                  clickable={true}
+                  title={ride.endLocation.name}
+                >
+                  <FlagRounded className={styles.flagIcon} />
+                </AdvancedMarker>
+              </Map>
+            )}
           </div>
         )}
       </div>

@@ -120,7 +120,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     selectedDays: [],
   });
 
-  const [selectionState, setSelectionState] = useState<SelectionState>('pickup');
+  const [selectionState, setSelectionState] =
+    useState<SelectionState>('pickup');
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
@@ -206,7 +207,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setConfirmDialogOpen(false);
   };
 
-    /**
+  /**
    * Resets the pickup/dropoff flow back to the beginning.
    *
    * Clears both selected locations and returns to the "pickup" phase.
@@ -345,7 +346,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         pickupLocation: finalPickup,
         dropoffLocation: finalDropoff,
       });
-      
+
       // Reset state
       setCustomPickup(false);
       setCustomDropoff(false);
@@ -359,9 +360,13 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   };
 
   const isFormValid = () => {
-    const hasPickup = customPickup ? customPickupName.trim() !== '' : formData.pickupLocation !== null;
-    const hasDropoff = customDropoff ? customDropoffName.trim() !== '' : formData.dropoffLocation !== null;
-    
+    const hasPickup = customPickup
+      ? customPickupName.trim() !== ''
+      : formData.pickupLocation !== null;
+    const hasDropoff = customDropoff
+      ? customDropoffName.trim() !== ''
+      : formData.dropoffLocation !== null;
+
     return (
       hasPickup &&
       hasDropoff &&
@@ -382,12 +387,16 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
   // Only show map if not using custom locations
   const safePickup =
-    !customPickup && formData.pickupLocation?.lat && formData.pickupLocation?.lng
+    !customPickup &&
+    formData.pickupLocation?.lat &&
+    formData.pickupLocation?.lng
       ? formData.pickupLocation
       : null;
 
   const safeDropoff =
-    !customDropoff && formData.dropoffLocation?.lat && formData.dropoffLocation?.lng
+    !customDropoff &&
+    formData.dropoffLocation?.lat &&
+    formData.dropoffLocation?.lng
       ? formData.dropoffLocation
       : null;
 
@@ -425,54 +434,90 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       style={{
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: (formData.pickupLocation || customPickupName)
-                          ? '#4caf50'
-                          : selectionState === 'pickup'
-                          ? '#2196f3'
-                          : '#e0e0e0',
+                        backgroundColor:
+                          formData.pickupLocation || customPickupName
+                            ? '#4caf50'
+                            : selectionState === 'pickup'
+                            ? '#2196f3'
+                            : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
                     >
-                      1. Pickup {(formData.pickupLocation || customPickupName) ? '✓' : ''}
+                      1. Pickup{' '}
+                      {formData.pickupLocation || customPickupName ? '✓' : ''}
                     </div>
                     <div
                       style={{
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: (formData.dropoffLocation || customDropoffName)
-                          ? '#4caf50'
-                          : selectionState === 'dropoff'
-                          ? '#2196f3'
-                          : '#e0e0e0',
+                        backgroundColor:
+                          formData.dropoffLocation || customDropoffName
+                            ? '#4caf50'
+                            : selectionState === 'dropoff'
+                            ? '#2196f3'
+                            : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
                     >
-                      2. Dropoff {(formData.dropoffLocation || customDropoffName) ? '✓' : ''}
+                      2. Dropoff{' '}
+                      {formData.dropoffLocation || customDropoffName ? '✓' : ''}
                     </div>
                   </div>
                   {!hasCustomLocation() && selectionState === 'pickup' && (
-                    <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#666' }}>
-                      Click on a location on the map or use the dropdown below to select your pickup point
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        fontSize: '14px',
+                        color: '#666',
+                      }}
+                    >
+                      Click on a location on the map or use the dropdown below
+                      to select your pickup point
                     </p>
                   )}
                   {!hasCustomLocation() && selectionState === 'dropoff' && (
-                    <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#666' }}>
-                      Click on a location on the map or use the dropdown below to select your dropoff point
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        fontSize: '14px',
+                        color: '#666',
+                      }}
+                    >
+                      Click on a location on the map or use the dropdown below
+                      to select your dropoff point
                     </p>
                   )}
                   {hasCustomLocation() && (
-                    <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#ff9800' }}>
-                      ⚠ Custom location mode - map disabled. Enter location names below.
+                    <p
+                      style={{
+                        margin: '8px 0 0 0',
+                        fontSize: '14px',
+                        color: '#ff9800',
+                      }}
+                    >
+                      ⚠ Custom location mode - map disabled. Enter location
+                      names below.
                     </p>
                   )}
-                  {!hasCustomLocation() && (formData.pickupLocation && formData.dropoffLocation) && (
-                    <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#4caf50' }}>
-                      ✓ Both locations selected! Complete the form below.
-                    </p>
-                  )}
-                  {(formData.pickupLocation || formData.dropoffLocation || customPickupName || customDropoffName) && (
+                  {!hasCustomLocation() &&
+                    formData.pickupLocation &&
+                    formData.dropoffLocation && (
+                      <p
+                        style={{
+                          margin: '8px 0 0 0',
+                          fontSize: '14px',
+                          color: '#4caf50',
+                        }}
+                      >
+                        ✓ Both locations selected! Complete the form below.
+                      </p>
+                    )}
+                  {(formData.pickupLocation ||
+                    formData.dropoffLocation ||
+                    customPickupName ||
+                    customDropoffName) && (
                     <Button
                       variant="outlined"
                       size="small"
@@ -537,7 +582,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 {/* Dropdown selectors */}
                 <div style={{ marginBottom: '5px' }}>
                   <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
-                    {hasCustomLocation() ? 'Location Selection:' : 'Or select from dropdown:'}
+                    {hasCustomLocation()
+                      ? 'Location Selection:'
+                      : 'Or select from dropdown:'}
                   </h4>
 
                   <FormControl fullWidth style={{ marginBottom: '16px' }}>
@@ -554,7 +601,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           ...prev,
                           pickupLocation: selectedLocation,
                         }));
-                        
+
                         if (selectedLocation?.name === Other.name) {
                           setCustomPickup(true);
                           setCustomPickupName('');
@@ -563,7 +610,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           setCustomPickupName('');
                           if (selectedLocation && !formData.dropoffLocation) {
                             setSelectionState('dropoff');
-                          } else if (selectedLocation && formData.dropoffLocation) {
+                          } else if (
+                            selectedLocation &&
+                            formData.dropoffLocation
+                          ) {
                             setSelectionState('complete');
                           }
                         }
@@ -594,7 +644,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         setInputPickUpError(false);
                       }}
                       error={inputPickUpError}
-                      helperText={inputPickUpError ? inputErrorText : "Enter a descriptive name for this location"}
+                      helperText={
+                        inputPickUpError
+                          ? inputErrorText
+                          : 'Enter a descriptive name for this location'
+                      }
                       style={{ marginBottom: '16px' }}
                     />
                   )}
@@ -614,7 +668,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           ...prev,
                           dropoffLocation: selectedLocation,
                         }));
-                        
+
                         if (selectedLocation?.name === Other.name) {
                           setCustomDropoff(true);
                           setCustomDropoffName('');
@@ -663,7 +717,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                         setInputDropOffError(false);
                       }}
                       error={inputDropOffError}
-                      helperText={inputDropOffError ? inputErrorText : "Enter a descriptive name for this location"}
+                      helperText={
+                        inputDropOffError
+                          ? inputErrorText
+                          : 'Enter a descriptive name for this location'
+                      }
                       style={{ marginTop: '16px' }}
                     />
                   )}
@@ -758,23 +816,32 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
             <div className={styles.mapColumn}>
               {hasCustomLocation() ? (
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#f5f5f5',
-                  borderRadius: '8px',
-                  padding: '20px',
-                  textAlign: 'center'
-                }}>
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
                   <div>
-                    <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
+                    <p
+                      style={{
+                        fontSize: '18px',
+                        color: '#666',
+                        marginBottom: '8px',
+                      }}
+                    >
                       📍 Custom Location Mode
                     </p>
                     <p style={{ fontSize: '14px', color: '#999' }}>
-                      Map disabled when using custom locations.<br />
+                      Map disabled when using custom locations.
+                      <br />
                       Enter location names in the form.
                     </p>
                   </div>
@@ -808,7 +875,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       <Dialog open={confirmDialogOpen} onClose={cancelLocationSelection}>
         <div style={{ padding: '20px', minWidth: '300px' }}>
           <h4 style={{ marginBottom: '16px', color: '#1976d2' }}>
-            Confirm {selectionState === 'pickup' ? 'Pickup' : 'Dropoff'} Location
+            Confirm {selectionState === 'pickup' ? 'Pickup' : 'Dropoff'}{' '}
+            Location
           </h4>
           {pendingLocation && (
             <>
@@ -819,11 +887,24 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 <p style={{ margin: '0 0 8px 0' }}>
                   <strong>Address:</strong> {pendingLocation.address}
                 </p>
-                <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#666' }}>
-                  <strong>Coordinates:</strong> {pendingLocation.lat.toFixed(6)}, {pendingLocation.lng.toFixed(6)}
+                <p
+                  style={{
+                    margin: '0 0 16px 0',
+                    fontSize: '12px',
+                    color: '#666',
+                  }}
+                >
+                  <strong>Coordinates:</strong> {pendingLocation.lat.toFixed(6)}
+                  , {pendingLocation.lng.toFixed(6)}
                 </p>
               </div>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  justifyContent: 'flex-end',
+                }}
+              >
                 <Button variant="outlined" onClick={cancelLocationSelection}>
                   Cancel
                 </Button>
