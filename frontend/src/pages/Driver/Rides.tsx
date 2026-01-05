@@ -257,7 +257,9 @@ const RideDetailCard = ({
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body1" fontWeight="bold">
                 {primaryRider
-                  ? `${primaryRider.firstName} ${primaryRider.lastName.charAt(0)}`
+                  ? `${primaryRider.firstName} ${primaryRider.lastName.charAt(
+                      0
+                    )}`
                   : 'No rider assigned'}
                 {ride.riders &&
                   ride.riders.length > 1 &&
