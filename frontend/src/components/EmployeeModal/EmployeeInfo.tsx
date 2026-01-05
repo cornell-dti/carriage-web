@@ -81,7 +81,7 @@ const EmployeeInfo = ({
             setValueAs: (value: string) => stripPhoneFormatting(value || ''),
             validate: (value) => {
               if (!value || value.length !== 10) {
-                return 'Phone number must be exactly 10 digits (e.g., 1234567890)';
+                return 'Format: 10 digits only (e.g. 1234567890, (123) 456-7890)';
               }
               return true;
             },
