@@ -128,17 +128,32 @@ export const getRideLocation = (value: ValueType) => {
   return value;
 };
 
-// Check if email (NetID) already exists in Admins or Drivers tables
-export async function checkNetIDExists(email: string): Promise<boolean> {
-  const [admins, drivers, riders] = await Promise.all([
+type Role = 'rider' | 'driver' | 'admin';
+
+export async function checkNetIDExists(
+  email: string,
+  role: Role
+): Promise<boolean> {
+  if (role === 'rider') {
+    const riders = await Rider.scan('email').eq(email).exec();
+    return riders.length > 0;
+  }
+
+  if (role === 'driver') {
+    const [drivers, admins] = await Promise.all([
+      Driver.scan('email').eq(email).exec(),
+      Admin.scan('email').eq(email).exec(),
+    ]);
+    return drivers.length > 0 || admins.length > 0;
+  }
+
+  const [admins, drivers] = await Promise.all([
     Admin.scan('email').eq(email).exec(),
     Driver.scan('email').eq(email).exec(),
-    Rider.scan('email').eq(email).exec(),
   ]);
 
-  return admins.length > 0 || drivers.length > 0 || riders.length > 0;
+  return admins.length > 0 || drivers.length > 0
 }
-
 
 export async function checkNetIDExistsForOtherEmployee(
   email: string,

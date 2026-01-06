@@ -26,7 +26,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
   try {
     const { body } = req;
 
-    const emailExists = await checkNetIDExists(body.email);
+    const emailExists = await checkNetIDExists(body.email, 'admin');
     if (emailExists) {
       return res.status(409).send({
         err: 'An employee with this NetID already exists'

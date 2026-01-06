@@ -115,7 +115,7 @@ describe('NetID Duplicate Prevention Tests', () => {
             expect(res.body.err).to.include('NetID');
         });
 
-        it('should reject creating admin with NetID that exists in Riders table', async () => {
+        it('should allow creating admin with NetID that exists in Riders table', async () => {
             // First create a rider
             const riderEmail = `rider-${Date.now()}@cornell.edu`;
             const riderRes = await request(app)
@@ -146,9 +146,9 @@ describe('NetID Duplicate Prevention Tests', () => {
                     isDriver: false,
                 })
                 .set('Authorization', `Bearer ${adminToken}`)
-                .expect(409);
+                .expect(200);
 
-            expect(res.body.err).to.include('NetID');
+            expect(res.body.data).to.have.property('id');
         });
     });
 
