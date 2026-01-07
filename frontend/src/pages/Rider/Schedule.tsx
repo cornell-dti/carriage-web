@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from 'react';
 import { Button } from '@mui/material';
 import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
@@ -115,24 +121,24 @@ const Schedule: React.FC = () => {
     });
   };
 
+  const fetchRiderRides = useCallback(async () => {
+    if (id) {
+      setLoadingRides(true);
+      try {
+        const rides = await refreshRidesByUser(id, 'rider');
+        setAllRiderRides(rides);
+      } catch (error) {
+        console.error('Failed to fetch rider rides:', error);
+      } finally {
+        setLoadingRides(false);
+      }
+    }
+  }, [id, refreshRidesByUser]);
+
   // Fetch all rider rides on component mount
   useEffect(() => {
-    const fetchRiderRides = async () => {
-      if (id) {
-        setLoadingRides(true);
-        try {
-          const rides = await refreshRidesByUser(id, 'rider');
-          setAllRiderRides(rides);
-        } catch (error) {
-          console.error('Failed to fetch rider rides:', error);
-        } finally {
-          setLoadingRides(false);
-        }
-      }
-    };
-
     fetchRiderRides();
-  }, [id, refreshRidesByUser]);
+  }, [fetchRiderRides]);
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
@@ -187,6 +193,7 @@ const Schedule: React.FC = () => {
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
+      fetchRiderRides();
     } catch (error) {
       console.error('Failed to create ride:', error);
       alert('Failed to create ride. Please try again.');
@@ -411,7 +418,10 @@ const Schedule: React.FC = () => {
           <RideDetailsComponent
             ride={editingRide}
             open={editingRide !== null}
-            onClose={() => setEditingRide(null)}
+            onClose={() => {
+              setEditingRide(null);
+              fetchRiderRides();
+            }}
           ></RideDetailsComponent>
         )}
       </main>

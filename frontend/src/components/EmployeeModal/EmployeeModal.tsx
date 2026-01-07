@@ -12,6 +12,7 @@ import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { extractNetIdFromEmail } from 'util/userUtils';
 
 type AdminData = {
   type: string[];
@@ -109,7 +110,7 @@ const EmployeeModal = ({
       methods.reset({
         firstName: existingEmployee.firstName,
         lastName: existingEmployee.lastName,
-        netid: existingEmployee.netId,
+        netid: extractNetIdFromEmail(existingEmployee.email) || '',
         phoneNumber: existingEmployee.phoneNumber,
         startDate: existingEmployee.driver?.startDate,
         availability: existingEmployee.driver?.availability || [],

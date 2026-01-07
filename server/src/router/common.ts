@@ -3,35 +3,141 @@ import { ModelType, ObjectType } from 'dynamoose/dist/General';
 import { Condition } from 'dynamoose/dist/Condition';
 import { Item } from 'dynamoose/dist/Item';
 import { Rider } from '../models/rider';
+import { Location } from '../models/location';
+import { Driver } from '../models/driver';
 
-// Helper function to populate riders for ride objects
+// Helper: batch fetch locations, riders, drivers and return maps keyed by id
+async function buildEntityMapsFromSets(
+  locationIds: Set<string>,
+  riderIds: Set<string>,
+  driverIds: Set<string>
+) {
+  const [locationsArr, ridersArr, driversArr] = await Promise.all([
+    locationIds.size
+      ? Location.batchGet(Array.from(locationIds).map((id) => ({ id })))
+      : Promise.resolve([]),
+    riderIds.size
+      ? Rider.batchGet(Array.from(riderIds).map((id) => ({ id })))
+      : Promise.resolve([]),
+    driverIds.size
+      ? Driver.batchGet(Array.from(driverIds).map((id) => ({ id })))
+      : Promise.resolve([]),
+  ]);
+
+  const locationMap = new Map<string, any>();
+  const riderMap = new Map<string, any>();
+  const driverMap = new Map<string, any>();
+
+  for (const l of locationsArr as any[]) {
+    const j = l && l.toJSON ? l.toJSON() : l;
+    if (j && j.id) locationMap.set(j.id, j);
+  }
+  for (const r of ridersArr as any[]) {
+    const j = r && r.toJSON ? r.toJSON() : r;
+    if (j && j.id) riderMap.set(j.id, j);
+  }
+  for (const d of driversArr as any[]) {
+    const j = d && d.toJSON ? d.toJSON() : d;
+    if (j && j.id) driverMap.set(j.id, j);
+  }
+
+  return { locationMap, riderMap, driverMap };
+}
+
+// Helper: apply maps to a single ride JSON object
+function applyMapsToRide(
+  rideJson: any,
+  maps: {
+    locationMap: Map<string, any>;
+    riderMap: Map<string, any>;
+    driverMap: Map<string, any>;
+  }
+) {
+  const { locationMap, riderMap, driverMap } = maps;
+
+  const startId =
+    typeof rideJson.startLocation === 'string'
+      ? rideJson.startLocation
+      : rideJson.startLocation && rideJson.startLocation.id
+      ? rideJson.startLocation.id
+      : undefined;
+  const endId =
+    typeof rideJson.endLocation === 'string'
+      ? rideJson.endLocation
+      : rideJson.endLocation && rideJson.endLocation.id
+      ? rideJson.endLocation.id
+      : undefined;
+
+  if (startId && locationMap.has(startId))
+    rideJson.startLocation = locationMap.get(startId);
+  if (endId && locationMap.has(endId))
+    rideJson.endLocation = locationMap.get(endId);
+
+  if (rideJson.riders && Array.isArray(rideJson.riders)) {
+    rideJson.riders = rideJson.riders
+      .map((r: any) => {
+        const id = typeof r === 'string' ? r : r && r.id ? r.id : undefined;
+        return id ? riderMap.get(id) || null : null;
+      })
+      .filter((r: any) => r !== null);
+  } else if (rideJson.rider && rideJson.rider.id) {
+    const id = rideJson.rider.id;
+    const r = riderMap.get(id);
+    rideJson.riders = r ? [r] : [];
+  }
+
+  if (rideJson.driver) {
+    const dId =
+      typeof rideJson.driver === 'string'
+        ? rideJson.driver
+        : rideJson.driver && rideJson.driver.id
+        ? rideJson.driver.id
+        : undefined;
+    if (dId && driverMap.has(dId)) rideJson.driver = driverMap.get(dId);
+  }
+
+  if (rideJson.riders === null || rideJson.riders === undefined) {
+    rideJson.riders = [];
+  }
+
+  return rideJson;
+}
+
+// Helper function to populate riders for ride objects (optimized - uses batchGet)
 async function populateRiders(rideJson: any) {
   if (
-    rideJson.riders &&
-    Array.isArray(rideJson.riders) &&
-    rideJson.riders.length > 0
+    !rideJson.riders ||
+    !Array.isArray(rideJson.riders) ||
+    rideJson.riders.length === 0
   ) {
-    try {
-      // If riders are just IDs (strings), populate them
-      if (typeof rideJson.riders[0] === 'string') {
-        const riderIds = rideJson.riders;
-        const populatedRiders = await Promise.all(
-          riderIds.map(async (riderId: string) => {
-            try {
-              const rider = await Rider.get(riderId);
-              return rider ? rider.toJSON() : null;
-            } catch (error) {
-              console.error(`Failed to populate rider ${riderId}:`, error);
-              return null;
-            }
-          })
-        );
-        rideJson.riders = populatedRiders.filter((rider) => rider !== null);
+    rideJson.riders = rideJson.riders || [];
+    return rideJson;
+  }
+
+  try {
+    // If riders are just IDs (strings), use a batchGet to avoid N+1 reads
+    if (typeof rideJson.riders[0] === 'string') {
+      const uniqueIds = Array.from(new Set(rideJson.riders)).filter(
+        (id) => typeof id === 'string'
+      ) as string[];
+      if (uniqueIds.length === 0) {
+        rideJson.riders = [];
+        return rideJson;
       }
-    } catch (error) {
-      console.error('Error populating riders:', error);
-      rideJson.riders = [];
+
+      const maps = await buildEntityMapsFromSets(
+        new Set(),
+        new Set(uniqueIds),
+        new Set()
+      );
+      rideJson.riders = uniqueIds
+        .map((id: string) => maps.riderMap.get(id))
+        .filter((r: any) => r !== undefined && r !== null);
     }
+    // If riders are already objects, leave them as-is
+  } catch (error) {
+    console.error('Error populating riders:', error);
+    rideJson.riders = [];
   }
   return rideJson;
 }
@@ -223,13 +329,12 @@ export function deleteById(
   id: string | ObjectType | undefined,
   table: string
 ) {
-  model.get(id || '', (err, data) => {
+  // Use direct delete to avoid an extra GET request (reduces read throughput)
+  model.delete(id || '', (err) => {
     if (err) {
       res.status(err.statusCode || 500).send({ err: err.message });
-    } else if (!data) {
-      res.status(400).send({ err: `id not found in ${table}` });
     } else {
-      data.delete().then(() => res.status(200).send({ id }));
+      res.status(200).send({ id });
     }
   });
 }
@@ -265,93 +370,75 @@ export function scan(
     if (err) {
       console.error('Dynamoose scan error:', err);
       res.status(err.statusCode || 500).send({ err: err.message });
-    } else if (!data) {
+      return;
+    }
+    if (!data) {
       res.status(400).send({ err: 'error when scanning table' });
-    } else if (callback) {
-      try {
-        // Per-item populate with error isolation & logging
-        const results: any[] = [];
-        const items = Array.isArray(data) ? data : [data];
-        for (const item of items) {
-          if (!item) {
-            console.warn('Scan result contains null/undefined item. Skipping.');
-            continue;
+      return;
+    }
+
+    try {
+      // Normalize raw items
+      const items = Array.isArray(data) ? data : [data];
+      const rawItems = items
+        .map((item) =>
+          item && (item as any).toJSON ? (item as any).toJSON() : item
+        )
+        .filter(Boolean);
+
+      // Collect unique IDs for batch fetches
+      const locationIds = new Set<string>();
+      const riderIds = new Set<string>();
+      const driverIds = new Set<string>();
+
+      for (const ride of rawItems) {
+        const startId =
+          typeof ride.startLocation === 'string'
+            ? ride.startLocation
+            : ride.startLocation && ride.startLocation.id
+            ? ride.startLocation.id
+            : undefined;
+        const endId =
+          typeof ride.endLocation === 'string'
+            ? ride.endLocation
+            : ride.endLocation && ride.endLocation.id
+            ? ride.endLocation.id
+            : undefined;
+        if (startId) locationIds.add(startId);
+        if (endId) locationIds.add(endId);
+
+        if (ride.riders && Array.isArray(ride.riders)) {
+          for (const r of ride.riders) {
+            if (!r) continue;
+            if (typeof r === 'string') riderIds.add(r);
+            else if (r.id) riderIds.add(r.id);
           }
-          try {
-            const populated = await (item as any).populate();
-            let json = (populated as any).toJSON
-              ? (populated as any).toJSON()
-              : populated;
-            // Manually populate riders if needed
-            json = await populateRiders(json);
-            results.push(json);
-          } catch (e) {
-            // Attempt to get an identifier for logging
-            let itemId: any = undefined;
-            try {
-              itemId =
-                (item as any).id ||
-                ((item as any).get && (item as any).get('id'));
-            } catch (e) {
-              // Ignore error when getting item ID
-            }
-            console.error(
-              'Populate failed for item',
-              itemId ? { id: itemId } : '',
-              'error:',
-              e
-            );
-            // Continue processing the rest
-          }
+        } else if (ride.rider && ride.rider.id) {
+          riderIds.add(ride.rider.id);
         }
 
-        callback(results);
-      } catch (error) {
-        console.error('Error in scan callback:', error);
-        res.status(500).send({ err: 'Error processing scan results' });
-      }
-    } else {
-      try {
-        // Per-item populate with error isolation & logging
-        const results: any[] = [];
-        const items = Array.isArray(data) ? data : [data];
-        for (const item of items) {
-          if (!item) {
-            console.warn('Scan result contains null/undefined item. Skipping.');
-            continue;
-          }
-          try {
-            const populated = await (item as any).populate();
-            let json = (populated as any).toJSON
-              ? (populated as any).toJSON()
-              : populated;
-            // Manually populate riders if needed
-            json = await populateRiders(json);
-            results.push(json);
-          } catch (e) {
-            let itemId: any = undefined;
-            try {
-              itemId =
-                (item as any).id ||
-                ((item as any).get && (item as any).get('id'));
-            } catch (e) {
-              // Ignore error when getting item ID
-            }
-            console.error(
-              'Error in scan response: populate failed for item',
-              itemId ? { id: itemId } : '',
-              'error:',
-              e
-            );
-            // Continue processing other items
-          }
+        if (ride.driver) {
+          const dId =
+            typeof ride.driver === 'string' ? ride.driver : ride.driver.id;
+          if (dId) driverIds.add(dId);
         }
-
-        res.status(200).send({ data: results });
-      } catch (error) {
-        console.error('Error in scan response:', error);
-        res.status(500).send({ err: 'Error processing scan results' });
       }
+
+      const maps = await buildEntityMapsFromSets(
+        locationIds,
+        riderIds,
+        driverIds
+      );
+
+      const results = rawItems.map((rideJson: any) =>
+        applyMapsToRide(rideJson, maps)
+      );
+
+      if (callback) callback(results);
+      else res.status(200).send({ data: results });
+    } catch (error) {
+      console.error('Error in scan processing:', error);
+      res.status(500).send({ err: 'Error processing scan results' });
     }
   });
 }
