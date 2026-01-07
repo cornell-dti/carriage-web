@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import { Typography, IconButton, Chip, Box, Button, TextField } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -180,7 +186,32 @@ const RideMap: React.FC<RideMapProps> = ({
   } | null>(null);
   const mapsLibrary = useMapsLibrary('routes');
 
+  // Check if either location is a custom location
+  const hasCustomLocation = useMemo(() => {
+    const isPickupCustom =
+      startLocation.tag === Tag.CUSTOM ||
+      startLocation.lat === 0 ||
+      startLocation.lng === 0 ||
+      !startLocation.address;
+    const isDropoffCustom =
+      endLocation.tag === Tag.CUSTOM ||
+      endLocation.lat === 0 ||
+      endLocation.lng === 0 ||
+      !endLocation.address;
+    return isPickupCustom || isDropoffCustom;
+  }, [startLocation, endLocation]);
+
   const fetchAndDrawRoute = useCallback(async () => {
+    // Skip route fetching for custom locations
+    if (hasCustomLocation) {
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+        polylineRef.current = null;
+      }
+      setTripInfo(null);
+      return;
+    }
+
     if (!window.google || !map || !startLocation || !endLocation) {
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
@@ -246,19 +277,26 @@ const RideMap: React.FC<RideMapProps> = ({
         polylineRef.current.setMap(null);
         polylineRef.current = null;
       }
-      // Fallback to approximate calculation
-      const distance = getApproximateDistance(
-        startLocation.lat,
-        startLocation.lng,
-        endLocation.lat,
-        endLocation.lng
-      );
-      setTripInfo({
-        distance: `${distance} mi`,
-        duration: `${Math.round(distance * 2)} min`,
-      });
+      // only do  approximate calculation if we have valid coordinates
+      if (
+        startLocation.lat !== 0 &&
+        startLocation.lng !== 0 &&
+        endLocation.lat !== 0 &&
+        endLocation.lng !== 0
+      ) {
+        const distance = getApproximateDistance(
+          startLocation.lat,
+          startLocation.lng,
+          endLocation.lat,
+          endLocation.lng
+        );
+        setTripInfo({
+          distance: `${distance} mi`,
+          duration: `${Math.round(distance * 2)} min`,
+        });
+      }
     }
-  }, [map, startLocation, endLocation]);
+  }, [map, startLocation, endLocation, hasCustomLocation]);
 
   useEffect(() => {
     fetchAndDrawRoute();
@@ -272,7 +310,7 @@ const RideMap: React.FC<RideMapProps> = ({
   }, [fetchAndDrawRoute]);
 
   const getMapCenter = () => {
-    if (startLocation && endLocation) {
+    if (startLocation && endLocation && !hasCustomLocation) {
       return {
         lat: (startLocation.lat + endLocation.lat) / 2,
         lng: (startLocation.lng + endLocation.lng) / 2,
@@ -301,6 +339,37 @@ const RideMap: React.FC<RideMapProps> = ({
     },
     [isSelecting, onLocationSelect]
   );
+
+  // if custom location, show placeholder instead of map
+  if (hasCustomLocation) {
+    return (
+      <div className={styles.mapContainer}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f5f5f5',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <div>
+            <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
+              📍 Custom Location
+            </p>
+            <p style={{ fontSize: '14px', color: '#999' }}>
+              Map not available for custom locations
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
