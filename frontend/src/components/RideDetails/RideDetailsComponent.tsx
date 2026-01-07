@@ -195,7 +195,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
           {/* Mobile actions - sticky bottom sheet */}
           {isMobile && (
             <div className={styles.mobileActions}>
-              <RideActions userRole={userRole} isMobile />
+              <RideActions userRole={userRole} isMobile onClose={onClose} />
             </div>
           )}
         </DialogContent>
