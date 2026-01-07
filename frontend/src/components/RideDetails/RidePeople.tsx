@@ -16,6 +16,7 @@ import { Driver, Rider } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import { canChangeRider, canAssignDriver } from '../../util/rideValidation';
 import { useRides } from '../../context/RidesContext';
+import { useEmployees } from '../../context/EmployeesContext';
 import axios from '../../util/axios';
 import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
@@ -111,12 +112,15 @@ const PersonCard: React.FC<PersonCardProps> = ({
 const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const { editedRide, isEditing, updateRideField } = useRideEdit();
   const { getAvailableRiders } = useRides();
+  const {
+    drivers: employeesDrivers,
+    loading: employeesLoading,
+    error: employeesError,
+  } = useEmployees();
   const ride = editedRide!;
 
   const [drivers, setDrivers] = useState<Driver[]>([]);
-  const [loadingDrivers, setLoadingDrivers] = useState(false);
   const [driverSelectOpen, setDriverSelectOpen] = useState(false);
-  const [driversError, setDriversError] = useState<string | null>(null);
   const driverButtonRef = useRef<HTMLButtonElement>(null);
 
   // Ref to store the driver assigned when editing started
@@ -141,11 +145,19 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
       originalDriverRef.current = driverAtEditStart;
       setTempCurrentDriver(driverAtEditStart);
 
-      fetchDrivers();
+      // Initialize drivers from the global employees context
+      setDrivers(employeesDrivers || []);
       fetchRiders();
     }
     // This effect should only run once when isEditing becomes true
   }, [isEditing, userRole]);
+
+  // Keep local drivers list in sync with global employees drivers while editing
+  useEffect(() => {
+    if (isEditing && userRole === 'admin') {
+      setDrivers(employeesDrivers || []);
+    }
+  }, [employeesDrivers, isEditing, userRole]);
 
   // Refetch available riders when ride times change
   useEffect(() => {
@@ -153,40 +165,6 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
       fetchRiders();
     }
   }, [ride.startTime, ride.endTime, isEditing, userRole]);
-
-  const fetchDrivers = async () => {
-    setLoadingDrivers(true);
-    setDriversError(null);
-    try {
-      const startTime = new Date(ride.startTime);
-      const endTime = new Date(ride.endTime);
-
-      const date = startTime.toISOString().split('T')[0];
-      const startTimeStr = startTime.toTimeString().slice(0, 5);
-      const endTimeStr = endTime.toTimeString().slice(0, 5);
-
-      const response = await axios.get('/api/drivers/available');
-
-      // const response = await axios.get('/api/drivers/available', {
-      //   params: {
-      //     date,
-      //     startTime: startTimeStr,
-      //     endTime: endTimeStr,
-      //     timezone: 'America/New_York',
-      //   },
-      // });
-
-      const driversData = response.data?.data || response.data;
-      const driversArray = Array.isArray(driversData) ? driversData : [];
-      setDrivers(driversArray);
-    } catch (error) {
-      console.error('Failed to fetch available drivers:', error);
-      setDriversError('Failed to load available drivers');
-      setDrivers([]);
-    } finally {
-      setLoadingDrivers(false);
-    }
-  };
 
   const fetchRiders = async () => {
     setLoadingRiders(true);
@@ -396,8 +374,8 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
             );
           })()}
           searchType={SearchableType.DRIVER}
-          loading={loadingDrivers}
-          error={driversError}
+          loading={employeesLoading}
+          error={employeesError ? employeesError.message : null}
           title="Select Driver"
           placeholder="Search drivers..."
           selectedItems={tempCurrentDriver ? [tempCurrentDriver] : []}
