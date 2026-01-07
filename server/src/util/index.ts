@@ -140,19 +140,12 @@ export async function checkNetIDExists(
   }
 
   if (role === 'driver') {
-    const [drivers, admins] = await Promise.all([
-      Driver.scan('email').eq(email).exec(),
-      Admin.scan('email').eq(email).exec(),
-    ]);
-    return drivers.length > 0 || admins.length > 0;
+    const drivers = await Driver.scan('email').eq(email).exec();
+    return drivers.length > 0;
   }
 
-  const [admins, drivers] = await Promise.all([
-    Admin.scan('email').eq(email).exec(),
-    Driver.scan('email').eq(email).exec(),
-  ]);
-
-  return admins.length > 0 || drivers.length > 0
+  const admins = await Admin.scan('email').eq(email).exec();
+  return admins.length > 0;
 }
 
 export async function checkNetIDExistsForOtherEmployee(
