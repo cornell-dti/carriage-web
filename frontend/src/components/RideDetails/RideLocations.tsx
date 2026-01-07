@@ -526,6 +526,9 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
       ...currentLocation,
       address,
       name: address || currentLocation.name,
+      tag: Tag.CUSTOM,
+      lat: 0,
+      lng: 0,
     };
 
     updateRideField(field, updatedLocation);
