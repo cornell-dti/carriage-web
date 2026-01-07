@@ -169,7 +169,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     joinDate,
     endDate,
   }) => {
-    const email = netid ? `${netid}@cornell.edu` : undefined;
+    const email = netid ? `${(netid).toLowerCase()}@cornell.edu` : undefined;
     const accessibility = needs.map((option) => option.value.toString());
     const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
@@ -267,7 +267,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             aria-required="true"
           />
           {errors.netid && (
-            <p className={styles.error}>NetId cannot be empty</p>
+            <p className={styles.error}>Invalid NetID</p>
           )}
         </div>
 
