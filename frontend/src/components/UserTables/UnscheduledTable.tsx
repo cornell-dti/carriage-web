@@ -20,7 +20,7 @@ const Table = () => {
     setRides(unscheduledRides.sort(compRides));
   }, [unscheduledRides]);
 
-  return rides.length ? <RidesTable rides={rides} hasButtons={true} /> : (
+  return rides.length ? <RidesTable rides={rides} /> : (
     <div className={styles.noRides}>No unscheduled rides</div>
   );
 };

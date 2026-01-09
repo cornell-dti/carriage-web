@@ -34,7 +34,7 @@ const CancelledTable = () => {
         return driverRides.length ? (
           <React.Fragment key={id}>
             <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={true} />
+            <RidesTable rides={driverRides} />
           </React.Fragment>
         ) : null;
       })}
