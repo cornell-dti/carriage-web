@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -8,16 +8,10 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -27,7 +21,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import UpdateIcon from '@mui/icons-material/Update';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import CloseIcon from '@mui/icons-material/Close';
-import { RideType, Status, SchedulingState } from '../../types';
+import { Status } from '../../types';
 import { useRideEdit } from './RideEditContext';
 import {
   canUpdateStatus,
@@ -40,32 +34,13 @@ import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import { isNewRide } from '../../util/modelFixtures';
 import axios from '../../util/axios';
+import UpdateStatusModal from '../UpdateStatusModal/UpdateStatusModal';
 
 interface RideActionsProps {
   userRole: UserRole;
   isMobile?: boolean;
   onClose?: () => void;
 }
-
-// Define status transitions
-const getNextStatuses = (currentStatus: Status): Status[] => {
-  switch (currentStatus) {
-    case Status.NOT_STARTED:
-      return [Status.ON_THE_WAY, Status.CANCELLED, Status.NO_SHOW];
-    case Status.ON_THE_WAY:
-      return [Status.ARRIVED, Status.CANCELLED, Status.NO_SHOW];
-    case Status.ARRIVED:
-      return [Status.PICKED_UP, Status.CANCELLED, Status.NO_SHOW];
-    case Status.PICKED_UP:
-      return [Status.COMPLETED, Status.CANCELLED];
-    default:
-      return [];
-  }
-};
-
-const formatStatusLabel = (status: Status): string => {
-  return status.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-};
 
 const RideActions: React.FC<RideActionsProps> = ({
   userRole,
@@ -82,13 +57,12 @@ const RideActions: React.FC<RideActionsProps> = ({
     saveChanges,
   } = useRideEdit();
   const { showToast } = useToast();
-  const { refreshRides } = useRides();
+  const { refreshRides, updateRideStatus } = useRides();
   const { curDate } = useDate();
 
   const [updateStatusOpen, setUpdateStatusOpen] = useState(false);
   const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
   const [contactAdminOpen, setContactAdminOpen] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<Status | null>(null);
   const [updating, setUpdating] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -97,17 +71,20 @@ const RideActions: React.FC<RideActionsProps> = ({
   const canUpdateRideStatus = canUpdateStatus(ride, userRole);
   const canCancelThisRide = canCancelRide(ride, userRole);
 
-  const handleStatusUpdate = async () => {
-    if (!selectedStatus) return;
+  const handleStatusUpdate = async (newStatus: Status) => {
+    // Extra guard even though the UI should prevent this
+    if (!canUpdateRideStatus) return;
 
     setUpdating(true);
     try {
-      // In a real app, make API call to update status
-      // await updateRideStatus(ride.id, selectedStatus);
-      setUpdateStatusOpen(false);
-      setSelectedStatus(null);
+      await updateRideStatus(ride.id, newStatus);
+      showToast('Ride status updated', ToastStatus.SUCCESS);
+
+      // Ensure any date-based ride views stay in sync with the latest status
+      await refreshRides();
     } catch (error) {
       console.error('Failed to update status:', error);
+      showToast('Failed to update ride status', ToastStatus.ERROR);
     } finally {
       setUpdating(false);
     }
@@ -197,6 +174,10 @@ const RideActions: React.FC<RideActionsProps> = ({
   const handleCancelEdit = () => {
     stopEditing();
   };
+
+  const allStatuses: Status[] = useMemo(() => {
+    return Object.values(Status) as Status[];
+  }, []);
 
   const renderRiderActions = () => {
     if (canEdit) {
@@ -373,7 +354,7 @@ const RideActions: React.FC<RideActionsProps> = ({
     }
   };
 
-  const nextStatuses = getNextStatuses(ride.status);
+  const nextStatuses = allStatuses // instead of preset transitions, give driver more options
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
@@ -392,64 +373,19 @@ const RideActions: React.FC<RideActionsProps> = ({
       )}
 
       {/* Update Status Modal */}
-      <Dialog
-        open={updateStatusOpen}
-        onClose={() => setUpdateStatusOpen(false)}
-        fullWidth
-        maxWidth="xs"
-      >
-        <DialogTitle>Update Ride Status</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-            Current status: {formatStatusLabel(ride.status)}
-          </Typography>
-          {!canUpdateRideStatus && (
-            <Box
-              sx={{
-                p: 2,
-                backgroundColor: 'warning.light',
-                borderRadius: 1,
-                mb: 2,
-              }}
-            >
-              <Typography variant="body2" color="warning.dark">
-                {getRestrictionMessage(ride, 'updateStatus', userRole)}
-              </Typography>
-            </Box>
-          )}
-          <FormControl
-            component="fieldset"
-            sx={{ mt: 2 }}
-            disabled={!canUpdateRideStatus}
-          >
-            <FormLabel component="legend">Select new status</FormLabel>
-            <RadioGroup
-              value={selectedStatus || ''}
-              onChange={(e) => setSelectedStatus(e.target.value as Status)}
-            >
-              {nextStatuses.map((status) => (
-                <FormControlLabel
-                  key={status}
-                  value={status}
-                  control={<Radio />}
-                  label={formatStatusLabel(status)}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setUpdateStatusOpen(false)}>Cancel</Button>
-          <Button
-            onClick={handleStatusUpdate}
-            variant="contained"
-            disabled={!selectedStatus || updating || !canUpdateRideStatus}
-            startIcon={updating ? <CircularProgress size={20} /> : undefined}
-          >
-            {updating ? 'Updating...' : 'Update'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {canUpdateRideStatus && (
+        <UpdateStatusModal
+          open={updateStatusOpen}
+          onClose={() => setUpdateStatusOpen(false)}
+          currentStatus={ride.status}
+          nextStatuses={nextStatuses}
+          onUpdate={async (newStatus) => {
+            await handleStatusUpdate(newStatus);
+            setUpdateStatusOpen(false);
+          }}
+          updating={updating}
+        />
+      )}
 
       {/* Cancel Confirmation Modal */}
       <Dialog
