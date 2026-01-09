@@ -39,10 +39,10 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
   const unscheduledHeaders = [
     '',
     'Time',
-    'Passenger',
     'Pickup Location',
     'Dropoff Location',
     'Needs',
+    'Passenger',
     '',
   ];
 
