@@ -40,18 +40,18 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
 
   const makeNameValidator =
     (fieldLabel: 'First name' | 'Last name') => (value: string) => {
-    const trimmed = value.trim();
+      const trimmed = value.trim();
 
-    if (!trimmed) {
-      return `${fieldLabel} cannot be empty`;
-    }
+      if (!trimmed) {
+        return `${fieldLabel} cannot be empty`;
+      }
 
-    if (trimmed === trimmed.toLowerCase()) {
-      return `Please capitalize the ${fieldLabel.toLowerCase()}`;
-    }
+      if (trimmed === trimmed.toLowerCase()) {
+        return `Please capitalize the ${fieldLabel.toLowerCase()}`;
+      }
 
-    return true;
-  };
+      return true;
+    };
 
   const normalizePhoneNumber = (value: string) =>
     value.replace(/\D/g, '');
@@ -84,7 +84,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
       netid: rider?.email.split('@')[0] ?? '',
       phoneNumber: rider?.phoneNumber ?? '',
       needs:
-        rider?.accessibility?.map((need) => ({
+        rider?.accessibility?.map((need: Accessibility | string) => ({
           value: need as Accessibility,
           label: need,
         })) ?? [],
@@ -94,7 +94,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   });
 
   const customStyles: StylesConfig<NeedOption, true> = {
-    option: (baseStyles, { data }) => ({
+    option: (baseStyles: any, { data }: { data: NeedOption }) => ({
       ...baseStyles,
       ...(data.value === 'OTHER' && {
         color: '#0066cc',
@@ -118,7 +118,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         },
       }),
     }),
-    menu: (baseStyles) => ({
+    menu: (baseStyles: any) => ({
       ...baseStyles,
       padding: '4px 0',
     }),
@@ -170,7 +170,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     endDate,
   }) => {
     const email = netid ? `${(netid).toLowerCase()}@cornell.edu` : undefined;
-    const accessibility = needs.map((option) => option.value.toString());
+    const accessibility = needs.map((option: NeedOption) => option.value.toString());
     const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
     const today = new Date().toISOString().slice(0, 10);
@@ -212,7 +212,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
       <div className={cn(styles.inputContainer, styles.rideTime)}>
         <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
+          <Label className={styles.label} htmlFor="firstName" required>
             First Name:{' '}
           </Label>
           <Input
@@ -232,7 +232,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-        <Label className={styles.label} htmlFor="lastName">
+          <Label className={styles.label} htmlFor="lastName" required>
             Last Name:{' '}
           </Label>
           <Input
@@ -252,7 +252,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-        <Label className={styles.label} htmlFor="netid">
+          <Label className={styles.label} htmlFor="netid" required>
             NetID:{' '}
           </Label>
           <Input
@@ -272,27 +272,27 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
-              Phone Number:{' '}
-            </Label>
-            <Input
-              id="phoneNumber"
-              {...register('phoneNumber', {
-                validate: validatePhoneNumber,
-              })}
-              type="tel"
-              className={styles.firstRow}
-              aria-required="true"
-              style={{ height: '60px' }}
-            />
-            {errors.phoneNumber && (
-              <p className={styles.error}>
-                {errors.phoneNumber.message ?? 'Phone number is not valid'}
-              </p>
-            )}
+          <Label className={styles.label} htmlFor="phoneNumber" required>
+            Phone Number:{' '}
+          </Label>
+          <Input
+            id="phoneNumber"
+            {...register('phoneNumber', {
+              validate: validatePhoneNumber,
+            })}
+            type="tel"
+            className={styles.firstRow}
+            aria-required="true"
+            style={{ height: '60px' }}
+          />
+          {errors.phoneNumber && (
+            <p className={styles.error}>
+              {errors.phoneNumber.message ?? 'Phone number is not valid'}
+            </p>
+          )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-        <Label className={styles.label} htmlFor="needs">
+          <Label className={styles.label} htmlFor="needs" required>
             Needs:{' '}
           </Label>
           <div className={styles.needsContainer}>
@@ -300,7 +300,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               name="needs"
               control={control}
               rules={{ required: true }}
-              render={({ field: { onChange, value, ...field } }) => (
+              render={({ field: { onChange, value, ...field } }: any) => (
                 <Select<NeedOption, true>
                   {...field}
                   value={value}
@@ -310,7 +310,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                   classNamePrefix="customSelectValueContainer"
                   placeholder="Select needs..."
                   styles={customStyles}
-                  onChange={(newValue, actionMeta) =>
+                  onChange={(newValue: readonly NeedOption[] | null, actionMeta: any) =>
                     handleNeedsChange(newValue, actionMeta)
                   }
                 />
@@ -321,8 +321,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 <input
                   type="text"
                   value={customNeed}
-                  onChange={(e) => setCustomNeed(e.target.value)}
-                  onKeyDown={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomNeed(e.target.value)}
+                  onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
                       handleAddCustomNeed();
@@ -360,7 +360,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <p>Duration</p>
           <div className={styles.lastRow}>
             <div>
-              <Label className={styles.label} htmlFor="joinDate">
+              <Label className={styles.label} htmlFor="joinDate" required>
                 Join Date:{' '}
               </Label>
               <Input
@@ -379,14 +379,14 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               <p>→</p>
             </div>
             <div>
-              <Label className={styles.label} htmlFor="endDate">
+              <Label className={styles.label} htmlFor="endDate" required>
                 End Date:{' '}
               </Label>
               <Input
                 id="endDate"
                 {...register('endDate', {
                   required: true,
-                  validate: (endDate) => {
+                  validate: (endDate: string) => {
                     const joinDate = getValues('joinDate');
                     return joinDate < endDate;
                   },

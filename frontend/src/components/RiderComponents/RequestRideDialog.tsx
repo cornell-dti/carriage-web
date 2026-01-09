@@ -191,10 +191,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     if (!pendingLocation) return;
 
     if (selectionState === 'pickup') {
-      setFormData((prev) => ({ ...prev, pickupLocation: pendingLocation }));
+      setFormData((prev: FormData) => ({ ...prev, pickupLocation: pendingLocation }));
       setSelectionState('dropoff');
     } else if (selectionState === 'dropoff') {
-      setFormData((prev) => ({ ...prev, dropoffLocation: pendingLocation }));
+      setFormData((prev: FormData) => ({ ...prev, dropoffLocation: pendingLocation }));
       setSelectionState('complete');
     }
 
@@ -213,7 +213,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
    * Clears both selected locations and returns to the "pickup" phase.
    */
   const resetSelection = () => {
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       pickupLocation: null,
       dropoffLocation: null,
@@ -266,18 +266,18 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   // Reset selected days when changing repeat type
   const handleDateChange =
     (field: keyof Pick<FormData, 'date' | 'time' | 'repeatEndDate'>) =>
-    (newDate: Date | null) => {
-      setFormData({
-        ...formData,
-        [field]: newDate,
-      });
-    };
+      (newDate: Date | null) => {
+        setFormData({
+          ...formData,
+          [field]: newDate,
+        });
+      };
 
   const handleRepeatTypeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = event.target.value as RepeatOption;
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       repeatType: value,
       selectedDays: value !== 'custom' ? [] : prev.selectedDays,
@@ -288,7 +288,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     event: React.MouseEvent<HTMLElement>,
     newDays: string[]
   ) => {
-    setFormData((prev) => ({
+    setFormData((prev: FormData) => ({
       ...prev,
       selectedDays: newDays.map(
         (shortDay) => fullDayNames[shortDay as keyof typeof fullDayNames]
@@ -388,15 +388,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   // Only show map if not using custom locations
   const safePickup =
     !customPickup &&
-    formData.pickupLocation?.lat &&
-    formData.pickupLocation?.lng
+      formData.pickupLocation?.lat &&
+      formData.pickupLocation?.lng
       ? formData.pickupLocation
       : null;
 
   const safeDropoff =
     !customDropoff &&
-    formData.dropoffLocation?.lat &&
-    formData.dropoffLocation?.lng
+      formData.dropoffLocation?.lat &&
+      formData.dropoffLocation?.lng
       ? formData.dropoffLocation
       : null;
 
@@ -438,8 +438,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           formData.pickupLocation || customPickupName
                             ? '#4caf50'
                             : selectionState === 'pickup'
-                            ? '#2196f3'
-                            : '#e0e0e0',
+                              ? '#2196f3'
+                              : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -455,8 +455,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                           formData.dropoffLocation || customDropoffName
                             ? '#4caf50'
                             : selectionState === 'dropoff'
-                            ? '#2196f3'
-                            : '#e0e0e0',
+                              ? '#2196f3'
+                              : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
@@ -518,15 +518,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     formData.dropoffLocation ||
                     customPickupName ||
                     customDropoffName) && (
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={resetSelection}
-                      style={{ marginTop: '8px' }}
-                    >
-                      Change Locations
-                    </Button>
-                  )}
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={resetSelection}
+                        style={{ marginTop: '8px' }}
+                      >
+                        Change Locations
+                      </Button>
+                    )}
                 </div>
 
                 {/* Show selected locations */}
@@ -587,17 +587,17 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       : 'Or select from dropdown:'}
                   </h4>
 
-                  <FormControl fullWidth style={{ marginBottom: '16px' }}>
-                    <InputLabel>Pickup Location</InputLabel>
+                  <FormControl fullWidth required style={{ marginBottom: '16px' }}>
+                    <InputLabel required>Pickup Location</InputLabel>
                     <Select<string>
                       value={formData.pickupLocation?.id || ''}
-                      onChange={(event) => {
+                      onChange={(event: SelectChangeEvent<string>) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
                           supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
-                        setFormData((prev) => ({
+                        setFormData((prev: FormData) => ({
                           ...prev,
                           pickupLocation: selectedLocation,
                         }));
@@ -636,10 +636,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                   {customPickup && (
                     <TextField
                       fullWidth
+                      required
                       label="Custom Pickup Name"
                       placeholder="e.g., Uri's Hall Loading Dock"
                       value={customPickupName}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setCustomPickupName(e.target.value);
                         setInputPickUpError(false);
                       }}
@@ -653,18 +654,18 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     />
                   )}
 
-                  <FormControl fullWidth>
-                    <InputLabel>Drop-off Location</InputLabel>
+                  <FormControl fullWidth required>
+                    <InputLabel required>Drop-off Location</InputLabel>
                     <Select<string>
                       value={formData.dropoffLocation?.id || ''}
                       disabled={!formData.pickupLocation && !customPickup}
-                      onChange={(event) => {
+                      onChange={(event: SelectChangeEvent<string>) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
                           supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
-                        setFormData((prev) => ({
+                        setFormData((prev: FormData) => ({
                           ...prev,
                           dropoffLocation: selectedLocation,
                         }));
@@ -709,10 +710,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                   {customDropoff && (
                     <TextField
                       fullWidth
+                      required
                       label="Custom Dropoff Name"
                       placeholder="e.g., Main Entrance Side Door"
                       value={customDropoffName}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setCustomDropoffName(e.target.value);
                         setInputDropOffError(false);
                       }}
@@ -730,7 +732,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <Stack direction="row" spacing={2}>
                     <DatePicker
-                      label="Date"
+                      label="Date *"
                       value={formData.date}
                       onChange={handleDateChange('date')}
                       slotProps={{
@@ -740,7 +742,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       }}
                     />
                     <TimePicker
-                      label="Time"
+                      label="Time *"
                       value={formData.time}
                       onChange={handleDateChange('time')}
                       slotProps={{
@@ -772,7 +774,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 {formData.repeatType !== 'none' && (
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
-                      label="Repeat End Date"
+                      label="Repeat End Date *"
                       value={formData.repeatEndDate}
                       onChange={handleDateChange('repeatEndDate')}
                       slotProps={{
