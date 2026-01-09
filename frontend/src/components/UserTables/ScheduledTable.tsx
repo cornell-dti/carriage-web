@@ -34,14 +34,14 @@ const ScheduledTable = () => {
         return driverRides.length ? (
           <React.Fragment key={id}>
             <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={true} />
+            <RidesTable rides={driverRides} />
           </React.Fragment>
         ) : null;
       })}
       {rides.filter((ride) => ride?.driver === undefined).map((ride) => (
         <React.Fragment key={ride.id}>
           <h1 className={styles.formHeader}>Unassigned</h1>
-          <RidesTable rides={[ride]} hasButtons={true} />
+          <RidesTable rides={[ride]} />
         </React.Fragment>
       ))}
     </>

@@ -8,15 +8,13 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
-import { trashbig } from '../../icons/other/index';
 import buttonStyles from '../../styles/button.module.css';
 
 type RidesTableProps = {
   rides: Ride[];
-  hasButtons: boolean;
 };
 
-const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
+const RidesTable = ({ rides }: RidesTableProps) => {
   const { drivers } = useEmployees();
   const { getRideById } = useRides();
   const [openAssignModal, setOpenAssignModal] = useState(-1);
@@ -35,17 +33,6 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
     setSelectedRide(null);
   };
 
-  const unscheduledColSizes = [0.5, 0.5, 0.8, 1, 1, 0.8, 1];
-  const unscheduledHeaders = [
-    '',
-    'Time',
-    'Passenger',
-    'Pickup Location',
-    'Dropoff Location',
-    'Needs',
-    '',
-  ];
-
   const scheduledColSizes = [0.5, 0.5, 1, 1, 1, 1, 1];
   const scheduledHeaders = [
     'Pickup Time',
@@ -62,8 +49,8 @@ const RidesTable = ({ rides, hasButtons }: RidesTableProps) => {
       <Table>
         <Row
           header
-          colSizes={hasButtons ? unscheduledColSizes : scheduledColSizes}
-          data={hasButtons ? unscheduledHeaders : scheduledHeaders}
+          colSizes={scheduledColSizes}
+          data={scheduledHeaders}
         />
         {rides.filter((ride) => ride !== undefined).map((ride, index) => {
           const startTime = new Date(ride.startTime).toLocaleTimeString([], {
