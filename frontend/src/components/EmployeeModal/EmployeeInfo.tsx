@@ -87,23 +87,24 @@ const EmployeeInfo = ({
             },
           })}
         />
-        {errors.phoneNumber && (
+        {errors.phoneNumber ? (
           <p className={styles.error}>
             {errors.phoneNumber.message?.toString() ||
               'Please enter a valid phone number (10 digits)'}
           </p>
+        ) : (
+          <p
+            className={styles.helperText}
+            style={{
+              fontSize: '0.75rem',
+              color: '#666',
+              marginTop: '0.25rem',
+              marginBottom: 0,
+            }}
+          >
+            Format: 10 digits only (e.g., 1234567890)
+          </p>
         )}
-        <p
-          className={styles.helperText}
-          style={{
-            fontSize: '0.75rem',
-            color: '#666',
-            marginTop: '0.25rem',
-            marginBottom: 0,
-          }}
-        >
-          Format: 10 digits only (e.g., 1234567890)
-        </p>
       </div>
     </div>
   );
