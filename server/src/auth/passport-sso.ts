@@ -13,7 +13,15 @@ interface SamlProfile extends Profile {
 // Load IdP certificate
 const idpCertPath =
   process.env.SAML_IDP_CERT_PATH || './config/cornell-idp-test.crt';
-const idpCert = fs.readFileSync(path.resolve(idpCertPath), 'utf-8');
+let idpCert = '';
+try {
+  idpCert = fs.readFileSync(path.resolve(idpCertPath), 'utf-8');
+} catch (error) {
+  if (!process.env.SAML_IDP_CERT) {
+    throw new Error('SAML_IDP_CERT is not available');
+  }
+  idpCert = process.env.SAML_IDP_CERT;
+}
 
 // Configure SAML strategy
 const samlStrategy = new SamlStrategy(
