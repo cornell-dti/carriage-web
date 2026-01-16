@@ -75,61 +75,16 @@ const AuthManager = () => {
     }
   }, []);
 
-  // Common logic to complete login from a JWT issued by the backend
-  const completeLoginFromToken = (serverJWT: string) => {
-    // Store JWT in encrypted cookie (matching Google OAuth pattern)
-    setCookie('jwt', serverJWT);
-
-    // Decode JWT to get user info
-    const decoded: any = jwtDecode(serverJWT);
-
-    // Set auth state
-    setId(decoded.id);
-    localStorage.setItem('userId', decoded.id);
-    localStorage.setItem('userType', decoded.userType);
-    setAuthToken(serverJWT);
-
-    // Refresh user data
-    const refreshFunc = createRefresh(decoded.id, decoded.userType, serverJWT);
-    refreshFunc();
-    setRefreshUser(() => refreshFunc);
-    setSignedIn(true);
-
-    // Navigate to appropriate dashboard based on userType
-    if (decoded.userType === 'Admin') {
-      navigate('/admin/home', { replace: true });
-    } else if (decoded.userType === 'Driver') {
-      navigate('/driver/rides', { replace: true });
-    } else if (decoded.userType === 'Rider') {
-      navigate('/rider/schedule', { replace: true });
-    } else {
-      // Invalid userType - this should never happen if backend is working correctly
-      setSsoError('Invalid user type received. Please contact support.');
-      logout();
-    }
-  };
-
-  // SSO Callback handler - can either use a JWT passed via URL or fall back to
-  // fetching the profile from the backend (for local dev where sessions work).
-  const handleSSOCallback = async (
-    event?: React.FormEvent<HTMLFormElement>,
-    tokenFromUrl?: string
-  ) => {
+  // SSO Callback handler - fetches profile and JWT after successful SSO login
+  const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
     if (event) {
       event.preventDefault();
     }
     try {
-      // Prefer a token directly supplied in the URL (stateless flow)
-      if (tokenFromUrl) {
-        completeLoginFromToken(tokenFromUrl);
-        return;
-      }
-
-      // Fallback: fetch profile + token from backend using session cookie
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
         {
-          credentials: 'include', // Sends session cookie when available
+          credentials: 'include', // CRITICAL: Sends session cookie
         }
       );
 
@@ -140,10 +95,43 @@ const AuthManager = () => {
       }
 
       const data = await response.json();
-      const { token: serverJWT } = data;
+      const { user: ssoUser, token: serverJWT } = data;
 
-      if (serverJWT) {
-        completeLoginFromToken(serverJWT);
+      if (serverJWT && ssoUser) {
+        // Store JWT in encrypted cookie (matching Google OAuth pattern)
+        setCookie('jwt', serverJWT);
+
+        // Decode JWT to get user info
+        const decoded: any = jwtDecode(serverJWT);
+
+        // Set auth state
+        setId(decoded.id);
+        localStorage.setItem('userId', decoded.id);
+        localStorage.setItem('userType', decoded.userType);
+        setAuthToken(serverJWT);
+
+        // Refresh user data
+        const refreshFunc = createRefresh(
+          decoded.id,
+          decoded.userType,
+          serverJWT
+        );
+        refreshFunc();
+        setRefreshUser(() => refreshFunc);
+        setSignedIn(true);
+
+        // Navigate to appropriate dashboard based on userType
+        if (decoded.userType === 'Admin') {
+          navigate('/admin/home', { replace: true });
+        } else if (decoded.userType === 'Driver') {
+          navigate('/driver/rides', { replace: true });
+        } else if (decoded.userType === 'Rider') {
+          navigate('/rider/schedule', { replace: true });
+        } else {
+          // Invalid userType - this should never happen if backend is working correctly
+          setSsoError('Invalid user type received. Please contact support.');
+          logout();
+        }
       } else {
         setSsoError('Failed to complete SSO login. Please try again.');
         logout();
@@ -159,7 +147,6 @@ const AuthManager = () => {
   useEffect(() => {
     const authParam = searchParams.get('auth');
     const errorParam = searchParams.get('error');
-    const tokenParam = searchParams.get('token');
 
     if (errorParam) {
       // Handle user_not_found specially - fetch unregistered user info
@@ -203,13 +190,8 @@ const AuthManager = () => {
     }
 
     if (authParam === 'sso_success') {
-      // Prefer JWT from URL (stateless) if available; otherwise fall back to
-      // session-based profile fetch (useful for local development).
-      if (tokenParam) {
-        handleSSOCallback(undefined, tokenParam);
-      } else {
-        handleSSOCallback();
-      }
+      // Fetch profile and JWT token from backend
+      handleSSOCallback();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
