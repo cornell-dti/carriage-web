@@ -38,36 +38,9 @@ const hostname = (useHostname && process.env.HOSTNAME) || '';
 initDynamoose();
 
 const app = express();
-
-// Configure CORS to work both locally and in deployed environments
-const rawFrontendUrl = process.env.FRONTEND_URL;
-// Normalize to ensure no trailing slash, so it matches the Origin header
-const normalizedFrontendUrl = rawFrontendUrl
-  ? rawFrontendUrl.replace(/\/+$/, '')
-  : undefined;
-
-const allowedOrigins = [
-  normalizedFrontendUrl, // Primary configured frontend URL (normalized)
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
-].filter(Boolean) as string[];
-
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow non-browser requests or same-origin (no Origin header)
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      const normalizedOrigin = origin.replace(/\/+$/, '');
-      if (allowedOrigins.includes(normalizedOrigin)) {
-        return callback(null, true);
-      }
-
-      // Reject other origins
-      callback(new Error(`Not allowed by CORS: ${origin}`));
-    },
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
   })
 );

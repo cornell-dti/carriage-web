@@ -25,11 +25,7 @@ export const sessionMiddleware = session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    // For cross-origin SSO between Netlify (frontend) and Vercel (backend),
-    // we must use SameSite=None so the browser will send the cookie on
-    // cross-site XHR/fetch requests with credentials: 'include'.
-    // In non-production, keep Lax to avoid warnings in some browsers.
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: 'lax',
     maxAge: sessionTTL,
   },
 });
