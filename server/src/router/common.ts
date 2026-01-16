@@ -7,38 +7,62 @@ import { Location } from '../models/location';
 import { Driver } from '../models/driver';
 
 // Helper: batch fetch locations, riders, drivers and return maps keyed by id
+// This is written defensively so that if any batchGet fails in a particular
+// environment (e.g., missing tables or limited IAM permissions in production),
+// we degrade gracefully by logging the error and continuing with empty maps
+// instead of failing the entire scan.
 async function buildEntityMapsFromSets(
   locationIds: Set<string>,
   riderIds: Set<string>,
   driverIds: Set<string>
 ) {
-  const [locationsArr, ridersArr, driversArr] = await Promise.all([
-    locationIds.size
-      ? Location.batchGet(Array.from(locationIds).map((id) => ({ id })))
-      : Promise.resolve([]),
-    riderIds.size
-      ? Rider.batchGet(Array.from(riderIds).map((id) => ({ id })))
-      : Promise.resolve([]),
-    driverIds.size
-      ? Driver.batchGet(Array.from(driverIds).map((id) => ({ id })))
-      : Promise.resolve([]),
-  ]);
-
   const locationMap = new Map<string, any>();
   const riderMap = new Map<string, any>();
   const driverMap = new Map<string, any>();
 
-  for (const l of locationsArr as any[]) {
-    const j = l && l.toJSON ? l.toJSON() : l;
-    if (j && j.id) locationMap.set(j.id, j);
+  // Fetch locations
+  if (locationIds.size) {
+    try {
+      const locationsArr = (await Location.batchGet(
+        Array.from(locationIds).map((id) => ({ id }))
+      )) as any[];
+      for (const l of locationsArr) {
+        const j = l && l.toJSON ? l.toJSON() : l;
+        if (j && j.id) locationMap.set(j.id, j);
+      }
+    } catch (err) {
+      console.error('Error batch fetching locations in buildEntityMapsFromSets:', err);
+    }
   }
-  for (const r of ridersArr as any[]) {
-    const j = r && r.toJSON ? r.toJSON() : r;
-    if (j && j.id) riderMap.set(j.id, j);
+
+  // Fetch riders
+  if (riderIds.size) {
+    try {
+      const ridersArr = (await Rider.batchGet(
+        Array.from(riderIds).map((id) => ({ id }))
+      )) as any[];
+      for (const r of ridersArr) {
+        const j = r && r.toJSON ? r.toJSON() : r;
+        if (j && j.id) riderMap.set(j.id, j);
+      }
+    } catch (err) {
+      console.error('Error batch fetching riders in buildEntityMapsFromSets:', err);
+    }
   }
-  for (const d of driversArr as any[]) {
-    const j = d && d.toJSON ? d.toJSON() : d;
-    if (j && j.id) driverMap.set(j.id, j);
+
+  // Fetch drivers
+  if (driverIds.size) {
+    try {
+      const driversArr = (await Driver.batchGet(
+        Array.from(driverIds).map((id) => ({ id }))
+      )) as any[];
+      for (const d of driversArr) {
+        const j = d && d.toJSON ? d.toJSON() : d;
+        if (j && j.id) driverMap.set(j.id, j);
+      }
+    } catch (err) {
+      console.error('Error batch fetching drivers in buildEntityMapsFromSets:', err);
+    }
   }
 
   return { locationMap, riderMap, driverMap };
