@@ -28,7 +28,7 @@ export const sessionMiddleware = session({
     // In production the frontend (Netlify) and backend (Vercel) are on different sites,
     // so we must allow the session cookie to be sent on cross-site XHR/fetch requests.
     // SameSite=Lax works for localhost (same-site) but *blocks* these requests in prod.
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: 'none',
     maxAge: sessionTTL,
   },
 });
