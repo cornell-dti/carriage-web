@@ -77,14 +77,11 @@ const AuthManager = () => {
 
   // SSO Callback handler - fetches profile and JWT after successful SSO login
   const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
-    if (event) {
-      event.preventDefault();
-    }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
         {
-          credentials: 'include', // CRITICAL: Sends session cookie
+          credentials: 'include', // Send session cookie
         }
       );
 
