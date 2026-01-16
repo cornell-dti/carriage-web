@@ -84,10 +84,11 @@ const AuthManager = () => {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
         {
-          mode: 'cors',
           credentials: 'include', // CRITICAL: Sends session cookie
         }
       );
+
+      console.log('SSO callback response:', response);
 
       if (!response.ok) {
         throw new Error('Failed to fetch SSO profile');
