@@ -84,6 +84,7 @@ const AuthManager = () => {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
         {
+          mode: 'cors',
           credentials: 'include', // CRITICAL: Sends session cookie
         }
       );
