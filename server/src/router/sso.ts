@@ -109,7 +109,7 @@ router.post(
         return res.redirect(`${frontendUrl}/?error=user_not_found`);
       }
 
-      const { userType } = result as any;
+      const { user, userType } = result as any;
 
       // Store user in session
       req.session.user = {
@@ -123,8 +123,23 @@ router.post(
       req.session.userType = userType;
       console.log('[SSO Callback] Stored userType in session:', userType);
 
-      // Redirect to frontend with success flag
-      res.redirect(`${redirectUri}?auth=sso_success`);
+      // Generate JWT with same payload format as Google OAuth
+      const token = sign({ id: user.id, userType }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      console.log('[SSO Callback] Generated JWT for user ID:', user.id);
+
+      // Build redirect URL with auth + token parameters.
+      // Avoid relying on Node's URL parsing; instead handle query separator manually
+      // so this works whether or not redirectUri already has query params.
+      const separator = redirectUri.includes('?') ? '&' : '?';
+      const redirectWithToken = `${redirectUri}${separator}auth=sso_success&token=${encodeURIComponent(
+        token
+      )}`;
+
+      // Redirect back to frontend with JWT so it can complete login without relying on
+      // server-side session cookies (which are third-party between Netlify and Vercel).
+      res.redirect(redirectWithToken);
     } catch (err) {
       console.error('SSO callback error:', err);
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';

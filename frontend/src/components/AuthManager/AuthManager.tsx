@@ -75,7 +75,44 @@ const AuthManager = () => {
     }
   }, []);
 
+  // Common logic to complete login from a JWT issued by the backend
+  const completeLoginFromToken = (serverJWT: string) => {
+    // Store JWT in encrypted cookie (matching Google OAuth pattern)
+    setCookie('jwt', serverJWT);
+
+    // Decode JWT to get user info
+    const decoded: any = jwtDecode(serverJWT);
+
+    // Set auth state
+    setId(decoded.id);
+    localStorage.setItem('userId', decoded.id);
+    localStorage.setItem('userType', decoded.userType);
+    setAuthToken(serverJWT);
+
+    // Refresh user data
+    const refreshFunc = createRefresh(decoded.id, decoded.userType, serverJWT);
+    refreshFunc();
+    setRefreshUser(() => refreshFunc);
+    setSignedIn(true);
+
+    // Navigate to appropriate dashboard based on userType
+    if (decoded.userType === 'Admin') {
+      navigate('/admin/home', { replace: true });
+    } else if (decoded.userType === 'Driver') {
+      navigate('/driver/rides', { replace: true });
+    } else if (decoded.userType === 'Rider') {
+      navigate('/rider/schedule', { replace: true });
+    } else {
+      // Invalid userType - this should never happen if backend is working correctly
+      setSsoError('Invalid user type received. Please contact support.');
+      logout();
+    }
+  };
+
   // SSO Callback handler - fetches profile and JWT after successful SSO login
+  // This is now primarily a fallback for environments where server-side
+  // sessions are same-site (e.g., local development). In production, we
+  // prefer the stateless JWT passed via the URL query parameter.
   const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
     try {
       const response = await fetch(
@@ -95,40 +132,8 @@ const AuthManager = () => {
       const { user: ssoUser, token: serverJWT } = data;
 
       if (serverJWT && ssoUser) {
-        // Store JWT in encrypted cookie (matching Google OAuth pattern)
-        setCookie('jwt', serverJWT);
-
-        // Decode JWT to get user info
-        const decoded: any = jwtDecode(serverJWT);
-
-        // Set auth state
-        setId(decoded.id);
-        localStorage.setItem('userId', decoded.id);
-        localStorage.setItem('userType', decoded.userType);
-        setAuthToken(serverJWT);
-
-        // Refresh user data
-        const refreshFunc = createRefresh(
-          decoded.id,
-          decoded.userType,
-          serverJWT
-        );
-        refreshFunc();
-        setRefreshUser(() => refreshFunc);
-        setSignedIn(true);
-
-        // Navigate to appropriate dashboard based on userType
-        if (decoded.userType === 'Admin') {
-          navigate('/admin/home', { replace: true });
-        } else if (decoded.userType === 'Driver') {
-          navigate('/driver/rides', { replace: true });
-        } else if (decoded.userType === 'Rider') {
-          navigate('/rider/schedule', { replace: true });
-        } else {
-          // Invalid userType - this should never happen if backend is working correctly
-          setSsoError('Invalid user type received. Please contact support.');
-          logout();
-        }
+        // Reuse common JWT login logic
+        completeLoginFromToken(serverJWT);
       } else {
         setSsoError('Failed to complete SSO login. Please try again.');
         logout();
@@ -144,6 +149,7 @@ const AuthManager = () => {
   useEffect(() => {
     const authParam = searchParams.get('auth');
     const errorParam = searchParams.get('error');
+    const tokenParam = searchParams.get('token');
 
     if (errorParam) {
       // Handle user_not_found specially - fetch unregistered user info
@@ -187,8 +193,14 @@ const AuthManager = () => {
     }
 
     if (authParam === 'sso_success') {
-      // Fetch profile and JWT token from backend
-      handleSSOCallback();
+      // Prefer stateless flow if backend supplied a JWT in the URL. This avoids
+      // relying on third-party cookies between Netlify (frontend) and Vercel (backend).
+      if (tokenParam) {
+        completeLoginFromToken(tokenParam);
+      } else {
+        // Fallback to session-based profile fetch (useful for local dev)
+        handleSSOCallback();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
