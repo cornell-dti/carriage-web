@@ -13,13 +13,19 @@ import {
 type LabelType = React.DetailedHTMLProps<
   React.LabelHTMLAttributes<HTMLLabelElement>,
   HTMLLabelElement
->;
+> & {
+  required?: boolean;
+};
 
-export const Label = ({ className, children, ...props }: LabelType) => (
-  <label {...props} className={cn(styles.label, className)}>
-    {children}
-  </label>
-);
+export const Label = ({ className, children, required, ...props }: LabelType) => {
+  console.log('Label required:', required); // Debug line
+  return (
+    <label {...props} className={cn(styles.label, className)}>
+      {children}
+      {required && <span className={styles.requiredIndicator}> *</span>}
+    </label>
+  );
+};
 
 // This should only be used when you don't want a label to visually appear on screen
 // Source: https://webaim.org/techniques/css/invisiblecontent/#techniques
@@ -78,7 +84,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         onClick={disabled ? undefined : onClick} // Disable click handler if disabled
         disabled={disabled}
-        // onClick={onClick}
+      // onClick={onClick}
       >
         {children}
       </button>

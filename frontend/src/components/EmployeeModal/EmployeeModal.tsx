@@ -319,6 +319,12 @@ const EmployeeModal = ({
    * @param photo - The optional photo file uploaded by the user.
    */
   async function onSubmit(formData: any) {
+    // Validate that at least one role is selected
+    if (selectedRoles.length === 0) {
+      showToast('Please select at least one role', ToastStatus.ERROR);
+      return;
+    }
+
     // Data entered from the form/modal.
     const hasAdmin =
       selectedRoles.includes('sds-admin') ||
@@ -360,7 +366,7 @@ const EmployeeModal = ({
         // Decide which table to update based on role selection (to be changed at a later date.)
         const targetTable =
           selectedRoles.includes('sds-admin') ||
-          selectedRoles.includes('redrunner-admin')
+            selectedRoles.includes('redrunner-admin')
             ? 'Admins'
             : 'Drivers';
         try {
@@ -438,14 +444,14 @@ const EmployeeModal = ({
 
             {(selectedRoles.includes('driver') ||
               existingEmployee?.driver?.availability) && (
-              <>
-                <StartDate existingDate={existingEmployee?.driver?.startDate} />
-                <WorkingHours
-                  existingAvailability={existingEmployee?.driver?.availability}
-                  hide={false}
-                />
-              </>
-            )}
+                <>
+                  <StartDate existingDate={existingEmployee?.driver?.startDate} />
+                  <WorkingHours
+                    existingAvailability={existingEmployee?.driver?.availability}
+                    hide={false}
+                  />
+                </>
+              )}
 
             <RoleSelector
               selectedRoles={selectedRoles}

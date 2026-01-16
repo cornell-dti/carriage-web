@@ -53,21 +53,25 @@
   border: 0.063rem solid #000000;
   box-sizing: border-box;
 }
+
 .primaryBtn:focus {
   box-shadow: 0 0 0 3px #0075db;
 }
+
 .secondaryBtn {
   background-color: white;
   border: 0.063rem solid #000000;
   box-sizing: border-box;
 }
+
 .secondaryBtn:focus {
   box-shadow: 0 0 0 3px #0075db;
 }
 
 .srlabel {
   border: 0;
-  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px 1px 1px 1px);
+  /* IE6, IE7 */
   clip: rect(1px, 1px, 1px, 1px);
   height: 1px;
   margin: -1px;
@@ -76,6 +80,7 @@
   position: absolute;
   width: 1px;
 }
+
 ::-webkit-input-placeholder {
   color: #767676;
   opacity: 1;
@@ -96,4 +101,13 @@
 :-ms-input-placeholder {
   color: #767676;
   opacity: 1;
+}
+
+.requiredIndicator {
+  color: #eb0023 !important;
+  /* Force red color */
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-left: 3px;
+  display: inline-block;
 }
