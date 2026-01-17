@@ -77,13 +77,8 @@ const AuthManager = () => {
 
   // Common logic to complete login from a JWT issued by the backend
   const completeLoginFromToken = (serverJWT: string) => {
-    // Store JWT in encrypted cookie (matching Google OAuth pattern)
     setCookie('jwt', serverJWT);
-
-    // Decode JWT to get user info
     const decoded: any = jwtDecode(serverJWT);
-
-    // Set auth state
     setId(decoded.id);
     localStorage.setItem('userId', decoded.id);
     localStorage.setItem('userType', decoded.userType);
@@ -121,8 +116,6 @@ const AuthManager = () => {
           credentials: 'include', // Send session cookie
         }
       );
-
-      console.log('SSO callback response:', response);
 
       if (!response.ok) {
         throw new Error('Failed to fetch SSO profile');
@@ -193,8 +186,6 @@ const AuthManager = () => {
     }
 
     if (authParam === 'sso_success') {
-      // Prefer stateless flow if backend supplied a JWT in the URL. This avoids
-      // relying on third-party cookies between Netlify (frontend) and Vercel (backend).
       if (tokenParam) {
         completeLoginFromToken(tokenParam);
       } else {
