@@ -109,7 +109,7 @@ router.post(
         return res.redirect(`${frontendUrl}/?error=user_not_found`);
       }
 
-      const { userType } = result as any;
+      const { user, userType } = result as any;
 
       // Store user in session
       req.session.user = {
@@ -119,12 +119,19 @@ router.post(
         lastName: samlUser.lastName,
       };
       req.session.authMethod = 'sso';
-      // CRITICAL: Store the validated userType in session for /profile endpoint
+      // Store the validated userType in session for /profile endpoint
       req.session.userType = userType;
-      console.log('[SSO Callback] Stored userType in session:', userType);
 
-      // Redirect to frontend with success flag
-      res.redirect(`${redirectUri}?auth=sso_success`);
+      const token = sign({ id: user.id, userType }, JWT_SECRET, {
+        expiresIn: '7d',
+      });
+
+      const separator = redirectUri.includes('?') ? '&' : '?';
+      const redirectWithToken = `${redirectUri}${separator}auth=sso_success&token=${encodeURIComponent(
+        token
+      )}`;
+
+      res.redirect(redirectWithToken);
     } catch (err) {
       console.error('SSO callback error:', err);
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
