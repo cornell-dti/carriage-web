@@ -10,7 +10,7 @@ interface SamlProfile extends Profile {
   email?: string;
 }
 
-// Load IdP certificate, necessary to authenticate with Cornell's SSO/SAML system
+// Load IdP certificate, necessary to authenticate with Cornell's SSO/SAML system. Get from Cornell IT or ask a previous developer.
 const idpCertPath =
   process.env.SAML_IDP_CERT_PATH || './config/cornell-idp-test.crt';
 let idpCert = '';
