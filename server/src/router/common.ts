@@ -6,6 +6,44 @@ import { Rider } from '../models/rider';
 import { Location } from '../models/location';
 import { Driver } from '../models/driver';
 
+const MAX_BATCH_GET_ITEMS = 100;
+
+// Internal helper: perform Dynamoose batchGet in chunks of MAX_BATCH_GET_ITEMS
+async function batchGetAllItems<T extends Item>(
+  model: ModelType<T>,
+  keys: ObjectType[]
+): Promise<T[]> {
+  if (!keys.length) return [];
+
+  const chunks: ObjectType[][] = [];
+  for (let i = 0; i < keys.length; i += MAX_BATCH_GET_ITEMS) {
+    chunks.push(keys.slice(i, i + MAX_BATCH_GET_ITEMS));
+  }
+
+  const chunkResults = await Promise.all(
+    chunks.map(
+      (chunk) =>
+        new Promise<T[]>((resolve, reject) => {
+          model.batchGet(chunk, (err: any, data: any) => {
+            if (err) {
+              reject(err);
+            } else if (!data) {
+              resolve([]);
+            } else if (Array.isArray(data)) {
+              resolve(data as T[]);
+            } else if (typeof (data as any)[Symbol.iterator] === 'function') {
+              resolve(Array.from(data as Iterable<T>));
+            } else {
+              resolve([]);
+            }
+          });
+        })
+    )
+  );
+
+  return chunkResults.flat();
+}
+
 // Helper: batch fetch locations, riders, drivers and return maps keyed by id
 async function buildEntityMapsFromSets(
   locationIds: Set<string>,
@@ -14,13 +52,22 @@ async function buildEntityMapsFromSets(
 ) {
   const [locationsArr, ridersArr, driversArr] = await Promise.all([
     locationIds.size
-      ? Location.batchGet(Array.from(locationIds).map((id) => ({ id })))
+      ? batchGetAllItems(
+          Location,
+          Array.from(locationIds).map((id) => ({ id }))
+        )
       : Promise.resolve([]),
     riderIds.size
-      ? Rider.batchGet(Array.from(riderIds).map((id) => ({ id })))
+      ? batchGetAllItems(
+          Rider,
+          Array.from(riderIds).map((id) => ({ id }))
+        )
       : Promise.resolve([]),
     driverIds.size
-      ? Driver.batchGet(Array.from(driverIds).map((id) => ({ id })))
+      ? batchGetAllItems(
+          Driver,
+          Array.from(driverIds).map((id) => ({ id }))
+        )
       : Promise.resolve([]),
   ]);
 
@@ -208,19 +255,43 @@ export function batchGet(
 ) {
   if (!keys.length) {
     res.send({ data: [] });
-  } else {
-    model.batchGet(keys, async (err, data) => {
-      if (err) {
-        res.status(err.statusCode || 500).send({ err: err.message });
-      } else if (!data) {
-        res.status(400).send({ err: `items not found in ${table}` });
-      } else if (callback) {
-        callback((await data.populate()).toJSON());
-      } else {
-        res.status(200).send({ data: (await data.populate()).toJSON() });
-      }
-    });
+    return;
   }
+
+  (async () => {
+    try {
+      // Fetch all items in chunks to respect DynamoDB's 100-item batchGet limit
+      const items = await batchGetAllItems(model, keys);
+
+      // Populate each item individually (since we no longer rely on a single DocumentArray)
+      const populatedJson: any[] = [];
+      for (const item of items as any[]) {
+        if (item && typeof item.populate === 'function') {
+          const populated = await item.populate();
+          populatedJson.push(
+            typeof populated.toJSON === 'function'
+              ? populated.toJSON()
+              : populated
+          );
+        } else if (item && typeof item.toJSON === 'function') {
+          populatedJson.push(item.toJSON());
+        } else {
+          populatedJson.push(item);
+        }
+      }
+
+      if (callback) {
+        callback(populatedJson);
+      } else {
+        res.status(200).send({ data: populatedJson });
+      }
+    } catch (err: any) {
+      console.error('Error in batchGet:', err);
+      const status = err?.statusCode || 500;
+      const message = err?.message || `Error fetching items from ${table}`;
+      res.status(status).send({ err: message });
+    }
+  })();
 }
 
 export function getAll(
