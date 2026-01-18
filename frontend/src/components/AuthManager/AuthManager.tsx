@@ -253,6 +253,7 @@ const AuthManager = () => {
     deleteCookie('jwt');
     setAuthToken('');
     setSignedIn(false);
+    setRefreshUser(() => () => {});
     window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
   }
 
