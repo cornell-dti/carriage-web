@@ -1,0 +1,83 @@
+services:
+  carriage:
+    extends:
+      file: ./docker-compose.yml
+      service: carriage
+    volumes:
+      - './cornell-idp-test.crt:/app/server/config/cornell-idp-test.crt:ro'
+    env_file:
+      - ./.env
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.carriage.rule=Host(`carriage.thekoppe.com`)'
+      - 'traefik.http.routers.carriage.tls.certresolver=le'
+      - 'traefik.http.routers.carriage.entrypoints=websecure'
+      - 'traefik.http.services.carriage.loadbalancer.server.port=3001'
+      - 'com.centurylinklabs.watchtower.enable=true'
+    networks:
+      - reverse-proxy
+
+  traefik:
+    image: traefik:v3.6
+    command:
+      - '--api.dashboard=true'
+      - '--providers.docker=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.le.acme.httpchallenge=true'
+      - '--certificatesresolvers.le.acme.httpchallenge.entrypoint=web'
+      - '--certificatesresolvers.le.acme.email=carriage@thekoppe.com'
+      - '--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - './letsencrypt:/letsencrypt'
+    restart: always
+    networks:
+      - reverse-proxy
+
+  watchtower:
+    image: containrrr/watchtower
+    environment:
+      WATCHTOWER_POLL_INTERVAL: 30
+      WATCHTOWER_CLEANUP: true # Remove redundant images after updates
+      WATCHTOWER_LABEL_ENABLE: true # Require label for auto-updates
+      DOCKER_HOST: tcp://docker-proxy:2375
+    volumes:
+      # create a config.json with `docker login` and symlink it to this directory.
+      # for more information, see https://containrrr.dev/watchtower/private-registries/
+      - ./config.json:/config.json
+    depends_on:
+      - docker-proxy
+    networks:
+      - docker-proxy
+
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    privileged: true
+    environment:
+      POST: 1
+      CONTAINERS: 1
+      DELETE: 1
+      IMAGES: 1
+      NETWORKS: 1
+      CONTAINERS_CREATE: 1
+      CONTAINERS_START: 1
+      CONTAINERS_UPDATE: 1
+      CONTAINERS_DELETE: 1
+      IMAGES_DELETE: 1
+      ALLOW_START: 1
+      ALLOW_RESTART: 1
+      ALLOW_STOP: 1
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    restart: unless-stopped
+    networks:
+      - docker-proxy
+
+networks:
+  reverse-proxy:
+  docker-proxy:
