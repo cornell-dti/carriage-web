@@ -8,32 +8,45 @@ type WorkingHoursProps = {
   hide: boolean;
 };
 
-const WorkingHours = ({
-  existingAvailability = [],
-  hide,
-}: WorkingHoursProps) => {
+const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
   const { register, setValue } = useFormContext();
   const [selectedDays, setSelectedDays] = useState<DayOfWeek[]>(
-    (existingAvailability as DayOfWeek[]) || []
+    () => (existingAvailability as DayOfWeek[]) || []
   );
 
-  const handleDayClick = (day: DayOfWeek) => {
-    const updatedDays = selectedDays.includes(day)
-      ? selectedDays.filter((d) => d !== day)
-      : [...selectedDays, day];
+  const orderedDays: DayOfWeek[] = [
+    DayOfWeek.MONDAY,
+    DayOfWeek.TUESDAY,
+    DayOfWeek.WEDNESDAY,
+    DayOfWeek.THURSDAY,
+    DayOfWeek.FRIDAY,
+  ];
 
-    setSelectedDays(updatedDays);
-    setValue('availability', updatedDays);
+  const dayToLetter: Record<DayOfWeek, string> = {
+    [DayOfWeek.MONDAY]: 'M',
+    [DayOfWeek.TUESDAY]: 'T',
+    [DayOfWeek.WEDNESDAY]: 'W',
+    [DayOfWeek.THURSDAY]: 'T',
+    [DayOfWeek.FRIDAY]: 'F',
   };
 
-  // Register the availability field and keep it in sync
+  const handleDayClick = (day: DayOfWeek) => {
+    setSelectedDays((prevSelectedDays) => {
+      let updatedDays = prevSelectedDays.includes(day)
+        ? prevSelectedDays.filter((d) => d !== day)
+        : [...prevSelectedDays, day];
+      updatedDays = updatedDays.sort(
+        (a, b) => orderedDays.indexOf(a) - orderedDays.indexOf(b)
+      );
+      setValue('availability', updatedDays);
+      return updatedDays;
+    });
+  };
+
+  // Register the availability field once
   React.useEffect(() => {
     register('availability');
   }, [register]);
-
-  React.useEffect(() => {
-    setValue('availability', selectedDays);
-  }, [setValue, selectedDays]);
 
   // If existing availability changes (e.g., when opening modal), sync selection
   React.useEffect(() => {
@@ -48,51 +61,18 @@ const WorkingHours = ({
     <div className={styles.availabilityContainer}>
       <h3 className={styles.workingHoursTitle}>Working Days</h3>
       <div className={styles.daysContainer}>
-        <button
-          type="button"
-          className={`${styles.dayButton} ${
-            selectedDays.includes(DayOfWeek.MONDAY) ? styles.daySelected : ''
-          }`}
-          onClick={() => handleDayClick(DayOfWeek.MONDAY)}
-        >
-          M
-        </button>
-        <button
-          type="button"
-          className={`${styles.dayButton} ${
-            selectedDays.includes(DayOfWeek.TUESDAY) ? styles.daySelected : ''
-          }`}
-          onClick={() => handleDayClick(DayOfWeek.TUESDAY)}
-        >
-          T
-        </button>
-        <button
-          type="button"
-          className={`${styles.dayButton} ${
-            selectedDays.includes(DayOfWeek.WEDNESDAY) ? styles.daySelected : ''
-          }`}
-          onClick={() => handleDayClick(DayOfWeek.WEDNESDAY)}
-        >
-          W
-        </button>
-        <button
-          type="button"
-          className={`${styles.dayButton} ${
-            selectedDays.includes(DayOfWeek.THURSDAY) ? styles.daySelected : ''
-          }`}
-          onClick={() => handleDayClick(DayOfWeek.THURSDAY)}
-        >
-          T
-        </button>
-        <button
-          type="button"
-          className={`${styles.dayButton} ${
-            selectedDays.includes(DayOfWeek.FRIDAY) ? styles.daySelected : ''
-          }`}
-          onClick={() => handleDayClick(DayOfWeek.FRIDAY)}
-        >
-          F
-        </button>
+        {orderedDays.map((day: DayOfWeek) => (
+          <button
+            key={day}
+            type="button"
+            className={`${styles.dayButton} ${
+              selectedDays.includes(day) ? styles.daySelected : ''
+            }`}
+            onClick={() => handleDayClick(day)}
+          >
+            {dayToLetter[day]}
+          </button>
+        ))}
       </div>
     </div>
   );

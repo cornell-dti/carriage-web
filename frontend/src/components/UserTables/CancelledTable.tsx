@@ -5,14 +5,14 @@ import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 
-type ScheduledTableProp = {
+type CancelledTableProp = {
   query: string; // either 'rider' or 'driver'
 };
 
-const ScheduledTable = () => {
+const CancelledTable = () => {
   const { drivers } = useEmployees();
   const [rides, setRides] = useState<Ride[]>([]);
-  const { scheduledRides } = useRides();
+  const { cancelledRides } = useRides();
 
   const compRides = (a: Ride, b: Ride) => {
     const x = new Date(a.startTime);
@@ -23,8 +23,8 @@ const ScheduledTable = () => {
   };
 
   useEffect(() => {
-    setRides(scheduledRides.filter((ride) => ride && ride.id).sort(compRides));
-  }, [scheduledRides]);
+    setRides(cancelledRides.filter((ride) => ride && ride.id).sort(compRides));
+  }, [cancelledRides]);
 
   return rides.length ? (
     <>
@@ -38,17 +38,10 @@ const ScheduledTable = () => {
           </React.Fragment>
         ) : null;
       })}
-      {rides.filter((ride) => ride?.driver === undefined).map((ride) => (
-        <React.Fragment key={ride.id}>
-          <h1 className={styles.formHeader}>Unassigned</h1>
-          <RidesTable rides={[ride]} />
-        </React.Fragment>
-      ))}
     </>
-  ) : 
-  (
-    <div className={styles.noRides}>No scheduled rides</div>
+  ) : (
+    <div className={styles.noRides}>No cancelled rides</div>
   );
 };
 
-export default ScheduledTable;
+export default CancelledTable;

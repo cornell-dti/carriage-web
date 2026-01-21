@@ -41,6 +41,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Keep the title + close button visible when the modal scrolls */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-bottom: 0.75rem;
+  background-color: white;
 }
 
 .page {
