@@ -2,5 +2,7 @@ packages:
   - frontend
   - server
 
+syncInjectedDepsAfterScripts:
+  - build
 catalog:
   typescript: 5.9.3
