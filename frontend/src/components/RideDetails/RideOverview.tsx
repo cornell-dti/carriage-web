@@ -48,7 +48,7 @@ interface RideOverviewProps {
 const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
   const now = new Date().getTime();
   const startTime = new Date(ride.startTime).getTime();
-  const endTime = new Date(ride.endTime).getTime();
+  const endTime = new Date(ride.startTime).getTime() + 15; //buffer time
 
   if (endTime < now) return 'Past';
   if (startTime <= now && now < endTime) return 'Active';
@@ -275,32 +275,6 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
     updateRideField('startTime', updatedStartTime.toISOString());
   };
 
-  const handleEndDateChange = (newDate: Dayjs | null) => {
-    if (!newDate) return;
-
-    const currentEndTime = dayjs(ride.endTime);
-    const updatedEndTime = newDate
-      .hour(currentEndTime.hour())
-      .minute(currentEndTime.minute())
-      .second(0)
-      .millisecond(0);
-
-    updateRideField('endTime', updatedEndTime.toISOString());
-  };
-
-  const handleEndTimeChange = (newTime: Dayjs | null) => {
-    if (!newTime) return;
-
-    const currentEndDate = dayjs(ride.endTime);
-    const updatedEndTime = currentEndDate
-      .hour(newTime.hour())
-      .minute(newTime.minute())
-      .second(0)
-      .millisecond(0);
-
-    updateRideField('endTime', updatedEndTime.toISOString());
-  };
-
   const handleStatusChange = (event: any) => {
     updateRideField('status', event.target.value);
   };
@@ -402,20 +376,9 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       const startTimePastError = validation.errors.find(
                         (e) => e.type === 'start_time_past'
                       );
-                      const endTimeBeforeStartError = validation.errors.find(
-                        (e) =>
-                          e.type === 'end_time_before_start' ||
-                          e.type === 'same_time'
-                      );
-                      const durationError = validation.errors.find(
-                        (e) => e.type === 'too_long_duration'
-                      );
 
                       const hasStartTimeError =
                         startTimePastError !== undefined;
-                      const hasEndTimeError =
-                        endTimeBeforeStartError !== undefined ||
-                        durationError !== undefined;
 
                       return (
                         <>
@@ -466,61 +429,6 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                                   }}
                                 >
                                   {startTimePastError.message}
-                                </Typography>
-                              )}
-                            </div>
-                          </div>
-
-                          <div className={styles.dateTimeRow}>
-                            <div style={{ flex: 1 }}>
-                              <DatePicker
-                                label="End Date"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndDateChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                              <TimePicker
-                                label="End Time"
-                                value={dayjs(ride.endTime)}
-                                onChange={handleEndTimeChange}
-                                slotProps={{
-                                  textField: {
-                                    size: 'small',
-                                    fullWidth: true,
-                                    error: hasEndTimeError,
-                                    helperText: hasEndTimeError
-                                      ? ' '
-                                      : undefined,
-                                  },
-                                }}
-                              />
-                              {/* End time specific errors - directly below end time field */}
-                              {(endTimeBeforeStartError || durationError) && (
-                                <Typography
-                                  variant="caption"
-                                  color="error"
-                                  sx={{
-                                    display: 'block',
-                                    fontSize: '0.75rem',
-                                    marginTop: 0.5,
-                                    marginLeft: 1,
-                                  }}
-                                >
-                                  {
-                                    (endTimeBeforeStartError || durationError)
-                                      ?.message
-                                  }
                                 </Typography>
                               )}
                             </div>
