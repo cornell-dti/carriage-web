@@ -5,7 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from 'react';
-import { Typography, IconButton, Chip, Box, Button } from '@mui/material';
+import { Typography, IconButton, Chip, Box, Button, TextField } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import TimelapseIcon from '@mui/icons-material/Timelapse';
@@ -26,6 +26,7 @@ import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
 import SearchPopup from './SearchPopup';
+import { ENABLE_ADD_RIDE_MAPS } from '../../config/googleMaps';
 import styles from './RideLocations.module.css';
 
 interface RideLocationsProps {
@@ -39,9 +40,6 @@ interface LocationBlockProps {
   isPickup?: boolean;
   isChanging?: boolean;
   onChangeClick?: () => void;
-  onDropdownClick?: () => void;
-  onConfirm?: () => void;
-  onCancel?: () => void;
   canEdit?: boolean;
   dropdownButtonRef?: React.RefObject<HTMLButtonElement>;
 }
@@ -53,9 +51,6 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
   isPickup = false,
   isChanging = false,
   onChangeClick,
-  onDropdownClick,
-  onConfirm,
-  onCancel,
   canEdit = false,
   dropdownButtonRef,
 }) => {
@@ -128,46 +123,16 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
                 <ContentCopyIcon fontSize="small" />
               </IconButton>
             )}
-            {!isChanging && canEdit && (
+            {canEdit && (
               <Button
-                variant="outlined"
+                ref={dropdownButtonRef}
+                variant={isChanging ? 'contained' : 'outlined'}
                 size="small"
                 onClick={onChangeClick}
                 sx={{ ml: 1 }}
               >
                 Change
               </Button>
-            )}
-            {isChanging && (
-              <div className={styles.changingActions}>
-                <Button
-                  ref={dropdownButtonRef}
-                  variant="outlined"
-                  size="small"
-                  onClick={onDropdownClick}
-                  sx={{ mr: 1 }}
-                >
-                  Select
-                </Button>
-                <div className={styles.confirmActions}>
-                  <IconButton
-                    size="small"
-                    onClick={onConfirm}
-                    title="Confirm change"
-                    color="primary"
-                  >
-                    <CheckIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={onCancel}
-                    title="Cancel change"
-                    color="error"
-                  >
-                    <CancelIcon fontSize="small" />
-                  </IconButton>
-                </div>
-              </div>
             )}
           </div>
         </div>
@@ -531,50 +496,65 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
   const [changingLocation, setChangingLocation] = useState<
     'pickup' | 'dropoff' | null
   >(null);
-  const [tempLocation, setTempLocation] = useState<Location | null>(null);
+  const [customAddress, setCustomAddress] = useState<string>('');
   const [locationSelectorOpen, setLocationSelectorOpen] = useState(false);
   const pickupButtonRef = useRef<HTMLButtonElement>(null);
   const dropoffButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleStartChanging = (locationType: 'pickup' | 'dropoff') => {
+    setChangingLocation(locationType);
     const currentLocation =
       locationType === 'pickup' ? ride.startLocation : ride.endLocation;
-    setChangingLocation(locationType);
-    setTempLocation(currentLocation);
+    setCustomAddress(currentLocation.address || '');
+    setLocationSelectorOpen(true);
+  };
+
+  const handleCustomAddressChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const address = event.target.value;
+    setCustomAddress(address);
+
+    if (!changingLocation) return;
+
+    const field =
+      changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
+    const currentLocation =
+      changingLocation === 'pickup' ? ride.startLocation : ride.endLocation;
+
+    const updatedLocation: Location = {
+      ...currentLocation,
+      address,
+      name: address || currentLocation.name,
+      tag: Tag.CUSTOM,
+      lat: 0,
+      lng: 0,
+    };
+
+    updateRideField(field, updatedLocation);
   };
 
   const handleLocationSelect = (location: Location) => {
-    setTempLocation(location);
-    setLocationSelectorOpen(false);
-  };
-
-  const handleConfirmChange = () => {
-    if (changingLocation && tempLocation) {
+    if (changingLocation) {
       const field =
         changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
-      updateRideField(field, tempLocation);
+      updateRideField(field, location);
     }
-    handleCancelChange();
-  };
-
-  const handleCancelChange = () => {
-    setChangingLocation(null);
-    setTempLocation(null);
     setLocationSelectorOpen(false);
+    setChangingLocation(null);
   };
 
   const handleMapLocationSelect = (location: Location) => {
-    setTempLocation(location);
-  };
-
-  const handleDropdownClick = () => {
-    setLocationSelectorOpen(!locationSelectorOpen);
+    if (changingLocation) {
+      const field =
+        changingLocation === 'pickup' ? 'startLocation' : 'endLocation';
+      updateRideField(field, location);
+      setChangingLocation(null);
+      setLocationSelectorOpen(false);
+    }
   };
 
   const getDisplayLocation = (locationType: 'pickup' | 'dropoff') => {
-    if (changingLocation === locationType && tempLocation) {
-      return tempLocation;
-    }
     return locationType === 'pickup' ? ride.startLocation : ride.endLocation;
   };
 
@@ -584,7 +564,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.locationsGrid}>
+      <div className={ENABLE_ADD_RIDE_MAPS ? styles.locationsGrid : styles.locationsGridNoMap}>
         {/* Left side - Address blocks */}
         <div className={styles.locationsContainer}>
           <LocationBlock
@@ -594,9 +574,6 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
             isPickup={true}
             isChanging={changingLocation === 'pickup'}
             onChangeClick={() => handleStartChanging('pickup')}
-            onDropdownClick={handleDropdownClick}
-            onConfirm={handleConfirmChange}
-            onCancel={handleCancelChange}
             canEdit={isEditing && canEdit}
             dropdownButtonRef={pickupButtonRef}
           />
@@ -607,41 +584,61 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
             isPickup={false}
             isChanging={changingLocation === 'dropoff'}
             onChangeClick={() => handleStartChanging('dropoff')}
-            onDropdownClick={handleDropdownClick}
-            onConfirm={handleConfirmChange}
-            onCancel={handleCancelChange}
             canEdit={isEditing && canEdit}
             dropdownButtonRef={dropoffButtonRef}
           />
+
+          {/* Custom location text input (similar in spirit to RequestRide modal) */}
+          {changingLocation && isEditing && canEdit && (
+            <Box sx={{ mt: 2 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, fontWeight: 500 }}
+              >
+                Or enter a custom location
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                label={
+                  changingLocation === 'pickup'
+                    ? 'Custom pickup address'
+                    : 'Custom dropoff address'
+                }
+                value={customAddress}
+                onChange={handleCustomAddressChange}
+                placeholder="Start typing an address (e.g., 123 Main St, Ithaca, NY)"
+              />
+            </Box>
+          )}
         </div>
 
         {/* Right side - Map */}
+        {ENABLE_ADD_RIDE_MAPS && (
         <div className={styles.mapAndInfoContainer}>
-          <RideMapWithProvider
-            startLocation={getDisplayLocation('pickup')}
-            endLocation={getDisplayLocation('dropoff')}
-            isSelecting={changingLocation !== null}
-            availableLocations={
-              changingLocation
-                ? locations.filter((location) => {
-                    // Don't show temp selected location
-                    if (location.id === tempLocation?.id) return false;
-
-                    // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
-                    if (changingLocation === 'pickup') {
-                      // When changing pickup, don't show current dropoff location
-                      return location.id !== ride.endLocation.id;
-                    } else {
-                      // When changing dropoff, don't show current pickup location
-                      return location.id !== ride.startLocation.id;
-                    }
-                  })
-                : []
-            }
-            onLocationSelect={handleMapLocationSelect}
-            changingLocationType={changingLocation}
-          />
+            <RideMapWithProvider
+              startLocation={getDisplayLocation('pickup')}
+              endLocation={getDisplayLocation('dropoff')}
+              isSelecting={changingLocation !== null}
+              availableLocations={
+                changingLocation
+                  ? locations.filter((location) => {
+                      // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
+                      if (changingLocation === 'pickup') {
+                        // When changing pickup, don't show current dropoff location
+                        return location.id !== ride.endLocation.id;
+                      } else {
+                        // When changing dropoff, don't show current pickup location
+                        return location.id !== ride.startLocation.id;
+                      }
+                    })
+                  : []
+              }
+              onLocationSelect={handleMapLocationSelect}
+              changingLocationType={changingLocation}
+            />
         </div>
+        )}
       </div>
 
       {/* Location Selection Popup */}
@@ -653,9 +650,6 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
           items={(() => {
             // Filter out the temporarily selected location and the other location type
             return locations.filter((location) => {
-              // Don't show temp selected location
-              if (location.id === tempLocation?.id) return false;
-
               // Don't allow selecting the other location (pickup/dropoff) to prevent duplicates
               if (changingLocation === 'pickup') {
                 // When changing pickup, don't show current dropoff location
@@ -673,7 +667,13 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
             changingLocation === 'pickup' ? 'Pickup' : 'Dropoff'
           } Location`}
           placeholder="Search locations..."
-          selectedItems={tempLocation ? [tempLocation] : []}
+          selectedItems={
+            changingLocation === 'pickup'
+              ? [ride.startLocation]
+              : changingLocation === 'dropoff'
+              ? [ride.endLocation]
+              : []
+          }
           anchorEl={getCurrentButtonRef().current}
         />
       )}

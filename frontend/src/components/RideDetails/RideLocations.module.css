@@ -2,6 +2,14 @@
   max-width: 1000px;
 }
 
+.locationsGridNoMap {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  align-items: start;
+}
+
 .locationsGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
