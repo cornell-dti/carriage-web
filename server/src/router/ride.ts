@@ -307,6 +307,8 @@ router.post('/', validateUser('User'), (req, res) => {
     recurring,
   } = body;
 
+  // TODO: Start with ride creation. The rest of this file will need to be reworked, but READ queries should go second.
+
   // Process locations - convert to reference IDs for storage
   const startLocationObj = startLocation as LocationType;
   const endLocationObj = endLocation as LocationType;
@@ -406,6 +408,8 @@ router.put('/:id', validateUser('User'), (req, res) => {
     body,
   } = req;
   const { type, startLocation, endLocation } = body;
+
+  // TODO: UPDATE queries should be last priority after CREATE and READ.
 
   if (
     type &&
