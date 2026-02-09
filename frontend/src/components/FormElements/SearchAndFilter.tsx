@@ -29,6 +29,11 @@ export default function SearchAndFilter<T extends Record<string, any>>({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
+  /**
+   * Handles changes to the search input.
+   * Applies search and currently active filters in real time.
+   */
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
@@ -75,6 +80,10 @@ export default function SearchAndFilter<T extends Record<string, any>>({
     onFilterApply(searchFilteredItems);
   };
 
+  /**
+   * Toggles a filter value on or off for a given field.
+   * Updates pending filters only.
+   */
   const toggleFilter = (field: string, value: string) => {
     setPendingFilters((prevFilters) => {
       const updatedFilters = { ...prevFilters };
@@ -94,10 +103,17 @@ export default function SearchAndFilter<T extends Record<string, any>>({
     });
   };
 
+  /**
+   * Returns the total number of active filter values.
+   */
   const getActiveFilterCount = () => {
     return Object.values(filters).reduce((acc, curr) => acc + curr.length, 0);
   };
 
+  /**
+   * Clears all applied and pending filters.
+   * Keeps the current search term active.
+   */
   const clearFilters = () => {
     setPendingFilters({});
     setFilters({});
@@ -115,6 +131,9 @@ export default function SearchAndFilter<T extends Record<string, any>>({
     onFilterApply(searchFilteredItems);
   };
 
+  /**
+   * Applies pending filters and updates the result set.
+   */
   const applyFilters = () => {
     setFilters(pendingFilters);
 
@@ -159,6 +178,10 @@ export default function SearchAndFilter<T extends Record<string, any>>({
     setIsFilterOpen(false);
   };
 
+  /**
+   * Resets search input and all filters.
+   * Restores the full item list.
+   */
   const clearAll = () => {
     setSearchTerm('');
     setFilters({});
