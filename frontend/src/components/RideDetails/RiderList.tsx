@@ -51,7 +51,7 @@ const RiderCard: React.FC<RiderCardProps> = ({
 
         <Box className={styles.compactInfo}>
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
-            {rider.firstName} {rider.lastName}
+            {rider.firstName} {rider.lastName.charAt(0)}
           </Typography>
           <Typography
             variant="body2"
