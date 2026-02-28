@@ -1,12 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
 import Modal from '../Modal/Modal';
-import { Button } from '../FormElements/FormElements';
 import { ObjectType, Ride } from '../../types/index';
 import styles from './requestridemodal.module.css';
-import RequestRideInfo from './RequestRideInfo';
+import RequestRideWizard from './RequestRideWizard';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
 import axios from '../../util/axios';
@@ -22,8 +21,8 @@ type CreateOrEditRideModalProps = {
 const CreateOrEditRideModal = ({
   isOpen,
   modalType,
-  onSubmit = () => {},
-  onClose = () => {},
+  onSubmit = () => { },
+  onClose = () => { },
   ride,
 }: CreateOrEditRideModalProps) => {
   const defaultStartDate = () => {
@@ -39,12 +38,13 @@ const CreateOrEditRideModal = ({
         return format_date(ride.startTime);
       }
     }
-    return format_date();
+    // For new rides, start with empty date so button is disabled
+    return '';
   };
 
   const defaultValues = {
     startDate: defaultStartDate(),
-    whenRepeat: ride?.isRecurring ? 'custom' : undefined,
+    whenRepeat: ride?.isRecurring ? 'custom' : 'no-repeat',
     pickupTime: ride ? moment(ride.startTime).format('HH:mm') : '',
     dropoffTime: ride ? moment(ride.endTime).format('HH:mm') : '',
     recurring: ride?.isRecurring ?? false,
@@ -52,10 +52,19 @@ const CreateOrEditRideModal = ({
 
   const methods = useForm({ defaultValues });
   const { id } = useContext(AuthContext);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const closeModal = () => {
     methods.clearErrors();
     onClose();
+  };
+
+  const handleFormSubmit = async () => {
+    // Trigger form submission
+    const isValid = await methods.trigger();
+    if (isValid) {
+      methods.handleSubmit(handleSubmit)();
+    }
   };
 
   // Removes null fields from object
@@ -95,14 +104,16 @@ const CreateOrEditRideModal = ({
         ? endLocation
         : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
     let rideData: ObjectType;
-    if (recurring || whenRepeat) {
+    // Check if it's a recurring ride (not "no-repeat")
+    const isRecurringRide = recurring || (whenRepeat && whenRepeat !== 'no-repeat');
+    if (isRecurringRide) {
       // For now, block recurring rides as they're not fully implemented
       alert(
         'Recurring rides are not yet supported. Please create a single ride instead.'
       );
       return;
     } else {
-      // Single ride (non-recurring)
+      // Single ride (non-recurring) - "No repeat" or no repeat selection
       rideData = {
         startLocation: startLoc,
         endLocation: endLoc,
@@ -147,22 +158,23 @@ const CreateOrEditRideModal = ({
 
   return (
     <Modal
-      title={!ride ? 'Request a Ride' : 'Edit Ride'}
+      title=""
       isOpen={isOpen}
       onClose={closeModal}
+      displayClose={true}
+      className={styles.requestRideModal}
     >
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(handleSubmit)}>
+        <form ref={formRef} onSubmit={methods.handleSubmit(handleSubmit)} id="ride-form">
           <div className={styles.inputContainer}>
-            <RequestRideInfo
+            <RequestRideWizard
               ride={ride}
               showRepeatingCheckbox={!ride}
               showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
               modalType={modalType}
+              onClose={closeModal}
+              onSubmit={handleFormSubmit}
             />
-            <Button className={styles.submit} type="submit">
-              {!ride ? 'Request a Ride' : 'Edit Ride'}
-            </Button>
           </div>
         </form>
       </FormProvider>

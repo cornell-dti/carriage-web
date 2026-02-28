@@ -9,8 +9,7 @@ import { Button } from '@mui/material';
 import { Ride } from '../../types';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
-import { FormData } from 'components/RiderComponents/RequestRideDialog';
-import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
+import RequestRideModal from 'components/RequestRideModal/RequestRideModal';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
@@ -71,7 +70,6 @@ const Schedule: React.FC = () => {
   const { user, id } = useContext(AuthContext);
   const { locations } = useLocations();
   const { refreshRides, refreshRidesByUser } = useRides();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
@@ -144,60 +142,10 @@ const Schedule: React.FC = () => {
     document.title = 'Schedule - Carriage';
   }, [id]);
 
-  const handleDialogOpen = () => {
-    setIsDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-  };
-
-  const handleRideSubmit = async (formData: FormData) => {
-    if (!formData.pickupLocation || !formData.dropoffLocation) return;
-
-    // For now, block any recurring rides
-    if (formData.repeatType !== 'none') {
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride.'
-      );
-      return;
-    }
-
-    try {
-      // Build ISO datetimes
-      if (!formData.date || !formData.time) {
-        alert('Please select both date and time.');
-        return;
-      }
-
-      const dateStr = formData.date.toISOString().split('T')[0];
-      const timeStr = formData.time.toTimeString().split(' ')[0];
-      const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
-
-      const endISO = new Date(
-        new Date(startISO).getTime() + 30 * 60 * 1000
-      ).toISOString();
-
-      await axios.post('/api/rides', {
-        // Send location IDs (matching Admin flow)
-        startLocation: formData.pickupLocation.id,
-        endLocation: formData.dropoffLocation.id,
-        startTime: startISO,
-        endTime: endISO,
-        rider: id,
-        type: 'upcoming',
-        status: 'not_started',
-        schedulingState: 'unscheduled',
-      });
-
-      // Refresh rides after successful creation
-      await refreshRides();
-      console.log('Ride created successfully');
-      fetchRiderRides();
-    } catch (error) {
-      console.error('Failed to create ride:', error);
-      alert('Failed to create ride. Please try again.');
-    }
+  const handleRideSubmit = async () => {
+    // Refresh rides after successful creation
+    await refreshRides();
+    fetchRiderRides();
   };
 
   // Use the fetched rider rides instead of filtering from context
@@ -223,19 +171,7 @@ const Schedule: React.FC = () => {
             <h1 className={styles.header}>{user.firstName}'s Schedule</h1>
           )}
           <div className={styles.rightSection}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDialogOpen}
-              sx={{
-                backgroundColor: 'black',
-                '&:hover': {
-                  backgroundColor: 'black',
-                },
-              }}
-            >
-              Request Ride
-            </Button>
+            <RequestRideModal onSubmit={handleRideSubmit} />
           </div>
         </div>
 
@@ -395,25 +331,6 @@ const Schedule: React.FC = () => {
           )}
         </div>
 
-        <RequestRideDialog
-          open={isDialogOpen}
-          onClose={handleDialogClose}
-          onSubmit={handleRideSubmit}
-          supportedLocations={locations
-            .map((l) => ({
-              id: String(l.id),
-              name: l.name,
-              address: l.address,
-              shortName: l.shortName,
-              info: l.info ?? '',
-              tag: (l.tag as any) ?? '',
-              lat: Number(l.lat),
-              lng: Number(l.lng),
-              photoLink: l.photoLink,
-              images: l.images,
-            }))
-            .filter((l) => Number.isFinite(l.lat) && Number.isFinite(l.lng))}
-        />
         {editingRide && (
           <RideDetailsComponent
             ride={editingRide}

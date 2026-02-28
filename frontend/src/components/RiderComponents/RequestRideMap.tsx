@@ -6,7 +6,7 @@ import {
   Pin,
   InfoWindow,
   useMap,
-  MapMouseEvent,
+  type MapMouseEvent,
 } from '@vis.gl/react-google-maps';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
@@ -25,6 +25,10 @@ interface RequestRideMapProps {
     address: string;
   }>;
   availableLocations?: Location[];
+  /** When true, clicking the map sets the pickup location (e.g. when there are no DB locations). */
+  enablePickupMapClick?: boolean;
+  /** When true, clicking the map sets the dropoff location. */
+  enableDropoffMapClick?: boolean;
   onPickupSelect: (location: Location | null) => void;
   onDropoffSelect: (location: Location | null) => void;
 }
@@ -34,6 +38,8 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   dropoffLocation,
   dropoffOptions,
   availableLocations = [],
+  enablePickupMapClick = false,
+  enableDropoffMapClick = false,
   onPickupSelect,
   onDropoffSelect,
 }) => {
@@ -151,9 +157,61 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     }
   };
 
-  // Remove custom map click handling since we only use predefined locations now
+  const handleMapClick = useCallback(
+    (event: MapMouseEvent) => {
+      const e = event as unknown as google.maps.MapMouseEvent;
+      if (!e.latLng) return;
+      const lat = typeof e.latLng.lat === 'function' ? e.latLng.lat() : (e.latLng as any).lat;
+      const lng = typeof e.latLng.lng === 'function' ? e.latLng.lng() : (e.latLng as any).lng;
+      if (typeof lat !== 'number' || typeof lng !== 'number' || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
 
-  // Remove these functions since confirmation is now handled in the parent component
+      const locationFromClick: Location = {
+        id: 'custom',
+        name: 'Selected location',
+        address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
+        shortName: 'Selected',
+        tag: 'custom' as any,
+        info: '',
+        lat,
+        lng,
+      };
+
+      const applyGeocoded = (loc: Location, results: google.maps.GeocoderResult[] | null) => {
+        if (results?.[0]?.formatted_address) {
+          return {
+            ...loc,
+            address: results[0].formatted_address,
+            name: results[0].formatted_address,
+            shortName: results[0].address_components?.[0]?.short_name ?? 'Selected',
+          };
+        }
+        return loc;
+      };
+
+      if (enablePickupMapClick) {
+        if (window.google?.maps?.Geocoder) {
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            const loc = status === 'OK' ? applyGeocoded(locationFromClick, results) : locationFromClick;
+            onPickupSelect(loc);
+          });
+        } else {
+          onPickupSelect(locationFromClick);
+        }
+      } else if (enableDropoffMapClick) {
+        if (window.google?.maps?.Geocoder) {
+          const geocoder = new window.google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            const loc = status === 'OK' ? applyGeocoded(locationFromClick, results) : locationFromClick;
+            onDropoffSelect(loc);
+          });
+        } else {
+          onDropoffSelect(locationFromClick);
+        }
+      }
+    },
+    [enablePickupMapClick, enableDropoffMapClick, onPickupSelect, onDropoffSelect]
+  );
 
   return (
     <>
@@ -164,6 +222,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         gestureHandling={'greedy'}
         disableDefaultUI={false}
         className={styles.mapContainer}
+        onClick={handleMapClick}
       >
         {/* Pickup Location Marker */}
         {pickupLocation && (

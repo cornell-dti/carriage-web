@@ -225,9 +225,16 @@
 
 @media screen and (max-height: 600px), screen and (max-width: 768px) {
   .modal {
-    max-width: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 395px;
+    height: 100%;
     max-height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
+    border-radius: 0;
+    padding: 0;
   }
 
   .page {
