@@ -66,16 +66,18 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
     }
   }, [watchDropoffTime]);
 
-  // Update form value when time fields change
+  // Update form value only when minute is complete and valid (2 digits, 00–59)
+  const timeMinuteNum = timeMinute.length === 2 ? parseInt(timeMinute, 10) : null;
+  const timeMinuteInvalid = timeMinuteNum !== null && (Number.isNaN(timeMinuteNum) || timeMinuteNum > 59);
   useEffect(() => {
-    if (timeHour && timeMinute) {
+    if (timeHour && timeMinute.length === 2 && !timeMinuteInvalid) {
       const hour24 = timePeriod === 'AM'
         ? (timeHour === '12' ? 0 : parseInt(timeHour, 10))
         : (timeHour === '12' ? 12 : parseInt(timeHour, 10) + 12);
       const timeString = `${hour24.toString().padStart(2, '0')}:${timeMinute.padStart(2, '0')}`;
       setValue('dropoffTime', timeString);
     }
-  }, [timeHour, timeMinute, timePeriod, setValue]);
+  }, [timeHour, timeMinute, timePeriod, setValue, timeMinuteInvalid]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -329,7 +331,8 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
           </div>
 
           {/* Time input - Figma-style */}
-          <div className={styles.timeInputContainer}>
+          <div className={styles.timeInputWrapper}>
+            <div className={`${styles.timeInputContainer} ${timeMinuteInvalid ? styles.timeInputContainerError : ''}`}>
             <input
               type="text"
               className={styles.timeInputHour}
@@ -351,15 +354,15 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
               placeholder="00"
               value={timeMinute}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '');
-                if (value === '' || (parseInt(value, 10) >= 0 && parseInt(value, 10) <= 59)) {
-                  setTimeMinute(value.slice(0, 2));
-                }
+                const value = e.target.value.replace(/\D/g, '').slice(0, 2);
+                setTimeMinute(value);
               }}
               onBlur={() => {
-                if (timeMinute && timeMinute.length === 1) {
+                if (timeMinute === '') return;
+                if (timeMinute.length === 1) {
                   setTimeMinute(timeMinute.padStart(2, '0'));
                 }
+                /* When minutes > 59 we leave the value so the user can correct it; error is shown below */
               }}
               maxLength={2}
               aria-label="Minute"
@@ -386,6 +389,12 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
                 <polyline points="12 6 12 12 16 14" />
               </svg>
             </span>
+            </div>
+            {timeMinuteInvalid && (
+              <p className={styles.timeInputError} role="alert">
+                Please enter minutes between 00 and 59. You can correct it above.
+              </p>
+            )}
           </div>
         </div>
       </div>

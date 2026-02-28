@@ -109,8 +109,13 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
   }, [editingSection, dropoffTime]);
 
   // Write pickup time back to form
+  const pickupMinuteNum = pickupTimeMinute.length === 2 ? parseInt(pickupTimeMinute, 10) : null;
+  const pickupMinuteInvalid = pickupMinuteNum !== null && (Number.isNaN(pickupMinuteNum) || pickupMinuteNum > 59);
+  const dropoffMinuteNum = dropoffTimeMinute.length === 2 ? parseInt(dropoffTimeMinute, 10) : null;
+  const dropoffMinuteInvalid = dropoffMinuteNum !== null && (Number.isNaN(dropoffMinuteNum) || dropoffMinuteNum > 59);
+
   useEffect(() => {
-    if (editingSection === 'pickup' && pickupTimeHour && pickupTimeMinute) {
+    if (editingSection === 'pickup' && pickupTimeHour && pickupTimeMinute.length === 2 && !pickupMinuteInvalid) {
       const hour24 =
         pickupTimePeriod === 'AM'
           ? pickupTimeHour === '12'
@@ -126,7 +131,7 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
 
   // Write dropoff time back to form
   useEffect(() => {
-    if (editingSection === 'dropoff' && dropoffTimeHour && dropoffTimeMinute) {
+    if (editingSection === 'dropoff' && dropoffTimeHour && dropoffTimeMinute.length === 2 && !dropoffMinuteInvalid) {
       const hour24 =
         dropoffTimePeriod === 'AM'
           ? dropoffTimeHour === '12'
@@ -380,7 +385,8 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                 )}
               </div>
               <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Pickup Time</h3>
-              <div className={styles.timeInputContainer}>
+              <div className={styles.timeInputWrapper}>
+                <div className={`${styles.timeInputContainer} ${pickupMinuteInvalid ? styles.timeInputContainerError : ''}`}>
                 <input
                   type="text"
                   className={styles.timeInputHour}
@@ -399,11 +405,12 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                   placeholder="00"
                   value={pickupTimeMinute}
                   onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '');
-                    if (v === '' || (parseInt(v, 10) >= 0 && parseInt(v, 10) <= 59)) setPickupTimeMinute(v.slice(0, 2));
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setPickupTimeMinute(v);
                   }}
                   onBlur={() => {
-                    if (pickupTimeMinute && pickupTimeMinute.length === 1) setPickupTimeMinute(pickupTimeMinute.padStart(2, '0'));
+                    if (pickupTimeMinute === '') return;
+                    if (pickupTimeMinute.length === 1) setPickupTimeMinute(pickupTimeMinute.padStart(2, '0'));
                   }}
                   maxLength={2}
                 />
@@ -423,6 +430,12 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                     PM
                   </button>
                 </div>
+              </div>
+              {pickupMinuteInvalid && (
+                <p className={styles.timeInputError} role="alert">
+                  Please enter minutes between 00 and 59. You can correct it above.
+                </p>
+              )}
               </div>
               <button
                 type="button"
@@ -501,7 +514,8 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                 )}
               </div>
               <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Dropoff Time</h3>
-              <div className={styles.timeInputContainer}>
+              <div className={styles.timeInputWrapper}>
+                <div className={`${styles.timeInputContainer} ${dropoffMinuteInvalid ? styles.timeInputContainerError : ''}`}>
                 <input
                   type="text"
                   className={styles.timeInputHour}
@@ -520,11 +534,12 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                   placeholder="00"
                   value={dropoffTimeMinute}
                   onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '');
-                    if (v === '' || (parseInt(v, 10) >= 0 && parseInt(v, 10) <= 59)) setDropoffTimeMinute(v.slice(0, 2));
+                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                    setDropoffTimeMinute(v);
                   }}
                   onBlur={() => {
-                    if (dropoffTimeMinute && dropoffTimeMinute.length === 1) setDropoffTimeMinute(dropoffTimeMinute.padStart(2, '0'));
+                    if (dropoffTimeMinute === '') return;
+                    if (dropoffTimeMinute.length === 1) setDropoffTimeMinute(dropoffTimeMinute.padStart(2, '0'));
                   }}
                   maxLength={2}
                 />
@@ -544,6 +559,12 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                     PM
                   </button>
                 </div>
+              </div>
+              {dropoffMinuteInvalid && (
+                <p className={styles.timeInputError} role="alert">
+                  Please enter minutes between 00 and 59. You can correct it above.
+                </p>
+              )}
               </div>
               <button
                 type="button"
