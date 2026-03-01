@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import { RideType, SchedulingState } from '../../types';
+import { RideType, SchedulingState, Location, Tag } from '../../types';
 import axios from '../../util/axios';
 import { canEditRide, UserRole } from '../../util/rideValidation';
 import {
@@ -128,9 +128,19 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
     // For new rides, check if required fields are filled
     if (isNewRide(editedRide)) {
-      const hasRequiredFields =
-        editedRide.startLocation.id !== '' && editedRide.endLocation.id !== '';
-      return hasRequiredFields;
+      // Require that both pickup and dropoff have a concrete address.
+      // This supports both saved locations (with IDs) and truly custom
+      // free‑text locations created in RideLocations.
+      const hasPickupLocation =
+        !!editedRide.startLocation &&
+        !!editedRide.startLocation.address &&
+        editedRide.startLocation.address.trim().length > 0;
+      const hasDropoffLocation =
+        !!editedRide.endLocation &&
+        !!editedRide.endLocation.address &&
+        editedRide.endLocation.address.trim().length > 0;
+
+      return hasPickupLocation && hasDropoffLocation;
     }
 
     if (!originalRide) {
@@ -167,26 +177,88 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
     // For new rides, we need different validation and payload
     if (isNewRide(editedRide)) {
-      // Validate required fields for new ride
-      if (
-        !editedRide.startLocation.id ||
-        !editedRide.endLocation.id ||
-        !editedRide.startTime ||
-        !editedRide.endTime
-      ) {
-        console.error('Missing required fields for new ride');
+      // Validate required fields for new ride.
+      // Allow custom locations that only have an address (no ID).
+      const hasPickupLocation =
+        !!editedRide.startLocation &&
+        !!editedRide.startLocation.address &&
+        editedRide.startLocation.address.trim().length > 0;
+      const hasDropoffLocation =
+        !!editedRide.endLocation &&
+        !!editedRide.endLocation.address &&
+        editedRide.endLocation.address.trim().length > 0;
+
+      if (!hasPickupLocation || !hasDropoffLocation) {
+        console.error('Missing required pickup or dropoff location for new ride');
+        return false;
+      }
+
+      if (!editedRide.startTime || !editedRide.endTime) {
+        console.error('Missing required time fields for new ride');
         return false;
       }
 
       try {
-        // Prepare payload for new ride creation
+        // Helper to ensure a location is backed by a real Location row,
+        // similar to RequestRideDialog's createCustomLocation flow.
+        const ensurePersistedLocation = async (
+          loc: Location
+        ): Promise<Location> => {
+          // If this location already has an ID, assume it's a real Location.
+          if (loc.id && loc.id.trim().length > 0) {
+            return loc;
+          }
+
+          // Create a new custom Location in the backend, mirroring
+          // RequestRideDialog's /api/locations/custom behavior.
+          const name =
+            (loc.name || loc.address || 'Custom Location').trim();
+
+          const payload: Partial<Location> = {
+            name,
+            shortName: loc.shortName || '',
+            // For custom locations, we follow the existing pattern and
+            // don't require a resolvable address/coordinates.
+            address: '',
+            info: loc.info || '',
+            tag: Tag.CUSTOM,
+            lat: 0,
+            lng: 0,
+          };
+
+          const response = await axios.post('/api/locations/custom', payload);
+          const created: Location = response.data.data || response.data;
+          return created;
+        };
+
+      let startLocationToUse = editedRide.startLocation as Location;
+      let endLocationToUse = editedRide.endLocation as Location;
+
+      // If either location looks like a "new" custom one (no ID),
+      // create a persisted custom Location first.
+      if (
+        startLocationToUse &&
+        (!startLocationToUse.id || startLocationToUse.id.trim().length === 0)
+      ) {
+        startLocationToUse = await ensurePersistedLocation(startLocationToUse);
+      }
+
+      if (
+        endLocationToUse &&
+        (!endLocationToUse.id || endLocationToUse.id.trim().length === 0)
+      ) {
+        endLocationToUse = await ensurePersistedLocation(endLocationToUse);
+      }
+
+        // Prepare payload for new ride creation. Send location IDs like
+        // the rider Schedule flow does; the backend will populate them.
         const createPayload = {
           type: editedRide.type,
           schedulingState: editedRide.schedulingState,
           startTime: editedRide.startTime,
           endTime: editedRide.endTime,
-          startLocation: editedRide.startLocation,
-          endLocation: editedRide.endLocation,
+          startLocation: startLocationToUse.id,
+          endLocation: endLocationToUse.id,
           riders: editedRide.riders || [],
           driver: editedRide.driver || null,
           isRecurring: false,
