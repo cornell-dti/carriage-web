@@ -1,8 +1,8 @@
 .cardsContainer {
   display: flex;
   flex-wrap: wrap;
-  height: 38rem;
-  margin-top: 1rem;
+  padding: 1rem 2rem;
+  gap: 2rem;
 }
 
 .timeText {
@@ -11,7 +11,6 @@
 }
 
 .link {
-  margin: 0 1.56rem 1.56rem;
   text-decoration: none;
   color: inherit;
   display: inline-block;

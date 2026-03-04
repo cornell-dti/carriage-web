@@ -21,9 +21,7 @@ const Settings = () => {
     <main id="main">
       <div className={pageStyles.pageTitle}>
         <h1 className={pageStyles.header}>Settings</h1>
-        <div className={pageStyles.rightSection}>
-          <Notification />
-        </div>
+        <div className={pageStyles.rightSection}></div>
       </div>
       <UserDetail
         firstName={user?.firstName || ''}

@@ -1,9 +1,16 @@
 .table {
   background-color: #f6f6f6;
-  padding: 2rem;
   border: none;
   width: 100%;
   border-spacing: 0 0.938rem;
+}
+
+.noRides {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .tableContainer {
@@ -35,7 +42,9 @@
   margin-top: 1.875rem;
   margin-bottom: 0.313rem;
   margin-left: 2rem;
-  font-size: 1.125rem;
+  font-size: 1.5rem;
+  color: #999;
+  font-weight: normal;
   text-align: left;
 }
 

@@ -1,8 +1,16 @@
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
 .pageContainer {
   margin: 0 2rem;
 }
 
 .header {
+  width: 100%;
   text-align: left;
   font-size: 1.75rem;
   margin: 0;
@@ -11,7 +19,7 @@
 .scheduleContainer {
   width: 100%;
   height: min-content;
-  padding: 0 2rem 2rem 2rem;
+  padding: 0 2rem 0rem 2rem;
 }
 
 .pageTitle {
@@ -21,12 +29,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2.25rem 2.5rem;
+  padding: 2rem;
 }
 
 .rightSection {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: end;
+  gap: 0.5rem;
 }
 
 .rightSection > div {

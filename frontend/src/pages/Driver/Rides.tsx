@@ -258,7 +258,9 @@ const RideDetailCard = ({
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body1" fontWeight="bold">
                 {primaryRider
-                  ? `${primaryRider.firstName} ${primaryRider.lastName}`
+                  ? `${primaryRider.firstName} ${primaryRider.lastName.charAt(
+                      0
+                    )}`
                   : 'No rider assigned'}
                 {ride.riders &&
                   ride.riders.length > 1 &&
@@ -451,7 +453,8 @@ const Rides = () => {
       .filter(
         (ride) =>
           ride.driver?.id === authContext.id &&
-          new Date(ride.startTime) > new Date()
+          new Date(ride.startTime) > new Date() &&
+          ride.status !== Status.CANCELLED
       )
       .sort(
         (a, b) =>
@@ -483,6 +486,15 @@ const Rides = () => {
       setUpdating(true);
       // Use optimistic update from context
       await updateRideStatus(rideId, status);
+
+      // Keep date-based admin views in sync
+      await refreshRides();
+
+      // Refresh this driver's rides so cards and table update automatically
+      if (authContext.id) {
+        const rides = await refreshRidesByUser(authContext.id, 'driver');
+        setAllDriverRides(rides);
+      }
     } catch (error: any) {
       console.error('Failed to update ride status:', error);
       const errorMessage =

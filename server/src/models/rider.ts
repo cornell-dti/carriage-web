@@ -54,9 +54,11 @@ const schema = new dynamoose.Schema({
   },
   address: {
     type: String,
-    required: true,
-    set: (address) => formatAddress(address as string),
-    validate: (address) => isAddress(address as string),
+    required: false,
+    set: (address) =>
+      address ? formatAddress(address as string) : (address as string),
+    validate: (address) =>
+      typeof address === 'undefined' || isAddress(address as string),
   },
   favoriteLocations: {
     type: Array,

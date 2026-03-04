@@ -18,18 +18,20 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
   };
   return (
     <div className={styles.collapsible}>
-      <div className={styles.banner} onClick={() => setExpanded(!expanded)}>
-        <h2 className={styles.title}>{title}</h2>
-        <img
-          className={styles.icon}
-          src={icon}
-          role={'button'}
-          alt={'see more'}
-          tabIndex={0}
-          onKeyPress={handleKeywordKeyPress}
-        />
+      <div className={styles.collapsibleContent}>
+        <div className={styles.banner} onClick={() => setExpanded(!expanded)}>
+          <h2 className={styles.title}>{title}</h2>
+          <img
+            className={styles.icon}
+            src={icon}
+            role={'button'}
+            alt={'see more'}
+            tabIndex={0}
+            onKeyDown={handleKeywordKeyPress}
+          />
+        </div>
+        {expanded && <div className={styles.contentContainer}>{children}</div>}
       </div>
-      {expanded && <div className={styles.contentContainer}>{children}</div>}
     </div>
   );
 };

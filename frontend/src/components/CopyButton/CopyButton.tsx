@@ -1,6 +1,5 @@
-import { Button } from '../FormElements/FormElements';
 import { useRiders } from '../../context/RidersContext';
-import styles from './copyButton.module.css';
+import buttonStyles from '../../styles/button.module.css';
 import { useToast, ToastStatus } from '../../context/toastContext';
 
 const CopyButton = () => {
@@ -20,9 +19,15 @@ const CopyButton = () => {
   };
 
   return (
-    <Button onClick={handleClick} outline className={styles.copyButton}>
+    <button
+      style={{
+        width: '10rem',
+      }}
+      onClick={handleClick}
+      className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${buttonStyles.buttonLarge}`}
+    >
       Copy Emails
-    </Button>
+    </button>
   );
 };
 
