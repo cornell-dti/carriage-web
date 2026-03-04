@@ -1,7 +1,16 @@
-version: '3'
-
 services:
   carriage:
+    image: ghcr.io/cornell-dti/carriage-web:${IMAGE_TAG:-latest}
+    restart: always
+    build:
+      context: .
+      args:
+        - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
+        - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
+        - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
+        - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
+        - REACT_APP_GOOGLE_MAPS_API_KEY=${REACT_APP_GOOGLE_MAPS_API_KEY}
+        - REACT_APP_GOOGLE_MAPS_MAP_ID=${REACT_APP_GOOGLE_MAPS_MAP_ID}
     environment:
       - NODE_ENV=production
       - DEBUG=True
@@ -17,16 +26,21 @@ services:
       - HOSTNAME=${HOSTNAME}
       - USE_HOSTNAME=${USE_HOSTNAME}
       - DOMAIN=${DOMAIN}
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN}
       - OAUTH_CLIENT_ID=${OAUTH_CLIENT_ID}
       - OAUTH_CLIENT_SECRET=${OAUTH_CLIENT_SECRET}
-    build:
-      context: .
-      args:
-        - REACT_APP_SERVER_URL=${REACT_APP_SERVER_URL}
-        - REACT_APP_CLIENT_ID=${REACT_APP_CLIENT_ID}
-        - REACT_APP_PUBLIC_VAPID_KEY=${REACT_APP_PUBLIC_VAPID_KEY}
-        - REACT_APP_ENCRYPTION_KEY=${REACT_APP_ENCRYPTION_KEY}
-    ports:
-      - '3001:3001'
-    image: dticarriage/carriage-service:latest
-    restart: always
+      - REVERSE_PROXY=${REVERSE_PROXY}
+      # auth
+      - SSO_ENABLED=${SSO_ENABLED}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - SAML_ENTRY_POINT=${SAML_ENTRY_POINT}
+      - SAML_CALLBACK_URL=${SAML_CALLBACK_URL}
+      - SAML_ISSUER=${SAML_ISSUER}
+      - SAML_IDP_CERT_PATH=${SAML_IDP_CERT_PATH}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - SESSION_TTL=${SESSION_TTL}
+      - SESSION_STORE_PATH=${SESSION_STORE_PATH}
+      # cornell LDAP
+      - LDAP_URL=${LDAP_URL}
+      - LDAP_USER=${LDAP_USER}
+      - LDAP_PASSWORD=${LDAP_PASSWORD}

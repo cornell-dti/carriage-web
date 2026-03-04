@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button } from '../FormElements/FormElements';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import { createEmptyRide } from '../../util/modelFixtures';
 import { RideType } from '../../types';
 import { useRides } from '../../context/RidesContext';
+import buttonStyles from '../../styles/button.module.css';
 
 const AddRideButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -28,7 +28,15 @@ const AddRideButton: React.FC = () => {
 
   return (
     <>
-      <Button onClick={handleOpenModal}>+ Add ride</Button>
+      <button
+        style={{
+          width: '8rem',
+        }}
+        onClick={handleOpenModal}
+        className={`${buttonStyles.buttonLarge} ${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
+      >
+        + Add ride
+      </button>
       <RideDetailsComponent
         key={modalKey} // Force remount when key changes
         open={open}

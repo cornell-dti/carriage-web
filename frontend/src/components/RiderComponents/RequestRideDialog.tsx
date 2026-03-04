@@ -17,6 +17,8 @@ import {
   MenuItem,
   InputLabel,
   SelectChangeEvent,
+  FormHelperText,
+  TextField,
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
@@ -27,9 +29,9 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { Ride, Location } from 'types';
+import { Ride, Location, Tag } from 'types';
+import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
-import { useLocations } from '../../context/LocationsContext';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
@@ -69,6 +71,20 @@ const fullDayNames = {
   F: 'Friday',
 } as const;
 
+//Other for dropdown
+const Other = {
+  id: 'custom' + crypto.randomUUID(),
+  name: 'Custom',
+  address: '',
+  shortName: '',
+  info: '',
+  tag: Tag.CUSTOM,
+  lat: 0,
+  lng: 0,
+  photoLink: '',
+  images: [''],
+} as Location;
+
 /**
  * RequestRideDialog component - A dialog for Riders to request a ride.
  *
@@ -91,40 +107,47 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
   supportedLocations,
   ride,
 }) => {
-  const { locations } = useLocations();
+  //official locations with other added
+  const supportLocsWithOther = [Other, ...supportedLocations];
+
   const [formData, setFormData] = useState<FormData>({
     pickupLocation: null,
     dropoffLocation: null,
     date: null,
     time: null,
-    repeatType: 'none',
+    repeatType: 'none', // Default to no repeat for editing
     repeatEndDate: null,
     selectedDays: [],
   });
 
-  // New state for the selection flow
   const [selectionState, setSelectionState] =
     useState<SelectionState>('pickup');
   const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [customPickup, setCustomPickup] = useState(false);
+  const [customDropoff, setCustomDropoff] = useState(false);
+  const [inputPickUpError, setInputPickUpError] = useState(false);
+  const [inputDropOffError, setInputDropOffError] = useState(false);
+  const [inputErrorText, setInputErrorText] = useState('');
+  const [customPickupName, setCustomPickupName] = useState('');
+  const [customDropoffName, setCustomDropoffName] = useState('');
 
   useEffect(() => {
     if (ride && open) {
-      // Prefill form with existing ride data
       const startDate = new Date(ride.startTime);
-      const endDate = new Date(ride.endTime);
 
       setFormData({
         pickupLocation: ride.startLocation,
         dropoffLocation: ride.endLocation,
         date: startDate,
         time: startDate,
-        repeatType: 'none', // Default to no repeat for editing
+        repeatType: 'none',
         repeatEndDate: null,
         selectedDays: [],
       });
       setSelectionState('complete');
     }
+
     if (!open) {
       setFormData({
         pickupLocation: null,
@@ -138,10 +161,16 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       setSelectionState('pickup');
       setPendingLocation(null);
       setConfirmDialogOpen(false);
+      setCustomPickup(false);
+      setCustomDropoff(false);
+      setCustomPickupName('');
+      setCustomDropoffName('');
+      setInputPickUpError(false);
+      setInputDropOffError(false);
+      setInputErrorText('');
     }
   }, [open, ride]);
 
-  // New handlers for map-based selection
   const handleLocationSelect = (location: Location | null) => {
     if (location) {
       setPendingLocation(location);
@@ -149,6 +178,15 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   };
 
+  /**
+   * Finalizes  pending location selection after user confirms
+   *
+   * Depending on the current 'selectionState':
+   *  - Saves as the pickup location or
+   *  - Saves as the dropoff location
+   *
+   * Progresses the state machine to the next step.
+   */
   const confirmLocationSelection = () => {
     if (!pendingLocation) return;
 
@@ -169,6 +207,11 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setConfirmDialogOpen(false);
   };
 
+  /**
+   * Resets the pickup/dropoff flow back to the beginning.
+   *
+   * Clears both selected locations and returns to the "pickup" phase.
+   */
   const resetSelection = () => {
     setFormData((prev) => ({
       ...prev,
@@ -176,37 +219,51 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       dropoffLocation: null,
     }));
     setSelectionState('pickup');
+    setCustomPickup(false);
+    setCustomDropoff(false);
+    setCustomPickupName('');
+    setCustomDropoffName('');
+    setInputPickUpError(false);
+    setInputDropOffError(false);
+  };
+
+  // clear any inputs/error
+  const handleCancel = () => {
+    setCustomPickup(false);
+    setCustomDropoff(false);
+    setCustomPickupName('');
+    setCustomDropoffName('');
+    setInputPickUpError(false);
+    setInputDropOffError(false);
+    setInputErrorText('');
+    resetSelection();
+
+    // close dialog
+    onClose();
+  };
+
+  // Check if any custom location is being used
+  const hasCustomLocation = () => {
+    return customPickup || customDropoff;
   };
 
   // Get available locations based on current selection state
   const getAvailableLocations = () => {
     if (selectionState === 'pickup') {
-      // Show all locations for pickup selection
-      return supportedLocations;
+      return supportLocsWithOther;
     } else if (selectionState === 'dropoff') {
-      // Show all locations except the selected pickup location
-      return supportedLocations.filter(
-        (loc) => loc.id !== formData.pickupLocation?.id
+      return supportLocsWithOther.filter(
+        (loc) =>
+          loc.id.startsWith('custom') || loc.id !== formData.pickupLocation?.id
       );
     } else {
-      // Show only selected locations
       return [formData.pickupLocation, formData.dropoffLocation].filter(
         Boolean
       ) as Location[];
     }
   };
 
-  // Legacy handler for dropdown (keeping for backward compatibility)
-  const handleDropoffChange = (event: SelectChangeEvent<string>) => {
-    const locationId = event.target.value as string;
-    const selectedLocation =
-      supportedLocations.find((loc) => loc.id === locationId) || null;
-    setFormData((prev) => ({
-      ...prev,
-      dropoffLocation: selectedLocation,
-    }));
-  };
-
+  // Reset selected days when changing repeat type
   const handleDateChange =
     (field: keyof Pick<FormData, 'date' | 'time' | 'repeatEndDate'>) =>
     (newDate: Date | null) => {
@@ -223,7 +280,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     setFormData((prev) => ({
       ...prev,
       repeatType: value,
-      // Reset selected days when changing repeat type
       selectedDays: value !== 'custom' ? [] : prev.selectedDays,
     }));
   };
@@ -240,20 +296,84 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }));
   };
 
+  const createCustomLocation = async (name: string): Promise<Location> => {
+    console.log('Creating new custom location:', name);
+
+    // Create new custom location
+    const payload: Partial<Location> = {
+      name: name.trim(),
+      shortName: '',
+      address: '', // Empty address for custom locations
+      info: '',
+      tag: Tag.CUSTOM,
+      lat: 0, // Null coordinates for custom locations
+      lng: 0,
+    };
+
+    const response = await axios.post('/api/locations/custom', payload);
+    const created: Location = response.data.data || response.data;
+    console.log('Created custom location:', created);
+    return created;
+  };
+
   const handleSubmit = async () => {
-    onSubmit(formData);
-    onClose();
+    try {
+      let finalPickup = formData.pickupLocation;
+      let finalDropoff = formData.dropoffLocation;
+
+      // Handle custom pickup - create actual Location in DB
+      if (customPickup) {
+        if (!customPickupName.trim()) {
+          setInputPickUpError(true);
+          setInputErrorText('Pickup name cannot be empty');
+          return;
+        }
+        finalPickup = await createCustomLocation(customPickupName);
+      }
+
+      // Handle custom dropoff - create actual Location in DB
+      if (customDropoff) {
+        if (!customDropoffName.trim()) {
+          setInputDropOffError(true);
+          setInputErrorText('Dropoff name cannot be empty');
+          return;
+        }
+        finalDropoff = await createCustomLocation(customDropoffName);
+      }
+
+      onSubmit({
+        ...formData,
+        pickupLocation: finalPickup,
+        dropoffLocation: finalDropoff,
+      });
+
+      // Reset state
+      setCustomPickup(false);
+      setCustomDropoff(false);
+      setCustomPickupName('');
+      setCustomDropoffName('');
+      onClose();
+    } catch (err) {
+      console.error('Error submitting ride:', err);
+      alert('Failed to submit ride. Please try again.');
+    }
   };
 
   const isFormValid = () => {
+    const hasPickup = customPickup
+      ? customPickupName.trim() !== ''
+      : formData.pickupLocation !== null;
+    const hasDropoff = customDropoff
+      ? customDropoffName.trim() !== ''
+      : formData.dropoffLocation !== null;
+
     return (
-      formData.pickupLocation &&
-      formData.dropoffLocation &&
+      hasPickup &&
+      hasDropoff &&
       formData.date &&
       formData.time &&
       (formData.repeatType !== 'custom' || formData.selectedDays.length > 0) &&
-      (formData.repeatType === 'none' || formData.repeatEndDate) &&
-      selectionState === 'complete'
+      (formData.repeatType === 'none' || formData.repeatEndDate)
     );
   };
 
@@ -265,12 +385,25 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     );
   };
 
-  //TODO: add edit dialog functionality that prepopulates the form with existing ride data
+  // Only show map if not using custom locations
+  const safePickup =
+    !customPickup &&
+    formData.pickupLocation?.lat &&
+    formData.pickupLocation?.lng
+      ? formData.pickupLocation
+      : null;
+
+  const safeDropoff =
+    !customDropoff &&
+    formData.dropoffLocation?.lat &&
+    formData.dropoffLocation?.lng
+      ? formData.dropoffLocation
+      : null;
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
-        {/* Wrap everything in a single APIProvider */}
         <APIProvider
           apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
@@ -301,34 +434,38 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       style={{
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: formData.pickupLocation
-                          ? '#4caf50'
-                          : selectionState === 'pickup'
-                          ? '#2196f3'
-                          : '#e0e0e0',
+                        backgroundColor:
+                          formData.pickupLocation || customPickupName
+                            ? '#4caf50'
+                            : selectionState === 'pickup'
+                            ? '#2196f3'
+                            : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
                     >
-                      1. Pickup {formData.pickupLocation ? '✓' : ''}
+                      1. Pickup{' '}
+                      {formData.pickupLocation || customPickupName ? '✓' : ''}
                     </div>
                     <div
                       style={{
                         padding: '4px 8px',
                         borderRadius: '4px',
-                        backgroundColor: formData.dropoffLocation
-                          ? '#4caf50'
-                          : selectionState === 'dropoff'
-                          ? '#2196f3'
-                          : '#e0e0e0',
+                        backgroundColor:
+                          formData.dropoffLocation || customDropoffName
+                            ? '#4caf50'
+                            : selectionState === 'dropoff'
+                            ? '#2196f3'
+                            : '#e0e0e0',
                         color: 'white',
                         fontSize: '12px',
                       }}
                     >
-                      2. Dropoff {formData.dropoffLocation ? '✓' : ''}
+                      2. Dropoff{' '}
+                      {formData.dropoffLocation || customDropoffName ? '✓' : ''}
                     </div>
                   </div>
-                  {selectionState === 'pickup' && (
+                  {!hasCustomLocation() && selectionState === 'pickup' && (
                     <p
                       style={{
                         margin: '8px 0 0 0',
@@ -340,7 +477,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       to select your pickup point
                     </p>
                   )}
-                  {selectionState === 'dropoff' && (
+                  {!hasCustomLocation() && selectionState === 'dropoff' && (
                     <p
                       style={{
                         margin: '8px 0 0 0',
@@ -352,18 +489,35 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       to select your dropoff point
                     </p>
                   )}
-                  {selectionState === 'complete' && (
+                  {hasCustomLocation() && (
                     <p
                       style={{
                         margin: '8px 0 0 0',
                         fontSize: '14px',
-                        color: '#4caf50',
+                        color: '#ff9800',
                       }}
                     >
-                      ✓ Both locations selected! Complete the form below.
+                      ⚠ Custom location mode - map disabled. Enter location
+                      names below.
                     </p>
                   )}
-                  {selectionState === 'complete' && (
+                  {!hasCustomLocation() &&
+                    formData.pickupLocation &&
+                    formData.dropoffLocation && (
+                      <p
+                        style={{
+                          margin: '8px 0 0 0',
+                          fontSize: '14px',
+                          color: '#4caf50',
+                        }}
+                      >
+                        ✓ Both locations selected! Complete the form below.
+                      </p>
+                    )}
+                  {(formData.pickupLocation ||
+                    formData.dropoffLocation ||
+                    customPickupName ||
+                    customDropoffName) && (
                     <Button
                       variant="outlined"
                       size="small"
@@ -376,7 +530,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 </div>
 
                 {/* Show selected locations */}
-                {formData.pickupLocation && (
+                {formData.pickupLocation && !customPickup && (
                   <div
                     style={{
                       marginBottom: '16px',
@@ -388,7 +542,19 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     <strong>Pickup:</strong> {formData.pickupLocation.name}
                   </div>
                 )}
-                {formData.dropoffLocation && (
+                {customPickupName && customPickup && (
+                  <div
+                    style={{
+                      marginBottom: '16px',
+                      padding: '12px',
+                      backgroundColor: '#fff3e0',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <strong>Custom Pickup:</strong> {customPickupName}
+                  </div>
+                )}
+                {formData.dropoffLocation && !customDropoff && (
                   <div
                     style={{
                       marginBottom: '16px',
@@ -400,11 +566,25 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                     <strong>Dropoff:</strong> {formData.dropoffLocation.name}
                   </div>
                 )}
+                {customDropoffName && customDropoff && (
+                  <div
+                    style={{
+                      marginBottom: '16px',
+                      padding: '12px',
+                      backgroundColor: '#fff3e0',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <strong>Custom Dropoff:</strong> {customDropoffName}
+                  </div>
+                )}
 
-                {/* Dropdown selectors as alternative to map selection */}
-                <div style={{ marginBottom: '20px' }}>
+                {/* Dropdown selectors */}
+                <div style={{ marginBottom: '5px' }}>
                   <h4 style={{ margin: '0 0 12px 0', color: '#1976d2' }}>
-                    Or select from dropdown:
+                    {hasCustomLocation()
+                      ? 'Location Selection:'
+                      : 'Or select from dropdown:'}
                   </h4>
 
                   <FormControl fullWidth style={{ marginBottom: '16px' }}>
@@ -414,63 +594,137 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
-                          supportedLocations.find(
+                          supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
                         setFormData((prev) => ({
                           ...prev,
                           pickupLocation: selectedLocation,
                         }));
-                        // Update selection state
-                        if (selectedLocation && !formData.dropoffLocation) {
-                          setSelectionState('dropoff');
-                        } else if (
-                          selectedLocation &&
-                          formData.dropoffLocation
-                        ) {
-                          setSelectionState('complete');
+
+                        if (selectedLocation?.name === Other.name) {
+                          setCustomPickup(true);
+                          setCustomPickupName('');
+                        } else {
+                          setCustomPickup(false);
+                          setCustomPickupName('');
+                          if (selectedLocation && !formData.dropoffLocation) {
+                            setSelectionState('dropoff');
+                          } else if (
+                            selectedLocation &&
+                            formData.dropoffLocation
+                          ) {
+                            setSelectionState('complete');
+                          }
                         }
+                        setInputPickUpError(false);
                       }}
                       label="Pickup Location"
+                      error={inputPickUpError}
                     >
-                      {supportedLocations.map((location) => (
+                      {supportLocsWithOther.map((location) => (
                         <MenuItem key={location.id} value={location.id}>
                           {location.name}
                         </MenuItem>
                       ))}
                     </Select>
+                    {inputPickUpError && (
+                      <FormHelperText error>{inputErrorText}</FormHelperText>
+                    )}
                   </FormControl>
+
+                  {customPickup && (
+                    <TextField
+                      fullWidth
+                      label="Custom Pickup Name"
+                      placeholder="e.g., Uri's Hall Loading Dock"
+                      value={customPickupName}
+                      onChange={(e) => {
+                        setCustomPickupName(e.target.value);
+                        setInputPickUpError(false);
+                      }}
+                      error={inputPickUpError}
+                      helperText={
+                        inputPickUpError
+                          ? inputErrorText
+                          : 'Enter a descriptive name for this location'
+                      }
+                      style={{ marginBottom: '16px' }}
+                    />
+                  )}
 
                   <FormControl fullWidth>
                     <InputLabel>Drop-off Location</InputLabel>
                     <Select<string>
                       value={formData.dropoffLocation?.id || ''}
+                      disabled={!formData.pickupLocation && !customPickup}
                       onChange={(event) => {
                         const locationId = event.target.value as string;
                         const selectedLocation =
-                          supportedLocations.find(
+                          supportLocsWithOther.find(
                             (loc) => loc.id === locationId
                           ) || null;
                         setFormData((prev) => ({
                           ...prev,
                           dropoffLocation: selectedLocation,
                         }));
-                        // Update selection state
-                        if (selectedLocation && formData.pickupLocation) {
-                          setSelectionState('complete');
+
+                        if (selectedLocation?.name === Other.name) {
+                          setCustomDropoff(true);
+                          setCustomDropoffName('');
+                        } else {
+                          setCustomDropoff(false);
+                          setCustomDropoffName('');
+                          if (selectedLocation && formData.pickupLocation) {
+                            setSelectionState('complete');
+                          }
                         }
+                        setInputDropOffError(false);
                       }}
                       label="Drop-off Location"
+                      error={inputDropOffError}
                     >
-                      {supportedLocations
-                        .filter((loc) => loc.id !== formData.pickupLocation?.id) // Don't show pickup location as dropoff option
+                      {supportLocsWithOther
+                        .filter(
+                          (loc) =>
+                            loc.id.startsWith('custom') ||
+                            loc.id !== formData.pickupLocation?.id
+                        )
                         .map((location) => (
                           <MenuItem key={location.id} value={location.id}>
                             {location.name}
                           </MenuItem>
                         ))}
                     </Select>
+                    {inputDropOffError && (
+                      <FormHelperText error>{inputErrorText}</FormHelperText>
+                    )}
+                    {!formData.pickupLocation && !customPickup && (
+                      <FormHelperText>
+                        Please choose pickup location first
+                      </FormHelperText>
+                    )}
                   </FormControl>
+
+                  {customDropoff && (
+                    <TextField
+                      fullWidth
+                      label="Custom Dropoff Name"
+                      placeholder="e.g., Main Entrance Side Door"
+                      value={customDropoffName}
+                      onChange={(e) => {
+                        setCustomDropoffName(e.target.value);
+                        setInputDropOffError(false);
+                      }}
+                      error={inputDropOffError}
+                      helperText={
+                        inputDropOffError
+                          ? inputErrorText
+                          : 'Enter a descriptive name for this location'
+                      }
+                      style={{ marginTop: '16px' }}
+                    />
+                  )}
                 </div>
 
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -559,20 +813,54 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 )}
               </div>
             </div>
+
             <div className={styles.mapColumn}>
-              <RequestRideMap
-                pickupLocation={formData.pickupLocation}
-                dropoffLocation={formData.dropoffLocation}
-                availableLocations={getAvailableLocations()}
-                onPickupSelect={handleLocationSelect}
-                onDropoffSelect={handleLocationSelect}
-              />
+              {hasCustomLocation() ? (
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '8px',
+                    padding: '20px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div>
+                    <p
+                      style={{
+                        fontSize: '18px',
+                        color: '#666',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      📍 Custom Location Mode
+                    </p>
+                    <p style={{ fontSize: '14px', color: '#999' }}>
+                      Map disabled when using custom locations.
+                      <br />
+                      Enter location names in the form.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <RequestRideMap
+                  pickupLocation={safePickup}
+                  dropoffLocation={safeDropoff}
+                  availableLocations={getAvailableLocations()}
+                  onPickupSelect={handleLocationSelect}
+                  onDropoffSelect={handleLocationSelect}
+                />
+              )}
             </div>
           </div>
         </APIProvider>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
         <Button
           onClick={handleSubmit}
           variant="contained"

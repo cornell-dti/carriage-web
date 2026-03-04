@@ -51,6 +51,13 @@ router.post('/', validateUser('Admin'), (req, res) => {
   db.create(res, location);
 });
 
+// Allows riders to create custom locations
+router.post('/custom', validateUser('User'), (req, res) => {
+  const { body } = req;
+  const location = new Location({ ...body, id: uuid(), tag: Tag.CUSTOM });
+  db.create(res, location);
+});
+
 // Update an existing location
 router.put('/:id', validateUser('Admin'), (req, res) => {
   const {

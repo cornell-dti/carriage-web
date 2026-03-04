@@ -1,31 +1,28 @@
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styles from './landing.module.css';
-import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import topLaptop from './landing-images/laptop1.svg';
 import bottomLaptop from './landing-images/laptop2.svg';
 import phone from './landing-images/iPhone.svg';
+import { WAVE_PATH } from '../../util/constants';
 
 const cuLiftTerms = `https://sds.cornell.edu/accommodations-services
 /transportation/culift-guidelines`;
-
-const wavePath = `M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,
-168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,
-26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z`;
 
 type LandingPropType = {
   students: ReactElement;
   admins: ReactElement;
   drivers: ReactElement;
+  ssoError?: string;
 };
 
-const Landing = ({ students, admins, drivers }: LandingPropType) => {
+const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
   useEffect(() => {
     document.title = 'Login - Carriage';
   }, []);
   return (
-    <main id="main">
+    <main id="main" className={styles.pageMain}>
       <div className={styles.home}>
         <div className={styles.tosButtonContainer}>
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
@@ -40,6 +37,20 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
           <div className={styles.right}>
             <div className={styles.spacing_container}>
               <h1 className={styles.heading}>Login</h1>
+              {ssoError && (
+                <div
+                  style={{
+                    backgroundColor: '#ffebee',
+                    color: '#c62828',
+                    padding: '12px 16px',
+                    borderRadius: '4px',
+                    marginBottom: '16px',
+                    border: '1px solid #ef5350',
+                  }}
+                >
+                  {ssoError}
+                </div>
+              )}
               <div className={styles.container}>
                 <div className={styles.container_item}>{students}</div>
                 <div className={styles.container_item}>{admins}</div>
@@ -56,7 +67,11 @@ const Landing = ({ students, admins, drivers }: LandingPropType) => {
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
-            <path d={wavePath.trim()} className={styles.shapeFill}></path>
+            <path
+              d={WAVE_PATH.trim()}
+              className={styles.shapeFill}
+              transform="translate(0, 120) scale(1, -1)"
+            />
           </svg>
         </div>
       </div>

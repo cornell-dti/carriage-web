@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Ride } from '../../types/index';
 import RidesTable from './RidesTable';
 import { useRides } from '../../context/RidesContext';
+import styles from './table.module.css';
 
 const Table = () => {
   const [rides, setRides] = useState<Ride[]>([]);
@@ -19,7 +20,9 @@ const Table = () => {
     setRides(unscheduledRides.sort(compRides));
   }, [unscheduledRides]);
 
-  return rides.length ? <RidesTable rides={rides} hasButtons={true} /> : null;
+  return rides.length ? <RidesTable rides={rides} /> : (
+    <div className={styles.noRides}>No unscheduled rides</div>
+  );
 };
 
 export default Table;

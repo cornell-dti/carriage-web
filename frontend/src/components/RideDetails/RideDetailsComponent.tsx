@@ -9,7 +9,6 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { RideType, Driver, Rider } from '../../types';
 import AuthContext from '../../context/auth';
 import RideOverview from './RideOverview';
@@ -196,7 +195,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
           {/* Mobile actions - sticky bottom sheet */}
           {isMobile && (
             <div className={styles.mobileActions}>
-              <RideActions userRole={userRole} isMobile />
+              <RideActions userRole={userRole} isMobile onClose={onClose} />
             </div>
           )}
         </DialogContent>

@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
-import Notification from '../../components/Notification/Notification';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
-import { Button } from '../../components/FormElements/FormElements';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
 import { AdminType, DriverType } from '../../types';
+import buttonStyles from '../../styles/button.module.css';
 
 const Employees = () => {
   const { admins, drivers } = useEmployees();
@@ -114,61 +113,66 @@ const Employees = () => {
 
   return (
     <main id="main">
-      <div className={styles.pageTitle}>
-        <h1 className={styles.header}>Employees</h1>
-        <div className={styles.rightSection}>
-          <Button onClick={() => setIsOpen(true)}>+ Add Employee</Button>
-          <EmployeeModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            existingEmployee={
-              selectedEmployee
-                ? convertToEmployeeEntity(selectedEmployee)
-                : null
-            }
-          />
-          <Notification />
+      <div className={styles.mainContent}>
+        <div className={styles.pageTitle}>
+          <h1 className={styles.header}>Employees</h1>
+          <div className={styles.rightSection}>
+            <button
+              style={{ width: '10rem' }}
+              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+              onClick={() => setIsOpen(true)}
+            >
+              + Add Employee
+            </button>
+            <EmployeeModal
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              existingEmployee={
+                selectedEmployee
+                  ? convertToEmployeeEntity(selectedEmployee)
+                  : null
+              }
+            />
+          </div>
         </div>
-      </div>
 
-      <div className={styles.statsAndSearch}>
-        <div className={styles.searchFilter}>
-          <SearchAndFilter
-            items={displayEmployees}
-            searchFields={['firstName', 'lastName']}
-            filterOptions={[
-              {
-                field: 'roleType',
-                label: 'Role',
-                options: [
-                  { value: 'admin', label: 'Admin' },
-                  { value: 'driver', label: 'Driver' },
-                ],
-              },
-            ]}
-            onFilterApply={handleFilterApply}
-          />
+        <div className={styles.statsAndSearch}>
+          <div className={styles.searchFilter}>
+            <SearchAndFilter
+              items={displayEmployees}
+              searchFields={['firstName', 'lastName']}
+              filterOptions={[
+                {
+                  field: 'roleType',
+                  label: 'Role',
+                  options: [
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'driver', label: 'Driver' },
+                  ],
+                },
+              ]}
+              onFilterApply={handleFilterApply}
+            />
+          </div>
+          <div className={styles.statsBoxContainer}>
+            {employeeStats.map((stat, idx) => (
+              <StatsBox key={idx} {...stat} />
+            ))}
+          </div>
         </div>
-        <div className={styles.statsBoxContainer}>
-          {employeeStats.map((stat, idx) => (
-            <StatsBox key={idx} {...stat} />
-          ))}
-        </div>
-      </div>
 
-      <div className={styles.employeeCards}>
         <EmployeeCards employees={paginatedEmployees} />
-      </div>
 
-      <div className={styles.paginationContainer}>
-        <Pagination
-          count={Math.ceil(filteredEmployees.length / pageSize)}
-          page={page}
-          onChange={handlePageChange}
-          size="large"
-          showFirstButton
-          showLastButton
-        />
+        <div className={styles.paginationContainer}>
+          <Pagination
+            count={Math.ceil(filteredEmployees.length / pageSize)}
+            page={page}
+            onChange={handlePageChange}
+            size="large"
+            showFirstButton
+            showLastButton
+          />
+        </div>
       </div>
     </main>
   );

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Admin, Location } from '../types';
+import { Admin, Location, Tag } from '../types';
 import axios from '../util/axios';
 
 type locationsState = {
@@ -28,12 +28,14 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
       .then((res) => res.data)
       .then((data) => data.data);
     if (locationsData) {
-      locationsData.sort((a: Location, b: Location) => {
+      const filtered = locationsData.filter((loc) => loc.tag !== Tag.CUSTOM);
+
+      filtered.sort((a: Location, b: Location) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
-    }
 
-    locationsData && componentMounted.current && setLocations(locationsData);
+      componentMounted.current && setLocations(filtered);
+    }
   }, []);
 
   React.useEffect(() => {

@@ -1,0 +1,6 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["private/sessions/**", "node_modules/**", "build/**"],
+  "exec": "ts-node src/app.ts"
+}

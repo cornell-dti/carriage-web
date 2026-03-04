@@ -1,85 +1,15 @@
-.heading {
-  margin-top: 1.875rem;
-  margin-bottom: 0.313rem;
-  margin-left: 2rem;
-}
-
-.calendar_container {
-  padding-left: 2rem;
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  height: 21.875rem;
-}
-
-.left {
-  width: calc(100% - 3.125rem);
-  height: 21.875rem;
-}
-
-.right {
-  width: 3.125rem;
-  display: flex;
-  height: 21.875rem;
-  z-index: 100;
-  position: absolute;
-  left: calc(100% - 3.125rem);
-  justify-content: center;
-  align-items: center;
-}
-
-.long {
-  height: 50rem;
-}
-
-.uparrow {
-  border: solid black;
-  border-width: 0 0.19rem 0.19rem 0;
-  display: inline-block;
-  padding: 0.19rem;
-  transform: rotate(-135deg);
-  -webkit-transform: rotate(-135deg);
-}
-
-.downarrow {
-  border: solid black;
-  border-width: 0 0.19rem 0.19rem 0;
-  display: inline-block;
-  padding: 0.19rem;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-}
-
-.btn {
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(255, 255, 255, 0);
-  display: block;
-  margin: auto;
-  width: 2.25rem;
-  height: 2.25rem;
-}
-
-.btn:hover {
-  border-radius: 50%;
-  background-color: lightgray;
-}
-.btn:focus {
-  border-radius: 50%;
-  background-color: lightgray;
-}
-.btn:disabled {
-  visibility: hidden;
-}
-
-.view_state {
-  padding: 0.313rem;
-  margin-right: 3.125rem;
-  border: none;
+.topControlButton {
+  cursor: pointer;
   background-color: white;
-  float: right;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  outline: none;
+  color: black;
+  width: 12rem;
+  transition: background-color 0.05s;
 }
 
-.view_state:hover {
-  text-decoration: underline;
+.topControlButton:hover {
+  background-color: #f5f5f5;
 }

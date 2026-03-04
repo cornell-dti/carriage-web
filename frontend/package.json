@@ -1,5 +1,5 @@
 {
-  "name": "carriage-web",
+  "name": "@carriage-web/frontend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -67,12 +67,14 @@
     ]
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vitejs/plugin-react": "^5.1.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.5.6",
