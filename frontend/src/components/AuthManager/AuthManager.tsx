@@ -111,7 +111,7 @@ const AuthManager = () => {
   const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_SERVER_URL}/api/sso/profile`,
+        `${import.meta.env.VITE_SERVER_URL}/api/sso/profile`,
         {
           credentials: 'include', // Send session cookie
         }
@@ -147,7 +147,7 @@ const AuthManager = () => {
     if (errorParam) {
       // Handle user_not_found specially - fetch unregistered user info
       if (errorParam === 'user_not_found') {
-        fetch(`${process.env.REACT_APP_SERVER_URL}/api/sso/unregistered-user`, {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/api/sso/unregistered-user`, {
           credentials: 'include', // Send session cookie
         })
           .then((res) => res.json())
@@ -242,7 +242,7 @@ const AuthManager = () => {
       userType = 'Driver';
     }
 
-    const ssoUrl = `${process.env.REACT_APP_SERVER_URL}/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
+    const ssoUrl = `${import.meta.env.VITE_SERVER_URL}/api/sso/login?redirect_uri=${redirectUri}&userType=${userType}`;
     window.location.href = ssoUrl;
   }
 
@@ -254,7 +254,7 @@ const AuthManager = () => {
     setAuthToken('');
     setSignedIn(false);
     setRefreshUser(() => () => {});
-    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
+    window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {

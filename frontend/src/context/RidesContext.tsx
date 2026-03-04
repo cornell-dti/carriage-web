@@ -197,18 +197,17 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const updateRideStatus = useCallback(
     async (rideId: string, status: Status) => {
       const originalRide = getRideById(rideId);
-      if (!originalRide) {
-        throw new Error('Ride not found');
-      }
 
       try {
-        // Optimistic update
-        updateRideInLists(rideId, (ride) => ({ ...ride, status }));
+        // Optimistic update only if ride is in context
+        if (originalRide) {
+          updateRideInLists(rideId, (ride) => ({ ...ride, status }));
+        }
 
         // Make API call
         await axios.put(`/api/rides/${rideId}`, { status });
       } catch (error) {
-        // Rollback on error
+        // Rollback on error if we did an optimistic update
         console.error('Failed to update ride status:', error);
         if (originalRide) {
           updateRideInLists(rideId, () => originalRide);
@@ -217,7 +216,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         throw error;
       }
     },
-    [getRideById]
+    [getRideById, updateRideInLists]
   );
 
   const updateRideScheduling = useCallback(

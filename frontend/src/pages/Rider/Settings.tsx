@@ -9,7 +9,7 @@ import { Rider } from '../../types/index';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
-  const netId = user?.email.split('@')[0] || '';
+  const netId = user?.email?.split('@')[0] || '';
 
   useEffect(() => {
     document.title = 'Settings - Carriage';
