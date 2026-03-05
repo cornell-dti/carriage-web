@@ -6,7 +6,7 @@ import * as db from './common';
 import { Rider } from '../models/rider';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { Location } from '../models/location';
-import { createKeys, validateUser } from '../util';
+import { createKeys, validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
 import { Ride } from '../models/ride';
 import { RideType, Type, Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
@@ -29,7 +29,7 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
       // Handle multiple riders - count usage for each rider in the ride
       const ridersToProcess = ride.riders || [];
 
-      ridersToProcess.forEach((rider) => {
+      ridersToProcess.forEach((rider: RiderType) => {
         const currID = rider.id;
         if (currID in usageObj) {
           if (ride.status === Status.COMPLETED) {
@@ -142,7 +142,7 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
       const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some((rider) => rider.id === id);
+          return ride.riders.some((rider: RiderType) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {
@@ -170,7 +170,7 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
       const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some((rider) => rider.id === id);
+          return ride.riders.some((rider: RiderType) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {
@@ -194,6 +194,15 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
 router.post('/', validateUser('Admin'), async (req, res) => {
   try {
     const { body } = req;
+
+    // Check if NetID already exists
+    const emailExists = await checkNetIDExists(body.email, 'rider');
+    if (emailExists) {
+      return res.status(409).send({
+        err: 'A user with this NetID already exists'
+      });
+    }
+
     const rider = new Rider({
       ...body,
       id: uuid(),
@@ -207,18 +216,34 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 });
 
 // Update a rider in Riders table
-router.put('/:id', validateUser('Rider'), (req, res) => {
-  const {
-    params: { id },
-    body,
-  } = req;
-  if (
-    res.locals.user.userType === UserType.ADMIN ||
-    id === res.locals.user.id
-  ) {
-    db.update(res, Rider, { id }, body, tableName);
-  } else {
-    res.status(400).send({ err: 'User ID does not match request ID' });
+router.put('/:id', validateUser('Rider'), async (req, res) => {
+  try {
+    const {
+      params: { id },
+      body,
+    } = req;
+
+    // Check if email is being changed and if it conflicts with another user
+    if (body.email) {
+      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      if (emailExists) {
+        return res.status(409).send({
+          err: 'A user with this NetID already exists'
+        });
+      }
+    }
+
+    if (
+      res.locals.user.userType === UserType.ADMIN ||
+      id === res.locals.user.id
+    ) {
+      db.update(res, Rider, { id }, body, tableName);
+    } else {
+      res.status(400).send({ err: 'User ID does not match request ID' });
+    }
+  } catch (error) {
+    console.error('Error updating rider:', error);
+    res.status(500).send({ err: 'Failed to update rider' });
   }
 });
 

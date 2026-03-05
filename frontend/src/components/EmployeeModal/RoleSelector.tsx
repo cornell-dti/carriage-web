@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import styles from './employeemodal.module.css';
 import { Label, Input } from '../FormElements/FormElements';
 
@@ -8,16 +8,12 @@ type Props = {
 };
 
 const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
-  const [roles, setRoles] = useState<string[]>(selectedRoles);
-
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const role = e.target.value;
     const checked = e.target.checked;
-    const updatedRoles = checked
-      ? [...roles, role]
-      : roles.filter((r) => r !== role);
-    setRoles(updatedRoles);
-    setSelectedRoles(updatedRoles); // Update the parent component state with the selected roles
+    setSelectedRoles((prevRoles) =>
+      checked ? [...prevRoles, role] : prevRoles.filter((r) => r !== role)
+    );
   };
 
   return (
@@ -32,7 +28,7 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             type="checkbox"
             value="driver"
             onChange={onChange}
-            checked={roles.includes('driver')}
+            checked={selectedRoles.includes('driver')}
           />
           <Label className={styles.driverLabel} htmlFor={'driver'}>
             Driver
@@ -46,7 +42,7 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             type="checkbox"
             value="redrunner-admin"
             onChange={onChange}
-            checked={roles.includes('redrunner-admin')}
+            checked={selectedRoles.includes('redrunner-admin')}
           />
           <Label className={styles.driverLabel} htmlFor={'redrunner-admin'}>
             Redrunner Admin
@@ -60,7 +56,7 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             type="checkbox"
             value="sds-admin"
             onChange={onChange}
-            checked={roles.includes('sds-admin')}
+            checked={selectedRoles.includes('sds-admin')}
           />
           <Label className={styles.driverLabel} htmlFor={'sds-admin'}>
             SDS Admin

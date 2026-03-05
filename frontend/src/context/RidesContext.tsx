@@ -9,6 +9,7 @@ import axios from '../util/axios';
 type ridesState = {
   unscheduledRides: RideType[];
   scheduledRides: RideType[];
+  cancelledRides: RideType[];
   loading: boolean;
   refreshRides: () => Promise<void>;
   refreshRidesByUser: (
@@ -43,6 +44,7 @@ type ridesState = {
 const initialState: ridesState = {
   unscheduledRides: [],
   scheduledRides: [],
+  cancelledRides: [],
   loading: true,
   refreshRides: async () => {},
   refreshRidesByUser: async () => [],
@@ -70,6 +72,7 @@ type RidesProviderProps = {
 export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [unscheduledRides, setUnscheduledRides] = useState<RideType[]>([]);
   const [scheduledRides, setScheduledRides] = useState<RideType[]>([]);
+  const [cancelledRides, setCancelledRides] = useState<RideType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { curDate } = useDate();
@@ -85,15 +88,21 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
 
       if (ridesData) {
         const unscheduled = ridesData.filter(
-          ({ schedulingState }) =>
-            schedulingState === SchedulingState.UNSCHEDULED
+          ({ schedulingState, status }) =>
+            schedulingState === SchedulingState.UNSCHEDULED && status !== Status.CANCELLED
         );
+
         const scheduled = ridesData.filter(
-          ({ schedulingState }) => schedulingState === SchedulingState.SCHEDULED
+          ({ schedulingState, status }) => schedulingState === SchedulingState.SCHEDULED && status !== Status.CANCELLED
+        );
+
+        const cancelled = ridesData.filter(
+          ({ status }) => status === Status.CANCELLED
         );
 
         setUnscheduledRides(unscheduled);
         setScheduledRides(scheduled);
+        setCancelledRides(cancelled);
       }
     } catch (error) {
       console.error('Error refreshing rides:', error);
@@ -137,6 +146,9 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     setScheduledRides((prev) =>
       prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
     );
+    setCancelledRides((prev) =>
+      prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
+    );
   };
 
   const moveRideBetweenLists = (
@@ -173,17 +185,17 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
 
   const getRideById = useCallback(
     (rideId: string): RideType | undefined => {
-      const allRides = [...unscheduledRides, ...scheduledRides];
+      const allRides = [...unscheduledRides, ...scheduledRides, ...cancelledRides];
       allRides.forEach((ride, index) => {});
-      const foundRide = allRides.find((ride) => ride.id === rideId);
+      const foundRide = allRides.find((ride) => ride && ride.id === rideId);
       return foundRide;
     },
-    [unscheduledRides, scheduledRides]
+    [unscheduledRides, scheduledRides, cancelledRides]
   );
 
   const getAllRides = useCallback((): RideType[] => {
-    return [...unscheduledRides, ...scheduledRides];
-  }, [unscheduledRides, scheduledRides]);
+    return [...unscheduledRides, ...scheduledRides, ...cancelledRides];
+  }, [unscheduledRides, scheduledRides, cancelledRides]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -261,7 +273,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         throw error;
       }
     },
-    [getRideById, scheduledRides, unscheduledRides]
+    [getRideById, scheduledRides, unscheduledRides, cancelledRides]
   );
 
   const assignDriver = useCallback(
@@ -374,7 +386,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         throw error;
       }
     },
-    [getRideById, scheduledRides, unscheduledRides]
+    [getRideById, scheduledRides, unscheduledRides, cancelledRides]
   );
 
   const createRide = useCallback(async (ride: Omit<RideType, 'id'>) => {
@@ -568,6 +580,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       value={{
         unscheduledRides,
         scheduledRides,
+        cancelledRides,
         loading,
         refreshRides,
         refreshRidesByUser,

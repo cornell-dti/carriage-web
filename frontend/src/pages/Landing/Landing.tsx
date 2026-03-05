@@ -1,6 +1,5 @@
-import React, { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect } from 'react';
 import styles from './landing.module.css';
-import Footer from '../../components/Footer/Footer';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import topLaptop from './landing-images/laptop1.svg';
@@ -23,7 +22,7 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
     document.title = 'Login - Carriage';
   }, []);
   return (
-    <main id="main">
+    <main id="main" className={styles.pageMain}>
       <div className={styles.home}>
         <div className={styles.tosButtonContainer}>
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
@@ -68,7 +67,11 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
           >
-            <path d={WAVE_PATH.trim()} className={styles.shapeFill}></path>
+            <path
+              d={WAVE_PATH.trim()}
+              className={styles.shapeFill}
+              transform="translate(0, 120) scale(1, -1)"
+            />
           </svg>
         </div>
       </div>

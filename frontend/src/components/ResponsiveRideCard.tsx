@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { SchedulingState, Status } from '../types';
+import { SchedulingState, Status, Tag } from '../types';
 import { RideType } from '@carriage-web/shared/types/ride';
 import {
   BadgeRounded,
@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
 import styles from './ResponsiveRideCard.module.css';
+import buttonStyles from '../styles/button.module.css';
 
 interface ResponsiveRideCardProps {
   ride: RideType;
@@ -56,6 +57,19 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  // Check if either location is a custom location (with no valid coordinates)
+  const hasCustomLocation = () => {
+    const isPickupCustom =
+      ride.startLocation.tag === Tag.CUSTOM ||
+      ride.startLocation.lat === 0 ||
+      ride.startLocation.lng === 0;
+    const isDropoffCustom =
+      ride.endLocation.tag === Tag.CUSTOM ||
+      ride.endLocation.lat === 0 ||
+      ride.endLocation.lng === 0;
+    return isPickupCustom || isDropoffCustom;
+  };
+
   return (
     <div className={styles.card}>
       <div className={styles.statusContainer}>
@@ -80,7 +94,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
         <button
           onClick={() => setExpanded(!expanded)}
-          className={`${styles.button} ${styles.buttonSecondary} ${styles.detailsButton}`}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.detailsButton}`}
         >
           {expanded ? 'Hide Details' : 'Details'}
         </button>
@@ -148,38 +162,74 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* expanded location view */}
         {expanded && (
           <div className={styles.mapContainer}>
-            <Map
-              className={styles.map}
-              defaultCenter={{
-                lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
-                lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
-              }}
-              defaultZoom={13}
-              gestureHandling="greedy"
-              disableDefaultUI
-              mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
-            >
-              <AdvancedMarker
-                position={{
-                  lat: ride.startLocation.lat,
-                  lng: ride.startLocation.lng,
+            {hasCustomLocation() ? (
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#f5f5f5',
+                  borderRadius: '8px',
+                  padding: '20px',
+                  textAlign: 'center',
+                  minHeight: '200px',
                 }}
-                clickable={true}
-                title={ride.startLocation.name}
               >
-                <Pin background={'#222'} glyphColor="#fff" borderColor="#222" />
-              </AdvancedMarker>
-              <AdvancedMarker
-                position={{
-                  lat: ride.endLocation.lat,
-                  lng: ride.endLocation.lng,
+                <div>
+                  <p
+                    style={{
+                      fontSize: '18px',
+                      color: '#666',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    📍 Custom Location
+                  </p>
+                  <p style={{ fontSize: '14px', color: '#999' }}>
+                    Map not available for custom locations
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <Map
+                className={styles.map}
+                defaultCenter={{
+                  lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
+                  lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
                 }}
-                clickable={true}
-                title={ride.endLocation.name}
+                defaultZoom={13}
+                gestureHandling="greedy"
+                disableDefaultUI
+                mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
               >
-                <FlagRounded className={styles.flagIcon} />
-              </AdvancedMarker>
-            </Map>
+                <AdvancedMarker
+                  position={{
+                    lat: ride.startLocation.lat,
+                    lng: ride.startLocation.lng,
+                  }}
+                  clickable={true}
+                  title={ride.startLocation.name}
+                >
+                  <Pin
+                    background={'#222'}
+                    glyphColor="#fff"
+                    borderColor="#222"
+                  />
+                </AdvancedMarker>
+                <AdvancedMarker
+                  position={{
+                    lat: ride.endLocation.lat,
+                    lng: ride.endLocation.lng,
+                  }}
+                  clickable={true}
+                  title={ride.endLocation.name}
+                >
+                  <FlagRounded className={styles.flagIcon} />
+                </AdvancedMarker>
+              </Map>
+            )}
           </div>
         )}
       </div>
@@ -192,7 +242,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               e.stopPropagation();
               setExpanded(false);
             }}
-            className={`${styles.button} ${styles.buttonSecondary}`}
+            className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
           >
             Hide Details
           </button>
@@ -201,7 +251,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               e.stopPropagation();
               handleEdit(ride);
             }}
-            className={`${styles.button} ${styles.buttonPrimary}`}
+            className={`${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
           >
             Edit
           </button>
