@@ -254,7 +254,7 @@ const AuthManager = () => {
     setAuthToken('');
     setSignedIn(false);
     setRefreshUser(() => () => {});
-    window.location.href = `${process.env.REACT_APP_SERVER_URL}/api/sso/logout`;
+    window.location.href = `${process.env.VITE_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {
