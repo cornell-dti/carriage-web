@@ -586,7 +586,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
         <APIProvider
-          apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
         >
           <div className={styles.formContainer}>

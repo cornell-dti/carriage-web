@@ -11,7 +11,7 @@
     "jsx": "react-jsx",
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "vite.config.ts", "vite-env.d.ts"],
   "references": [
     {
       "path": "../shared"
