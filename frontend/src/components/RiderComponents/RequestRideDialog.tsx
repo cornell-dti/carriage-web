@@ -477,24 +477,24 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }));
   };
 
-  const createCustomLocation = async (name: string): Promise<Location> => {
-    console.log('Creating new custom location:', name);
+  const createCustomLocation = async (name: string): Promise<LocationType> => {
+      console.log('Creating new custom location:', name);
 
-    // Create new custom location
-    const payload: Partial<Location> = {
-      name: name.trim(),
-      shortName: '',
-      address: '', // Empty address for custom locations
-      info: '',
-      tag: Tag.CUSTOM,
-      lat: 0, // Null coordinates for custom locations
-      lng: 0,
-    };
+      // Create new custom location
+      const payload: Partial<LocationType> = { // Change Location to LocationType
+        name: name.trim(),
+        shortName: '',
+        address: '', // Empty address for custom locations
+        info: '',
+        tag: Tag.CUSTOM,
+        lat: 0, // Null coordinates for custom locations
+        lng: 0,
+      };
 
-    const response = await axios.post('/api/locations/custom', payload);
-    const created: Location = response.data.data || response.data;
-    console.log('Created custom location:', created);
-    return created;
+      const response = await axios.post('/api/locations/custom', payload);
+      const created: LocationType = response.data.data || response.data; // Change Location to LocationType
+      console.log('Created custom location:', created);
+      return created;
   };
 
   const handleSubmit = async () => {
