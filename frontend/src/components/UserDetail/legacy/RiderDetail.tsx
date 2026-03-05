@@ -6,7 +6,7 @@ import { ArrowBack } from '@mui/icons-material';
 import UserDetail, { UserContactInfo } from './UserDetail';
 import UserActions from './UserActions';
 import { phone, home, calendar } from '../../../icons/userInfo/index';
-import { Ride } from '../../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './userDetail.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import axios from '../../../util/axios';
@@ -44,7 +44,7 @@ const RiderDetail = () => {
     riders.find((rider) => rider.id === riderId)
   );
   const now = new Date().toISOString();
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [rides, setRides] = useState<RideType[]>([]);
   const netid = rider?.email.split('@')[0];
   const componentMounted = useRef(true);
 
@@ -52,7 +52,7 @@ const RiderDetail = () => {
     navigate('/admin/riders');
   };
 
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;

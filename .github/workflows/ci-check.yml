@@ -16,6 +16,8 @@ jobs:
           pnpm install --frozen-lockfile
           echo "Prettier version:"
           pnpm prettier --version
+      - name: Build Shared Package
+        run: pnpm --filter shared... build
       - name: Debug Prettier
         run: |
           echo "Files to be checked:"

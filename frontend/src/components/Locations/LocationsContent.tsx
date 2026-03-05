@@ -5,11 +5,11 @@ import { Chip } from '@mui/material';
 import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
-import { Location } from 'types';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface LocationsContentProps {
-  locations: Location[];
-  onUpdateLocation?: (updatedLocation: Location) => void;
+  locations: LocationType[];
+  onUpdateLocation?: (updatedLocation: LocationType) => void;
 }
 
 const LocationsContent: React.FC<LocationsContentProps> = ({
@@ -17,12 +17,12 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
   onUpdateLocation,
 }) => {
   const [filteredLocations, setFilteredLocations] =
-    useState<Location[]>(locations);
-  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    useState<LocationType[]>(locations);
+  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
     null
   );
   const [selectedLocationForDialog, setSelectedLocationForDialog] =
-    useState<Location | null>(null);
+    useState<LocationType | null>(null);
 
   useEffect(() => {
     setFilteredLocations(locations);
@@ -33,15 +33,15 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
     [locations]
   );
 
-  const handleFilterApply = (filteredItems: Location[]) => {
+  const handleFilterApply = (filteredItems: LocationType[]) => {
     setFilteredLocations(filteredItems);
   };
 
-  const handleListItemClick = (location: Location) => {
+  const handleListItemClick = (location: LocationType) => {
     setSelectedLocation(location);
   };
 
-  const handleLocationUpdate = (updatedLocation: Location) => {
+  const handleLocationUpdate = (updatedLocation: LocationType) => {
     if (onUpdateLocation) {
       onUpdateLocation(updatedLocation);
 

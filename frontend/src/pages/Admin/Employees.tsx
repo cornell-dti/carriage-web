@@ -7,7 +7,8 @@ import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
-import { AdminType, DriverType } from '../../types';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
 import buttonStyles from '../../styles/button.module.css';
 
 const Employees = () => {

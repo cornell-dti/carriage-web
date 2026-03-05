@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Ride } from '../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { Row, Table } from '../TableComponents/TableComponents';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
@@ -11,7 +11,7 @@ import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import buttonStyles from '../../styles/button.module.css';
 
 type RidesTableProps = {
-  rides: Ride[];
+  rides: RideType[];
 };
 
 const RidesTable = ({ rides }: RidesTableProps) => {
@@ -23,7 +23,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
   const [editSingle, setEditSingle] = useState(false);
   const [reassign, setReassign] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(-1);
-  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rideEditOpenId, setRideEditOpenId] = useState<string | null>(null);
   let buttonRef = useRef(null);

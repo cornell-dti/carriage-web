@@ -3,10 +3,12 @@ import { v4 as uuid } from 'uuid';
 import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
 import * as db from './common';
-import { Rider, RiderType } from '../models/rider';
+import { Rider } from '../models/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { Location } from '../models/location';
 import { createKeys, validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
-import { Ride, RideType, Type, Status } from '../models/ride';
+import { Ride } from '../models/ride';
+import { RideType, Type, Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();
@@ -27,7 +29,7 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
       // Handle multiple riders - count usage for each rider in the ride
       const ridersToProcess = ride.riders || [];
 
-      ridersToProcess.forEach((rider) => {
+      ridersToProcess.forEach((rider: RiderType) => {
         const currID = rider.id;
         if (currID in usageObj) {
           if (ride.status === Status.COMPLETED) {
@@ -140,7 +142,7 @@ router.get('/:id/currentride', validateUser('Rider'), (req, res) => {
       const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some((rider) => rider.id === id);
+          return ride.riders.some((rider: RiderType) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {
@@ -168,7 +170,7 @@ router.get('/:id/usage', validateUser('Admin'), (req, res) => {
       const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some((rider) => rider.id === id);
+          return ride.riders.some((rider: RiderType) => rider.id === id);
         }
         // Legacy support for old rider field (if it exists)
         if ((ride as any).rider && (ride as any).rider.id === id) {

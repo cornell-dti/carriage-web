@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import { createEmptyRide } from '../../util/modelFixtures';
-import { RideType } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { useRides } from '../../context/RidesContext';
 import buttonStyles from '../../styles/button.module.css';
 

@@ -1,4 +1,4 @@
-import webpush from 'web-push';
+import * as webpush from 'web-push';
 import {
   PublishCommandInput,
   SNS,
@@ -13,8 +13,8 @@ import {
   UserType,
   PlatformType,
 } from '../models/subscription';
-import { RideType, Type } from '../models/ride';
-import { Change, NotificationEvent } from './types';
+import { RideType, Type } from '@carriage-web/shared/types/ride';
+import { Change, NotificationEvent } from '@carriage-web/shared/types';
 import { getMessage } from './notificationMsg';
 import { getReceivers } from './notificationReceivers';
 

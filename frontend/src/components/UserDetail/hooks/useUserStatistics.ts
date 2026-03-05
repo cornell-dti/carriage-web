@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { Ride, Status, SchedulingState } from '../../../types/index';
+import { Status, SchedulingState } from '../../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 interface StatisticsFilters {
   dateFrom: Date | null;
@@ -17,7 +18,7 @@ interface StatisticsData {
 }
 
 const useUserStatistics = (
-  rides: Ride[],
+  rides: RideType[],
   filters: StatisticsFilters
 ): StatisticsData => {
   return useMemo(() => {

@@ -1,7 +1,12 @@
-import { RideType, Status, Type, SchedulingState } from '../../models/ride';
+import {
+  RideType,
+  Status,
+  Type,
+  SchedulingState,
+} from '@carriage-web/shared/types/ride';
 import { UserType } from '../../models/subscription';
-import { Tag } from '../../models/location';
-import { RiderType } from '../../models/rider';
+import { Tag } from '@carriage-web/shared/types/location';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import initDynamoose from '../dynamoose';
 import { notify } from '../notification';
 

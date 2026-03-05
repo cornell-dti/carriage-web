@@ -49,5 +49,20 @@ module.exports = {
     react: {
       version: 'detect',
     },
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: [
+          './tsconfig.base.json',
+          './server/tsconfig.json',
+          './frontend/tsconfig.json',
+          './shared/tsconfig.json',
+        ],
+      },
+      node: true,
+    },
   },
 };

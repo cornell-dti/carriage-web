@@ -1,9 +1,11 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Admin, Location, Tag } from '../types';
+import { Tag } from '../types';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { LocationType } from '@carriage-web/shared/types/location';
 import axios from '../util/axios';
 
 type locationsState = {
-  locations: Array<Location>;
+  locations: Array<LocationType>;
   refreshLocations: () => Promise<void>;
 };
 
@@ -21,16 +23,16 @@ type locationsProviderProps = {
 
 export const LocationsProvider = ({ children }: locationsProviderProps) => {
   const componentMounted = useRef(true);
-  const [locations, setLocations] = useState<Array<Location>>([]);
+  const [locations, setLocations] = useState<Array<LocationType>>([]);
   const refreshLocations = useCallback(async () => {
-    const locationsData: Array<Location> = await axios
+    const locationsData: Array<LocationType> = await axios
       .get('/api/locations')
       .then((res) => res.data)
       .then((data) => data.data);
     if (locationsData) {
       const filtered = locationsData.filter((loc) => loc.tag !== Tag.CUSTOM);
 
-      filtered.sort((a: Location, b: Location) => {
+      filtered.sort((a: LocationType, b: LocationType) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
 

@@ -1,7 +1,7 @@
 import { parseAddress } from 'addresser';
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { UserType, JWTPayload } from './types';
+import * as jwt from 'jsonwebtoken';
+import { UserType, JWTPayload } from '@carriage-web/shared/types';
 import moment from 'moment-timezone';
 import { ValueType } from 'dynamoose/dist/Schema';
 import { Location } from '../models/location';

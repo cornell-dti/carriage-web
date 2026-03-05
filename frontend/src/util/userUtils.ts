@@ -1,4 +1,5 @@
-import { Employee, Rider } from '../types/index';
+import { Employee } from '../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 /**
  * Extracts NetID from email address
@@ -19,6 +20,6 @@ export const extractNetIdFromEmail = (email: string): string | null => {
  * @param user - User object with email field
  * @returns NetID string or null if not found
  */
-export const getUserNetId = (user: Employee | Rider): string | null => {
+export const getUserNetId = (user: Employee | RiderType): string | null => {
   return extractNetIdFromEmail(user.email);
 };

@@ -5,7 +5,9 @@ import UserDetail, {
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
-import { DriverType as Driver } from 'types';
+import styles from './settings.module.css';
+import Notification from '../../components/Notification/Notification';
+import { DriverType } from '@carriage-web/shared/types/driver';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
@@ -26,18 +28,18 @@ const Settings = () => {
         lastName={user?.lastName || ''}
         netId={netId}
         photoLink={user?.photoLink}
-        driver={user as Driver}
+        driver={user as DriverType}
         employee={{
-          id: (user as Driver)?.id || '',
+          id: (user as DriverType)?.id || '',
           firstName: user?.firstName || '',
           lastName: user?.lastName || '',
           netId,
           phoneNumber: user?.phoneNumber || '',
-          availability: (user as Driver)?.availability as unknown as
+          availability: (user as DriverType)?.availability as unknown as
             | string[]
             | undefined,
           photoLink: user?.photoLink,
-          startDate: (user as Driver)?.joinDate,
+          startDate: (user as DriverType)?.joinDate,
           isDriver: true,
         }}
         role="driver"

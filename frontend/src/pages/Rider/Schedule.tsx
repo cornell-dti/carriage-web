@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from 'react';
 import { Button } from '@mui/material';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
 import { FormData } from 'components/RiderComponents/RequestRideDialog';
@@ -22,9 +22,9 @@ import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-type DayRideCollection = [string, Ride[]][];
+type DayRideCollection = [string, RideType[]][];
 
-const partitionRides = (rides: Ride[]): DayRideCollection => {
+const partitionRides = (rides: RideType[]): DayRideCollection => {
   const sortedRides = [...rides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
@@ -46,7 +46,7 @@ const partitionRides = (rides: Ride[]): DayRideCollection => {
     return `${weekday}, ${month} ${day}${suffix}`;
   };
 
-  const dayMap = new Map<string, Ride[]>();
+  const dayMap = new Map<string, RideType[]>();
 
   sortedRides.forEach((ride) => {
     const day = formatReadableDate(new Date(ride.startTime));
@@ -72,10 +72,10 @@ const Schedule: React.FC = () => {
   const { locations } = useLocations();
   const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
+  const [allRiderRides, setAllRiderRides] = useState<RideType[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
-  const [editingRide, setEditingRide] = useState<null | Ride>(null);
+  const [editingRide, setEditingRide] = useState<null | RideType>(null);
 
   // Get the start of the current week (Sunday in local timezone)
   const getStartOfWeek = (date: Date): Date => {
@@ -214,7 +214,7 @@ const Schedule: React.FC = () => {
 
   return (
     <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
       <main id="main" className={styles.schedulePage}>

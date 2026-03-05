@@ -29,15 +29,17 @@ import {
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
 import styles from './requestridedialog.module.css';
-import { Ride, Location, Tag } from 'types';
+import { Tag } from 'types';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { LocationType } from '@carriage-web/shared/types/location';
 import RequestRidePlacesSearch from './RequestRidePlacesSearch';
 import axios from '../../util/axios';
 
 type RepeatOption = 'none' | 'daily' | 'weekly' | 'custom';
 
 export interface FormData {
-  pickupLocation: Location | null;
-  dropoffLocation: Location | null;
+  pickupLocation: LocationType | null;
+  dropoffLocation: LocationType | null;
   date: Date | null;
   time: Date | null;
   repeatType: RepeatOption;
@@ -51,8 +53,8 @@ interface RequestRideDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: FormData) => void;
-  supportedLocations: Location[];
-  ride?: Ride;
+  supportedLocations: LocationType[];
+  ride?: RideType;
 }
 
 const repeatOptions: Array<{ value: RepeatOption; label: string }> = [
@@ -83,7 +85,7 @@ const Other = {
   lng: 0,
   photoLink: '',
   images: [''],
-} as Location;
+} as LocationType;
 
 /**
  * RequestRideDialog component - A dialog for Riders to request a ride.
@@ -122,7 +124,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
   const [selectionState, setSelectionState] =
     useState<SelectionState>('pickup');
-  const [pendingLocation, setPendingLocation] = useState<Location | null>(null);
+  const [pendingLocation, setPendingLocation] = useState<LocationType | null>(
+    null
+  );
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [customPickup, setCustomPickup] = useState(false);
   const [customDropoff, setCustomDropoff] = useState(false);
@@ -171,7 +175,8 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }
   }, [open, ride]);
 
-  const handleLocationSelect = (location: Location | null) => {
+  // New handlers for map-based selection
+  const handleLocationSelect = (location: LocationType | null) => {
     if (location) {
       setPendingLocation(location);
       setConfirmDialogOpen(true);
@@ -259,11 +264,187 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     } else {
       return [formData.pickupLocation, formData.dropoffLocation].filter(
         Boolean
-      ) as Location[];
+      ) as LocationType[];
     }
   };
 
-  // Reset selected days when changing repeat type
+  const getAllLocs = async () => {
+    const locationsData: Array<LocationType> = await axios
+      .get('/api/locations')
+      .then((res) => res.data)
+      .then((data) => data.data);
+    return locationsData;
+  };
+
+  /**
+   * Strips address of variation
+   * @function normalizeAddress
+   *
+   * @param {string} addr
+   *
+   * @returns {string}
+   * An address in all lowercase with no punctuation with variations
+   * between place names (such as USA vs United States) unified
+   *
+   * @description
+   * This function ensures that the system properly normalizes an address
+   * to make comparison simpler
+   */
+  const normalizeAddress = (addr: string) => {
+    if (!addr) return '';
+
+    //everything lowercase
+    let a = addr.trim().toLowerCase();
+
+    // collapse whitespace
+    a = a.replace(/\s+/g, ' ');
+
+    // remove punctuation
+    a = a.replace(/[.,]/g, '');
+
+    // country name variations unified
+    a = a
+      .replace(/\busa\b/g, 'united states')
+      .replace(/\bus\b/g, 'united states');
+
+    // state name variations unified
+    a = a.replace(/\bny\b/g, 'new york');
+
+    // road names variations unified
+    a = a
+      .replace(/\brd\b/g, 'road')
+      .replace(/\bst\b/g, 'street')
+      .replace(/\bave\b/g, 'avenue')
+      .replace(/\bblvd\b/g, 'boulevard')
+      .replace(/\bdr\b/g, 'drive');
+
+    return a;
+  };
+
+  /**
+   * Creates a new custom Location in the database OR returns an existing one
+   * if it matches the provided address/coordinates.
+   *
+   * @async
+   * @function createOrGetLocation
+   *
+   * @param {string} address
+   * @param {number} lat
+   * @param {number} lng
+   * @returns {Promise<LocationType>}
+   *          A resolved Location object — either:
+   *          - an existing Location already stored in `allLocations`, OR
+   *          - a newly created custom Location saved to the backend.
+   * @description
+   * This function ensures that the system does not create duplicate custom
+   * locations. It does this by:
+   *
+   * 1. Normalizing the address
+   *
+   * 2. Searching for an existing Location via address or lat/lng matching
+   *
+   * 3. Creating a new Location if needed
+   * This prevents multiple users from creating duplicate “custom” entries
+   * for the exact same geolocation.
+   *
+   */
+  const createOrGetLocation = async (
+    address: string,
+    lat: number,
+    lng: number,
+    isPickUp: boolean
+  ): Promise<LocationType> => {
+    const LOCATION_TOLERANCE = 0.00025; // ~25 meters
+
+    const normalized = normalizeAddress(address);
+
+    if (normalized === '') {
+      if (isPickUp) {
+        setInputPickUpError(true);
+      } else {
+        setInputDropOffError(true);
+      }
+      setInputErrorText('Attempted to submit an empty location');
+      throw new Error('User tried to submit empty custom location');
+    }
+
+    const allLocs = getAllLocs();
+
+    // checking db for if it already exists in Locations quack MUST CHANGE HERE
+    console.log('Checking for address:', normalized);
+
+    // check against allLocations (includes newly created custom ones)
+    const matched = (await allLocs).find((loc) => {
+      const addrMatch = normalizeAddress(loc.address) === normalized; // 1) is address the same
+      const addrSimilar1 = normalizeAddress(loc.address).includes(normalized);
+      const addrSimilar2 = normalized.includes(normalizeAddress(loc.address));
+      const latMatch = Math.abs(loc.lat - lat) < LOCATION_TOLERANCE; // 2) are lat/long similar
+      const lngMatch = Math.abs(loc.lng - lng) < LOCATION_TOLERANCE;
+      console.log(
+        `Checking ${loc.name}: addrMatch=${addrMatch}, addrSimilar1=${addrSimilar1}, addrSimilar2=${addrSimilar2}, latMatch=${latMatch}, lngMatch=${lngMatch}`
+      );
+      console.log(normalized + '     ' + normalizeAddress(loc.address));
+      return (
+        addrMatch || addrSimilar1 || addrSimilar2 || (latMatch && lngMatch)
+      );
+    });
+
+    if (matched) {
+      console.log('Found matching location:', matched);
+      return matched; //if this location already exists, return it
+    }
+
+    console.log('No match found, creating new location');
+
+    // else create new custom location
+    const payload: Partial<LocationType> = {
+      name: address.split(',')[0], // short name
+      shortName: '',
+      address,
+      info: '',
+      tag: Tag.CUSTOM,
+      lat,
+      lng,
+    };
+
+    const response = await axios.post('/api/locations/custom', payload); //add to locations
+    const created: LocationType = response.data.data || response.data;
+    return created;
+  };
+
+  /**
+   * handlePickupSelect and handleDropoffSelect
+   *
+   * Store a custom pickup or dropoff location selected through Google Places search.
+   * Creates a temporary placeholder based on the "Other" template.
+   * Actual DB-backed Location is created later in handleSubmit via createOrGetLocation().
+   */
+
+  const handlePickupSelect = (address: string, lat: number, lng: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      pickupLocation: { ...Other, address: address, lat: lat, lng: lng },
+    }));
+  };
+
+  const handleDropoffSelect = (address: string, lat: number, lng: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      dropoffLocation: { ...Other, address: address, lat: lat, lng: lng },
+    }));
+  };
+
+  // Legacy handler for dropdown (keeping for backward compatibility)
+  const handleDropoffChange = (event: SelectChangeEvent<string>) => {
+    const locationId = event.target.value as string;
+    const selectedLocation =
+      supportedLocations.find((loc) => loc.id === locationId) || null;
+    setFormData((prev) => ({
+      ...prev,
+      dropoffLocation: selectedLocation,
+    }));
+  };
+
   const handleDateChange =
     (field: keyof Pick<FormData, 'date' | 'time' | 'repeatEndDate'>) =>
     (newDate: Date | null) => {
@@ -296,24 +477,24 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
     }));
   };
 
-  const createCustomLocation = async (name: string): Promise<Location> => {
-    console.log('Creating new custom location:', name);
+  const createCustomLocation = async (name: string): Promise<LocationType> => {
+      console.log('Creating new custom location:', name);
 
-    // Create new custom location
-    const payload: Partial<Location> = {
-      name: name.trim(),
-      shortName: '',
-      address: '', // Empty address for custom locations
-      info: '',
-      tag: Tag.CUSTOM,
-      lat: 0, // Null coordinates for custom locations
-      lng: 0,
-    };
+      // Create new custom location
+      const payload: Partial<LocationType> = { // Change Location to LocationType
+        name: name.trim(),
+        shortName: '',
+        address: '', // Empty address for custom locations
+        info: '',
+        tag: Tag.CUSTOM,
+        lat: 0, // Null coordinates for custom locations
+        lng: 0,
+      };
 
-    const response = await axios.post('/api/locations/custom', payload);
-    const created: Location = response.data.data || response.data;
-    console.log('Created custom location:', created);
-    return created;
+      const response = await axios.post('/api/locations/custom', payload);
+      const created: LocationType = response.data.data || response.data; // Change Location to LocationType
+      console.log('Created custom location:', created);
+      return created;
   };
 
   const handleSubmit = async () => {
@@ -405,7 +586,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
         <APIProvider
-          apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
         >
           <div className={styles.formContainer}>
