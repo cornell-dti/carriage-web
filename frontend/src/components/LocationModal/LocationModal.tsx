@@ -116,7 +116,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
           aria-labelledby="location-modal"
         >
           <div className={styles.inputContainer}>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name" required>Name</Label>
             <Input
               {...register('name', { required: true })}
               type="text"
@@ -129,7 +129,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
               <p className={styles.errorMsg}>Please enter a name</p>
             )}
 
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address" required>Address</Label>
             <Input
               {...register('address', { required: true, validate: isAddress })}
               type="text"
@@ -142,7 +142,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
               <p className={styles.errorMsg}>{errors.address.message}</p>
             )}
 
-            <Label htmlFor="info">Pickup/Dropoff Info</Label>
+            <Label htmlFor="info" required>Pickup/Dropoff Info</Label>
             <Input
               {...register('info', { required: true })}
               type="text"
@@ -157,7 +157,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
               </p>
             )}
 
-            <Label htmlFor="tag">Tag</Label>
+            <Label htmlFor="tag" required>Tag</Label>
             <select
               {...register('tag', { required: true })}
               id="tag"

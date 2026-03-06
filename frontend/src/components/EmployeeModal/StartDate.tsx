@@ -14,7 +14,7 @@ const StartDate = ({ existingDate }: StartDateProps) => {
 
   return (
     <div className={cn(styles.col1, styles.workingHours)}>
-      <Label htmlFor="startDate">Start Date:</Label>
+      <Label htmlFor="startDate" required>Start Date:</Label>
       <Input
         id="startDate"
         type="date"

@@ -141,13 +141,13 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       {((modalType === 'CREATE' && watchRepeating) ||
         modalType === 'EDIT_REGULAR' ||
         modalType === 'EDIT_SINGLE_RECURRING') && (
-        <Label htmlFor={'startDate'} className={styles.largeLabel}>
-          Date
-        </Label>
-      )}
+          <Label htmlFor={'startDate'} className={styles.largeLabel} required>
+            Date
+          </Label>
+        )}
       <div className={styles.box}>
         {modalType === 'EDIT_ALL_RECURRING' && (
-          <Label className={styles.boldLabel} htmlFor="startDate">
+          <Label className={styles.boldLabel} htmlFor="startDate" required>
             Starts
           </Label>
         )}
@@ -199,7 +199,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       {showRepeatingInfo && watchRepeating ? (
         <div>
           <div className={styles.box}>
-            <Label className={styles.boldLabel} id="repeats">
+            <Label className={styles.boldLabel} id="repeats" required>
               Repeats
             </Label>
             <div className={styles.radioBox}>
@@ -283,7 +283,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       </Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
-          <Label className={styles.label} id="pickupLocation">
+          <Label className={styles.label} id="pickupLocation" required>
             Location
           </Label>
           <select
@@ -312,7 +312,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           )}
         </div>
         <div className={styles.errorBox}>
-          <Label className={styles.label} id="pickupTime">
+          <Label className={styles.label} id="pickupTime" required>
             Time
           </Label>
           <Input
@@ -388,7 +388,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       </Label>
       <div className={styles.box}>
         <div className={styles.errorBox}>
-          <Label className={styles.label} id="dropoffLocation">
+          <Label className={styles.label} id="dropoffLocation" required>
             Location
           </Label>
           <select
@@ -418,7 +418,7 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           )}
         </div>
         <div className={styles.errorBox}>
-          <Label className={styles.label} id="dropoffTime">
+          <Label className={styles.label} id="dropoffTime" required>
             Time
           </Label>
           <Input

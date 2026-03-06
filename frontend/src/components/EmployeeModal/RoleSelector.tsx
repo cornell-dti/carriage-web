@@ -18,7 +18,9 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
 
   return (
     <div className={styles.roleSelector}>
-      <p className={styles.roleSelectorTitle}>Role</p>
+      <Label className={styles.roleSelectorTitle} required>
+        Role
+      </Label>
       <div className={styles.radioGroup}>
         <div className={styles.radioOption}>
           <Input
