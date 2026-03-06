@@ -2,7 +2,7 @@ import { RiderType } from '../../../server/src/models/rider';
 import { DriverType } from '../../../server/src/models/driver';
 import { RideType } from '../../../server/src/models/ride';
 import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
+import { LocationModel } from '../../../server/generated/prisma/models/Location';
 import { VehicleType } from '../../../server/src/models/vehicle';
 import { UnregisteredUserType } from '../../../server/src/util/types';
 
@@ -65,7 +65,7 @@ export enum Tag {
   CUSTOM = 'custom',
 }
 
-export type Location = LocationType;
+export type Location = LocationModel;
 
 export type Ride = RideType;
 

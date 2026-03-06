@@ -71,7 +71,7 @@ export function createDefaultLocation(): LocationType {
     address: '',
     shortName: '',
     info: '',
-    tag: Tag.CUSTOM,
+    tag: LocationTag.CUSTOM,
     lat: 0,
     lng: 0,
     photoLink: undefined,

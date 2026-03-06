@@ -1,78 +1,111 @@
 import express from 'express';
-import { v4 as uuid } from 'uuid';
-import { Condition } from 'dynamoose/dist/Condition';
-import * as db from './common';
-import { Location, Tag } from '../models/location';
+import { prisma } from '../../lib/prisma';
+import { Tag } from '../models/location';
 import { validateUser } from '../util';
 
 const router = express.Router();
-const tableName = 'Locations';
 
-// Get a location by id in Locations table
-router.get('/:id', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Location, id, tableName);
-});
-
-// Get and query all locations
-router.get('/', validateUser('User'), (req, res) => {
-  const { query } = req;
-  if (Object.keys(query).length === 0) {
-    db.getAll(res, Location, tableName);
-  } else {
-    const { active } = query;
-    let condition = new Condition();
-    if (active) {
-      if (active === 'true') {
-        condition = condition
-          .where('tag')
-          .not()
-          .eq(Tag.INACTIVE)
-          .where('tag')
-          .not()
-          .eq(Tag.CUSTOM);
-      } else {
-        condition = condition.where('tag').eq(Tag.INACTIVE);
-      }
-    }
-    db.scan(res, Location, condition);
+/**
+ * Get a location by ID
+ */
+router.get('/:id', validateUser('User'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const location = await prisma.location.findUnique({ where: { id } });
+    if (!location) return res.status(404).json({ error: 'Location not found' });
+    res.json(location);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 
-// Put a location in Locations table
-router.post('/', validateUser('Admin'), (req, res) => {
-  const { body } = req;
-  const location = new Location({
-    ...body,
-    id: uuid(),
-  });
-  db.create(res, location);
+/**
+ * Get all locations or filtered by query
+ */
+router.get('/', validateUser('User'), async (req, res) => {
+  try {
+    const { active } = req.query;
+
+    const where: any = {};
+
+    if (active !== undefined) {
+      if (active === 'true') {
+        where.NOT = { tag: { in: [Tag.INACTIVE, Tag.CUSTOM] } };
+      } else {
+        where.tag = Tag.INACTIVE;
+      }
+    }
+
+    const locations = await prisma.location.findMany({ where });
+    res.json(locations);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
-// Allows riders to create custom locations
-router.post('/custom', validateUser('User'), (req, res) => {
-  const { body } = req;
-  const location = new Location({ ...body, id: uuid(), tag: Tag.CUSTOM });
-  db.create(res, location);
+/**
+ * Create a new location (Admin only)
+ */
+router.post('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const { body } = req;
+    const location = await prisma.location.create({
+      data: body,
+    });
+    res.status(201).json(location);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
-// Update an existing location
-router.put('/:id', validateUser('Admin'), (req, res) => {
-  const {
-    params: { id },
-    body,
-  } = req;
-  db.update(res, Location, { id }, body, tableName);
+/**
+ * Create a custom location (User allowed)
+ */
+router.post('/custom', validateUser('User'), async (req, res) => {
+  try {
+    const { body } = req;
+    const location = await prisma.location.create({
+      data: {
+        ...body,
+        tag: Tag.CUSTOM,
+      },
+    });
+    res.status(201).json(location);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
-// Delete an existing location
-router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.deleteById(res, Location, id, tableName);
+/**
+ * Update a location by ID (Admin only)
+ */
+router.put('/:id', validateUser('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { body } = req;
+
+    const updated = await prisma.location.update({
+      where: { id },
+      data: body,
+    });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+/**
+ * Delete a location by ID (Admin only)
+ */
+router.delete('/:id', validateUser('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.location.delete({ where: { id } });
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 export default router;
