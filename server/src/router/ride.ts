@@ -11,7 +11,7 @@ import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { notify } from '../util/notification';
-import { Change } from '../util/types';
+import { Change, JWTPayload } from '../util/types';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();
@@ -202,6 +202,28 @@ router.get('/', validateUser('User'), (req, res) => {
     allDates,
   } = req.query;
 
+  // Extract caller identity from validated JWT (set by validateUser middleware)
+  const { id: callerId, userType } = res.locals.user as JWTPayload;
+
+  // Scope query params to the caller's own identity.
+  // Admins: pass through whatever the query provides (existing behaviour).
+  // Riders: always scope to their own rider ID; discard any ?rider= or ?driver= param.
+  // Drivers: always scope to their own driver ID; discard any ?rider= or ?driver= param.
+  let effectiveRider = rider as string | undefined;
+  let effectiveDriver = driver as string | undefined;
+
+  if (userType === UserType.RIDER) {
+    effectiveRider = callerId;
+    effectiveDriver = undefined;
+  } else if (userType === UserType.DRIVER) {
+    effectiveDriver = callerId;
+    effectiveRider = undefined;
+  } else if (userType !== UserType.ADMIN) {
+    // Unrecognised non-admin role — deny as a defence-in-depth fallback
+    res.status(403).send({ err: 'Insufficient permissions for this request.' });
+    return;
+  }
+
   let condition = new Condition();
 
   if (type) {
@@ -224,8 +246,8 @@ router.get('/', validateUser('User'), (req, res) => {
 
   // Skip rider condition in Dynamoose query - will filter in JavaScript
 
-  if (driver) {
-    condition = condition.where('driver').eq(driver);
+  if (effectiveDriver) {
+    condition = condition.where('driver').eq(effectiveDriver);
   }
 
   // Only apply date filter if date is provided and allDates is not true
@@ -237,17 +259,17 @@ router.get('/', validateUser('User'), (req, res) => {
     condition = condition.where('startTime').between(dateStart, dateEnd);
   }
 
-  if (rider) {
+  if (effectiveRider) {
     // If rider filter is specified, use callback to filter after scan
     db.scan(res, Ride, condition, (data: RideType[]) => {
       // Filter for rides that include this rider
       const riderRides = data.filter((ride) => {
         // Check both old (rider) and new (riders) format for compatibility
         if (ride.riders && Array.isArray(ride.riders)) {
-          return ride.riders.some((riderObj) => riderObj.id === rider);
+          return ride.riders.some((riderObj) => riderObj.id === effectiveRider);
         }
         // Legacy support for old rider field (if it exists)
-        if ((ride as any).rider && (ride as any).rider.id === rider) {
+        if ((ride as any).rider && (ride as any).rider.id === effectiveRider) {
           return true;
         }
         return false;
