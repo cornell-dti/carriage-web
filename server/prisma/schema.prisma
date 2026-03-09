@@ -1,0 +1,243 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -------ENUMS-------
+
+enum RideType {
+  UPCOMING
+  PAST
+  ACTIVE
+}
+
+enum SchedulingState {
+  SCHEDULED
+  UNSCHEDULED
+}
+
+enum RideStatus {
+  NOT_STARTED
+  ON_THE_WAY
+  ARRIVED
+  PICKED_UP
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+enum DayOfWeek {
+  MON
+  TUE
+  WED
+  THURS
+  FRI
+}
+
+enum Accessibility {
+  ASSISTANT
+  CRUTCHES
+  WHEELCHAIR
+  MOTOR_SCOOTER
+  KNEE_SCOOTER
+  LOW_VISION
+  SERVICE_ANIMALS
+}
+
+enum Organization {
+  REDRUNNER
+  CULIFT
+}
+
+enum LocationTag {
+  EAST
+  CENTRAL
+  NORTH
+  WEST
+  CTOWN
+  DTOWN
+  INACTIVE
+  CUSTOM
+}
+
+enum UserType {
+  ADMIN
+  RIDER
+  DRIVER
+}
+
+enum AdminRole {
+  SDS_ADMIN
+  REDRUNNER_ADMIN
+}
+
+enum NotificationEvent {
+  NOT_STARTED
+  ON_THE_WAY
+  ARRIVED
+  PICKED_UP
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+// -----MODELS-----------
+
+model Location {
+  id        String      @id @default(uuid())
+  name      String
+  address   String
+  shortName String
+  info      String?
+  tag       LocationTag
+  lat       Float
+  lng       Float
+  photoLink String?
+  images    String[]
+
+  ridesAsStart Ride[] @relation("StartLocation")
+  ridesAsEnd   Ride[] @relation("EndLocation")
+}
+
+//--------------------
+
+model Driver {
+  id           String      @id @default(uuid())
+  firstName    String
+  lastName     String
+  phoneNumber  String
+  email        String      @unique
+  photoLink    String?
+  availability DayOfWeek[]
+  active       Boolean     @default(true)
+  joinDate     DateTime    @default(now())
+  rides Ride[]
+}
+
+//--------------------
+
+model Rider {
+  id                String          @id @default(uuid())
+  firstName         String
+  lastName          String
+  phoneNumber       String?
+  email             String          @unique
+  accessibility     Accessibility[]
+  organization      Organization?
+  description       String?
+  joinDate           DateTime       @default(now())
+  endDate           DateTime?  
+  address           String?
+  photoLink         String?
+  active            Boolean         @default(true)
+
+  rides             Ride[]          @relation("RideRiders")
+  favorites         Favorite[]
+}
+
+//--------------------
+
+model Ride {
+  id              String          @id @default(uuid())
+  type            RideType        @default(UPCOMING)
+  status          RideStatus      @default(NOT_STARTED)
+  schedulingState SchedulingState @default(UNSCHEDULED)
+
+  startLocationId String
+  startLocation   Location        @relation("StartLocation", fields: [startLocationId], references: [id])
+
+  endLocationId   String
+  endLocation     Location        @relation("EndLocation", fields: [endLocationId], references: [id])
+
+  startTime       DateTime
+  endTime         DateTime
+
+  riders          Rider[]         @relation("RideRiders")
+
+  driverId        String?
+  driver          Driver?         @relation(fields: [driverId], references: [id])
+
+  // RFC 5545 recurrence placeholders
+  isRecurring     Boolean         @default(false)
+  rrule           String?
+  exdate          String[]
+  rdate           String[]
+  parentRideId    String?
+  recurrenceId    String?
+  timezone        String          @default("America/New_York")
+
+  favorites       Favorite[]
+  notifications   Notification[]
+
+  @@index([startTime])
+  @@index([endTime])
+  @@index([driverId])
+}
+
+//--------------------
+
+model Favorite {
+  userId      String
+  rideId      String
+  favoritedAt DateTime @default(now())
+
+  rider Rider @relation(fields: [userId], references: [id])
+  ride  Ride  @relation(fields: [rideId], references: [id])
+
+  @@id([userId, rideId])
+}
+
+//--------------------
+
+model Admin {
+  id          String      @id @default(uuid())
+  firstName   String
+  lastName    String
+  roles       AdminRole[]
+  isDriver    Boolean     @default(false)
+  phoneNumber String
+  email       String      @unique
+  photoLink   String?
+}
+
+//--------------------
+
+model Stats {
+  year        String
+  monthDay    String
+  dayCount    Int    @default(0)
+  dayNoShow   Int    @default(0)
+  dayCancel   Int    @default(0)
+  nightCount  Int    @default(0)
+  nightNoShow Int    @default(0)
+  nightCancel Int    @default(0)
+  // Dynamic driver -> ride-count map stored as JSON
+  drivers     Json   @default("{}")
+
+  @@id([year, monthDay])
+}
+
+//--------------------
+
+model Notification {
+  id         String            @id @default(uuid())
+  notifEvent NotificationEvent
+  userID     String
+  rideID     String
+  title      String
+  body       String
+  timeSent   DateTime
+  read       Boolean
+
+  ride Ride @relation(fields: [rideID], references: [id])
+}
