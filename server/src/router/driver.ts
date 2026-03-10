@@ -1,27 +1,26 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
-import * as db from './common';
-import { Driver } from '../models/driver';
+import { prisma } from '../db/prisma';
+import { DayOfWeek } from '../../generated/prisma/client';
 import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
-import { Ride } from '../models/ride';
-import { Status } from '@carriage-web/shared/types/ride';
-import { UserType } from '../models/subscription';
-import { Item } from 'dynamoose/dist/Item';
-import { DriverType } from '@carriage-web/shared/types/driver';
 
 const router = express.Router();
-const tableName = 'Drivers';
 
 // Get all drivers
-router.get('/', validateUser('Admin'), (req, res) => {
-  db.getAll(res, Driver, tableName);
+router.get('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const drivers = await prisma.driver.findMany();
+    res.status(200).send({ data: drivers });
+  } catch (error) {
+    console.error('Error fetching drivers:', error);
+    res.status(500).send({ err: 'Failed to fetch drivers' });
+  }
 });
 
 // Get available drivers for a given date and time window
 // Example: /api/drivers/available?date=2025-09-10&startTime=10:00&endTime=12:00
-router.get('/available', validateUser('User'), (req, res) => {
+router.get('/available', validateUser('User'), async (req, res) => {
   const { date, startTime, endTime, timezone } = req.query as {
     date?: string;
     startTime?: string;
@@ -30,152 +29,129 @@ router.get('/available', validateUser('User'), (req, res) => {
   };
 
   if (!date || !startTime || !endTime) {
-    res
-      .status(400)
-      .send({ err: 'Missing required query params: date, startTime, endTime' });
-    return;
+    return res.status(400).send({ err: 'Missing required query params: date, startTime, endTime' });
   }
 
   const tz = timezone || 'America/New_York';
 
-  // Build requested time window ISO strings
-  const requestedStartIso = moment
-    .tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz)
-    .toISOString();
-  const requestedEndIso = moment
-    .tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz)
-    .toISOString();
+  const requestedStart = moment.tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz).toDate();
+  const requestedEnd = moment.tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz).toDate();
+  const dayStart = moment.tz(date, 'YYYY-MM-DD', tz).startOf('day').toDate();
+  const dayEnd = moment.tz(date, 'YYYY-MM-DD', tz).endOf('day').toDate();
 
-  // Build full-day window for scanning rides
-  const dayStartIso = moment
-    .tz(date, 'YYYY-MM-DD', tz)
-    .startOf('day')
-    .toISOString();
-  const dayEndIso = moment
-    .tz(date, 'YYYY-MM-DD', tz)
-    .endOf('day')
-    .toISOString();
-
-  // Map JS weekday to our DayOfWeek enum values
-  const weekday = moment.tz(date, 'YYYY-MM-DD', tz).format('ddd'); // e.g., Mon, Tue, Wed
-  const dayMap: Record<string, string> = {
-    Mon: 'MON',
-    Tue: 'TUE',
-    Wed: 'WED',
-    Thu: 'THURS',
-    Fri: 'FRI',
-    Sat: 'SAT',
-    Sun: 'SUN',
+  const weekday = moment.tz(date, 'YYYY-MM-DD', tz).format('ddd');
+  const dayMap: Record<string, DayOfWeek> = {
+    Mon: DayOfWeek.MON,
+    Tue: DayOfWeek.TUE,
+    Wed: DayOfWeek.WED,
+    Thu: DayOfWeek.THURS,
+    Fri: DayOfWeek.FRI,
   };
   const dayToken = dayMap[weekday];
 
-  // Scan rides for that day to detect conflicts
-  const rideCondition = new Condition()
-    .where('startTime')
-    .between(dayStartIso, dayEndIso)
-    .where('status')
-    .not()
-    .eq(Status.CANCELLED);
-
-  db.scan(res, Ride, rideCondition, (ridesOfDay: any[]) => {
-    // Then fetch all drivers, and filter by availability and conflicts
-    db.getAll(res, Driver, tableName, (allDrivers: any[]) => {
-      // Filter active drivers first
-      const activeDrivers = allDrivers.filter((d) => d.active !== false);
-
-      // Filter by weekday availability if we have a valid token
-      const dayFilteredDrivers = dayToken
-        ? activeDrivers.filter(
-          (d) =>
-            Array.isArray(d.availability) && d.availability.includes(dayToken)
-        )
-        : activeDrivers;
-
-      const reqStart = requestedStartIso;
-      const reqEnd = requestedEndIso;
-
-      // Helper to check time overlap
-      const overlaps = (rideStartIso: string, rideEndIso: string) => {
-        return !(rideEndIso <= reqStart || rideStartIso >= reqEnd);
-      };
-
-      // Build a lookup of driverId -> hasConflict
-      const conflictingDriverIds = new Set<string>();
-      for (const ride of ridesOfDay) {
-        if (!ride.driver || !ride.driver.id) continue;
-        if (overlaps(ride.startTime, ride.endTime)) {
-          conflictingDriverIds.add(ride.driver.id);
-        }
-      }
-
-      const availableDrivers = dayFilteredDrivers.filter(
-        (d) => !conflictingDriverIds.has(d.id)
-      );
-
-      res.send({ data: availableDrivers });
+  try {
+    // Get rides for that day that aren't cancelled
+    const ridesOfDay = await prisma.ride.findMany({
+      where: {
+        startTime: { gte: dayStart, lte: dayEnd },
+        status: { not: 'CANCELLED' },
+        driverId: { not: null },
+      },
     });
-  });
+
+    // Find conflicting driver IDs
+    const conflictingDriverIds = new Set<string>();
+    for (const ride of ridesOfDay) {
+      if (!ride.driverId) continue;
+      const rideStart = ride.startTime.toISOString();
+      const rideEnd = ride.endTime.toISOString();
+      const reqStart = requestedStart.toISOString();
+      const reqEnd = requestedEnd.toISOString();
+      if (!(rideEnd <= reqStart || rideStart >= reqEnd)) {
+        conflictingDriverIds.add(ride.driverId);
+      }
+    }
+
+    // Fetch active drivers filtered by availability
+    const drivers = await prisma.driver.findMany({
+      where: {
+        active: true,
+        ...(dayToken ? { availability: { has: dayToken } } : {}),
+      },
+    });
+
+    const availableDrivers = drivers.filter((d) => !conflictingDriverIds.has(d.id));
+    res.send({ data: availableDrivers });
+  } catch (error) {
+    console.error('Error fetching available drivers:', error);
+    res.status(500).send({ err: 'Failed to fetch available drivers' });
+  }
 });
 
-// Get a driver by id in Drivers table
-router.get('/:id', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Driver, id, tableName);
+// Get a driver by id
+router.get('/:id', validateUser('User'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const driver = await prisma.driver.findUnique({ where: { id } });
+    if (!driver) {
+      return res.status(400).send({ err: 'id not found in Drivers' });
+    }
+    res.status(200).json({ data: driver });
+  } catch (error) {
+    console.error('Error fetching driver:', error);
+    res.status(500).send({ err: 'Failed to fetch driver' });
+  }
 });
 
 // Get profile information for a driver
-router.get('/:id/profile', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Driver, id, tableName, (driver: DriverType) => {
+router.get('/:id/profile', validateUser('User'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const driver = await prisma.driver.findUnique({ where: { id } });
+    if (!driver) {
+      return res.status(400).send({ err: 'id not found in Drivers' });
+    }
     const { email, firstName, lastName, phoneNumber, photoLink } = driver;
-    res.send({
-      email,
-      firstName,
-      lastName,
-      phoneNumber,
-      photoLink,
-    });
-  });
+    res.send({ email, firstName, lastName, phoneNumber, photoLink });
+  } catch (error) {
+    console.error('Error fetching driver profile:', error);
+    res.status(500).send({ err: 'Failed to fetch driver profile' });
+  }
 });
 
-// Put a driver in Drivers table
+// Create a driver
 router.post('/', validateUser('Admin'), async (req, res) => {
+  console.log('driver post body:', req.body);
   try {
     const { body } = req;
 
+    if (!Array.isArray(body.availability)) {
+      return res.status(469).send({
+        err: 'Expected availability to be of type array, instead found type ' + typeof body.availability + '.',
+      });
+    }
+
     const emailExists = await checkNetIDExists(body.email, 'driver');
     if (emailExists) {
-      return res.status(409).send({
-        err: 'An employee with this NetID already exists'
-      });
+      return res.status(409).send({ err: 'An employee with this NetID already exists' });
     }
 
-    // Map startDate from payload to joinDate in model
     const joinDate = body.startDate || body.joinDate;
 
-    const admin = new Driver({
-      id: !body.eid || body.eid === '' ? uuid() : body.eid,
-      firstName: body.firstName,
-      lastName: body.lastName,
-      availability: body.availability,
-      phoneNumber: body.phoneNumber,
-      joinDate,
-      email: body.email,
+    const driver = await prisma.driver.create({
+      data: {
+        id: !body.eid || body.eid === '' ? uuid() : body.eid,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        availability: body.availability.map((d: string) => d.toUpperCase() as DayOfWeek),
+        phoneNumber: body.phoneNumber,
+        email: body.email,
+        photoLink: body.photoLink,
+        ...(joinDate ? { joinDate: new Date(joinDate) } : {}),
+      },
     });
-    if (!Array.isArray(body.availability)) {
-      res.status(469).send({
-        err:
-          'Expected availability to be of type array, instead found type ' +
-          typeof body.availability +
-          '.',
-      });
-    } else {
-      db.create(res, admin);
-    }
+
+    res.status(200).send({ data: driver });
   } catch (error) {
     console.error('Error creating driver:', error);
     res.status(500).send({ err: 'Failed to create driver' });
@@ -185,50 +161,65 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 // Update an existing driver
 router.put('/:id', validateUser('Driver'), async (req, res) => {
   try {
-    const {
-      params: { id },
-      body,
-    } = req;
+    const { id } = req.params;
+    const { body } = req;
 
-    // Check if email is being changed and if it conflicts with another employee
+    if (
+      res.locals.user.userType !== 'Admin' &&
+      id !== res.locals.user.id
+    ) {
+      return res.status(400).send({ err: 'User ID does not match request ID' });
+    }
+
     if (body.email) {
       const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
       if (emailExists) {
-        return res.status(409).send({
-          err: 'An employee with this NetID already exists'
-        });
+        return res.status(409).send({ err: 'An employee with this NetID already exists' });
       }
     }
 
-    // Allow startDate in payload by mapping to joinDate
+    // Map startDate -> joinDate
     if (body.startDate && !body.joinDate) {
-      body.joinDate = body.startDate;
+      body.joinDate = new Date(body.startDate);
       delete body.startDate;
     }
-    if (
-      res.locals.user.userType === UserType.ADMIN ||
-      id === res.locals.user.id
-    ) {
-      db.update(res, Driver, { id }, body, tableName);
-    } else {
-      res.status(400).send({ err: 'User ID does not match request ID' });
+
+    // Uppercase availability enums if provided
+    if (body.availability && Array.isArray(body.availability)) {
+      body.availability = body.availability.map((d: string) => d.toUpperCase() as DayOfWeek);
     }
-  } catch (error) {
+
+    const driver = await prisma.driver.update({
+      where: { id },
+      data: body,
+    });
+
+    res.status(200).send({ data: driver });
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(400).send({ err: 'id not found in Drivers' });
+    }
     console.error('Error updating driver:', error);
     res.status(500).send({ err: 'Failed to update driver' });
   }
 });
 
 // Delete an existing driver
-router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.deleteById(res, Driver, id, tableName);
+router.delete('/:id', validateUser('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.driver.delete({ where: { id } });
+    res.status(200).send({ id });
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(400).send({ err: 'id not found in Drivers' });
+    }
+    console.error('Error deleting driver:', error);
+    res.status(500).send({ err: 'Failed to delete driver' });
+  }
 });
 
-// Get a driver's weekly stats
-
+// Get a driver's weekly stats (stub)
 router.get('/:id/stats', validateUser('Admin'), (req, res) => { });
 
 export default router;

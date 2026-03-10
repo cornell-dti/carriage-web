@@ -1,12 +1,8 @@
 import express from 'express';
 import * as jwt from 'jsonwebtoken';
-import { Rider } from '../models/rider';
-import { Admin } from '../models/admin';
-import { Driver } from '../models/driver';
+import { prisma } from '../db/prisma';
 import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
-import { ModelType } from 'dynamoose/dist/General';
-import { Item } from 'dynamoose/dist/Item';
 import { UnregisteredUserType } from '@carriage-web/shared/types';
 
 const router = express.Router();
@@ -23,19 +19,6 @@ const audience = [
 ];
 
 /**
- * Returns the appropriate model (Rider, Driver, Admin) for a given table name.
- * @param table - The string name of the table (e.g., 'Riders', 'Drivers', 'Admins').
- */
-function getModel(table: string) {
-  const tableToModel: { [table: string]: ModelType<Item> } = {
-    Riders: Rider,
-    Drivers: Driver,
-    Admins: Admin,
-  };
-  return tableToModel[table];
-}
-
-/**
  * Derives the singular user type from the table name.
  * For example, 'Riders' becomes 'Rider'.
  * @param table - The string name of the table.
@@ -45,79 +28,48 @@ function getUserType(table: string) {
 }
 
 /**
- * Finds a user in the specified model by email and sends back a JWT token if found.
+ * Finds a user in Prisma by email and sends back a JWT token if found.
  * If logging in as an Admin and no match is found, the Driver table is checked as a fallback for admin-flagged users.
  * @param res - Express response object.
- * @param model - The model to query (Rider, Admin, or Driver).
  * @param table - Name of the user table (used to derive userType).
  * @param email - The email address to look up.
  * @param userInfo - Optional user info from Google OAuth (name, etc.).
  */
-function findUserAndSendToken(
+async function findUserAndSendToken(
   res: express.Response,
-  model: ModelType<Item>,
   table: string,
   email: string,
   userInfo?: Partial<UnregisteredUserType>
 ) {
-  model.scan({ email: { eq: email } }).exec((err, data) => {
-    if (err) {
-      res.status(err.statusCode || 500).send({ err: err.message });
-      return;
-    }
+  try {
+    let user: any = null;
 
-    if (data?.length) {
-      const { id, active } = data[0].toJSON();
-      if (table === 'Riders' && !active) {
+    if (table === 'Riders') {
+      user = await prisma.rider.findUnique({ where: { email } });
+      if (user && !user.active) {
         res.status(400).send({ err: 'User not active' });
         return;
       }
+    } else if (table === 'Drivers') {
+      user = await prisma.driver.findUnique({ where: { email } });
+    } else if (table === 'Admins') {
+      user = await prisma.admin.findUnique({ where: { email } });
+
+      // Fallback: Check drivers table for admins
+      if (!user) {
+        const driver = await prisma.driver.findUnique({ where: { email } });
+        if (driver) {
+          user = driver;
+        }
+      }
+    }
+
+    if (user) {
       const userPayload = {
-        id,
+        id: user.id,
         userType: getUserType(table),
       };
-      res
-        .status(200)
-        .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-    } else if (table === 'Admins') {
-      // Check drivers table for admins
-      // when the frontend page is made, this removed and we only use the first scan and change the error handling to check
-      // per table this is because we would have decoupled admins and drivers, so drivers wouldnt sign on admin page and vice versa
-      // but maybe we would allow admins to log onto the driver page?
-      Driver.scan({ email: { eq: email } }).exec((dErr, dData) => {
-        if (dErr) {
-          res.status(dErr.statusCode || 500).send({ err: dErr });
-        } else if (dData?.length) {
-          const { id, admin } = dData[0].toJSON();
-          if (admin) {
-            const userPayload = {
-              id,
-              userType: getUserType(table),
-            };
-            res
-              .status(200)
-              .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
-          } else {
-            const unregisteredUser: UnregisteredUserType = {
-              email: email,
-              name: userInfo?.name || 'User',
-            };
-            res.status(400).send({
-              err: 'User not found',
-              user: unregisteredUser,
-            });
-          }
-        } else {
-          const unregisteredUser: UnregisteredUserType = {
-            email: email,
-            name: userInfo?.name || 'User',
-          };
-          res.status(400).send({
-            err: 'User not found',
-            user: unregisteredUser,
-          });
-        }
-      });
+      res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
     } else {
       const unregisteredUser: UnregisteredUserType = {
         email: email,
@@ -128,7 +80,10 @@ function findUserAndSendToken(
         user: unregisteredUser,
       });
     }
-  });
+  } catch (error) {
+    console.error('Error finding user:', error);
+    res.status(500).send({ err: 'Internal server error' });
+  }
 }
 
 /**
@@ -148,6 +103,12 @@ async function getIdToken(client: OAuth2Client, code: string) {
 router.post('/', async (req, res) => {
   const { code, table } = req.body;
   try {
+    const validTables = ['Riders', 'Drivers', 'Admins'];
+    if (!validTables.includes(table)) {
+      res.status(400).send({ err: 'Table not found' });
+      return;
+    }
+
     const client = new OAuth2Client({
       clientId: oauthValues.client_id,
       clientSecret: oauthValues.client_secret,
@@ -158,15 +119,11 @@ router.post('/', async (req, res) => {
     const payload = result.getPayload();
     const email = payload?.email;
     const name = payload?.name;
-    const model = getModel(table);
-    if (model && email) {
-      findUserAndSendToken(res, model, table, email, { name });
-    } else if (!model) {
-      res.status(400).send({ err: 'Table not found' });
-    } else if (!email) {
-      res.status(400).send({ err: 'Email not found' });
+
+    if (email) {
+      await findUserAndSendToken(res, table, email, { name });
     } else {
-      res.status(400).send({ err: 'Payload not found' });
+      res.status(400).send({ err: 'Email not found' });
     }
   } catch (err) {
     console.log(err);
@@ -178,15 +135,16 @@ if (process.env.NODE_ENV === 'test') {
   router.post('/dummy', async (req, res) => {
     const { email, table } = req.body;
     try {
-      const model = getModel(table);
-      if (model && email) {
-        findUserAndSendToken(res, model, table, email, { name: email });
-      } else if (!model) {
+      const validTables = ['Riders', 'Drivers', 'Admins'];
+      if (!validTables.includes(table)) {
         res.status(400).send({ err: 'Table not found' });
-      } else if (!email) {
-        res.status(400).send({ err: 'Email not found' });
+        return;
+      }
+
+      if (email) {
+        await findUserAndSendToken(res, table, email, { name: email });
       } else {
-        res.status(400).send({ err: 'Payload not found' });
+        res.status(400).send({ err: 'Email not found' });
       }
     } catch (err) {
       console.log(err);

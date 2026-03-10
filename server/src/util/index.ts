@@ -3,11 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { UserType, JWTPayload } from '@carriage-web/shared/types';
 import moment from 'moment-timezone';
-import { ValueType } from 'dynamoose/dist/Schema';
-import { Location } from '../models/location';
-import { Admin } from '../models/admin';
-import { Driver } from '../models/driver';
-import { Rider } from '../models/rider';
+import { prisma } from '../db/prisma';
 
 export function createKeys(property: string, values: string[]) {
   return values.map((v) => ({ [property]: v }));
@@ -121,13 +117,6 @@ export const timeToMDY = (time: string) => moment(time).format('l');
 
 export const timeTo12Hr = (time: string) => moment(time).format('LT');
 
-export const getRideLocation = (value: ValueType) => {
-  if (typeof value === 'string') {
-    return Location.get(value) as any;
-  }
-  return value;
-};
-
 type Role = 'rider' | 'driver' | 'admin';
 
 export async function checkNetIDExists(
@@ -135,30 +124,29 @@ export async function checkNetIDExists(
   role: Role
 ): Promise<boolean> {
   if (role === 'rider') {
-    const riders = await Rider.scan('email').eq(email).exec();
-    return riders.length > 0;
+    const rider = await prisma.rider.findUnique({ where: { email } });
+    return rider !== null;
   }
 
   if (role === 'driver') {
-    const drivers = await Driver.scan('email').eq(email).exec();
-    return drivers.length > 0;
+    const driver = await prisma.driver.findUnique({ where: { email } });
+    return driver !== null;
   }
 
-  const admins = await Admin.scan('email').eq(email).exec();
-  return admins.length > 0;
+  const admin = await prisma.admin.findUnique({ where: { email } });
+  return admin !== null;
 }
 
 export async function checkNetIDExistsForOtherEmployee(
   email: string,
   currentEmployeeId: string
 ): Promise<boolean> {
-  const [admins, drivers, riders] = await Promise.all([
-    Admin.scan('email').eq(email).exec(),
-    Driver.scan('email').eq(email).exec(),
-    Rider.scan('email').eq(email).exec(),
+  const [admin, driver, rider] = await Promise.all([
+    prisma.admin.findUnique({ where: { email } }),
+    prisma.driver.findUnique({ where: { email } }),
+    prisma.rider.findUnique({ where: { email } }),
   ]);
 
-  // Check if any found employee has a different ID
-  const allEmployees = [...admins, ...drivers, ...riders];
-  return allEmployees.some(emp => emp.id !== currentEmployeeId);
+  const allEmployees = [admin, driver, rider].filter(Boolean);
+  return allEmployees.some(emp => emp!.id !== currentEmployeeId);
 }

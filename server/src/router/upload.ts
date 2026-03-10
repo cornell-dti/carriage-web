@@ -1,10 +1,6 @@
 import express from 'express';
 import { S3 } from '@aws-sdk/client-s3';
-import * as db from './common';
-import { Driver } from '../models/driver';
-import { Admin } from '../models/admin';
-import { Location } from '../models/location';
-import { Rider } from '../models/rider';
+import { prisma } from '../db/prisma';
 import { validateUser } from '../util';
 import { config } from 'dotenv';
 config();
@@ -46,25 +42,43 @@ router.post('/', validateUser('User'), (request, response) => {
       ContentEncoding: 'base64',
     };
 
-    return s3Bucket.putObject(params, (s3Err: any) => {
+    return s3Bucket.putObject(params, async (s3Err: any) => {
       if (s3Err) {
         response.status(s3Err.statusCode || 400).send({ err: s3Err.message });
       } else {
-        const photoLink = `https://${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
-        const databaseOperation = { $SET: { photoLink } };
-        switch (tableName) {
-          case 'Drivers':
-            db.update(response, Driver, { id }, databaseOperation, tableName);
-            break;
-          case 'Admins':
-            db.update(response, Admin, { id }, databaseOperation, tableName);
-            break;
-          case 'Locations':
-            db.update(response, Location, { id }, databaseOperation, tableName);
-            break;
-          case 'Riders':
-            db.update(response, Rider, { id }, databaseOperation, tableName);
-            break;
+        try {
+          const photoLink = `https://${BUCKET_NAME}.s3.us-east-2.amazonaws.com/${objectKey}`;
+          let updated;
+          switch (tableName) {
+            case 'Drivers':
+              updated = await prisma.driver.update({
+                where: { id },
+                data: { photoLink },
+              });
+              break;
+            case 'Admins':
+              updated = await prisma.admin.update({
+                where: { id },
+                data: { photoLink },
+              });
+              break;
+            case 'Locations':
+              updated = await prisma.location.update({
+                where: { id },
+                data: { photoLink },
+              });
+              break;
+            case 'Riders':
+              updated = await prisma.rider.update({
+                where: { id },
+                data: { photoLink },
+              });
+              break;
+          }
+          response.status(200).send({ data: updated });
+        } catch (error) {
+          console.error('Error updating photo link:', error);
+          response.status(500).send({ err: 'Failed to update photo link' });
         }
       }
     });
@@ -98,19 +112,26 @@ router.post('/', validateUser('User'), (request, response) => {
         // Update DB with images array (for Locations only)
         if (tableName === 'Locations') {
           // Merge with existing images if any
-          Location.get(id, (err, data) => {
-            const existing: string[] = (data && (data as any).images) || [];
-            const merged = Array.from(
-              new Set([...(existing || []), ...uploadedUrls])
-            );
-            const databaseOperation = {
-              $SET: {
-                images: merged,
-                photoLink: (data && (data as any).photoLink) || merged[0],
-              },
-            };
-            db.update(response, Location, { id }, databaseOperation, tableName);
-          });
+          (async () => {
+            try {
+              const location = await prisma.location.findUnique({ where: { id } });
+              const existing: string[] = (location && location.images) || [];
+              const merged = Array.from(
+                new Set([...(existing || []), ...uploadedUrls])
+              );
+              const updated = await prisma.location.update({
+                where: { id },
+                data: {
+                  images: merged,
+                  photoLink: (location && location.photoLink) || merged[0],
+                },
+              });
+              response.status(200).send({ data: updated });
+            } catch (error) {
+              console.error('Error updating location images:', error);
+              response.status(500).send({ err: 'Failed to update location images' });
+            }
+          })();
         } else {
           response.send({ data: uploadedUrls });
         }

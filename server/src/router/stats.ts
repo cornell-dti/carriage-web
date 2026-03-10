@@ -1,18 +1,25 @@
 import express, { Response } from 'express';
 import moment from 'moment-timezone';
-import { Condition } from 'dynamoose/dist/Condition';
 import * as csv from '@fast-csv/format';
-import { ObjectType } from 'dynamoose/dist/General';
-import { Stats, StatsType } from '../models/stats';
-import { Ride } from '../models/ride';
-import { RideType, Status } from '@carriage-web/shared/types/ride';
-import * as db from './common';
+import { prisma } from '../db/prisma';
+import { RideStatus } from '../../generated/prisma/client';
 import { validateUser } from '../util';
-import { Driver } from '../models/driver';
 
 const router = express.Router();
 
-router.get('/download', validateUser('Admin'), (req, res) => {
+type StatsType = {
+  year: string;
+  monthDay: string;
+  dayCount: number;
+  dayNoShow: number;
+  dayCancel: number;
+  nightCount: number;
+  nightNoShow: number;
+  nightCancel: number;
+  drivers: any;
+};
+
+router.get('/download', validateUser('Admin'), async (req, res) => {
   const {
     query: { from, to },
   } = req;
@@ -26,36 +33,37 @@ router.get('/download', validateUser('Admin'), (req, res) => {
     }
   }
 
-  statsFromDates(dates, res, true);
+  await statsFromDates(dates, res, true);
 });
 
-router.put('/', validateUser('Admin'), (req, res) => {
-  const {
-    body: { dates },
-  } = req;
+router.put('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const { dates } = req.body;
 
-  const numEdits = Object.keys(dates).length;
+    const updates = Object.keys(dates).map(async (date: string) => {
+      const year = moment(date as string, 'MM/DD/YYYY').format('YYYY');
+      const monthDay = moment(date as string, 'MM/DD/YYYY').format('MMDD');
 
-  const statsAcc: StatsType[] = [];
+      return await prisma.stats.upsert({
+        where: { year_monthDay: { year, monthDay } },
+        update: dates[date],
+        create: {
+          year,
+          monthDay,
+          ...dates[date],
+        },
+      });
+    });
 
-  Object.keys(dates).forEach((date: string) => {
-    const year = moment(date as string, 'MM/DD/YYYY').format('YYYY');
-    const monthDay = moment(date as string, 'MM/DD/YYYY').format('MMDD');
-    const operation = { $SET: dates[date] };
-    const key = { year, monthDay };
-
-    Stats.update(key, operation)
-      .then((doc) => {
-        statsAcc.push(doc.toJSON() as StatsType);
-        checkSend(res, statsAcc, numEdits);
-      })
-      .catch((err) =>
-        res.status(err.statusCode || 500).send({ err: err.message })
-      );
-  });
+    const statsAcc = await Promise.all(updates);
+    res.send(statsAcc);
+  } catch (error) {
+    console.error('Error updating stats:', error);
+    res.status(500).send({ err: 'Failed to update stats' });
+  }
 });
 
-router.get('/', validateUser('Admin'), (req, res) => {
+router.get('/', validateUser('Admin'), async (req, res) => {
   const {
     query: { from, to },
   } = req;
@@ -73,30 +81,26 @@ router.get('/', validateUser('Admin'), (req, res) => {
         date = moment(date).add(1, 'days').format('YYYY-MM-DD');
       }
     }
-    statsFromDates(dates, res, false);
+    await statsFromDates(dates, res, false);
   } else {
     res.status(400).send({ err: 'Invalid from/to query date format' });
   }
 });
 
-function statsFromDates(dates: string[], res: Response, download: boolean) {
+async function statsFromDates(dates: string[], res: Response, download: boolean) {
   const statsAcc: StatsType[] = [];
 
-  dates.forEach((currDate) => {
+  for (const currDate of dates) {
     const year = moment(currDate, 'YYYY-MM-DD').format('YYYY');
     const monthDay = moment(currDate, 'YYYY-MM-DD').format('MMDD');
 
     const dateMoment = moment(currDate);
-    // day = 12am to 5:00pm
-    const dayStart = dateMoment.toISOString();
-    const dayEnd = dateMoment.add(17, 'hours').toISOString();
-    // night = 5:01pm to 11:59:59pm
-    const nightStart = moment(dayEnd).add(1, 'seconds').toISOString();
-    const nightEnd = moment(currDate as string)
-      .endOf('day')
-      .toISOString();
+    const dayStart = dateMoment.toDate();
+    const dayEnd = dateMoment.add(17, 'hours').toDate();
+    const nightStart = moment(dayEnd).add(1, 'seconds').toDate();
+    const nightEnd = moment(currDate as string).endOf('day').toDate();
 
-    computeStats(
+    await computeStats(
       res,
       statsAcc,
       dates.length,
@@ -108,48 +112,50 @@ function statsFromDates(dates: string[], res: Response, download: boolean) {
       monthDay,
       download
     );
-  });
+  }
 }
 
-function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
+async function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
   if (statsAcc.length === numDays) {
-    Driver.scan()
-      .exec()
-      .then((scanRes) => {
-        const defaultDrivers = scanRes.reduce((acc, curr) => {
-          const { firstName, lastName } = curr;
-          const fullName = `${firstName} ${lastName}`;
-          acc[fullName] = 0;
-          return acc;
-        }, {} as ObjectType);
-        const dataToExport = statsAcc
-          .sort(
-            (a: any, b: any) =>
-              Number(a.year + a.monthDay) - Number(b.year + b.monthDay)
-          )
-          .map((doc: any) => {
-            const { drivers, monthDay } = doc;
-            const row = {
-              Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${
-                doc.year
-              }`,
-              'Daily Total': doc.dayCount + doc.nightCount,
-              'Daily Ride Count': doc.dayCount,
-              'Day No Shows': doc.dayNoShow,
-              'Day Cancels': doc.dayCancel,
-              'Night Ride Count': doc.nightCount,
-              'Night No Shows': doc.nightNoShow,
-              'Night Cancels': doc.nightCancel,
-              ...defaultDrivers,
-              ...drivers,
-            };
-            return row;
-          });
-        csv
-          .writeToBuffer(dataToExport, { headers: true })
-          .then((data) => res.send(data))
-          .catch((err) => res.send(err));
-      });
+    try {
+      const drivers = await prisma.driver.findMany();
+      const defaultDrivers = drivers.reduce((acc, curr) => {
+        const { firstName, lastName } = curr;
+        const fullName = `${firstName} ${lastName}`;
+        acc[fullName] = 0;
+        return acc;
+      }, {} as any);
+
+      const dataToExport = statsAcc
+        .sort(
+          (a: any, b: any) =>
+            Number(a.year + a.monthDay) - Number(b.year + b.monthDay)
+        )
+        .map((doc: any) => {
+          const { drivers, monthDay } = doc;
+          const row = {
+            Date: `${monthDay.substring(0, 2)}/${monthDay.substring(2, 4)}/${
+              doc.year
+            }`,
+            'Daily Total': doc.dayCount + doc.nightCount,
+            'Daily Ride Count': doc.dayCount,
+            'Day No Shows': doc.dayNoShow,
+            'Day Cancels': doc.dayCancel,
+            'Night Ride Count': doc.nightCount,
+            'Night No Shows': doc.nightNoShow,
+            'Night Cancels': doc.nightCancel,
+            ...defaultDrivers,
+            ...drivers,
+          };
+          return row;
+        });
+
+      const csvData = await csv.writeToBuffer(dataToExport, { headers: true });
+      res.send(csvData);
+    } catch (error) {
+      console.error('Error downloading stats:', error);
+      res.status(500).send({ err: 'Failed to download stats' });
+    }
   }
 }
 
@@ -159,71 +165,76 @@ function checkSend(res: Response, statsAcc: StatsType[], numDays: number) {
   }
 }
 
-function computeStats(
+async function computeStats(
   res: Response,
   statsAcc: StatsType[],
   numDays: number,
-  dayStart: string,
-  dayEnd: string,
-  nightStart: string,
-  nightEnd: string,
+  dayStart: Date,
+  dayEnd: Date,
+  nightStart: Date,
+  nightEnd: Date,
   year: string,
   monthDay: string,
   download: boolean
 ) {
-  Stats.get({ year, monthDay }, (err, data) => {
-    if (data) {
-      statsAcc.push(data.toJSON() as StatsType);
+  try {
+    const existingStats = await prisma.stats.findUnique({
+      where: { year_monthDay: { year, monthDay } },
+    });
+
+    if (existingStats) {
+      statsAcc.push(existingStats as StatsType);
       if (!download) {
         checkSend(res, statsAcc, numDays);
       } else {
-        downloadStats(res, statsAcc, numDays);
+        await downloadStats(res, statsAcc, numDays);
       }
-    } else if (err || !data) {
-      const conditionRidesDate = new Condition()
-        .where('startTime')
-        .between(dayStart, nightEnd)
-        .where('type')
-        .not()
-        .eq('unscheduled');
+    } else {
+      const rides = await prisma.ride.findMany({
+        where: {
+          startTime: { gte: dayStart, lte: nightEnd },
+        },
+        include: { driver: true },
+      });
 
-      db.scan(res, Ride, conditionRidesDate, (dataDay: RideType[]) => {
-        let dayCountStat = 0;
-        let dayNoShowStat = 0;
-        let dayCancelStat = 0;
-        let nightCountStat = 0;
-        let nightNoShowStat = 0;
-        let nightCancelStat = 0;
-        const driversStat: { [name: string]: number } = {};
+      let dayCountStat = 0;
+      let dayNoShowStat = 0;
+      let dayCancelStat = 0;
+      let nightCountStat = 0;
+      let nightNoShowStat = 0;
+      let nightCancelStat = 0;
+      const driversStat: { [name: string]: number } = {};
 
-        dataDay.forEach((rideData: RideType) => {
-          const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
-          if (rideData.status === Status.NO_SHOW) {
-            if (rideData.startTime <= dayEnd) {
-              dayNoShowStat += 1;
-            } else {
-              nightNoShowStat += 1;
-            }
-          } else if (rideData.status === Status.COMPLETED) {
-            if (rideData.startTime <= dayEnd) {
-              dayCountStat += 1;
-            } else {
-              nightCountStat += 1;
-            }
-            if (driversStat[driverName]) {
-              driversStat[driverName] += 1;
-            } else {
-              driversStat[driverName] = 1;
-            }
-          } else if (rideData.status === Status.CANCELLED) {
-            if (rideData.startTime <= dayEnd) {
-              dayCancelStat += 1;
-            } else {
-              nightCancelStat += 1;
-            }
+      rides.forEach((rideData: any) => {
+        const driverName = `${rideData.driver?.firstName} ${rideData.driver?.lastName}`;
+        if (rideData.status === RideStatus.NO_SHOW) {
+          if (rideData.startTime <= dayEnd) {
+            dayNoShowStat += 1;
+          } else {
+            nightNoShowStat += 1;
           }
-        });
-        const stats = new Stats({
+        } else if (rideData.status === RideStatus.COMPLETED) {
+          if (rideData.startTime <= dayEnd) {
+            dayCountStat += 1;
+          } else {
+            nightCountStat += 1;
+          }
+          if (driversStat[driverName]) {
+            driversStat[driverName] += 1;
+          } else {
+            driversStat[driverName] = 1;
+          }
+        } else if (rideData.status === RideStatus.CANCELLED) {
+          if (rideData.startTime <= dayEnd) {
+            dayCancelStat += 1;
+          } else {
+            nightCancelStat += 1;
+          }
+        }
+      });
+
+      const stats = await prisma.stats.create({
+        data: {
           year,
           monthDay,
           dayCount: dayCountStat,
@@ -233,20 +244,20 @@ function computeStats(
           nightNoShow: nightNoShowStat,
           nightCancel: nightCancelStat,
           drivers: driversStat,
-        });
-        Stats.create(stats).then((doc) => {
-          statsAcc.push(doc.toJSON() as StatsType);
-          if (!download) {
-            checkSend(res, statsAcc, numDays);
-          } else {
-            downloadStats(res, statsAcc, numDays);
-          }
-        });
+        },
       });
-    } else {
-      console.log('Should be unreachable');
+
+      statsAcc.push(stats as StatsType);
+      if (!download) {
+        checkSend(res, statsAcc, numDays);
+      } else {
+        await downloadStats(res, statsAcc, numDays);
+      }
     }
-  });
+  } catch (error) {
+    console.error('Error computing stats:', error);
+    res.status(500).send({ err: 'Failed to compute stats' });
+  }
 }
 
 export default router;
