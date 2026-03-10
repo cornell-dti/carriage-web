@@ -24,7 +24,7 @@
   "packageManager": "pnpm@10.23.0",
   "scripts": {
     "quiet-lint": "pnpm eslint . --ext .js,.jsx,.ts,.tsx --fix --quiet",
-    "lint": "pnpm eslint . --ignore-path .eslintignore --ext .js,.jsx,.ts,.tsx --fix",
+    "lint": "pnpm eslint . --ignore-pattern .eslintignore --ext .js,.jsx,.ts,.tsx --fix",
     "format": "pnpm prettier --write \"**/*.{ts,js,tsx,jsx,css}\"",
     "format:check": "pnpm prettier --check \"**/*.{ts,js,tsx,jsx,css}\"",
     "prepare": "husky"
