@@ -2,7 +2,11 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import * as db from './common';
 import { Admin } from '../models/admin';
-import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 import { UserType } from '../models/subscription';
 
 const router = express.Router();
@@ -29,7 +33,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
     const emailExists = await checkNetIDExists(body.email, 'admin');
     if (emailExists) {
       return res.status(409).send({
-        err: 'An employee with this NetID already exists'
+        err: 'An employee with this NetID already exists',
       });
     }
 
@@ -60,10 +64,13 @@ router.put('/:id', validateUser('Admin'), async (req, res) => {
 
     // Check if email is being changed and if it conflicts with another employee
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res.status(409).send({
-          err: 'An employee with this NetID already exists'
+          err: 'An employee with this NetID already exists',
         });
       }
     }

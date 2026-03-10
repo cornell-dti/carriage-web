@@ -30,11 +30,11 @@ export function isAddress(address: string) {
   } = parsedAddr;
   return Boolean(
     streetNumber &&
-    streetName &&
-    streetSuffix &&
-    placeName &&
-    stateName &&
-    zipCode
+      streetName &&
+      streetSuffix &&
+      placeName &&
+      stateName &&
+      zipCode
   );
 }
 
@@ -160,5 +160,5 @@ export async function checkNetIDExistsForOtherEmployee(
 
   // Check if any found employee has a different ID
   const allEmployees = [...admins, ...drivers, ...riders];
-  return allEmployees.some(emp => emp.id !== currentEmployeeId);
+  return allEmployees.some((emp) => emp.id !== currentEmployeeId);
 }

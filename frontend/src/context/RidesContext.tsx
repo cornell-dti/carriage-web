@@ -89,11 +89,14 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       if (ridesData) {
         const unscheduled = ridesData.filter(
           ({ schedulingState, status }) =>
-            schedulingState === SchedulingState.UNSCHEDULED && status !== Status.CANCELLED
+            schedulingState === SchedulingState.UNSCHEDULED &&
+            status !== Status.CANCELLED
         );
 
         const scheduled = ridesData.filter(
-          ({ schedulingState, status }) => schedulingState === SchedulingState.SCHEDULED && status !== Status.CANCELLED
+          ({ schedulingState, status }) =>
+            schedulingState === SchedulingState.SCHEDULED &&
+            status !== Status.CANCELLED
         );
 
         const cancelled = ridesData.filter(
@@ -185,7 +188,11 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
 
   const getRideById = useCallback(
     (rideId: string): RideType | undefined => {
-      const allRides = [...unscheduledRides, ...scheduledRides, ...cancelledRides];
+      const allRides = [
+        ...unscheduledRides,
+        ...scheduledRides,
+        ...cancelledRides,
+      ];
       allRides.forEach((ride, index) => {});
       const foundRide = allRides.find((ride) => ride && ride.id === rideId);
       return foundRide;
@@ -204,7 +211,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const updateRideStatus = useCallback(
     async (rideId: string, status: Status) => {
       let originalRide = getRideById(rideId);
-      
+
       // If ride not found in current context, fetch it from the server
       if (!originalRide) {
         try {
@@ -242,7 +249,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     },
     [getRideById]
   );
-  
+
   const updateRideScheduling = useCallback(
     async (
       rideId: string,
