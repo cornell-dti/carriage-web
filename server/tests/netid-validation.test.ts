@@ -5,10 +5,11 @@ import authorize from './utils/auth';
 import { clearDB, populateDB } from './utils/db';
 import { Admin } from '../src/models/admin';
 import { Driver } from '../src/models/driver';
-import { Rider, RiderType } from '../src/models/rider';
-import { AdminType } from '../src/models/admin';
-import { DriverType } from '../src/models/driver';
-import { DayOfWeek } from '../src/models/driver';
+import { Rider } from '../src/models/rider';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { AdminType } from '@carriage-web/shared/types/admin';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 
 const testNetID = `testnetid-${Date.now()}`;
 const testEmail = `${testNetID}@cornell.edu`;
