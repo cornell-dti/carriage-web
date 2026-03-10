@@ -24,6 +24,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['promise', '@typescript-eslint', 'import', 'react', 'react-hooks'],
+  ignorePatterns: ['node_modules', 'dist', 'build', 'tests'],
   rules: {
     'import/extensions': [
       'error',
