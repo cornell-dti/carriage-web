@@ -193,7 +193,6 @@ const AuthManager = () => {
         handleSSOCallback();
       }
     }
-     
   }, [searchParams]);
 
   function getCookie(name: string) {
