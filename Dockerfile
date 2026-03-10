@@ -15,7 +15,7 @@ RUN pnpm fetch --prod
 
 FROM fetch-deps AS prod-deps
 COPY . .
-RUN pnpm add --save-dev -w husky
+RUN CI=true pnpm add --save-dev -w husky
 RUN pnpm install -r --offline --prod --filter server...
 
 FROM fetch-deps AS build-base
