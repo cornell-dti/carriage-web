@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@carriage-web/shared": "workspace:*"
+    "@carriage-web/shared": "workspace:*",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit"

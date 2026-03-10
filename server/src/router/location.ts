@@ -1,79 +1,107 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
-import { Condition } from 'dynamoose/dist/Condition';
-import * as db from './common';
-import { Location } from '../models/location';
-import { Tag } from '@carriage-web/shared/types/location';
+import { prisma } from '../db/prisma';
+import { LocationTag } from '@prisma/client';
 import { validateUser } from '../util';
 
 const router = express.Router();
-const tableName = 'Locations';
 
-// Get a location by id in Locations table
-router.get('/:id', validateUser('User'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.getById(res, Location, id, tableName);
-});
-
-// Get and query all locations
-router.get('/', validateUser('User'), (req, res) => {
-  const { query } = req;
-  if (Object.keys(query).length === 0) {
-    db.getAll(res, Location, tableName);
-  } else {
-    const { active } = query;
-    let condition = new Condition();
-    if (active) {
-      if (active === 'true') {
-        condition = condition
-          .where('tag')
-          .not()
-          .eq(Tag.INACTIVE)
-          .where('tag')
-          .not()
-          .eq(Tag.CUSTOM);
-      } else {
-        condition = condition.where('tag').eq(Tag.INACTIVE);
-      }
+// Get a location by id
+router.get('/:id', validateUser('User'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const location = await prisma.location.findUnique({ where: { id } });
+    if (!location) {
+      return res.status(400).send({ err: 'id not found in Locations' });
     }
-    db.scan(res, Location, condition);
+    res.status(200).json({ data: location });
+  } catch (error) {
+    console.error('Error fetching location:', error);
+    res.status(500).send({ err: 'Failed to fetch location' });
   }
 });
 
-// Put a location in Locations table
-router.post('/', validateUser('Admin'), (req, res) => {
-  const { body } = req;
-  const location = new Location({
-    ...body,
-    id: uuid(),
-  });
-  db.create(res, location);
+// Get and query all locations
+router.get('/', validateUser('User'), async (req, res) => {
+  try {
+    const { active } = req.query;
+
+    let where = {};
+    if (active === 'true') {
+      where = {
+        tag: { notIn: [LocationTag.INACTIVE, LocationTag.CUSTOM] },
+      };
+    } else if (active === 'false') {
+      where = { tag: LocationTag.INACTIVE };
+    }
+
+    const locations = await prisma.location.findMany({ where });
+    res.status(200).send({ data: locations });
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    res.status(500).send({ err: 'Failed to fetch locations' });
+  }
 });
 
-// Allows riders to create custom locations
-router.post('/custom', validateUser('User'), (req, res) => {
-  const { body } = req;
-  const location = new Location({ ...body, id: uuid(), tag: Tag.CUSTOM });
-  db.create(res, location);
+// Create a location
+router.post('/', validateUser('Admin'), async (req, res) => {
+  try {
+    const { body } = req;
+    const location = await prisma.location.create({
+      data: { ...body, id: uuid(), tag: body.tag?.toUpperCase() as LocationTag },
+    });
+    res.status(200).send({ data: location });
+  } catch (error) {
+    console.error('Error creating location:', error);
+    res.status(500).send({ err: 'Failed to create location' });
+  }
+});
+
+// Create a custom location (riders)
+router.post('/custom', validateUser('User'), async (req, res) => {
+  try {
+    const { body } = req;
+    const location = await prisma.location.create({
+      data: { ...body, id: uuid(), tag: LocationTag.CUSTOM },
+    });
+    res.status(200).send({ data: location });
+  } catch (error) {
+    console.error('Error creating custom location:', error);
+    res.status(500).send({ err: 'Failed to create custom location' });
+  }
 });
 
 // Update an existing location
-router.put('/:id', validateUser('Admin'), (req, res) => {
-  const {
-    params: { id },
-    body,
-  } = req;
-  db.update(res, Location, { id }, body, tableName);
+router.put('/:id', validateUser('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const location = await prisma.location.update({
+      where: { id },
+      data: {...req.body, tag: req.body.tag?.toUpperCase() as LocationTag},
+    });
+    res.status(200).send({ data: location });
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(400).send({ err: 'id not found in Locations' });
+    }
+    console.error('Error updating location:', error);
+    res.status(500).send({ err: 'Failed to update location' });
+  }
 });
 
 // Delete an existing location
-router.delete('/:id', validateUser('Admin'), (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  db.deleteById(res, Location, id, tableName);
+router.delete('/:id', validateUser('Admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.location.delete({ where: { id } });
+    res.status(200).send({ id });
+  } catch (error: any) {
+    if (error.code === 'P2025') {
+      return res.status(400).send({ err: 'id not found in Locations' });
+    }
+    console.error('Error deleting location:', error);
+    res.status(500).send({ err: 'Failed to delete location' });
+  }
 });
 
 export default router;

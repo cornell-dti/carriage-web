@@ -92,3 +92,4 @@ private/
 
 #prisma
 /generated/prisma
+DATABASE_URL=postgresql://anikachandra@localhost:5432/carriage
