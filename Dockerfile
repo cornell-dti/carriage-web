@@ -10,7 +10,7 @@ RUN corepack enable pnpm && \
 
 # Build stage
 FROM base AS fetch-deps
-RUN pnpm add --save-dev -w husky
+RUN pnpm add --save-dev husky
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm fetch --prod
 
