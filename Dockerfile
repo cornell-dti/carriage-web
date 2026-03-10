@@ -10,12 +10,12 @@ RUN corepack enable pnpm && \
 
 # Build stage
 FROM base AS fetch-deps
+RUN pnpm add --save-dev -w husky
 COPY pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm fetch --prod
 
 FROM fetch-deps AS prod-deps
 COPY . .
-RUN CI=true pnpm add --save-dev -w husky
 RUN pnpm install -r --offline --prod --filter server...
 
 FROM fetch-deps AS build-base
