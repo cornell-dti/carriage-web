@@ -354,7 +354,7 @@ const RideActions: React.FC<RideActionsProps> = ({
     }
   };
 
-  const nextStatuses = allStatuses // instead of preset transitions, give driver more options
+  const nextStatuses = allStatuses; // instead of preset transitions, give driver more options
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>

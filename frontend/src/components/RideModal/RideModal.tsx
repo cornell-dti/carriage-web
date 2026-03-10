@@ -41,8 +41,8 @@ const getRideData = (ride: RideType | undefined) => {
     if (ride.isRecurring) {
       // Note: Recurring functionality is disabled for now
       // This is legacy code that will be updated when RFC 5545 is implemented
-      let repeats = RepeatValues.DoesNotRepeat;
-      let days = {};
+      const repeats = RepeatValues.DoesNotRepeat;
+      const days = {};
 
       rideData = {
         ...rideData,
