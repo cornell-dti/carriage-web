@@ -193,7 +193,7 @@ const AuthManager = () => {
         handleSSOCallback();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [searchParams]);
 
   function getCookie(name: string) {

@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals */
+ 
 
 // Try making the service worker immediately claim the page
 self.addEventListener('install', (event) =>

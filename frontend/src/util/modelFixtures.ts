@@ -207,7 +207,7 @@ export function deepCompare(obj1: any, obj2: any): boolean {
 
   if (keys1.length !== keys2.length) return false;
 
-  for (let key of keys1) {
+  for (const key of keys1) {
     if (!keys2.includes(key)) return false;
     if (!deepCompare(obj1[key], obj2[key])) return false;
   }

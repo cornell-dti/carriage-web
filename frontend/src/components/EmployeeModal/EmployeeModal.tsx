@@ -259,7 +259,7 @@ const EmployeeModal = ({
       selectedRoles.includes('redrunner-admin');
     const hasDriver = selectedRoles.includes('driver');
 
-    let currentId = employeeData.id;
+    const currentId = employeeData.id;
     // If no employee exists, create one using a primary role.
     if (!currentId || currentId === '') {
       if (hasAdmin) {
@@ -301,7 +301,7 @@ const EmployeeModal = ({
         await deleteEmployee(employeeData.id, '/api/drivers');
       }
     }
-    let id = employeeData.id;
+    const id = employeeData.id;
     if (!hasAdmin && !hasDriver) {
       return '';
     }
