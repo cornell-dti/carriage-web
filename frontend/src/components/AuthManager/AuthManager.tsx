@@ -106,7 +106,9 @@ const AuthManager = () => {
   // This is now primarily a fallback for environments where server-side
   // sessions are same-site (e.g., local development). In production, we
   // prefer the stateless JWT passed via the URL query parameter.
-  const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
+  const handleSSOCallback = async (
+    event?: React.FormEvent<HTMLFormElement>
+  ) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/sso/profile`,
@@ -354,29 +356,27 @@ const AuthManager = () => {
           document.body
         )}
       <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-        <SubscribeWrapper userId={id}>
-          <Routes>
-            <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="/rider/*" element={<RiderRoutes />} />
-            <Route path="/driver/*" element={<DriverRoutes />} />
-            <Route
-              path="/"
-              element={
-                <Navigate
-                  to={
-                    localStorage.getItem('userType') === 'Admin'
-                      ? '/admin/home'
-                      : localStorage.getItem('userType') === 'Driver'
-                      ? '/driver/rides'
-                      : '/rider/schedule'
-                  }
-                  replace
-                />
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </SubscribeWrapper>
+        <Routes>
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/rider/*" element={<RiderRoutes />} />
+          <Route path="/driver/*" element={<DriverRoutes />} />
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to={
+                  localStorage.getItem('userType') === 'Admin'
+                    ? '/admin/home'
+                    : localStorage.getItem('userType') === 'Driver'
+                    ? '/driver/rides'
+                    : '/rider/schedule'
+                }
+                replace
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AuthContext.Provider>
     </>
   );
