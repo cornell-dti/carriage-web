@@ -169,5 +169,6 @@ module.exports = defineConfig([
     '**/tests/**',
     'eslint.config.js',
     '.eslintrc.js',
+    '.claude/**',
   ]),
 ]);
