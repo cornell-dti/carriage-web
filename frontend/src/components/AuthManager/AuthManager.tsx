@@ -27,6 +27,7 @@ import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
+import DesignSystem from '../../pages/DesignSystem/DesignSystem';
 
 const secretKey = `${import.meta.env.VITE_ENCRYPTION_KEY!}`;
 
@@ -340,6 +341,9 @@ const AuthManager = () => {
             />
           }
         />
+        {import.meta.env.DEV && (
+          <Route path="/design-system" element={<DesignSystem />} />
+        )}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -375,6 +379,9 @@ const AuthManager = () => {
               />
             }
           />
+          {import.meta.env.DEV && (
+            <Route path="/design-system" element={<DesignSystem />} />
+          )}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthContext.Provider>
