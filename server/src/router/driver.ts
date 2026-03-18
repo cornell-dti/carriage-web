@@ -4,7 +4,11 @@ import { Condition } from 'dynamoose';
 import moment from 'moment-timezone';
 import * as db from './common';
 import { Driver } from '../models/driver';
-import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 import { Ride } from '../models/ride';
 import { Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
@@ -86,9 +90,9 @@ router.get('/available', validateUser('User'), (req, res) => {
       // Filter by weekday availability if we have a valid token
       const dayFilteredDrivers = dayToken
         ? activeDrivers.filter(
-          (d) =>
-            Array.isArray(d.availability) && d.availability.includes(dayToken)
-        )
+            (d) =>
+              Array.isArray(d.availability) && d.availability.includes(dayToken)
+          )
         : activeDrivers;
 
       const reqStart = requestedStartIso;
@@ -150,7 +154,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
     const emailExists = await checkNetIDExists(body.email, 'driver');
     if (emailExists) {
       return res.status(409).send({
-        err: 'An employee with this NetID already exists'
+        err: 'An employee with this NetID already exists',
       });
     }
 
@@ -192,10 +196,13 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
 
     // Check if email is being changed and if it conflicts with another employee
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res.status(409).send({
-          err: 'An employee with this NetID already exists'
+          err: 'An employee with this NetID already exists',
         });
       }
     }
@@ -229,6 +236,6 @@ router.delete('/:id', validateUser('Admin'), (req, res) => {
 
 // Get a driver's weekly stats
 
-router.get('/:id/stats', validateUser('Admin'), (req, res) => { });
+router.get('/:id/stats', validateUser('Admin'), (req, res) => {});
 
 export default router;
