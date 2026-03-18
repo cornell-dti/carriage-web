@@ -81,9 +81,6 @@ build/
 # Claude Code
 .claude/
 
-# Husky
-.husky/
-
 # Documentation
 docs/
 

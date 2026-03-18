@@ -3,7 +3,8 @@ packages:
   - server
   - shared
 
-syncInjectedDepsAfterScripts:
-  - build
 catalog:
   typescript: 5.9.3
+
+syncInjectedDepsAfterScripts:
+  - build
