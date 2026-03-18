@@ -141,12 +141,22 @@ export async function checkNetIDExistsForOtherEmployee(
   email: string,
   currentEmployeeId: string
 ): Promise<boolean> {
+  // Determine which table the current employee belongs to, then only check that table.
+  // This prevents false conflicts when the same email is shared across roles (e.g. admin + rider).
   const [admin, driver, rider] = await Promise.all([
-    prisma.admin.findUnique({ where: { email } }),
-    prisma.driver.findUnique({ where: { email } }),
-    prisma.rider.findUnique({ where: { email } }),
+    prisma.admin.findUnique({ where: { id: currentEmployeeId } }),
+    prisma.driver.findUnique({ where: { id: currentEmployeeId } }),
+    prisma.rider.findUnique({ where: { id: currentEmployeeId } }),
   ]);
 
-  const allEmployees = [admin, driver, rider].filter(Boolean);
-  return allEmployees.some(emp => emp!.id !== currentEmployeeId);
+  let emailRecord: { id: string } | null = null;
+  if (admin) {
+    emailRecord = await prisma.admin.findUnique({ where: { email } });
+  } else if (driver) {
+    emailRecord = await prisma.driver.findUnique({ where: { email } });
+  } else if (rider) {
+    emailRecord = await prisma.rider.findUnique({ where: { email } });
+  }
+
+  return emailRecord !== null && emailRecord.id !== currentEmployeeId;
 }

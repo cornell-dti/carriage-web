@@ -52,9 +52,15 @@ router.post('/', validateUser('Admin'), async (req, res) => {
           .filter((r: string) => r === 'SDS_ADMIN' || r === 'REDRUNNER_ADMIN')
       : [];
 
+    // Reuse existing ID if this person already has a driver or rider record
+    const existing =
+      await prisma.driver.findUnique({ where: { email: body.email } }) ??
+      await prisma.rider.findUnique({ where: { email: body.email } });
+    const sharedId = (!body.eid || body.eid === '') ? (existing?.id ?? uuid()) : body.eid;
+
     const admin = await prisma.admin.create({
       data: {
-        id: !body.eid || body.eid === '' ? uuid() : body.eid,
+        id: sharedId,
         firstName: body.firstName,
         lastName: body.lastName,
         roles: roles as AdminRole[],
@@ -89,7 +95,7 @@ router.put('/:id', validateUser('Admin'), async (req, res) => {
 
     if (body.type || body.roles) {
       const roles = body.type || body.roles;
-      body.roles = Array.isArray(roles) ? roles.map((r: string) => r.toUpperCase() as AdminRole) : roles;
+      body.roles = Array.isArray(roles) ? roles.map((r: string) => r.toUpperCase().replace(/-/g, '_') as AdminRole) : roles;
       delete body.type;
     }
 

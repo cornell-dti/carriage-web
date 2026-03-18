@@ -138,9 +138,15 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 
     const joinDate = body.startDate || body.joinDate;
 
+    // Reuse existing ID if this person already has an admin or rider record
+    const existing =
+      await prisma.admin.findUnique({ where: { email: body.email } }) ??
+      await prisma.rider.findUnique({ where: { email: body.email } });
+    const sharedId = (!body.eid || body.eid === '') ? (existing?.id ?? uuid()) : body.eid;
+
     const driver = await prisma.driver.create({
       data: {
-        id: !body.eid || body.eid === '' ? uuid() : body.eid,
+        id: sharedId,
         firstName: body.firstName,
         lastName: body.lastName,
         availability: body.availability.map((d: string) => d.toUpperCase() as DayOfWeek),
@@ -187,6 +193,11 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
     // Uppercase availability enums if provided
     if (body.availability && Array.isArray(body.availability)) {
       body.availability = body.availability.map((d: string) => d.toUpperCase() as DayOfWeek);
+    }
+
+    // Convert date-only strings to full ISO-8601 DateTime
+    if (body.joinDate && !String(body.joinDate).includes('T')) {
+      body.joinDate = new Date(body.joinDate).toISOString();
     }
 
     const driver = await prisma.driver.update({

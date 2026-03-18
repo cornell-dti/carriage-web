@@ -11,7 +11,16 @@ import { RiderType } from '@carriage-web/shared/types/rider';
 import { notify } from '../util/notification';
 import { Change } from '@carriage-web/shared/types';
 
+
 const router = express.Router();
+
+// Transform Prisma ride (uppercase enums) to frontend-expected format (lowercase enums)
+const formatRide = (ride: any) => ({
+  ...ride,
+  type: ride.type?.toLowerCase(),
+  status: ride.status?.toLowerCase(),
+  schedulingState: ride.schedulingState?.toLowerCase(),
+});
 
 // Debug endpoint to get current user's JWT token
 router.get('/debug/token', validateUser('User'), (req, res) => {
@@ -119,7 +128,7 @@ router.get('/repeating', validateUser('User'), async (req, res) => {
       },
     });
 
-    res.status(200).send({ data: rides });
+    res.status(200).send({ data: rides.map(formatRide) });
   } catch (error) {
     console.error('Error fetching repeating rides:', error);
     res.status(500).send({ err: 'Failed to fetch repeating rides' });
@@ -142,7 +151,7 @@ router.get('/:id', validateUser('User'), async (req, res) => {
     if (!ride) {
       return res.status(400).send({ err: 'id not found in Rides' });
     }
-    res.status(200).json({ data: ride });
+    res.status(200).json({ data: formatRide(ride) });
   } catch (error) {
     console.error('Error fetching ride:', error);
     res.status(500).send({ err: 'Failed to fetch ride' });
@@ -162,7 +171,7 @@ router.get('/rider/:id', validateUser('User'), async (req, res) => {
         driver: true,
       },
     });
-    res.status(200).send({ data: rides });
+    res.status(200).send({ data: rides.map(formatRide) });
   } catch (error) {
     console.error('Error fetching rider rides:', error);
     res.status(500).send({ err: 'Failed to fetch rider rides' });
@@ -223,7 +232,7 @@ router.get('/', validateUser('User'), async (req, res) => {
       },
     });
 
-    res.status(200).send({ data: rides });
+    res.status(200).send({ data: rides.map(formatRide) });
   } catch (error) {
     console.error('Error fetching rides:', error);
     res.status(500).send({ err: 'Failed to fetch rides' });
@@ -272,9 +281,14 @@ router.post('/', validateUser('User'), async (req, res) => {
     }
 
     const hasDriver = body.driver ? true : false;
-    const schedulingState =
-      body.schedulingState ||
-      (hasDriver ? SchedulingState.SCHEDULED : SchedulingState.UNSCHEDULED);
+    const schedulingState: SchedulingState =
+      body.schedulingState === 'scheduled' || body.schedulingState === SchedulingState.SCHEDULED
+        ? SchedulingState.SCHEDULED
+        : body.schedulingState === 'unscheduled' || body.schedulingState === SchedulingState.UNSCHEDULED
+        ? SchedulingState.UNSCHEDULED
+        : hasDriver
+        ? SchedulingState.SCHEDULED
+        : SchedulingState.UNSCHEDULED;
 
     let riderIds;
     if (body.riders && body.riders.length > 0) {
@@ -294,6 +308,17 @@ router.post('/', validateUser('User'), async (req, res) => {
     const driverId = body.driver
       ? (typeof body.driver === 'string' ? body.driver : body.driver.id)
       : null;
+
+    // Verify all referenced records exist before creating the ride
+    const [startLoc, endLoc, ...riders] = await Promise.all([
+      prisma.location.findUnique({ where: { id: startLocationId } }),
+      prisma.location.findUnique({ where: { id: endLocationId } }),
+      ...riderIds.map((rid: string) => prisma.rider.findUnique({ where: { id: rid } })),
+    ]);
+    if (!startLoc) return res.status(400).send({ err: `startLocation not found: ${startLocationId}` });
+    if (!endLoc) return res.status(400).send({ err: `endLocation not found: ${endLocationId}` });
+    const missingRider = riderIds.find((_: string, i: number) => !riders[i]);
+    if (missingRider) return res.status(400).send({ err: `rider not found: ${missingRider}` });
 
     const ride = await prisma.ride.create({
       data: {
@@ -319,9 +344,10 @@ router.post('/', validateUser('User'), async (req, res) => {
     });
 
     const { userType } = res.locals.user;
-    notify(ride, body, userType, Change.CREATED)
-      .then(() => res.send(ride))
-      .catch(() => res.send(ride));
+    const formattedRide = formatRide(ride);
+    notify(formattedRide as any, body as any, userType, Change.CREATED)
+      .then(() => res.send({ data: formattedRide }))
+      .catch(() => res.send({ data: formattedRide }));
   } catch (error) {
     console.error('Error creating ride:', error);
     res.status(500).send({ err: 'Failed to create ride' });
@@ -355,8 +381,8 @@ router.put('/:id', validateUser('User'), async (req, res) => {
 
     const updateData: any = {};
 
-    if (body.type) updateData.type = body.type as RideType;
-    if (body.status) updateData.status = body.status as RideStatus;
+    if (body.type) updateData.type = body.type.toUpperCase() as RideType;
+    if (body.status) updateData.status = body.status.toUpperCase() as RideStatus;
     if (body.startTime) updateData.startTime = new Date(body.startTime);
     if (body.endTime) updateData.endTime = new Date(body.endTime);
     if (body.timezone) updateData.timezone = body.timezone;
@@ -391,7 +417,7 @@ router.put('/:id', validateUser('User'), async (req, res) => {
     }
 
     if (body.schedulingState) {
-      updateData.schedulingState = body.schedulingState as SchedulingState;
+      updateData.schedulingState = body.schedulingState.toUpperCase() as SchedulingState;
     }
 
     const updatedRide = await prisma.ride.update({
@@ -406,9 +432,10 @@ router.put('/:id', validateUser('User'), async (req, res) => {
     });
 
     const { userType } = res.locals.user;
-    notify(updatedRide, body, userType)
-      .then(() => res.send(updatedRide))
-      .catch(() => res.send(updatedRide));
+    const formattedRide = formatRide(updatedRide);
+    notify(formattedRide as any, body as any, userType)
+      .then(() => res.send({ data: formattedRide }))
+      .catch(() => res.send({ data: formattedRide }));
   } catch (error: any) {
     if (error.code === 'P2025') {
       return res.status(400).send({ err: 'id not found in Rides' });
@@ -479,7 +506,7 @@ router.delete('/:id', validateUser('User'), async (req, res) => {
 
     const { userType } = res.locals.user;
     try {
-      await notify(ride, {}, userType, Change.CANCELLED);
+      await notify(formatRide(ride) as any, {}, userType, Change.CANCELLED);
     } catch (notificationError) {
       console.error('Failed to send cancellation notification:', notificationError);
     }
