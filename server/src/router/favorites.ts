@@ -52,7 +52,16 @@ router.get('/', validateUser('User'), async (req, res) => {
 
     const favorites = await prisma.favorite.findMany({
       where: { userId },
-      include: { ride: { include: { startLocation: true, endLocation: true, riders: true, driver: true } } },
+      include: {
+        ride: {
+          include: {
+            startLocation: true,
+            endLocation: true,
+            riders: true,
+            driver: true,
+          },
+        },
+      },
     });
 
     const rides = favorites.map((fav) => fav.ride);
@@ -79,7 +88,12 @@ router.get('/:rideId', validateUser('User'), async (req, res) => {
 
     const ride = await prisma.ride.findUnique({
       where: { id: rideId },
-      include: { startLocation: true, endLocation: true, riders: true, driver: true },
+      include: {
+        startLocation: true,
+        endLocation: true,
+        riders: true,
+        driver: true,
+      },
     });
 
     res.send(ride);

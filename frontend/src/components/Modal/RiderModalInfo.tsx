@@ -41,21 +41,20 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
 
   const makeNameValidator =
     (fieldLabel: 'First name' | 'Last name') => (value: string) => {
-    const trimmed = value.trim();
+      const trimmed = value.trim();
 
-    if (!trimmed) {
-      return `${fieldLabel} cannot be empty`;
-    }
+      if (!trimmed) {
+        return `${fieldLabel} cannot be empty`;
+      }
 
-    if (trimmed === trimmed.toLowerCase()) {
-      return `Please capitalize the ${fieldLabel.toLowerCase()}`;
-    }
+      if (trimmed === trimmed.toLowerCase()) {
+        return `Please capitalize the ${fieldLabel.toLowerCase()}`;
+      }
 
-    return true;
-  };
+      return true;
+    };
 
-  const normalizePhoneNumber = (value: string) =>
-    value.replace(/\D/g, '');
+  const normalizePhoneNumber = (value: string) => value.replace(/\D/g, '');
 
   const validatePhoneNumber = (value: string) => {
     const digits = normalizePhoneNumber(value);
@@ -170,7 +169,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     joinDate,
     endDate,
   }) => {
-    const email = netid ? `${(netid).toLowerCase()}@cornell.edu` : undefined;
+    const email = netid ? `${netid.toLowerCase()}@cornell.edu` : undefined;
     const accessibility = needs.map((option) => option.value.toString());
     const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
@@ -233,7 +232,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-        <Label className={styles.label} htmlFor="lastName">
+          <Label className={styles.label} htmlFor="lastName">
             Last Name:{' '}
           </Label>
           <Input
@@ -253,7 +252,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-        <Label className={styles.label} htmlFor="netid">
+          <Label className={styles.label} htmlFor="netid">
             NetID:{' '}
           </Label>
           <Input
@@ -267,33 +266,31 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             className={styles.firstRow}
             aria-required="true"
           />
-          {errors.netid && (
-            <p className={styles.error}>Invalid NetID</p>
-          )}
+          {errors.netid && <p className={styles.error}>Invalid NetID</p>}
         </div>
 
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label} htmlFor="phoneNumber">
-              Phone Number:{' '}
-            </Label>
-            <Input
-              id="phoneNumber"
-              {...register('phoneNumber', {
-                validate: validatePhoneNumber,
-              })}
-              type="tel"
-              className={styles.firstRow}
-              aria-required="true"
-              style={{ height: '60px' }}
-            />
-            {errors.phoneNumber && (
-              <p className={styles.error}>
-                {errors.phoneNumber.message ?? 'Phone number is not valid'}
-              </p>
-            )}
+            Phone Number:{' '}
+          </Label>
+          <Input
+            id="phoneNumber"
+            {...register('phoneNumber', {
+              validate: validatePhoneNumber,
+            })}
+            type="tel"
+            className={styles.firstRow}
+            aria-required="true"
+            style={{ height: '60px' }}
+          />
+          {errors.phoneNumber && (
+            <p className={styles.error}>
+              {errors.phoneNumber.message ?? 'Phone number is not valid'}
+            </p>
+          )}
         </div>
         <div className={cn(styles.gridR2, styles.gridCBig2)}>
-        <Label className={styles.label} htmlFor="needs">
+          <Label className={styles.label} htmlFor="needs">
             Needs:{' '}
           </Label>
           <div className={styles.needsContainer}>

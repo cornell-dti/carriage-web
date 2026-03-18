@@ -3,7 +3,11 @@ import { v4 as uuid } from 'uuid';
 import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
 import { DayOfWeek } from '../../generated/prisma/client';
-import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 
 const router = express.Router();
 
@@ -29,13 +33,19 @@ router.get('/available', validateUser('User'), async (req, res) => {
   };
 
   if (!date || !startTime || !endTime) {
-    return res.status(400).send({ err: 'Missing required query params: date, startTime, endTime' });
+    return res
+      .status(400)
+      .send({ err: 'Missing required query params: date, startTime, endTime' });
   }
 
   const tz = timezone || 'America/New_York';
 
-  const requestedStart = moment.tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz).toDate();
-  const requestedEnd = moment.tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz).toDate();
+  const requestedStart = moment
+    .tz(`${date} ${startTime}`, 'YYYY-MM-DD HH:mm', tz)
+    .toDate();
+  const requestedEnd = moment
+    .tz(`${date} ${endTime}`, 'YYYY-MM-DD HH:mm', tz)
+    .toDate();
   const dayStart = moment.tz(date, 'YYYY-MM-DD', tz).startOf('day').toDate();
   const dayEnd = moment.tz(date, 'YYYY-MM-DD', tz).endOf('day').toDate();
 
@@ -80,7 +90,9 @@ router.get('/available', validateUser('User'), async (req, res) => {
       },
     });
 
-    const availableDrivers = drivers.filter((d) => !conflictingDriverIds.has(d.id));
+    const availableDrivers = drivers.filter(
+      (d) => !conflictingDriverIds.has(d.id)
+    );
     res.send({ data: availableDrivers });
   } catch (error) {
     console.error('Error fetching available drivers:', error);
@@ -127,29 +139,37 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 
     if (!Array.isArray(body.availability)) {
       return res.status(469).send({
-        err: 'Expected availability to be of type array, instead found type ' + typeof body.availability + '.',
+        err:
+          'Expected availability to be of type array, instead found type ' +
+          typeof body.availability +
+          '.',
       });
     }
 
     const emailExists = await checkNetIDExists(body.email, 'driver');
     if (emailExists) {
-      return res.status(409).send({ err: 'An employee with this NetID already exists' });
+      return res
+        .status(409)
+        .send({ err: 'An employee with this NetID already exists' });
     }
 
     const joinDate = body.startDate || body.joinDate;
 
     // Reuse existing ID if this person already has an admin or rider record
     const existing =
-      await prisma.admin.findUnique({ where: { email: body.email } }) ??
-      await prisma.rider.findUnique({ where: { email: body.email } });
-    const sharedId = (!body.eid || body.eid === '') ? (existing?.id ?? uuid()) : body.eid;
+      (await prisma.admin.findUnique({ where: { email: body.email } })) ??
+      (await prisma.rider.findUnique({ where: { email: body.email } }));
+    const sharedId =
+      !body.eid || body.eid === '' ? existing?.id ?? uuid() : body.eid;
 
     const driver = await prisma.driver.create({
       data: {
         id: sharedId,
         firstName: body.firstName,
         lastName: body.lastName,
-        availability: body.availability.map((d: string) => d.toUpperCase() as DayOfWeek),
+        availability: body.availability.map(
+          (d: string) => d.toUpperCase() as DayOfWeek
+        ),
         phoneNumber: body.phoneNumber,
         email: body.email,
         photoLink: body.photoLink,
@@ -170,17 +190,19 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
     const { id } = req.params;
     const { body } = req;
 
-    if (
-      res.locals.user.userType !== 'Admin' &&
-      id !== res.locals.user.id
-    ) {
+    if (res.locals.user.userType !== 'Admin' && id !== res.locals.user.id) {
       return res.status(400).send({ err: 'User ID does not match request ID' });
     }
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
-        return res.status(409).send({ err: 'An employee with this NetID already exists' });
+        return res
+          .status(409)
+          .send({ err: 'An employee with this NetID already exists' });
       }
     }
 
@@ -192,7 +214,9 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
 
     // Uppercase availability enums if provided
     if (body.availability && Array.isArray(body.availability)) {
-      body.availability = body.availability.map((d: string) => d.toUpperCase() as DayOfWeek);
+      body.availability = body.availability.map(
+        (d: string) => d.toUpperCase() as DayOfWeek
+      );
     }
 
     // Convert date-only strings to full ISO-8601 DateTime
@@ -231,6 +255,6 @@ router.delete('/:id', validateUser('Admin'), async (req, res) => {
 });
 
 // Get a driver's weekly stats (stub)
-router.get('/:id/stats', validateUser('Admin'), (req, res) => { });
+router.get('/:id/stats', validateUser('Admin'), (req, res) => {});
 
 export default router;

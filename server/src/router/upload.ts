@@ -114,7 +114,9 @@ router.post('/', validateUser('User'), (request, response) => {
           // Merge with existing images if any
           (async () => {
             try {
-              const location = await prisma.location.findUnique({ where: { id } });
+              const location = await prisma.location.findUnique({
+                where: { id },
+              });
               const existing: string[] = (location && location.images) || [];
               const merged = Array.from(
                 new Set([...(existing || []), ...uploadedUrls])
@@ -129,7 +131,9 @@ router.post('/', validateUser('User'), (request, response) => {
               response.status(200).send({ data: updated });
             } catch (error) {
               console.error('Error updating location images:', error);
-              response.status(500).send({ err: 'Failed to update location images' });
+              response
+                .status(500)
+                .send({ err: 'Failed to update location images' });
             }
           })();
         } else {

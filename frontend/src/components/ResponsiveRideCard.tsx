@@ -152,7 +152,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 <p className={styles.labelText}>Driver</p>
               </span>
               <p>
-                {ride.driver !== undefined
+                {ride.driver?.firstName
                   ? `${ride.driver.firstName} ${ride.driver.lastName}`
                   : 'Not Assigned'}
               </p>
@@ -202,7 +202,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 defaultZoom={13}
                 gestureHandling="greedy"
                 disableDefaultUI
-                mapId={process.env.VITE_GOOGLE_MAPS_MAP_ID}
+                mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
               >
                 <AdvancedMarker
                   position={{

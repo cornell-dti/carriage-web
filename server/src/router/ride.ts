@@ -3,14 +3,17 @@ import { v4 as uuid } from 'uuid';
 import * as csv from '@fast-csv/format';
 import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
-import { RideType, RideStatus, SchedulingState } from '../../generated/prisma/client';
+import {
+  RideType,
+  RideStatus,
+  SchedulingState,
+} from '../../generated/prisma/client';
 import { Status, Type } from '@carriage-web/shared/types/ride';
 import { validateUser } from '../util';
 import { DriverType } from '@carriage-web/shared/types/driver';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { notify } from '../util/notification';
 import { Change } from '@carriage-web/shared/types';
-
 
 const router = express.Router();
 
@@ -35,7 +38,9 @@ router.get('/debug/token', validateUser('User'), (req, res) => {
 router.get('/diagnose', async (_req, res) => {
   try {
     const rides = await prisma.ride.findMany();
-    res.status(200).send({ total: rides.length, goodCount: rides.length, bad: [] });
+    res
+      .status(200)
+      .send({ total: rides.length, goodCount: rides.length, bad: [] });
   } catch (e: any) {
     res.status(500).send({ err: e?.message || 'diagnostic failed' });
   }
@@ -44,7 +49,9 @@ router.get('/diagnose', async (_req, res) => {
 router.get('/download', async (req, res) => {
   try {
     const dateStart = moment(req.query.date as string).toDate();
-    const dateEnd = moment(req.query.date as string).endOf('day').toDate();
+    const dateEnd = moment(req.query.date as string)
+      .endOf('day')
+      .toDate();
 
     const rides = await prisma.ride.findMany({
       where: {
@@ -218,7 +225,9 @@ router.get('/', validateUser('User'), async (req, res) => {
 
     if (date && allDates !== 'true') {
       const dateStart = moment(date as string).toDate();
-      const dateEnd = moment(date as string).endOf('day').toDate();
+      const dateEnd = moment(date as string)
+        .endOf('day')
+        .toDate();
       where.startTime = { gte: dateStart, lte: dateEnd };
     }
 
@@ -243,12 +252,7 @@ router.get('/', validateUser('User'), async (req, res) => {
 router.post('/', validateUser('User'), async (req, res) => {
   try {
     const { body } = req;
-    const {
-      startLocation,
-      endLocation,
-      isRecurring = false,
-      recurring,
-    } = body;
+    const { startLocation, endLocation, isRecurring = false, recurring } = body;
 
     if (isRecurring || recurring) {
       return res.status(400).send({
@@ -282,9 +286,11 @@ router.post('/', validateUser('User'), async (req, res) => {
 
     const hasDriver = body.driver ? true : false;
     const schedulingState: SchedulingState =
-      body.schedulingState === 'scheduled' || body.schedulingState === SchedulingState.SCHEDULED
+      body.schedulingState === 'scheduled' ||
+      body.schedulingState === SchedulingState.SCHEDULED
         ? SchedulingState.SCHEDULED
-        : body.schedulingState === 'unscheduled' || body.schedulingState === SchedulingState.UNSCHEDULED
+        : body.schedulingState === 'unscheduled' ||
+          body.schedulingState === SchedulingState.UNSCHEDULED
         ? SchedulingState.UNSCHEDULED
         : hasDriver
         ? SchedulingState.SCHEDULED
@@ -301,24 +307,37 @@ router.post('/', validateUser('User'), async (req, res) => {
       riderIds = [];
     }
 
-    const startLocationId = typeof startLocation === 'string' ? startLocation : startLocation.id;
-    const endLocationId = typeof endLocation === 'string' ? endLocation : endLocation.id;
+    const startLocationId =
+      typeof startLocation === 'string' ? startLocation : startLocation.id;
+    const endLocationId =
+      typeof endLocation === 'string' ? endLocation : endLocation.id;
 
     // Extract driver ID if driver is an object
     const driverId = body.driver
-      ? (typeof body.driver === 'string' ? body.driver : body.driver.id)
+      ? typeof body.driver === 'string'
+        ? body.driver
+        : body.driver.id
       : null;
 
     // Verify all referenced records exist before creating the ride
     const [startLoc, endLoc, ...riders] = await Promise.all([
       prisma.location.findUnique({ where: { id: startLocationId } }),
       prisma.location.findUnique({ where: { id: endLocationId } }),
-      ...riderIds.map((rid: string) => prisma.rider.findUnique({ where: { id: rid } })),
+      ...riderIds.map((rid: string) =>
+        prisma.rider.findUnique({ where: { id: rid } })
+      ),
     ]);
-    if (!startLoc) return res.status(400).send({ err: `startLocation not found: ${startLocationId}` });
-    if (!endLoc) return res.status(400).send({ err: `endLocation not found: ${endLocationId}` });
+    if (!startLoc)
+      return res
+        .status(400)
+        .send({ err: `startLocation not found: ${startLocationId}` });
+    if (!endLoc)
+      return res
+        .status(400)
+        .send({ err: `endLocation not found: ${endLocationId}` });
     const missingRider = riderIds.find((_: string, i: number) => !riders[i]);
-    if (missingRider) return res.status(400).send({ err: `rider not found: ${missingRider}` });
+    if (missingRider)
+      return res.status(400).send({ err: `rider not found: ${missingRider}` });
 
     const ride = await prisma.ride.create({
       data: {
@@ -329,8 +348,12 @@ router.post('/', validateUser('User'), async (req, res) => {
         endTime: new Date(body.endTime),
         riders: { connect: riderIds.map((id: string) => ({ id })) },
         driverId,
-        type: body.type ? (body.type.toUpperCase() as RideType) : RideType.UPCOMING,
-        status: body.status ? (body.status.toUpperCase() as RideStatus) : RideStatus.NOT_STARTED,
+        type: body.type
+          ? (body.type.toUpperCase() as RideType)
+          : RideType.UPCOMING,
+        status: body.status
+          ? (body.status.toUpperCase() as RideStatus)
+          : RideStatus.NOT_STARTED,
         schedulingState,
         isRecurring: false,
         timezone: body.timezone || 'America/New_York',
@@ -369,7 +392,9 @@ router.put('/:id', validateUser('User'), async (req, res) => {
       return res.status(400).send({ err: 'id not found in Rides' });
     }
 
-    const userIsRider = ride.riders.some((rider) => rider.id === res.locals.user.id);
+    const userIsRider = ride.riders.some(
+      (rider) => rider.id === res.locals.user.id
+    );
     const userIsDriver = ride.driver && res.locals.user.id === ride.driver.id;
     const userIsAdmin = res.locals.user.userType === 'Admin';
 
@@ -382,21 +407,24 @@ router.put('/:id', validateUser('User'), async (req, res) => {
     const updateData: any = {};
 
     if (body.type) updateData.type = body.type.toUpperCase() as RideType;
-    if (body.status) updateData.status = body.status.toUpperCase() as RideStatus;
+    if (body.status)
+      updateData.status = body.status.toUpperCase() as RideStatus;
     if (body.startTime) updateData.startTime = new Date(body.startTime);
     if (body.endTime) updateData.endTime = new Date(body.endTime);
     if (body.timezone) updateData.timezone = body.timezone;
 
     if (body.startLocation) {
-      updateData.startLocationId = typeof body.startLocation === 'string'
-        ? body.startLocation
-        : body.startLocation.id;
+      updateData.startLocationId =
+        typeof body.startLocation === 'string'
+          ? body.startLocation
+          : body.startLocation.id;
     }
 
     if (body.endLocation) {
-      updateData.endLocationId = typeof body.endLocation === 'string'
-        ? body.endLocation
-        : body.endLocation.id;
+      updateData.endLocationId =
+        typeof body.endLocation === 'string'
+          ? body.endLocation
+          : body.endLocation.id;
     }
 
     if (body.riders && Array.isArray(body.riders)) {
@@ -408,7 +436,8 @@ router.put('/:id', validateUser('User'), async (req, res) => {
 
     if (Object.prototype.hasOwnProperty.call(body, 'driver')) {
       if (body.driver) {
-        updateData.driverId = typeof body.driver === 'string' ? body.driver : body.driver.id;
+        updateData.driverId =
+          typeof body.driver === 'string' ? body.driver : body.driver.id;
         updateData.schedulingState = SchedulingState.SCHEDULED;
       } else {
         updateData.driverId = null;
@@ -417,7 +446,8 @@ router.put('/:id', validateUser('User'), async (req, res) => {
     }
 
     if (body.schedulingState) {
-      updateData.schedulingState = body.schedulingState.toUpperCase() as SchedulingState;
+      updateData.schedulingState =
+        body.schedulingState.toUpperCase() as SchedulingState;
     }
 
     const updatedRide = await prisma.ride.update({
@@ -472,7 +502,9 @@ router.delete('/:id', validateUser('User'), async (req, res) => {
       });
     }
 
-    const userIsRider = ride.riders.some((rider: any) => rider.id === res.locals.user.id);
+    const userIsRider = ride.riders.some(
+      (rider: any) => rider.id === res.locals.user.id
+    );
     const userIsDriver = ride.driver && res.locals.user.id === ride.driver.id;
     const userIsAdmin = res.locals.user.userType === 'Admin';
 
@@ -508,7 +540,10 @@ router.delete('/:id', validateUser('User'), async (req, res) => {
     try {
       await notify(formatRide(ride) as any, {}, userType, Change.CANCELLED);
     } catch (notificationError) {
-      console.error('Failed to send cancellation notification:', notificationError);
+      console.error(
+        'Failed to send cancellation notification:',
+        notificationError
+      );
     }
 
     res.send({ id });

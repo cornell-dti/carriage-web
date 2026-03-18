@@ -2,7 +2,11 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { prisma } from '../db/prisma';
 import { AdminRole } from '../../generated/prisma/client';
-import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 
 const router = express.Router();
 
@@ -32,7 +36,6 @@ router.get('/', validateUser('Admin'), async (req, res) => {
   }
 });
 
-
 // Put a driver in Admins table
 router.post('/', validateUser('Admin'), async (req, res) => {
   try {
@@ -41,7 +44,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
     const emailExists = await checkNetIDExists(body.email, 'admin');
     if (emailExists) {
       return res.status(409).send({
-        err: 'An employee with this NetID already exists'
+        err: 'An employee with this NetID already exists',
       });
     }
 
@@ -54,9 +57,10 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 
     // Reuse existing ID if this person already has a driver or rider record
     const existing =
-      await prisma.driver.findUnique({ where: { email: body.email } }) ??
-      await prisma.rider.findUnique({ where: { email: body.email } });
-    const sharedId = (!body.eid || body.eid === '') ? (existing?.id ?? uuid()) : body.eid;
+      (await prisma.driver.findUnique({ where: { email: body.email } })) ??
+      (await prisma.rider.findUnique({ where: { email: body.email } }));
+    const sharedId =
+      !body.eid || body.eid === '' ? existing?.id ?? uuid() : body.eid;
 
     const admin = await prisma.admin.create({
       data: {
@@ -85,17 +89,24 @@ router.put('/:id', validateUser('Admin'), async (req, res) => {
     const { body } = req;
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res.status(409).send({
-          err: 'An employee with this NetID already exists'
+          err: 'An employee with this NetID already exists',
         });
       }
     }
 
     if (body.type || body.roles) {
       const roles = body.type || body.roles;
-      body.roles = Array.isArray(roles) ? roles.map((r: string) => r.toUpperCase().replace(/-/g, '_') as AdminRole) : roles;
+      body.roles = Array.isArray(roles)
+        ? roles.map(
+            (r: string) => r.toUpperCase().replace(/-/g, '_') as AdminRole
+          )
+        : roles;
       delete body.type;
     }
 

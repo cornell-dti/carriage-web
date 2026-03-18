@@ -2,8 +2,16 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
-import { Accessibility, RideType, RideStatus } from '../../generated/prisma/client';
-import { validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  Accessibility,
+  RideType,
+  RideStatus,
+} from '../../generated/prisma/client';
+import {
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 
 const router = express.Router();
 
@@ -15,7 +23,8 @@ router.get('/usage', validateUser('Admin'), async (req, res) => {
       include: { riders: true },
     });
 
-    const usageObj: Record<string, { noShows: number; totalRides: number }> = {};
+    const usageObj: Record<string, { noShows: number; totalRides: number }> =
+      {};
 
     for (const ride of rides) {
       for (const rider of ride.riders) {
@@ -71,7 +80,8 @@ router.get('/:id/profile', validateUser('User'), async (req, res) => {
     if (!rider) {
       return res.status(400).send({ err: 'id not found in Riders' });
     }
-    const { email, firstName, lastName, phoneNumber, joinDate, endDate } = rider;
+    const { email, firstName, lastName, phoneNumber, joinDate, endDate } =
+      rider;
     res.send({ email, firstName, lastName, phoneNumber, joinDate, endDate });
   } catch (error) {
     console.error('Error fetching rider profile:', error);
@@ -87,7 +97,10 @@ router.get('/:id/accessibility', validateUser('User'), async (req, res) => {
     if (!rider) {
       return res.status(400).send({ err: 'id not found in Riders' });
     }
-    res.send({ description: rider.description, accessibility: rider.accessibility });
+    res.send({
+      description: rider.description,
+      accessibility: rider.accessibility,
+    });
   } catch (error) {
     console.error('Error fetching accessibility:', error);
     res.status(500).send({ err: 'Failed to fetch accessibility' });
@@ -102,7 +115,10 @@ router.get('/:id/organization', validateUser('User'), async (req, res) => {
     if (!rider) {
       return res.status(400).send({ err: 'id not found in Riders' });
     }
-    res.send({ description: rider.description, organization: rider.organization });
+    res.send({
+      description: rider.description,
+      organization: rider.organization,
+    });
   } catch (error) {
     console.error('Error fetching organization:', error);
     res.status(500).send({ err: 'Failed to fetch organization' });
@@ -115,7 +131,13 @@ router.get('/:id/favorites', validateUser('User'), async (req, res) => {
     const { id } = req.params;
     const rider = await prisma.rider.findUnique({
       where: { id },
-      include: { favorites: { include: { ride: { include: { startLocation: true, endLocation: true } } } } },
+      include: {
+        favorites: {
+          include: {
+            ride: { include: { startLocation: true, endLocation: true } },
+          },
+        },
+      },
     });
     if (!rider) {
       return res.status(400).send({ err: 'id not found in Riders' });
@@ -143,7 +165,12 @@ router.get('/:id/currentride', validateUser('Rider'), async (req, res) => {
           { startTime: { lte: now }, endTime: { gte: now } },
         ],
       },
-      include: { startLocation: true, endLocation: true, riders: true, driver: true },
+      include: {
+        startLocation: true,
+        endLocation: true,
+        riders: true,
+        driver: true,
+      },
       orderBy: { startTime: 'asc' },
     });
 
@@ -162,8 +189,12 @@ router.get('/:id/usage', validateUser('Admin'), async (req, res) => {
       where: { riders: { some: { id } } },
     });
 
-    const studentRides = rides.filter((r) => r.status === RideStatus.COMPLETED).length;
-    const noShowCount = rides.filter((r) => r.status === RideStatus.NO_SHOW).length;
+    const studentRides = rides.filter(
+      (r) => r.status === RideStatus.COMPLETED
+    ).length;
+    const noShowCount = rides.filter(
+      (r) => r.status === RideStatus.NO_SHOW
+    ).length;
 
     res.send({ studentRides, noShowCount });
   } catch (error) {
@@ -179,7 +210,9 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 
     const emailExists = await checkNetIDExists(body.email, 'rider');
     if (emailExists) {
-      return res.status(409).send({ err: 'A user with this NetID already exists' });
+      return res
+        .status(409)
+        .send({ err: 'A user with this NetID already exists' });
     }
 
     // Uppercase accessibility enums if provided
@@ -189,8 +222,8 @@ router.post('/', validateUser('Admin'), async (req, res) => {
 
     // Reuse existing ID if this person already has an admin or driver record
     const existing =
-      await prisma.admin.findUnique({ where: { email: body.email } }) ??
-      await prisma.driver.findUnique({ where: { email: body.email } });
+      (await prisma.admin.findUnique({ where: { email: body.email } })) ??
+      (await prisma.driver.findUnique({ where: { email: body.email } }));
     const sharedId = existing?.id ?? uuid();
 
     const rider = await prisma.rider.create({
@@ -198,8 +231,8 @@ router.post('/', validateUser('Admin'), async (req, res) => {
         ...body,
         id: sharedId,
         accessibility,
-            joinDate: body.joinDate ? new Date(body.joinDate) : undefined,
-    endDate: body.endDate ? new Date(body.endDate) : undefined,
+        joinDate: body.joinDate ? new Date(body.joinDate) : undefined,
+        endDate: body.endDate ? new Date(body.endDate) : undefined,
       },
     });
 
@@ -216,23 +249,27 @@ router.put('/:id', validateUser('Rider'), async (req, res) => {
     const { id } = req.params;
     const { body } = req;
 
-    if (
-      res.locals.user.userType !== 'Admin' &&
-      id !== res.locals.user.id
-    ) {
+    if (res.locals.user.userType !== 'Admin' && id !== res.locals.user.id) {
       return res.status(400).send({ err: 'User ID does not match request ID' });
     }
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
-        return res.status(409).send({ err: 'A user with this NetID already exists' });
+        return res
+          .status(409)
+          .send({ err: 'A user with this NetID already exists' });
       }
     }
 
     // Uppercase accessibility enums if provided
     if (body.accessibility && Array.isArray(body.accessibility)) {
-      body.accessibility = body.accessibility.map((a: string) => a.toUpperCase() as Accessibility);
+      body.accessibility = body.accessibility.map(
+        (a: string) => a.toUpperCase() as Accessibility
+      );
     }
 
     // Convert date-only strings to full ISO-8601 DateTime
@@ -279,7 +316,9 @@ router.post('/:id/favorites', validateUser('Rider'), async (req, res) => {
 
     const favorites = await prisma.favorite.findMany({
       where: { userId: id },
-      include: { ride: { include: { startLocation: true, endLocation: true } } },
+      include: {
+        ride: { include: { startLocation: true, endLocation: true } },
+      },
     });
 
     res.status(200).send({ data: favorites });

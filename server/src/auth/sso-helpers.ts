@@ -30,45 +30,63 @@ export async function findUserByNetID(
 
   try {
     if (requestedUserType === 'Rider') {
-      const rider = await prisma.rider.findUnique({ where: { email: cornellEmail } });
+      const rider = await prisma.rider.findUnique({
+        where: { email: cornellEmail },
+      });
       if (!rider) return null;
       if (!rider.active) return { error: 'User not active', userType: 'Rider' };
       return { user: rider, userType: 'Rider' };
     }
 
     if (requestedUserType === 'Admin') {
-      const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
+      const admin = await prisma.admin.findUnique({
+        where: { email: cornellEmail },
+      });
       if (admin) return { user: admin, userType: 'Admin' };
 
       // Fallback: check drivers with admin flag
-      const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
-      if (driver && (driver as any).admin) return { user: driver, userType: 'Admin' };
+      const driver = await prisma.driver.findUnique({
+        where: { email: cornellEmail },
+      });
+      if (driver && (driver as any).admin)
+        return { user: driver, userType: 'Admin' };
 
       return null;
     }
 
     if (requestedUserType === 'Driver') {
-      const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
+      const driver = await prisma.driver.findUnique({
+        where: { email: cornellEmail },
+      });
       if (driver) return { user: driver, userType: 'Driver' };
 
       // Fallback: check admin with isDriver flag
-      const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
-      if (admin && (admin as any).isDriver) return { user: admin, userType: 'Driver' };
+      const admin = await prisma.admin.findUnique({
+        where: { email: cornellEmail },
+      });
+      if (admin && (admin as any).isDriver)
+        return { user: admin, userType: 'Driver' };
 
       return null;
     }
 
     // No specific userType — search all tables
-    const rider = await prisma.rider.findUnique({ where: { email: cornellEmail } });
+    const rider = await prisma.rider.findUnique({
+      where: { email: cornellEmail },
+    });
     if (rider) {
       if (!rider.active) return { error: 'User not active', userType: 'Rider' };
       return { user: rider, userType: 'Rider' };
     }
 
-    const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
+    const admin = await prisma.admin.findUnique({
+      where: { email: cornellEmail },
+    });
     if (admin) return { user: admin, userType: 'Admin' };
 
-    const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
+    const driver = await prisma.driver.findUnique({
+      where: { email: cornellEmail },
+    });
     if (driver) {
       if ((driver as any).admin) return { user: driver, userType: 'Admin' };
       return { user: driver, userType: 'Driver' };

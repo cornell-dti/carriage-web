@@ -106,7 +106,9 @@ const AuthManager = () => {
   // This is now primarily a fallback for environments where server-side
   // sessions are same-site (e.g., local development). In production, we
   // prefer the stateless JWT passed via the URL query parameter.
-  const handleSSOCallback = async (event?: React.FormEvent<HTMLFormElement>) => {
+  const handleSSOCallback = async (
+    event?: React.FormEvent<HTMLFormElement>
+  ) => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/api/sso/profile`,

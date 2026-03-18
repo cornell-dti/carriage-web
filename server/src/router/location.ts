@@ -48,7 +48,11 @@ router.post('/', validateUser('Admin'), async (req, res) => {
   try {
     const { body } = req;
     const location = await prisma.location.create({
-      data: { ...body, id: uuid(), tag: body.tag?.toUpperCase() as LocationTag },
+      data: {
+        ...body,
+        id: uuid(),
+        tag: body.tag?.toUpperCase() as LocationTag,
+      },
     });
     res.status(200).send({ data: location });
   } catch (error) {
@@ -77,7 +81,7 @@ router.put('/:id', validateUser('Admin'), async (req, res) => {
     const { id } = req.params;
     const location = await prisma.location.update({
       where: { id },
-      data: {...req.body, tag: req.body.tag?.toUpperCase() as LocationTag},
+      data: { ...req.body, tag: req.body.tag?.toUpperCase() as LocationTag },
     });
     res.status(200).send({ data: location });
   } catch (error: any) {

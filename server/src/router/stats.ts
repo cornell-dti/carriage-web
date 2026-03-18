@@ -87,7 +87,11 @@ router.get('/', validateUser('Admin'), async (req, res) => {
   }
 });
 
-async function statsFromDates(dates: string[], res: Response, download: boolean) {
+async function statsFromDates(
+  dates: string[],
+  res: Response,
+  download: boolean
+) {
   const statsAcc: StatsType[] = [];
 
   for (const currDate of dates) {
@@ -98,7 +102,9 @@ async function statsFromDates(dates: string[], res: Response, download: boolean)
     const dayStart = dateMoment.toDate();
     const dayEnd = dateMoment.add(17, 'hours').toDate();
     const nightStart = moment(dayEnd).add(1, 'seconds').toDate();
-    const nightEnd = moment(currDate as string).endOf('day').toDate();
+    const nightEnd = moment(currDate as string)
+      .endOf('day')
+      .toDate();
 
     await computeStats(
       res,
@@ -115,7 +121,11 @@ async function statsFromDates(dates: string[], res: Response, download: boolean)
   }
 }
 
-async function downloadStats(res: Response, statsAcc: StatsType[], numDays: number) {
+async function downloadStats(
+  res: Response,
+  statsAcc: StatsType[],
+  numDays: number
+) {
   if (statsAcc.length === numDays) {
     try {
       const drivers = await prisma.driver.findMany();

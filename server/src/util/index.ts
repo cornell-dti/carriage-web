@@ -26,11 +26,11 @@ export function isAddress(address: string) {
   } = parsedAddr;
   return Boolean(
     streetNumber &&
-    streetName &&
-    streetSuffix &&
-    placeName &&
-    stateName &&
-    zipCode
+      streetName &&
+      streetSuffix &&
+      placeName &&
+      stateName &&
+      zipCode
   );
 }
 

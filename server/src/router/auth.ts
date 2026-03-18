@@ -69,7 +69,9 @@ async function findUserAndSendToken(
         id: user.id,
         userType: getUserType(table),
       };
-      res.status(200).send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
+      res
+        .status(200)
+        .send({ jwt: jwt.sign(userPayload, process.env.JWT_SECRET!) });
     } else {
       const unregisteredUser: UnregisteredUserType = {
         email: email,
