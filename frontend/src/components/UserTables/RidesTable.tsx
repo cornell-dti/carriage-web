@@ -26,7 +26,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
   const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rideEditOpenId, setRideEditOpenId] = useState<string | null>(null);
-  let buttonRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const handleCloseDetailsModal = () => {
     setDetailsModalOpen(false);
@@ -47,171 +47,169 @@ const RidesTable = ({ rides }: RidesTableProps) => {
   return (
     <>
       <Table>
-        <Row
-          header
-          colSizes={scheduledColSizes}
-          data={scheduledHeaders}
-        />
-        {rides.filter((ride) => ride !== undefined).map((ride, index) => {
-          const startTime = new Date(ride.startTime).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-          const endTime = new Date(ride.endTime).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          });
-          // Use primary rider (first in array) for table display
-          const primaryRider =
-            ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
-          const riderName = primaryRider
-            ? `${primaryRider.firstName} ${primaryRider.lastName}`
-            : '';
+        <Row header colSizes={scheduledColSizes} data={scheduledHeaders} />
+        {rides
+          .filter((ride) => ride !== undefined)
+          .map((ride, index) => {
+            const startTime = new Date(ride.startTime).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+            const endTime = new Date(ride.endTime).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+            // Use primary rider (first in array) for table display
+            const primaryRider =
+              ride.riders && ride.riders.length > 0 ? ride.riders[0] : null;
+            const riderName = primaryRider
+              ? `${primaryRider.firstName} ${primaryRider.lastName}`
+              : '';
 
-          // Convert accessibility array to string
-          const needsRenderer = () => {
-            if (
-              primaryRider &&
-              primaryRider.accessibility &&
-              primaryRider.accessibility.length > 0
-            ) {
-              return (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  {primaryRider.accessibility.map((accessibility) => (
-                    <p style={{ textWrap: 'nowrap' }}>{accessibility}</p>
-                  ))}
-                </div>
-              );
-            }
-            return <p>None</p>;
-          };
+            // Convert accessibility array to string
+            const needsRenderer = () => {
+              if (
+                primaryRider &&
+                primaryRider.accessibility &&
+                primaryRider.accessibility.length > 0
+              ) {
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {primaryRider.accessibility.map((accessibility) => (
+                      <p style={{ textWrap: 'nowrap' }}>{accessibility}</p>
+                    ))}
+                  </div>
+                );
+              }
+              return <p>None</p>;
+            };
 
-          const needs = {
-            data: needsRenderer(),
-          };
+            const needs = {
+              data: needsRenderer(),
+            };
 
-          const pickupLocation = ride.startLocation.name;
-          const pickupTag = ride.startLocation.tag;
-          const dropoffLocation = ride.endLocation.name;
-          const dropoffTag = ride.endLocation.tag;
+            const pickupLocation = ride.startLocation.name;
+            const pickupTag = ride.startLocation.tag;
+            const dropoffLocation = ride.endLocation.name;
+            const dropoffTag = ride.endLocation.tag;
 
-          const valuePickup = { data: pickupLocation, tag: pickupTag };
-          const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
+            const valuePickup = { data: pickupLocation, tag: pickupTag };
+            const valueDropoff = { data: dropoffLocation, tag: dropoffTag };
 
-          const startTimeElement = {
-            data: <p style={{ textWrap: 'nowrap' }}>{startTime}</p>,
-          };
+            const startTimeElement = {
+              data: <p style={{ textWrap: 'nowrap' }}>{startTime}</p>,
+            };
 
-          const endTimeElement = {
-            data: <p style={{ textWrap: 'nowrap' }}>{endTime}</p>,
-          };
+            const endTimeElement = {
+              data: <p style={{ textWrap: 'nowrap' }}>{endTime}</p>,
+            };
 
-          // Task1
+            // Task1
 
-          const assignButton = (shouldReassign: boolean) => (
-            <button
-              className={`${buttonStyles.button} ${
-                shouldReassign
-                  ? buttonStyles.buttonSecondary
-                  : buttonStyles.buttonPrimary
-              }`}
-              ref={buttonRef}
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpenAssignModal(openAssignModal === index ? -1 : index);
-                setReassign(shouldReassign);
-              }}
-            >
-              {shouldReassign ? 'Reassign' : 'Assign'}
-            </button>
-          );
-
-          const editButton = (
-            <button
-              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              onClick={() => {
-                if (rides[index].isRecurring) {
-                  setOpenDeleteOrEditModal(index);
-                } else {
-                  setRideEditOpenId(ride.id);
-                }
-              }}
-            >
-              Edit
-            </button>
-          );
-
-          const valueEdit = {
-            data: (
-              <div
-                className={styles.dataValues}
-                style={{ display: 'flex', gap: '0.5rem' }}
-              >
-                {editButton}
-                {assignButton(ride.driver !== undefined)}
-              </div>
-            ),
-          };
-
-          const scheduledRideData = [
-            startTimeElement,
-            endTimeElement,
-            valuePickup,
-            valueDropoff,
-            needs,
-            riderName,
-            valueEdit,
-          ];
-
-          const handleRowClick = () => {
-            setSelectedRide(ride);
-            setDetailsModalOpen(true);
-          };
-
-          const scheduledRow = () => (
-            <Row
-              key={ride.id}
-              data={scheduledRideData}
-              colSizes={scheduledColSizes}
-              onClick={handleRowClick}
-            />
-          );
-
-          return (
-            <React.Fragment key={ride.id}>
-              {scheduledRow()}
-              <DeleteOrEditTypeModal
-                key={`delete-edit-modal-${ride.id}`}
-                open={deleteOpen === index}
-                onClose={() => setDeleteOpen(-1)}
-                ride={rides[index]}
-                deleting={true}
-                onNext={(single) => {
-                  setOpenDeleteOrEditModal(-1);
-                  setOpenEditModal(index);
-                  setEditSingle(single);
+            const assignButton = (shouldReassign: boolean) => (
+              <button
+                className={`${buttonStyles.button} ${
+                  shouldReassign
+                    ? buttonStyles.buttonSecondary
+                    : buttonStyles.buttonPrimary
+                }`}
+                ref={buttonRef}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenAssignModal(openAssignModal === index ? -1 : index);
+                  setReassign(shouldReassign);
                 }}
-                isRider={false}
+              >
+                {shouldReassign ? 'Reassign' : 'Assign'}
+              </button>
+            );
+
+            const editButton = (
+              <button
+                className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
+                onClick={() => {
+                  if (rides[index].isRecurring) {
+                    setOpenDeleteOrEditModal(index);
+                  } else {
+                    setRideEditOpenId(ride.id);
+                  }
+                }}
+              >
+                Edit
+              </button>
+            );
+
+            const valueEdit = {
+              data: (
+                <div
+                  className={styles.dataValues}
+                  style={{ display: 'flex', gap: '0.5rem' }}
+                >
+                  {editButton}
+                  {assignButton(ride.driver !== undefined)}
+                </div>
+              ),
+            };
+
+            const scheduledRideData = [
+              startTimeElement,
+              endTimeElement,
+              valuePickup,
+              valueDropoff,
+              needs,
+              riderName,
+              valueEdit,
+            ];
+
+            const handleRowClick = () => {
+              setSelectedRide(ride);
+              setDetailsModalOpen(true);
+            };
+
+            const scheduledRow = () => (
+              <Row
+                key={ride.id}
+                data={scheduledRideData}
+                colSizes={scheduledColSizes}
+                onClick={handleRowClick}
               />
-              <AssignDriverModal
-                key={`assign-driver-modal-${ride.id}`}
-                isOpen={openAssignModal === index}
-                close={() => setOpenAssignModal(-1)}
-                ride={rides[index]}
-                allDrivers={drivers}
-                reassign={reassign}
-                buttonRef={buttonRef}
-              />
-              <RideModal
-                key={`ride-modal-${ride.id}`}
-                open={openEditModal === index}
-                close={() => setOpenEditModal(-1)}
-                ride={rides[index]}
-                editSingle={editSingle}
-              />
-            </React.Fragment>
-          );
-        })}
+            );
+
+            return (
+              <React.Fragment key={ride.id}>
+                {scheduledRow()}
+                <DeleteOrEditTypeModal
+                  key={`delete-edit-modal-${ride.id}`}
+                  open={deleteOpen === index}
+                  onClose={() => setDeleteOpen(-1)}
+                  ride={rides[index]}
+                  deleting={true}
+                  onNext={(single) => {
+                    setOpenDeleteOrEditModal(-1);
+                    setOpenEditModal(index);
+                    setEditSingle(single);
+                  }}
+                  isRider={false}
+                />
+                <AssignDriverModal
+                  key={`assign-driver-modal-${ride.id}`}
+                  isOpen={openAssignModal === index}
+                  close={() => setOpenAssignModal(-1)}
+                  ride={rides[index]}
+                  allDrivers={drivers}
+                  reassign={reassign}
+                  buttonRef={buttonRef}
+                />
+                <RideModal
+                  key={`ride-modal-${ride.id}`}
+                  open={openEditModal === index}
+                  close={() => setOpenEditModal(-1)}
+                  ride={rides[index]}
+                  editSingle={editSingle}
+                />
+              </React.Fragment>
+            );
+          })}
       </Table>
 
       {/* Ride Details Modal */}

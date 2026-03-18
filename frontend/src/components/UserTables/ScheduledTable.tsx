@@ -38,15 +38,16 @@ const ScheduledTable = () => {
           </React.Fragment>
         ) : null;
       })}
-      {rides.filter((ride) => ride?.driver === undefined).map((ride) => (
-        <React.Fragment key={ride.id}>
-          <h1 className={styles.formHeader}>Unassigned</h1>
-          <RidesTable rides={[ride]} />
-        </React.Fragment>
-      ))}
+      {rides
+        .filter((ride) => ride?.driver === undefined)
+        .map((ride) => (
+          <React.Fragment key={ride.id}>
+            <h1 className={styles.formHeader}>Unassigned</h1>
+            <RidesTable rides={[ride]} />
+          </React.Fragment>
+        ))}
     </>
-  ) : 
-  (
+  ) : (
     <div className={styles.noRides}>No scheduled rides</div>
   );
 };

@@ -6,7 +6,12 @@ import * as db from './common';
 import { Rider } from '../models/rider';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { Location } from '../models/location';
-import { createKeys, validateUser, checkNetIDExists, checkNetIDExistsForOtherEmployee } from '../util';
+import {
+  createKeys,
+  validateUser,
+  checkNetIDExists,
+  checkNetIDExistsForOtherEmployee,
+} from '../util';
 import { Ride } from '../models/ride';
 import { RideType, Type, Status } from '@carriage-web/shared/types/ride';
 import { UserType } from '../models/subscription';
@@ -199,7 +204,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
     const emailExists = await checkNetIDExists(body.email, 'rider');
     if (emailExists) {
       return res.status(409).send({
-        err: 'A user with this NetID already exists'
+        err: 'A user with this NetID already exists',
       });
     }
 
@@ -225,10 +230,13 @@ router.put('/:id', validateUser('Rider'), async (req, res) => {
 
     // Check if email is being changed and if it conflicts with another user
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res.status(409).send({
-          err: 'A user with this NetID already exists'
+          err: 'A user with this NetID already exists',
         });
       }
     }
