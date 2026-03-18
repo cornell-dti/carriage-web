@@ -1,6 +1,4 @@
-import { Rider } from '../models/rider';
-import { Admin } from '../models/admin';
-import { Driver } from '../models/driver';
+import { prisma } from '../db/prisma';
 
 /**
  * Extract NetID from Cornell email address
@@ -31,74 +29,48 @@ export async function findUserByNetID(
   const cornellEmail = `${netid}@cornell.edu`;
 
   try {
-    // If a specific userType is requested, only search that table (matching Google OAuth behavior)
-    if (requestedUserType) {
-      if (requestedUserType === 'Rider') {
-        const riders = await Rider.scan('email').eq(cornellEmail).exec();
-        if (riders.length > 0) {
-          const rider = riders[0];
-          // IMPORTANT: Check if Rider is active (same as Google OAuth)
-          if (!rider.active) {
-            return { error: 'User not active', userType: 'Rider' };
-          }
-          return { user: rider, userType: 'Rider' };
-        }
-        return null; // User not found in Riders table
-      }
-
-      if (requestedUserType === 'Admin') {
-        // Check Admins table first
-        const admins = await Admin.scan('email').eq(cornellEmail).exec();
-        if (admins.length > 0) {
-          return { user: admins[0], userType: 'Admin' };
-        }
-
-        // Fallback: Check Drivers table for admin-flagged drivers (matches Google OAuth)
-        const drivers = await Driver.scan('email').eq(cornellEmail).exec();
-        if (drivers.length > 0) {
-          const driver = drivers[0];
-          if ((driver as any).admin) {
-            return { user: driver, userType: 'Admin' };
-          }
-        }
-        return null; // User not found as Admin
-      }
-
-      if (requestedUserType === 'Driver') {
-        const drivers = await Driver.scan('email').eq(cornellEmail).exec();
-        if (drivers.length > 0) {
-          return { user: drivers[0], userType: 'Driver' };
-        }
-        return null; // User not found in Drivers table
-      }
-    }
-
-    // No specific userType requested - search all tables (fallback behavior)
-    // Check Riders first
-    const riders = await Rider.scan('email').eq(cornellEmail).exec();
-    if (riders.length > 0) {
-      const rider = riders[0];
-      // IMPORTANT: Check if Rider is active (same as Google OAuth)
-      if (!rider.active) {
-        return { error: 'User not active', userType: 'Rider' };
-      }
+    if (requestedUserType === 'Rider') {
+      const rider = await prisma.rider.findUnique({ where: { email: cornellEmail } });
+      if (!rider) return null;
+      if (!rider.active) return { error: 'User not active', userType: 'Rider' };
       return { user: rider, userType: 'Rider' };
     }
 
-    // Check Admins
-    const admins = await Admin.scan('email').eq(cornellEmail).exec();
-    if (admins.length > 0) {
-      return { user: admins[0], userType: 'Admin' };
+    if (requestedUserType === 'Admin') {
+      const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
+      if (admin) return { user: admin, userType: 'Admin' };
+
+      // Fallback: check drivers with admin flag
+      const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
+      if (driver && (driver as any).admin) return { user: driver, userType: 'Admin' };
+
+      return null;
     }
 
-    // Check Drivers (for admin access, similar to Google OAuth fallback)
-    const drivers = await Driver.scan('email').eq(cornellEmail).exec();
-    if (drivers.length > 0) {
-      const driver = drivers[0];
-      // If driver has admin flag, treat as Admin (matches Google OAuth logic)
-      if ((driver as any).admin) {
-        return { user: driver, userType: 'Admin' };
-      }
+    if (requestedUserType === 'Driver') {
+      const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
+      if (driver) return { user: driver, userType: 'Driver' };
+
+      // Fallback: check admin with isDriver flag
+      const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
+      if (admin && (admin as any).isDriver) return { user: admin, userType: 'Driver' };
+
+      return null;
+    }
+
+    // No specific userType — search all tables
+    const rider = await prisma.rider.findUnique({ where: { email: cornellEmail } });
+    if (rider) {
+      if (!rider.active) return { error: 'User not active', userType: 'Rider' };
+      return { user: rider, userType: 'Rider' };
+    }
+
+    const admin = await prisma.admin.findUnique({ where: { email: cornellEmail } });
+    if (admin) return { user: admin, userType: 'Admin' };
+
+    const driver = await prisma.driver.findUnique({ where: { email: cornellEmail } });
+    if (driver) {
+      if ((driver as any).admin) return { user: driver, userType: 'Admin' };
       return { user: driver, userType: 'Driver' };
     }
 
