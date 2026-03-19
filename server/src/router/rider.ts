@@ -24,6 +24,7 @@ router.get('/usage', validateUser('Admin'), (req, res) => {
     noShows: number;
     totalRides: number;
   };
+
   type Usage = {
     [id: string]: UsageData;
   };

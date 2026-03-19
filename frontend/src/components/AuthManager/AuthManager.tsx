@@ -355,29 +355,27 @@ const AuthManager = () => {
           document.body
         )}
       <AuthContext.Provider value={{ logout, id, user, refreshUser }}>
-        <SubscribeWrapper userId={id}>
-          <Routes>
-            <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="/rider/*" element={<RiderRoutes />} />
-            <Route path="/driver/*" element={<DriverRoutes />} />
-            <Route
-              path="/"
-              element={
-                <Navigate
-                  to={
-                    localStorage.getItem('userType') === 'Admin'
-                      ? '/admin/home'
-                      : localStorage.getItem('userType') === 'Driver'
-                      ? '/driver/rides'
-                      : '/rider/schedule'
-                  }
-                  replace
-                />
-              }
-            />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </SubscribeWrapper>
+        <Routes>
+          <Route path="/admin/*" element={<AdminRoutes />} />
+          <Route path="/rider/*" element={<RiderRoutes />} />
+          <Route path="/driver/*" element={<DriverRoutes />} />
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to={
+                  localStorage.getItem('userType') === 'Admin'
+                    ? '/admin/home'
+                    : localStorage.getItem('userType') === 'Driver'
+                    ? '/driver/rides'
+                    : '/rider/schedule'
+                }
+                replace
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AuthContext.Provider>
     </>
   );
