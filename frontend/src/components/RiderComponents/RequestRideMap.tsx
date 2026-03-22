@@ -24,13 +24,13 @@ interface RequestRideMapProps {
     name: string;
     address: string;
   }>;
-  availableLocations?: Location[];
+  availableLocations?: LocationType[];
   /** When true, clicking the map sets the pickup location (e.g. when there are no DB locations). */
   enablePickupMapClick?: boolean;
   /** When true, clicking the map sets the dropoff location. */
   enableDropoffMapClick?: boolean;
-  onPickupSelect: (location: Location | null) => void;
-  onDropoffSelect: (location: Location | null) => void;
+  onPickupSelect: (location: LocationType | null) => void;
+  onDropoffSelect: (location: LocationType | null) => void;
 }
 
 const RequestRideMap: React.FC<RequestRideMapProps> = ({
@@ -179,7 +179,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       )
         return;
 
-      const locationFromClick: Location = {
+      const locationFromClick: LocationType = {
         id: 'custom',
         name: 'Selected location',
         address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
@@ -191,7 +191,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       };
 
       const applyGeocoded = (
-        loc: Location,
+        loc: LocationType,
         results: google.maps.GeocoderResult[] | null
       ) => {
         if (results?.[0]?.formatted_address) {
