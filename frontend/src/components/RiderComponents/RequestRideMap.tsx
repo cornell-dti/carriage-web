@@ -12,11 +12,11 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import styles from './requestridedialog.module.css';
 // Removed unused imports
-import { Location } from '../../types';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 interface RequestRideMapProps {
-  pickupLocation: Location | null;
-  dropoffLocation: Location | null;
+  pickupLocation: LocationType | null;
+  dropoffLocation: LocationType | null;
   dropoffOptions?: Array<{
     id?: string;
     lat: number;
@@ -47,7 +47,9 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   const polylineRef = useRef<google.maps.Polyline | null>(null);
   const clusterer = useRef<MarkerClusterer | null>(null);
   const markers = useRef<Record<string, Marker>>({});
-  const [markerWithPopup, setMarkerWithPopup] = useState<Location | null>(null);
+  const [markerWithPopup, setMarkerWithPopup] = useState<LocationType | null>(
+    null
+  );
 
   // Accept only real, finite numbers
   const isValidCoord = (v: unknown): v is number =>
@@ -149,7 +151,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     }
   };
 
-  const handleMarkerClick = (location: Location) => {
+  const handleMarkerClick = (location: LocationType) => {
     if (markerWithPopup?.address === location.address) {
       setMarkerWithPopup(null);
     } else {
@@ -218,7 +220,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       <Map
         defaultZoom={13}
         defaultCenter={getMapCenter()}
-        mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+        mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
         gestureHandling={'greedy'}
         disableDefaultUI={false}
         className={styles.mapContainer}
@@ -337,7 +339,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
 /* -------------------------------------------------------------------------- */
 const RequestRideMapWithProvider: React.FC<RequestRideMapProps> = (props) => (
   <APIProvider
-    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
     libraries={['places']}
   >
     <RequestRideMap {...props} />

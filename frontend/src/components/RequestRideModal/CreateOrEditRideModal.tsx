@@ -3,7 +3,9 @@ import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
 import Modal from '../Modal/Modal';
-import { ObjectType, Ride } from '../../types/index';
+import { Button } from '../FormElements/FormElements';
+import { ObjectType } from '../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './requestridemodal.module.css';
 import RequestRideWizard from './RequestRideWizard';
 import { RideModalType } from './types';
@@ -15,7 +17,7 @@ type CreateOrEditRideModalProps = {
   modalType: RideModalType;
   onSubmit?: () => void;
   onClose?: () => void;
-  ride?: Ride;
+  ride?: RideType;
 };
 
 const CreateOrEditRideModal = ({

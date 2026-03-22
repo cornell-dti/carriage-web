@@ -1,5 +1,6 @@
 import React, { FC, ReactNode, useState } from 'react';
-import { Ride, SchedulingState, Status, Tag } from '../types';
+import { SchedulingState, Status, Tag } from '../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import {
   BadgeRounded,
   FlagRounded,
@@ -12,8 +13,8 @@ import styles from './ResponsiveRideCard.module.css';
 import buttonStyles from '../styles/button.module.css';
 
 interface ResponsiveRideCardProps {
-  ride: Ride;
-  handleEdit: (rideToEdit: Ride) => any;
+  ride: RideType;
+  handleEdit: (rideToEdit: RideType) => any;
 }
 
 type FormattedTime = { time: string; meridiem: 'AM' | 'PM' };
@@ -201,7 +202,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 defaultZoom={13}
                 gestureHandling="greedy"
                 disableDefaultUI
-                mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+                mapId={process.env.VITE_GOOGLE_MAPS_MAP_ID}
               >
                 <AdvancedMarker
                   position={{

@@ -21,7 +21,8 @@ import {
   useMap,
   MapMouseEvent,
 } from '@vis.gl/react-google-maps';
-import { RideType, Location, Tag } from '../../types';
+import { Tag } from '../../types';
+import { LocationType } from '@carriage-web/shared/types/location';
 import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
@@ -33,7 +34,7 @@ interface RideLocationsProps {
 }
 
 interface LocationBlockProps {
-  location: Location;
+  location: LocationType;
   label: string;
   icon: React.ReactNode;
   isPickup?: boolean;
@@ -197,11 +198,11 @@ const getApproximateDistance = (
 };
 
 interface RideMapProps {
-  startLocation: Location;
-  endLocation: Location;
+  startLocation: LocationType;
+  endLocation: LocationType;
   isSelecting?: boolean;
-  availableLocations?: Location[];
-  onLocationSelect?: (location: Location) => void;
+  availableLocations?: LocationType[];
+  onLocationSelect?: (location: LocationType) => void;
   changingLocationType?: 'pickup' | 'dropoff' | null;
 }
 
@@ -359,7 +360,7 @@ const RideMap: React.FC<RideMapProps> = ({
       if (isSelecting && onLocationSelect && event.detail.latLng) {
         const { lat, lng } = event.detail.latLng;
         // Create a custom location from map click
-        const customLocation: Location = {
+        const customLocation: LocationType = {
           id: `custom-${Date.now()}`,
           name: 'Custom Location',
           address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
@@ -413,7 +414,7 @@ const RideMap: React.FC<RideMapProps> = ({
         <Map
           defaultZoom={12}
           defaultCenter={getMapCenter()}
-          mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+          mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
           onClick={handleMapClick}
@@ -515,7 +516,7 @@ const RideMap: React.FC<RideMapProps> = ({
 
 const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   <APIProvider
-    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
     libraries={['places']}
   >
     <RideMap {...props} />
@@ -531,7 +532,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
   const [changingLocation, setChangingLocation] = useState<
     'pickup' | 'dropoff' | null
   >(null);
-  const [tempLocation, setTempLocation] = useState<Location | null>(null);
+  const [tempLocation, setTempLocation] = useState<LocationType | null>(null);
   const [locationSelectorOpen, setLocationSelectorOpen] = useState(false);
   const pickupButtonRef = useRef<HTMLButtonElement>(null);
   const dropoffButtonRef = useRef<HTMLButtonElement>(null);
@@ -543,7 +544,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
     setTempLocation(currentLocation);
   };
 
-  const handleLocationSelect = (location: Location) => {
+  const handleLocationSelect = (location: LocationType) => {
     setTempLocation(location);
     setLocationSelectorOpen(false);
   };
@@ -563,7 +564,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
     setLocationSelectorOpen(false);
   };
 
-  const handleMapLocationSelect = (location: Location) => {
+  const handleMapLocationSelect = (location: LocationType) => {
     setTempLocation(location);
   };
 
@@ -646,7 +647,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
 
       {/* Location Selection Popup */}
       {changingLocation && (
-        <SearchPopup<Location>
+        <SearchPopup<LocationType>
           open={locationSelectorOpen}
           onClose={() => setLocationSelectorOpen(false)}
           onSelect={handleLocationSelect}

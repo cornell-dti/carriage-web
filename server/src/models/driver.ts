@@ -1,27 +1,7 @@
 import dynamoose from 'dynamoose';
 import isEmail from 'validator/lib/isEmail';
 import defaultModelConfig from '../util/modelConfig';
-
-// Define day of week enum
-export enum DayOfWeek {
-  MONDAY = 'MON',
-  TUESDAY = 'TUE',
-  WEDNESDAY = 'WED',
-  THURSDAY = 'THURS',
-  FRIDAY = 'FRI',
-}
-
-export type DriverType = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  photoLink?: string;
-  availability: DayOfWeek[];
-  active?: boolean;
-  joinDate?: string;
-};
+import { DayOfWeek } from '@carriage-web/shared/types/driver';
 
 const schema = new dynamoose.Schema({
   id: {

@@ -12,17 +12,17 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
-import { Rider } from '../../types';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import styles from './RiderList.module.css';
 
 interface RiderListProps {
-  riders: Rider[];
+  riders: RiderType[];
   showAccessibility?: boolean;
   hideHeader?: boolean;
 }
 
 interface RiderCardProps {
-  rider: Rider;
+  rider: RiderType;
   showAccessibility?: boolean;
   expanded: boolean;
   onToggleExpanded: () => void;

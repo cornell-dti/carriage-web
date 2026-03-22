@@ -2,10 +2,10 @@ import React from 'react';
 import styles from './unregistereduserpage.module.css';
 import { logo } from '../../icons/other';
 import { WAVE_PATH } from '../../util/constants';
-import { UnregisteredUser } from '../../types/index';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
 
 interface UnregisteredUserProps {
-  user: UnregisteredUser;
+  user: UnregisteredUserType;
   onBack: () => void;
 }
 

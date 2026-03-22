@@ -4,7 +4,7 @@ import app from '../src/app';
 import authorize from './utils/auth';
 import { Location } from '../src/models';
 import { clearDB, populateDB } from './utils/db';
-import { LocationType, Tag } from '../src/models/location';
+import { LocationType, Tag } from '@carriage-web/shared/types/location';
 
 const testAdmin = {
   firstName: 'Test-Admin',

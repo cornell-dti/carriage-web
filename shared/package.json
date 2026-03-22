@@ -1,0 +1,26 @@
+{
+  "name": "@carriage-web/shared",
+  "version": "1.0.0",
+  "description": "Shared code for Carriage",
+  "main": "./build/types/index.js",
+  "types": "./build/types/index.d.ts",
+  "exports": {
+    "./types": {
+      "types": "./build/types/index.d.ts",
+      "default": "./build/types/index.js"
+    },
+    "./types/*": {
+      "types": "./build/types/*.d.ts",
+      "default": "./build/types/*.js"
+    }
+  },
+  "dependencies": {},
+  "scripts": {
+    "dev": "pnpm run build --preserveWatchOutput --watch",
+    "build": "tsc --project tsconfig.json",
+    "type-check": "tsc --noEmit --project tsconfig.json --pretty"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  }
+}

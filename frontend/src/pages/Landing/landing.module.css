@@ -176,19 +176,68 @@
   column-gap: 4rem;
 }
 
+.topLaptop {
+  max-width: 100%;
+  height: auto;
+}
+
 .bottomLaptop {
   width: 670px;
+  max-width: 100%;
   height: auto;
 }
 
 .phone {
   width: 220px;
-  height: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
 @media (max-width: 800px) {
   .container {
     flex-direction: column;
+  }
+
+  .main {
+    max-width: 95%;
+    min-height: auto;
+    height: auto;
+  }
+
+  .home {
+    min-height: 100vh;
+    height: auto;
+    padding-bottom: 80px;
+  }
+
+  .information {
+    margin-top: 60px;
+  }
+
+  .adminInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .adminInfo p {
+    font-size: 24px;
+  }
+
+  .studentInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .studentImgContainer {
+    max-width: 100%;
+  }
+
+  .bottomLaptop {
+    width: 60%;
+    max-width: 200px;
+  }
+
+  .phone {
+    width: 30%;
+    max-width: 100px;
   }
 }
 
@@ -220,7 +269,7 @@
   .adminInfo {
     flex-direction: column;
     row-gap: 3rem;
-    padding: 6rem 6rem 6rem 6rem;
+    padding: 4rem 1.5rem;
   }
 
   .adminInfo p {
@@ -230,7 +279,7 @@
 
 @media (max-width: 1000px) {
   .studentInfo {
-    padding: 6rem 3rem 6rem 3rem;
+    padding: 4rem 1.5rem;
   }
 
   .studentImgContainer {

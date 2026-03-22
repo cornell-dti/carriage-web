@@ -1,0 +1,10 @@
+packages:
+  - frontend
+  - server
+  - shared
+
+catalog:
+  typescript: 5.9.3
+
+syncInjectedDepsAfterScripts:
+  - build
