@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { RideModalType } from './types';
-import { Button } from '../FormElements/FormElements';
 import DateStep from './steps/DateStep';
 import PickupLocationStep from './steps/PickupLocationStep';
 import DropoffLocationStep from './steps/DropoffLocationStep';
@@ -12,7 +11,7 @@ import styles from './requestridemodal.module.css';
 export type WizardStep = 'date' | 'pickup' | 'dropoff' | 'summary';
 
 type RequestRideWizardProps = {
-  ride?: Ride;
+  ride?: RideType;
   showRepeatingCheckbox: boolean;
   showRepeatingInfo: boolean;
   modalType: RideModalType;
@@ -45,7 +44,7 @@ const RequestRideWizard: React.FC<RequestRideWizardProps> = ({
   // Get fields to validate for each step
   const getStepFields = (step: WizardStep): string[] => {
     switch (step) {
-      case 'date':
+      case 'date': {
         // Include repeat fields if repeating is enabled
         const watchRepeating = watch('recurring', false);
         const baseFields = ['startDate'];
@@ -53,6 +52,7 @@ const RequestRideWizard: React.FC<RequestRideWizardProps> = ({
           return [...baseFields, 'whenRepeat', 'endDate'];
         }
         return baseFields;
+      }
       case 'pickup':
         return ['startLocation', 'pickupTime'];
       case 'dropoff':
