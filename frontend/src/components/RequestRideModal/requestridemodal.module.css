@@ -217,7 +217,8 @@
 .summaryTitle {
   align-self: stretch;
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 20px;
   font-style: normal;
   font-weight: 500;
@@ -272,7 +273,8 @@
 
 .summarySectionLabel {
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -292,7 +294,8 @@
 
 .summaryDateTimeTitle {
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -310,7 +313,8 @@
   border-radius: 4px;
   border: 1px solid #dadada;
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -343,7 +347,8 @@
   border: 1px solid #dadada;
   background: var(--bg-main, #fff);
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -352,7 +357,8 @@
   cursor: default;
 }
 
-.summaryCustomDaysInSummary .summaryDayBlockReadOnly.summaryDayBlockReadOnlySelected {
+.summaryCustomDaysInSummary
+  .summaryDayBlockReadOnly.summaryDayBlockReadOnlySelected {
   background: #000;
   color: #fff;
   border: 1px solid #000;
@@ -380,7 +386,8 @@
 
 .summaryEditText {
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -404,7 +411,8 @@
   border: 1px solid #dadada;
   background: #fff;
   cursor: pointer;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 14px;
   font-weight: 500;
 }
@@ -508,7 +516,7 @@
   z-index: 0;
 }
 
-.pickupMapContainer>* {
+.pickupMapContainer > * {
   width: 100% !important;
   height: 100% !important;
   max-width: 100% !important;
@@ -587,7 +595,8 @@
   outline: none;
   background: transparent;
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1.25;
@@ -604,7 +613,8 @@
 
 .timeSeparator {
   color: #616161;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 16px;
   font-weight: 500;
   line-height: 1;
@@ -624,7 +634,8 @@
   border-radius: 6px;
   background: #fff;
   color: #616161;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 13px;
   font-weight: 500;
   line-height: 1.25;
@@ -688,7 +699,8 @@
   margin: 0;
   padding: 0;
   color: #c62828;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.35;
@@ -709,7 +721,8 @@
   border: 1px solid #dadada;
   background: #fff;
   color: #000;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.25;
@@ -771,9 +784,13 @@
 }
 
 .timePickerLabel {
-  color: var(--M3-sys-light-on-surface-variant, var(--Schemes-On-Surface-Variant, #49454F));
+  color: var(
+    --M3-sys-light-on-surface-variant,
+    var(--Schemes-On-Surface-Variant, #49454f)
+  );
   text-align: center;
-  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Label-Large-Size, 14px);
   font-style: normal;
   font-weight: 500;
@@ -800,9 +817,13 @@
   border: none;
   background: transparent;
   border-radius: 50%;
-  color: var(--M3-sys-light-on-surface-variant, var(--Schemes-On-Surface-Variant, #49454F));
+  color: var(
+    --M3-sys-light-on-surface-variant,
+    var(--Schemes-On-Surface-Variant, #49454f)
+  );
   text-align: center;
-  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Label-Large-Size, 14px);
   font-style: normal;
   font-weight: 500;
@@ -1055,9 +1076,10 @@
   background: var(--bg-main, #fff);
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1D1B20));
+  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1d1b20));
   text-align: center;
-  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Body-Large-Size, 16px);
   font-style: normal;
   font-weight: 400;
@@ -1103,8 +1125,9 @@
   border-radius: 4px;
   padding: 4px 8px;
   padding-right: 24px;
-  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1D1B20));
-  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1d1b20));
+  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Body-Large-Size, 16px);
   font-style: normal;
   font-weight: 400;
@@ -1131,8 +1154,9 @@
 
 .datePickerWeekday {
   text-align: center;
-  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1D1B20));
-  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1d1b20));
+  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Body-Large-Size, 16px);
   font-style: normal;
   font-weight: 400;
@@ -1154,8 +1178,9 @@
   background: none;
   border-radius: 4px;
   text-align: center;
-  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1D1B20));
-  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--M3-sys-light-on-surface, var(--Schemes-On-Surface, #1d1b20));
+  font-family: var(--Static-Body-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Body-Large-Size, 16px);
   font-style: normal;
   font-weight: 400;
@@ -1218,8 +1243,12 @@
   border: none;
   background: transparent;
   text-align: right;
-  color: var(--M3-sys-light-on-surface-variant, var(--Schemes-On-Surface-Variant, #49454F));
-  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(
+    --M3-sys-light-on-surface-variant,
+    var(--Schemes-On-Surface-Variant, #49454f)
+  );
+  font-family: var(--Static-Label-Large-Font, Roboto), system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--Static-Label-Large-Size, 14px);
   font-style: normal;
   font-weight: 500;
@@ -1234,7 +1263,10 @@
 }
 
 .datePickerOkButton {
-  color: var(--M3-sys-light-on-surface-variant, var(--Schemes-On-Surface-Variant, #49454F));
+  color: var(
+    --M3-sys-light-on-surface-variant,
+    var(--Schemes-On-Surface-Variant, #49454f)
+  );
 }
 
 .datePickerCancelButton:hover,

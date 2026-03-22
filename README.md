@@ -26,12 +26,15 @@ If you have a disability that prevents you from walking around campus, getting a
 ### Current Contributors
 
 #### Technical Project Manager
+
 - Matthew Kim
 
 ### Designer
+
 - Ryan Qiu
 
 #### Software Developers
+
 - Anika Chandra
 - Emir Icyer
 
@@ -40,6 +43,7 @@ If you have a disability that prevents you from walking around campus, getting a
 ### Past Contributors
 
 #### Product Managers
+
 - Andrew Choi
 - Bryan Graeser
 - Kathy Lim
@@ -49,6 +53,7 @@ If you have a disability that prevents you from walking around campus, getting a
 - Stephy Chen
 
 #### Technical Project Managers
+
 - Christopher Hansen
 - Desmond Atikpui
 - Daniel Wei
@@ -59,6 +64,7 @@ If you have a disability that prevents you from walking around campus, getting a
 - Selena Liu
 
 #### Software Developers
+
 - Aaron Kang
 - Aiden Kim
 - Andrew Choi
@@ -90,6 +96,7 @@ If you have a disability that prevents you from walking around campus, getting a
 - Zack Ashen
 
 #### Designers
+
 - Aiden Kim
 - Chelsea Wang
 - Joanne Lee

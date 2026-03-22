@@ -14,10 +14,10 @@ type RequestSummaryStepProps = {
 
 const REPEAT_LABELS: Record<string, string> = {
   'no-repeat': 'No Repeat',
-  'daily': 'Daily',
-  'weekly': 'Weekly',
-  'biweekly': 'Biweekly',
-  'custom': 'Custom',
+  daily: 'Daily',
+  weekly: 'Weekly',
+  biweekly: 'Biweekly',
+  custom: 'Custom',
 };
 
 const REPEAT_OPTIONS = [
@@ -85,7 +85,9 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
     Fri: !!fri,
   };
   const selectedDaysSet = new Set(
-    (['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as const).filter((d) => customDaysSelected[d])
+    (['Mon', 'Tue', 'Wed', 'Thu', 'Fri'] as const).filter(
+      (d) => customDaysSelected[d]
+    )
   );
 
   // Sync pickup time state when entering pickup edit mode
@@ -109,41 +111,73 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
   }, [editingSection, dropoffTime]);
 
   // Write pickup time back to form
-  const pickupMinuteNum = pickupTimeMinute.length === 2 ? parseInt(pickupTimeMinute, 10) : null;
-  const pickupMinuteInvalid = pickupMinuteNum !== null && (Number.isNaN(pickupMinuteNum) || pickupMinuteNum > 59);
-  const dropoffMinuteNum = dropoffTimeMinute.length === 2 ? parseInt(dropoffTimeMinute, 10) : null;
-  const dropoffMinuteInvalid = dropoffMinuteNum !== null && (Number.isNaN(dropoffMinuteNum) || dropoffMinuteNum > 59);
+  const pickupMinuteNum =
+    pickupTimeMinute.length === 2 ? parseInt(pickupTimeMinute, 10) : null;
+  const pickupMinuteInvalid =
+    pickupMinuteNum !== null &&
+    (Number.isNaN(pickupMinuteNum) || pickupMinuteNum > 59);
+  const dropoffMinuteNum =
+    dropoffTimeMinute.length === 2 ? parseInt(dropoffTimeMinute, 10) : null;
+  const dropoffMinuteInvalid =
+    dropoffMinuteNum !== null &&
+    (Number.isNaN(dropoffMinuteNum) || dropoffMinuteNum > 59);
 
   useEffect(() => {
-    if (editingSection === 'pickup' && pickupTimeHour && pickupTimeMinute.length === 2 && !pickupMinuteInvalid) {
+    if (
+      editingSection === 'pickup' &&
+      pickupTimeHour &&
+      pickupTimeMinute.length === 2 &&
+      !pickupMinuteInvalid
+    ) {
       const hour24 =
         pickupTimePeriod === 'AM'
           ? pickupTimeHour === '12'
             ? 0
             : parseInt(pickupTimeHour, 10)
           : pickupTimeHour === '12'
-            ? 12
-            : parseInt(pickupTimeHour, 10) + 12;
-      const timeString = `${hour24.toString().padStart(2, '0')}:${pickupTimeMinute.padStart(2, '0')}`;
+          ? 12
+          : parseInt(pickupTimeHour, 10) + 12;
+      const timeString = `${hour24
+        .toString()
+        .padStart(2, '0')}:${pickupTimeMinute.padStart(2, '0')}`;
       setValue('pickupTime', timeString);
     }
-  }, [editingSection, pickupTimeHour, pickupTimeMinute, pickupTimePeriod, setValue]);
+  }, [
+    editingSection,
+    pickupTimeHour,
+    pickupTimeMinute,
+    pickupTimePeriod,
+    setValue,
+  ]);
 
   // Write dropoff time back to form
   useEffect(() => {
-    if (editingSection === 'dropoff' && dropoffTimeHour && dropoffTimeMinute.length === 2 && !dropoffMinuteInvalid) {
+    if (
+      editingSection === 'dropoff' &&
+      dropoffTimeHour &&
+      dropoffTimeMinute.length === 2 &&
+      !dropoffMinuteInvalid
+    ) {
       const hour24 =
         dropoffTimePeriod === 'AM'
           ? dropoffTimeHour === '12'
             ? 0
             : parseInt(dropoffTimeHour, 10)
           : dropoffTimeHour === '12'
-            ? 12
-            : parseInt(dropoffTimeHour, 10) + 12;
-      const timeString = `${hour24.toString().padStart(2, '0')}:${dropoffTimeMinute.padStart(2, '0')}`;
+          ? 12
+          : parseInt(dropoffTimeHour, 10) + 12;
+      const timeString = `${hour24
+        .toString()
+        .padStart(2, '0')}:${dropoffTimeMinute.padStart(2, '0')}`;
       setValue('dropoffTime', timeString);
     }
-  }, [editingSection, dropoffTimeHour, dropoffTimeMinute, dropoffTimePeriod, setValue]);
+  }, [
+    editingSection,
+    dropoffTimeHour,
+    dropoffTimeMinute,
+    dropoffTimePeriod,
+    setValue,
+  ]);
 
   const getPickupLocationDisplay = () => {
     if (!startLocation || startLocation === '') return '';
@@ -195,7 +229,9 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
 
   const repeatDisplay =
     REPEAT_LABELS[whenRepeat] ??
-    (whenRepeat ? whenRepeat.charAt(0).toUpperCase() + whenRepeat.slice(1) : 'No Repeat');
+    (whenRepeat
+      ? whenRepeat.charAt(0).toUpperCase() + whenRepeat.slice(1)
+      : 'No Repeat');
 
   return (
     <div className={styles.summaryStepPage}>
@@ -229,15 +265,26 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                       : 'Select date'}
                   </span>
                   <span className={styles.optionIcon} aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M19 19H5V8H19M16 1V3H8V1H6V3H5C3.89 3 3 3.89 3 5V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V5C21 3.89 20.1 3 19 3H18V1" fill="black" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M19 19H5V8H19M16 1V3H8V1H6V3H5C3.89 3 3 3.89 3 5V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V5C21 3.89 20.1 3 19 3H18V1"
+                        fill="black"
+                      />
                     </svg>
                   </span>
                 </button>
                 {showDatePicker && dateButtonRef.current && (
                   <CustomDatePicker
                     selectedDate={
-                      startDate && moment(startDate).isValid() ? moment(startDate) : moment()
+                      startDate && moment(startDate).isValid()
+                        ? moment(startDate)
+                        : moment()
                     }
                     currentMonth={datePickerMonth}
                     onMonthChange={setDatePickerMonth}
@@ -258,7 +305,9 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                       <button
                         key={option.value}
                         type="button"
-                        className={`${styles.repeatOption} ${isSelected ? styles.repeatOptionSelected : ''}`}
+                        className={`${styles.repeatOption} ${
+                          isSelected ? styles.repeatOptionSelected : ''
+                        }`}
                         onClick={() => {
                           if (option.value === 'no-repeat') {
                             setValue('whenRepeat', 'no-repeat');
@@ -279,13 +328,19 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                 </div>
                 {whenRepeat === 'custom' && (
                   <div className={styles.customRepeatSection}>
-                    <div className={styles.selectDaysLabel}>Select day of the week</div>
+                    <div className={styles.selectDaysLabel}>
+                      Select day of the week
+                    </div>
                     <div className={styles.daysContainer}>
                       {CUSTOM_DAYS.map((day) => (
                         <button
                           key={day.value}
                           type="button"
-                          className={`${styles.dayBlock} ${selectedDaysSet.has(day.value) ? styles.dayBlockSelected : ''}`}
+                          className={`${styles.dayBlock} ${
+                            selectedDaysSet.has(day.value)
+                              ? styles.dayBlockSelected
+                              : ''
+                          }`}
                           onClick={() => toggleCustomDay(day.value)}
                         >
                           {day.label}
@@ -313,11 +368,17 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                   <span>{repeatDisplay}</span>
                 </div>
                 {whenRepeat === 'custom' && (
-                  <div className={`${styles.daysContainer} ${styles.summaryCustomDaysInSummary}`}>
+                  <div
+                    className={`${styles.daysContainer} ${styles.summaryCustomDaysInSummary}`}
+                  >
                     {CUSTOM_DAYS.map((day) => (
                       <div
                         key={day.value}
-                        className={`${styles.summaryDayBlockReadOnly} ${customDaysSelected[day.value] ? styles.summaryDayBlockReadOnlySelected : ''}`}
+                        className={`${styles.summaryDayBlockReadOnly} ${
+                          customDaysSelected[day.value]
+                            ? styles.summaryDayBlockReadOnlySelected
+                            : ''
+                        }`}
                       >
                         {day.label}
                       </div>
@@ -343,18 +404,35 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
           <h3 className={styles.summarySectionLabel}>Pickup Location</h3>
           {editingSection === 'pickup' ? (
             <div className={styles.summaryInlineEdit}>
-              <div className={styles.searchInputWrapper} ref={pickupDropdownRef}>
+              <div
+                className={styles.searchInputWrapper}
+                ref={pickupDropdownRef}
+              >
                 <button
                   type="button"
                   className={styles.locationSelectButton}
                   onClick={() => setShowPickupDropdown(!showPickupDropdown)}
                 >
-                  <span className={!startLocation ? styles.locationButtonPlaceholder : ''}>
+                  <span
+                    className={
+                      !startLocation ? styles.locationButtonPlaceholder : ''
+                    }
+                  >
                     {getPickupLocationDisplay() || 'Select pickup location'}
                   </span>
                   <span className={styles.optionIcon}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(90deg)' }}>
-                      <path d="M9.20508 3C10.929 3 12.5823 3.68482 13.8013 4.90381C15.0203 6.12279 15.7051 7.77609 15.7051 9.5C15.7051 11.11 15.1151 12.59 14.1451 13.73L14.4151 14H15.2051L20.2051 19L18.7051 20.5L13.7051 15.5V14.71L13.4351 14.44C12.2951 15.41 10.8151 16 9.20508 16C7.48117 16 5.82787 15.3152 4.60888 14.0962C3.3899 12.8772 2.70508 11.2239 2.70508 9.5C2.70508 7.77609 3.3899 6.12279 4.60888 4.90381C5.82787 3.68482 7.48117 3 9.20508 3ZM9.20508 5C6.70508 5 4.70508 7 4.70508 9.5C4.70508 12 6.70508 14 9.20508 14C11.7051 14 13.7051 12 13.7051 9.5C13.7051 7 11.7051 5 9.20508 5Z" fill="black" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      style={{ transform: 'rotate(90deg)' }}
+                    >
+                      <path
+                        d="M9.20508 3C10.929 3 12.5823 3.68482 13.8013 4.90381C15.0203 6.12279 15.7051 7.77609 15.7051 9.5C15.7051 11.11 15.1151 12.59 14.1451 13.73L14.4151 14H15.2051L20.2051 19L18.7051 20.5L13.7051 15.5V14.71L13.4351 14.44C12.2951 15.41 10.8151 16 9.20508 16C7.48117 16 5.82787 15.3152 4.60888 14.0962C3.3899 12.8772 2.70508 11.2239 2.70508 9.5C2.70508 7.77609 3.3899 6.12279 4.60888 4.90381C5.82787 3.68482 7.48117 3 9.20508 3ZM9.20508 5C6.70508 5 4.70508 7 4.70508 9.5C4.70508 12 6.70508 14 9.20508 14C11.7051 14 13.7051 12 13.7051 9.5C13.7051 7 11.7051 5 9.20508 5Z"
+                        fill="black"
+                      />
                     </svg>
                   </span>
                 </button>
@@ -384,58 +462,80 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                   </div>
                 )}
               </div>
-              <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Pickup Time</h3>
+              <h3
+                className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}
+              >
+                Pickup Time
+              </h3>
               <div className={styles.timeInputWrapper}>
-                <div className={`${styles.timeInputContainer} ${pickupMinuteInvalid ? styles.timeInputContainerError : ''}`}>
-                <input
-                  type="text"
-                  className={styles.timeInputHour}
-                  placeholder="12"
-                  value={pickupTimeHour}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '');
-                    if (v === '' || (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)) setPickupTimeHour(v);
-                  }}
-                  maxLength={2}
-                />
-                <span className={styles.timeSeparator}>:</span>
-                <input
-                  type="text"
-                  className={styles.timeInputMinute}
-                  placeholder="00"
-                  value={pickupTimeMinute}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-                    setPickupTimeMinute(v);
-                  }}
-                  onBlur={() => {
-                    if (pickupTimeMinute === '') return;
-                    if (pickupTimeMinute.length === 1) setPickupTimeMinute(pickupTimeMinute.padStart(2, '0'));
-                  }}
-                  maxLength={2}
-                />
-                <div className={styles.timePeriodContainer}>
-                  <button
-                    type="button"
-                    className={`${styles.timePeriodButton} ${pickupTimePeriod === 'AM' ? styles.timePeriodButtonActive : ''}`}
-                    onClick={() => setPickupTimePeriod('AM')}
-                  >
-                    AM
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.timePeriodButton} ${pickupTimePeriod === 'PM' ? styles.timePeriodButtonActive : ''}`}
-                    onClick={() => setPickupTimePeriod('PM')}
-                  >
-                    PM
-                  </button>
+                <div
+                  className={`${styles.timeInputContainer} ${
+                    pickupMinuteInvalid ? styles.timeInputContainerError : ''
+                  }`}
+                >
+                  <input
+                    type="text"
+                    className={styles.timeInputHour}
+                    placeholder="12"
+                    value={pickupTimeHour}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, '');
+                      if (
+                        v === '' ||
+                        (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)
+                      )
+                        setPickupTimeHour(v);
+                    }}
+                    maxLength={2}
+                  />
+                  <span className={styles.timeSeparator}>:</span>
+                  <input
+                    type="text"
+                    className={styles.timeInputMinute}
+                    placeholder="00"
+                    value={pickupTimeMinute}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                      setPickupTimeMinute(v);
+                    }}
+                    onBlur={() => {
+                      if (pickupTimeMinute === '') return;
+                      if (pickupTimeMinute.length === 1)
+                        setPickupTimeMinute(pickupTimeMinute.padStart(2, '0'));
+                    }}
+                    maxLength={2}
+                  />
+                  <div className={styles.timePeriodContainer}>
+                    <button
+                      type="button"
+                      className={`${styles.timePeriodButton} ${
+                        pickupTimePeriod === 'AM'
+                          ? styles.timePeriodButtonActive
+                          : ''
+                      }`}
+                      onClick={() => setPickupTimePeriod('AM')}
+                    >
+                      AM
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.timePeriodButton} ${
+                        pickupTimePeriod === 'PM'
+                          ? styles.timePeriodButtonActive
+                          : ''
+                      }`}
+                      onClick={() => setPickupTimePeriod('PM')}
+                    >
+                      PM
+                    </button>
+                  </div>
                 </div>
-              </div>
-              {pickupMinuteInvalid && (
-                <p className={styles.timeInputError} role="alert">
-                  Please enter minutes between 00 and 59. You can correct it above.
-                </p>
-              )}
+                {pickupMinuteInvalid && (
+                  <p className={styles.timeInputError} role="alert">
+                    Please enter minutes between 00 and 59. You can correct it
+                    above.
+                  </p>
+                )}
               </div>
               <button
                 type="button"
@@ -450,7 +550,11 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
               <div className={styles.summaryValueBox}>
                 <span>{getPickupLocationDisplay()}</span>
               </div>
-              <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Pickup Time</h3>
+              <h3
+                className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}
+              >
+                Pickup Time
+              </h3>
               <div className={styles.summaryValueBox}>
                 <span>{formatTime(pickupTime)}</span>
               </div>
@@ -465,25 +569,44 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
           )}
         </div>
 
-        <div className={`${styles.summaryDivider} ${styles.summaryDividerAfterSection}`} />
+        <div
+          className={`${styles.summaryDivider} ${styles.summaryDividerAfterSection}`}
+        />
 
         {/* Dropoff section */}
         <div className={styles.summarySectionBlock}>
           <h3 className={styles.summarySectionLabel}>Dropoff Location</h3>
           {editingSection === 'dropoff' ? (
             <div className={styles.summaryInlineEdit}>
-              <div className={styles.searchInputWrapper} ref={dropoffDropdownRef}>
+              <div
+                className={styles.searchInputWrapper}
+                ref={dropoffDropdownRef}
+              >
                 <button
                   type="button"
                   className={styles.locationSelectButton}
                   onClick={() => setShowDropoffDropdown(!showDropoffDropdown)}
                 >
-                  <span className={!endLocation ? styles.locationButtonPlaceholder : ''}>
+                  <span
+                    className={
+                      !endLocation ? styles.locationButtonPlaceholder : ''
+                    }
+                  >
                     {getDropoffLocationDisplay() || 'Select dropoff location'}
                   </span>
                   <span className={styles.optionIcon}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(90deg)' }}>
-                      <path d="M9.20508 3C10.929 3 12.5823 3.68482 13.8013 4.90381C15.0203 6.12279 15.7051 7.77609 15.7051 9.5C15.7051 11.11 15.1151 12.59 14.1451 13.73L14.4151 14H15.2051L20.2051 19L18.7051 20.5L13.7051 15.5V14.71L13.4351 14.44C12.2951 15.41 10.8151 16 9.20508 16C7.48117 16 5.82787 15.3152 4.60888 14.0962C3.3899 12.8772 2.70508 11.2239 2.70508 9.5C2.70508 7.77609 3.3899 6.12279 4.60888 4.90381C5.82787 3.68482 7.48117 3 9.20508 3ZM9.20508 5C6.70508 5 4.70508 7 4.70508 9.5C4.70508 12 6.70508 14 9.20508 14C11.7051 14 13.7051 12 13.7051 9.5C13.7051 7 11.7051 5 9.20508 5Z" fill="black" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      style={{ transform: 'rotate(90deg)' }}
+                    >
+                      <path
+                        d="M9.20508 3C10.929 3 12.5823 3.68482 13.8013 4.90381C15.0203 6.12279 15.7051 7.77609 15.7051 9.5C15.7051 11.11 15.1151 12.59 14.1451 13.73L14.4151 14H15.2051L20.2051 19L18.7051 20.5L13.7051 15.5V14.71L13.4351 14.44C12.2951 15.41 10.8151 16 9.20508 16C7.48117 16 5.82787 15.3152 4.60888 14.0962C3.3899 12.8772 2.70508 11.2239 2.70508 9.5C2.70508 7.77609 3.3899 6.12279 4.60888 4.90381C5.82787 3.68482 7.48117 3 9.20508 3ZM9.20508 5C6.70508 5 4.70508 7 4.70508 9.5C4.70508 12 6.70508 14 9.20508 14C11.7051 14 13.7051 12 13.7051 9.5C13.7051 7 11.7051 5 9.20508 5Z"
+                        fill="black"
+                      />
                     </svg>
                   </span>
                 </button>
@@ -513,58 +636,82 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
                   </div>
                 )}
               </div>
-              <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Dropoff Time</h3>
+              <h3
+                className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}
+              >
+                Dropoff Time
+              </h3>
               <div className={styles.timeInputWrapper}>
-                <div className={`${styles.timeInputContainer} ${dropoffMinuteInvalid ? styles.timeInputContainerError : ''}`}>
-                <input
-                  type="text"
-                  className={styles.timeInputHour}
-                  placeholder="12"
-                  value={dropoffTimeHour}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '');
-                    if (v === '' || (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)) setDropoffTimeHour(v);
-                  }}
-                  maxLength={2}
-                />
-                <span className={styles.timeSeparator}>:</span>
-                <input
-                  type="text"
-                  className={styles.timeInputMinute}
-                  placeholder="00"
-                  value={dropoffTimeMinute}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-                    setDropoffTimeMinute(v);
-                  }}
-                  onBlur={() => {
-                    if (dropoffTimeMinute === '') return;
-                    if (dropoffTimeMinute.length === 1) setDropoffTimeMinute(dropoffTimeMinute.padStart(2, '0'));
-                  }}
-                  maxLength={2}
-                />
-                <div className={styles.timePeriodContainer}>
-                  <button
-                    type="button"
-                    className={`${styles.timePeriodButton} ${dropoffTimePeriod === 'AM' ? styles.timePeriodButtonActive : ''}`}
-                    onClick={() => setDropoffTimePeriod('AM')}
-                  >
-                    AM
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.timePeriodButton} ${dropoffTimePeriod === 'PM' ? styles.timePeriodButtonActive : ''}`}
-                    onClick={() => setDropoffTimePeriod('PM')}
-                  >
-                    PM
-                  </button>
+                <div
+                  className={`${styles.timeInputContainer} ${
+                    dropoffMinuteInvalid ? styles.timeInputContainerError : ''
+                  }`}
+                >
+                  <input
+                    type="text"
+                    className={styles.timeInputHour}
+                    placeholder="12"
+                    value={dropoffTimeHour}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, '');
+                      if (
+                        v === '' ||
+                        (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)
+                      )
+                        setDropoffTimeHour(v);
+                    }}
+                    maxLength={2}
+                  />
+                  <span className={styles.timeSeparator}>:</span>
+                  <input
+                    type="text"
+                    className={styles.timeInputMinute}
+                    placeholder="00"
+                    value={dropoffTimeMinute}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+                      setDropoffTimeMinute(v);
+                    }}
+                    onBlur={() => {
+                      if (dropoffTimeMinute === '') return;
+                      if (dropoffTimeMinute.length === 1)
+                        setDropoffTimeMinute(
+                          dropoffTimeMinute.padStart(2, '0')
+                        );
+                    }}
+                    maxLength={2}
+                  />
+                  <div className={styles.timePeriodContainer}>
+                    <button
+                      type="button"
+                      className={`${styles.timePeriodButton} ${
+                        dropoffTimePeriod === 'AM'
+                          ? styles.timePeriodButtonActive
+                          : ''
+                      }`}
+                      onClick={() => setDropoffTimePeriod('AM')}
+                    >
+                      AM
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.timePeriodButton} ${
+                        dropoffTimePeriod === 'PM'
+                          ? styles.timePeriodButtonActive
+                          : ''
+                      }`}
+                      onClick={() => setDropoffTimePeriod('PM')}
+                    >
+                      PM
+                    </button>
+                  </div>
                 </div>
-              </div>
-              {dropoffMinuteInvalid && (
-                <p className={styles.timeInputError} role="alert">
-                  Please enter minutes between 00 and 59. You can correct it above.
-                </p>
-              )}
+                {dropoffMinuteInvalid && (
+                  <p className={styles.timeInputError} role="alert">
+                    Please enter minutes between 00 and 59. You can correct it
+                    above.
+                  </p>
+                )}
               </div>
               <button
                 type="button"
@@ -579,7 +726,11 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
               <div className={styles.summaryValueBox}>
                 <span>{getDropoffLocationDisplay()}</span>
               </div>
-              <h3 className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}>Dropoff Time</h3>
+              <h3
+                className={`${styles.summarySectionLabel} ${styles.summarySectionLabelAfterValue}`}
+              >
+                Dropoff Time
+              </h3>
               <div className={styles.summaryValueBox}>
                 <span>{formatTime(dropoffTime)}</span>
               </div>
@@ -597,10 +748,18 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
 
       <div className={styles.bottomSection}>
         <div className={styles.bottomButtonFrame}>
-          <button type="button" className={styles.cancelButton} onClick={onBack}>
+          <button
+            type="button"
+            className={styles.cancelButton}
+            onClick={onBack}
+          >
             Back
           </button>
-          <button type="button" className={styles.saveContinueButton} onClick={onNext}>
+          <button
+            type="button"
+            className={styles.saveContinueButton}
+            onClick={onNext}
+          >
             Save and Continue
           </button>
         </div>

@@ -163,9 +163,21 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
     (event: MapMouseEvent) => {
       const e = event as unknown as google.maps.MapMouseEvent;
       if (!e.latLng) return;
-      const lat = typeof e.latLng.lat === 'function' ? e.latLng.lat() : (e.latLng as any).lat;
-      const lng = typeof e.latLng.lng === 'function' ? e.latLng.lng() : (e.latLng as any).lng;
-      if (typeof lat !== 'number' || typeof lng !== 'number' || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      const lat =
+        typeof e.latLng.lat === 'function'
+          ? e.latLng.lat()
+          : (e.latLng as any).lat;
+      const lng =
+        typeof e.latLng.lng === 'function'
+          ? e.latLng.lng()
+          : (e.latLng as any).lng;
+      if (
+        typeof lat !== 'number' ||
+        typeof lng !== 'number' ||
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng)
+      )
+        return;
 
       const locationFromClick: Location = {
         id: 'custom',
@@ -178,13 +190,17 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         lng,
       };
 
-      const applyGeocoded = (loc: Location, results: google.maps.GeocoderResult[] | null) => {
+      const applyGeocoded = (
+        loc: Location,
+        results: google.maps.GeocoderResult[] | null
+      ) => {
         if (results?.[0]?.formatted_address) {
           return {
             ...loc,
             address: results[0].formatted_address,
             name: results[0].formatted_address,
-            shortName: results[0].address_components?.[0]?.short_name ?? 'Selected',
+            shortName:
+              results[0].address_components?.[0]?.short_name ?? 'Selected',
           };
         }
         return loc;
@@ -194,7 +210,10 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         if (window.google?.maps?.Geocoder) {
           const geocoder = new window.google.maps.Geocoder();
           geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-            const loc = status === 'OK' ? applyGeocoded(locationFromClick, results) : locationFromClick;
+            const loc =
+              status === 'OK'
+                ? applyGeocoded(locationFromClick, results)
+                : locationFromClick;
             onPickupSelect(loc);
           });
         } else {
@@ -204,7 +223,10 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         if (window.google?.maps?.Geocoder) {
           const geocoder = new window.google.maps.Geocoder();
           geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-            const loc = status === 'OK' ? applyGeocoded(locationFromClick, results) : locationFromClick;
+            const loc =
+              status === 'OK'
+                ? applyGeocoded(locationFromClick, results)
+                : locationFromClick;
             onDropoffSelect(loc);
           });
         } else {
@@ -212,7 +234,12 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         }
       }
     },
-    [enablePickupMapClick, enableDropoffMapClick, onPickupSelect, onDropoffSelect]
+    [
+      enablePickupMapClick,
+      enableDropoffMapClick,
+      onPickupSelect,
+      onDropoffSelect,
+    ]
   );
 
   return (

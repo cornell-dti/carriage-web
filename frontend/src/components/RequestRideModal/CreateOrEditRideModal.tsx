@@ -23,8 +23,8 @@ type CreateOrEditRideModalProps = {
 const CreateOrEditRideModal = ({
   isOpen,
   modalType,
-  onSubmit = () => { },
-  onClose = () => { },
+  onSubmit = () => {},
+  onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
   const defaultStartDate = () => {
@@ -107,7 +107,8 @@ const CreateOrEditRideModal = ({
         : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
     let rideData: ObjectType;
     // Check if it's a recurring ride (not "no-repeat")
-    const isRecurringRide = recurring || (whenRepeat && whenRepeat !== 'no-repeat');
+    const isRecurringRide =
+      recurring || (whenRepeat && whenRepeat !== 'no-repeat');
     if (isRecurringRide) {
       // For now, block recurring rides as they're not fully implemented
       alert(
@@ -167,7 +168,11 @@ const CreateOrEditRideModal = ({
       className={styles.requestRideModal}
     >
       <FormProvider {...methods}>
-        <form ref={formRef} onSubmit={methods.handleSubmit(handleSubmit)} id="ride-form">
+        <form
+          ref={formRef}
+          onSubmit={methods.handleSubmit(handleSubmit)}
+          id="ride-form"
+        >
           <div className={styles.inputContainer}>
             <RequestRideWizard
               ride={ride}

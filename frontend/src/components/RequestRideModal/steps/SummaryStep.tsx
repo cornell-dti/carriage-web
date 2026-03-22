@@ -77,14 +77,14 @@ const SummaryStep: React.FC<SummaryStepProps> = ({ ride, modalType }) => {
           <div className={styles.summaryItem}>
             <span className={styles.summaryLabel}>Date:</span>
             <span className={styles.summaryValue}>
-              {startDate
-                ? moment(startDate).format('MMMM D, YYYY')
-                : 'Not set'}
+              {startDate ? moment(startDate).format('MMMM D, YYYY') : 'Not set'}
             </span>
           </div>
           <div className={styles.summaryItem}>
             <span className={styles.summaryLabel}>Pickup Time:</span>
-            <span className={styles.summaryValue}>{formatTime(pickupTime)}</span>
+            <span className={styles.summaryValue}>
+              {formatTime(pickupTime)}
+            </span>
           </div>
           <div className={styles.summaryItem}>
             <span className={styles.summaryLabel}>Dropoff Time:</span>
