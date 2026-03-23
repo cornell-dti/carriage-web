@@ -93,6 +93,7 @@ enum NotificationEvent {
 
 // -----MODELS-----------
 
+/// A named pickup or drop-off point used in rides
 model Location {
   id        String      @id @default(uuid())
   name      String
@@ -111,6 +112,7 @@ model Location {
 
 //--------------------
 
+/// A driver who can be assigned to fulfill ride requests
 model Driver {
   id           String      @id @default(uuid())
   firstName    String
@@ -126,6 +128,7 @@ model Driver {
 
 //--------------------
 
+/// A rider who requests and takes rides
 model Rider {
   id                String          @id @default(uuid())
   firstName         String
@@ -136,7 +139,7 @@ model Rider {
   organization      Organization?
   description       String?
   joinDate           DateTime       @default(now())
-  endDate           DateTime?  
+  endDate           DateTime?
   address           String?
   photoLink         String?
   active            Boolean         @default(true)
@@ -147,6 +150,7 @@ model Rider {
 
 //--------------------
 
+/// A scheduled trip from a start location to an end location
 model Ride {
   id              String          @id @default(uuid())
   type            RideType        @default(UPCOMING)
@@ -186,6 +190,7 @@ model Ride {
 
 //--------------------
 
+/// Tracks which riders have favorited which rides
 model Favorite {
   userId      String
   rideId      String
@@ -199,6 +204,7 @@ model Favorite {
 
 //--------------------
 
+/// A platform administrator who manages riders, drivers, and rides
 model Admin {
   id          String      @id @default(uuid())
   firstName   String
@@ -212,23 +218,24 @@ model Admin {
 
 //--------------------
 
+/// Aggregated daily ride statistics -- year and day of year
 model Stats {
   year        String
-  monthDay    String
+  monthDay    String         // Format: MM-DD
   dayCount    Int    @default(0)
   dayNoShow   Int    @default(0)
   dayCancel   Int    @default(0)
   nightCount  Int    @default(0)
   nightNoShow Int    @default(0)
   nightCancel Int    @default(0)
-  // Dynamic driver -> ride-count map stored as JSON
-  drivers     Json   @default("{}")
+  drivers     Json   @default("{}") // Dynamic map of driverId -> ride count
 
   @@id([year, monthDay])
 }
 
 //--------------------
 
+/// A push notification sent to a user about a ride status change
 model Notification {
   id         String            @id @default(uuid())
   notifEvent NotificationEvent
