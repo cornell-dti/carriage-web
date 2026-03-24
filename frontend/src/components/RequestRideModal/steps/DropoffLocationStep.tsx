@@ -114,6 +114,12 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
     // and let the map handle filtering by coordinates internally
     setLocations(loc);
     setFilteredLocations(loc);
+  
+    const savedId = watchEndLocation;
+    if (savedId && savedId !== 'Other' && loc.length > 0) {
+      const found = loc.find((l) => l.id === savedId);
+      if (found) setDropoffLocation(found);
+    }
   }, [loc]);
 
   useEffect(() => {

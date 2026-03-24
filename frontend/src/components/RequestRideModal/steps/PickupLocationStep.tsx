@@ -106,6 +106,13 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
     // and let the map handle filtering by coordinates internally
     setLocations(loc);
     setFilteredLocations(loc);
+     
+    // Restore pickupLocation object from form value (e.g. when navigating back to this step)
+    const savedId = watchStartLocation;
+    if (savedId && savedId !== 'Other' && loc.length > 0) {
+      const found = loc.find((l) => l.id === savedId);
+      if (found) setPickupLocation(found);
+    }
   }, [loc]);
 
   useEffect(() => {

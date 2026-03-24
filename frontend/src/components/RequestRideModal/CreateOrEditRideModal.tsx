@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import moment from 'moment';
 import AuthContext from '../../context/auth';
@@ -7,10 +7,18 @@ import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
 import styles from './requestridemodal.module.css';
-import RequestRideWizard from './RequestRideWizard';
+import DateStep from './steps/DateStep';
+import PickupLocationStep from './steps/PickupLocationStep';
+import DropoffLocationStep from './steps/DropoffLocationStep';
+import RequestSummaryStep from './steps/RequestSummaryStep';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
 import axios from '../../util/axios';
+
+type WizardStep = 'date' | 'pickup' | 'dropoff' | 'summary';
+ 
+const stepOrder: WizardStep[] = ['date', 'pickup', 'dropoff', 'summary'];
+ 
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -27,6 +35,7 @@ const CreateOrEditRideModal = ({
   onClose = () => {},
   ride,
 }: CreateOrEditRideModalProps) => {
+  const [currentStep, setCurrentStep] = useState<WizardStep>('date');
   const defaultStartDate = () => {
     if (ride) {
       if (
@@ -36,11 +45,10 @@ const CreateOrEditRideModal = ({
         return format_date(ride.startTime);
       }
       if (modalType === 'EDIT_ALL_RECURRING') {
-        // For now, recurring rides aren't supported - treat as regular edit
         return format_date(ride.startTime);
       }
     }
-    // For new rides, start with empty date so button is disabled
+    return format_date();
     return '';
   };
 
@@ -57,19 +65,67 @@ const CreateOrEditRideModal = ({
   const formRef = useRef<HTMLFormElement>(null);
 
   const closeModal = () => {
+    setCurrentStep('date');
     methods.clearErrors();
     onClose();
   };
 
+
+
   const handleFormSubmit = async () => {
-    // Trigger form submission
     const isValid = await methods.trigger();
     if (isValid) {
       methods.handleSubmit(handleSubmit)();
     }
   };
 
-  // Removes null fields from object
+  const getStepFields = (step: WizardStep): string[] => {
+    switch (step) {
+      case 'date': {
+        const isRepeating = methods.watch('recurring', false);
+        const baseFields = ['startDate'];
+        if (isRepeating) {
+          return [...baseFields, 'whenRepeat', 'endDate'];
+        }
+        return baseFields;
+      }
+      case 'pickup':
+        return ['startLocation', 'pickupTime'];
+      case 'dropoff':
+        return ['endLocation', 'dropoffTime'];
+      case 'summary':
+        return [];
+      default:
+        return [];
+    }
+  };
+ 
+  const handleNext = async () => {
+    const currentIndex = stepOrder.indexOf(currentStep);
+    const fieldsToValidate = getStepFields(currentStep);
+    const isValid = await methods.trigger(fieldsToValidate as any);
+ 
+    if (isValid) {
+      if (currentIndex < stepOrder.length - 1) {
+        setCurrentStep(stepOrder[currentIndex + 1]);
+      }
+    } else {
+      const basicFieldsFilled = fieldsToValidate.every((field) => {
+        const value = methods.watch(field as any);
+        return value && value !== '' && value !== undefined;
+      });
+      if (basicFieldsFilled && currentIndex < stepOrder.length - 1) {
+        setCurrentStep(stepOrder[currentIndex + 1]);
+      }
+    }
+  };
+ 
+  const handleBack = () => {
+    const currentIndex = stepOrder.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(stepOrder[currentIndex - 1]);
+    }
+  };
   const cleanData = (data: ObjectType) =>
     Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== null));
 
@@ -159,6 +215,56 @@ const CreateOrEditRideModal = ({
     }
   };
 
+   const renderStep = () => {
+    switch (currentStep) {
+      case 'date':
+        return (
+          <DateStep
+            ride={ride}
+            modalType={modalType}
+            showRepeatingCheckbox={!ride}
+            showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
+            onClose={closeModal}
+            onNext={handleNext}
+            currentStep={currentStep}
+          />
+        );
+      case 'pickup':
+        return (
+          <PickupLocationStep
+            ride={ride}
+            modalType={modalType}
+            currentStep={currentStep}
+            onClose={closeModal}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        );
+      case 'dropoff':
+        return (
+          <DropoffLocationStep
+            ride={ride}
+            modalType={modalType}
+            currentStep={currentStep}
+            onClose={closeModal}
+            onNext={handleNext}
+            onBack={handleBack}
+          />
+        );
+      case 'summary':
+        return (
+          <RequestSummaryStep
+            onClose={closeModal}
+            onNext={handleFormSubmit}
+            onBack={handleBack}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+ 
+
   return (
     <Modal
       title=""
@@ -174,14 +280,9 @@ const CreateOrEditRideModal = ({
           id="ride-form"
         >
           <div className={styles.inputContainer}>
-            <RequestRideWizard
-              ride={ride}
-              showRepeatingCheckbox={!ride}
-              showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
-              modalType={modalType}
-              onClose={closeModal}
-              onSubmit={handleFormSubmit}
-            />
+                        <div className={styles.wizardContainer}>
+              <div className={styles.stepContent}>{renderStep()}</div>
+            </div>
           </div>
         </form>
       </FormProvider>
