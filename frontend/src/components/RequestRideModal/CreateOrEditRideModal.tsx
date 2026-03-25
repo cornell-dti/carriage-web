@@ -14,6 +14,7 @@ import RequestSummaryStep from './steps/RequestSummaryStep';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
 import axios from '../../util/axios';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type WizardStep = 'date' | 'pickup' | 'dropoff' | 'summary';
 
@@ -61,6 +62,7 @@ const CreateOrEditRideModal = ({
   const methods = useForm({ defaultValues });
   const { id } = useContext(AuthContext);
   const formRef = useRef<HTMLFormElement>(null);
+  const { showToast } = useToast();
 
   const closeModal = () => {
     setCurrentStep('date');
@@ -152,9 +154,9 @@ const CreateOrEditRideModal = ({
     const isRecurringRide =
       recurring || (whenRepeat && whenRepeat !== 'no-repeat');
     if (isRecurringRide) {
-      // For now, block recurring rides as they're not fully implemented
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride instead.'
+      showToast(
+        'Recurring rides are not yet supported. Please create a single ride instead.',
+        ToastStatus.ERROR
       );
       return;
     } else {
@@ -177,11 +179,18 @@ const CreateOrEditRideModal = ({
       closeModal();
     };
 
+    const handleError = (err: any) => {
+      showToast(
+        err?.response?.data?.message ?? 'Something went wrong. Please try again.',
+        ToastStatus.ERROR
+      );
+    };
+
     if (!ride) {
       // create ride
       rideData.type = 'upcoming';
       rideData.schedulingState = 'unscheduled';
-      axios.post('/api/rides', rideData).then(afterSubmit);
+      axios.post('/api/rides', rideData).then(afterSubmit).catch(handleError);
     } else if (modalType === 'EDIT_SINGLE_RECURRING') {
       // edit single instance of recurring ride
       rideData.type = 'upcoming';
@@ -192,12 +201,16 @@ const CreateOrEditRideModal = ({
           origDate: format_date(ride.startTime),
           ...rideData,
         })
-        .then(afterSubmit);
+        .then(afterSubmit)
+        .catch(handleError);
     } else {
       // edit single ride - for now all rides are treated as single rides
       rideData.type = 'upcoming';
       rideData.schedulingState = 'unscheduled';
-      axios.put(`/api/rides/${ride.id}`, rideData).then(afterSubmit);
+      axios
+        .put(`/api/rides/${ride.id}`, rideData)
+        .then(afterSubmit)
+        .catch(handleError);
     }
   };
 

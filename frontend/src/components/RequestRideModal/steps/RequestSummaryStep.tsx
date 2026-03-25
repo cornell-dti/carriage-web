@@ -13,7 +13,6 @@ type RequestSummaryStepProps = {
   onClose?: () => void;
   onNext?: () => void;
   onBack?: () => void;
-  submitError?: string | null;
 };
 
 const REPEAT_LABELS: Record<string, string> = {
@@ -48,7 +47,6 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
   onClose,
   onNext,
   onBack,
-  submitError,
 }) => {
   const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [editingSection, setEditingSection] = useState<EditingSection>(null);
@@ -483,9 +481,6 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
       </div>
 
       <div className={styles.bottomSection}>
-        {submitError && (
-          <p className={styles.error}>{submitError}</p>
-        )}
         <div className={styles.bottomButtonFrame}>
           <button
             type="button"
