@@ -10,7 +10,9 @@ import { useLocations } from '../../../context/LocationsContext';
 import RequestRideMap from '../../RiderComponents/RequestRideMap';
 import { Location } from '../../../types';
 import CustomTimePicker from '../CustomTimePicker';
-import styles from '../requestridemodal.module.css';
+import sharedStyles from '../requestridemodal.module.css';
+import ownStyles from './locationstep.module.css';
+const styles = { ...sharedStyles, ...ownStyles };
 
 type PickupLocationStepProps = {
   ride?: Ride;
@@ -29,10 +31,15 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   onNext,
   onBack,
 }) => {
-  const { register, getValues, watch, setValue, formState: { errors } } = useFormContext();
+  const {
+    register,
+    getValues,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
 
   const [locations, setLocations] = useState<Location[]>([]);
-  const [pickupLocation, setPickupLocation] = useState<Location | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
@@ -45,6 +52,10 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   const watchStartLocation = watch('startLocation');
   const watchPickupTime = watch('pickupTime');
   const loc = useLocations().locations;
+
+  // Derive selected location from form value — persists across Back navigation
+  const pickupLocation =
+    loc.find((l) => l.id === watchStartLocation) ?? null;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -67,17 +78,8 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   }, []);
 
   useEffect(() => {
-    // Use all locations from context for the selector,
-    // and let the map handle filtering by coordinates internally
     setLocations(loc);
     setFilteredLocations(loc);
-
-    // Restore pickupLocation object from form value (e.g. when navigating back to this step)
-    const savedId = watchStartLocation;
-    if (savedId && savedId !== 'Other' && loc.length > 0) {
-      const found = loc.find((l) => l.id === savedId);
-      if (found) setPickupLocation(found);
-    }
   }, [loc]);
 
   useEffect(() => {
@@ -118,7 +120,6 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   }, [watchCustomCheckbox, setValue]);
 
   const handlePickupSelect = (location: Location | null) => {
-    setPickupLocation(location);
     if (location) {
       const foundLocation = locations.find((loc) => loc.id === location.id);
       if (foundLocation) {
@@ -141,7 +142,6 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
     setSearchQuery(location.name);
     setShowLocationDropdown(false);
     setShowLocationButton(false);
-    setPickupLocation(location);
   };
 
   // Check if form is valid for enabling "Save and Continue" button
@@ -286,7 +286,9 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
             )}
           </div>
           {errors.startLocation && (
-            <p className={styles.error}>{errors.startLocation.message as string}</p>
+            <p className={styles.error}>
+              {errors.startLocation.message as string}
+            </p>
           )}
 
           {/* Map */}
@@ -310,7 +312,9 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
             label="Time"
           />
           {errors.pickupTime && (
-            <p className={styles.error}>{errors.pickupTime.message as string}</p>
+            <p className={styles.error}>
+              {errors.pickupTime.message as string}
+            </p>
           )}
         </div>
       </div>

@@ -7,7 +7,9 @@ import { Label, Input } from '../../FormElements/FormElements';
 import { isTimeValid } from '../../../util/index';
 import CustomRepeatingRides from '../CustomRepeatingRides';
 import CustomDatePicker from '../CustomDatePicker';
-import styles from '../requestridemodal.module.css';
+import sharedStyles from '../requestridemodal.module.css';
+import ownStyles from './datestep.module.css';
+const styles = { ...sharedStyles, ...ownStyles };
 
 type DateStepProps = {
   ride?: Ride;

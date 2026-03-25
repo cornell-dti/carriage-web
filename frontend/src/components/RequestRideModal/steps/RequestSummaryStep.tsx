@@ -5,12 +5,15 @@ import { useLocations } from '../../../context/LocationsContext';
 import CustomDatePicker from '../CustomDatePicker';
 import CustomTimePicker from '../CustomTimePicker';
 import { Location } from '../../../types';
-import styles from '../requestridemodal.module.css';
+import sharedStyles from '../requestridemodal.module.css';
+import ownStyles from './requestsummarystep.module.css';
+const styles = { ...sharedStyles, ...ownStyles };
 
 type RequestSummaryStepProps = {
   onClose?: () => void;
   onNext?: () => void;
   onBack?: () => void;
+  submitError?: string | null;
 };
 
 const REPEAT_LABELS: Record<string, string> = {
@@ -45,6 +48,7 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
   onClose,
   onNext,
   onBack,
+  submitError,
 }) => {
   const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [editingSection, setEditingSection] = useState<EditingSection>(null);
@@ -479,6 +483,9 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
       </div>
 
       <div className={styles.bottomSection}>
+        {submitError && (
+          <p className={styles.error}>{submitError}</p>
+        )}
         <div className={styles.bottomButtonFrame}>
           <button
             type="button"
