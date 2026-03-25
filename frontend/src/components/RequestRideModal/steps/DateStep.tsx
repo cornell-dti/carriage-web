@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import moment from 'moment';
 import { Ride } from '../../../types';
@@ -31,7 +31,6 @@ const DateStep: React.FC<DateStepProps> = ({
   const {
     register,
     formState: { errors },
-    getValues,
     watch,
     trigger,
     reset,
@@ -42,9 +41,6 @@ const DateStep: React.FC<DateStepProps> = ({
   const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [showRepeatOptions, setShowRepeatOptions] = useState(false);
   const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [datePickerMonth, setDatePickerMonth] = useState(moment());
-  const dateButtonRef = useRef<HTMLButtonElement>(null);
   const watchRepeating = watch('recurring', false);
   const watchStartDate = watch('startDate');
   const watchWhenRepeat = watch('whenRepeat', 'no-repeat');
@@ -101,59 +97,11 @@ const DateStep: React.FC<DateStepProps> = ({
         <div className={styles.mobileHeaderFrame}>
           <div className={styles.mobileTitleLeft}>Request a Ride</div>
           <div className={styles.datePickerAnchor}>
-            <button
-              ref={dateButtonRef}
-              type="button"
+            <CustomDatePicker
+              value={watchStartDate || ''}
+              onChange={(date) => setValue('startDate', date)}
               className={styles.optionButton}
-              onClick={() => {
-                setShowDatePicker(!showDatePicker);
-              }}
-            >
-              <span
-                className={
-                  !watchStartDate || watchStartDate === ''
-                    ? styles.dateButtonPlaceholder
-                    : ''
-                }
-              >
-                {watchStartDate && watchStartDate !== ''
-                  ? moment(watchStartDate).format('MM/DD/YYYY')
-                  : 'Date'}
-              </span>
-              <span aria-hidden="true" className={styles.optionIcon}>
-                {/* Calendar icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <path
-                    d="M19 19H5V8H19M16 1V3H8V1H6V3H5C3.89 3 3 3.89 3 5V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V5C21 3.89 20.1 3 19 3H18V1"
-                    fill="black"
-                  />
-                </svg>
-              </span>
-            </button>
-            {showDatePicker && dateButtonRef.current && (
-              <CustomDatePicker
-                selectedDate={
-                  watchStartDate && watchStartDate !== ''
-                    ? moment(watchStartDate)
-                    : moment()
-                }
-                currentMonth={datePickerMonth}
-                onMonthChange={setDatePickerMonth}
-                onDateSelect={(date) => {
-                  const formattedDate = date.format('YYYY-MM-DD');
-                  setValue('startDate', formattedDate);
-                  setShowDatePicker(false);
-                }}
-                onCancel={() => setShowDatePicker(false)}
-                buttonRef={dateButtonRef}
-              />
-            )}
+            />
           </div>
           <button
             type="button"
@@ -298,20 +246,15 @@ const DateStep: React.FC<DateStepProps> = ({
           {...register('startDate', {
             required: 'Please select a date',
             validate: (startDate) => {
-              const pickupTime = getValues('pickupTime');
               const notWeekend =
                 moment(startDate).day() !== 0 && moment(startDate).day() !== 6;
-              if (pickupTime && notWeekend) {
-                return (
-                  isTimeValid(startDate, pickupTime) ||
-                  "Can't schedule rides for less than 2 days from today"
-                );
-              } else {
-                return (
-                  notWeekend ||
-                  'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)'
-                );
+              if (!notWeekend) {
+                return 'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)';
               }
+              return (
+                isTimeValid(startDate, '00:00') ||
+                "Can't schedule rides for less than 2 days from today"
+              );
             },
           })}
         />

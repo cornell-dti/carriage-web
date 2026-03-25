@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import moment from 'moment';
 import { useLocations } from '../../../context/LocationsContext';
 import CustomDatePicker from '../CustomDatePicker';
+import CustomTimePicker from '../CustomTimePicker';
 import { Location } from '../../../types';
 import styles from '../requestridemodal.module.css';
 
@@ -47,18 +48,9 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
 }) => {
   const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [editingSection, setEditingSection] = useState<EditingSection>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [datePickerMonth, setDatePickerMonth] = useState(moment());
   const [showPickupDropdown, setShowPickupDropdown] = useState(false);
   const [showDropoffDropdown, setShowDropoffDropdown] = useState(false);
-  const [pickupTimeHour, setPickupTimeHour] = useState<string>('');
-  const [pickupTimeMinute, setPickupTimeMinute] = useState<string>('');
-  const [pickupTimePeriod, setPickupTimePeriod] = useState<'AM' | 'PM'>('AM');
-  const [dropoffTimeHour, setDropoffTimeHour] = useState<string>('');
-  const [dropoffTimeMinute, setDropoffTimeMinute] = useState<string>('');
-  const [dropoffTimePeriod, setDropoffTimePeriod] = useState<'AM' | 'PM'>('AM');
 
-  const dateButtonRef = useRef<HTMLButtonElement>(null);
   const pickupDropdownRef = useRef<HTMLDivElement>(null);
   const dropoffDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -89,95 +81,6 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
       (d) => customDaysSelected[d]
     )
   );
-
-  // Sync pickup time state when entering pickup edit mode
-  useEffect(() => {
-    if (editingSection === 'pickup' && pickupTime) {
-      const t = moment(pickupTime, 'HH:mm');
-      setPickupTimeHour(t.format('h'));
-      setPickupTimeMinute(t.format('mm'));
-      setPickupTimePeriod(t.format('A') as 'AM' | 'PM');
-    }
-  }, [editingSection, pickupTime]);
-
-  // Sync dropoff time state when entering dropoff edit mode
-  useEffect(() => {
-    if (editingSection === 'dropoff' && dropoffTime) {
-      const t = moment(dropoffTime, 'HH:mm');
-      setDropoffTimeHour(t.format('h'));
-      setDropoffTimeMinute(t.format('mm'));
-      setDropoffTimePeriod(t.format('A') as 'AM' | 'PM');
-    }
-  }, [editingSection, dropoffTime]);
-
-  // Write pickup time back to form
-  const pickupMinuteNum =
-    pickupTimeMinute.length === 2 ? parseInt(pickupTimeMinute, 10) : null;
-  const pickupMinuteInvalid =
-    pickupMinuteNum !== null &&
-    (Number.isNaN(pickupMinuteNum) || pickupMinuteNum > 59);
-  const dropoffMinuteNum =
-    dropoffTimeMinute.length === 2 ? parseInt(dropoffTimeMinute, 10) : null;
-  const dropoffMinuteInvalid =
-    dropoffMinuteNum !== null &&
-    (Number.isNaN(dropoffMinuteNum) || dropoffMinuteNum > 59);
-
-  useEffect(() => {
-    if (
-      editingSection === 'pickup' &&
-      pickupTimeHour &&
-      pickupTimeMinute.length === 2 &&
-      !pickupMinuteInvalid
-    ) {
-      const hour24 =
-        pickupTimePeriod === 'AM'
-          ? pickupTimeHour === '12'
-            ? 0
-            : parseInt(pickupTimeHour, 10)
-          : pickupTimeHour === '12'
-          ? 12
-          : parseInt(pickupTimeHour, 10) + 12;
-      const timeString = `${hour24
-        .toString()
-        .padStart(2, '0')}:${pickupTimeMinute.padStart(2, '0')}`;
-      setValue('pickupTime', timeString);
-    }
-  }, [
-    editingSection,
-    pickupTimeHour,
-    pickupTimeMinute,
-    pickupTimePeriod,
-    setValue,
-  ]);
-
-  // Write dropoff time back to form
-  useEffect(() => {
-    if (
-      editingSection === 'dropoff' &&
-      dropoffTimeHour &&
-      dropoffTimeMinute.length === 2 &&
-      !dropoffMinuteInvalid
-    ) {
-      const hour24 =
-        dropoffTimePeriod === 'AM'
-          ? dropoffTimeHour === '12'
-            ? 0
-            : parseInt(dropoffTimeHour, 10)
-          : dropoffTimeHour === '12'
-          ? 12
-          : parseInt(dropoffTimeHour, 10) + 12;
-      const timeString = `${hour24
-        .toString()
-        .padStart(2, '0')}:${dropoffTimeMinute.padStart(2, '0')}`;
-      setValue('dropoffTime', timeString);
-    }
-  }, [
-    editingSection,
-    dropoffTimeHour,
-    dropoffTimeMinute,
-    dropoffTimePeriod,
-    setValue,
-  ]);
 
   const getPickupLocationDisplay = () => {
     if (!startLocation || startLocation === '') return '';
@@ -253,49 +156,10 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
           {editingSection === 'date' ? (
             <div className={styles.summaryInlineEdit}>
               <div className={styles.datePickerAnchor}>
-                <button
-                  ref={dateButtonRef}
-                  type="button"
-                  className={styles.optionButton}
-                  onClick={() => setShowDatePicker(!showDatePicker)}
-                >
-                  <span>
-                    {startDate && moment(startDate).isValid()
-                      ? moment(startDate).format('MM/DD/YYYY')
-                      : 'Select date'}
-                  </span>
-                  <span className={styles.optionIcon} aria-hidden="true">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <path
-                        d="M19 19H5V8H19M16 1V3H8V1H6V3H5C3.89 3 3 3.89 3 5V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V5C21 3.89 20.1 3 19 3H18V1"
-                        fill="black"
-                      />
-                    </svg>
-                  </span>
-                </button>
-                {showDatePicker && dateButtonRef.current && (
-                  <CustomDatePicker
-                    selectedDate={
-                      startDate && moment(startDate).isValid()
-                        ? moment(startDate)
-                        : moment()
-                    }
-                    currentMonth={datePickerMonth}
-                    onMonthChange={setDatePickerMonth}
-                    onDateSelect={(date) => {
-                      setValue('startDate', date.format('YYYY-MM-DD'));
-                      setShowDatePicker(false);
-                    }}
-                    onCancel={() => setShowDatePicker(false)}
-                    buttonRef={dateButtonRef}
-                  />
-                )}
+                <CustomDatePicker
+                  value={startDate || ''}
+                  onChange={(date) => setValue('startDate', date)}
+                />
               </div>
               <div className={styles.summaryRepeatBlock}>
                 <div className={styles.repeatOptionsContainer}>
@@ -467,76 +331,11 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
               >
                 Pickup Time
               </h3>
-              <div className={styles.timeInputWrapper}>
-                <div
-                  className={`${styles.timeInputContainer} ${
-                    pickupMinuteInvalid ? styles.timeInputContainerError : ''
-                  }`}
-                >
-                  <input
-                    type="text"
-                    className={styles.timeInputHour}
-                    placeholder="12"
-                    value={pickupTimeHour}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, '');
-                      if (
-                        v === '' ||
-                        (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)
-                      )
-                        setPickupTimeHour(v);
-                    }}
-                    maxLength={2}
-                  />
-                  <span className={styles.timeSeparator}>:</span>
-                  <input
-                    type="text"
-                    className={styles.timeInputMinute}
-                    placeholder="00"
-                    value={pickupTimeMinute}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-                      setPickupTimeMinute(v);
-                    }}
-                    onBlur={() => {
-                      if (pickupTimeMinute === '') return;
-                      if (pickupTimeMinute.length === 1)
-                        setPickupTimeMinute(pickupTimeMinute.padStart(2, '0'));
-                    }}
-                    maxLength={2}
-                  />
-                  <div className={styles.timePeriodContainer}>
-                    <button
-                      type="button"
-                      className={`${styles.timePeriodButton} ${
-                        pickupTimePeriod === 'AM'
-                          ? styles.timePeriodButtonActive
-                          : ''
-                      }`}
-                      onClick={() => setPickupTimePeriod('AM')}
-                    >
-                      AM
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.timePeriodButton} ${
-                        pickupTimePeriod === 'PM'
-                          ? styles.timePeriodButtonActive
-                          : ''
-                      }`}
-                      onClick={() => setPickupTimePeriod('PM')}
-                    >
-                      PM
-                    </button>
-                  </div>
-                </div>
-                {pickupMinuteInvalid && (
-                  <p className={styles.timeInputError} role="alert">
-                    Please enter minutes between 00 and 59. You can correct it
-                    above.
-                  </p>
-                )}
-              </div>
+              <CustomTimePicker
+                value={pickupTime || ''}
+                onChange={(time) => setValue('pickupTime', time)}
+                label="Pickup Time"
+              />
               <button
                 type="button"
                 className={styles.summaryDoneButton}
@@ -641,78 +440,11 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
               >
                 Dropoff Time
               </h3>
-              <div className={styles.timeInputWrapper}>
-                <div
-                  className={`${styles.timeInputContainer} ${
-                    dropoffMinuteInvalid ? styles.timeInputContainerError : ''
-                  }`}
-                >
-                  <input
-                    type="text"
-                    className={styles.timeInputHour}
-                    placeholder="12"
-                    value={dropoffTimeHour}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, '');
-                      if (
-                        v === '' ||
-                        (parseInt(v, 10) >= 1 && parseInt(v, 10) <= 12)
-                      )
-                        setDropoffTimeHour(v);
-                    }}
-                    maxLength={2}
-                  />
-                  <span className={styles.timeSeparator}>:</span>
-                  <input
-                    type="text"
-                    className={styles.timeInputMinute}
-                    placeholder="00"
-                    value={dropoffTimeMinute}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-                      setDropoffTimeMinute(v);
-                    }}
-                    onBlur={() => {
-                      if (dropoffTimeMinute === '') return;
-                      if (dropoffTimeMinute.length === 1)
-                        setDropoffTimeMinute(
-                          dropoffTimeMinute.padStart(2, '0')
-                        );
-                    }}
-                    maxLength={2}
-                  />
-                  <div className={styles.timePeriodContainer}>
-                    <button
-                      type="button"
-                      className={`${styles.timePeriodButton} ${
-                        dropoffTimePeriod === 'AM'
-                          ? styles.timePeriodButtonActive
-                          : ''
-                      }`}
-                      onClick={() => setDropoffTimePeriod('AM')}
-                    >
-                      AM
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.timePeriodButton} ${
-                        dropoffTimePeriod === 'PM'
-                          ? styles.timePeriodButtonActive
-                          : ''
-                      }`}
-                      onClick={() => setDropoffTimePeriod('PM')}
-                    >
-                      PM
-                    </button>
-                  </div>
-                </div>
-                {dropoffMinuteInvalid && (
-                  <p className={styles.timeInputError} role="alert">
-                    Please enter minutes between 00 and 59. You can correct it
-                    above.
-                  </p>
-                )}
-              </div>
+              <CustomTimePicker
+                value={dropoffTime || ''}
+                onChange={(time) => setValue('dropoffTime', time)}
+                label="Dropoff Time"
+              />
               <button
                 type="button"
                 className={styles.summaryDoneButton}

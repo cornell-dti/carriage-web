@@ -16,9 +16,8 @@ import { format_date } from '../../util/index';
 import axios from '../../util/axios';
 
 type WizardStep = 'date' | 'pickup' | 'dropoff' | 'summary';
- 
+
 const stepOrder: WizardStep[] = ['date', 'pickup', 'dropoff', 'summary'];
- 
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -48,7 +47,6 @@ const CreateOrEditRideModal = ({
         return format_date(ride.startTime);
       }
     }
-    return format_date();
     return '';
   };
 
@@ -69,8 +67,6 @@ const CreateOrEditRideModal = ({
     methods.clearErrors();
     onClose();
   };
-
-
 
   const handleFormSubmit = async () => {
     const isValid = await methods.trigger();
@@ -99,27 +95,17 @@ const CreateOrEditRideModal = ({
         return [];
     }
   };
- 
+
   const handleNext = async () => {
     const currentIndex = stepOrder.indexOf(currentStep);
     const fieldsToValidate = getStepFields(currentStep);
     const isValid = await methods.trigger(fieldsToValidate as any);
- 
-    if (isValid) {
-      if (currentIndex < stepOrder.length - 1) {
-        setCurrentStep(stepOrder[currentIndex + 1]);
-      }
-    } else {
-      const basicFieldsFilled = fieldsToValidate.every((field) => {
-        const value = methods.watch(field as any);
-        return value && value !== '' && value !== undefined;
-      });
-      if (basicFieldsFilled && currentIndex < stepOrder.length - 1) {
-        setCurrentStep(stepOrder[currentIndex + 1]);
-      }
+
+    if (isValid && currentIndex < stepOrder.length - 1) {
+      setCurrentStep(stepOrder[currentIndex + 1]);
     }
   };
- 
+
   const handleBack = () => {
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex > 0) {
@@ -215,7 +201,7 @@ const CreateOrEditRideModal = ({
     }
   };
 
-   const renderStep = () => {
+  const renderStep = () => {
     switch (currentStep) {
       case 'date':
         return (
@@ -263,7 +249,6 @@ const CreateOrEditRideModal = ({
         return null;
     }
   };
- 
 
   return (
     <Modal
@@ -280,7 +265,7 @@ const CreateOrEditRideModal = ({
           id="ride-form"
         >
           <div className={styles.inputContainer}>
-                        <div className={styles.wizardContainer}>
+            <div className={styles.wizardContainer}>
               <div className={styles.stepContent}>{renderStep()}</div>
             </div>
           </div>

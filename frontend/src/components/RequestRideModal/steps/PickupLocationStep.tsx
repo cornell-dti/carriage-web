@@ -5,10 +5,11 @@ import moment from 'moment';
 import { Ride } from '../../../types';
 import { RideModalType } from '../types';
 import { Input } from '../../FormElements/FormElements';
-import { checkBounds, isTimeValid } from '../../../util/index';
+import { checkBounds } from '../../../util/index';
 import { useLocations } from '../../../context/LocationsContext';
 import RequestRideMap from '../../RiderComponents/RequestRideMap';
 import { Location } from '../../../types';
+import CustomTimePicker from '../CustomTimePicker';
 import styles from '../requestridemodal.module.css';
 
 type PickupLocationStepProps = {
@@ -28,7 +29,7 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   onNext,
   onBack,
 }) => {
-  const { register, getValues, watch, setValue } = useFormContext();
+  const { register, getValues, watch, setValue, formState: { errors } } = useFormContext();
 
   const [locations, setLocations] = useState<Location[]>([]);
   const [pickupLocation, setPickupLocation] = useState<Location | null>(null);
@@ -37,9 +38,6 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showLocationButton, setShowLocationButton] = useState(false);
   const [dragStartY, setDragStartY] = useState<number | null>(null);
-  const [timeHour, setTimeHour] = useState<string>('');
-  const [timeMinute, setTimeMinute] = useState<string>('');
-  const [timePeriod, setTimePeriod] = useState<'AM' | 'PM'>('AM');
   const searchInputRef = useRef<HTMLDivElement>(null);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
   const watchPickupCustom = watch('startLocation');
@@ -47,39 +45,6 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
   const watchStartLocation = watch('startLocation');
   const watchPickupTime = watch('pickupTime');
   const loc = useLocations().locations;
-
-  // Initialize time fields from watchPickupTime
-  useEffect(() => {
-    if (watchPickupTime && watchPickupTime !== '') {
-      const time = moment(watchPickupTime, 'HH:mm');
-      setTimeHour(time.format('h'));
-      setTimeMinute(time.format('mm'));
-      setTimePeriod(time.format('A') as 'AM' | 'PM');
-    }
-  }, [watchPickupTime]);
-
-  // Update form value only when minute is complete and valid (2 digits, 00–59)
-  const timeMinuteNum =
-    timeMinute.length === 2 ? parseInt(timeMinute, 10) : null;
-  const timeMinuteInvalid =
-    timeMinuteNum !== null &&
-    (Number.isNaN(timeMinuteNum) || timeMinuteNum > 59);
-  useEffect(() => {
-    if (timeHour && timeMinute.length === 2 && !timeMinuteInvalid) {
-      const hour24 =
-        timePeriod === 'AM'
-          ? timeHour === '12'
-            ? 0
-            : parseInt(timeHour, 10)
-          : timeHour === '12'
-          ? 12
-          : parseInt(timeHour, 10) + 12;
-      const timeString = `${hour24
-        .toString()
-        .padStart(2, '0')}:${timeMinute.padStart(2, '0')}`;
-      setValue('pickupTime', timeString);
-    }
-  }, [timeHour, timeMinute, timePeriod, setValue, timeMinuteInvalid]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -106,7 +71,7 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
     // and let the map handle filtering by coordinates internally
     setLocations(loc);
     setFilteredLocations(loc);
-     
+
     // Restore pickupLocation object from form value (e.g. when navigating back to this step)
     const savedId = watchStartLocation;
     if (savedId && savedId !== 'Other' && loc.length > 0) {
@@ -320,6 +285,9 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
               </div>
             )}
           </div>
+          {errors.startLocation && (
+            <p className={styles.error}>{errors.startLocation.message as string}</p>
+          )}
 
           {/* Map */}
           <div className={styles.pickupMapContainer}>
@@ -336,94 +304,14 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
           {/* Pickup time text */}
           <div className={styles.pickupTimeText}>Pick me up by ...</div>
 
-          {/* Time input - Figma-style */}
-          <div className={styles.timeInputWrapper}>
-            <div
-              className={`${styles.timeInputContainer} ${
-                timeMinuteInvalid ? styles.timeInputContainerError : ''
-              }`}
-            >
-              <input
-                type="text"
-                className={styles.timeInputHour}
-                placeholder="12"
-                value={timeHour}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  if (
-                    value === '' ||
-                    (parseInt(value, 10) >= 1 && parseInt(value, 10) <= 12)
-                  ) {
-                    setTimeHour(value);
-                  }
-                }}
-                maxLength={2}
-                aria-label="Hour"
-              />
-              <span className={styles.timeSeparator}>:</span>
-              <input
-                type="text"
-                className={styles.timeInputMinute}
-                placeholder="00"
-                value={timeMinute}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 2);
-                  setTimeMinute(value);
-                }}
-                onBlur={() => {
-                  if (timeMinute === '') return;
-                  if (timeMinute.length === 1) {
-                    setTimeMinute(timeMinute.padStart(2, '0'));
-                  }
-                  /* When minutes > 59 we leave the value so the user can correct it; error is shown below */
-                }}
-                maxLength={2}
-                aria-label="Minute"
-              />
-              <div className={styles.timePeriodContainer}>
-                <button
-                  type="button"
-                  className={`${styles.timePeriodButton} ${
-                    timePeriod === 'AM' ? styles.timePeriodButtonActive : ''
-                  }`}
-                  onClick={() => setTimePeriod('AM')}
-                >
-                  AM
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.timePeriodButton} ${
-                    timePeriod === 'PM' ? styles.timePeriodButtonActive : ''
-                  }`}
-                  onClick={() => setTimePeriod('PM')}
-                >
-                  PM
-                </button>
-              </div>
-              <span className={styles.timeIcon} aria-hidden="true">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </span>
-            </div>
-            {timeMinuteInvalid && (
-              <p className={styles.timeInputError} role="alert">
-                Please enter minutes between 00 and 59. You can correct it
-                above.
-              </p>
-            )}
-          </div>
+          <CustomTimePicker
+            value={watchPickupTime || ''}
+            onChange={(t) => setValue('pickupTime', t)}
+            label="Time"
+          />
+          {errors.pickupTime && (
+            <p className={styles.error}>{errors.pickupTime.message as string}</p>
+          )}
         </div>
       </div>
 
@@ -460,11 +348,6 @@ const PickupLocationStep: React.FC<PickupLocationStepProps> = ({
             validate: (pickupTime: string) => {
               const startDate = getValues('startDate');
               const pickup = moment(`${startDate} ${pickupTime}`);
-              if (startDate) {
-                if (!isTimeValid(startDate, pickupTime)) {
-                  return 'Please enter a valid date. (Note: CULifts does not operate during weekends or university-wide breaks.)';
-                }
-              }
               return (
                 checkBounds(startDate, pickup) ||
                 'Please select a valid pickup time between 7:45 AM and 10:00 PM.'

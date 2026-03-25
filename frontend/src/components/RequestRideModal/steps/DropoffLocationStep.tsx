@@ -4,11 +4,12 @@ import addresser from 'addresser';
 import moment from 'moment';
 import { Ride } from '../../../types';
 import { RideModalType } from '../types';
-import { Label, Input } from '../../FormElements/FormElements';
+import { Input } from '../../FormElements/FormElements';
 import { checkBounds, isTimeValid } from '../../../util/index';
 import { useLocations } from '../../../context/LocationsContext';
 import RequestRideMap from '../../RiderComponents/RequestRideMap';
 import { Location } from '../../../types';
+import CustomTimePicker from '../CustomTimePicker';
 import styles from '../requestridemodal.module.css';
 
 type DropoffLocationStepProps = {
@@ -45,9 +46,6 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showLocationButton, setShowLocationButton] = useState(false);
   const [dragStartY, setDragStartY] = useState<number | null>(null);
-  const [timeHour, setTimeHour] = useState<string>('');
-  const [timeMinute, setTimeMinute] = useState<string>('');
-  const [timePeriod, setTimePeriod] = useState<'AM' | 'PM'>('AM');
   const searchInputRef = useRef<HTMLDivElement>(null);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
   const watchDropoffCustom = watch('endLocation');
@@ -55,39 +53,6 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
   const watchEndLocation = watch('endLocation');
   const watchDropoffTime = watch('dropoffTime');
   const loc = useLocations().locations;
-
-  // Initialize time fields from watchDropoffTime
-  useEffect(() => {
-    if (watchDropoffTime && watchDropoffTime !== '') {
-      const time = moment(watchDropoffTime, 'HH:mm');
-      setTimeHour(time.format('h'));
-      setTimeMinute(time.format('mm'));
-      setTimePeriod(time.format('A') as 'AM' | 'PM');
-    }
-  }, [watchDropoffTime]);
-
-  // Update form value only when minute is complete and valid (2 digits, 00–59)
-  const timeMinuteNum =
-    timeMinute.length === 2 ? parseInt(timeMinute, 10) : null;
-  const timeMinuteInvalid =
-    timeMinuteNum !== null &&
-    (Number.isNaN(timeMinuteNum) || timeMinuteNum > 59);
-  useEffect(() => {
-    if (timeHour && timeMinute.length === 2 && !timeMinuteInvalid) {
-      const hour24 =
-        timePeriod === 'AM'
-          ? timeHour === '12'
-            ? 0
-            : parseInt(timeHour, 10)
-          : timeHour === '12'
-          ? 12
-          : parseInt(timeHour, 10) + 12;
-      const timeString = `${hour24
-        .toString()
-        .padStart(2, '0')}:${timeMinute.padStart(2, '0')}`;
-      setValue('dropoffTime', timeString);
-    }
-  }, [timeHour, timeMinute, timePeriod, setValue, timeMinuteInvalid]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -114,7 +79,7 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
     // and let the map handle filtering by coordinates internally
     setLocations(loc);
     setFilteredLocations(loc);
-  
+
     const savedId = watchEndLocation;
     if (savedId && savedId !== 'Other' && loc.length > 0) {
       const found = loc.find((l) => l.id === savedId);
@@ -336,6 +301,9 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
               </div>
             )}
           </div>
+          {errors.endLocation && (
+            <p className={styles.error}>{errors.endLocation.message as string}</p>
+          )}
 
           {/* Map */}
           <div className={styles.pickupMapContainer}>
@@ -352,94 +320,14 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
           {/* Dropoff time text */}
           <div className={styles.pickupTimeText}>Drop me off by ...</div>
 
-          {/* Time input - Figma-style */}
-          <div className={styles.timeInputWrapper}>
-            <div
-              className={`${styles.timeInputContainer} ${
-                timeMinuteInvalid ? styles.timeInputContainerError : ''
-              }`}
-            >
-              <input
-                type="text"
-                className={styles.timeInputHour}
-                placeholder="12"
-                value={timeHour}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '');
-                  if (
-                    value === '' ||
-                    (parseInt(value, 10) >= 1 && parseInt(value, 10) <= 12)
-                  ) {
-                    setTimeHour(value);
-                  }
-                }}
-                maxLength={2}
-                aria-label="Hour"
-              />
-              <span className={styles.timeSeparator}>:</span>
-              <input
-                type="text"
-                className={styles.timeInputMinute}
-                placeholder="00"
-                value={timeMinute}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, '').slice(0, 2);
-                  setTimeMinute(value);
-                }}
-                onBlur={() => {
-                  if (timeMinute === '') return;
-                  if (timeMinute.length === 1) {
-                    setTimeMinute(timeMinute.padStart(2, '0'));
-                  }
-                  /* When minutes > 59 we leave the value so the user can correct it; error is shown below */
-                }}
-                maxLength={2}
-                aria-label="Minute"
-              />
-              <div className={styles.timePeriodContainer}>
-                <button
-                  type="button"
-                  className={`${styles.timePeriodButton} ${
-                    timePeriod === 'AM' ? styles.timePeriodButtonActive : ''
-                  }`}
-                  onClick={() => setTimePeriod('AM')}
-                >
-                  AM
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.timePeriodButton} ${
-                    timePeriod === 'PM' ? styles.timePeriodButtonActive : ''
-                  }`}
-                  onClick={() => setTimePeriod('PM')}
-                >
-                  PM
-                </button>
-              </div>
-              <span className={styles.timeIcon} aria-hidden="true">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </span>
-            </div>
-            {timeMinuteInvalid && (
-              <p className={styles.timeInputError} role="alert">
-                Please enter minutes between 00 and 59. You can correct it
-                above.
-              </p>
-            )}
-          </div>
+          <CustomTimePicker
+            value={watchDropoffTime || ''}
+            onChange={(t) => setValue('dropoffTime', t)}
+            label="Time"
+          />
+          {errors.dropoffTime && (
+            <p className={styles.error}>{errors.dropoffTime.message as string}</p>
+          )}
         </div>
       </div>
 
