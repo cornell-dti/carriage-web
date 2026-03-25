@@ -25,5 +25,21 @@ export const isTimeValid = (startDate: string, pickupTime: string) => {
   return selectedTime.isSameOrAfter(now.add(bufferDays, 'day'), 'day');
 };
 
+/** Time slots for pickup/dropoff: 7:45 AM–10:00 PM, 15-min steps. value = HH:mm, label = "7:45 AM" etc. */
+export const getTimeSlots = (): { value: string; label: string }[] => {
+  const slots: { value: string; label: string }[] = [];
+  const start = moment().hour(7).minute(45).second(0).millisecond(0);
+  const end = moment().hour(22).minute(0).second(0).millisecond(0);
+  let current = start.clone();
+  while (current.isSameOrBefore(end)) {
+    slots.push({
+      value: current.format('HH:mm'),
+      label: current.format('h:mm A'),
+    });
+    current.add(15, 'minutes');
+  }
+  return slots;
+};
+
 // Re-export user utilities
 export { extractNetIdFromEmail, getUserNetId } from './userUtils';

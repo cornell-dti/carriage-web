@@ -37,6 +37,7 @@ type ModalProps = {
   isRider?: boolean;
   id?: string;
   arialabelledby?: string;
+  className?: string;
 };
 
 const Modal = ({
@@ -50,6 +51,7 @@ const Modal = ({
   isRider = true,
   arialabelledby,
   id = 'modal',
+  className,
 }: ModalProps) => {
   // Wrapping children in Array to match type for numPages
   const pages = paginate ? (children as React.ReactNodeArray) : [children];
@@ -74,7 +76,7 @@ const Modal = ({
                 clickOutsideDeactivates: true,
               }}
             >
-              <div className={styles.modal}>
+              <div className={`${styles.modal} ${className ?? ''}`.trim()}>
                 <div className={styles.topContainer}>
                   {isRider ? (
                     <h1 className={styles.title} id={id}>
