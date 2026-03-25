@@ -11,8 +11,8 @@ import { validateUser, daysUntilWeekday } from '../util';
 import { DriverType } from '../models/driver';
 import { RiderType } from '../models/rider';
 import { notify } from '../util/notification';
-import { Change, JWTPayload } from '../util/types';
-import { UserType } from '../models/subscription';
+import { JWTPayload, UserType, Change } from '../../../shared/build/types'
+
 
 const router = express.Router();
 const tableName = 'Rides';
@@ -212,13 +212,13 @@ router.get('/', validateUser('User'), (req, res) => {
   let effectiveRider = rider as string | undefined;
   let effectiveDriver = driver as string | undefined;
 
-  if (userType === UserType.RIDER) {
+  if (userType === 'Rider') {
     effectiveRider = callerId;
     effectiveDriver = undefined;
-  } else if (userType === UserType.DRIVER) {
+  } else if (userType === 'Driver') {
     effectiveDriver = callerId;
     effectiveRider = undefined;
-  } else if (userType !== UserType.ADMIN) {
+  } else if (userType !== 'Admin') {
     // Unrecognised non-admin role — deny as a defence-in-depth fallback
     res.status(403).send({ err: 'Insufficient permissions for this request.' });
     return;
@@ -466,7 +466,7 @@ router.put('/:id', validateUser('User'), (req, res) => {
       riders && riders.some((rider) => rider.id === res.locals.user.id);
 
     if (
-      res.locals.user.userType === UserType.ADMIN ||
+      res.locals.user.userType === 'Admin' ||
       userIsRider ||
       (driver && res.locals.user.id === driver.id)
     ) {
