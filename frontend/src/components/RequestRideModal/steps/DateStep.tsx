@@ -40,7 +40,6 @@ const DateStep: React.FC<DateStepProps> = ({
   } = useFormContext();
 
   const [custom, setCustom] = useState(false);
-  const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [showRepeatOptions, setShowRepeatOptions] = useState(false);
   const [selectedDays, setSelectedDays] = useState<Set<string>>(new Set());
   const watchRepeating = watch('recurring', false);
@@ -59,42 +58,20 @@ const DateStep: React.FC<DateStepProps> = ({
       watchStartDate !== 'Invalid date'
   );
 
+  const isRecurring = watchWhenRepeat !== 'no-repeat';
   const isCustom = watchWhenRepeat === 'custom';
   const hasValidRepeats = !isCustom || selectedDays.size > 0;
 
-  const isFormValid = hasValidDate && hasValidRepeats;
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    setDragStartY(e.touches[0].clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (dragStartY === null) return;
-    const currentY = e.touches[0].clientY;
-    const deltaY = currentY - dragStartY;
-
-    // If user drags down more than 60px, close the modal
-    if (deltaY > 60) {
-      onClose?.();
-      setDragStartY(null);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setDragStartY(null);
-  };
+  const isFormValid = hasValidDate && hasValidRepeats && !isRecurring;
 
   return (
     <div className={styles.stepPage}>
       <div className={styles.topContent}>
-        {/* Drag handle at the top (click to close on desktop, drag down on mobile) */}
-        <div
-          className={styles.dragHandle}
-          onClick={onClose}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        />
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 5L5 15M5 5L15 15" stroke="#ABABAB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
 
         <div className={styles.mobileHeaderFrame}>
           <div className={styles.mobileTitleLeft}>Request a Ride</div>
@@ -183,6 +160,13 @@ const DateStep: React.FC<DateStepProps> = ({
                 );
               })}
             </div>
+          )}
+
+          {/* Recurring not supported warning */}
+          {isRecurring && (
+            <p className={styles.error}>
+              Recurring rides are not yet supported. Please select "No Repeat" to continue.
+            </p>
           )}
 
           {/* Custom repeat day selection - appears when Custom is selected */}

@@ -36,6 +36,7 @@ const CreateOrEditRideModal = ({
   ride,
 }: CreateOrEditRideModalProps) => {
   const [currentStep, setCurrentStep] = useState<WizardStep>('date');
+  const [dragStartY, setDragStartY] = useState<number | null>(null);
   const defaultStartDate = () => {
     if (ride) {
       if (
@@ -68,6 +69,24 @@ const CreateOrEditRideModal = ({
     setCurrentStep('date');
     methods.clearErrors();
     onClose();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setDragStartY(e.touches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (dragStartY !== null) {
+      const diff = e.touches[0].clientY - dragStartY;
+      if (diff > 100) {
+        closeModal();
+        setDragStartY(null);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setDragStartY(null);
   };
 
   const handleFormSubmit = async () => {
@@ -120,18 +139,10 @@ const CreateOrEditRideModal = ({
   const handleSubmit = async (formData: ObjectType) => {
     const {
       startDate,
-      recurring,
-      whenRepeat,
-      Mon,
-      Tue,
-      Wed,
-      Thu,
-      Fri,
       startLocation,
       endLocation,
       pickupTime,
       dropoffTime,
-      endDate,
       customPickup,
       pickupCity,
       pickupZip,
@@ -149,28 +160,16 @@ const CreateOrEditRideModal = ({
       endLocation !== 'Other'
         ? endLocation
         : `${customDropoff}, ${dropoffCity} NY, ${dropoffZip}`;
-    let rideData: ObjectType;
-    // Check if it's a recurring ride (not "no-repeat")
-    const isRecurringRide =
-      recurring || (whenRepeat && whenRepeat !== 'no-repeat');
-    if (isRecurringRide) {
-      showToast(
-        'Recurring rides are not yet supported. Please create a single ride instead.',
-        ToastStatus.ERROR
-      );
-      return;
-    } else {
-      // Single ride (non-recurring) - "No repeat" or no repeat selection
-      rideData = {
-        startLocation: startLoc,
-        endLocation: endLoc,
-        rider: id,
-        startTime,
-        endTime,
-        isRecurring: false,
-        timezone: 'America/New_York',
-      };
-    }
+    // Single ride only — recurring is blocked at DateStep
+    const rideData: ObjectType = {
+      startLocation: startLoc,
+      endLocation: endLoc,
+      rider: id,
+      startTime,
+      endTime,
+      isRecurring: false,
+      timezone: 'America/New_York',
+    };
 
     rideData = cleanData(rideData);
 
@@ -181,7 +180,8 @@ const CreateOrEditRideModal = ({
 
     const handleError = (err: any) => {
       showToast(
-        err?.response?.data?.message ?? 'Something went wrong. Please try again.',
+        err?.response?.data?.message ??
+          'Something went wrong. Please try again.',
         ToastStatus.ERROR
       );
     };
@@ -277,7 +277,12 @@ const CreateOrEditRideModal = ({
           onSubmit={methods.handleSubmit(handleSubmit)}
           id="ride-form"
         >
-          <div className={styles.inputContainer}>
+          <div
+            className={styles.inputContainer}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className={styles.wizardContainer}>
               <div className={styles.stepContent}>{renderStep()}</div>
             </div>

@@ -16,7 +16,6 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid #dadada;
   background: #fff;
   margin: 0 auto;
 }
@@ -72,7 +71,6 @@
   width: 395px;
   height: 752px;
   align-items: center;
-  border-top: 1px solid #dadada;
   background: #fff;
   margin: 0 auto;
   overflow: hidden;
@@ -102,19 +100,19 @@
   margin: 0 auto;
 }
 
-/* Summary: Date and time section (40px below Request Summary title) */
+/* Summary: Date and time section */
 .summaryDateTimeBlock {
-  margin-top: 40px;
-  margin-bottom: 40px;
+  margin-top: 16px;
+  margin-bottom: 16px;
   width: 100%;
   max-width: 363px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Summary: section block (e.g. Pickup) - 40px below divider */
+/* Summary: section block (e.g. Pickup) */
 .summarySectionBlock {
-  margin-top: 40px;
+  margin-top: 16px;
   width: 100%;
   max-width: 363px;
   margin-left: auto;
@@ -122,14 +120,21 @@
 }
 
 /* Drag handle at the top of the sheet (sits above inner frame) */
-.dragHandle {
-  width: 72px;
-  height: 4px;
-  background: #dadada;
-  border-radius: 999px;
-  align-self: center;
-  margin-bottom: 8px;
+.closeButton {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  border: 1px solid #dadada;
+  background: none;
   cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 4px;
 }
 
 .mobileHeaderFrame {
@@ -138,7 +143,7 @@
   align-items: stretch;
   gap: 16px;
   align-self: stretch;
-  padding: 16px;
+  padding: 8px 16px 16px;
   position: relative;
 }
 

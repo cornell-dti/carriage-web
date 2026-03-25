@@ -48,7 +48,6 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
   onNext,
   onBack,
 }) => {
-  const [dragStartY, setDragStartY] = useState<number | null>(null);
   const [editingSection, setEditingSection] = useState<EditingSection>(null);
   const [showPickupDropdown, setShowPickupDropdown] = useState(false);
   const [showDropoffDropdown, setShowDropoffDropdown] = useState(false);
@@ -103,25 +102,6 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
     return loc ? loc.name : endLocation;
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setDragStartY(e.touches[0].clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartY !== null) {
-      const currentY = e.touches[0].clientY;
-      const diff = currentY - dragStartY;
-      if (diff > 100 && onClose) {
-        onClose();
-        setDragStartY(null);
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setDragStartY(null);
-  };
-
   const toggleCustomDay = (day: CustomDayValue) => {
     const current = watch(day);
     setValue(day, !current);
@@ -140,13 +120,11 @@ const RequestSummaryStep: React.FC<RequestSummaryStepProps> = ({
 
   return (
     <div className={styles.summaryStepPage}>
-      <div
-        className={styles.dragHandle}
-        onClick={onClose}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      />
+      <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M15 5L5 15M5 5L15 15" stroke="#ABABAB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
 
       <h2 className={styles.summaryTitle}>Request Summary</h2>
 

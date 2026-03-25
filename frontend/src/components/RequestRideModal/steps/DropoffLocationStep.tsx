@@ -46,7 +46,6 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showLocationButton, setShowLocationButton] = useState(false);
-  const [dragStartY, setDragStartY] = useState<number | null>(null);
   const searchInputRef = useRef<HTMLDivElement>(null);
   const locationButtonRef = useRef<HTMLButtonElement>(null);
   const watchDropoffCustom = watch('endLocation');
@@ -56,8 +55,7 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
   const loc = useLocations().locations;
 
   // Derive selected location from form value — persists across Back navigation
-  const dropoffLocation =
-    loc.find((l) => l.id === watchEndLocation) ?? null;
+  const dropoffLocation = loc.find((l) => l.id === watchEndLocation) ?? null;
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -183,25 +181,6 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
     }
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setDragStartY(e.touches[0].clientY);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (dragStartY !== null) {
-      const currentY = e.touches[0].clientY;
-      const diff = currentY - dragStartY;
-      if (diff > 100 && onClose) {
-        onClose();
-        setDragStartY(null);
-      }
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setDragStartY(null);
-  };
-
   // Get selected location name for display
   const getSelectedLocationName = () => {
     if (watchEndLocation && watchEndLocation !== '') {
@@ -217,14 +196,11 @@ const DropoffLocationStep: React.FC<DropoffLocationStepProps> = ({
   return (
     <div className={styles.stepPage}>
       <div className={styles.topContent}>
-        {/* Drag handle at the top */}
-        <div
-          className={styles.dragHandle}
-          onClick={onClose}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        />
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M15 5L5 15M5 5L15 15" stroke="#ABABAB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
 
         {/* Top frame with dropoff location selection */}
         <div className={styles.pickupLocationFrame}>
