@@ -219,7 +219,9 @@ const Schedule: React.FC = () => {
       <main id="main" className="flex flex-col p-4">
         <div className="flex justify-between items-center p-4">
           {user && (
-            <h1 className="text-left text-[1.75rem] m-0 mr-4">{user.firstName}'s Schedule</h1>
+            <h1 className="text-left text-[1.75rem] m-0 mr-4">
+              {user.firstName}'s Schedule
+            </h1>
           )}
           <div className="flex items-center [&>div]:ml-3.5">
             <Button
