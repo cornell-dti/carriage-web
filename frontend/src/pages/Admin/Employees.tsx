@@ -2,14 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import EmployeeModal from '../../components/EmployeeModal/EmployeeModal';
 import EmployeeCards from '../../components/EmployeeCards/EmployeeCards';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
-import styles from './page.module.css';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
 import { AdminType } from '@carriage-web/shared/types/admin';
 import { DriverType } from '@carriage-web/shared/types/driver';
-import buttonStyles from '../../styles/button.module.css';
 
 const Employees = () => {
   const { admins, drivers } = useEmployees();
@@ -114,13 +112,12 @@ const Employees = () => {
 
   return (
     <main id="main">
-      <div className={styles.mainContent}>
-        <div className={styles.pageTitle}>
-          <h1 className={styles.header}>Employees</h1>
-          <div className={styles.rightSection}>
+      <div className="flex flex-col gap-8 p-8">
+        <div className="flex justify-between items-center p-8 text-[1.75rem] text-left m-0">
+          <h1 className="w-full text-left text-[1.75rem] m-0">Employees</h1>
+          <div className="w-full flex items-center justify-end gap-2 [&>div]:ml-3.5">
             <button
-              style={{ width: '10rem' }}
-              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+              className="w-40 h-10 flex items-center justify-center cursor-pointer rounded text-base text-nowrap px-6 border border-[#303030] bg-black text-white transition-all duration-100 hover:bg-[#333] hover:text-white active:bg-[#555] active:text-white"
               onClick={() => setIsOpen(true)}
             >
               + Add Employee
@@ -137,8 +134,8 @@ const Employees = () => {
           </div>
         </div>
 
-        <div className={styles.statsAndSearch}>
-          <div className={styles.searchFilter}>
+        <div className="px-8 flex flex-row items-center gap-4 w-full h-12">
+          <div className="grow h-[80%] flex [&>div]:w-full [&>div]:h-[80%]">
             <SearchAndFilter
               items={displayEmployees}
               searchFields={['firstName', 'lastName']}
@@ -155,7 +152,7 @@ const Employees = () => {
               onFilterApply={handleFilterApply}
             />
           </div>
-          <div className={styles.statsBoxContainer}>
+          <div className="flex gap-4 shrink-0 h-full">
             {employeeStats.map((stat, idx) => (
               <StatsBox key={idx} {...stat} />
             ))}
@@ -164,7 +161,7 @@ const Employees = () => {
 
         <EmployeeCards employees={paginatedEmployees} />
 
-        <div className={styles.paginationContainer}>
+        <div className="flex justify-center my-8 p-4">
           <Pagination
             count={Math.ceil(filteredEmployees.length / pageSize)}
             page={page}

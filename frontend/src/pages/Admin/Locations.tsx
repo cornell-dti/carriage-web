@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import LocationsContent from 'components/Locations/LocationsContent';
-import styles from './page.module.css';
 import { LocationFormModal } from 'components/Locations/LocationFormModal';
 import { LocationType } from '@carriage-web/shared/types/location';
 import { useLocations } from 'context/LocationsContext';
 import axios from '../../util/axios';
 import { LocationImage } from 'components/Locations/LocationImagesUpload';
 import { Box, CircularProgress } from '@mui/material';
-import buttonStyles from '../../styles/button.module.css';
 
 const Locations = () => {
   const [locations, setLocations] = useState<LocationType[]>([]);
@@ -133,14 +131,13 @@ const Locations = () => {
 
   return (
     <main id="main">
-      <div className={styles.mainContent} style={{ gap: 0 }}>
-        <div className={styles.pageTitle}>
-          <h1 className={styles.header}>Locations</h1>
-          <div className={styles.rightSection}>
+      <div className="flex flex-col gap-0 p-8">
+        <div className="flex justify-between items-center p-8 text-[1.75rem] text-left m-0">
+          <h1 className="w-full text-left text-[1.75rem] m-0">Locations</h1>
+          <div className="w-full flex items-center justify-end gap-2 [&>div]:ml-3.5">
             <button
-              style={{ width: '10rem' }}
               onClick={() => setIsAddDialogOpen(true)}
-              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+              className="w-40 h-10 flex items-center justify-center cursor-pointer rounded text-base text-nowrap px-6 border border-[#303030] bg-black text-white transition-all duration-100 hover:bg-[#333] hover:text-white active:bg-[#555] active:text-white"
             >
               + Add Location
             </button>

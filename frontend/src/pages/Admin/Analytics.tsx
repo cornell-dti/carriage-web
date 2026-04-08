@@ -9,7 +9,6 @@ import ExportButton from '../../components/ExportButton/ExportButton';
 import DateFilter from '../../components/AnalyticsTable/DateFilter';
 import AnalyticsOverview from '../../components/AnalyticsOverview/AnalyticsOverview';
 import axios from '../../util/axios';
-import styles from './page.module.css';
 
 const Analytics = () => {
   const [analyticsData, setData] = useState<TableData[]>([]);
@@ -67,7 +66,7 @@ const Analytics = () => {
   };
 
   return (
-    <div className={styles.mainContent}>
+    <div className="flex flex-col gap-8 p-8">
       <TabSwitcher
         labels={['Ride Data', 'Driver Data']}
         renderRight={renderRight}
