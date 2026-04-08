@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
 import { format_date } from '../../util/index';
 
@@ -30,13 +29,13 @@ const DateFilter = ({
   const today = format_date();
 
   return (
-    <div className={styles.dateFilter}>
-      <div className={styles.box}>
-        <label className={styles.datePickerLabel}>Date Range</label>
-        <div className={styles.dateRangeContainer}>
+    <div className="flex flex-row flex-nowrap justify-start mb-4">
+      <div className="flex flex-col m-0">
+        <label className="font-semibold text-xl">Date Range</label>
+        <div className="flex items-center flex-wrap">
           <input
             aria-label="Start Date"
-            className={styles.input}
+            className="rounded-[10px] text-xl font-semibold p-2 px-4 border border-black"
             type="date"
             max={today}
             onChange={(e) => {
@@ -50,10 +49,10 @@ const DateFilter = ({
             }}
             value={startDate}
           />
-          <span style={{ margin: '0 1rem' }}>-</span>
+          <span className="mx-4">-</span>
           <input
             aria-label="End Date"
-            className={styles.input}
+            className="rounded-[10px] text-xl font-semibold p-2 px-4 border border-black"
             type="date"
             max={today}
             onChange={(e) => {
@@ -74,12 +73,12 @@ const DateFilter = ({
               }
             }}
             outline={true}
-            className={styles.submitButton}
+            className="bg-black text-white rounded-[10px] text-xl p-2 px-4 ml-4"
           >
             Apply Dates
           </Button>
         </div>
-        <div className={styles.error}>{error}</div>
+        <div className="text-[#eb0023] text-xs">{error}</div>
       </div>
     </div>
   );

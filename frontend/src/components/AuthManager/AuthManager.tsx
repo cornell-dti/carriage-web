@@ -10,7 +10,6 @@ import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
-import styles from './authmanager.module.css';
 import { studentLanding, car, admin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
 import Toast from '../ConfirmationToast/ConfirmationToast';
@@ -302,14 +301,14 @@ const AuthManager = () => {
               students={
                 <button
                   onClick={() => handleSSOLogin(false, false)}
-                  className={styles.ssoBtn}
+                  className="flex flex-col items-center justify-center border-none rounded-xl bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.16)] m-2 p-4 cursor-pointer min-w-45"
                 >
                   <img
                     src={studentLanding}
-                    className={styles.icon}
+                    className="h-11.25 w-11.25 m-0.5"
                     alt="student logo"
                   />
-                  <div className={styles.heading}>Students</div>
+                  <div className="p-3 text-lg font-bold">Students</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
@@ -317,10 +316,10 @@ const AuthManager = () => {
               admins={
                 <button
                   onClick={() => handleSSOLogin(true, false)}
-                  className={styles.ssoBtn}
+                  className="flex flex-col items-center justify-center border-none rounded-xl bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.16)] m-2 p-4 cursor-pointer min-w-45"
                 >
-                  <img src={admin} className={styles.icon} alt="admin logo" />
-                  <div className={styles.heading}>Admins</div>
+                  <img src={admin} className="h-11.25 w-11.25 m-0.5" alt="admin logo" />
+                  <div className="p-3 text-lg font-bold">Admins</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
@@ -328,10 +327,10 @@ const AuthManager = () => {
               drivers={
                 <button
                   onClick={() => handleSSOLogin(false, true)}
-                  className={styles.ssoBtn}
+                  className="flex flex-col items-center justify-center border-none rounded-xl bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.16)] m-2 p-4 cursor-pointer min-w-45"
                 >
-                  <img src={car} className={styles.icon} alt="car logo" />
-                  <div className={styles.heading}>Drivers</div>
+                  <img src={car} className="h-11.25 w-11.25 m-0.5" alt="car logo" />
+                  <div className="p-3 text-lg font-bold">Drivers</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
