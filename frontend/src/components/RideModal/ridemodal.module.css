@@ -1,0 +1,263 @@
+/* General form styles */
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+/* This is a container for all inputs not to be mistaken for imageContainer*/
+.inputContainer {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.input {
+  border: 1px solid #808080;
+  border-radius: 0.25rem;
+}
+
+.input {
+  border: 1px solid #808080;
+  border-radius: 0.25rem;
+}
+
+.error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  max-width: 12rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Input styles */
+.dateStyle,
+.timeStyle,
+.selectInputContainer {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+/* Styled select */
+.selectInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+  padding-right: 2.5rem;
+}
+
+/* RideTimes and DriverPage shared styles */
+.rideTime,
+.drivers {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1.25rem;
+}
+
+.col1,
+.col2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.colSpan {
+  grid-column: 1 / -1;
+}
+
+/* Day selector styles */
+.day {
+  border-radius: 50%;
+  height: 2.25rem;
+  width: 2.25rem;
+  border: 2px solid #6c757d;
+  padding: 0;
+  cursor: pointer;
+  margin: 0 0.25rem;
+  background-color: transparent;
+  color: #6c757d;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.day:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.5);
+}
+
+.daySelected {
+  background-color: #000;
+  color: white;
+  border-color: #000;
+}
+
+/* DriverPage specific styles */
+.drivers {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.driver {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.driver:last-child {
+  border-bottom: none;
+}
+
+.driver:hover {
+  background-color: #e9ecef;
+}
+
+.driverLabel {
+  flex-grow: 1;
+  margin-left: 1rem;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.driverRadio {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ced4da;
+  border-radius: 50%;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.driverRadio:checked {
+  border-color: #000;
+  background-color: #000;
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+.driverRadio:focus {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25), inset 0 0 0 4px #fff;
+}
+
+/* Button styles */
+.btnContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.btnContainer button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnContainer button:hover {
+  background-color: #333;
+}
+
+.btnContainer button[type='button'] {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.btnContainer button[type='button']:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+  .rideTime,
+  .drivers {
+    grid-template-columns: 1fr;
+  }
+
+  .btnContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btnContainer button {
+    width: 100%;
+  }
+}
+
+.nameInput {
+  font-size: 1.5rem;
+  width: 100%;
+}
+
+.clearAllBtn {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  min-width: 6.563rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  color: black;
+  margin-right: 1rem;
+  display: inline-block;
+  margin-left: 3rem;
+}
+
+.nextBtn {
+  border-radius: 0.5rem;
+  min-width: 6.563rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.image {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+/* This is a container to group image and input together so that a border can be created 
+that includes the image, not to be mistaken with inputContainer */
+.imgContainer {
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid #808080;
+  padding-left: 5px;
+}
+/* This gets rid of a double border since the parent, .imgContainer, already has a border */
+.imgContainer > input {
+  border: 0px;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Typography, Card, CardContent, Grid } from '@mui/material';
 import { peopleStats, wheelStats } from '../../../icons/stats/index';
+import styles from './UserStatistics.module.css';
 
 type UserRole = 'driver' | 'admin' | 'rider' | 'both';
 
@@ -60,44 +61,44 @@ const UserStatistics = ({
 
   return (
     <Card
-      className={`statisticsContainer} ${className || ''}`}
+      className={`${styles.statisticsContainer} ${className || ''}`}
       elevation={2}
     >
-      <CardContent statisticsCardContent}>
-        <Typography variant="h6" userDetailHeader}>
+      <CardContent className={styles.statisticsCardContent}>
+        <Typography variant="h6" className={styles.userDetailHeader}>
           Statistics (Last Week)
         </Typography>
-        <Grid container spacing={2} statisticsGrid}>
+        <Grid container spacing={2} className={styles.statisticsGrid}>
           {statistics.map((stat, index) => (
             <Grid item xs={12} sm={6} key={index}>
-              <Card statisticCard} elevation={1}>
-                <CardContent cardContent}>
-                  <Box statIconContainer}>
+              <Card className={styles.statisticCard} elevation={1}>
+                <CardContent className={styles.cardContent}>
+                  <Box className={styles.statIconContainer}>
                     <img
                       src={stat.icon}
-                      statIcon}
+                      className={styles.statIcon}
                       alt={stat.alt}
                     />
                   </Box>
-                  <Box statDescription}>
+                  <Box className={styles.statDescription}>
                     {stat.value >= 0 ? (
-                      <Typography variant="h4" stat}>
+                      <Typography variant="h4" className={styles.stat}>
                         {stat.value}
                         {stat.unit && (
                           <Typography
                             component="span"
-                            statsUnit}
+                            className={styles.statsUnit}
                           >
                             {stat.unit}
                           </Typography>
                         )}
                       </Typography>
                     ) : (
-                      <Typography variant="h4" stat}>
+                      <Typography variant="h4" className={styles.stat}>
                         N/A
                       </Typography>
                     )}
-                    <Typography variant="body2" statLabel}>
+                    <Typography variant="body2" className={styles.statLabel}>
                       {stat.label}
                     </Typography>
                   </Box>

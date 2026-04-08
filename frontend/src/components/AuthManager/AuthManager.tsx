@@ -10,6 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 import AuthContext from '../../context/auth';
 
 import LandingPage from '../../pages/Landing/Landing';
+import styles from './authmanager.module.css';
 import { studentLanding, car, admin } from '../../icons/other';
 import SubscribeWrapper from './SubscrbeWrapper';
 import Toast from '../ConfirmationToast/ConfirmationToast';
@@ -301,14 +302,14 @@ const AuthManager = () => {
               students={
                 <button
                   onClick={() => handleSSOLogin(false, false)}
-                  ssoBtn}
+                  className={styles.ssoBtn}
                 >
                   <img
                     src={studentLanding}
-                    icon}
+                    className={styles.icon}
                     alt="student logo"
                   />
-                  <div heading}>Students</div>
+                  <div className={styles.heading}>Students</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
@@ -316,10 +317,10 @@ const AuthManager = () => {
               admins={
                 <button
                   onClick={() => handleSSOLogin(true, false)}
-                  ssoBtn}
+                  className={styles.ssoBtn}
                 >
-                  <img src={admin} icon} alt="admin logo" />
-                  <div heading}>Admins</div>
+                  <img src={admin} className={styles.icon} alt="admin logo" />
+                  <div className={styles.heading}>Admins</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>
@@ -327,10 +328,10 @@ const AuthManager = () => {
               drivers={
                 <button
                   onClick={() => handleSSOLogin(false, true)}
-                  ssoBtn}
+                  className={styles.ssoBtn}
                 >
-                  <img src={car} icon} alt="car logo" />
-                  <div heading}>Drivers</div>
+                  <img src={car} className={styles.icon} alt="car logo" />
+                  <div className={styles.heading}>Drivers</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
                 </button>

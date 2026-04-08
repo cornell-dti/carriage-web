@@ -1,0 +1,382 @@
+/* New layout structure */
+.pageContainer {
+  width: 95%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.userInformationSection {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: fit-content;
+}
+
+.userInfoContainer {
+  flex: 1;
+  min-width: 300px;
+}
+
+.statisticsContainer {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.actionsContainer {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.ridesTableSection {
+  width: 100%;
+}
+
+.userDetail {
+  border-radius: 12px !important;
+  background-color: white;
+  margin-bottom: 1.5rem;
+}
+
+.userDetailContent {
+  display: flex;
+  flex-direction: row;
+  padding: 1.5rem !important;
+  gap: 1.5rem;
+  min-height: fit-content;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profilePicContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.pageDivTitle {
+  text-align: left;
+  font-size: 1.75rem;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.25rem 2.5rem;
+  font-weight: bold;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.75rem;
+  margin-bottom: 0;
+  margin-left: -28px;
+}
+
+.chevronLeft {
+  margin-right: 4px;
+}
+
+.profilePic {
+  width: 8rem !important;
+  height: 8rem !important;
+  border: 3px solid #f0f0f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.defaultUserIcon {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.basicInfoContainer {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.basicInfoTop {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nameInfoContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.name {
+  font-size: 1.75rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.netId {
+  font-size: 1rem !important;
+  color: #6b7280 !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+}
+
+.trashIcon {
+  width: 1.25rem;
+  height: auto;
+}
+
+.editIcon {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.deleteButton {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: 0.7rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.edit {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: 0.7rem;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.userEditContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.contactInfoContainer,
+.riderContactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.contactInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+}
+
+.contactIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.contactText {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.otherInfoContainer {
+  border-top: ridge;
+  padding-top: 3%;
+  margin-top: 3%;
+}
+
+.rider {
+  margin: 0 2.5rem;
+}
+
+.userDetailHeader {
+  font-size: 1.125rem;
+}
+
+.statisticsContainer {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.pastRidesContainer,
+.ridesSection {
+  margin-top: 2rem;
+}
+
+.statisticsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.noContentText {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.statisticCard {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.statisticCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.statIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+}
+
+.statDescription {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.statsHrs {
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-left: 0.25rem;
+}
+
+@media (max-width: 1200px) {
+  .userInformationSection {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .statisticsContainer,
+  .actionsContainer {
+    width: 100%;
+    max-width: none;
+  }
+
+  .userInformationSection {
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .pageContainer {
+    width: 98%;
+    gap: 1rem;
+  }
+
+  .userInformationSection {
+    gap: 1rem;
+  }
+
+  .userDetailContent {
+    flex-direction: column;
+    padding: 1.5rem !important;
+    gap: 1.5rem;
+  }
+
+  .profileSection {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profilePic {
+    width: 6rem !important;
+    height: 6rem !important;
+  }
+
+  .defaultUserIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .basicInfoContainer {
+    text-align: center;
+  }
+
+  .contactInfoContainer,
+  .riderContactInfo {
+    padding: 1rem;
+  }
+
+  .contactInfo {
+    justify-content: flex-start;
+  }
+
+  .name {
+    font-size: 1.5rem !important;
+  }
+
+  .userInfoContainer,
+  .statisticsContainer,
+  .actionsContainer {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .rider {
+    margin: 0 0.5rem;
+  }
+
+  .pageDivTitle {
+    padding: 1.5rem 1rem;
+  }
+}

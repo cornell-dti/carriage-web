@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IconButton, Box } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import styles from './locations.module.css';
 import { LocationImage } from './LocationImagesUpload';
 
 interface Props {

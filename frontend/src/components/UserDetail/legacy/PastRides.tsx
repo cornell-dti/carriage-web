@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Table } from '../../TableComponents/TableComponents';
 import { RideType } from '@carriage-web/shared/types/ride';
+import styles from './userDetail.module.css';
 
 type PastRideProps = {
   isStudent: boolean;
@@ -18,8 +19,8 @@ const PastRides = ({ isStudent, rides }: PastRideProps) => {
   ];
 
   return (
-    <div pastRidesContainer}>
-      <h3 userDetailHeader}>Past Rides</h3>
+    <div className={styles.pastRidesContainer}>
+      <h3 className={styles.userDetailHeader}>Past Rides</h3>
       {rides.length !== 0 ? (
         <Table>
           <Row
@@ -74,7 +75,7 @@ const PastRides = ({ isStudent, rides }: PastRideProps) => {
           })}
         </Table>
       ) : (
-        <p noContentText}>No rides completed.</p>
+        <p className={styles.noContentText}>No rides completed.</p>
       )}
     </div>
   );

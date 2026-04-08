@@ -17,6 +17,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import EditIcon from '@mui/icons-material/Edit';
 import CallIcon from '@mui/icons-material/Call';
 import CancelIcon from '@mui/icons-material/Cancel';
+import styles from './maincard.module.css';
 import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
 import RequestRideDialog from './RequestRideDialog';
 import { useLocations } from 'context/LocationsContext';
@@ -110,13 +111,13 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   };
 
   return (
-    <div card}>
-      <div header}>
+    <div className={styles.card}>
+      <div className={styles.header}>
         <h2>{cardTitle}</h2>
-        <div actions}>
+        <div className={styles.actions}>
           <button
             onClick={handleCancel}
-            className={`button} ${cancelButton}`}
+            className={`${styles.button} ${styles.cancelButton}`}
           >
             <CancelIcon fontSize="small" />
           </button>
@@ -134,7 +135,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
           />
           <button
             onClick={handleEdit}
-            className={`button} ${editButton}`}
+            className={`${styles.button} ${styles.editButton}`}
           >
             <EditIcon fontSize="small" />
           </button>
@@ -166,7 +167,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
             <>
               <button
                 onClick={handleContact}
-                className={`button} ${contactButton}`}
+                className={`${styles.button} ${styles.contactButton}`}
               >
                 <CallIcon fontSize="small" />
               </button>
@@ -185,81 +186,81 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
         </div>
       </div>
 
-      <div contentRow}>
+      <div className={styles.contentRow}>
         {/* Destination Information */}
-        <div section}>
-          <div detail}>
+        <div className={styles.section}>
+          <div className={styles.detail}>
             <CalendarMonthIcon fontSize="small" />
-            <span label}>Date:</span>
+            <span className={styles.label}>Date:</span>
             <span>{date}</span>
           </div>
-          <div detail}>
+          <div className={styles.detail}>
             <AccessTimeIcon fontSize="small" />
-            <span label}>Time:</span>
+            <span className={styles.label}>Time:</span>
             <span>{time}</span>
           </div>
-          <div detail}>
+          <div className={styles.detail}>
             <LocationOnIcon fontSize="small" />
-            <span label}>Pick-up:</span>
+            <span className={styles.label}>Pick-up:</span>
             <span>{ride.startLocation.name}</span>
           </div>
-          <div detail}>
+          <div className={styles.detail}>
             <LocationOnIcon fontSize="small" />
-            <span label}>Drop-off:</span>
+            <span className={styles.label}>Drop-off:</span>
             <span>{ride.endLocation.name}</span>
           </div>
         </div>
 
         {/* Driver Information or Scheduling Status */}
-        <div section}>
+        <div className={styles.section}>
           {ride.driver ? (
-            <div driverInfo}>
-              <div driverImageContainer}>
+            <div className={styles.driverInfo}>
+              <div className={styles.driverImageContainer}>
                 {getDriverImageSrc() ? (
                   <img
                     src={getDriverImageSrc()!}
                     alt={`${ride.driver.firstName} ${ride.driver.lastName}`}
-                    driverImage}
+                    className={styles.driverImage}
                     onError={handleImageError}
                   />
                 ) : (
-                  <div driverImagePlaceholder}>
+                  <div className={styles.driverImagePlaceholder}>
                     <PersonIcon fontSize="large" />
                   </div>
                 )}
               </div>
-              <div driverDetails}>
-                <div detail}>
+              <div className={styles.driverDetails}>
+                <div className={styles.detail}>
                   <PersonIcon fontSize="small" />
-                  <span label}>Name:</span>
+                  <span className={styles.label}>Name:</span>
                   <span>
                     {ride.driver.firstName} {ride.driver.lastName}
                   </span>
                 </div>
-                <div detail}>
+                <div className={styles.detail}>
                   <PhoneIcon fontSize="small" />
-                  <span label}>Phone:</span>
+                  <span className={styles.label}>Phone:</span>
                   <span>{ride.driver.phoneNumber}</span>
                 </div>
-                <div detail}>
+                <div className={styles.detail}>
                   <EmailIcon fontSize="small" />
-                  <span label}>Email:</span>
+                  <span className={styles.label}>Email:</span>
                   <span>{ride.driver.email}</span>
                 </div>
-                <div status}>
+                <div className={styles.status}>
                   Status: {ride.status.replace('_', ' ')}
                 </div>
               </div>
             </div>
           ) : (
-            <div driverInfo}>
-              <div driverDetails}>
-                <div detail}>
+            <div className={styles.driverInfo}>
+              <div className={styles.driverDetails}>
+                <div className={styles.detail}>
                   <PersonIcon fontSize="small" />
-                  <span label}>Scheduling:</span>
+                  <span className={styles.label}>Scheduling:</span>
                   <span>Unscheduled</span>
                 </div>
-                <div status}>
+                <div className={styles.status}>
                   Status: {ride.status.replace('_', ' ')}
                 </div>
               </div>

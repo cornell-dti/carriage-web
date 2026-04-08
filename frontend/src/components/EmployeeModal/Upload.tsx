@@ -1,5 +1,6 @@
 import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
+import styles from './employeemodal.module.css';
 
 const IMAGE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB limit
 
@@ -66,12 +67,12 @@ const Upload = ({
   }
 
   return (
-    <div uploadContainer}>
+    <div className={styles.uploadContainer}>
       {imageURL ? (
-        <img uploadImg} alt="uploaded" src={imageURL} />
+        <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
       ) : (
         <img
-          uploadImg}
+          className={styles.uploadImg}
           alt="profile upload"
           src={uploadBox}
         />
@@ -87,7 +88,7 @@ const Upload = ({
       />
       <label
         htmlFor="driverPhotoInput"
-        uploadText}
+        className={styles.uploadText}
         style={{ opacity: isUploading ? 0.6 : 1 }}
       >
         <span
@@ -101,7 +102,7 @@ const Upload = ({
       </label>
       {errorMessage && (
         <div
-          error}
+          className={styles.error}
           style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#eb0023' }}
         >
           {errorMessage}

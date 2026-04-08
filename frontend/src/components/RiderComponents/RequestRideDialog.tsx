@@ -28,6 +28,7 @@ import {
 } from '@mui/x-date-pickers';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import RequestRideMap from './RequestRideMap';
+import styles from './requestridedialog.module.css';
 import { Tag } from 'types';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { LocationType } from '@carriage-web/shared/types/location';
@@ -589,9 +590,9 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
           apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
         >
-          <div formContainer}>
-            <div formColumn}>
-              <div formSection}>
+          <div className={styles.formContainer}>
+            <div className={styles.formColumn}>
+              <div className={styles.formSection}>
                 {/* Selection Progress Indicator */}
                 <div
                   style={{
@@ -966,10 +967,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                 )}
 
                 {formData.repeatType === 'custom' && (
-                  <div daySelectionContainer}>
+                  <div className={styles.daySelectionContainer}>
                     <FormLabel
                       component="legend"
-                      daySelectionLabel}
+                      className={styles.daySelectionLabel}
                     >
                       Select Days
                     </FormLabel>
@@ -977,14 +978,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
                       value={formData.selectedDays.map(getShortDay)}
                       onChange={handleDaysChange}
                       aria-label="select days"
-                      toggleButtonGroup}
+                      className={styles.toggleButtonGroup}
                     >
                       {daysOfWeek.map((day) => (
                         <ToggleButton
                           key={day}
                           value={day}
                           aria-label={fullDayNames[day]}
-                          dayToggleButton}
+                          className={styles.dayToggleButton}
                         >
                           {day}
                         </ToggleButton>
@@ -995,7 +996,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
               </div>
             </div>
 
-            <div mapColumn}>
+            <div className={styles.mapColumn}>
               {hasCustomLocation() ? (
                 <div
                   style={{

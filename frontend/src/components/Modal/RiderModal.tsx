@@ -3,6 +3,7 @@ import Modal from './Modal';
 import { ObjectType } from '../../types/index';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import RiderModalInfo from './RiderModalInfo';
+import styles from './ridermodal.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';

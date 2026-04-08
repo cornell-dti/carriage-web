@@ -1,4 +1,5 @@
 import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import styles from './employeemodal.module.css';
 import { Label, Input } from '../FormElements/FormElements';
 
 type Props = {
@@ -16,12 +17,12 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
   };
 
   return (
-    <div roleSelector}>
-      <p roleSelectorTitle}>Role</p>
-      <div radioGroup}>
-        <div radioOption}>
+    <div className={styles.roleSelector}>
+      <p className={styles.roleSelectorTitle}>Role</p>
+      <div className={styles.radioGroup}>
+        <div className={styles.radioOption}>
           <Input
-            radioButton}
+            className={styles.radioButton}
             id="driver"
             name="role"
             type="checkbox"
@@ -29,13 +30,13 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('driver')}
           />
-          <Label driverLabel} htmlFor={'driver'}>
+          <Label className={styles.driverLabel} htmlFor={'driver'}>
             Driver
           </Label>
         </div>
-        <div radioOption}>
+        <div className={styles.radioOption}>
           <Input
-            radioButton}
+            className={styles.radioButton}
             id="redrunner-admin"
             name="role"
             type="checkbox"
@@ -43,13 +44,13 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('redrunner-admin')}
           />
-          <Label driverLabel} htmlFor={'redrunner-admin'}>
+          <Label className={styles.driverLabel} htmlFor={'redrunner-admin'}>
             Redrunner Admin
           </Label>
         </div>
-        <div radioOption}>
+        <div className={styles.radioOption}>
           <Input
-            radioButton}
+            className={styles.radioButton}
             id="sds-admin"
             name="role"
             type="checkbox"
@@ -57,7 +58,7 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('sds-admin')}
           />
-          <Label driverLabel} htmlFor={'sds-admin'}>
+          <Label className={styles.driverLabel} htmlFor={'sds-admin'}>
             SDS Admin
           </Label>
         </div>

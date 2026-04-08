@@ -9,6 +9,8 @@ import {
   WatchLater,
 } from '@mui/icons-material';
 import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
+import styles from './ResponsiveRideCard.module.css';
+import buttonStyles from '../styles/button.module.css';
 
 interface ResponsiveRideCardProps {
   ride: RideType;
@@ -42,9 +44,9 @@ const formatTime = (time: Date): FormattedTime => {
 const renderFormattedTime = (time: Date): ReactNode => {
   const formattedTime = formatTime(time);
   return (
-    <span timeWrapper}>
+    <span className={styles.timeWrapper}>
       <p>{formattedTime.time}</p>
-      <p timeMeridiem}>{formattedTime.meridiem}</p>
+      <p className={styles.timeMeridiem}>{formattedTime.meridiem}</p>
     </span>
   );
 };
@@ -69,73 +71,73 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   };
 
   return (
-    <div card}>
-      <div statusContainer}>
+    <div className={styles.card}>
+      <div className={styles.statusContainer}>
         {/* ride status chip */}
         {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
-          <div className={`statusBadge} ${statusRequested}`}>
+          <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
             <p>Requested</p>
           </div>
         ) : ride.status === Status.CANCELLED ? (
-          <div className={`statusBadge} ${statusCanceled}`}>
+          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
             <p>Canceled</p>
           </div>
         ) : ride.status === Status.NO_SHOW ? (
-          <div className={`statusBadge} ${statusCanceled}`}>
+          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
             <p>No Show</p>
           </div>
         ) : (
-          <div className={`statusBadge} ${statusScheduled}`}>
+          <div className={`${styles.statusBadge} ${styles.statusScheduled}`}>
             <p>Approved</p>
           </div>
         )}
 
         <button
           onClick={() => setExpanded(!expanded)}
-          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${detailsButton}`}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.detailsButton}`}
         >
           {expanded ? 'Hide Details' : 'Details'}
         </button>
       </div>
       <div
-        className={`contentWrapper} ${
+        className={`${styles.contentWrapper} ${
           expanded
-            ? contentWrapperExpanded
-            : contentWrapperCollapsed
+            ? styles.contentWrapperExpanded
+            : styles.contentWrapperCollapsed
         }`}
       >
-        <div infoSection}>
+        <div className={styles.infoSection}>
           {/* time-related */}
-          <div column}>
-            <span row}>
-              <span labelWrapper}>
+          <div className={styles.column}>
+            <span className={styles.row}>
+              <span className={styles.labelWrapper}>
                 <WatchLater />
-                <p labelText}>Start</p>
+                <p className={styles.labelText}>Start</p>
               </span>
               {renderFormattedTime(new Date(ride.startTime))}
             </span>
-            <span rowSecondary}>
-              <span labelWrapper}>
+            <span className={styles.rowSecondary}>
+              <span className={styles.labelWrapper}>
                 <SubdirectoryArrowRight />
-                <p labelText}>End</p>
+                <p className={styles.labelText}>End</p>
               </span>
               {renderFormattedTime(new Date(ride.endTime))}
             </span>
           </div>
 
           {/* location-related */}
-          <div column}>
-            <span row}>
-              <span labelWrapper}>
+          <div className={styles.column}>
+            <span className={styles.row}>
+              <span className={styles.labelWrapper}>
                 <Place />
-                <p labelText}>Pickup</p>
+                <p className={styles.labelText}>Pickup</p>
               </span>
               <p>{ride.startLocation.name}</p>
             </span>
-            <span rowSecondary}>
-              <span labelWrapper}>
+            <span className={styles.rowSecondary}>
+              <span className={styles.labelWrapper}>
                 <FlagRounded />
-                <p labelText}>Dropoff</p>
+                <p className={styles.labelText}>Dropoff</p>
               </span>
               <p>{ride.endLocation.name}</p>
             </span>
@@ -144,10 +146,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* driver info */}
         {expanded && (
           <div>
-            <span row}>
-              <span labelWrapper}>
+            <span className={styles.row}>
+              <span className={styles.labelWrapper}>
                 <BadgeRounded></BadgeRounded>
-                <p labelText}>Driver</p>
+                <p className={styles.labelText}>Driver</p>
               </span>
               <p>
                 {ride.driver !== undefined
@@ -159,7 +161,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         )}
         {/* expanded location view */}
         {expanded && (
-          <div mapContainer}>
+          <div className={styles.mapContainer}>
             {hasCustomLocation() ? (
               <div
                 style={{
@@ -192,7 +194,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               </div>
             ) : (
               <Map
-                map}
+                className={styles.map}
                 defaultCenter={{
                   lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
                   lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
@@ -224,7 +226,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                   clickable={true}
                   title={ride.endLocation.name}
                 >
-                  <FlagRounded flagIcon} />
+                  <FlagRounded className={styles.flagIcon} />
                 </AdvancedMarker>
               </Map>
             )}
@@ -234,7 +236,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
       {/* expanded buttons */}
       {expanded ? (
-        <div buttonContainer}>
+        <div className={styles.buttonContainer}>
           <button
             onClick={(e) => {
               e.stopPropagation();

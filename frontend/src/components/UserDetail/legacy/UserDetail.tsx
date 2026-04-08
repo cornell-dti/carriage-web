@@ -4,13 +4,14 @@ import cn from 'classnames';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { DriverType } from '@carriage-web/shared/types/driver';
 import { user as defaultUserIcon } from '../../../icons/userInfo/index';
+import styles from './userDetail.module.css';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
 };
 
 export const OtherInfo = ({ children }: otherInfo) => (
-  <div otherInfoContainer}>{children}</div>
+  <div className={styles.otherInfoContainer}>{children}</div>
 );
 
 type UserContactInfo = {
@@ -20,9 +21,9 @@ type UserContactInfo = {
 };
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
-  <div contactInfo}>
-    <img contactIcon} src={icon} alt={alt} />
-    <p contactText}>{text}</p>
+  <div className={styles.contactInfo}>
+    <img className={styles.contactIcon} src={icon} alt={alt} />
+    <p className={styles.contactText}>{text}</p>
   </div>
 );
 
@@ -68,45 +69,45 @@ const UserDetail = ({
 
   return (
     <Card
-      className={cn(userDetail, { 'isRider })}
+      className={cn(styles.userDetail, { [styles.rider]: isRider })}
       elevation={2}
     >
-      <CardContent userDetailContent}>
-        <Box profileSection}>
-          <Box profilePicContainer}>
+      <CardContent className={styles.userDetailContent}>
+        <Box className={styles.profileSection}>
+          <Box className={styles.profilePicContainer}>
             <Avatar
               src={
                 photoLink && photoLink !== ''
                   ? `${photoLink}?t=${new Date().getTime()}`
                   : undefined
               }
-              profilePic}
+              className={styles.profilePic}
               alt={`${fullName} profile`}
             >
               {(!photoLink || photoLink === '') && (
                 <img
                   src={defaultUserIcon}
                   alt="Default user"
-                  defaultUserIcon}
+                  className={styles.defaultUserIcon}
                 />
               )}
             </Avatar>
           </Box>
         </Box>
 
-        <Box basicInfoContainer}>
-          <Box basicInfoTop}>
-            <Box nameInfoContainer}>
-              <Typography variant="h4" name}>
+        <Box className={styles.basicInfoContainer}>
+          <Box className={styles.basicInfoTop}>
+            <Box className={styles.nameInfoContainer}>
+              <Typography variant="h4" className={styles.name}>
                 {fullName}
               </Typography>
-              <Typography variant="body2" netId}>
+              <Typography variant="body2" className={styles.netId}>
                 {netId}
               </Typography>
             </Box>
           </Box>
 
-          <Box contactInfoContainer}>{children}</Box>
+          <Box className={styles.contactInfoContainer}>{children}</Box>
         </Box>
       </CardContent>
     </Card>

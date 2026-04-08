@@ -5,6 +5,7 @@ import { SchedulingState } from '../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { Row, Table } from '../TableComponents/TableComponents';
 import { trashbig } from '../../icons/other';
+import styles from './table.module.css';
 import RequestRideModal from '../RequestRideModal/RequestRideModal';
 import RideDetailsModal from '../RideModal/RideDetailsModal';
 
@@ -75,8 +76,8 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
           const startEndTime = {
             data: (
               <p>
-                <span bold}>{startTime}</span>
-                <span gray}> -- {endTime}</span>
+                <span className={styles.bold}>{startTime}</span>
+                <span className={styles.gray}> -- {endTime}</span>
               </p>
             ),
           };
@@ -86,7 +87,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
             data: (
               <p>
                 {recurringDays}
-                <span bold}> {recurringDateRange}</span>
+                <span className={styles.bold}> {recurringDateRange}</span>
               </p>
             ),
           };
@@ -104,7 +105,7 @@ const RiderRidesTable = ({ rides, isPast }: RiderRidesTableProps) => {
 
           const deleteButton = (
             <button
-              deleteIcon}
+              className={styles.deleteIcon}
               onClick={() => setDeleteOpen(index)}
             >
               <img src={trashbig} alt="delete ride" />

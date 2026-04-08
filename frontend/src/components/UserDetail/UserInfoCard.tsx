@@ -19,6 +19,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { Employee } from '../../types/index';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { getUserNetId } from '../../util';
+import styles from './UserDetailCards.module.css';
 
 interface UserInfoCardProps {
   user: Employee | RiderType;
@@ -51,7 +52,7 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
   };
 
   return (
-    <Card className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col h-full shadow-md">
+    <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-md font-medium text-gray-900">User Info</h3>

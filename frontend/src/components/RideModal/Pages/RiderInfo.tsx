@@ -10,6 +10,7 @@ import {
   Label,
   SelectComponent,
 } from '../../FormElements/FormElements';
+import styles from '../ridemodal.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import { useLocations } from '../../../context/LocationsContext';
 
@@ -69,14 +70,14 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   }, [riders, locations]);
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} form}>
-      <div className={cn(inputContainer, rider)}>
-        <div name}>
+    <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
+      <div className={cn(styles.inputContainer, styles.rider)}>
+        <div className={styles.name}>
           <Label htmlFor={'name'}>Name</Label>
           {/* <Input
             id="name"
             type="text"
-            nameInput}
+            className={styles.nameInput}
             list="names"
             aria-required="true"
             {...register('name', {
@@ -96,7 +97,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             rules={{ required: 'Rider name is required' }}
           />
 
-          {errors.name && <p error}>Rider not found</p>}
+          {errors.name && <p className={styles.error}>Rider not found</p>}
           <datalist id="names">
             {riders.map((r) => (
               <option key={r.id}>
@@ -105,8 +106,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ))}
           </datalist>
         </div>
-        <div pickupLocation}>
-          <Label htmlFor={'pickupLoc'} label}>
+        <div className={styles.pickupLocation}>
+          <Label htmlFor={'pickupLoc'} className={styles.label}>
             Pickup Location
           </Label>
           <SelectComponent
@@ -118,7 +119,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           />
 
           {errors.pickupLoc && (
-            <p error}>Please enter a location</p>
+            <p className={styles.error}>Please enter a location</p>
           )}
           <datalist id="locations">
             {locations.map((l) => (
@@ -126,8 +127,8 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             ))}
           </datalist>
         </div>
-        <div dropoffLocation}>
-          <Label htmlFor={'dropoffLoc'} label}>
+        <div className={styles.dropoffLocation}>
+          <Label htmlFor={'dropoffLoc'} className={styles.label}>
             Dropoff Location
           </Label>
           <SelectComponent
@@ -138,10 +139,10 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
             rules={{ required: 'Dropoff Location is required' }}
           />
           {errors.dropoffLoc?.type === 'required' && (
-            <p error}>Please enter a location</p>
+            <p className={styles.error}>Please enter a location</p>
           )}
           {errors.dropoffLoc?.type === 'validate' && (
-            <p error}>Locations cannot match</p>
+            <p className={styles.error}>Locations cannot match</p>
           )}
           <datalist id="locations">
             {locations.map((l) => (
@@ -150,7 +151,7 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
       </div>
-      <div btnContainer}>
+      <div className={styles.btnContainer}>
         <Button outline type="button" onClick={onBack}>
           Back
         </Button>

@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
+import styles from './confirmModal.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { User } from '../../types/index';
 import { useNavigate } from 'react-router-dom';
@@ -70,22 +71,22 @@ const ConfirmationModal = ({
       displayClose={true}
       arialabelledby="confirm-text"
     >
-      <div modal}>
-        <p modalText} id="confirm-text">
+      <div className={styles.modal}>
+        <p className={styles.modalText} id="confirm-text">
           Are you sure you want to remove {user.firstName} {user.lastName}?
         </p>
-        <div buttonContainer}>
+        <div className={styles.buttonContainer}>
           <Button
             type="button"
             onClick={closeModal}
-            cancelButton}
+            className={styles.cancelButton}
           >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={userDelete}
-            removeButton}
+            className={styles.removeButton}
           >
             Remove
           </Button>

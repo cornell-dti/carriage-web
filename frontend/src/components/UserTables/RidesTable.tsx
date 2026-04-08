@@ -4,9 +4,11 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
+import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
+import buttonStyles from '../../styles/button.module.css';
 
 type RidesTableProps = {
   rides: RideType[];
@@ -140,7 +142,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
             const valueEdit = {
               data: (
                 <div
-                  dataValues}
+                  className={styles.dataValues}
                   style={{ display: 'flex', gap: '0.5rem' }}
                 >
                   {editButton}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Typography, Box } from '@mui/material';
+import styles from './locations.module.css';
 
 // Define the interface for location images to export
 export interface LocationImage {
@@ -57,12 +58,12 @@ const LocationImagesUpload: React.FC<Props> = ({
       slots.push(
         <div
           key={`image-${i}`}
-          className={`imagePreviewSlot} ${hasImage}`}
+          className={`${styles.imagePreviewSlot} ${styles.hasImage}`}
         >
           <img
             src={images[i].url}
             alt={`Location ${i + 1}`}
-            previewImage}
+            className={styles.previewImage}
           />
         </div>
       );
@@ -71,7 +72,7 @@ const LocationImagesUpload: React.FC<Props> = ({
     // Add upload button if we haven't reached the maximum
     if (images.length < maxImages) {
       slots.push(
-        <div key="upload-button" imageUploadButton}>
+        <div key="upload-button" className={styles.imageUploadButton}>
           <input
             id="location-images-input"
             type="file"
@@ -81,7 +82,7 @@ const LocationImagesUpload: React.FC<Props> = ({
             onChange={handleImageSelect}
           />
           <label htmlFor="location-images-input">
-            <div addImageIcon}>
+            <div className={styles.addImageIcon}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M12 8V16M8 12H16"
@@ -116,7 +117,7 @@ const LocationImagesUpload: React.FC<Props> = ({
     const remainingSlots = maxImages - slots.length;
     for (let i = 0; i < remainingSlots; i++) {
       slots.push(
-        <div key={`empty-${i}`} imagePreviewSlot} />
+        <div key={`empty-${i}`} className={styles.imagePreviewSlot} />
       );
     }
 
@@ -124,12 +125,12 @@ const LocationImagesUpload: React.FC<Props> = ({
   };
 
   return (
-    <div imageUploadContainer}>
+    <div className={styles.imageUploadContainer}>
       <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
         Location Images
       </Typography>
 
-      <div imagesGrid}>{renderSlots()}</div>
+      <div className={styles.imagesGrid}>{renderSlots()}</div>
 
       <Typography variant="caption" color="textSecondary">
         Upload up to {maxImages} images (PNG, JPG, max 5MB each)

@@ -3,6 +3,7 @@ import { useDate } from 'context/date';
 import { useRides } from 'context/RidesContext';
 import { FC, useState } from 'react';
 import { format_date } from '../../util/index';
+import buttonStyles from '../../styles/button.module.css';
 import { FileDownload } from '@mui/icons-material';
 
 export const CSVFromRidesButton: FC = () => {

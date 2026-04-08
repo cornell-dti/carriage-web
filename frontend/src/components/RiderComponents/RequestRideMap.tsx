@@ -10,6 +10,7 @@ import {
 } from '@vis.gl/react-google-maps';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
+import styles from './requestridedialog.module.css';
 // Removed unused imports
 import { LocationType } from '@carriage-web/shared/types/location';
 
@@ -164,7 +165,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
         gestureHandling={'greedy'}
         disableDefaultUI={false}
-        mapContainer}
+        className={styles.mapContainer}
       >
         {/* Pickup Location Marker */}
         {pickupLocation && (
@@ -260,7 +261,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
             }}
             onCloseClick={() => setMarkerWithPopup(null)}
           >
-            <div mapPopup}>
+            <div className={styles.mapPopup}>
               <h4>{markerWithPopup.shortName}</h4>
               <p>{markerWithPopup.name}</p>
               <p>{markerWithPopup.address}</p>

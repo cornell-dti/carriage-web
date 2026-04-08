@@ -8,6 +8,7 @@ import RoleSelector from './RoleSelector';
 import StartDate from './StartDate';
 import WorkingHours from './WorkingHours';
 import Upload from './Upload';
+import styles from './employeemodal.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
@@ -451,7 +452,7 @@ const EmployeeModal = ({
               setSelectedRoles={setSelectedRole}
             />
 
-            <Button submit} type="submit">
+            <Button className={styles.submit} type="submit">
               {existingEmployee ? 'Save' : 'Add'}
             </Button>
           </form>

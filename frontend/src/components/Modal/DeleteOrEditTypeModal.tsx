@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from './Modal';
 import { Button } from '../FormElements/FormElements';
+import styles from './modal.module.css';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
@@ -55,8 +56,8 @@ const DeleteOrEditTypeModal = ({
       onClose={closeModal}
       isRider={isRider}
     >
-      <div modal}>
-        <p modalText}>
+      <div className={styles.modal}>
+        <p className={styles.modalText}>
           Are you sure you want to cancel this ride?
           {ride.isRecurring && (
             <span
@@ -71,14 +72,14 @@ const DeleteOrEditTypeModal = ({
             </span>
           )}
         </p>
-        <div buttonContainer}>
+        <div className={styles.buttonContainer}>
           <Button outline type="button" onClick={closeModal}>
             Back
           </Button>
           <Button
             type="button"
             onClick={confirmCancel}
-            redButton}
+            className={styles.redButton}
           >
             OK
           </Button>

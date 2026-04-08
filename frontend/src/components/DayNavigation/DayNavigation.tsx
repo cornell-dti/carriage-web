@@ -2,6 +2,7 @@ import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useDate } from 'context/date';
+import buttonStyles from '../../styles/button.module.css';
 
 export const DayNavigation = () => {
   const { curDate, setCurDate } = useDate();

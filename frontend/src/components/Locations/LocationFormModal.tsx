@@ -22,6 +22,7 @@ import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
 import { Tag } from 'types';
 import { LocationType } from '@carriage-web/shared/types/location';
+import styles from './locations.module.css';
 import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
 
 const CAMPUS_OPTIONS = [
@@ -161,9 +162,9 @@ export const LocationFormModal: React.FC<Props> = ({
           apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
         >
-          <div formGrid}>
+          <div className={styles.formGrid}>
             {/* -------- Left column (Form inputs) -------------------------------- */}
-            <div formColumn}>
+            <div className={styles.formColumn}>
               <TextField
                 label="Location Name"
                 fullWidth
@@ -212,8 +213,8 @@ export const LocationFormModal: React.FC<Props> = ({
             </div>
 
             {/* -------- Right column (Map and Address) -------------------------- */}
-            <div formColumn}>
-              <div mapSection}>
+            <div className={styles.formColumn}>
+              <div className={styles.mapSection}>
                 <LocationPickerMap
                   key={`picker-${mapKey}`}
                   onPointSelected={selectPoint}
@@ -226,12 +227,12 @@ export const LocationFormModal: React.FC<Props> = ({
                 />
               </div>
 
-              <Typography infoText}>
+              <Typography className={styles.infoText}>
                 Click on the map to select a location and fetch its address.
               </Typography>
 
-              <div addressSection}>
-                <Typography addressTitle}>Address</Typography>
+              <div className={styles.addressSection}>
+                <Typography className={styles.addressTitle}>Address</Typography>
 
                 <PlacesSearch
                   onAddressSelect={(a, lat, lng) =>
@@ -241,7 +242,7 @@ export const LocationFormModal: React.FC<Props> = ({
                   onChange={(val) => update({ address: val })}
                 />
 
-                <div addressTools}>
+                <div className={styles.addressTools}>
                   <Button
                     variant="outlined"
                     size="small"
@@ -253,7 +254,7 @@ export const LocationFormModal: React.FC<Props> = ({
                   {loadingAddr && <CircularProgress size={20} />}
                 </div>
 
-                <Typography coordinatesText}>
+                <Typography className={styles.coordinatesText}>
                   Current coordinates:
                   {form.lat && form.lng
                     ? ` ${form.lat.toFixed(6)}, ${form.lng.toFixed(6)}`

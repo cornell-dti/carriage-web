@@ -1,0 +1,114 @@
+.modal {
+  height: auto;
+  max-height: 85vh;
+  min-height: 400px;
+}
+
+.modalMobile {
+  height: 100vh;
+  max-height: 100vh;
+}
+
+.closeButton {
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 40px;
+  height: 40px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.closeButton:hover {
+  background-color: #f5f5f5;
+}
+
+.mainContainer {
+  display: flex;
+  min-height: 100%;
+  position: relative;
+  padding: 16px;
+}
+
+.contentContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabs {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 8px;
+  padding-top: 8px;
+  margin-bottom: 8px;
+}
+
+.tab {
+  flex: 1;
+  max-width: none;
+}
+
+.tabContent {
+  flex: 1;
+  overflow: visible;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tabContentWithActions {
+  padding: 0;
+}
+
+.tabContentMobile {
+  padding: 24px;
+  padding-bottom: 100px; /* Space for mobile actions */
+}
+
+.tabPanelContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  max-height: 100%;
+}
+
+.tabPanelContent {
+  flex: 1;
+  overflow: hidden;
+  padding: 16px 20px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tabActions {
+  flex-shrink: 0;
+  border-top: 1px solid #e0e0e0;
+  padding: 16px 24px;
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.actionsSection {
+  border-top: 1px solid #e0e0e0;
+  padding: 24px;
+  background-color: #f9f9f9;
+  margin-top: auto;
+}
+
+.mobileActions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  padding: 16px;
+  z-index: 1300;
+}

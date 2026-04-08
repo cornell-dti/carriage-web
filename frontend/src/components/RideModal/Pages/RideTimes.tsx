@@ -10,6 +10,7 @@ import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
+import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
@@ -76,8 +77,8 @@ const DaySelector = () => {
         <button
           key={day}
           type="button"
-          className={cn(day, {
-            [daySelected]: isSelected(day),
+          className={cn(styles.day, {
+            [styles.daySelected]: isSelected(day),
           })}
           onClick={() => toggle(day)}
           {...register(`days.${day}` as const, { validate })}
@@ -86,7 +87,7 @@ const DaySelector = () => {
         </button>
       ))}
       {errors.days?.Mon?.type === 'validate' && (
-        <p error}>Please select a day</p>
+        <p className={styles.error}>Please select a day</p>
       )}
     </>
   );
@@ -106,12 +107,12 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
   return (
     <>
       {repeatValue === RepeatValues.Custom && (
-        <div colSpan}>
+        <div className={styles.colSpan}>
           <Label htmlFor="repeatsOn">Repeats on:</Label>
           <DaySelector />
         </div>
       )}
-      <div colSpan}>
+      <div className={styles.colSpan}>
         <Label htmlFor="endDate">End date:</Label>
         <Input
           id="endDate"
@@ -129,10 +130,10 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
           aria-required="true"
         />
         {errors.endDate?.type === 'required' && (
-          <p error}>Please enter an end date</p>
+          <p className={styles.error}>Please enter an end date</p>
         )}
         {errors.endDate?.type === 'validate' && (
-          <p error}>Invalid date</p>
+          <p className={styles.error}>Invalid date</p>
         )}
       </div>
     </>
@@ -176,9 +177,9 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} form}>
-        <div className={cn(inputContainer, rideTime)}>
-          <div col1}>
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <div className={cn(styles.inputContainer, styles.rideTime)}>
+          <div className={styles.col1}>
             <Label htmlFor="date">Day:</Label>
             <Input
               id="date"
@@ -202,23 +203,23 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                 },
               })}
               aria-required="true"
-              className={cn(dateStyle)}
+              className={cn(styles.dateStyle)}
             />
             {errors.date?.type === 'required' && (
-              <p error}>Please enter a date</p>
+              <p className={styles.error}>Please enter a date</p>
             )}
             {errors.date?.type === 'validate' && (
-              <p error}>{errors.date.message}</p>
+              <p className={styles.error}>{errors.date.message}</p>
             )}
           </div>
-          <div col2}>
+          <div className={styles.col2}>
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
               {...register('repeats', {
                 required: 'Please select a repeat option',
               })}
-              className={cn(selectInputContainer, selectInput)}
+              className={cn(styles.selectInputContainer, styles.selectInput)}
             >
               {repeatOptions.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -227,16 +228,16 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               ))}
             </select>
             {errors.repeats?.type === 'required' && (
-              <p error}>Please enter a time</p>
+              <p className={styles.error}>Please enter a time</p>
             )}
           </div>
           {isRepeating && <RepeatSection repeatValue={watchRepeats} />}
-          <div col1}>
+          <div className={styles.col1}>
             <Label htmlFor="pickupTime">Pickup time:</Label>
             <Input
               id="pickupTime"
               type="time"
-              className={cn(timeStyle)}
+              className={cn(styles.timeStyle)}
               {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
@@ -248,20 +249,20 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               aria-required="true"
             />
             {errors.pickupTime?.type === 'required' && (
-              <p error}>Please choose a valid pickup time</p>
+              <p className={styles.error}>Please choose a valid pickup time</p>
             )}
             {errors.pickupTime?.type === 'validate' && (
-              <p error}>
+              <p className={styles.error}>
                 Please choose a time between 7:30 am and 10:00 pm
               </p>
             )}
           </div>
-          <div col2}>
+          <div className={styles.col2}>
             <Label htmlFor="dropoffTime">Dropoff time:</Label>
             <Input
               id="dropoffTime"
               type="time"
-              className={cn(timeStyle)}
+              className={cn(styles.timeStyle)}
               {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {
@@ -283,10 +284,10 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               aria-required="true"
             />
             {errors.dropoffTime?.type === 'required' && (
-              <p error}>Please choose a valid dropoff time</p>
+              <p className={styles.error}>Please choose a valid dropoff time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
-              <p error}>{errors.dropoffTime.message}</p>
+              <p className={styles.error}>{errors.dropoffTime.message}</p>
             )}
           </div>
         </div>

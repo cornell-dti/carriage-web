@@ -7,13 +7,14 @@ import UserDetail, { UserContactInfo } from './UserDetail';
 import UserActions from './UserActions';
 import { phone, home, calendar } from '../../../icons/userInfo/index';
 import { RideType } from '@carriage-web/shared/types/ride';
+import styles from './userDetail.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import axios from '../../../util/axios';
 import { RideTable } from '../../RideDetails';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
-    <Box pageDivTitle}>
+    <Box className={styles.pageDivTitle}>
       <Button
         startIcon={<ArrowBack />}
         onClick={onBack}
@@ -109,10 +110,10 @@ const RiderDetail = () => {
   return rider ? (
     <main id="main">
       <Header onBack={handleBack} />
-      <Box pageContainer}>
+      <Box className={styles.pageContainer}>
         {/* User Information Section */}
-        <Box userInformationSection}>
-          <Box userInfoContainer}>
+        <Box className={styles.userInformationSection}>
+          <Box className={styles.userInfoContainer}>
             <UserDetail
               firstName={rider.firstName}
               lastName={rider.lastName}
@@ -141,13 +142,13 @@ const RiderDetail = () => {
             </UserDetail>
           </Box>
 
-          <Box actionsContainer}>
+          <Box className={styles.actionsContainer}>
             <UserActions role="rider" rider={rider} />
           </Box>
         </Box>
 
         {/* Rides Table Section */}
-        <Box ridesTableSection}>
+        <Box className={styles.ridesTableSection}>
           <RideTable rides={rides} userRole="admin" />
         </Box>
       </Box>

@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './card.module.css';
 
 type CardInfoProps = {
   icon: string;
@@ -7,8 +8,8 @@ type CardInfoProps = {
 };
 
 export const CardInfo = ({ icon, alt, children }: CardInfoProps) => (
-  <div className="flex items-center">
-    <img className="w-4 mr-4" src={icon} alt={alt} />
+  <div className={styles.infoContainer}>
+    <img className={styles.icon} src={icon} alt={alt} />
     {children}
   </div>
 );
@@ -34,20 +35,20 @@ const Card = ({
       : `${firstName} ${lastName}`;
 
   return (
-    <div className="inline-block w-68 h-80 bg-white rounded-lg border border-gray-300 overflow-hidden shadow-md">
+    <div className={styles.card}>
       {photoLink && photoLink !== '' ? (
         <img
-          className="bg-gray-300 object-cover w-full h-37.5"
+          className={styles.image}
           alt="uploaded profile"
           src={`${photoLink}`}
         />
       ) : (
-        <div className="bg-gray-300 w-full h-37.5"> </div>
+        <div className={styles.image}> </div>
       )}
-      <div className="p-5 pr-0 pb-7 pl-4">
-        <div className="-ml-4 pt-1 pb-1 pl-3 border-l-3 border-black">
-          <h2 className="inline-block text-xl font-bold m-0">{fullName}</h2>
-          <p className="inline-block text-sm text-gray-700 ml-1">{netId}</p>
+      <div className={styles.contentContainer}>
+        <div className={styles.titleContainer}>
+          <h2 className={styles.name}>{fullName}</h2>
+          <p className={styles.netId}>{netId}</p>
         </div>
         {children}
       </div>

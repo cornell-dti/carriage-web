@@ -1,0 +1,182 @@
+.table {
+  background-color: #f6f6f6;
+  border: none;
+  width: 100%;
+  border-spacing: 0 0.938rem;
+}
+
+.noRides {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tableContainer {
+  padding-left: 2%;
+  padding-right: 2%;
+  width: 100%;
+  flex-direction: row;
+  display: block;
+  overflow-x: auto;
+}
+
+.tableHeader {
+  border-bottom: none;
+  text-align: left;
+  padding-left: 2rem;
+  padding-bottom: 1rem;
+}
+
+.tableRow {
+  cursor: pointer;
+}
+
+.cell {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.formHeader {
+  margin-top: 1.875rem;
+  margin-bottom: 0.313rem;
+  margin-left: 2rem;
+  font-size: 1.5rem;
+  color: #999;
+  font-weight: normal;
+  text-align: left;
+}
+
+.formDiv {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 0.313rem;
+}
+
+.formLabel {
+  width: 7.813rem;
+  text-align: right;
+  padding-right: 0.313rem;
+}
+
+.formFeedback {
+  color: red;
+  display: block;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 0.313rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.hidden2 {
+  visibility: hidden;
+}
+
+.addForm {
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.addFormDiv {
+  text-align: center;
+}
+
+.checkboxDiv {
+  text-align: left;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.gray {
+  color: #616161;
+}
+
+.left {
+  text-align: left;
+}
+
+.proflePic {
+  border-radius: 50%;
+}
+
+.assignButton {
+  margin-left: 0.75rem;
+}
+
+.usage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.usageContainer {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.usageTag {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.ridesCount {
+  background-color: #c5e4fb;
+}
+
+.noShow {
+  background-color: #ff8b9d;
+}
+
+.deleteIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+  padding: 0.5em;
+  margin-left: 0.5em;
+}
+
+.dataValues {
+  display: flex;
+}
+
+.scheduleTable {
+  overflow-y: auto;
+}
+
+.scheduleTableInner {
+  min-width: 875px;
+}
+
+.invalid {
+  border: #eb0023 1px solid;
+}
+
+.filterDisabilityHeader {
+  margin-left: 4rem;
+}
+
+.filterDisabilityBox {
+  height: 1.5rem;
+  border-radius: 4px;
+  border-width: 1.25px;
+}
+
+@media screen and (max-width: 700px) {
+  .scheduleTableInner {
+    min-width: initial;
+  }
+}

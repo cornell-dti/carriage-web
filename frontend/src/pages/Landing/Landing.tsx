@@ -1,4 +1,5 @@
 import { ReactElement, useEffect } from 'react';
+import styles from './landing.module.css';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import topLaptop from './landing-images/laptop1.svg';
@@ -21,21 +22,21 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
     document.title = 'Login - Carriage';
   }, []);
   return (
-    <main id="main" pageMain}>
-      <div home}>
-        <div tosButtonContainer}>
+    <main id="main" className={styles.pageMain}>
+      <div className={styles.home}>
+        <div className={styles.tosButtonContainer}>
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
-            <button tosButton}>Terms of Service</button>
+            <button className={styles.tosButton}>Terms of Service</button>
           </a>
         </div>
-        <div main}>
-          <div left}>
-            <img src={logo} badge} alt="Carriage logo" />
-            <span title}>Carriage</span>
+        <div className={styles.main}>
+          <div className={styles.left}>
+            <img src={logo} className={styles.badge} alt="Carriage logo" />
+            <span className={styles.title}>Carriage</span>
           </div>
-          <div right}>
-            <div spacing_container}>
-              <h1 heading}>Login</h1>
+          <div className={styles.right}>
+            <div className={styles.spacing_container}>
+              <h1 className={styles.heading}>Login</h1>
               {ssoError && (
                 <div
                   style={{
@@ -50,16 +51,16 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
                   {ssoError}
                 </div>
               )}
-              <div container}>
-                <div container_item}>{students}</div>
-                <div container_item}>{admins}</div>
-                <div container_item}>{drivers}</div>
+              <div className={styles.container}>
+                <div className={styles.container_item}>{students}</div>
+                <div className={styles.container_item}>{admins}</div>
+                <div className={styles.container_item}>{drivers}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div customShape}>
+        <div className={styles.customShape}>
           <svg
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"
@@ -68,31 +69,31 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
           >
             <path
               d={WAVE_PATH.trim()}
-              shapeFill}
+              className={styles.shapeFill}
               transform="translate(0, 120) scale(1, -1)"
             />
           </svg>
         </div>
       </div>
 
-      <div information}>
-        <div adminInfo}>
+      <div className={styles.information}>
+        <div className={styles.adminInfo}>
           <p>
             Administrators add students and employees and assign rides on Admin
             Web.
           </p>
-          <img src={topLaptop} alt="top laptop" topLaptop} />
+          <img src={topLaptop} alt="top laptop" className={styles.topLaptop} />
         </div>
       </div>
 
-      <div studentInfo}>
-        <div studentImgContainer}>
+      <div className={styles.studentInfo}>
+        <div className={styles.studentImgContainer}>
           <img
             src={bottomLaptop}
             alt="bottom laptop"
-            bottomLaptop}
+            className={styles.bottomLaptop}
           />
-          <img src={phone} alt="phone" phone} />
+          <img src={phone} alt="phone" className={styles.phone} />
         </div>
 
         <p>
@@ -100,14 +101,14 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
         </p>
       </div>
 
-      <div footer}>
-        <div dti_container}>
+      <div className={styles.footer}>
+        <div className={styles.dti_container}>
           <a
             href="https://www.cornelldti.org/"
             target="_blank"
             rel="noreferrer"
           >
-            <img src={dti} dti_logo} alt="DTI Logo" />
+            <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
           </a>
         </div>
       </div>

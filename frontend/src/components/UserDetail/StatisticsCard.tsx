@@ -15,6 +15,7 @@ import StatisticsFilter from './StatisticsFilter';
 import { Employee } from '../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { RiderType } from '@carriage-web/shared/types/rider';
+import styles from './UserDetailCards.module.css';
 
 interface StatisticsCardProps {
   user: Employee | RiderType;
@@ -48,7 +49,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
   };
 
   return (
-    <Card userDetailCard}>
+    <Card className={styles.userDetailCard}>
       <CardContent className="flex-1 flex flex-col p-0">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-md font-medium text-gray-900">Statistics</h3>

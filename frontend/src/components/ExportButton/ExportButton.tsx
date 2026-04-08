@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
+import styles from './exportButton.module.css';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
 
@@ -49,14 +50,14 @@ const ExportButton = ({
       <Button
         onClick={() => downloadCSV()}
         outline={true}
-        className="mr-2"
+        className={styles.exportButton}
       >
         <img src={download} alt="capacity icon" /> Export
       </Button>
       <CSVLink
         data={downloadData}
         filename={filename}
-        className="hidden"
+        className={styles.hidden}
         ref={csvLink}
         target="_blank"
       />

@@ -6,6 +6,7 @@ import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { ObjectType } from '../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
+import styles from './requestridemodal.module.css';
 import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
@@ -153,14 +154,14 @@ const CreateOrEditRideModal = ({
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(handleSubmit)}>
-          <div inputContainer}>
+          <div className={styles.inputContainer}>
             <RequestRideInfo
               ride={ride}
               showRepeatingCheckbox={!ride}
               showRepeatingInfo={modalType !== 'EDIT_SINGLE_RECURRING'}
               modalType={modalType}
             />
-            <Button submit} type="submit">
+            <Button className={styles.submit} type="submit">
               {!ride ? 'Request a Ride' : 'Edit Ride'}
             </Button>
           </div>

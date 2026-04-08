@@ -13,6 +13,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import { RiderType } from '@carriage-web/shared/types/rider';
+import styles from './RiderList.module.css';
 
 interface RiderListProps {
   riders: RiderType[];
@@ -36,19 +37,19 @@ const RiderCard: React.FC<RiderCardProps> = ({
   onRef,
 }) => {
   return (
-    <div ref={onRef} riderCard}>
+    <div ref={onRef} className={styles.riderCard}>
       {/* Compact View - Always Visible */}
-      <div compactView} onClick={onToggleExpanded}>
+      <div className={styles.compactView} onClick={onToggleExpanded}>
         <Avatar
           src={rider.photoLink}
           sx={{ width: 40, height: 40 }}
-          avatar}
+          className={styles.avatar}
         >
           {rider.firstName?.charAt(0)}
           {rider.lastName?.charAt(0)}
         </Avatar>
 
-        <Box compactInfo}>
+        <Box className={styles.compactInfo}>
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
             {rider.firstName} {rider.lastName.charAt(0)}
           </Typography>
@@ -78,15 +79,15 @@ const RiderCard: React.FC<RiderCardProps> = ({
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ pt: 1, pb: 2 }}>
           {/* Contact Information */}
-          <div contactInfo}>
+          <div className={styles.contactInfo}>
             {rider.phoneNumber && (
-              <div contactRow}>
+              <div className={styles.contactRow}>
                 <PhoneIcon fontSize="small" color="action" />
                 <Typography variant="body2">{rider.phoneNumber}</Typography>
               </div>
             )}
             {rider.email && (
-              <div contactRow}>
+              <div className={styles.contactRow}>
                 <EmailIcon fontSize="small" color="action" />
                 <Typography variant="body2">{rider.email}</Typography>
               </div>
@@ -97,7 +98,7 @@ const RiderCard: React.FC<RiderCardProps> = ({
           {showAccessibility &&
             rider.accessibility &&
             rider.accessibility.length > 0 && (
-              <div accessibilitySection}>
+              <div className={styles.accessibilitySection}>
                 <Typography
                   variant="body2"
                   color="textSecondary"
@@ -106,7 +107,7 @@ const RiderCard: React.FC<RiderCardProps> = ({
                 >
                   Accessibility Needs
                 </Typography>
-                <div accessibilityChips}>
+                <div className={styles.accessibilityChips}>
                   {rider.accessibility.map((need: string) => (
                     <Chip
                       key={need}
@@ -169,7 +170,7 @@ const RiderList: React.FC<RiderListProps> = ({
 
   if (!riders || riders.length === 0) {
     return (
-      <div emptyState}>
+      <div className={styles.emptyState}>
         <Typography variant="body1" color="textSecondary">
           No riders assigned
         </Typography>
@@ -178,7 +179,7 @@ const RiderList: React.FC<RiderListProps> = ({
   }
 
   return (
-    <div riderList}>
+    <div className={styles.riderList}>
       {!hideHeader && (
         <Typography
           variant="subtitle2"
@@ -188,7 +189,7 @@ const RiderList: React.FC<RiderListProps> = ({
         </Typography>
       )}
 
-      <div riderCards}>
+      <div className={styles.riderCards}>
         {riders.map((rider) => (
           <RiderCard
             key={rider.id}

@@ -7,6 +7,7 @@ import {
   nightRide,
   noShow,
 } from '../../icons/analytics/index';
+import styles from './AnalyticsOverview.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 
 type AnalyticsOverviewProps = {
@@ -80,9 +81,9 @@ const AnalyticsOverview = ({ type, data, label }: AnalyticsOverviewProps) => {
   }, [data, drivers, type]);
 
   return (
-    <div className="inline-block w-full mb-8">
-      <p className="font-bold text-lg">Overview [{label}]</p>
-      <div className="flex gap-6 items-center bg-white p-6 rounded-lg shadow-lg">
+    <div className={styles.analyticsOverview}>
+      <p className={styles.overviewName}>Overview [{label}]</p>
+      <div className={styles.statsContainer}>
         {stats.map((stat, idx) => (
           <StatsBox key={idx} {...stat} />
         ))}

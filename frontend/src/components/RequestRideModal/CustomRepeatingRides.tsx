@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import { RideType } from '@carriage-web/shared/types/ride';
+import styles from './requestridemodal.module.css';
 import { Label, SRLabel } from '../FormElements/FormElements';
 
 type WeekType = {
@@ -50,8 +51,8 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
     week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
 
   return (
-    <div dayBox}>
-      <Label id={'repeatDays'} boldLabel}>
+    <div className={styles.dayBox}>
+      <Label id={'repeatDays'} className={styles.boldLabel}>
         Repeat every
       </Label>
       {Object.entries(dayLabels).map(([day, label]) => (
@@ -66,7 +67,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
               validate: () => dayClicked(),
             })}
             value={week[day] ? label[1] : -1}
-            className={cn(day, { 'week[day] })}
+            className={cn(styles.day, { [styles.daySelected]: week[day] })}
             onClick={() => handleClick(day)}
           >
             {label[0]}
@@ -74,7 +75,7 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
         </div>
       ))}
       {errors.Mon && (
-        <p error}>Please select at least one day</p>
+        <p className={styles.error}>Please select at least one day</p>
       )}
     </div>
   );

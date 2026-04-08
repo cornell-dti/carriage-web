@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './favoritescard.module.css';
 import AddIcon from '@mui/icons-material/Add';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -33,42 +34,42 @@ const FavoritesCard: React.FC<FavoritesCardProps> = ({
   onQuickRequest,
 }) => {
   return (
-    <div card}>
-      <div header}>
+    <div className={styles.card}>
+      <div className={styles.header}>
         <h2>Favorites</h2>
-        <button addButton} onClick={onAddNew}>
+        <button className={styles.addButton} onClick={onAddNew}>
           <AddIcon fontSize="small" />
         </button>
       </div>
 
-      <div favoritesList}>
+      <div className={styles.favoritesList}>
         {favorites.length === 0 && (
-          <div emptyMessage}>
+          <div className={styles.emptyMessage}>
             No favorite rides yet. Click the + button to add one.
           </div>
         )}
         {favorites.map((fav) => (
-          <div key={fav.id} favoriteItem}>
-            <div favoriteInfo}>
-              <h3 favoriteName}>{fav.name}</h3>
-              <div detail}>
+          <div key={fav.id} className={styles.favoriteItem}>
+            <div className={styles.favoriteInfo}>
+              <h3 className={styles.favoriteName}>{fav.name}</h3>
+              <div className={styles.detail}>
                 <LocationOnIcon fontSize="small" />
-                <span label}>Pick-up:</span>
+                <span className={styles.label}>Pick-up:</span>
                 <span>{fav.startLocation.name}</span>
               </div>
-              <div detail}>
+              <div className={styles.detail}>
                 <LocationOnIcon fontSize="small" />
-                <span label}>Drop-off:</span>
+                <span className={styles.label}>Drop-off:</span>
                 <span>{fav.endLocation.name}</span>
               </div>
-              <div detail}>
+              <div className={styles.detail}>
                 <AccessTimeIcon fontSize="small" />
-                <span label}>Preferred Time:</span>
+                <span className={styles.label}>Preferred Time:</span>
                 <span>{fav.preferredTime}</span>
               </div>
             </div>
             <button
-              className={`button} ${requestButton}`}
+              className={`${styles.button} ${styles.requestButton}`}
               onClick={() => onQuickRequest && onQuickRequest(fav.id)}
             >
               Quick Request

@@ -6,6 +6,7 @@ import {
   MapMouseEvent,
 } from '@vis.gl/react-google-maps';
 import { Dialog, Button, Typography } from '@mui/material';
+import styles from './locations.module.css';
 
 interface LocationPosition {
   lat: number;
@@ -68,7 +69,7 @@ const LocationPickerMap: React.FC<LocationPickerMapProps> = ({
         defaultZoom={initialPosition ? 15 : 13}
         defaultCenter={defaultCenter}
         mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
-        mapContainer}
+        className={styles.mapContainer}
         gestureHandling="greedy"
         disableDefaultUI={false}
         onClick={handleMapClick}
@@ -85,12 +86,12 @@ const LocationPickerMap: React.FC<LocationPickerMapProps> = ({
         open={confirmDialogOpen}
         onClose={() => setConfirmDialogOpen(false)}
       >
-        <div confirmDialog}>
-          <Typography confirmDialogTitle}>
+        <div className={styles.confirmDialog}>
+          <Typography className={styles.confirmDialogTitle}>
             Confirm Location
           </Typography>
           <Typography>Do you want to confirm this point?</Typography>
-          <div confirmDialogActions}>
+          <div className={styles.confirmDialogActions}>
             <Button onClick={handleConfirmPoint} color="primary">
               Confirm
             </Button>
