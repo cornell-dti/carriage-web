@@ -142,13 +142,13 @@ const Sidebar = ({ type, children }: SidebarProps) => {
           ))}
         </div>
         <div className={styles.logout}>
-          {(isAdmin || isDriver) && (
+          {/* {(isAdmin || isDriver) && (
             <img
               alt="profile_picture"
               className={styles.profile}
               src={photoLink ? `${photoLink}?t=${new Date().getTime()}` : blank}
             />
-          )}
+          )} */}
           <button className={styles.logoutLink} onClick={authContext.logout}>
             Log out
           </button>
