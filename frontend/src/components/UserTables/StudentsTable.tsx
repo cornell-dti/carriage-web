@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { Row, Table } from '../TableComponents/TableComponents';
-import styles from './table.module.css';
 import { RiderType } from '@carriage-web/shared/types/rider';
 
 type StudentsTableProps = {

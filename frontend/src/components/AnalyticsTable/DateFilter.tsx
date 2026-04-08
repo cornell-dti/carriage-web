@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './datefilter.module.css';
 import { Button } from '../FormElements/FormElements';
 import { format_date } from '../../util/index';
 
@@ -30,13 +29,13 @@ const DateFilter = ({
   const today = format_date();
 
   return (
-    <div className={styles.dateFilter}>
-      <div className={styles.box}>
-        <label className={styles.datePickerLabel}>Date Range</label>
-        <div className={styles.dateRangeContainer}>
+    <div dateFilter}>
+      <div box}>
+        <label datePickerLabel}>Date Range</label>
+        <div dateRangeContainer}>
           <input
             aria-label="Start Date"
-            className={styles.input}
+            input}
             type="date"
             max={today}
             onChange={(e) => {
@@ -53,7 +52,7 @@ const DateFilter = ({
           <span style={{ margin: '0 1rem' }}>-</span>
           <input
             aria-label="End Date"
-            className={styles.input}
+            input}
             type="date"
             max={today}
             onChange={(e) => {
@@ -74,12 +73,12 @@ const DateFilter = ({
               }
             }}
             outline={true}
-            className={styles.submitButton}
+            submitButton}
           >
             Apply Dates
           </Button>
         </div>
-        <div className={styles.error}>{error}</div>
+        <div error}>{error}</div>
       </div>
     </div>
   );

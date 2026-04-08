@@ -3,7 +3,6 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import addresser from 'addresser';
 import moment from 'moment';
-import styles from './requestridemodal.module.css';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { LocationType } from '@carriage-web/shared/types/location';
 import { Label, Input } from '../FormElements/FormElements';
@@ -141,22 +140,22 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       {((modalType === 'CREATE' && watchRepeating) ||
         modalType === 'EDIT_REGULAR' ||
         modalType === 'EDIT_SINGLE_RECURRING') && (
-        <Label htmlFor={'startDate'} className={styles.largeLabel}>
+        <Label htmlFor={'startDate'} largeLabel}>
           Date
         </Label>
       )}
-      <div className={styles.box}>
+      <div box}>
         {modalType === 'EDIT_ALL_RECURRING' && (
-          <Label className={styles.boldLabel} htmlFor="startDate">
+          <Label boldLabel} htmlFor="startDate">
             Starts
           </Label>
         )}
-        <div className={styles.errorBox}>
+        <div errorBox}>
           <Input
             id="startDate"
             type="date"
             disabled={shouldDisableStartDate}
-            className={cn(styles.input)}
+            className={cn(input)}
             aria-required="true"
             {...register('startDate', {
               required: true,
@@ -179,17 +178,17 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             })}
           />
           {errors.startDate && (
-            <p className={styles.error}>{errors.startDate.message}</p>
+            <p error}>{errors.startDate.message}</p>
           )}
         </div>
         {showRepeatingCheckbox && (
-          <Label className={styles.boldLabel} htmlFor={'recurring'}>
+          <Label boldLabel} htmlFor={'recurring'}>
             Repeating?
           </Label>
         )}
         {showRepeatingCheckbox && (
           <Input
-            className={styles.recurring}
+            recurring}
             type="checkbox"
             id="recurring"
             {...register('recurring')}
@@ -198,61 +197,61 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       </div>
       {showRepeatingInfo && watchRepeating ? (
         <div>
-          <div className={styles.box}>
-            <Label className={styles.boldLabel} id="repeats">
+          <div box}>
+            <Label boldLabel} id="repeats">
               Repeats
             </Label>
-            <div className={styles.radioBox}>
+            <div radioBox}>
               <Input
-                className={styles.whenRepeat}
+                whenRepeat}
                 id="daily"
                 {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="daily"
                 onChange={() => setCustom(false)}
               />
-              <Label className={styles.label} htmlFor="daily">
+              <Label label} htmlFor="daily">
                 Daily
               </Label>
             </div>
-            <div className={styles.radioBox}>
+            <div radioBox}>
               <input
-                className={styles.whenRepeat}
+                whenRepeat}
                 id="weekly"
                 {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="weekly"
                 onChange={() => setCustom(false)}
               />
-              <Label className={styles.label} htmlFor="weekly">
+              <Label label} htmlFor="weekly">
                 Weekly
               </Label>
             </div>
-            <div className={styles.radioBox}>
+            <div radioBox}>
               <input
-                className={styles.whenRepeat}
+                whenRepeat}
                 id="custom"
                 {...register('whenRepeat', { required: watchRepeating })}
                 type="radio"
                 value="custom"
                 onChange={() => setCustom(true)}
               />
-              <Label className={styles.label} htmlFor="custom">
+              <Label label} htmlFor="custom">
                 Custom
               </Label>
             </div>
             {errors.whenRepeat && (
-              <p className={styles.error}>Please select a value</p>
+              <p error}>Please select a value</p>
             )}
           </div>
           {custom && watchRepeating ? (
             <CustomRepeatingRides ride={ride} />
           ) : null}
-          <Label className={styles.boldLabel} htmlFor="endDate">
+          <Label boldLabel} htmlFor="endDate">
             Ends
           </Label>
           <Input
-            className={styles.input}
+            input}
             type={'date'}
             id="endDate"
             {...register('endDate', {
@@ -274,20 +273,20 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             })}
           />
           {errors.endDate && (
-            <p className={styles.error}>{errors.endDate.message}</p>
+            <p error}>{errors.endDate.message}</p>
           )}
         </div>
       ) : null}
-      <Label className={styles.largeLabel} id="pickupLabel">
+      <Label largeLabel} id="pickupLabel">
         Pickup
       </Label>
-      <div className={styles.box}>
-        <div className={styles.errorBox}>
-          <Label className={styles.label} id="pickupLocation">
+      <div box}>
+        <div errorBox}>
+          <Label label} id="pickupLocation">
             Location
           </Label>
           <select
-            className={styles.input}
+            input}
             aria-labelledby="pickupLabel pickupLocations"
             aria-required="true"
             {...register('startLocation', {
@@ -308,16 +307,16 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             ))}
           </select>
           {errors.startLocation && (
-            <p className={styles.error}>{errors.startLocation.message}</p>
+            <p error}>{errors.startLocation.message}</p>
           )}
         </div>
-        <div className={styles.errorBox}>
-          <Label className={styles.label} id="pickupTime">
+        <div errorBox}>
+          <Label label} id="pickupTime">
             Time
           </Label>
           <Input
             type="time"
-            className={styles.input}
+            input}
             aria-labelledby="pickupLabel pickupTime"
             aria-required="true"
             {...register('pickupTime', {
@@ -337,28 +336,28 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             })}
           />
           {errors.pickupTime && (
-            <p className={styles.error}>{errors.pickupTime.message}</p>
+            <p error}>{errors.pickupTime.message}</p>
           )}
         </div>
       </div>
       {watchPickupCustom === 'Other' ? (
-        <div className={styles.box}>
-          <Label className={styles.boldLabel} id="customPickup">
+        <div box}>
+          <Label boldLabel} id="customPickup">
             Enter Pickup Location
           </Label>
           <Input
-            className={cn(styles.input, styles.flexGrow)}
+            className={cn(input, flexGrow)}
             aria-labelledby="customPickup"
             type="text"
             {...register('customPickup', {
               required: watchPickupCustom === 'Other',
             })}
           />
-          <Label className={styles.label} id="pickupCity">
+          <Label label} id="pickupCity">
             City
           </Label>
           <Input
-            className={styles.input}
+            input}
             aria-labelledby="customPickup pickupCity"
             type="text"
             defaultValue="Ithaca"
@@ -367,11 +366,11 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
               required: watchPickupCustom === 'Other',
             })}
           />
-          <Label className={styles.label} id="pickupZip">
+          <Label label} id="pickupZip">
             Zip Code
           </Label>
           <Input
-            className={styles.input}
+            input}
             aria-labelledby="customPickup pickupZip"
             type="text"
             defaultValue="14853"
@@ -383,16 +382,16 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
           />
         </div>
       ) : null}
-      <Label className={styles.largeLabel} id="dropoffLabel">
+      <Label largeLabel} id="dropoffLabel">
         Dropoff
       </Label>
-      <div className={styles.box}>
-        <div className={styles.errorBox}>
-          <Label className={styles.label} id="dropoffLocation">
+      <div box}>
+        <div errorBox}>
+          <Label label} id="dropoffLocation">
             Location
           </Label>
           <select
-            className={styles.input}
+            input}
             aria-labelledby="dropoffLabel dropoffLocations"
             aria-required="true"
             {...register('endLocation', {
@@ -414,16 +413,16 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             ))}
           </select>
           {errors.endLocation && (
-            <p className={styles.error}>{errors.endLocation.message}</p>
+            <p error}>{errors.endLocation.message}</p>
           )}
         </div>
-        <div className={styles.errorBox}>
-          <Label className={styles.label} id="dropoffTime">
+        <div errorBox}>
+          <Label label} id="dropoffTime">
             Time
           </Label>
           <Input
             type="time"
-            className={styles.input}
+            input}
             aria-labelledby="dropoffLabel dropoffTime"
             aria-required="true"
             {...register('dropoffTime', {
@@ -442,15 +441,15 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
             })}
           />
           {errors.dropoffTime && (
-            <p className={styles.error}>{errors.dropoffTime.message}</p>
+            <p error}>{errors.dropoffTime.message}</p>
           )}
         </div>
       </div>
 
       {/* Map for location selection */}
-      <div className={styles.mapSection}>
-        <Label className={styles.largeLabel}>Select Locations on Map</Label>
-        <div className={styles.mapContainer}>
+      <div mapSection}>
+        <Label largeLabel}>Select Locations on Map</Label>
+        <div mapContainer}>
           <RequestRideMap
             pickupLocation={pickupLocation}
             dropoffLocation={dropoffLocation}
@@ -462,23 +461,23 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
       </div>
 
       {watchDropoffCustom === 'Other' ? (
-        <div className={styles.box}>
-          <Label className={styles.boldLabel} id="customDropoff">
+        <div box}>
+          <Label boldLabel} id="customDropoff">
             Enter Dropoff Location
           </Label>
           <Input
-            className={cn(styles.input, styles.flexGrow)}
+            className={cn(input, flexGrow)}
             aria-labelledby="customDropoff"
             type="text"
             {...register('customDropoff', {
               required: watchDropoffCustom === 'Other',
             })}
           />
-          <Label className={styles.label} id="dropoffCity">
+          <Label label} id="dropoffCity">
             City
           </Label>
           <Input
-            className={styles.input}
+            input}
             aria-labelledby="customDropoff dropoffCity"
             type="text"
             defaultValue="Ithaca"
@@ -487,11 +486,11 @@ const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
               required: watchDropoffCustom === 'Other',
             })}
           />
-          <Label className={styles.label} id="dropoffZip">
+          <Label label} id="dropoffZip">
             Zip Code
           </Label>
           <Input
-            className={styles.input}
+            input}
             aria-labelledby="customDropoff dropoffZip"
             type="text"
             defaultValue="14850"

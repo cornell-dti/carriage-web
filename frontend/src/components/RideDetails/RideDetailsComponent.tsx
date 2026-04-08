@@ -16,7 +16,6 @@ import RidePeople from './RidePeople';
 import RideLocations from './RideLocations';
 import RideActions from './RideActions';
 import { RideEditProvider } from './RideEditContext';
-import styles from './RideDetails.module.css';
 
 interface RideDetailsProps {
   open: boolean;
@@ -115,52 +114,52 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
         maxWidth="md"
         fullScreen={isMobile}
         PaperProps={{
-          className: isMobile ? styles.modalMobile : styles.modal,
+          className: isMobile ? modalMobile : modal,
         }}
       >
         <DialogContent sx={{ p: 0, height: '100%' }}>
-          <div className={styles.mainContainer}>
+          <div mainContainer}>
             {/* Main content area - tabs */}
-            <div className={styles.contentContainer}>
+            <div contentContainer}>
               {/* Tabs */}
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}
-                className={styles.tabs}
+                tabs}
                 variant="fullWidth"
               >
                 {tabs.map((tab) => (
                   <Tab
                     key={tab.value}
                     label={tab.label}
-                    className={styles.tab}
+                    tab}
                   />
                 ))}
               </Tabs>
 
               {/* Tab Content */}
               <div
-                className={`${styles.tabContent} ${
+                className={`tabContent} ${
                   isMobile
-                    ? styles.tabContentMobile
-                    : styles.tabContentWithActions
+                    ? tabContentMobile
+                    : tabContentWithActions
                 }`}
               >
                 <TabPanel value={tabValue} index={0}>
-                  <div className={styles.tabPanelContainer}>
-                    <div className={styles.tabPanelContent}>
+                  <div tabPanelContainer}>
+                    <div tabPanelContent}>
                       <RideOverview userRole={userRole} />
                     </div>
                     {!isMobile && (
-                      <div className={styles.tabActions}>
+                      <div tabActions}>
                         <RideActions userRole={userRole} onClose={onClose} />
                       </div>
                     )}
                   </div>
                 </TabPanel>
                 <TabPanel value={tabValue} index={1}>
-                  <div className={styles.tabPanelContainer}>
-                    <div className={styles.tabPanelContent}>
+                  <div tabPanelContainer}>
+                    <div tabPanelContent}>
                       {userRole === 'admin' ? (
                         <RidePeople userRole={userRole} />
                       ) : (
@@ -168,7 +167,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
                       )}
                     </div>
                     {!isMobile && (
-                      <div className={styles.tabActions}>
+                      <div tabActions}>
                         <RideActions userRole={userRole} onClose={onClose} />
                       </div>
                     )}
@@ -176,12 +175,12 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
                 </TabPanel>
                 {userRole === 'admin' && (
                   <TabPanel value={tabValue} index={2}>
-                    <div className={styles.tabPanelContainer}>
-                      <div className={styles.tabPanelContent}>
+                    <div tabPanelContainer}>
+                      <div tabPanelContent}>
                         <RideLocations />
                       </div>
                       {!isMobile && (
-                        <div className={styles.tabActions}>
+                        <div tabActions}>
                           <RideActions userRole={userRole} onClose={onClose} />
                         </div>
                       )}
@@ -194,7 +193,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
 
           {/* Mobile actions - sticky bottom sheet */}
           {isMobile && (
-            <div className={styles.mobileActions}>
+            <div mobileActions}>
               <RideActions userRole={userRole} isMobile onClose={onClose} />
             </div>
           )}

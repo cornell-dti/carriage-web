@@ -34,7 +34,6 @@ import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
-import styles from './RideOverview.module.css';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -122,9 +121,9 @@ const PersonCardOverview: React.FC<{
   const rider = isRider ? (person as RiderType) : undefined;
 
   return (
-    <div className={styles.personCard}>
+    <div personCard}>
       <CardContent sx={{ p: 2 }}>
-        <div className={styles.personHeader}>
+        <div personHeader}>
           <Avatar src={person.photoLink} sx={{ width: 48, height: 48 }}>
             {person.firstName?.charAt(0)}
             {person.lastName?.charAt(0)}
@@ -144,15 +143,15 @@ const PersonCardOverview: React.FC<{
         </div>
 
         {/* Contact Information */}
-        <div className={styles.contactInfo}>
+        <div contactInfo}>
           {person.phoneNumber && (
-            <div className={styles.contactRow}>
+            <div contactRow}>
               <PhoneIcon fontSize="small" color="action" />
               <Typography variant="body2">{person.phoneNumber}</Typography>
             </div>
           )}
           {person.email && (
-            <div className={styles.contactRow}>
+            <div contactRow}>
               <EmailIcon fontSize="small" color="action" />
               <Typography variant="body2">{person.email}</Typography>
             </div>
@@ -163,7 +162,7 @@ const PersonCardOverview: React.FC<{
         {showAccessibility &&
           rider?.accessibility &&
           rider.accessibility.length > 0 && (
-            <div className={styles.accessibilitySection}>
+            <div accessibilitySection}>
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -172,7 +171,7 @@ const PersonCardOverview: React.FC<{
               >
                 Accessibility Needs
               </Typography>
-              <div className={styles.accessibilityChips}>
+              <div accessibilityChips}>
                 {rider.accessibility.map((need: string) => (
                   <Chip
                     key={need}
@@ -314,17 +313,17 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
     if (userRole === 'rider') {
       return (
-        <div className={styles.rightColumn}>
-          <div className={styles.sectionTitle}>
+        <div rightColumn}>
+          <div sectionTitle}>
             <PersonIcon color="primary" />
             <Typography variant="h6">Driver</Typography>
           </div>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div contentArea}>
+            <div riderListContainer}>
               {ride.driver ? (
                 <PersonCardOverview person={ride.driver} type="driver" />
               ) : (
-                <div className={styles.notAssigned}>
+                <div notAssigned}>
                   <Typography variant="body1" color="textSecondary">
                     Not assigned
                   </Typography>
@@ -338,15 +337,15 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
     if (userRole === 'driver') {
       return (
-        <div className={styles.rightColumn}>
-          <div className={styles.sectionTitle}>
+        <div rightColumn}>
+          <div sectionTitle}>
             <PersonIcon color="primary" />
             <Typography variant="h6">
               Riders ({ride.riders?.length || 0})
             </Typography>
           </div>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div contentArea}>
+            <div riderListContainer}>
               <RiderList
                 riders={ride.riders || []}
                 showAccessibility
@@ -362,24 +361,24 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div container}>
       <div
         className={
-          userRole === 'admin' ? styles.adminOverviewGrid : styles.overviewGrid
+          userRole === 'admin' ? adminOverviewGrid : overviewGrid
         }
       >
         {/* Left Column - Ride Information */}
-        <div className={styles.leftColumn}>
-          <div className={styles.sectionTitle}>
+        <div leftColumn}>
+          <div sectionTitle}>
             <DirectionsCarIcon color="primary" />
             <Typography variant="h6">Ride Overview</Typography>
           </div>
-          <div className={styles.contentArea}>
+          <div contentArea}>
             {/* Schedule Section */}
-            <div className={styles.scheduleSection}>
+            <div scheduleSection}>
               {isEditing ? (
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <div className={styles.editFormFields}>
+                  <div editFormFields}>
                     {(() => {
                       // For editing existing rides, allow past times; for new rides, don't
                       const allowPastTimes = !isNewRide(ride);
@@ -415,7 +414,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
                       return (
                         <>
-                          <div className={styles.dateTimeRow}>
+                          <div dateTimeRow}>
                             <div style={{ flex: 1 }}>
                               <DatePicker
                                 label="Start Date"
@@ -467,7 +466,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                             </div>
                           </div>
 
-                          <div className={styles.dateTimeRow}>
+                          <div dateTimeRow}>
                             <div style={{ flex: 1 }}>
                               <DatePicker
                                 label="End Date"
@@ -528,15 +527,15 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                 </LocalizationProvider>
               ) : (
                 <>
-                  <div className={styles.dateRow}>
+                  <div dateRow}>
                     <CalendarTodayIcon fontSize="small" color="action" />
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {startDateTime.date}
                     </Typography>
                   </div>
 
-                  <div className={styles.timeRow}>
-                    <div className={styles.timeBlock}>
+                  <div timeRow}>
+                    <div timeBlock}>
                       <AccessTimeIcon fontSize="small" color="action" />
                       <Box>
                         <Typography variant="body2" color="textSecondary">
@@ -547,7 +546,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                         </Typography>
                       </Box>
                     </div>
-                    <div className={styles.timeBlock}>
+                    <div timeBlock}>
                       <AccessTimeIcon fontSize="small" color="action" />
                       <Box>
                         <Typography variant="body2" color="textSecondary">
@@ -564,14 +563,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
             </div>
 
             {/* Status Section */}
-            <div className={styles.statusSection}>
-              <div className={styles.statusHeader}>
+            <div statusSection}>
+              <div statusHeader}>
                 <InfoIcon color="primary" />
                 <Typography variant="h6">Status</Typography>
               </div>
 
               {isEditing && userRole === 'admin' && !isNewRide(ride) ? (
-                <div className={styles.editStatusFields}>
+                <div editStatusFields}>
                   <FormControl size="small" sx={{ minWidth: 120 }}>
                     <InputLabel>Status</InputLabel>
                     <Select
@@ -618,7 +617,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                   </FormControl>
                 </div>
               ) : (
-                <div className={styles.chipsContainer}>
+                <div chipsContainer}>
                   <Chip
                     label={ride.status.replace(/_/g, ' ')}
                     color={getStatusColor(ride.status)}
@@ -647,14 +646,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
             {/* Recurrence Section - Show for Rider and Admin only */}
             {showRecurrence && (
-              <div className={styles.recurrenceSection}>
-                <div className={styles.sectionTitle}>
+              <div recurrenceSection}>
+                <div sectionTitle}>
                   <RepeatIcon color="primary" />
                   <Typography variant="h6">Recurrence</Typography>
                 </div>
 
                 {isEditing ? (
-                  <div className={styles.editRecurrenceFields}>
+                  <div editRecurrenceFields}>
                     <FormControl size="small" sx={{ minWidth: 120 }}>
                       <InputLabel>Repeat</InputLabel>
                       <Select

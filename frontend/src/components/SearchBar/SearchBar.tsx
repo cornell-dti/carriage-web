@@ -1,5 +1,4 @@
 import React, { useState, ChangeEventHandler } from 'react';
-import styles from './searchbar.module.css';
 import { search_icon } from '../../icons/other/index';
 
 type SearchBarProps = {
@@ -10,14 +9,14 @@ type SearchBarProps = {
 
 const SearchBar = ({ value, onChange, placeholder }: SearchBarProps) => {
   return (
-    <div className={styles.search}>
-      <div className={styles.searchIcon}>
+    <div className="w-[933px] h-10 ml-8 bg-white border border-black rounded-lg flex flex-row">
+      <div className="mt-1.5 ml-4">
         <img alt="search-icon" src={search_icon} />
       </div>
-      <div className={styles.searchInputs}>
+      <div className="mt-1.5 ml-4 border-0">
         <input
           type="text"
-          className={styles.searchBar}
+          className="border-0 font-semibold text-xl leading-6 w-[850px]"
           placeholder={placeholder}
           onChange={onChange}
           value={value}

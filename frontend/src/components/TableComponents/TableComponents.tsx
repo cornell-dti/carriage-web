@@ -1,6 +1,5 @@
 import React from 'react';
 import cn from 'classnames';
-import styles from './tablecomponents.module.css';
 import Tag from '../Tag/Tag';
 import useWindowSize from '../../hooks/useWindowSize';
 
@@ -18,15 +17,15 @@ type CellProps = {
 export const Cell = ({ data, tag, smallTag }: CellProps) => {
   if (tag) {
     return (
-      <div className={styles.cell}>
+      <div cell}>
         <Tag location={data} tag={tag} reduced={smallTag} />
       </div>
     );
   }
   return typeof data === 'object' ? (
-    <div className={styles.cell}>{data}</div>
+    <div cell}>{data}</div>
   ) : (
-    <p className={styles.cell}>{data}</p>
+    <p cell}>{data}</p>
   );
 };
 
@@ -81,7 +80,7 @@ export const Row = ({
     const groupCols = colSizes.slice(groupStart);
     return (
       <div
-        className={cn(styles.rowGroup, className)}
+        className={cn(rowGroup, className)}
         style={
           !isMobile
             ? { gridTemplateColumns: formatColSizes(colSizes) }
@@ -89,7 +88,7 @@ export const Row = ({
         }
       >
         <div
-          className={styles.nongroup}
+          nongroup}
           style={
             !isMobile
               ? {
@@ -105,7 +104,7 @@ export const Row = ({
           {createCells(nonGroup)}
         </div>
         <div
-          className={styles.group}
+          group}
           style={
             !isMobile
               ? {
@@ -126,8 +125,9 @@ export const Row = ({
   return (
     <div
       className={cn(
-        { [styles.row]: !header },
-        { [styles.header]: header },
+        { 'bg-white': !header },
+        { 'bg-gray-100 font-semibold': header },
+        'grid gap-2 p-3 border-b border-gray-200',
         className
       )}
       style={
@@ -153,5 +153,5 @@ type TableProps = {
 };
 
 export const Table = ({ children }: TableProps) => (
-  <div className={styles.table}>{children}</div>
+  <div table}>{children}</div>
 );

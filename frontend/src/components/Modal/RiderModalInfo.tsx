@@ -3,7 +3,6 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import Select, { StylesConfig } from 'react-select';
 import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
-import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility } from '../../types/index';
 import { RiderType } from '@carriage-web/shared/types/rider';
 
@@ -209,10 +208,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   ];
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
+    <form onSubmit={handleSubmit(beforeSubmit)} form}>
+      <div className={cn(inputContainer, rideTime)}>
+        <div className={cn(gridR1, gridCSmall1)}>
+          <Label label} htmlFor="firstName">
             First Name:{' '}
           </Label>
           <Input
@@ -222,17 +221,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: makeNameValidator('First name'),
             })}
             aria-required="true"
-            className={styles.firstRow}
+            firstRow}
           />
           {errors.firstName && (
-            <p className={styles.error}>
+            <p error}>
               {errors.firstName.message ?? 'First name cannot be empty'}
             </p>
           )}
         </div>
 
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="lastName">
+        <div className={cn(gridR1, gridCSmall2)}>
+          <Label label} htmlFor="lastName">
             Last Name:{' '}
           </Label>
           <Input
@@ -242,17 +241,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: makeNameValidator('Last name'),
             })}
             aria-required="true"
-            className={styles.firstRow}
+            firstRow}
           />
           {errors.lastName && (
-            <p className={styles.error}>
+            <p error}>
               {errors.lastName.message ?? 'Last name cannot be empty'}
             </p>
           )}
         </div>
 
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="netid">
+        <div className={cn(gridR1, gridCSmall3)}>
+          <Label label} htmlFor="netid">
             NetID:{' '}
           </Label>
           <Input
@@ -263,14 +262,14 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             })}
             type="text"
             disabled={isStudentEditing}
-            className={styles.firstRow}
+            firstRow}
             aria-required="true"
           />
-          {errors.netid && <p className={styles.error}>Invalid NetID</p>}
+          {errors.netid && <p error}>Invalid NetID</p>}
         </div>
 
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
+        <div className={cn(gridR2, gridCBig1)}>
+          <Label label} htmlFor="phoneNumber">
             Phone Number:{' '}
           </Label>
           <Input
@@ -279,21 +278,21 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: validatePhoneNumber,
             })}
             type="tel"
-            className={styles.firstRow}
+            firstRow}
             aria-required="true"
             style={{ height: '60px' }}
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>
+            <p error}>
               {errors.phoneNumber.message ?? 'Phone number is not valid'}
             </p>
           )}
         </div>
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor="needs">
+        <div className={cn(gridR2, gridCBig2)}>
+          <Label label} htmlFor="needs">
             Needs:{' '}
           </Label>
-          <div className={styles.needsContainer}>
+          <div needsContainer}>
             <Controller
               name="needs"
               control={control}
@@ -304,7 +303,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                   value={value}
                   isMulti
                   options={needsOptions}
-                  className={styles.customSelect}
+                  customSelect}
                   classNamePrefix="customSelectValueContainer"
                   placeholder="Select needs..."
                   styles={customStyles}
@@ -315,7 +314,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               )}
             />
             {showCustomInput && (
-              <div className={styles.customNeedInput}>
+              <div customNeedInput}>
                 <input
                   type="text"
                   value={customNeed}
@@ -327,21 +326,21 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                     }
                   }}
                   placeholder="Type custom need"
-                  className={styles.customNeedField}
+                  customNeedField}
                   autoFocus
                 />
-                <div className={styles.customNeedActions}>
+                <div customNeedActions}>
                   <button
                     type="button"
                     onClick={handleAddCustomNeed}
-                    className={styles.customNeedButton}
+                    customNeedButton}
                   >
                     ✓
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelCustomNeed}
-                    className={styles.customNeedButton}
+                    customNeedButton}
                   >
                     ✕
                   </button>
@@ -349,16 +348,16 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               </div>
             )}
             {errors.needs && (
-              <p className={styles.error}>Please select at least one need</p>
+              <p error}>Please select at least one need</p>
             )}
           </div>
         </div>
 
-        <div className={cn(styles.gridR3, styles.gridCAll)}>
+        <div className={cn(gridR3, gridCAll)}>
           <p>Duration</p>
-          <div className={styles.lastRow}>
+          <div lastRow}>
             <div>
-              <Label className={styles.label} htmlFor="joinDate">
+              <Label label} htmlFor="joinDate">
                 Join Date:{' '}
               </Label>
               <Input
@@ -367,17 +366,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 type="date"
                 aria-required="true"
                 disabled={isStudentEditing}
-                className={styles.riderDate}
+                riderDate}
               />
               {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
+                <p error}>Please enter a join date</p>
               )}
             </div>
-            <div className={styles.to}>
+            <div to}>
               <p>→</p>
             </div>
             <div>
-              <Label className={styles.label} htmlFor="endDate">
+              <Label label} htmlFor="endDate">
                 End Date:{' '}
               </Label>
               <Input
@@ -392,29 +391,29 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 type="date"
                 aria-required="true"
                 disabled={isStudentEditing}
-                className={styles.riderDate}
+                riderDate}
               />
               {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
+                <p error}>Please enter an end date</p>
               )}
               {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
+                <p error}>Invalid end time</p>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className={styles.buttonContainer}>
+      <div buttonContainer}>
         <Button
           type="button"
-          className={styles.cancel}
+          cancel}
           outline={true}
           onClick={() => cancel()}
         >
           Cancel
         </Button>
-        <Button type="submit" className={styles.submit}>
+        <Button type="submit" submit}>
           {isEditing ? 'Edit a Student' : 'Add a Student'}
         </Button>
       </div>

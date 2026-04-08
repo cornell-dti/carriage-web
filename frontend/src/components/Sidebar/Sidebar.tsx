@@ -13,7 +13,6 @@ import {
 } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import useClientId from '../../hooks/useClientId';
-import styles from './sidebar.module.css';
 import Footer from '../Footer/Footer';
 import axios from '../../util/axios';
 
@@ -113,24 +112,24 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   }
 
   return (
-    <div className={styles.container}>
-      <nav className={styles.sidebar}>
-        <div className={styles.menuItems}>
+    <div container}>
+      <nav sidebar}>
+        <div menuItems}>
           {menuItems.map(({ path, icon, caption }) => (
-            <div key={path} className={styles.sidebarLinks}>
-              <div className={styles.caption} id={path}>
+            <div key={path} sidebarLinks}>
+              <div caption} id={path}>
                 <Link
                   key={path}
                   onClick={() => setSelected(path)}
-                  className={styles.icon}
+                  icon}
                   to={path}
                   aria-labelledby={path}
                 >
                   <div
                     className={
                       path === selected
-                        ? cn(styles.selected, styles.circle)
-                        : styles.circle
+                        ? 'w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center cursor-pointer'
+                        : 'w-12 h-12 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100'
                     }
                   >
                     <img alt={`Go to ${caption}`} src={icon} />
@@ -141,20 +140,20 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             </div>
           ))}
         </div>
-        <div className={styles.logout}>
+        <div logout}>
           {/* {(isAdmin || isDriver) && (
             <img
               alt="profile_picture"
-              className={styles.profile}
+              profile}
               src={photoLink ? `${photoLink}?t=${new Date().getTime()}` : blank}
             />
           )} */}
-          <button className={styles.logoutLink} onClick={authContext.logout}>
+          <button logoutLink} onClick={authContext.logout}>
             Log out
           </button>
         </div>
       </nav>
-      <div className={styles.content}>
+      <div content}>
         {children}
         <Footer />
       </div>

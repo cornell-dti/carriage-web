@@ -1,7 +1,6 @@
 import React from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
-import styles from './employeemodal.module.css';
 import { Input, Label } from '../FormElements/FormElements';
 
 // Helper function to strip non-digit characters from phone number
@@ -25,57 +24,57 @@ const EmployeeInfo = ({
   const { register, formState } = useFormContext();
   const { errors } = formState;
   return (
-    <div className={styles.inputContainer}>
-      <div className={styles.col1}>
+    <div inputContainer}>
+      <div col1}>
         <Label htmlFor="firstName">First Name</Label>
         <Input
           id="firstName"
           type="text"
           defaultValue={firstName}
-          className={cn(styles.input)}
+          className={cn(input)}
           aria-required="true"
           {...register('firstName', { required: true })}
         />
         {errors.firstName && (
-          <p className={styles.error}>Please enter a valid name</p>
+          <p error}>Please enter a valid name</p>
         )}
       </div>
-      <div className={styles.col2}>
+      <div col2}>
         <Label htmlFor="lastName">Last Name</Label>
         <Input
           id="lastName"
           type="text"
           defaultValue={lastName}
-          className={cn(styles.input)}
+          className={cn(input)}
           aria-required="true"
           {...register('lastName', { required: true })}
         />
         {errors.lastName && (
-          <p className={styles.error}>Please enter a valid name</p>
+          <p error}>Please enter a valid name</p>
         )}
       </div>
-      <div className={styles.col1}>
+      <div col1}>
         <Label htmlFor="netid">NetID</Label>
         <Input
           id="netid"
           type="text"
           defaultValue={netId}
-          className={cn(styles.input)}
+          className={cn(input)}
           aria-required="true"
           {...register('netid', { required: true })}
         />
         {errors.netid && (
-          <p className={styles.error}>Please enter a valid NetID</p>
+          <p error}>Please enter a valid NetID</p>
         )}
       </div>
-      <div className={styles.col2}>
+      <div col2}>
         <Label htmlFor="phoneNumber">Phone Number</Label>
         <Input
           id="phoneNumber"
           type="tel"
           defaultValue={phone}
           aria-required="true"
-          className={cn(styles.input)}
+          className={cn(input)}
           {...register('phoneNumber', {
             required: 'Phone number is required',
             setValueAs: (value: string) => stripPhoneFormatting(value || ''),
@@ -88,13 +87,13 @@ const EmployeeInfo = ({
           })}
         />
         {errors.phoneNumber && (
-          <p className={styles.error}>
+          <p error}>
             {errors.phoneNumber.message?.toString() ||
               'Please enter a valid phone number (10 digits)'}
           </p>
         )}
         <p
-          className={styles.helperText}
+          helperText}
           style={{
             fontSize: '0.75rem',
             color: '#666',

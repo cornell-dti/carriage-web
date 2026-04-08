@@ -3,10 +3,8 @@ import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
-import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 import { isHoliday } from 'util/holidays';
-import buttonStyles from '../../styles/button.module.css';
 
 const isWeekday = (date: Date) => {
   return 0 < date.getDay() && date.getDay() < 6;
@@ -29,7 +27,7 @@ const isTomorrow = (date: Date) =>
 
 const Icon = () => (
   <svg
-    className={styles.svg}
+    svg}
     viewBox="0 0 12 13"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -59,19 +57,19 @@ const MiniCal = () => {
     render() {
       return (
         <>
-          <span aria-live="polite" className={styles.modal_state}>
+          <span aria-live="polite" modal_state}>
             Modal is{isExpanded}
           </span>
           <button
             className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
             onClick={this.props.onClick}
           >
-            <span className={styles.primary}>
+            <span primary}>
               {isToday(curDate) ? 'Today ' : ' '}
               {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
             </span>
-            <span className={styles.space} /> <Icon />
-            <span className={styles.space} /> {this.props.value}
+            <span space} /> <Icon />
+            <span space} /> {this.props.value}
           </button>
         </>
       );
@@ -105,7 +103,7 @@ const MiniCal = () => {
   };
 
   return (
-    <div className={styles.root}>
+    <div root}>
       <DatePicker
         //adjustDateOnChange
         selected={curDate}
@@ -128,9 +126,9 @@ const MiniCal = () => {
           nextMonthButtonDisabled,
         }) => (
           <div>
-            <div className={styles.justify}>
+            <div justify}>
               <button
-                className={cn(styles.btn2, { [styles.active]: isToday(date) })}
+                className={cn(btn2, { 'isToday(date) })}
                 onClick={() => {
                   updateDate(new Date());
                   pseudoScroll();
@@ -140,8 +138,8 @@ const MiniCal = () => {
               </button>
               <Indicators date={date} />
               <button
-                className={cn(styles.btn2, {
-                  [styles.active]: isTomorrow(date),
+                className={cn(btn2, {
+                  [active]: isTomorrow(date),
                 })}
                 onClick={() => {
                   const tomorrow = new Date();
@@ -153,22 +151,22 @@ const MiniCal = () => {
                 TOMORROW
               </button>
             </div>
-            <div className={styles.justify}>
+            <div justify}>
               <button
-                className={styles.btn}
+                btn}
                 onClick={decreaseMonth}
                 disabled={prevMonthButtonDisabled}
               >
                 {'<'}
               </button>
-              <span className={styles.month}>
+              <span month}>
                 {`${date.toLocaleString('default', {
                   month: 'long',
                 })} ${date.getFullYear()}`}
               </span>
 
               <button
-                className={styles.btn}
+                btn}
                 onClick={increaseMonth}
                 disabled={nextMonthButtonDisabled}
               >

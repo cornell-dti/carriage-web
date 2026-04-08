@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import styles from './searchandfilter.module.css';
 import { search_icon, filter, check, down, x } from 'icons/other';
 
 interface FilterOption {
@@ -168,58 +167,58 @@ export default function SearchAndFilter<T extends Record<string, any>>({
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.searchInputContainer}>
+    <div container}>
+      <div searchInputContainer}>
         <input
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
           placeholder="Search..."
-          className={styles.searchInput}
+          searchInput}
         />
-        <img src={search_icon} alt="search" className={styles.searchIcon} />
+        <img src={search_icon} alt="search" searchIcon} />
       </div>
 
-      <div className={styles.buttonContainer}>
+      <div buttonContainer}>
         <button
           onClick={() => setIsFilterOpen(!isFilterOpen)}
-          className={styles.filterButton}
+          filterButton}
         >
-          <div className={styles.filterIconWrapper}>
-            <img src={filter} alt="filter" className={styles.filterIcon} />
-            <span className={styles.filterLabel}>Filters</span>
+          <div filterIconWrapper}>
+            <img src={filter} alt="filter" filterIcon} />
+            <span filterLabel}>Filters</span>
             {getActiveFilterCount() > 0 && (
-              <span className={styles.filterCount}>
+              <span filterCount}>
                 {getActiveFilterCount()}
               </span>
             )}
             <img
               src={down}
               alt="expand"
-              className={`${styles.chevronIcon} ${
-                isFilterOpen ? styles.chevronRotate : ''
+              className={`chevronIcon} ${
+                isFilterOpen ? chevronRotate : ''
               }`}
             />
           </div>
         </button>
 
         {isFilterOpen && (
-          <div className={styles.filterDropdown}>
-            <div className={styles.filterHeader}>
+          <div filterDropdown}>
+            <div filterHeader}>
               <h3>Filters</h3>
               <button
                 onClick={() => setIsFilterOpen(false)}
-                className={styles.closeButton}
+                closeButton}
               >
-                <img src={x} alt="close" className={styles.closeIcon} />
+                <img src={x} alt="close" closeIcon} />
               </button>
             </div>
 
-            <div className={styles.filterSections}>
+            <div filterSections}>
               {filterOptions.map((option) => (
-                <div key={option.field} className={styles.filterSection}>
+                <div key={option.field} filterSection}>
                   <button
-                    className={styles.sectionHeader}
+                    sectionHeader}
                     onClick={() =>
                       setActiveSection(
                         activeSection === option.field ? null : option.field
@@ -230,26 +229,26 @@ export default function SearchAndFilter<T extends Record<string, any>>({
                     <img
                       src={down}
                       alt="expand"
-                      className={`${styles.chevronIcon} ${
+                      className={`chevronIcon} ${
                         activeSection === option.field
-                          ? styles.chevronRotate
+                          ? chevronRotate
                           : ''
                       }`}
                     />
                   </button>
 
                   {activeSection === option.field && (
-                    <div className={styles.optionsList}>
+                    <div optionsList}>
                       {option.options.map((opt) => (
                         <label
                           key={opt.value}
-                          className={styles.optionLabel}
+                          optionLabel}
                           onClick={() => toggleFilter(option.field, opt.value)}
                         >
                           <div
-                            className={`${styles.checkbox} ${
+                            className={`checkbox} ${
                               pendingFilters[option.field]?.includes(opt.value)
-                                ? styles.checkboxChecked
+                                ? checkboxChecked
                                 : ''
                             }`}
                           >
@@ -259,7 +258,7 @@ export default function SearchAndFilter<T extends Record<string, any>>({
                               <img
                                 src={check}
                                 alt="selected"
-                                className={styles.checkIcon}
+                                checkIcon}
                               />
                             )}
                           </div>
@@ -272,14 +271,14 @@ export default function SearchAndFilter<T extends Record<string, any>>({
               ))}
             </div>
 
-            <div className={styles.filterActions}>
+            <div filterActions}>
               <button
                 onClick={clearFilters}
-                className={styles.clearFiltersButton}
+                clearFiltersButton}
               >
                 Clear Filters
               </button>
-              <button onClick={applyFilters} className={styles.applyButton}>
+              <button onClick={applyFilters} applyButton}>
                 Apply Filters
               </button>
             </div>

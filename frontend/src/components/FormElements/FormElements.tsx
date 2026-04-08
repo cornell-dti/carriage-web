@@ -1,6 +1,5 @@
 import React, { SelectHTMLAttributes } from 'react';
 import cn from 'classnames';
-import styles from './formelements.module.css';
 import Select, { ActionMeta, Props as SelectProps } from 'react-select';
 import {
   Control,
@@ -16,7 +15,7 @@ type LabelType = React.DetailedHTMLProps<
 >;
 
 export const Label = ({ className, children, ...props }: LabelType) => (
-  <label {...props} className={cn(styles.label, className)}>
+  <label {...props} className={cn('mr-2', className)}>
     {children}
   </label>
 );
@@ -24,7 +23,7 @@ export const Label = ({ className, children, ...props }: LabelType) => (
 // This should only be used when you don't want a label to visually appear on screen
 // Source: https://webaim.org/techniques/css/invisiblecontent/#techniques
 export const SRLabel = ({ className, children, ...props }: LabelType) => (
-  <label {...props} className={cn(styles.srlabel, className)}>
+  <label {...props} className={cn('sr-only', className)}>
     {children}
   </label>
 );
@@ -38,7 +37,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputType>(
   ({ type, className, ...props }, ref) => (
     <input
       {...props}
-      className={cn(styles.input, styles[`${type}Input`], className)}
+      className={cn('border border-black rounded-sm text-base p-1', className)}
       type={type}
       ref={ref}
     />
@@ -68,17 +67,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       onClick,
       children,
     } = props;
-    const btnClass = !outline ? styles.primaryBtn : styles.secondaryBtn;
-    const sizeClass = !small ? styles.lgBtn : styles.smBtn;
+    const btnClass = !outline
+      ? 'text-white bg-black border border-black'
+      : 'bg-white border border-black';
+    const sizeClass = !small
+      ? 'rounded-lg min-w-[6.563rem] p-2 px-4 text-center text-sm'
+      : 'rounded-xl min-w-[5.375rem] p-1.5 px-3 text-center text-xs';
     return (
       <button
         type={type}
-        className={cn(btnClass, sizeClass, className)}
+        className={cn(btnClass, sizeClass, 'cursor-pointer focus:shadow-lg focus:shadow-blue-600', className)}
         name={name}
         ref={ref}
-        onClick={disabled ? undefined : onClick} // Disable click handler if disabled
+        onClick={disabled ? undefined : onClick}
         disabled={disabled}
-        // onClick={onClick}
       >
         {children}
       </button>
@@ -133,7 +135,7 @@ export const SelectComponent = <TFieldValues extends FieldValues>({
     <Select
       {...inputProps}
       options={transformedOptions}
-      className={cn(styles.customSelect, className)}
+      className={cn(className)}
       onChange={(newValue: unknown) => {
         const option = newValue as SelectOption | null;
         onChange(option?.value);

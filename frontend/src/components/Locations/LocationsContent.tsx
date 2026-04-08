@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import { LocationMap } from './LocationMap';
 import { Chip } from '@mui/material';
-import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
 import { LocationType } from '@carriage-web/shared/types/location';
@@ -59,9 +58,9 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
   };
 
   return (
-    <div className={styles.mainContent}>
-      <div className={styles.leftPanel}>
-        <div className={styles.searchFilterWrapper}>
+    <div className="grid grid-cols-[400px_1fr] gap-4 p-0 px-8 relative">
+      <div className="flex flex-col gap-3 h-full min-h-0">
+        <div className="h-[38px] min-h-[38px] shrink-0 bg-white rounded-sm p-0 px-2">
           <SearchAndFilter
             items={locations}
             searchFields={['name', 'address']}
@@ -79,18 +78,18 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
           />
         </div>
 
-        <div className={styles.locationsList}>
+        <div className="flex-1 overflow-y-auto bg-gray-100 rounded-sm p-4 min-h-0 max-h-[calc(100vh-300px)]">
           {filteredLocations.map((location) => (
             <div
               key={location.id}
               onClick={() => handleListItemClick(location)}
-              className={`${styles.locationItem} ${
+              className={`bg-white rounded-sm p-4 mb-4 cursor-pointer transition-all duration-200 ease-in-out ${
                 selectedLocation?.id === location.id
-                  ? styles.locationItemSelected
+                  ? 'border-2 border-blue-600'
                   : ''
-              }`}
+              } hover:shadow-md`}
             >
-              <div className={styles.locationContent}>
+              <div className="flex">
                 <LocationOn
                   sx={{
                     color: '#1976d2',
@@ -98,20 +97,20 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
                     marginTop: '0.25rem',
                   }}
                 />
-                <div className={styles.locationInfo}>
-                  <div className={styles.locationHeader}>
-                    <h3 className={styles.locationName}>{location.name}</h3>
+                <div className="flex-1">
+                  <div className="flex items-center">
+                    <h3 className="font-semibold">{location.name}</h3>
                     <Chip
                       label={location.tag}
                       size="small"
                       sx={{ marginLeft: '0.5rem' }}
                     />
                   </div>
-                  <p className={styles.locationDetails}>{location.address}</p>
-                  <div className={styles.locationFooter}>
-                    <p className={styles.locationDetails}>{location.info}</p>
+                  <p className="text-sm text-gray-600">{location.address}</p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-gray-600">{location.info}</p>
                     <OpenInFull
-                      className={styles.expandIcon}
+                      expandIcon}
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedLocationForDialog(location);
@@ -125,7 +124,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
         </div>
       </div>
 
-      <div className={styles.mapContainer}>
+      <div>
         <LocationMap
           locations={filteredLocations}
           selectedLocation={selectedLocation}

@@ -5,7 +5,6 @@ import { useDate } from '../../context/date';
 import Modal from '../RideStatus/SModal';
 import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
-import buttonStyles from '../../styles/button.module.css';
 import { Replay, ZoomIn, ZoomOut } from '@mui/icons-material';
 
 const Schedule = () => {

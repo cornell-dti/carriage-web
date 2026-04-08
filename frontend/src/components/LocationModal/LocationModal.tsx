@@ -6,7 +6,6 @@ import { ObjectType, Tag } from '../../types/index';
 import { LocationType } from '@carriage-web/shared/types/location';
 import { Button, Input, Label } from '../FormElements/FormElements';
 import Modal from '../Modal/Modal';
-import styles from './locationmodal.module.css';
 import axios from '../../util/axios';
 
 type LocationModalProps = {
@@ -115,18 +114,18 @@ const LocationModal: React.FC<LocationModalProps> = ({
           onSubmit={handleSubmit(onSubmit)}
           aria-labelledby="location-modal"
         >
-          <div className={styles.inputContainer}>
+          <div inputContainer}>
             <Label htmlFor="name">Name</Label>
             <Input
               {...register('name', { required: true })}
               type="text"
               id="name"
               defaultValue={existingLocation?.name}
-              className={styles.input}
+              input}
               aria-required="true"
             />
             {errors.name && (
-              <p className={styles.errorMsg}>Please enter a name</p>
+              <p errorMsg}>Please enter a name</p>
             )}
 
             <Label htmlFor="address">Address</Label>
@@ -135,11 +134,11 @@ const LocationModal: React.FC<LocationModalProps> = ({
               type="text"
               id="address"
               defaultValue={existingLocation?.address}
-              className={styles.input}
+              input}
               aria-required="true"
             />
             {errors.address && (
-              <p className={styles.errorMsg}>{errors.address.message}</p>
+              <p errorMsg}>{errors.address.message}</p>
             )}
 
             <Label htmlFor="info">Pickup/Dropoff Info</Label>
@@ -148,11 +147,11 @@ const LocationModal: React.FC<LocationModalProps> = ({
               type="text"
               id="info"
               defaultValue={existingLocation?.info}
-              className={styles.input}
+              input}
               aria-required="true"
             />
             {errors.info && (
-              <p className={styles.errorMsg}>
+              <p errorMsg}>
                 Please enter pickup/dropoff info
               </p>
             )}
@@ -162,7 +161,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
               {...register('tag', { required: true })}
               id="tag"
               defaultValue={existingLocation?.tag}
-              className={styles.inputContainer}
+              inputContainer}
               aria-required="true"
             >
               {Object.values(Tag).map((value) =>
@@ -175,7 +174,7 @@ const LocationModal: React.FC<LocationModalProps> = ({
             </select>
 
             <div>
-              <Button className={styles.submit} type="submit">
+              <Button submit} type="submit">
                 {submitButtonText}
               </Button>
             </div>

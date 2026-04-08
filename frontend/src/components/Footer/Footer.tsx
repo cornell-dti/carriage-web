@@ -1,10 +1,9 @@
 import React from 'react';
-import styles from './footer.module.css';
 
 const contact = 'web-accessibility@cornell.edu';
 
 const Footer = () => (
-  <footer className={styles.footer}>
+  <footer className="text-center py-8">
     <p>
       If you have a disability and are having trouble accessing information on
       this website or need materials in an alternate format, contact{' '}

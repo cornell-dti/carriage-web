@@ -10,7 +10,6 @@ import {
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
 import { OpenInFull } from '@mui/icons-material';
-import styles from './locations.module.css';
 import { LocationType } from '@carriage-web/shared/types/location';
 
 interface LocationMapProps {
@@ -79,7 +78,7 @@ const MapContent = ({
       defaultZoom={13}
       defaultCenter={{ lat: 42.4534531, lng: -76.4760776 }}
       mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
-      className={styles.mapPlaceholder}
+      mapPlaceholder}
       gestureHandling="greedy"
       disableDefaultUI={false}
     >
@@ -117,11 +116,11 @@ const MapContent = ({
           pixelOffset={[0, -40]}
           onCloseClick={() => onLocationSelect(null)}
         >
-          <div className={styles.mapPopup}>
-            <div className={styles.popupHeader}>
+          <div mapPopup}>
+            <div popupHeader}>
               <h4>{selectedLocation.shortName}</h4>
               <OpenInFull
-                className={styles.expandIcon}
+                expandIcon}
                 onClick={(e) => {
                   e.stopPropagation();
                   onViewDetails(selectedLocation);

@@ -1,6 +1,5 @@
 import React from 'react';
 import { check, block } from '../../icons/other/index';
-import styles from './confirmationtoast.module.css';
 import { ToastStatus } from '../../context/toastContext';
 
 type toastProps = {
@@ -9,16 +8,11 @@ type toastProps = {
 };
 
 const Toast = ({ message, toastType }: toastProps) => {
-  return typeof toastType === 'undefined' ||
-    toastType == ToastStatus.SUCCESS ? (
-    <div className={`${styles.toast} ${styles.successToast}`}>
-      <img alt="toast check" src={check} />
-      <p className={styles.toasttext}>{message}</p>
-    </div>
-  ) : (
-    <div className={`${styles.toast} ${styles.errorToast}`}>
-      <img alt="toast block" src={block} />
-      <p className={styles.toasttext}>{message}</p>
+  const isSuccess = typeof toastType === 'undefined' || toastType === ToastStatus.SUCCESS;
+  return (
+    <div className={`fixed top-8 left-1/2 -translate-x-1/2 m-auto p-3 px-4 rounded-lg z-999 flex items-center shadow-lg ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`}>
+      <img alt={isSuccess ? 'toast check' : 'toast block'} src={isSuccess ? check : block} />
+      <p className={`text-lg h-full ml-2.5 text-white`}>{message}</p>
     </div>
   );
 };

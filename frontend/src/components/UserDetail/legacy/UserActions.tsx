@@ -25,7 +25,6 @@ import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { ToastStatus, useToast } from '../../../context/toastContext';
 import axios from '../../../util/axios';
-import styles from './UserActions.module.css';
 
 type UserRole = 'driver' | 'admin' | 'rider' | 'both';
 
@@ -129,13 +128,13 @@ const UserActions = ({
   };
 
   return (
-    <Card className={styles.actionsContainer} elevation={2}>
-      <CardContent className={styles.actionsCardContent}>
-        <Typography variant="h6" className={styles.actionsHeader}>
+    <Card actionsContainer} elevation={2}>
+      <CardContent actionsCardContent}>
+        <Typography variant="h6" actionsHeader}>
           Actions
         </Typography>
 
-        <Box className={styles.buttonsContainer}>
+        <Box buttonsContainer}>
           {showToast && rider && (
             <Toast
               message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
@@ -150,7 +149,7 @@ const UserActions = ({
                 <Tooltip title={getActivateButtonText()}>
                   <IconButton
                     onClick={toggleActive}
-                    className={styles.actionButton}
+                    actionButton}
                     color={rider.active ? 'error' : 'success'}
                   >
                     {getActivateButtonIcon()}
@@ -161,7 +160,7 @@ const UserActions = ({
                   variant="outlined"
                   startIcon={getActivateButtonIcon()}
                   onClick={toggleActive}
-                  className={styles.activateButton}
+                  activateButton}
                   color={rider.active ? 'error' : 'success'}
                 >
                   {getActivateButtonText()}
@@ -175,7 +174,7 @@ const UserActions = ({
             <Tooltip title="Edit">
               <IconButton
                 onClick={handleEdit}
-                className={styles.actionButton}
+                actionButton}
                 color="primary"
               >
                 <EditIcon />
@@ -186,7 +185,7 @@ const UserActions = ({
               variant="outlined"
               startIcon={<EditIcon />}
               onClick={handleEdit}
-              className={styles.editButton}
+              editButton}
             >
               Edit
             </Button>
@@ -197,7 +196,7 @@ const UserActions = ({
             <Tooltip title="Delete">
               <IconButton
                 onClick={handleDelete}
-                className={styles.actionButton}
+                actionButton}
                 color="error"
               >
                 <DeleteIcon />
@@ -208,7 +207,7 @@ const UserActions = ({
               variant="outlined"
               startIcon={<DeleteIcon />}
               onClick={handleDelete}
-              className={styles.deleteButton}
+              deleteButton}
               color="error"
             >
               Delete

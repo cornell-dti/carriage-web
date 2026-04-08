@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ModalPageProps } from '../../Modal/types';
-import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 import axios from '../../../util/axios';
 
@@ -48,41 +47,41 @@ const DriverPage = ({
   }, [startTime, endTime, date]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <div className={styles.inputContainer}>
+    <form onSubmit={handleSubmit(onSubmit)} form}>
+      <div inputContainer}>
         <div
-          className={styles.drivers}
+          drivers}
           aria-required="true"
           role="radiogroup"
           aria-labelledby={labelid}
         >
           {loaded ? (
             availableDrivers.map((d) => (
-              <div className={styles.driver} key={d.id}>
+              <div driver} key={d.id}>
                 <Input
                   id={d.firstName + d.lastName}
-                  className={styles.driverRadio}
+                  driverRadio}
                   type="radio"
                   value={d.id}
                   {...register('driver', { required: true })}
                 />
                 <Label
                   htmlFor={d.firstName + d.lastName}
-                  className={styles.driverLabel}
+                  driverLabel}
                 >
                   {d.firstName} {d.lastName}
                 </Label>
               </div>
             ))
           ) : (
-            <p className={styles.loading}>Loading...</p>
+            <p loading}>Loading...</p>
           )}
         </div>
         {errors.driver?.type === 'required' && (
-          <p className={styles.error}>Please select a driver</p>
+          <p error}>Please select a driver</p>
         )}
       </div>
-      <div className={styles.btnContainer}>
+      <div btnContainer}>
         <Button outline type="button" onClick={onBack}>
           Back
         </Button>

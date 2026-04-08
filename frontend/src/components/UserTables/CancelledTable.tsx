@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RideType } from '@carriage-web/shared/types/ride';
 import RidesTable from './RidesTable';
-import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 
@@ -33,14 +32,14 @@ const CancelledTable = () => {
         const driverRides = rides.filter((r) => r && r.driver?.id === id);
         return driverRides.length ? (
           <React.Fragment key={id}>
-            <h1 className={styles.formHeader}>{name}</h1>
+            <h1 formHeader}>{name}</h1>
             <RidesTable rides={driverRides} />
           </React.Fragment>
         ) : null;
       })}
     </>
   ) : (
-    <div className={styles.noRides}>No cancelled rides</div>
+    <div noRides}>No cancelled rides</div>
   );
 };
 

@@ -3,7 +3,6 @@ import moment from 'moment';
 import { ObjectType } from '../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
 import RiderRidesTable from './RiderRidesTable';
-import styles from './table.module.css';
 import { useDate } from '../../context/date';
 
 type RiderScheduleTableProp = {
@@ -122,15 +121,15 @@ const RiderScheduleTable = ({ data, isPast }: RiderScheduleTableProp) => {
   };
 
   return (
-    <div className={styles.scheduleTable}>
-      <div className={styles.scheduleTableInner}>
+    <div scheduleTable}>
+      <div scheduleTableInner}>
         {rideMapArray.map(
           ([date, rideArray]) =>
             rideArray.length > 0 && (
               <React.Fragment key={date}>
-                <h1 className={styles.formHeader}>
+                <h1 formHeader}>
                   {date}
-                  <span className={styles.gray}>
+                  <span gray}>
                     - {getWeekday(rideArray[0].startTime)}
                   </span>
                 </h1>

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
-import styles from './modal.module.css';
 import { close } from '../../icons/other/index';
 
 type PageIndicatorsProps = {
@@ -14,11 +13,11 @@ const PageIndicators = ({ pages, current }: PageIndicatorsProps) => {
   // use spread operator to actually get empty array w/ length pages
   const indicators = [...new Array(pages)];
   return (
-    <div className={styles.pageIndicators}>
+    <div pageIndicators}>
       {indicators.map((_, i) => (
         <span
           key={String(i)}
-          className={styles.indicator}
+          indicator}
           style={{ background: i === current ? '#000' : '#C4C4C4' }}
         />
       ))}
@@ -66,7 +65,7 @@ const Modal = ({
     <>
       {isOpen &&
         createPortal(
-          <div className={styles.background}>
+          <div background}>
             <FocusTrap
               focusTrapOptions={{
                 onDeactivate: onClose,
@@ -74,20 +73,20 @@ const Modal = ({
                 clickOutsideDeactivates: true,
               }}
             >
-              <div className={styles.modal}>
-                <div className={styles.topContainer}>
+              <div modal}>
+                <div topContainer}>
                   {isRider ? (
-                    <h1 className={styles.title} id={id}>
+                    <h1 title} id={id}>
                       {currentTitle}
                     </h1>
                   ) : (
-                    <div className={styles.title} id={id}>
+                    <div title} id={id}>
                       {currentTitle}
                     </div>
                   )}
                   {!displayClose && isRider && (
                     <button
-                      className={styles.closeBtn}
+                      closeBtn}
                       id={'close'}
                       onClick={onClose}
                     >
@@ -95,7 +94,7 @@ const Modal = ({
                     </button>
                   )}
                 </div>
-                <div className={styles.page}>{pages[currentPage]}</div>
+                <div page}>{pages[currentPage]}</div>
               </div>
             </FocusTrap>
           </div>,

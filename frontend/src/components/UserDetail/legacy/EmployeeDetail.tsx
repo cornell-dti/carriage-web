@@ -14,7 +14,6 @@ import {
   calender_dark,
 } from '../../../icons/userInfo/index';
 import { RideTable } from '../../RideDetails';
-import styles from './userDetail.module.css';
 import { AdminType } from '@carriage-web/shared/types/admin';
 import { DriverType } from '@carriage-web/shared/types/driver';
 import axios from '../../../util/axios';
@@ -79,7 +78,7 @@ const Header = () => {
   };
 
   return (
-    <Box className={styles.pageDivTitle}>
+    <Box pageDivTitle}>
       <Button
         startIcon={<ArrowBack />}
         onClick={handleBack}
@@ -234,10 +233,10 @@ const EmployeeDetail = () => {
     return (
       <main id="main">
         <Header />
-        <Box className={styles.pageContainer}>
+        <Box pageContainer}>
           {/* User Information Section */}
-          <Box className={styles.userInformationSection}>
-            <Box className={styles.userInfoContainer}>
+          <Box userInformationSection}>
+            <Box userInfoContainer}>
               <UserDetail
                 firstName={employee.firstName}
                 lastName={employee.lastName}
@@ -264,7 +263,7 @@ const EmployeeDetail = () => {
               </UserDetail>
             </Box>
 
-            <Box className={styles.statisticsContainer}>
+            <Box statisticsContainer}>
               <UserStatistics
                 role={roleValue() as 'driver' | 'admin' | 'both'}
                 rideCount={rideCount}
@@ -272,7 +271,7 @@ const EmployeeDetail = () => {
               />
             </Box>
 
-            <Box className={styles.actionsContainer}>
+            <Box actionsContainer}>
               <UserActions
                 role={roleValue() as 'driver' | 'admin' | 'both'}
                 employee={employee}
@@ -281,7 +280,7 @@ const EmployeeDetail = () => {
           </Box>
 
           {/* Rides Table Section */}
-          <Box className={styles.ridesTableSection}>
+          <Box ridesTableSection}>
             <RideTable rides={rides} userRole="admin" />
           </Box>
         </Box>

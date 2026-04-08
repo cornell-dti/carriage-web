@@ -3,7 +3,6 @@ import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import { createEmptyRide } from '../../util/modelFixtures';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { useRides } from '../../context/RidesContext';
-import buttonStyles from '../../styles/button.module.css';
 
 const AddRideButton: React.FC = () => {
   const [open, setOpen] = useState(false);

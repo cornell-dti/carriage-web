@@ -3,7 +3,6 @@ import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import Tag from '../Tag/Tag';
 import { RideType } from '@carriage-web/shared/types/ride';
-import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
 import { trash, x } from '../../icons/other/index';
 
@@ -42,20 +41,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
         onClose={() => setDeleteOpen(false)}
       />
       {isOpen && (
-        <div className={styles.modal} ref={wrapperRef}>
-          <div className={styles.body}>
-            <div className={styles.modalOptions}>
+        <div modal} ref={wrapperRef}>
+          <div body}>
+            <div modalOptions}>
               <button
-                className={styles.cancel}
+                cancel}
                 onClick={() => setDeleteOpen(true)}
               >
                 <img src={trash} alt="trash" />
               </button>
-              <button className={styles.close} onClick={close}>
+              <button close} onClick={close}>
                 <img src={x} alt="close" />
               </button>
             </div>
-            <h3 className={styles.title}>
+            <h3 title}>
               {ride.riders && ride.riders.length > 0
                 ? ride.riders.length === 1
                   ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
@@ -65,20 +64,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                 : 'No rider assigned'}
             </h3>
             <p>Status Updates</p>
-            <div className={styles.bar}>
+            <div bar}>
               <ProgressBar status={ride.status} late={false} />
             </div>
-            <div className={styles.row}>
-              <div className={styles.column}>
+            <div row}>
+              <div column}>
                 <p>{moment(new Date(ride.startTime)).format('h:mm a')}</p>
-                <div className={styles.location}>
+                <div location}>
                   <Tag location="" tag={ride.startLocation.tag} />
-                  <p className={styles.locationName}>
+                  <p locationName}>
                     {ride.startLocation.name}
                   </p>
                 </div>
               </div>
-              <div className={styles.center}>
+              <div center}>
                 <svg
                   width="28"
                   height="8"
@@ -113,19 +112,19 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                   />
                 </svg>
               </div>
-              <div className={styles.column}>
+              <div column}>
                 <p>{moment(new Date(ride.endTime)).format('h:mm a')}</p>
-                <div className={styles.location}>
+                <div location}>
                   <Tag location="" tag={ride.endLocation.tag} />
-                  <p className={styles.locationName}>{ride.endLocation.name}</p>
+                  <p locationName}>{ride.endLocation.name}</p>
                 </div>
               </div>
             </div>
 
-            <div className={styles.footer}>
-              <hr className={styles.divider} />
-              <div className={styles.row}>
-                <div className={styles.column2}>
+            <div footer}>
+              <hr divider} />
+              <div row}>
+                <div column2}>
                   <svg
                     width="24"
                     height="1em"

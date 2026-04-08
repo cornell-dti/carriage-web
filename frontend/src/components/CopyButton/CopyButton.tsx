@@ -1,5 +1,4 @@
 import { useRiders } from '../../context/RidersContext';
-import buttonStyles from '../../styles/button.module.css';
 import { useToast, ToastStatus } from '../../context/toastContext';
 
 const CopyButton = () => {

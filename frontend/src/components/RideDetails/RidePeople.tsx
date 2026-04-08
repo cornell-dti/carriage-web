@@ -22,7 +22,6 @@ import axios from '../../util/axios';
 import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
 import { SearchableType } from '../../utils/searchConfig';
-import styles from './RidePeople.module.css';
 
 interface RidePeopleProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -43,9 +42,9 @@ const PersonCard: React.FC<PersonCardProps> = ({
   const rider = isRider ? (person as RiderType) : undefined;
 
   return (
-    <div className={styles.personCard}>
+    <div personCard}>
       <CardContent>
-        <div className={styles.personHeader}>
+        <div personHeader}>
           <Avatar src={person.photoLink} sx={{ width: 48, height: 48 }}>
             {person.firstName?.charAt(0)}
             {person.lastName?.charAt(0)}
@@ -65,9 +64,9 @@ const PersonCard: React.FC<PersonCardProps> = ({
         </div>
 
         {/* Contact Information */}
-        <div className={styles.contactInfo}>
+        <div contactInfo}>
           {person.phoneNumber && (
-            <div className={styles.contactRow}>
+            <div contactRow}>
               <IconButton size="small" aria-label="Call">
                 <PhoneIcon fontSize="small" />
               </IconButton>
@@ -75,7 +74,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
             </div>
           )}
           {person.email && (
-            <div className={styles.contactRow}>
+            <div contactRow}>
               <IconButton size="small" aria-label="Email">
                 <EmailIcon fontSize="small" />
               </IconButton>
@@ -88,11 +87,11 @@ const PersonCard: React.FC<PersonCardProps> = ({
         {showAccessibility &&
           rider?.accessibility &&
           rider.accessibility.length > 0 && (
-            <div className={styles.accessibilitySection}>
+            <div accessibilitySection}>
               <Typography variant="body2" color="textSecondary" gutterBottom>
                 Accessibility Needs
               </Typography>
-              <div className={styles.accessibilityChips}>
+              <div accessibilityChips}>
                 {rider.accessibility.map((need: string) => (
                   <Chip
                     key={need}
@@ -222,18 +221,18 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   };
 
   const renderRiderView = () => (
-    <div className={styles.container}>
-      <div className={styles.adminContainer}>
-        <div className={styles.adminCard}>
+    <div container}>
+      <div adminContainer}>
+        <div adminCard}>
           <Typography variant="subtitle1" gutterBottom>
             Driver
           </Typography>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div contentArea}>
+            <div riderListContainer}>
               {ride.driver ? (
                 <PersonCard person={ride.driver} type="driver" />
               ) : (
-                <div className={styles.notAssigned}>
+                <div notAssigned}>
                   <Typography variant="body1">Not assigned</Typography>
                 </div>
               )}
@@ -245,14 +244,14 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   );
 
   const renderDriverView = () => (
-    <div className={styles.container}>
-      <div className={styles.adminContainer}>
-        <div className={styles.adminCard}>
+    <div container}>
+      <div adminContainer}>
+        <div adminCard}>
           <Typography variant="subtitle1" gutterBottom>
             Riders ({ride.riders?.length || 0})
           </Typography>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div contentArea}>
+            <div riderListContainer}>
               <RiderList
                 riders={ride.riders || []}
                 showAccessibility
@@ -270,14 +269,14 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     const canEditDriver = canAssignDriver(ride, 'admin');
 
     return (
-      <div className={styles.container}>
-        <div className={styles.adminContainer}>
-          <div className={styles.adminCard}>
+      <div container}>
+        <div adminContainer}>
+          <div adminCard}>
             <Typography variant="subtitle1" gutterBottom>
               Riders ({ride.riders?.length || 0})
             </Typography>
-            <div className={styles.contentArea}>
-              <div className={styles.riderListContainer}>
+            <div contentArea}>
+              <div riderListContainer}>
                 <RiderList
                   riders={ride.riders || []}
                   showAccessibility
@@ -286,7 +285,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
               </div>
             </div>
             {isEditing && canEditRider && (
-              <div className={styles.actionButtons}>
+              <div actionButtons}>
                 <Button
                   ref={riderButtonRef}
                   variant="outlined"
@@ -299,23 +298,23 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
               </div>
             )}
           </div>
-          <div className={styles.adminCard}>
+          <div adminCard}>
             <Typography variant="subtitle1" gutterBottom>
               Driver
             </Typography>
-            <div className={styles.contentArea}>
-              <div className={styles.riderListContainer}>
+            <div contentArea}>
+              <div riderListContainer}>
                 {tempCurrentDriver ? (
                   <PersonCard person={tempCurrentDriver} type="driver" />
                 ) : (
-                  <div className={styles.notAssigned}>
+                  <div notAssigned}>
                     <Typography variant="body1">Not assigned</Typography>
                   </div>
                 )}
               </div>
             </div>
             {isEditing && canEditDriver && (
-              <div className={styles.actionButtons}>
+              <div actionButtons}>
                 {tempCurrentDriver ? (
                   <>
                     <Button
