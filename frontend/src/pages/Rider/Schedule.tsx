@@ -8,7 +8,6 @@ import React, {
 import { Button } from '@mui/material';
 import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
-import styles from './page.module.css';
 import RequestRideDialog, {
   FormData,
 } from 'components/RiderComponents/RequestRideDialog';
@@ -18,7 +17,6 @@ import { useRides } from '../../context/RidesContext';
 import axios from '../../util/axios';
 import ResponsiveRideCard from '../../components/ResponsiveRideCard';
 import { RideDetailsComponent } from 'components/RideDetails';
-import buttonStyles from '../../styles/button.module.css';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -218,12 +216,12 @@ const Schedule: React.FC = () => {
       apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
-      <main id="main" className={styles.schedulePage}>
-        <div className={styles.pageTitle}>
+      <main id="main" className="flex flex-col p-4">
+        <div className="flex justify-between items-center p-4">
           {user && (
-            <h1 className={styles.header}>{user.firstName}'s Schedule</h1>
+            <h1 className="text-left text-[1.75rem] m-0 mr-4">{user.firstName}'s Schedule</h1>
           )}
-          <div className={styles.rightSection}>
+          <div className="flex items-center [&>div]:ml-3.5">
             <Button
               variant="contained"
               color="secondary"
@@ -261,8 +259,7 @@ const Schedule: React.FC = () => {
           >
             <button
               onClick={goToPreviousWeek}
-              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: '3rem', height: '2.5rem' }}
+              className="w-12 h-10 flex items-center justify-center cursor-pointer rounded px-4 text-base text-nowrap border border-[#ddd] bg-white transition-[background] duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
               aria-label="Previous Week"
               aria-hidden="true"
             >
@@ -328,8 +325,7 @@ const Schedule: React.FC = () => {
             </LocalizationProvider>
             <button
               onClick={goToNextWeek}
-              className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-              style={{ width: '3rem', height: '2.5rem' }}
+              className="w-12 h-10 flex items-center justify-center cursor-pointer rounded px-4 text-base text-nowrap border border-[#ddd] bg-white transition-[background] duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
               aria-label="Next Week"
               aria-hidden="true"
             >
