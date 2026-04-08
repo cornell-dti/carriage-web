@@ -318,7 +318,11 @@ const AuthManager = () => {
                   onClick={() => handleSSOLogin(true, false)}
                   className="flex flex-col items-center justify-center border-none rounded-xl bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.16)] m-2 p-4 cursor-pointer min-w-45"
                 >
-                  <img src={admin} className="h-11.25 w-11.25 m-0.5" alt="admin logo" />
+                  <img
+                    src={admin}
+                    className="h-11.25 w-11.25 m-0.5"
+                    alt="admin logo"
+                  />
                   <div className="p-3 text-lg font-bold">Admins</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>
@@ -329,7 +333,11 @@ const AuthManager = () => {
                   onClick={() => handleSSOLogin(false, true)}
                   className="flex flex-col items-center justify-center border-none rounded-xl bg-white shadow-[0px_0px_10px_rgba(0,0,0,0.1),0px_10px_10px_rgba(0,0,0,0.16)] m-2 p-4 cursor-pointer min-w-45"
                 >
-                  <img src={car} className="h-11.25 w-11.25 m-0.5" alt="car logo" />
+                  <img
+                    src={car}
+                    className="h-11.25 w-11.25 m-0.5"
+                    alt="car logo"
+                  />
                   <div className="p-3 text-lg font-bold">Drivers</div>
                   <div>Sign in with</div>
                   <div>Cornell NetID</div>

@@ -40,10 +40,14 @@ const StatsBox: React.FC<StatsBoxProps> = ({
 }) => {
   const { iconBg, statColor } = getVariantStyles(variant);
   return (
-    <div className={`flex items-center p-5 px-6 min-w-45 bg-white rounded-lg transition-all duration-200 ${className}`}>
+    <div
+      className={`flex items-center p-5 px-6 min-w-45 bg-white rounded-lg transition-all duration-200 ${className}`}
+    >
       <div className="flex items-center justify-center mr-4 shrink-0">
         {icon ? (
-          <div className={`rounded-full w-10 h-10 flex items-center justify-center ${iconBg} transition-all duration-200`}>
+          <div
+            className={`rounded-full w-10 h-10 flex items-center justify-center ${iconBg} transition-all duration-200`}
+          >
             <img
               className="w-6 h-6 object-contain"
               src={icon}
@@ -60,7 +64,9 @@ const StatsBox: React.FC<StatsBoxProps> = ({
         )}
       </div>
       <div className="flex flex-col items-center text-center w-full">
-        <p className={`text-2xl font-semibold m-0 leading-tight ${statColor}`}>{stats}</p>
+        <p className={`text-2xl font-semibold m-0 leading-tight ${statColor}`}>
+          {stats}
+        </p>
         <p className="text-sm text-[#6b7280] m-0 mt-1">{description}</p>
       </div>
     </div>

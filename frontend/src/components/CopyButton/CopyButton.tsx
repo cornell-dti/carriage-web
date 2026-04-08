@@ -1,5 +1,4 @@
 import { useRiders } from '../../context/RidersContext';
-import buttonStyles from '../../styles/button.module.css';
 import { useToast, ToastStatus } from '../../context/toastContext';
 
 const CopyButton = () => {
@@ -20,11 +19,8 @@ const CopyButton = () => {
 
   return (
     <button
-      style={{
-        width: '10rem',
-      }}
       onClick={handleClick}
-      className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${buttonStyles.buttonLarge}`}
+      className="w-40 h-10 flex items-center justify-center cursor-pointer rounded-sm text-base whitespace-nowrap pl-6 pr-6 border border-[#ddd] bg-white transition-colors duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
     >
       Copy Emails
     </button>

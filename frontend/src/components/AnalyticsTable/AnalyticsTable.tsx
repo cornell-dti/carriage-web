@@ -43,9 +43,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
   };
 
   return (
-    <tr
-      style={{ backgroundColor: index % 2 ? undefined : '#EBEAEA' }}
-    >
+    <tr style={{ backgroundColor: index % 2 ? undefined : '#EBEAEA' }}>
       {data.map((d, cellIndex) => (
         <td
           key={cellIndex}
@@ -242,7 +240,9 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
                 : driverTableHeader.map((title, idx) => (
                     <th
                       key={idx}
-                      className={cn('py-4.5 px-2 text-center', { 'sticky left-0': idx < 2 })}
+                      className={cn('py-4.5 px-2 text-center', {
+                        'sticky left-0': idx < 2,
+                      })}
                     >
                       {title}
                     </th>

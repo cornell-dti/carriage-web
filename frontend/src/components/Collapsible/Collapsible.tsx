@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styles from './collapsible.module.css';
 import { up, down } from '../../icons/other/index';
 
 type CollapsibleSection = {
@@ -17,12 +16,12 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
     }
   };
   return (
-    <div className={styles.collapsible}>
-      <div className={styles.collapsibleContent}>
-        <div className={styles.banner} onClick={() => setExpanded(!expanded)}>
-          <h2 className={styles.title}>{title}</h2>
+    <div className="w-full">
+      <div className="inline-block w-full border-b border-[#ddd]">
+        <div className="flex w-full p-[0.9375rem_2.25rem] cursor-pointer" onClick={() => setExpanded(!expanded)}>
+          <h2 className="inline-block text-[1.125rem] font-bold m-0">{title}</h2>
           <img
-            className={styles.icon}
+            className="ml-[0.75rem]"
             src={icon}
             role={'button'}
             alt={'see more'}
@@ -30,7 +29,7 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
             onKeyDown={handleKeywordKeyPress}
           />
         </div>
-        {expanded && <div className={styles.contentContainer}>{children}</div>}
+        {expanded && <div>{children}</div>}
       </div>
     </div>
   );
