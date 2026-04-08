@@ -18,8 +18,13 @@ const Collapsible = ({ title, children }: CollapsibleSection) => {
   return (
     <div className="w-full">
       <div className="inline-block w-full border-b border-[#ddd]">
-        <div className="flex w-full p-[0.9375rem_2.25rem] cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <h2 className="inline-block text-[1.125rem] font-bold m-0">{title}</h2>
+        <div
+          className="flex w-full p-[0.9375rem_2.25rem] cursor-pointer"
+          onClick={() => setExpanded(!expanded)}
+        >
+          <h2 className="inline-block text-[1.125rem] font-bold m-0">
+            {title}
+          </h2>
           <img
             className="ml-[0.75rem]"
             src={icon}

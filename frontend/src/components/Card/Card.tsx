@@ -46,8 +46,12 @@ const Card = ({
       )}
       <div className="p-[1.2rem_0rem_1.81rem_1rem]">
         <div className="ml-[-1rem] p-[0.25rem_0_0.25rem_0.81rem] border-l-[0.19rem] border-black">
-          <h2 className="inline-block text-[1.25rem] font-bold m-0">{fullName}</h2>
-          <p className="inline-block text-[0.938rem] text-[#595959] ml-[0.313rem] m-0">{netId}</p>
+          <h2 className="inline-block text-[1.25rem] font-bold m-0">
+            {fullName}
+          </h2>
+          <p className="inline-block text-[0.938rem] text-[#595959] ml-[0.313rem] m-0">
+            {netId}
+          </p>
         </div>
         {children}
       </div>
