@@ -83,7 +83,7 @@ const ComponentDefinition = ({
             fontSize: '0.875rem',
             color: '#555',
             margin: 0,
-            maxWidth: '15rem',
+            maxWidth: '15git rem',
           }}
         >
           {usage}
