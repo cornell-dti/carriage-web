@@ -206,7 +206,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                       marginBottom: '8px',
                     }}
                   >
-                    📍 {coordsInvalidForMap ? 'Map unavailable' : 'Custom Location'}
+                    📍{' '}
+                    {coordsInvalidForMap
+                      ? 'Map unavailable'
+                      : 'Custom Location'}
                   </p>
                   <p style={{ fontSize: '14px', color: '#999' }}>
                     {mapPlaceholderSubtitle}

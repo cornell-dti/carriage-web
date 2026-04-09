@@ -31,7 +31,9 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
   const uniqueTags = useMemo(() => {
     const tags = locations
       .map((location) => location.tag)
-      .filter((tag): tag is string => typeof tag === 'string' && tag.length > 0);
+      .filter(
+        (tag): tag is string => typeof tag === 'string' && tag.length > 0
+      );
     return Array.from(new Set(tags));
   }, [locations]);
 
