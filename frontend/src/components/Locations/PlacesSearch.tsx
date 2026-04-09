@@ -56,7 +56,10 @@ const PlacesSearch = ({
         setIsLoading(false);
         setError('Error searching for address');
         setResults([]);
-        showError(`Error searching for address: ${formatErrorMessage(error)}`, 'Address Search Error');
+        showError(
+          `Error searching for address: ${formatErrorMessage(error)}`,
+          'Address Search Error'
+        );
       }
     },
     [map]

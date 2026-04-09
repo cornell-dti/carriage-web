@@ -533,7 +533,6 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
         finalDropoff = await createCustomLocation(customDropoffName);
       }
 
-
       const datetime = dayjs(formData.time)
         .set('date', formData.date!.getDate())
         .set('month', formData.date!.getMonth())
@@ -551,11 +550,13 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
-        const errMessages = timeValidation.errors.map((err) => err.message).join(', ');
+        const errMessages = timeValidation.errors
+          .map((err) => err.message)
+          .join(', ');
         const firstErr =
           timeValidation.errors[0]?.message || 'Invalid time values';
         showError(
-          "Could not create ride due to following time validation issues: " +
+          'Could not create ride due to following time validation issues: ' +
             (errMessages || firstErr),
           'Time Validation Error'
         );
@@ -580,7 +581,10 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       }
     } catch (e) {
       console.error('Error submitting ride:', e);
-      showToast('Failed to save changes: ' + formatErrorMessage(e), ToastStatus.ERROR);
+      showToast(
+        'Failed to save changes: ' + formatErrorMessage(e),
+        ToastStatus.ERROR
+      );
     }
   };
 

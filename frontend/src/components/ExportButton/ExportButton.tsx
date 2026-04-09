@@ -47,7 +47,10 @@ const ExportButton = ({
       })
       .then(() => showToast(toastMsg, ToastStatus.SUCCESS))
       .catch((error) => {
-        showError(`Failed to download data: ${formatErrorMessage(error)}`, 'Export Error');
+        showError(
+          `Failed to download data: ${formatErrorMessage(error)}`,
+          'Export Error'
+        );
       });
   };
 

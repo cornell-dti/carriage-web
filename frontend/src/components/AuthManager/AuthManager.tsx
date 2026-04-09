@@ -215,7 +215,10 @@ const AuthManager = () => {
       }
     } catch (error) {
       console.error('Error decrypting JWT:', error);
-      showError(`Error decrypting JWT: ${formatErrorMessage(error)}`, 'Authentication Error');
+      showError(
+        `Error decrypting JWT: ${formatErrorMessage(error)}`,
+        'Authentication Error'
+      );
     }
     return '';
   }

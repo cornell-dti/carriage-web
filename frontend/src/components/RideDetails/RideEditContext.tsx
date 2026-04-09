@@ -10,10 +10,7 @@ import { SchedulingState } from '../../types';
 import { RideType } from '@carriage-web/shared/types/ride';
 import axios from '../../util/axios';
 import { canEditRide, UserRole } from '../../util/rideValidation';
-import {
-  isNewRide,
-  hasRideChanges,
-} from '../../util/modelFixtures';
+import { isNewRide, hasRideChanges } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
 import { useRides } from '../../context/RidesContext';
 import { useToast } from '../../context/toastContext';
@@ -165,7 +162,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
 
       if (!timeValidation.isValid) {
         console.error('Time validation failed:', timeValidation.errors);
-        const errMessages = timeValidation.errors.map((err) => err.message).join(', ');
+        const errMessages = timeValidation.errors
+          .map((err) => err.message)
+          .join(', ');
         const firstErr =
           timeValidation.errors[0]?.message || 'Invalid time values';
         showError(errMessages || firstErr, 'Ride Edit Error');
@@ -183,7 +182,10 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         !editedRide.endTime
       ) {
         console.error('Missing required fields for new ride');
-        showError('Please select pickup, dropoff, start time, and end time.', 'Ride Edit Error');
+        showError(
+          'Please select pickup, dropoff, start time, and end time.',
+          'Ride Edit Error'
+        );
         return [false, 'Missing required fields for new ride'];
       }
 

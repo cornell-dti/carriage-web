@@ -87,7 +87,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     } catch (error) {
       console.error('Failed to fetch drivers:', error);
       setError(error as Error);
-      showError(`Failed to fetch drivers: ${formatErrorMessage(error)}`, 'Employees Error');
+      showError(
+        `Failed to fetch drivers: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
     }
   }, []);
 
@@ -103,7 +106,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     } catch (error) {
       console.error('Failed to fetch admins:', error);
       setError(error as Error);
-      showError(`Failed to fetch admins: ${formatErrorMessage(error)}`, 'Employees Error');
+      showError(
+        `Failed to fetch admins: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
     }
   }, []);
 
@@ -136,7 +142,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         console.error('Failed to update driver info:', error);
         setDrivers(originalDrivers);
         setError(error as Error);
-        showError(`Failed to update driver info: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to update driver info: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
         throw error;
       }
     },
@@ -168,7 +177,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       console.error('Failed to create driver:', error);
       setDrivers((prevDrivers) => prevDrivers.filter((d) => d.id !== tempId));
       setError(error as Error);
-      showError(`Failed to create driver: ${formatErrorMessage(error)}`, 'Employees Error');
+      showError(
+        `Failed to create driver: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
       throw error;
     }
   }, []);
@@ -189,7 +201,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         console.error('Failed to delete driver:', error);
         setDrivers(originalDrivers);
         setError(error as Error);
-        showError(`Failed to delete driver: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to delete driver: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
         throw error;
       }
     },
@@ -225,7 +240,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         console.error('Failed to update admin info:', error);
         setAdmins(originalAdmins);
         setError(error as Error);
-        showError(`Failed to update admin info: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to update admin info: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
         throw error;
       }
     },
@@ -255,7 +273,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
       console.error('Failed to create admin:', error);
       setAdmins((prevAdmins) => prevAdmins.filter((a) => a.id !== tempId));
       setError(error as Error);
-      showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+      showError(
+        `Failed to create admin: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
       throw error;
     }
   }, []);
@@ -276,7 +297,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
         console.error('Failed to delete admin:', error);
         setAdmins(originalAdmins);
         setError(error as Error);
-        showError(`Failed to delete admin: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to delete admin: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
         throw error;
       }
     },

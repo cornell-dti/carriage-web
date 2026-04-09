@@ -86,7 +86,10 @@ const RideActions: React.FC<RideActionsProps> = ({
       await refreshRides();
     } catch (error) {
       console.error('Failed to update status:', error);
-      showError(`Failed to update status: ${formatErrorMessage(error)}`, 'Rides Error');
+      showError(
+        `Failed to update status: ${formatErrorMessage(error)}`,
+        'Rides Error'
+      );
     } finally {
       setUpdating(false);
     }
@@ -122,7 +125,10 @@ const RideActions: React.FC<RideActionsProps> = ({
       showToast('Ride Cancelled', ToastStatus.SUCCESS);
     } catch (error) {
       console.error('Failed to cancel ride:', error);
-      showError(`Failed to cancel ride: ${formatErrorMessage(error)}`, 'Rides Error');
+      showError(
+        `Failed to cancel ride: ${formatErrorMessage(error)}`,
+        'Rides Error'
+      );
     }
   };
 
@@ -158,8 +164,12 @@ const RideActions: React.FC<RideActionsProps> = ({
         }
       } else {
         const message = isNewRide(ride)
-          ? 'Failed to create ride due to the following errors: ' + errMessage + '.'
-          : 'Failed to save ride due to the following errors: ' + errMessage + '.';
+          ? 'Failed to create ride due to the following errors: ' +
+            errMessage +
+            '.'
+          : 'Failed to save ride due to the following errors: ' +
+            errMessage +
+            '.';
         showError(message, 'Rides Error');
       }
     } catch (error) {

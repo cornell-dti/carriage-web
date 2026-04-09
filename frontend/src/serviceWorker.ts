@@ -107,7 +107,9 @@ function registerValidSW(swUrl: string, config?: Config) {
     .catch((error) => {
       console.error('Error during service worker registration:', error);
       showGlobalError(
-        `Failed to register service worker: ${formatErrorMessage(error)}. Some features may not be available offline.`,
+        `Failed to register service worker: ${formatErrorMessage(
+          error
+        )}. Some features may not be available offline.`,
         'Service Worker Error'
       );
     });

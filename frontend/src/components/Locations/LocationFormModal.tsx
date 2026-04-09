@@ -72,7 +72,7 @@ export const LocationFormModal: React.FC<Props> = ({
   const [locationImages, setLocationImages] = useState<LocationImage[]>([]);
   const { showError } = useErrorModal();
   const { showToast } = useToast();
-  
+
   useEffect(() => {
     if (!open) return;
 

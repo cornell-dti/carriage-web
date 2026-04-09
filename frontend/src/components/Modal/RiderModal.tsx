@@ -45,21 +45,23 @@ const RiderModal = ({
   useEffect(() => {
     if (isSubmitted) {
       const method = existingRider ? axios.put : axios.post;
-      method(
-        `/api/riders/${!existingRider ? '' : existingRider.id}`,
-        formData
-      ).then(() => {
-        refreshRiders();
-        showToast(
-          `The student has been ${!existingRider ? 'added' : 'edited'}`,
-          ToastStatus.SUCCESS
-        );
-        if (isRiderWeb) {
-          refreshUser();
-        }
-      }).catch((error) => {
-        showError(`Failed to save student: ${formatErrorMessage(error)}`, 'Students Error');
-      });
+      method(`/api/riders/${!existingRider ? '' : existingRider.id}`, formData)
+        .then(() => {
+          refreshRiders();
+          showToast(
+            `The student has been ${!existingRider ? 'added' : 'edited'}`,
+            ToastStatus.SUCCESS
+          );
+          if (isRiderWeb) {
+            refreshUser();
+          }
+        })
+        .catch((error) => {
+          showError(
+            `Failed to save student: ${formatErrorMessage(error)}`,
+            'Students Error'
+          );
+        });
       setIsSubmitted(false);
     }
   }, [

@@ -66,7 +66,10 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
       }
     } catch (error) {
       console.error('Failed to fetch riders:', error);
-      showError(`Failed to fetch riders: ${formatErrorMessage(error)}`, 'Riders Error');
+      showError(
+        `Failed to fetch riders: ${formatErrorMessage(error)}`,
+        'Riders Error'
+      );
     } finally {
       if (componentMounted.current) {
         setLoading(false);
@@ -90,7 +93,10 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
         // Rollback on error
         console.error('Failed to update rider active status:', error);
         await refreshRiders(); // Refresh to get server state
-        showError(`Failed to update rider active status: ${formatErrorMessage(error)}`, 'Riders Error');
+        showError(
+          `Failed to update rider active status: ${formatErrorMessage(error)}`,
+          'Riders Error'
+        );
         throw error;
       }
     },
@@ -122,7 +128,10 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
         // Rollback on error
         console.error('Failed to update rider info:', error);
         setRiders(originalRiders);
-        showError(`Failed to update rider info: ${formatErrorMessage(error)}`, 'Riders Error');
+        showError(
+          `Failed to update rider info: ${formatErrorMessage(error)}`,
+          'Riders Error'
+        );
         throw error;
       }
     },
@@ -149,7 +158,10 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
       // Rollback on error
       console.error('Failed to create rider:', error);
       setRiders((prevRiders) => prevRiders.filter((r) => r.id !== tempId));
-      showError(`Failed to create rider: ${formatErrorMessage(error)}`, 'Riders Error');
+      showError(
+        `Failed to create rider: ${formatErrorMessage(error)}`,
+        'Riders Error'
+      );
       throw error;
     }
   }, []);
@@ -169,7 +181,10 @@ export const RidersProvider = ({ children }: RidersProviderProps) => {
         // Rollback on error
         console.error('Failed to delete rider:', error);
         setRiders(originalRiders);
-        showError(`Failed to delete rider: ${formatErrorMessage(error)}`, 'Riders Error');
+        showError(
+          `Failed to delete rider: ${formatErrorMessage(error)}`,
+          'Riders Error'
+        );
         throw error;
       }
     },

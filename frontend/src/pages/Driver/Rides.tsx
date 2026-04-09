@@ -425,7 +425,10 @@ const Rides = () => {
           setAllDriverRides(rides);
         } catch (error) {
           console.error('Failed to fetch driver rides:', error);
-        showError(`Failed to fetch driver rides: ${formatErrorMessage(error)}`, 'Rides Error');
+          showError(
+            `Failed to fetch driver rides: ${formatErrorMessage(error)}`,
+            'Rides Error'
+          );
         } finally {
           setLoadingRides(false);
         }

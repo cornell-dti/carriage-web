@@ -251,7 +251,10 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
       updateRideField('startTime', updatedStartTime.toISOString());
     } catch (error) {
       console.error('Failed to update ride time:', error);
-      showError(`Error updating ride time: ${formatErrorMessage(error)}`, 'Ride Edit Error');
+      showError(
+        `Error updating ride time: ${formatErrorMessage(error)}`,
+        'Ride Edit Error'
+      );
     }
   };
 
@@ -420,7 +423,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       const hasEndTimeError =
                         endTimeBeforeStartError !== undefined ||
                         durationError !== undefined;
-                        
+
                       return (
                         <>
                           <div className={styles.dateTimeRow}>

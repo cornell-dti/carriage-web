@@ -191,7 +191,10 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
       console.error('Failed to fetch riders:', error);
       setRidersError('Failed to load riders');
       setRiders([]);
-      showError(`Failed to fetch riders: ${formatErrorMessage(error)}`, 'Riders Error');
+      showError(
+        `Failed to fetch riders: ${formatErrorMessage(error)}`,
+        'Riders Error'
+      );
     } finally {
       setLoadingRiders(false);
     }

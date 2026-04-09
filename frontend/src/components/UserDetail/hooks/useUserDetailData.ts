@@ -7,7 +7,10 @@ import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
-import { showGlobalError, formatErrorMessage } from '../../../context/errorModal';
+import {
+  showGlobalError,
+  formatErrorMessage,
+} from '../../../context/errorModal';
 
 interface UserDetailData {
   user: Employee | RiderType | null;

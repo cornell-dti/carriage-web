@@ -1,4 +1,10 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import Modal from '../components/Modal/Modal';
 
 type ErrorModalState = {
@@ -12,9 +18,13 @@ type ErrorModalContextValue = {
   hideError: () => void;
 };
 
-const ErrorModalContext = createContext<ErrorModalContextValue | undefined>(undefined);
+const ErrorModalContext = createContext<ErrorModalContextValue | undefined>(
+  undefined
+);
 
-let externalShowError: ((message: React.ReactNode, title?: string) => void) | null = null;
+let externalShowError:
+  | ((message: React.ReactNode, title?: string) => void)
+  | null = null;
 
 export const showGlobalError = (message: React.ReactNode, title?: string) => {
   if (externalShowError) {
@@ -35,26 +45,39 @@ type ProviderProps = {
   defaultTitle?: string;
 };
 
-export const ErrorModalProvider = ({ children, defaultTitle = 'Something went wrong' }: ProviderProps) => {
+export const ErrorModalProvider = ({
+  children,
+  defaultTitle = 'Something went wrong',
+}: ProviderProps) => {
   const [state, setState] = useState<ErrorModalState>({ isOpen: false });
 
   const hideError = useCallback(() => {
     setState({ isOpen: false });
   }, []);
 
-  const showError = useCallback((message: React.ReactNode, title?: string) => {
-    setState({ isOpen: true, title: title || defaultTitle, message });
-  }, [defaultTitle]);
+  const showError = useCallback(
+    (message: React.ReactNode, title?: string) => {
+      setState({ isOpen: true, title: title || defaultTitle, message });
+    },
+    [defaultTitle]
+  );
 
   // Expose for non-React modules
   externalShowError = showError;
 
-  const value = useMemo(() => ({ showError, hideError }), [showError, hideError]);
+  const value = useMemo(
+    () => ({ showError, hideError }),
+    [showError, hideError]
+  );
 
   return (
     <ErrorModalContext.Provider value={value}>
       {children}
-      <Modal title={state.title || defaultTitle} isOpen={state.isOpen} onClose={hideError}>
+      <Modal
+        title={state.title || defaultTitle}
+        isOpen={state.isOpen}
+        onClose={hideError}
+      >
         <div style={{ padding: '12px 4px' }}>{state.message}</div>
       </Modal>
     </ErrorModalContext.Provider>
@@ -74,5 +97,3 @@ export const formatErrorMessage = (err: unknown): string => {
     return 'An unexpected error occurred.';
   }
 };
-
-

@@ -114,7 +114,10 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       }
     } catch (error) {
       console.error('Error fetching route:', error);
-      showError(`Error fetching route: ${formatErrorMessage(error)}`, 'Maps Error');
+      showError(
+        `Error fetching route: ${formatErrorMessage(error)}`,
+        'Maps Error'
+      );
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
         polylineRef.current = null;

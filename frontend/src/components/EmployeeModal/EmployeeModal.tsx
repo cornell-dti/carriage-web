@@ -160,7 +160,10 @@ const EmployeeModal = ({
       });
     } catch (error) {
       console.error('Error uploading photo:', error);
-      showError(`Error uploading photo: ${formatErrorMessage(error)}`, 'Employees Error');
+      showError(
+        `Error uploading photo: ${formatErrorMessage(error)}`,
+        'Employees Error'
+      );
       throw new Error('Failed to upload employee photo. Please try again.');
     }
   }
@@ -187,7 +190,10 @@ const EmployeeModal = ({
       case '/api/admins':
         // Use optimistic create from context
         await createAdmin(extractAdminData(employeeData)).catch((error) => {
-          showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+          showError(
+            `Failed to create admin: ${formatErrorMessage(error)}`,
+            'Employees Error'
+          );
         });
         res = employeeData; // The context will handle server response and ID assignment
         break;
@@ -240,11 +246,17 @@ const EmployeeModal = ({
     // Use optimistic delete from context
     if (endpoint === '/api/admins') {
       await deleteAdmin(id).catch((error) => {
-        showError(`Failed to delete admin: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to delete admin: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
       });
     } else if (endpoint === '/api/drivers') {
       await deleteDriver(id).catch((error) => {
-        showError(`Failed to delete driver: ${formatErrorMessage(error)}`, 'Employees Error');
+        showError(
+          `Failed to delete driver: ${formatErrorMessage(error)}`,
+          'Employees Error'
+        );
       });
     }
   }
@@ -281,7 +293,10 @@ const EmployeeModal = ({
             ToastStatus.SUCCESS
           );
         } catch (error) {
-          showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+          showError(
+            `Failed to create admin: ${formatErrorMessage(error)}`,
+            'Employees Error'
+          );
         }
       }
       if (hasDriver) {
@@ -294,7 +309,10 @@ const EmployeeModal = ({
             ToastStatus.SUCCESS
           );
         } catch (error) {
-          showError(`Failed to create driver: ${formatErrorMessage(error)}`, 'Employees Error');
+          showError(
+            `Failed to create driver: ${formatErrorMessage(error)}`,
+            'Employees Error'
+          );
         }
       }
     } else {
@@ -303,20 +321,29 @@ const EmployeeModal = ({
           try {
             await updateEmployee(employeeData, '/api/admins');
           } catch (error) {
-            showError(`Failed to update admin: ${formatErrorMessage(error)}`, 'Employees Error');
+            showError(
+              `Failed to update admin: ${formatErrorMessage(error)}`,
+              'Employees Error'
+            );
           }
         } else {
           try {
             await createEmployee(employeeData, '/api/admins');
           } catch (error) {
-            showError(`Failed to create admin: ${formatErrorMessage(error)}`, 'Employees Error');
+            showError(
+              `Failed to create admin: ${formatErrorMessage(error)}`,
+              'Employees Error'
+            );
           }
         }
       } else if (employeeData.admin) {
         try {
           await deleteEmployee(employeeData.id, '/api/admins');
         } catch (error) {
-          showError(`Failed to delete admin: ${formatErrorMessage(error)}`, 'Employees Error');
+          showError(
+            `Failed to delete admin: ${formatErrorMessage(error)}`,
+            'Employees Error'
+          );
         }
       }
 
@@ -325,20 +352,29 @@ const EmployeeModal = ({
           try {
             await updateEmployee(employeeData, '/api/drivers');
           } catch (error) {
-            showError(`Failed to update driver: ${formatErrorMessage(error)}`, 'Employees Error');
+            showError(
+              `Failed to update driver: ${formatErrorMessage(error)}`,
+              'Employees Error'
+            );
           }
         } else {
           try {
             await createEmployee(employeeData, '/api/drivers');
           } catch (error) {
-            showError(`Failed to create driver: ${formatErrorMessage(error)}`, 'Employees Error');
+            showError(
+              `Failed to create driver: ${formatErrorMessage(error)}`,
+              'Employees Error'
+            );
           }
         }
       } else if (employeeData.driver) {
         try {
           await deleteEmployee(employeeData.id, '/api/drivers');
         } catch (error) {
-          showError(`Failed to delete driver: ${formatErrorMessage(error)}`, 'Employees Error');
+          showError(
+            `Failed to delete driver: ${formatErrorMessage(error)}`,
+            'Employees Error'
+          );
         }
       }
     }
@@ -406,12 +442,19 @@ const EmployeeModal = ({
             : 'Drivers';
         try {
           setIsUploadingImage(true);
-          await uploadEmployeePhoto(id, targetTable, imageBase64).catch((error) => {
-            showError(`Failed to upload photo: ${formatErrorMessage(error)}`, 'Employees Error');
-          });
+          await uploadEmployeePhoto(id, targetTable, imageBase64).catch(
+            (error) => {
+              showError(
+                `Failed to upload photo: ${formatErrorMessage(error)}`,
+                'Employees Error'
+              );
+            }
+          );
         } catch (uploadError) {
           showError(
-            `Employee created but photo upload failed: ${formatErrorMessage(uploadError)}. You can try uploading the photo again later.`,
+            `Employee created but photo upload failed: ${formatErrorMessage(
+              uploadError
+            )}. You can try uploading the photo again later.`,
             'Employees Error'
           );
           // Don't throw here - we want the employee creation to succeed even if photo upload fails

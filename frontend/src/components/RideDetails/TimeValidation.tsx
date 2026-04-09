@@ -81,7 +81,12 @@ export const validateRideTimes = (
   }
 
   // Check weekends
-  if (start.day() === 0 || start.day() === 6 || end.day() === 0 || end.day() === 6) {
+  if (
+    start.day() === 0 ||
+    start.day() === 6 ||
+    end.day() === 0 ||
+    end.day() === 6
+  ) {
     errors.push({
       type: 'weekend_occurrence',
       message: 'Ride cannot occur on a weekend',
@@ -104,17 +109,22 @@ export const validateRideTimes = (
     });
   }
 
-  // Check that rides must be scheduled by 10am the previous business day  
+  // Check that rides must be scheduled by 10am the previous business day
   let previousBusinessDay = start.subtract(1, 'day');
   while (previousBusinessDay.day() === 0 || previousBusinessDay.day() === 6) {
     previousBusinessDay = previousBusinessDay.subtract(1, 'day');
   }
-  const deadline = previousBusinessDay.set('hour', 10).set('minute', 0).set('second', 0);
-  
+  const deadline = previousBusinessDay
+    .set('hour', 10)
+    .set('minute', 0)
+    .set('second', 0);
+
   if (now.isAfter(deadline)) {
     errors.push({
       type: 'scheduling_deadline_passed',
-      message: `Ride must be scheduled by 10am on previous day (${previousBusinessDay.format('dddd')} ${previousBusinessDay.format('MM/DD/YYYY')})`,
+      message: `Ride must be scheduled by 10am on previous day (${previousBusinessDay.format(
+        'dddd'
+      )} ${previousBusinessDay.format('MM/DD/YYYY')})`,
     });
   }
 

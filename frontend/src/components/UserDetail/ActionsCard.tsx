@@ -95,7 +95,10 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
         // triggers the useUserDetailData hook to update the local user state
       } catch (error) {
         console.error('Error updating rider status:', error);
-        showError(`Error updating rider status: ${formatErrorMessage(error)}`, 'Rider Error');
+        showError(
+          `Error updating rider status: ${formatErrorMessage(error)}`,
+          'Rider Error'
+        );
         setToastMessage(
           `Failed to ${newActiveStatus ? 'activate' : 'deactivate'} rider.`
         );

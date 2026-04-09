@@ -10,7 +10,10 @@ if (container) {
   root.render(<App />);
 } else {
   console.error('Failed to find the root element');
-  showGlobalError('Failed to initialize the app. Please refresh the page.', 'Initialization Error');
+  showGlobalError(
+    'Failed to initialize the app. Please refresh the page.',
+    'Initialization Error'
+  );
 }
 
 serviceWorker.register();
