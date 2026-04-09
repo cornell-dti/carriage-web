@@ -165,7 +165,13 @@ export const LocationFormModal: React.FC<Props> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      disableEnforceFocus
+    >
       <DialogTitle>
         {mode === 'add' ? 'Add New Location' : 'Edit Location'}
       </DialogTitle>

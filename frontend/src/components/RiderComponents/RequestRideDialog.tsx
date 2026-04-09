@@ -630,7 +630,14 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
       : null;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      // Maps + nested confirm Dialog fight the default focus trap and can cause "too much recursion"
+      disableEnforceFocus
+    >
       <DialogTitle>{!ride ? 'Request a Ride' : 'Edit Ride'}</DialogTitle>
       <DialogContent>
         <APIProvider

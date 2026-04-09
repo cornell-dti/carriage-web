@@ -28,10 +28,12 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
     setFilteredLocations(locations);
   }, [locations]);
 
-  const uniqueTags = useMemo(
-    () => Array.from(new Set(locations.map((location) => location.tag))),
-    [locations]
-  );
+  const uniqueTags = useMemo(() => {
+    const tags = locations
+      .map((location) => location.tag)
+      .filter((tag): tag is string => typeof tag === 'string' && tag.length > 0);
+    return Array.from(new Set(tags));
+  }, [locations]);
 
   const handleFilterApply = (filteredItems: LocationType[]) => {
     setFilteredLocations(filteredItems);

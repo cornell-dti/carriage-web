@@ -33,7 +33,9 @@ export const LocationsProvider = ({ children }: locationsProviderProps) => {
       const filtered = locationsData.filter((loc) => loc.tag !== Tag.CUSTOM);
 
       filtered.sort((a: LocationType, b: LocationType) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        const nameA = (a.name ?? '').toLowerCase();
+        const nameB = (b.name ?? '').toLowerCase();
+        return nameA.localeCompare(nameB);
       });
 
       componentMounted.current && setLocations(filtered);
