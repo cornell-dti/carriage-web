@@ -6,8 +6,8 @@ import { Admin } from '../models/admin';
 import { Location } from '../models/location';
 import { Rider } from '../models/rider';
 import { validateUser } from '../util';
-import dotenv from 'dotenv';
-dotenv.config();
+import { config } from 'dotenv';
+config();
 
 // const BUCKET_NAME = 'dti-carriage-staging-public'; old bucket
 const BUCKET_NAME = 'carriage-images';

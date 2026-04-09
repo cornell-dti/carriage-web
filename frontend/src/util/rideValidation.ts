@@ -1,4 +1,5 @@
-import { RideType, Status, SchedulingState } from '../types';
+import { Status, SchedulingState } from '../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 
 export type UserRole = 'admin' | 'driver' | 'rider';
 
@@ -96,9 +97,10 @@ export function canUpdateStatus(ride: RideType, userRole: UserRole): boolean {
   }
 
   // Completed rides cannot have status updates
-  if (isRideCompleted(ride)) {
-    return false;
-  }
+  // COMMENTED OUT: in case of misclick/etc, drivers should be able to update the status
+  // if (isRideCompleted(ride)) {
+  //   return false;
+  // }
 
   // Only drivers and admins can update status
   if (userRole === 'rider') {

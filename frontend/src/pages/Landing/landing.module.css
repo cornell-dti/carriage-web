@@ -1,27 +1,26 @@
+.pageMain {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .home {
   position: relative;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(./campus.jpg) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
+  background: url(./campus.jpg);
   background-size: cover;
-  height: 100vh;
+  min-height: min-content;
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
-  padding: 0 1.25rem;
+  align-items: center;
 }
 
 .main {
-  border: 1px solid black;
   border-radius: 16px;
-  max-width: 850px;
-  height: 550px;
+  padding: 8rem 0;
   display: flex;
-  flex-grow: 1;
-  margin-top: 7.5rem;
+  min-height: min-content;
 }
 
 .tosButtonContainer {
@@ -106,7 +105,7 @@
   justify-content: space-between;
   align-items: center;
   text-align: center;
-  padding: 8px;
+  padding: 4rem;
   position: relative;
 }
 
@@ -114,28 +113,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.customShape {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
-  transform: rotate(180deg);
-  height: 15%;
-  z-index: 10;
-}
-
-.customShape svg {
-  position: absolute;
-  display: block;
-  width: calc(142% + 1.3px);
-}
-
-.shapeFill {
-  fill: white;
 }
 
 .information {
@@ -153,6 +130,21 @@
   align-items: center;
   column-gap: 13rem;
   justify-content: center;
+}
+
+.customShape {
+  width: 100%;
+  padding: 0;
+  line-height: 0;
+  transform: translateY(2px);
+}
+
+.customShape svg {
+  display: block;
+}
+
+.shapeFill {
+  fill: white;
 }
 
 .adminInfo p {
@@ -184,25 +176,72 @@
   column-gap: 4rem;
 }
 
+.topLaptop {
+  max-width: 100%;
+  height: auto;
+}
+
 .bottomLaptop {
   width: 670px;
+  max-width: 100%;
   height: auto;
 }
 
 .phone {
   width: 220px;
-  height: 100%;
+  max-width: 100%;
+  height: auto;
 }
 
-/* Landing page is almost fully responsive. It still needs to vertical media queries. */
-
-@media (max-width: 400px) {
+@media (max-width: 800px) {
   .container {
     flex-direction: column;
   }
+
+  .main {
+    max-width: 95%;
+    min-height: auto;
+    height: auto;
+  }
+
+  .home {
+    min-height: 100vh;
+    height: auto;
+    padding-bottom: 80px;
+  }
+
+  .information {
+    margin-top: 60px;
+  }
+
+  .adminInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .adminInfo p {
+    font-size: 24px;
+  }
+
+  .studentInfo {
+    padding: 3rem 1.5rem;
+  }
+
+  .studentImgContainer {
+    max-width: 100%;
+  }
+
+  .bottomLaptop {
+    width: 60%;
+    max-width: 200px;
+  }
+
+  .phone {
+    width: 30%;
+    max-width: 100px;
+  }
 }
 
-@media (max-width: 550px) {
+@media (max-width: 800px) {
   .main {
     flex-direction: column;
   }
@@ -211,12 +250,6 @@
   }
   .right {
     border-radius: 0 0 16px 16px;
-  }
-}
-
-@media (max-width: 600px) {
-  .main {
-    min-height: 0px;
   }
 }
 
@@ -236,7 +269,7 @@
   .adminInfo {
     flex-direction: column;
     row-gap: 3rem;
-    padding: 6rem 6rem 6rem 6rem;
+    padding: 4rem 1.5rem;
   }
 
   .adminInfo p {
@@ -246,7 +279,7 @@
 
 @media (max-width: 1000px) {
   .studentInfo {
-    padding: 6rem 3rem 6rem 3rem;
+    padding: 4rem 1.5rem;
   }
 
   .studentImgContainer {
@@ -276,12 +309,6 @@
   .topLaptop {
     width: 470px;
     height: auto;
-  }
-}
-
-@media (max-height: 600px) {
-  .main {
-    min-height: 0px;
   }
 }
 

@@ -5,7 +5,8 @@ import CopyButton from '../../components/CopyButton/CopyButton';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import styles from './page.module.css';
 import { useRiders } from '../../context/RidersContext';
-import { Rider, Accessibility } from '../../types';
+import { Accessibility } from '../../types';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
 import buttonStyles from '../../styles/button.module.css';
@@ -13,14 +14,14 @@ import buttonStyles from '../../styles/button.module.css';
 const Riders = () => {
   const { riders } = useRiders();
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredStudents, setFilteredStudents] = useState<Rider[]>(riders);
+  const [filteredStudents, setFilteredStudents] = useState<RiderType[]>(riders);
 
   useEffect(() => {
     document.title = 'Students - Carriage';
     setFilteredStudents(riders);
   }, [riders]);
 
-  const handleFilterApply = (filteredItems: Rider[]) => {
+  const handleFilterApply = (filteredItems: RiderType[]) => {
     setFilteredStudents(filteredItems);
   };
 

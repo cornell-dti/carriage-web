@@ -5,6 +5,14 @@
   border-spacing: 0 0.938rem;
 }
 
+.noRides {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .tableContainer {
   padding-left: 2%;
   padding-right: 2%;

@@ -1,20 +1,9 @@
 import { v4 as uuid } from 'uuid';
-import {
-  Ride,
-  Driver,
-  Rider,
-  Location,
-  Status,
-  SchedulingState,
-  Type,
-  Tag,
-} from '../types';
-
-// Type aliases for better readability
-type RideType = Ride;
-type DriverType = Driver;
-type RiderType = Rider;
-type LocationType = Location;
+import { Status, SchedulingState, Type, Tag } from '../types';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
+import { DriverType } from '@carriage-web/shared/types/driver';
+import { LocationType } from '@carriage-web/shared/types/location';
 
 /**
  * Model Fixtures - Default object creators for all data models
@@ -218,7 +207,7 @@ export function deepCompare(obj1: any, obj2: any): boolean {
 
   if (keys1.length !== keys2.length) return false;
 
-  for (let key of keys1) {
+  for (const key of keys1) {
     if (!keys2.includes(key)) return false;
     if (!deepCompare(obj1[key], obj2[key])) return false;
   }

@@ -13,6 +13,7 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
+import { extractNetIdFromEmail } from 'util/userUtils';
 
 type AdminData = {
   type: string[];
@@ -111,7 +112,7 @@ const EmployeeModal = ({
       methods.reset({
         firstName: existingEmployee.firstName,
         lastName: existingEmployee.lastName,
-        netid: existingEmployee.netId,
+        netid: extractNetIdFromEmail(existingEmployee.email) || '',
         phoneNumber: existingEmployee.phoneNumber,
         startDate: existingEmployee.driver?.startDate,
         availability: existingEmployee.driver?.availability || [],
@@ -267,7 +268,7 @@ const EmployeeModal = ({
       selectedRoles.includes('redrunner-admin');
     const hasDriver = selectedRoles.includes('driver');
 
-    let currentId = employeeData.id;
+    const currentId = employeeData.id;
     // If no employee exists, create one using a primary role.
     if (!currentId || currentId === '') {
       if (hasAdmin) {
@@ -341,7 +342,7 @@ const EmployeeModal = ({
         }
       }
     }
-    let id = employeeData.id;
+    const id = employeeData.id;
     if (!hasAdmin && !hasDriver) {
       return '';
     }

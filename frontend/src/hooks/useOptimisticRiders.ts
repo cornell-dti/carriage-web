@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Rider } from '../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import {
   useOptimisticUpdate,
   OptimisticUpdateOptions,
@@ -11,14 +11,14 @@ export interface RiderOperations {
   updateRiderActive: (riderId: string, active: boolean) => Promise<string>;
   updateRiderInfo: (
     riderId: string,
-    updates: Partial<Rider>
+    updates: Partial<RiderType>
   ) => Promise<string>;
-  createRider: (rider: Omit<Rider, 'id'>) => Promise<string>;
+  createRider: (rider: Omit<RiderType, 'id'>) => Promise<string>;
   deleteRider: (riderId: string) => Promise<string>;
 }
 
-export function useOptimisticRiders(initialRiders: Rider[]) {
-  const optimisticState = useOptimisticUpdate<Rider[]>(initialRiders);
+export function useOptimisticRiders(initialRiders: RiderType[]) {
+  const optimisticState = useOptimisticUpdate<RiderType[]>(initialRiders);
 
   const findRiderIndex = useCallback(
     (riderId: string) => {
@@ -31,7 +31,7 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
     async (
       riderId: string,
       active: boolean,
-      options: OptimisticUpdateOptions<Rider[]> = {}
+      options: OptimisticUpdateOptions<RiderType[]> = {}
     ): Promise<string> => {
       const riderIndex = findRiderIndex(riderId);
       if (riderIndex === -1) {
@@ -76,8 +76,8 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
   const updateRiderInfo = useCallback(
     async (
       riderId: string,
-      updates: Partial<Rider>,
-      options: OptimisticUpdateOptions<Rider[]> = {}
+      updates: Partial<RiderType>,
+      options: OptimisticUpdateOptions<RiderType[]> = {}
     ): Promise<string> => {
       const riderIndex = findRiderIndex(riderId);
       if (riderIndex === -1) {
@@ -124,12 +124,12 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
 
   const createRider = useCallback(
     async (
-      rider: Omit<Rider, 'id'>,
-      options: OptimisticUpdateOptions<Rider[]> = {}
+      rider: Omit<RiderType, 'id'>,
+      options: OptimisticUpdateOptions<RiderType[]> = {}
     ): Promise<string> => {
       // Generate temporary ID for optimistic update
       const tempId = `temp-${Date.now()}`;
-      const tempRider: Rider = { ...rider, id: tempId };
+      const tempRider: RiderType = { ...rider, id: tempId };
 
       const updatedRiders = [...optimisticState.data, tempRider];
 
@@ -170,7 +170,7 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
   const deleteRider = useCallback(
     async (
       riderId: string,
-      options: OptimisticUpdateOptions<Rider[]> = {}
+      options: OptimisticUpdateOptions<RiderType[]> = {}
     ): Promise<string> => {
       const riderIndex = findRiderIndex(riderId);
       if (riderIndex === -1) {
@@ -210,7 +210,7 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
   );
 
   const getRiderById = useCallback(
-    (riderId: string): Rider | undefined => {
+    (riderId: string): RiderType | undefined => {
       return optimisticState.data.find((rider) => rider.id === riderId);
     },
     [optimisticState.data]
@@ -219,10 +219,10 @@ export function useOptimisticRiders(initialRiders: Rider[]) {
   const refreshFromServer = useCallback(async () => {
     try {
       const response = await axios.get('/api/riders');
-      const serverRiders: Rider[] = response.data.data;
+      const serverRiders: RiderType[] = response.data.data;
 
       // Sort riders as done in original context
-      serverRiders.sort((a: Rider, b: Rider) => {
+      serverRiders.sort((a: RiderType, b: RiderType) => {
         const aFull = `${a.firstName} ${a.lastName}`.toLowerCase();
         const bFull = `${b.firstName} ${b.lastName}`.toLowerCase();
         return aFull < bFull ? -1 : 1;

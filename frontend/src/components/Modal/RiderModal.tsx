@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Modal from './Modal';
-import { ObjectType, Rider } from '../../types/index';
+import { ObjectType } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import RiderModalInfo from './RiderModalInfo';
 import styles from './ridermodal.module.css';
 import { useRiders } from '../../context/RidersContext';
@@ -11,7 +12,7 @@ import axios from '../../util/axios';
 import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 type RiderModalProps = {
-  existingRider?: Rider;
+  existingRider?: RiderType;
   isRiderWeb?: boolean;
   isOpen: boolean;
   setIsOpen: any;

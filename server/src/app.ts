@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
@@ -38,6 +37,11 @@ const hostname = (useHostname && process.env.HOSTNAME) || '';
 initDynamoose();
 
 const app = express();
+
+if (process.env.REVERSE_PROXY === 'true') {
+  app.set('trust proxy', true);
+}
+
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',

@@ -3,7 +3,8 @@ import moment from 'moment';
 import Modal from '../Modal/Modal';
 import { Button } from '../FormElements/FormElements';
 import { DriverPage, RiderInfoPage, RideTimesPage } from './Pages';
-import { ObjectType, RepeatValues, Ride } from '../../types/index';
+import { ObjectType, RepeatValues } from '../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 import { format_date } from '../../util/index';
 import { useRides } from '../../context/RidesContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
@@ -12,11 +13,11 @@ import axios from '../../util/axios';
 type RideModalProps = {
   open?: boolean;
   close?: () => void;
-  ride?: Ride;
+  ride?: RideType;
   editSingle?: boolean;
 };
 
-const getRideData = (ride: Ride | undefined) => {
+const getRideData = (ride: RideType | undefined) => {
   if (ride) {
     let rideData: ObjectType = {
       date: format_date(ride.startTime),
@@ -40,8 +41,8 @@ const getRideData = (ride: Ride | undefined) => {
     if (ride.isRecurring) {
       // Note: Recurring functionality is disabled for now
       // This is legacy code that will be updated when RFC 5545 is implemented
-      let repeats = RepeatValues.DoesNotRepeat;
-      let days = {};
+      const repeats = RepeatValues.DoesNotRepeat;
+      const days = {};
 
       rideData = {
         ...rideData,

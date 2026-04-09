@@ -1,13 +1,3 @@
-import { RiderType } from '../../../server/src/models/rider';
-import { DriverType } from '../../../server/src/models/driver';
-import { RideType } from '../../../server/src/models/ride';
-import { AdminType } from '../../../server/src/models/admin';
-import { LocationType } from '../../../server/src/models/location';
-import { VehicleType } from '../../../server/src/models/vehicle';
-import { UnregisteredUserType } from '../../../server/src/util/types';
-
-export type Rider = RiderType;
-
 export enum Accessibility {
   ASSISTANT = 'Assistant',
   CRUTCHES = 'Crutches',
@@ -25,9 +15,6 @@ export enum DayOfWeek {
   THURSDAY = 'THURS',
   FRIDAY = 'FRI',
 }
-export type Driver = DriverType;
-
-export type Admin = AdminType;
 
 export type Employee = {
   id: string;
@@ -52,8 +39,6 @@ export type ObjectType = {
   [x: string]: any;
 };
 
-export type Vehicle = VehicleType;
-
 export enum Tag {
   EAST = 'east',
   CENTRAL = 'central',
@@ -64,10 +49,6 @@ export enum Tag {
   INACTIVE = 'inactive',
   CUSTOM = 'custom',
 }
-
-export type Location = LocationType;
-
-export type Ride = RideType;
 
 export enum Type {
   UPCOMING = 'upcoming',
@@ -111,7 +92,3 @@ export enum RepeatValues {
   Weekly = 'Weekly',
   Custom = 'Custom',
 }
-
-export type { DriverType, AdminType, RideType };
-
-export type UnregisteredUser = UnregisteredUserType;

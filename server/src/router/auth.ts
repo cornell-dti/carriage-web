@@ -1,5 +1,5 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { Rider } from '../models/rider';
 import { Admin } from '../models/admin';
 import { Driver } from '../models/driver';
@@ -7,7 +7,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { oauthValues } from '../config';
 import { ModelType } from 'dynamoose/dist/General';
 import { Item } from 'dynamoose/dist/Item';
-import { UnregisteredUserType } from '../util/types';
+import { UnregisteredUserType } from '@carriage-web/shared/types';
 
 const router = express.Router();
 

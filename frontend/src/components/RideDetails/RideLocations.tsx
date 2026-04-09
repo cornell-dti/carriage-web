@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import { Typography, IconButton, Chip, Box, Button } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -15,7 +21,8 @@ import {
   useMap,
   MapMouseEvent,
 } from '@vis.gl/react-google-maps';
-import { RideType, Location, Tag } from '../../types';
+import { Tag } from '../../types';
+import { LocationType } from '@carriage-web/shared/types/location';
 import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
@@ -28,7 +35,7 @@ interface RideLocationsProps {
 }
 
 interface LocationBlockProps {
-  location: Location;
+  location: LocationType;
   label: string;
   icon: React.ReactNode;
   isPickup?: boolean;
@@ -192,11 +199,11 @@ const getApproximateDistance = (
 };
 
 interface RideMapProps {
-  startLocation: Location;
-  endLocation: Location;
+  startLocation: LocationType;
+  endLocation: LocationType;
   isSelecting?: boolean;
-  availableLocations?: Location[];
-  onLocationSelect?: (location: Location) => void;
+  availableLocations?: LocationType[];
+  onLocationSelect?: (location: LocationType) => void;
   changingLocationType?: 'pickup' | 'dropoff' | null;
 }
 
@@ -217,7 +224,32 @@ const RideMap: React.FC<RideMapProps> = ({
   const mapsLibrary = useMapsLibrary('routes');
   const { showError } = useErrorModal();
 
+  // Check if either location is a custom location
+  const hasCustomLocation = useMemo(() => {
+    const isPickupCustom =
+      startLocation.tag === Tag.CUSTOM ||
+      startLocation.lat === 0 ||
+      startLocation.lng === 0 ||
+      !startLocation.address;
+    const isDropoffCustom =
+      endLocation.tag === Tag.CUSTOM ||
+      endLocation.lat === 0 ||
+      endLocation.lng === 0 ||
+      !endLocation.address;
+    return isPickupCustom || isDropoffCustom;
+  }, [startLocation, endLocation]);
+
   const fetchAndDrawRoute = useCallback(async () => {
+    // Skip route fetching for custom locations
+    if (hasCustomLocation) {
+      if (polylineRef.current) {
+        polylineRef.current.setMap(null);
+        polylineRef.current = null;
+      }
+      setTripInfo(null);
+      return;
+    }
+
     if (!window.google || !map || !startLocation || !endLocation) {
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
@@ -284,19 +316,26 @@ const RideMap: React.FC<RideMapProps> = ({
         polylineRef.current.setMap(null);
         polylineRef.current = null;
       }
-      // Fallback to approximate calculation
-      const distance = getApproximateDistance(
-        startLocation.lat,
-        startLocation.lng,
-        endLocation.lat,
-        endLocation.lng
-      );
-      setTripInfo({
-        distance: `${distance} mi`,
-        duration: `${Math.round(distance * 2)} min`,
-      });
+      // only do  approximate calculation if we have valid coordinates
+      if (
+        startLocation.lat !== 0 &&
+        startLocation.lng !== 0 &&
+        endLocation.lat !== 0 &&
+        endLocation.lng !== 0
+      ) {
+        const distance = getApproximateDistance(
+          startLocation.lat,
+          startLocation.lng,
+          endLocation.lat,
+          endLocation.lng
+        );
+        setTripInfo({
+          distance: `${distance} mi`,
+          duration: `${Math.round(distance * 2)} min`,
+        });
+      }
     }
-  }, [map, startLocation, endLocation]);
+  }, [map, startLocation, endLocation, hasCustomLocation]);
 
   useEffect(() => {
     fetchAndDrawRoute();
@@ -310,7 +349,7 @@ const RideMap: React.FC<RideMapProps> = ({
   }, [fetchAndDrawRoute]);
 
   const getMapCenter = () => {
-    if (startLocation && endLocation) {
+    if (startLocation && endLocation && !hasCustomLocation) {
       return {
         lat: (startLocation.lat + endLocation.lat) / 2,
         lng: (startLocation.lng + endLocation.lng) / 2,
@@ -324,7 +363,7 @@ const RideMap: React.FC<RideMapProps> = ({
       if (isSelecting && onLocationSelect && event.detail.latLng) {
         const { lat, lng } = event.detail.latLng;
         // Create a custom location from map click
-        const customLocation: Location = {
+        const customLocation: LocationType = {
           id: `custom-${Date.now()}`,
           name: 'Custom Location',
           address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`,
@@ -340,6 +379,37 @@ const RideMap: React.FC<RideMapProps> = ({
     [isSelecting, onLocationSelect]
   );
 
+  // if custom location, show placeholder instead of map
+  if (hasCustomLocation) {
+    return (
+      <div className={styles.mapContainer}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#f5f5f5',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center',
+            minHeight: '400px',
+          }}
+        >
+          <div>
+            <p style={{ fontSize: '18px', color: '#666', marginBottom: '8px' }}>
+              📍 Custom Location
+            </p>
+            <p style={{ fontSize: '14px', color: '#999' }}>
+              Map not available for custom locations
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Map */}
@@ -347,7 +417,7 @@ const RideMap: React.FC<RideMapProps> = ({
         <Map
           defaultZoom={12}
           defaultCenter={getMapCenter()}
-          mapId={process.env.REACT_APP_GOOGLE_MAPS_MAP_ID}
+          mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
           onClick={handleMapClick}
@@ -449,7 +519,7 @@ const RideMap: React.FC<RideMapProps> = ({
 
 const RideMapWithProvider: React.FC<RideMapProps> = (props) => (
   <APIProvider
-    apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+    apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
     libraries={['places']}
   >
     <RideMap {...props} />
@@ -465,7 +535,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
   const [changingLocation, setChangingLocation] = useState<
     'pickup' | 'dropoff' | null
   >(null);
-  const [tempLocation, setTempLocation] = useState<Location | null>(null);
+  const [tempLocation, setTempLocation] = useState<LocationType | null>(null);
   const [locationSelectorOpen, setLocationSelectorOpen] = useState(false);
   const pickupButtonRef = useRef<HTMLButtonElement>(null);
   const dropoffButtonRef = useRef<HTMLButtonElement>(null);
@@ -477,7 +547,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
     setTempLocation(currentLocation);
   };
 
-  const handleLocationSelect = (location: Location) => {
+  const handleLocationSelect = (location: LocationType) => {
     setTempLocation(location);
     setLocationSelectorOpen(false);
   };
@@ -497,7 +567,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
     setLocationSelectorOpen(false);
   };
 
-  const handleMapLocationSelect = (location: Location) => {
+  const handleMapLocationSelect = (location: LocationType) => {
     setTempLocation(location);
   };
 
@@ -580,7 +650,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
 
       {/* Location Selection Popup */}
       {changingLocation && (
-        <SearchPopup<Location>
+        <SearchPopup<LocationType>
           open={locationSelectorOpen}
           onClose={() => setLocationSelectorOpen(false)}
           onSelect={handleLocationSelect}

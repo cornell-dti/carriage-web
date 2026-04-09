@@ -4,7 +4,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Rider, Employee } from '../../types/index';
+import { Employee } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import EmployeeModal from '../EmployeeModal/EmployeeModal';
 import RiderModal from '../Modal/RiderModal';
 import ConfirmationModal from '../Modal/ConfirmationModal';
@@ -15,7 +16,7 @@ import styles from './UserDetailCards.module.css';
 import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface ActionsCardProps {
-  user: Employee | Rider;
+  user: Employee | RiderType;
   userType: 'employee' | 'rider';
   refreshUserData?: () => void;
 }
@@ -76,7 +77,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
 
   const handleToggleActive = async () => {
     if (userType === 'rider') {
-      const rider = user as Rider;
+      const rider = user as RiderType;
       const { id, active } = rider;
       const newActiveStatus = !active;
 
@@ -129,7 +130,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
     return 'rider';
   };
 
-  const rider = userType === 'rider' ? (user as Rider) : undefined;
+  const rider = userType === 'rider' ? (user as RiderType) : undefined;
   const employee = userType === 'employee' ? (user as Employee) : undefined;
 
   return (

@@ -4,6 +4,11 @@ import { useFormContext } from 'react-hook-form';
 import styles from './employeemodal.module.css';
 import { Input, Label } from '../FormElements/FormElements';
 
+// Helper function to strip non-digit characters from phone number
+const stripPhoneFormatting = (value: string): string => {
+  return value.replace(/\D/g, '');
+};
+
 type EmployeeInfoProps = {
   firstName?: string;
   lastName?: string;
@@ -69,20 +74,36 @@ const EmployeeInfo = ({
           id="phoneNumber"
           type="tel"
           defaultValue={phone}
-          min={10}
-          max={10}
           aria-required="true"
           className={cn(styles.input)}
           {...register('phoneNumber', {
-            required: true,
-            pattern: /^[0-9]{10}$/,
-            maxLength: 10,
-            minLength: 10,
+            required: 'Phone number is required',
+            setValueAs: (value: string) => stripPhoneFormatting(value || ''),
+            validate: (value) => {
+              if (!value || value.length !== 10) {
+                return 'Format: 10 digits only (e.g. 1234567890, (123) 456-7890)';
+              }
+              return true;
+            },
           })}
         />
         {errors.phoneNumber && (
-          <p className={styles.error}>Please enter a valid phone number</p>
+          <p className={styles.error}>
+            {errors.phoneNumber.message?.toString() ||
+              'Please enter a valid phone number (10 digits)'}
+          </p>
         )}
+        <p
+          className={styles.helperText}
+          style={{
+            fontSize: '0.75rem',
+            color: '#666',
+            marginTop: '0.25rem',
+            marginBottom: 0,
+          }}
+        >
+          Format: 10 digits only (e.g., 1234567890)
+        </p>
       </div>
     </div>
   );

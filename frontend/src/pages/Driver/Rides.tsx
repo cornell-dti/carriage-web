@@ -22,7 +22,8 @@ import TimelapseIcon from '@mui/icons-material/Timelapse';
 import { useRides } from '../../context/RidesContext';
 import { useDate } from '../../context/date';
 import AuthContext from '../../context/auth';
-import { Ride, Status } from '../../types';
+import { Status } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import axios from '../../util/axios';
 import { RideTable } from '../../components/RideDetails';
 import NoRidesView from '../../components/NoRidesView/NoRidesView';
@@ -85,7 +86,7 @@ const RideDetailCard = ({
   updating,
   onUpdate,
 }: {
-  ride: Ride | undefined;
+  ride: RideType | undefined;
   isCurrent: boolean;
   updating?: boolean;
   onUpdate?: (rideId: string, status: Status) => void;
@@ -259,7 +260,9 @@ const RideDetailCard = ({
             <Box sx={{ flexGrow: 1 }}>
               <Typography variant="body1" fontWeight="bold">
                 {primaryRider
-                  ? `${primaryRider.firstName} ${primaryRider.lastName}`
+                  ? `${primaryRider.firstName} ${primaryRider.lastName.charAt(
+                      0
+                    )}`
                   : 'No rider assigned'}
                 {ride.riders &&
                   ride.riders.length > 1 &&
@@ -409,7 +412,7 @@ const Rides = () => {
   const { showError } = useErrorModal();
   const [updating, setUpdating] = useState(false);
   const [currentRideId, setCurrentRideId] = useState<string | null>(null);
-  const [allDriverRides, setAllDriverRides] = useState<Ride[]>([]);
+  const [allDriverRides, setAllDriverRides] = useState<RideType[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
 
   // Fetch all driver rides on component mount
@@ -455,7 +458,8 @@ const Rides = () => {
       .filter(
         (ride) =>
           ride.driver?.id === authContext.id &&
-          new Date(ride.startTime) > new Date()
+          new Date(ride.startTime) > new Date() &&
+          ride.status !== Status.CANCELLED
       )
       .sort(
         (a, b) =>
@@ -463,7 +467,7 @@ const Rides = () => {
       )[0];
   }, [todaysRides, authContext.id]);
 
-  const currentRide: Ride | undefined = useMemo(() => {
+  const currentRide: RideType | undefined = useMemo(() => {
     const now = Date.now();
     const mine = todaysRides.filter((r) => r.driver?.id === authContext.id);
     return mine.find((r) => {
@@ -487,6 +491,15 @@ const Rides = () => {
       setUpdating(true);
       // Use optimistic update from context
       await updateRideStatus(rideId, status);
+
+      // Keep date-based admin views in sync
+      await refreshRides();
+
+      // Refresh this driver's rides so cards and table update automatically
+      if (authContext.id) {
+        const rides = await refreshRidesByUser(authContext.id, 'driver');
+        setAllDriverRides(rides);
+      }
     } catch (error: any) {
       console.error('Failed to update ride status:', error);
       const errorMessage =
@@ -503,7 +516,7 @@ const Rides = () => {
   }, []);
 
   return (
-    <APIProvider apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}>
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <main id="main">
         <Box sx={{ p: 3 }}>
           <Box

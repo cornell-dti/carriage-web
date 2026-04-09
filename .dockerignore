@@ -3,3 +3,11 @@
 build
 *.log
 *.gz
+
+**/.env
+
+.dockerignore
+Dockerfile
+LICENSE
+
+.github

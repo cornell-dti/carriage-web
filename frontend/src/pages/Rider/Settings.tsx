@@ -5,7 +5,7 @@ import UserDetail, {
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
 import pageStyles from '../Admin/page.module.css';
-import { Rider } from '../../types/index';
+import { RiderType } from '@carriage-web/shared/types/rider';
 
 const Settings = () => {
   const { user } = useContext(AuthContext);
@@ -27,7 +27,7 @@ const Settings = () => {
         netId={netId}
         photoLink={user?.photoLink}
         isRider={true}
-        rider={user as Rider}
+        rider={user as RiderType}
       >
         <UserContactInfo
           icon={phone}

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import AddRideButton from '../../components/AddRideButton/AddRideButton';
 import ScheduledTable from '../../components/UserTables/ScheduledTable';
 import UnscheduledTable from '../../components/UserTables/UnscheduledTable';
+import CancelledTable from '../../components/UserTables/CancelledTable';
 import Schedule from '../../components/Schedule/Schedule';
 import styles from './page.module.css';
 import Collapsible from '../../components/Collapsible/Collapsible';
@@ -28,14 +29,16 @@ const Home = () => {
         <div className={styles.scheduleContainer}>
           <Schedule />
         </div>
-
-        <Collapsible title={'Unscheduled Rides'}>
-          <UnscheduledTable />
-        </Collapsible>
-        <Collapsible title={'Scheduled Rides'}>
-          <ScheduledTable />
-        </Collapsible>
       </div>
+      <Collapsible title={'Unscheduled Rides'}>
+        <UnscheduledTable />
+      </Collapsible>
+      <Collapsible title={'Scheduled Rides'}>
+        <ScheduledTable />
+      </Collapsible>
+      <Collapsible title={'Cancelled Rides'}>
+        <CancelledTable />
+      </Collapsible>
     </main>
   );
 };

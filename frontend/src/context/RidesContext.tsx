@@ -1,19 +1,22 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { Ride, SchedulingState, Status, Rider } from '../types';
+import { SchedulingState, Status } from '../types';
+import { RideType } from '@carriage-web/shared/types/ride';
+import { RiderType } from '@carriage-web/shared/types/rider';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
 import { useErrorModal, formatErrorMessage } from './errorModal';
 
 type ridesState = {
-  unscheduledRides: Ride[];
-  scheduledRides: Ride[];
+  unscheduledRides: RideType[];
+  scheduledRides: RideType[];
+  cancelledRides: RideType[];
   loading: boolean;
   refreshRides: () => Promise<void>;
   refreshRidesByUser: (
     userId: string,
     userType: 'rider' | 'driver'
-  ) => Promise<Ride[]>;
+  ) => Promise<RideType[]>;
   // Optimistic ride operations
   updateRideStatus: (rideId: string, status: Status) => Promise<void>;
   updateRideScheduling: (
@@ -22,15 +25,18 @@ type ridesState = {
     driverId?: string
   ) => Promise<void>;
   assignDriver: (rideId: string, driverId: string) => Promise<void>;
-  updateRideInfo: (rideId: string, updates: Partial<Ride>) => Promise<void>;
-  createRide: (ride: Omit<Ride, 'id'>) => Promise<void>;
+  updateRideInfo: (rideId: string, updates: Partial<RideType>) => Promise<void>;
+  createRide: (ride: Omit<RideType, 'id'>) => Promise<void>;
   cancelRide: (rideId: string) => Promise<void>;
   deleteRide: (rideId: string) => Promise<void>;
   // Helper functions
-  getRideById: (rideId: string) => Ride | undefined;
-  getAllRides: () => Ride[];
+  getRideById: (rideId: string) => RideType | undefined;
+  getAllRides: () => RideType[];
   // Available riders functions
-  getAvailableRiders: (startTime: string, endTime: string) => Promise<Rider[]>;
+  getAvailableRiders: (
+    startTime: string,
+    endTime: string
+  ) => Promise<RiderType[]>;
   // Error handling
   clearError: () => void;
   error: Error | null;
@@ -39,6 +45,7 @@ type ridesState = {
 const initialState: ridesState = {
   unscheduledRides: [],
   scheduledRides: [],
+  cancelledRides: [],
   loading: true,
   refreshRides: async () => {},
   refreshRidesByUser: async () => [],
@@ -64,8 +71,9 @@ type RidesProviderProps = {
 };
 
 export const RidesProvider = ({ children }: RidesProviderProps) => {
-  const [unscheduledRides, setUnscheduledRides] = useState<Ride[]>([]);
-  const [scheduledRides, setScheduledRides] = useState<Ride[]>([]);
+  const [unscheduledRides, setUnscheduledRides] = useState<RideType[]>([]);
+  const [scheduledRides, setScheduledRides] = useState<RideType[]>([]);
+  const [cancelledRides, setCancelledRides] = useState<RideType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { curDate } = useDate();
@@ -78,19 +86,28 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       // Fetch rides filtered by the selected date
       const response = await axios.get(`/api/rides?date=${formattedDate}`);
 
-      const ridesData: Ride[] = response.data.data;
+      const ridesData: RideType[] = response.data.data;
 
       if (ridesData) {
         const unscheduled = ridesData.filter(
-          ({ schedulingState }) =>
-            schedulingState === SchedulingState.UNSCHEDULED
+          ({ schedulingState, status }) =>
+            schedulingState === SchedulingState.UNSCHEDULED &&
+            status !== Status.CANCELLED
         );
+
         const scheduled = ridesData.filter(
-          ({ schedulingState }) => schedulingState === SchedulingState.SCHEDULED
+          ({ schedulingState, status }) =>
+            schedulingState === SchedulingState.SCHEDULED &&
+            status !== Status.CANCELLED
+        );
+
+        const cancelled = ridesData.filter(
+          ({ status }) => status === Status.CANCELLED
         );
 
         setUnscheduledRides(unscheduled);
         setScheduledRides(scheduled);
+        setCancelledRides(cancelled);
       }
     } catch (error) {
       console.error('Error refreshing rides:', error);
@@ -102,7 +119,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   }, [curDate]);
 
   const refreshRidesByUser = useCallback(
-    async (userId: string, userType: 'rider' | 'driver'): Promise<Ride[]> => {
+    async (
+      userId: string,
+      userType: 'rider' | 'driver'
+    ): Promise<RideType[]> => {
       try {
         // Fetch all rides for the user across all dates
         const queryParam = userType === 'rider' ? 'rider' : 'driver';
@@ -110,7 +130,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           `/api/rides?${queryParam}=${userId}&allDates=true`
         );
 
-        const ridesData: Ride[] = response.data.data || [];
+        const ridesData: RideType[] = response.data.data || [];
 
         return ridesData;
       } catch (error) {
@@ -124,12 +144,15 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   // Helper functions to manage ride state
   const updateRideInLists = (
     rideId: string,
-    updateFn: (ride: Ride) => Ride
+    updateFn: (ride: RideType) => RideType
   ) => {
     setUnscheduledRides((prev) =>
       prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
     );
     setScheduledRides((prev) =>
+      prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
+    );
+    setCancelledRides((prev) =>
       prev.map((ride) => (ride.id === rideId ? updateFn(ride) : ride))
     );
   };
@@ -138,7 +161,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     rideId: string,
     fromScheduled: boolean,
     toScheduled: boolean,
-    updateFn?: (ride: Ride) => Ride
+    updateFn?: (ride: RideType) => RideType
   ) => {
     if (fromScheduled === toScheduled) {
       // Same list, just update
@@ -167,41 +190,60 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   };
 
   const getRideById = useCallback(
-    (rideId: string): Ride | undefined => {
-      const allRides = [...unscheduledRides, ...scheduledRides];
+    (rideId: string): RideType | undefined => {
+      const allRides = [
+        ...unscheduledRides,
+        ...scheduledRides,
+        ...cancelledRides,
+      ];
       allRides.forEach((ride, index) => {});
-      const foundRide = allRides.find((ride) => ride.id === rideId);
+      const foundRide = allRides.find((ride) => ride && ride.id === rideId);
       return foundRide;
     },
-    [unscheduledRides, scheduledRides]
+    [unscheduledRides, scheduledRides, cancelledRides]
   );
 
-  const getAllRides = useCallback((): Ride[] => {
-    return [...unscheduledRides, ...scheduledRides];
-  }, [unscheduledRides, scheduledRides]);
+  const getAllRides = useCallback((): RideType[] => {
+    return [...unscheduledRides, ...scheduledRides, ...cancelledRides];
+  }, [unscheduledRides, scheduledRides, cancelledRides]);
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  // Optimistic ride operations
   const updateRideStatus = useCallback(
     async (rideId: string, status: Status) => {
-      const originalRide = getRideById(rideId);
+      let originalRide = getRideById(rideId);
+
+      // If ride not found in current context, fetch it from the server
+      if (!originalRide) {
+        try {
+          const response = await axios.get(`/api/rides/${rideId}`);
+          originalRide = response.data.data;
+        } catch (error) {
+          console.error('Failed to fetch ride from server:', error);
+          throw new Error('Ride not found');
+        }
+      }
+
       if (!originalRide) {
         throw new Error('Ride not found');
       }
 
       try {
-        // Optimistic update
-        updateRideInLists(rideId, (ride) => ({ ...ride, status }));
+        // Only do optimistic update if ride is in current context
+        const rideInContext = getRideById(rideId);
+        if (rideInContext) {
+          updateRideInLists(rideId, (ride) => ({ ...ride, status }));
+        }
 
         // Make API call
         await axios.put(`/api/rides/${rideId}`, { status });
       } catch (error) {
         // Rollback on error
         console.error('Failed to update ride status:', error);
-        if (originalRide) {
+        const rideInContext = getRideById(rideId);
+        if (originalRide && rideInContext) {
           updateRideInLists(rideId, () => originalRide);
         }
         setError(error as Error);
@@ -258,7 +300,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         throw error;
       }
     },
-    [getRideById, scheduledRides, unscheduledRides]
+    [getRideById, scheduledRides, unscheduledRides, cancelledRides]
   );
 
   const assignDriver = useCallback(
@@ -292,8 +334,8 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   );
 
   const updateRideInfo = useCallback(
-    async (rideId: string, updates: Partial<Ride>) => {
-      let originalRide: Ride | undefined = getRideById(rideId);
+    async (rideId: string, updates: Partial<RideType>) => {
+      let originalRide: RideType | undefined = getRideById(rideId);
 
       // If ride not found in current context, fetch it from the server first
       if (!originalRide) {
@@ -367,7 +409,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
             rideId,
             willBeScheduled,
             wasScheduled,
-            () => originalRide as Ride
+            () => originalRide as RideType
           );
         }
         setError(error as Error);
@@ -375,12 +417,12 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         throw error;
       }
     },
-    [getRideById, scheduledRides, unscheduledRides]
+    [getRideById, scheduledRides, unscheduledRides, cancelledRides]
   );
 
-  const createRide = useCallback(async (ride: Omit<Ride, 'id'>) => {
+  const createRide = useCallback(async (ride: Omit<RideType, 'id'>) => {
     const tempId = `temp-ride-${Date.now()}`;
-    const tempRide: Ride = { ...ride, id: tempId };
+    const tempRide: RideType = { ...ride, id: tempId };
     const isScheduled = ride.schedulingState === SchedulingState.SCHEDULED;
 
     try {
@@ -505,7 +547,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   );
 
   const getAvailableRiders = useCallback(
-    async (startTime: string, endTime: string): Promise<Rider[]> => {
+    async (startTime: string, endTime: string): Promise<RiderType[]> => {
       try {
         // Fetch all riders
         const ridersResponse = await axios.get('/api/riders');
@@ -573,6 +615,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       value={{
         unscheduledRides,
         scheduledRides,
+        cancelledRides,
         loading,
         refreshRides,
         refreshRidesByUser,

@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "rootDir": "src",
+    "outDir": "build",
+    "module": "commonjs",
+    "target": "es6"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "build"]
+}

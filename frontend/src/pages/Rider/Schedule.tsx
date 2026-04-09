@@ -1,10 +1,17 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+} from 'react';
 import { Button } from '@mui/material';
-import { Ride } from '../../types';
+import { RideType } from '@carriage-web/shared/types/ride';
 import AuthContext from '../../context/auth';
 import styles from './page.module.css';
-import { FormData } from 'components/RiderComponents/RequestRideDialog';
-import RequestRideDialog from 'components/RiderComponents/RequestRideDialog';
+import RequestRideDialog, {
+  FormData,
+} from 'components/RiderComponents/RequestRideDialog';
 import { APIProvider } from '@vis.gl/react-google-maps';
 import { useLocations } from '../../context/LocationsContext';
 import { useRides } from '../../context/RidesContext';
@@ -18,9 +25,9 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
-type DayRideCollection = [string, Ride[]][];
+type DayRideCollection = [string, RideType[]][];
 
-const partitionRides = (rides: Ride[]): DayRideCollection => {
+const partitionRides = (rides: RideType[]): DayRideCollection => {
   const sortedRides = [...rides].sort(
     (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
   );
@@ -42,7 +49,7 @@ const partitionRides = (rides: Ride[]): DayRideCollection => {
     return `${weekday}, ${month} ${day}${suffix}`;
   };
 
-  const dayMap = new Map<string, Ride[]>();
+  const dayMap = new Map<string, RideType[]>();
 
   sortedRides.forEach((ride) => {
     const day = formatReadableDate(new Date(ride.startTime));
@@ -69,11 +76,11 @@ const Schedule: React.FC = () => {
   const { locations } = useLocations();
   const { refreshRides, refreshRidesByUser } = useRides();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [allRiderRides, setAllRiderRides] = useState<Ride[]>([]);
+  const [allRiderRides, setAllRiderRides] = useState<RideType[]>([]);
   const [loadingRides, setLoadingRides] = useState(false);
   const { showError } = useErrorModal();
 
-  const [editingRide, setEditingRide] = useState<null | Ride>(null);
+  const [editingRide, setEditingRide] = useState<null | RideType>(null);
 
   // Get the start of the current week (Sunday in local timezone)
   const getStartOfWeek = (date: Date): Date => {
@@ -119,25 +126,24 @@ const Schedule: React.FC = () => {
     });
   };
 
+  const fetchRiderRides = useCallback(async () => {
+    if (id) {
+      setLoadingRides(true);
+      try {
+        const rides = await refreshRidesByUser(id, 'rider');
+        setAllRiderRides(rides);
+      } catch (error) {
+        console.error('Failed to fetch rider rides:', error);
+      } finally {
+        setLoadingRides(false);
+      }
+    }
+  }, [id, refreshRidesByUser]);
+
   // Fetch all rider rides on component mount
   useEffect(() => {
-    const fetchRiderRides = async () => {
-      if (id) {
-        setLoadingRides(true);
-        try {
-          const rides = await refreshRidesByUser(id, 'rider');
-          setAllRiderRides(rides);
-        } catch (error) {
-          console.error('Failed to fetch rider rides:', error);
-        showError(`Failed to fetch rider rides: ${formatErrorMessage(error)}`, 'Rides Error');
-        } finally {
-          setLoadingRides(false);
-        }
-      }
-    };
-
     fetchRiderRides();
-  }, [id, refreshRidesByUser]);
+  }, [fetchRiderRides]);
 
   useEffect(() => {
     document.title = 'Schedule - Carriage';
@@ -195,7 +201,7 @@ const Schedule: React.FC = () => {
       // Refresh rides after successful creation
       await refreshRides();
       console.log('Ride created successfully');
-      return true;
+      fetchRiderRides();
     } catch (error: any) {
       console.error('Failed to create ride:', error);
       const msg = error?.response?.data?.err || 'Please try again.';
@@ -218,7 +224,7 @@ const Schedule: React.FC = () => {
 
   return (
     <APIProvider
-      apiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY as string}
+      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
       libraries={['places']}
     >
       <main id="main" className={styles.schedulePage}>
@@ -422,7 +428,10 @@ const Schedule: React.FC = () => {
           <RideDetailsComponent
             ride={editingRide}
             open={editingRide !== null}
-            onClose={() => setEditingRide(null)}
+            onClose={() => {
+              setEditingRide(null);
+              fetchRiderRides();
+            }}
           ></RideDetailsComponent>
         )}
       </main>

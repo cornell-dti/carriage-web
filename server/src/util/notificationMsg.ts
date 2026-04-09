@@ -1,6 +1,6 @@
 import { UserType } from '../models/subscription';
-import { Change, NotificationEvent } from './types';
-import { RideType, Status } from '../models/ride';
+import { Change, NotificationEvent } from '@carriage-web/shared/types';
+import { RideType, Status } from '@carriage-web/shared/types/ride';
 import { timeTo12Hr, timeToMDY } from './index';
 
 const getCancelledMessage = (receiver: UserType, ride: RideType) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Ride } from '../../types/index';
+import { RideType } from '@carriage-web/shared/types/ride';
 import RidesTable from './RidesTable';
 import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
@@ -11,10 +11,10 @@ type ScheduledTableProp = {
 
 const ScheduledTable = () => {
   const { drivers } = useEmployees();
-  const [rides, setRides] = useState<Ride[]>([]);
+  const [rides, setRides] = useState<RideType[]>([]);
   const { scheduledRides } = useRides();
 
-  const compRides = (a: Ride, b: Ride) => {
+  const compRides = (a: RideType, b: RideType) => {
     const x = new Date(a.startTime);
     const y = new Date(b.startTime);
     if (x < y) return -1;
@@ -34,12 +34,22 @@ const ScheduledTable = () => {
         return driverRides.length ? (
           <React.Fragment key={id}>
             <h1 className={styles.formHeader}>{name}</h1>
-            <RidesTable rides={driverRides} hasButtons={true} />
+            <RidesTable rides={driverRides} />
           </React.Fragment>
         ) : null;
       })}
+      {rides
+        .filter((ride) => ride?.driver === undefined)
+        .map((ride) => (
+          <React.Fragment key={ride.id}>
+            <h1 className={styles.formHeader}>Unassigned</h1>
+            <RidesTable rides={[ride]} />
+          </React.Fragment>
+        ))}
     </>
-  ) : null;
+  ) : (
+    <div className={styles.noRides}>No scheduled rides</div>
+  );
 };
 
 export default ScheduledTable;
