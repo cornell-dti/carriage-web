@@ -27,6 +27,7 @@ import { createPortal } from 'react-dom';
 import CryptoJS from 'crypto-js';
 import axios, { setAuthToken } from '../../util/axios';
 import UnregisteredUserPage from '../Onboarding/UnregisteredUserPage';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 const secretKey = `${import.meta.env.VITE_ENCRYPTION_KEY!}`;
 
@@ -65,6 +66,7 @@ const AuthManager = () => {
     setUnregisteredUser(null);
     logout();
   };
+  const { showError } = useErrorModal();
 
   useEffect(() => {
     const token = jwtValue();
@@ -213,6 +215,10 @@ const AuthManager = () => {
       }
     } catch (error) {
       console.error('Error decrypting JWT:', error);
+      showError(
+        `Error decrypting JWT: ${formatErrorMessage(error)}`,
+        'Authentication Error'
+      );
     }
     return '';
   }
@@ -255,7 +261,7 @@ const AuthManager = () => {
     setAuthToken('');
     setSignedIn(false);
     setRefreshUser(() => () => {});
-    window.location.href = `${process.env.VITE_SERVER_URL}/api/sso/logout`;
+    window.location.href = `${import.meta.env.VITE_SERVER_URL}/api/sso/logout`;
   }
 
   function createRefresh(userId: string, userType: string, token: string) {

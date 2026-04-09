@@ -11,6 +11,7 @@ import RequestRideInfo from './RequestRideInfo';
 import { RideModalType } from './types';
 import { format_date } from '../../util/index';
 import axios from '../../util/axios';
+import { useToast, ToastStatus } from '../../context/toastContext';
 
 type CreateOrEditRideModalProps = {
   isOpen: boolean;
@@ -53,6 +54,7 @@ const CreateOrEditRideModal = ({
 
   const methods = useForm({ defaultValues });
   const { id } = useContext(AuthContext);
+  const { showToast } = useToast();
 
   const closeModal = () => {
     methods.clearErrors();
@@ -98,8 +100,9 @@ const CreateOrEditRideModal = ({
     let rideData: ObjectType;
     if (recurring || whenRepeat) {
       // For now, block recurring rides as they're not fully implemented
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride instead.'
+      showToast(
+        'Recurring rides are not yet supported. Please create a single ride instead.',
+        ToastStatus.ERROR
       );
       return;
     } else {

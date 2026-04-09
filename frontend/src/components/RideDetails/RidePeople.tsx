@@ -23,6 +23,7 @@ import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
 import { SearchableType } from '../../utils/searchConfig';
 import styles from './RidePeople.module.css';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 interface RidePeopleProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -113,6 +114,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
 const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   const { editedRide, isEditing, updateRideField } = useRideEdit();
   const { getAvailableRiders } = useRides();
+  const { showError } = useErrorModal();
   const {
     drivers: employeesDrivers,
     loading: employeesLoading,
@@ -189,6 +191,10 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
       console.error('Failed to fetch riders:', error);
       setRidersError('Failed to load riders');
       setRiders([]);
+      showError(
+        `Failed to fetch riders: ${formatErrorMessage(error)}`,
+        'Riders Error'
+      );
     } finally {
       setLoadingRiders(false);
     }

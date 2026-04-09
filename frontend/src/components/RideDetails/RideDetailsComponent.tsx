@@ -114,6 +114,7 @@ const RideDetailsComponent: React.FC<RideDetailsProps> = ({
         onClose={onClose}
         maxWidth="md"
         fullScreen={isMobile}
+        disableEnforceFocus
         PaperProps={{
           className: isMobile ? styles.modalMobile : styles.modal,
         }}

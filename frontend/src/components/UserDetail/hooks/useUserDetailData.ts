@@ -7,6 +7,10 @@ import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
+import {
+  showGlobalError,
+  formatErrorMessage,
+} from '../../../context/errorModal';
 
 interface UserDetailData {
   user: Employee | RiderType | null;
@@ -151,6 +155,10 @@ const useUserDetailData = (
       } catch (err) {
         console.error('Error fetching employee data:', err);
         setError('Failed to fetch employee data');
+        showGlobalError(
+          `Failed to fetch employee data: ${formatErrorMessage(err)}`,
+          'Employees Error'
+        );
         setLoading(false);
       }
     }
@@ -194,6 +202,10 @@ const useUserDetailData = (
     } catch (err) {
       setError('Failed to fetch rider data');
       console.error('Error fetching rider data:', err);
+      showGlobalError(
+        `Failed to fetch rider data: ${formatErrorMessage(err)}`,
+        'Riders Error'
+      );
       setLoading(false);
     }
   };

@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react';
 import { SchedulingState, Status, Tag } from '../types';
 import { RideType } from '@carriage-web/shared/types/ride';
+import { LocationType } from '@carriage-web/shared/types/location';
 import {
   BadgeRounded,
   FlagRounded,
@@ -51,24 +52,44 @@ const renderFormattedTime = (time: Date): ReactNode => {
   );
 };
 
+/** Both endpoints must be finite numbers so Map defaultCenter and markers never receive NaN. */
+const hasValidMapCoords = (loc: LocationType): boolean => {
+  const lat = Number(loc.lat);
+  const lng = Number(loc.lng);
+  return Number.isFinite(lat) && Number.isFinite(lng);
+};
+
 const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   ride,
   handleEdit,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
-  // Check if either location is a custom location (with no valid coordinates)
+  // Custom tag / placeholder zeros, or missing non-finite coords — skip map to avoid Google Maps errors
   const hasCustomLocation = () => {
     const isPickupCustom =
       ride.startLocation.tag === Tag.CUSTOM ||
-      ride.startLocation.lat === 0 ||
-      ride.startLocation.lng === 0;
+      Number(ride.startLocation.lat) === 0 ||
+      Number(ride.startLocation.lng) === 0;
     const isDropoffCustom =
       ride.endLocation.tag === Tag.CUSTOM ||
-      ride.endLocation.lat === 0 ||
-      ride.endLocation.lng === 0;
+      Number(ride.endLocation.lat) === 0 ||
+      Number(ride.endLocation.lng) === 0;
     return isPickupCustom || isDropoffCustom;
   };
+
+  const canShowRouteMap =
+    hasValidMapCoords(ride.startLocation) &&
+    hasValidMapCoords(ride.endLocation) &&
+    !hasCustomLocation();
+
+  const coordsInvalidForMap =
+    !hasValidMapCoords(ride.startLocation) ||
+    !hasValidMapCoords(ride.endLocation);
+
+  const mapPlaceholderSubtitle = coordsInvalidForMap
+    ? 'Map not available — location coordinates are missing or invalid.'
+    : 'Map not available for custom locations';
 
   return (
     <div className={styles.card}>
@@ -162,7 +183,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* expanded location view */}
         {expanded && (
           <div className={styles.mapContainer}>
-            {hasCustomLocation() ? (
+            {!canShowRouteMap ? (
               <div
                 style={{
                   width: '100%',
@@ -185,10 +206,13 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                       marginBottom: '8px',
                     }}
                   >
-                    📍 Custom Location
+                    📍{' '}
+                    {coordsInvalidForMap
+                      ? 'Map unavailable'
+                      : 'Custom Location'}
                   </p>
                   <p style={{ fontSize: '14px', color: '#999' }}>
-                    Map not available for custom locations
+                    {mapPlaceholderSubtitle}
                   </p>
                 </div>
               </div>
@@ -196,18 +220,24 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               <Map
                 className={styles.map}
                 defaultCenter={{
-                  lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
-                  lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
+                  lat:
+                    (Number(ride.startLocation.lat) +
+                      Number(ride.endLocation.lat)) /
+                    2,
+                  lng:
+                    (Number(ride.startLocation.lng) +
+                      Number(ride.endLocation.lng)) /
+                    2,
                 }}
                 defaultZoom={13}
                 gestureHandling="greedy"
                 disableDefaultUI
-                mapId={process.env.VITE_GOOGLE_MAPS_MAP_ID}
+                mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
               >
                 <AdvancedMarker
                   position={{
-                    lat: ride.startLocation.lat,
-                    lng: ride.startLocation.lng,
+                    lat: Number(ride.startLocation.lat),
+                    lng: Number(ride.startLocation.lng),
                   }}
                   clickable={true}
                   title={ride.startLocation.name}
@@ -220,8 +250,8 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 </AdvancedMarker>
                 <AdvancedMarker
                   position={{
-                    lat: ride.endLocation.lat,
-                    lng: ride.endLocation.lng,
+                    lat: Number(ride.endLocation.lat),
+                    lng: Number(ride.endLocation.lng),
                   }}
                   clickable={true}
                   title={ride.endLocation.name}

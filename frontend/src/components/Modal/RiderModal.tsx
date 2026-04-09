@@ -9,6 +9,7 @@ import { edit, trash, trashbig, red_trash } from '../../icons/other/index';
 import AuthContext from '../../context/auth';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
+import { useErrorModal, formatErrorMessage } from '../../context/errorModal';
 
 type RiderModalProps = {
   existingRider?: RiderType;
@@ -28,7 +29,7 @@ const RiderModal = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { showToast } = useToast();
   const { refreshRiders } = useRiders();
-
+  const { showError } = useErrorModal();
   const closeModal = () => setIsOpen(false);
 
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
@@ -44,19 +45,23 @@ const RiderModal = ({
   useEffect(() => {
     if (isSubmitted) {
       const method = existingRider ? axios.put : axios.post;
-      method(
-        `/api/riders/${!existingRider ? '' : existingRider.id}`,
-        formData
-      ).then(() => {
-        refreshRiders();
-        showToast(
-          `The student has been ${!existingRider ? 'added' : 'edited'}`,
-          ToastStatus.SUCCESS
-        );
-        if (isRiderWeb) {
-          refreshUser();
-        }
-      });
+      method(`/api/riders/${!existingRider ? '' : existingRider.id}`, formData)
+        .then(() => {
+          refreshRiders();
+          showToast(
+            `The student has been ${!existingRider ? 'added' : 'edited'}`,
+            ToastStatus.SUCCESS
+          );
+          if (isRiderWeb) {
+            refreshUser();
+          }
+        })
+        .catch((error) => {
+          showError(
+            `Failed to save student: ${formatErrorMessage(error)}`,
+            'Students Error'
+          );
+        });
       setIsSubmitted(false);
     }
   }, [

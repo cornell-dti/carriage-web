@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastProvider } from './context/toastContext';
 import AuthManager from './components/AuthManager/AuthManager';
+import { ErrorModalProvider } from './context/errorModal';
 import './styles/App.css';
 import { setAuthToken } from './util/axios';
 
@@ -18,9 +19,11 @@ const App = () => {
 
   return (
     <Router>
-      <ToastProvider>
-        <AuthManager />
-      </ToastProvider>
+      <ErrorModalProvider>
+        <ToastProvider>
+          <AuthManager />
+        </ToastProvider>
+      </ErrorModalProvider>
     </Router>
   );
 };

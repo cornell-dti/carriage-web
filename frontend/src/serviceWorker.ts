@@ -2,6 +2,7 @@
 // register() is not called by default.
 
 import axios from './util/axios';
+import { showGlobalError, formatErrorMessage } from './context/errorModal';
 
 // This lets the app load faster on subsequent visits in production, and gives
 // it offline capabilities. However, it also means that developers (and users)
@@ -105,6 +106,12 @@ function registerValidSW(swUrl: string, config?: Config) {
     })
     .catch((error) => {
       console.error('Error during service worker registration:', error);
+      showGlobalError(
+        `Failed to register service worker: ${formatErrorMessage(
+          error
+        )}. Some features may not be available offline.`,
+        'Service Worker Error'
+      );
     });
 }
 
@@ -145,6 +152,10 @@ export function unregister() {
       })
       .catch((error) => {
         console.error(error.message);
+        showGlobalError(
+          `Failed to unregister service worker: ${formatErrorMessage(error)}`,
+          'Service Worker Error'
+        );
       });
   }
 }

@@ -5,6 +5,7 @@ import { RiderType } from '@carriage-web/shared/types/rider';
 import { useDate } from './date';
 import { format_date } from '../util/index';
 import axios from '../util/axios';
+import { useErrorModal, formatErrorMessage } from './errorModal';
 
 type ridesState = {
   unscheduledRides: RideType[];
@@ -76,6 +77,7 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const { curDate } = useDate();
+  const { showError } = useErrorModal();
 
   const refreshRides = useCallback(async () => {
     const formattedDate = format_date(curDate);
@@ -110,6 +112,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
     } catch (error) {
       console.error('Error refreshing rides:', error);
       setError(error as Error);
+      showError(
+        `Error refreshing rides: ${formatErrorMessage(error)}`,
+        'Rides Error'
+      );
     } finally {
       setLoading(false);
     }
@@ -244,6 +250,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           updateRideInLists(rideId, () => originalRide);
         }
         setError(error as Error);
+        showError(
+          `Failed to update ride status: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -292,6 +302,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           );
         }
         setError(error as Error);
+        showError(
+          `Failed to update ride scheduling: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -321,6 +335,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           updateRideInLists(rideId, () => originalRide);
         }
         setError(error as Error);
+        showError(
+          `Failed to assign driver: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -341,7 +359,9 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           // We'll just use it for the optimistic update logic
         } catch (error) {
           console.error('Failed to fetch ride from server:', error);
-          throw new Error('Ride not found');
+          const msg = 'Ride not found';
+          showError(`${msg}: ${formatErrorMessage(error)}`, 'Rides Error');
+          throw new Error(msg);
         }
       }
 
@@ -405,6 +425,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           );
         }
         setError(error as Error);
+        showError(
+          `Failed to update ride info: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -447,6 +471,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         setUnscheduledRides((prev) => prev.filter((r) => r.id !== tempId));
       }
       setError(error as Error);
+      showError(
+        `Failed to create ride: ${formatErrorMessage(error)}`,
+        'Rides Error'
+      );
       throw error;
     }
   }, []);
@@ -486,6 +514,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           }
         }
         setError(error as Error);
+        showError(
+          `Failed to delete ride: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -528,6 +560,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
           }
         }
         setError(error as Error);
+        showError(
+          `Failed to cancel ride: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
@@ -587,6 +623,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
       } catch (error) {
         console.error('Failed to get available riders:', error);
         setError(error as Error);
+        showError(
+          `Failed to get available riders: ${formatErrorMessage(error)}`,
+          'Rides Error'
+        );
         throw error;
       }
     },
