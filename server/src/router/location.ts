@@ -1,7 +1,7 @@
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import { prisma } from '../db/prisma';
-import { LocationTag } from '@prisma/client';
+import { LocationTag } from '../../generated/prisma/client';
 import { validateUser } from '../util';
 
 const router = express.Router();
