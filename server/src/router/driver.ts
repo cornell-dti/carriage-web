@@ -2,7 +2,7 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
-import { DayOfWeek } from '../../generated/prisma/client';
+import { DayOfWeek, Driver } from '../../generated/prisma/client';
 import {
   validateUser,
   checkNetIDExists,
@@ -91,7 +91,7 @@ router.get('/available', validateUser('User'), async (req, res) => {
     });
 
     const availableDrivers = drivers.filter(
-      (d) => !conflictingDriverIds.has(d.id)
+      (d: Driver) => !conflictingDriverIds.has(d.id)
     );
     res.send({ data: availableDrivers });
   } catch (error) {

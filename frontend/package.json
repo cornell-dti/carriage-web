@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "@carriage-web/shared": "workspace:*",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "@tailwindcss/vite": "^4.2.2"
   },
   "scripts": {
     "dev": "vite",
@@ -13,12 +14,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -47,25 +42,24 @@
     "@types/react": "^18.3.8",
     "@types/react-big-calendar": "^1.8.11",
     "@types/react-csv": "^1.1.10",
-    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^18.3.0",
+    "@types/react-router-hash-link": "^2.4.9",
     "@types/uuid": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
     "@vis.gl/react-google-maps": "^1.4.0",
     "@vitejs/plugin-react": "^5.1.2",
     "addresser": "^1.1.20",
     "autoprefixer": "^10.4.21",
-    "axios": "^1.12.0",
+    "axios": "^1.13.5",
     "classnames": "^2.5.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.19",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "focus-trap-react": "^10.2.3",
     "jwt-decode": "^4.0.0",
     "moment": "^2.30.1",
@@ -74,17 +68,17 @@
     "react": "^18.3.1",
     "react-big-calendar": "^1.14.1",
     "react-csv": "^2.2.2",
-    "react-datepicker": "^7.3.0",
+    "react-datepicker": "^9.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
-    "react-router-dom": "^6.26.2",
+    "react-router-dom": "^6.30.3",
     "react-router-hash-link": "^2.4.3",
     "react-select": "^5.8.1",
     "reactjs-popup": "^2.0.6",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.0.0",
     "typescript": "catalog:",
     "uuid": "^13.0.0",
-    "vite": "^7.2.7",
+    "vite": "^7.3.2",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

@@ -26,7 +26,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
   const [selectedRide, setSelectedRide] = useState<RideType | null>(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [rideEditOpenId, setRideEditOpenId] = useState<string | null>(null);
-  let buttonRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const handleCloseDetailsModal = () => {
     setDetailsModalOpen(false);

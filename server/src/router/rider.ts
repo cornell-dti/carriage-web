@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
 import {
   Accessibility,
+  Ride,
   RideType,
   RideStatus,
 } from '../../generated/prisma/client';
@@ -190,10 +191,10 @@ router.get('/:id/usage', validateUser('Admin'), async (req, res) => {
     });
 
     const studentRides = rides.filter(
-      (r) => r.status === RideStatus.COMPLETED
+      (r: Ride) => r.status === RideStatus.COMPLETED
     ).length;
     const noShowCount = rides.filter(
-      (r) => r.status === RideStatus.NO_SHOW
+      (r: Ride) => r.status === RideStatus.NO_SHOW
     ).length;
 
     res.send({ studentRides, noShowCount });
