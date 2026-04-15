@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
-import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
 import { AdminType } from '@carriage-web/shared/types/admin';
 import { DriverType } from '@carriage-web/shared/types/driver';
@@ -55,8 +54,7 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
   return (
     <div
       onClick={handleClick}
-      style={{ cursor: 'pointer' }}
-      className={styles.link}
+      className="cursor-pointer no-underline text-inherit inline-block"
     >
       <Card
         firstName={employee.firstName}
@@ -84,7 +82,7 @@ type EmployeeCardsProps = {
 
 const EmployeeCards = ({ employees }: EmployeeCardsProps) => {
   return (
-    <div className={styles.cardsContainer}>
+    <div className="flex flex-wrap py-4 px-8 gap-8">
       {employees.map((employee) => (
         <EmployeeCard key={employee.id} id={employee.id} employee={employee} />
       ))}

@@ -1,6 +1,5 @@
 import React, { useState, createRef } from 'react';
 import uploadBox from './upload.svg';
-import styles from './employeemodal.module.css';
 
 const IMAGE_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB limit
 
@@ -67,12 +66,12 @@ const Upload = ({
   }
 
   return (
-    <div className={styles.uploadContainer}>
+    <div className="absolute right-8 top-8 max-w-25 max-h-25 text-center flex flex-col items-center">
       {imageURL ? (
-        <img className={styles.uploadImg} alt="uploaded" src={imageURL} />
+        <img className="block w-full h-full object-cover" alt="uploaded" src={imageURL} />
       ) : (
         <img
-          className={styles.uploadImg}
+          className="block w-full h-full object-cover"
           alt="profile upload"
           src={uploadBox}
         />
@@ -82,14 +81,13 @@ const Upload = ({
         type="file"
         accept="image/png, image/jpeg, image/heic, image/heif"
         ref={inputRef}
-        style={{ display: 'none' }}
+        className="hidden"
         onChange={previewImage}
         disabled={isUploading}
       />
       <label
         htmlFor="driverPhotoInput"
-        className={styles.uploadText}
-        style={{ opacity: isUploading ? 0.6 : 1 }}
+        className={`m-0 text-xs text-[#0057a3] cursor-pointer transition-[text-decoration] duration-200 hover:underline ${isUploading ? 'opacity-60' : 'opacity-100'}`}
       >
         <span
           role="button"
@@ -101,10 +99,7 @@ const Upload = ({
         </span>
       </label>
       {errorMessage && (
-        <div
-          className={styles.error}
-          style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#eb0023' }}
-        >
+        <div className="text-[#eb0023] text-xs mt-2">
           {errorMessage}
         </div>
       )}

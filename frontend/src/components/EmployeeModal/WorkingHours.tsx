@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { DayOfWeek } from '../../types';
-import styles from './employeemodal.module.css';
 
 type WorkingHoursProps = {
   existingAvailability?: string[];
@@ -58,15 +57,17 @@ const WorkingHours = ({ existingAvailability, hide }: WorkingHoursProps) => {
   if (hide) return null;
 
   return (
-    <div className={styles.availabilityContainer}>
-      <h3 className={styles.workingHoursTitle}>Working Days</h3>
-      <div className={styles.daysContainer}>
+    <div className="flex flex-col gap-4 mb-6">
+      <h3 className="mb-3.5">Working Days</h3>
+      <div className="flex gap-2 items-center">
         {orderedDays.map((day: DayOfWeek) => (
           <button
             key={day}
             type="button"
-            className={`${styles.dayButton} ${
-              selectedDays.includes(day) ? styles.daySelected : ''
+            className={`rounded-full h-10 w-10 border border-black/20 p-0 cursor-pointer font-medium transition-colors duration-200 ${
+              selectedDays.includes(day)
+                ? 'bg-black text-white hover:bg-[#333]'
+                : 'bg-black/5 hover:bg-black/10'
             }`}
             onClick={() => handleDayClick(day)}
           >
