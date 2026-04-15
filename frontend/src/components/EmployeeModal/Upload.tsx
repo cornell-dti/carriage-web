@@ -68,7 +68,11 @@ const Upload = ({
   return (
     <div className="absolute right-8 top-8 max-w-25 max-h-25 text-center flex flex-col items-center">
       {imageURL ? (
-        <img className="block w-full h-full object-cover" alt="uploaded" src={imageURL} />
+        <img
+          className="block w-full h-full object-cover"
+          alt="uploaded"
+          src={imageURL}
+        />
       ) : (
         <img
           className="block w-full h-full object-cover"
@@ -87,7 +91,9 @@ const Upload = ({
       />
       <label
         htmlFor="driverPhotoInput"
-        className={`m-0 text-xs text-[#0057a3] cursor-pointer transition-[text-decoration] duration-200 hover:underline ${isUploading ? 'opacity-60' : 'opacity-100'}`}
+        className={`m-0 text-xs text-[#0057a3] cursor-pointer transition-[text-decoration] duration-200 hover:underline ${
+          isUploading ? 'opacity-60' : 'opacity-100'
+        }`}
       >
         <span
           role="button"
@@ -99,9 +105,7 @@ const Upload = ({
         </span>
       </label>
       {errorMessage && (
-        <div className="text-[#eb0023] text-xs mt-2">
-          {errorMessage}
-        </div>
+        <div className="text-[#eb0023] text-xs mt-2">{errorMessage}</div>
       )}
     </div>
   );

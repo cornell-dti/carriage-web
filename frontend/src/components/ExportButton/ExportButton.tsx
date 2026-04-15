@@ -46,11 +46,7 @@ const ExportButton = ({
 
   return (
     <>
-      <Button
-        onClick={() => downloadCSV()}
-        outline={true}
-        className="mr-2"
-      >
+      <Button onClick={() => downloadCSV()} outline={true} className="mr-2">
         <img src={download} alt="capacity icon" /> Export
       </Button>
       <CSVLink

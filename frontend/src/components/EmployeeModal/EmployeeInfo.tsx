@@ -36,7 +36,9 @@ const EmployeeInfo = ({
           {...register('firstName', { required: true })}
         />
         {errors.firstName && (
-          <p className="text-[#eb0023] text-xs mt-1">Please enter a valid name</p>
+          <p className="text-[#eb0023] text-xs mt-1">
+            Please enter a valid name
+          </p>
         )}
       </div>
       <div className="col-start-2">
@@ -50,7 +52,9 @@ const EmployeeInfo = ({
           {...register('lastName', { required: true })}
         />
         {errors.lastName && (
-          <p className="text-[#eb0023] text-xs mt-1">Please enter a valid name</p>
+          <p className="text-[#eb0023] text-xs mt-1">
+            Please enter a valid name
+          </p>
         )}
       </div>
       <div className="col-start-1">
@@ -64,7 +68,9 @@ const EmployeeInfo = ({
           {...register('netid', { required: true })}
         />
         {errors.netid && (
-          <p className="text-[#eb0023] text-xs mt-1">Please enter a valid NetID</p>
+          <p className="text-[#eb0023] text-xs mt-1">
+            Please enter a valid NetID
+          </p>
         )}
       </div>
       <div className="col-start-2">

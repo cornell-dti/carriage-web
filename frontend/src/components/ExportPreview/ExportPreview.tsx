@@ -34,7 +34,9 @@ const ExportPreview = () => {
 
   return (
     <>
-      <p className="font-bold text-gray-500 ml-[2%] mt-[2%]">{format_date(curDate)}</p>
+      <p className="font-bold text-gray-500 ml-[2%] mt-[2%]">
+        {format_date(curDate)}
+      </p>
       <h1 className="-mt-[1%] ml-[2%]">Scheduled Rides</h1>
       <div id="exportTable">
         <ScheduledTable />

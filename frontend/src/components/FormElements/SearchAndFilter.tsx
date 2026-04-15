@@ -176,7 +176,11 @@ export default function SearchAndFilter<T extends Record<string, any>>({
           placeholder="Search..."
           className="h-full py-0 pr-3 pl-10 border border-[#d1d5db] rounded text-sm w-full focus:outline-none focus:border-[#3b82f6] focus:shadow-[0_0_0_3px_rgba(59,130,246,0.5)]"
         />
-        <img src={search_icon} alt="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af] w-5 h-5 pointer-events-none" />
+        <img
+          src={search_icon}
+          alt="search"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af] w-5 h-5 pointer-events-none"
+        />
       </div>
 
       <div className="relative h-full">
@@ -195,7 +199,9 @@ export default function SearchAndFilter<T extends Record<string, any>>({
             <img
               src={down}
               alt="expand"
-              className={`w-4 h-4 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 transition-transform duration-200 ${
+                isFilterOpen ? 'rotate-180' : ''
+              }`}
             />
           </div>
         </button>
@@ -203,7 +209,9 @@ export default function SearchAndFilter<T extends Record<string, any>>({
         {isFilterOpen && (
           <div className="absolute top-[calc(100%+4px)] right-0 w-75 bg-white border border-[#d1d5db] rounded shadow-md z-50 p-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-base font-semibold text-[#111827]">Filters</h3>
+              <h3 className="text-base font-semibold text-[#111827]">
+                Filters
+              </h3>
               <button
                 onClick={() => setIsFilterOpen(false)}
                 className="p-1 border-none bg-transparent rounded cursor-pointer transition-colors duration-200 hover:bg-[#f3f4f6]"
@@ -214,7 +222,10 @@ export default function SearchAndFilter<T extends Record<string, any>>({
 
             <div className="flex flex-col gap-4 max-h-100 overflow-y-auto">
               {filterOptions.map((option) => (
-                <div key={option.field} className="border-b border-[#e5e7eb] pb-4 last:border-b-0">
+                <div
+                  key={option.field}
+                  className="border-b border-[#e5e7eb] pb-4 last:border-b-0"
+                >
                   <button
                     className="w-full flex justify-between items-center py-2 bg-transparent border-none font-medium text-[#374151] cursor-pointer transition-colors duration-200 hover:text-[#111827]"
                     onClick={() =>
@@ -274,7 +285,10 @@ export default function SearchAndFilter<T extends Record<string, any>>({
               >
                 Clear Filters
               </button>
-              <button onClick={applyFilters} className="flex-1 px-4 py-2 bg-[#3b82f6] text-white border-none rounded text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-[#2563eb]">
+              <button
+                onClick={applyFilters}
+                className="flex-1 px-4 py-2 bg-[#3b82f6] text-white border-none rounded text-sm font-medium cursor-pointer transition-colors duration-200 hover:bg-[#2563eb]"
+              >
                 Apply Filters
               </button>
             </div>
