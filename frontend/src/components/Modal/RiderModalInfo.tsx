@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import Select, { StylesConfig } from 'react-select';
-import cn from 'classnames';
 import { Button, Input, Label } from '../FormElements/FormElements';
-import styles from './ridermodal.module.css';
 import { ObjectType, Accessibility } from '../../types/index';
 import { RiderType } from '@carriage-web/shared/types/rider';
 
@@ -209,10 +207,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   ];
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className={styles.form}>
-      <div className={cn(styles.inputContainer, styles.rideTime)}>
-        <div className={cn(styles.gridR1, styles.gridCSmall1)}>
-          <Label className={styles.label} htmlFor="firstName">
+    <form onSubmit={handleSubmit(beforeSubmit)} className="flex flex-col w-full h-full">
+      <div className="mb-6 w-full grid grid-cols-12 gap-5 [@media(max-width:1092px)]:flex [@media(max-width:1092px)]:flex-col [@media(max-width:1092px)]:gap-5">
+        <div className="row-start-1 col-start-1 col-span-4">
+          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="firstName">
             First Name:{' '}
           </Label>
           <Input
@@ -222,17 +220,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: makeNameValidator('First name'),
             })}
             aria-required="true"
-            className={styles.firstRow}
+            className="w-full"
           />
           {errors.firstName && (
-            <p className={styles.error}>
+            <p className="text-[#dc3545] text-xs mt-1">
               {errors.firstName.message ?? 'First name cannot be empty'}
             </p>
           )}
         </div>
 
-        <div className={cn(styles.gridR1, styles.gridCSmall2)}>
-          <Label className={styles.label} htmlFor="lastName">
+        <div className="row-start-1 col-start-5 col-span-3">
+          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="lastName">
             Last Name:{' '}
           </Label>
           <Input
@@ -242,17 +240,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: makeNameValidator('Last name'),
             })}
             aria-required="true"
-            className={styles.firstRow}
+            className="w-full"
           />
           {errors.lastName && (
-            <p className={styles.error}>
+            <p className="text-[#dc3545] text-xs mt-1">
               {errors.lastName.message ?? 'Last name cannot be empty'}
             </p>
           )}
         </div>
 
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="netid">
+        <div className="row-start-1 col-start-8 col-span-5">
+          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="netid">
             NetID:{' '}
           </Label>
           <Input
@@ -263,14 +261,14 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             })}
             type="text"
             disabled={isStudentEditing}
-            className={styles.firstRow}
+            className="w-full"
             aria-required="true"
           />
-          {errors.netid && <p className={styles.error}>Invalid NetID</p>}
+          {errors.netid && <p className="text-[#dc3545] text-xs mt-1">Invalid NetID</p>}
         </div>
 
-        <div className={cn(styles.gridR2, styles.gridCBig1)}>
-          <Label className={styles.label} htmlFor="phoneNumber">
+        <div className="row-start-2 col-start-1 col-span-6">
+          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="phoneNumber">
             Phone Number:{' '}
           </Label>
           <Input
@@ -279,21 +277,22 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               validate: validatePhoneNumber,
             })}
             type="tel"
-            className={styles.firstRow}
+            className="w-full"
             aria-required="true"
             style={{ height: '60px' }}
           />
           {errors.phoneNumber && (
-            <p className={styles.error}>
+            <p className="text-[#dc3545] text-xs mt-1">
               {errors.phoneNumber.message ?? 'Phone number is not valid'}
             </p>
           )}
         </div>
-        <div className={cn(styles.gridR2, styles.gridCBig2)}>
-          <Label className={styles.label} htmlFor="needs">
+
+        <div className="row-start-2 col-start-7 col-span-6">
+          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="needs">
             Needs:{' '}
           </Label>
-          <div className={styles.needsContainer}>
+          <div className="flex flex-col gap-2">
             <Controller
               name="needs"
               control={control}
@@ -304,7 +303,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                   value={value}
                   isMulti
                   options={needsOptions}
-                  className={styles.customSelect}
+                  className="w-full"
                   classNamePrefix="customSelectValueContainer"
                   placeholder="Select needs..."
                   styles={customStyles}
@@ -315,7 +314,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               )}
             />
             {showCustomInput && (
-              <div className={styles.customNeedInput}>
+              <div className="flex items-center gap-2 mt-2">
                 <input
                   type="text"
                   value={customNeed}
@@ -327,21 +326,21 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                     }
                   }}
                   placeholder="Type custom need"
-                  className={styles.customNeedField}
+                  className="flex-1 h-8 px-3 border border-[#ced4da] rounded text-sm focus:outline-none focus:border-black focus:[box-shadow:0_0_0_2px_rgba(0,0,0,0.1)]"
                   autoFocus
                 />
-                <div className={styles.customNeedActions}>
+                <div className="flex gap-1">
                   <button
                     type="button"
                     onClick={handleAddCustomNeed}
-                    className={styles.customNeedButton}
+                    className="flex items-center justify-center w-8 h-8 border border-[#28a745] rounded bg-white cursor-pointer text-base text-[#28a745] transition-all duration-200 hover:bg-[#28a745] hover:text-white"
                   >
                     ✓
                   </button>
                   <button
                     type="button"
                     onClick={handleCancelCustomNeed}
-                    className={styles.customNeedButton}
+                    className="flex items-center justify-center w-8 h-8 border border-[#dc3545] rounded bg-white cursor-pointer text-base text-[#dc3545] transition-all duration-200 hover:bg-[#dc3545] hover:text-white"
                   >
                     ✕
                   </button>
@@ -349,16 +348,16 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               </div>
             )}
             {errors.needs && (
-              <p className={styles.error}>Please select at least one need</p>
+              <p className="text-[#dc3545] text-xs mt-1">Please select at least one need</p>
             )}
           </div>
         </div>
 
-        <div className={cn(styles.gridR3, styles.gridCAll)}>
+        <div className="row-start-3 col-start-1 col-span-7">
           <p>Duration</p>
-          <div className={styles.lastRow}>
+          <div className="flex gap-5 items-center [@media(max-width:1092px)]:flex-col [@media(max-width:1092px)]:gap-4">
             <div>
-              <Label className={styles.label} htmlFor="joinDate">
+              <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="joinDate">
                 Join Date:{' '}
               </Label>
               <Input
@@ -367,17 +366,17 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 type="date"
                 aria-required="true"
                 disabled={isStudentEditing}
-                className={styles.riderDate}
+                className="w-full min-w-50"
               />
               {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
+                <p className="text-[#dc3545] text-xs mt-1">Please enter a join date</p>
               )}
             </div>
-            <div className={styles.to}>
+            <div className="text-2xl h-full">
               <p>→</p>
             </div>
             <div>
-              <Label className={styles.label} htmlFor="endDate">
+              <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="endDate">
                 End Date:{' '}
               </Label>
               <Input
@@ -392,29 +391,32 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 type="date"
                 aria-required="true"
                 disabled={isStudentEditing}
-                className={styles.riderDate}
+                className="w-full min-w-50"
               />
               {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
+                <p className="text-[#dc3545] text-xs mt-1">Please enter an end date</p>
               )}
               {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
+                <p className="text-[#dc3545] text-xs mt-1">Invalid end time</p>
               )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className={styles.buttonContainer}>
+      <div className="flex justify-end mt-8 gap-4 [@media(max-width:1092px)]:flex-col">
         <Button
           type="button"
-          className={styles.cancel}
+          className="bg-white text-black border border-black hover:bg-black hover:text-white [@media(max-width:1092px)]:w-full"
           outline={true}
           onClick={() => cancel()}
         >
           Cancel
         </Button>
-        <Button type="submit" className={styles.submit}>
+        <Button
+          type="submit"
+          className="bg-black text-white border-none hover:bg-[#333] [@media(max-width:1092px)]:w-full"
+        >
           {isEditing ? 'Edit a Student' : 'Add a Student'}
         </Button>
       </div>

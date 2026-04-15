@@ -202,7 +202,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 defaultZoom={13}
                 gestureHandling="greedy"
                 disableDefaultUI
-                mapId={process.env.VITE_GOOGLE_MAPS_MAP_ID}
+                mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
               >
                 <AdvancedMarker
                   position={{

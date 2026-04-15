@@ -3,7 +3,6 @@ import DatePicker from 'react-datepicker';
 import cn from 'classnames';
 import 'react-datepicker/dist/react-datepicker.css';
 import './datepicker_override.css';
-import styles from './minical.module.css';
 import { useDate } from '../../context/date';
 import { isHoliday } from 'util/holidays';
 import buttonStyles from '../../styles/button.module.css';
@@ -29,7 +28,7 @@ const isTomorrow = (date: Date) =>
 
 const Icon = () => (
   <svg
-    className={styles.svg}
+    className="h-3"
     viewBox="0 0 12 13"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -59,19 +58,19 @@ const MiniCal = () => {
     render() {
       return (
         <>
-          <span aria-live="polite" className={styles.modal_state}>
+          <span aria-live="polite" className="top-0 -left-px w-px h-px absolute overflow-hidden">
             Modal is{isExpanded}
           </span>
           <button
             className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
             onClick={this.props.onClick}
           >
-            <span className={styles.primary}>
+            <span className="text-[#00c48c]">
               {isToday(curDate) ? 'Today ' : ' '}
               {isTomorrow(curDate) ? 'Tomorrow ' : ' '}
             </span>
-            <span className={styles.space} /> <Icon />
-            <span className={styles.space} /> {this.props.value}
+            <span className="w-[0.5em]" /> <Icon />
+            <span className="w-[0.5em]" /> {this.props.value}
           </button>
         </>
       );
@@ -105,9 +104,8 @@ const MiniCal = () => {
   };
 
   return (
-    <div className={styles.root}>
+    <div className="flex items-center">
       <DatePicker
-        //adjustDateOnChange
         selected={curDate}
         onChange={updateDate}
         closeOnScroll={true}
@@ -128,9 +126,12 @@ const MiniCal = () => {
           nextMonthButtonDisabled,
         }) => (
           <div>
-            <div className={styles.justify}>
+            <div className="mb-1.25 h-11.25 flex justify-center items-center">
               <button
-                className={cn(styles.btn2, { [styles.active]: isToday(date) })}
+                className={cn(
+                  'cursor-pointer bg-white text-black mx-2.5 rounded-xl border-0 w-21.25 h-7 text-xs',
+                  { 'bg-[#00c48c] text-black': isToday(date) }
+                )}
                 onClick={() => {
                   updateDate(new Date());
                   pseudoScroll();
@@ -140,9 +141,10 @@ const MiniCal = () => {
               </button>
               <Indicators date={date} />
               <button
-                className={cn(styles.btn2, {
-                  [styles.active]: isTomorrow(date),
-                })}
+                className={cn(
+                  'cursor-pointer bg-white text-black mx-2.5 rounded-xl border-0 w-21.25 h-7 text-xs',
+                  { 'bg-[#00c48c] text-black': isTomorrow(date) }
+                )}
                 onClick={() => {
                   const tomorrow = new Date();
                   tomorrow.setDate(new Date().getDate() + 1);
@@ -153,22 +155,22 @@ const MiniCal = () => {
                 TOMORROW
               </button>
             </div>
-            <div className={styles.justify}>
+            <div className="mb-1.25 h-11.25 flex justify-center items-center">
               <button
-                className={styles.btn}
+                className="cursor-pointer bg-black text-white rounded-full border-0 mx-3"
                 onClick={decreaseMonth}
                 disabled={prevMonthButtonDisabled}
               >
                 {'<'}
               </button>
-              <span className={styles.month}>
+              <span className="w-40 leading-11.25 text-xl">
                 {`${date.toLocaleString('default', {
                   month: 'long',
                 })} ${date.getFullYear()}`}
               </span>
 
               <button
-                className={styles.btn}
+                className="cursor-pointer bg-black text-white rounded-full border-0 mx-3"
                 onClick={increaseMonth}
                 disabled={nextMonthButtonDisabled}
               >

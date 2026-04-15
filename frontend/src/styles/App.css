@@ -41,3 +41,21 @@ a.skip-main:active {
 #main {
   flex: 1;
 }
+
+/* Google Maps marker cluster styles */
+.gm-style .cluster {
+  background: #1976d2;
+  border-radius: 50%;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.cluster span {
+  position: relative;
+  top: -2px;
+}

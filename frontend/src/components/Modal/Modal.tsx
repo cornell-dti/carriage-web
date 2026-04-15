@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import FocusTrap from 'focus-trap-react';
 import { createPortal } from 'react-dom';
-import styles from './modal.module.css';
 import { close } from '../../icons/other/index';
 
 type PageIndicatorsProps = {
@@ -14,11 +13,11 @@ const PageIndicators = ({ pages, current }: PageIndicatorsProps) => {
   // use spread operator to actually get empty array w/ length pages
   const indicators = [...new Array(pages)];
   return (
-    <div className={styles.pageIndicators}>
+    <div className="flex justify-center">
       {indicators.map((_, i) => (
         <span
           key={String(i)}
-          className={styles.indicator}
+          className="h-1.5 w-1.5 mx-1 rounded-full inline-block"
           style={{ background: i === current ? '#000' : '#C4C4C4' }}
         />
       ))}
@@ -66,7 +65,7 @@ const Modal = ({
     <>
       {isOpen &&
         createPortal(
-          <div className={styles.background}>
+          <div className="fixed bg-[rgba(13,13,13,0.6)] top-0 left-0 h-full w-full z-1000">
             <FocusTrap
               focusTrapOptions={{
                 onDeactivate: onClose,
@@ -74,20 +73,20 @@ const Modal = ({
                 clickOutsideDeactivates: true,
               }}
             >
-              <div className={styles.modal}>
-                <div className={styles.topContainer}>
+              <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white py-8 px-9 rounded-2xl z-1010 max-sm:max-w-full max-sm:max-h-full max-sm:overflow-y-scroll [@media(max-height:600px)]:max-w-full [@media(max-height:600px)]:max-h-full [@media(max-height:600px)]:overflow-y-scroll">
+                <div className="flex justify-between items-center sticky top-0 z-1 pb-3 bg-white">
                   {isRider ? (
-                    <h1 className={styles.title} id={id}>
+                    <h1 className="text-[1.75rem] m-0" id={id}>
                       {currentTitle}
                     </h1>
                   ) : (
-                    <div className={styles.title} id={id}>
+                    <div className="text-[1.75rem] m-0" id={id}>
                       {currentTitle}
                     </div>
                   )}
                   {!displayClose && isRider && (
                     <button
-                      className={styles.closeBtn}
+                      className="border-0 cursor-pointer bg-transparent p-0 ml-3 focus:[outline:3px_solid_black]"
                       id={'close'}
                       onClick={onClose}
                     >
@@ -95,7 +94,9 @@ const Modal = ({
                     </button>
                   )}
                 </div>
-                <div className={styles.page}>{pages[currentPage]}</div>
+                <div className="my-3 relative max-sm:max-w-full max-sm:block max-sm:m-0 [@media(max-height:600px)]:max-w-full [@media(max-height:600px)]:block [@media(max-height:600px)]:m-0">
+                  {pages[currentPage]}
+                </div>
               </div>
             </FocusTrap>
           </div>,
