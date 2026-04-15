@@ -171,14 +171,11 @@ model Ride {
   driverId        String?
   driver          Driver?         @relation(fields: [driverId], references: [id])
 
-  // RFC 5545 recurrence placeholders
-  isRecurring     Boolean         @default(false)
-  rrule           String?
-  exdate          String[]
-  rdate           String[]
-  parentRideId    String?
-  recurrenceId    String?
-  timezone        String          @default("America/New_York")
+  isRecurring       Boolean         @default(false)
+  recurrenceId      String?         // Shared UUID for all rides in a series
+  recurrenceDays    Int[]           // Days of week to repeat: 0=Sun, 1=Mon, ..., 6=Sat
+  recurrenceEndDate DateTime?       // Last date for the series
+  timezone          String          @default("America/New_York")
 
   favorites       Favorite[]
   notifications   Notification[]
@@ -186,6 +183,7 @@ model Ride {
   @@index([startTime])
   @@index([endTime])
   @@index([driverId])
+  @@index([recurrenceId])
 }
 
 //--------------------

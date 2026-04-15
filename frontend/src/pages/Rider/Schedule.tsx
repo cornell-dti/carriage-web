@@ -156,16 +156,7 @@ const Schedule: React.FC = () => {
   const handleRideSubmit = async (formData: FormData) => {
     if (!formData.pickupLocation || !formData.dropoffLocation) return;
 
-    // For now, block any recurring rides
-    if (formData.repeatType !== 'none') {
-      alert(
-        'Recurring rides are not yet supported. Please create a single ride.'
-      );
-      return;
-    }
-
     try {
-      // Build ISO datetimes
       if (!formData.date || !formData.time) {
         alert('Please select both date and time.');
         return;
@@ -174,13 +165,28 @@ const Schedule: React.FC = () => {
       const dateStr = formData.date.toISOString().split('T')[0];
       const timeStr = formData.time.toTimeString().split(' ')[0];
       const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
+      const endISO = new Date(new Date(startISO).getTime() + 30 * 60 * 1000).toISOString();
 
-      const endISO = new Date(
-        new Date(startISO).getTime() + 30 * 60 * 1000
-      ).toISOString();
+      const isRecurring = formData.repeatType !== 'none';
 
-      await axios.post('/api/rides', {
-        // Send location IDs (matching Admin flow)
+      // Map day abbreviations to day-of-week numbers (0=Sun…6=Sat)
+      const dayNameToNumber: Record<string, number> = {
+        Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
+        Thursday: 4, Friday: 5, Saturday: 6,
+      };
+
+      let recurrenceDays: number[] = [];
+      if (formData.repeatType === 'daily') {
+        recurrenceDays = [1, 2, 3, 4, 5]; // Mon–Fri
+      } else if (formData.repeatType === 'weekly') {
+        recurrenceDays = [new Date(startISO).getDay()];
+      } else if (formData.repeatType === 'custom') {
+        recurrenceDays = formData.selectedDays
+          .map((d) => dayNameToNumber[d])
+          .filter((n) => n !== undefined);
+      }
+
+      const payload: Record<string, unknown> = {
         startLocation: formData.pickupLocation.id,
         endLocation: formData.dropoffLocation.id,
         startTime: startISO,
@@ -189,11 +195,20 @@ const Schedule: React.FC = () => {
         type: 'upcoming',
         status: 'not_started',
         schedulingState: 'unscheduled',
-      });
+        isRecurring,
+      };
 
-      // Refresh rides after successful creation
+      if (isRecurring) {
+        if (!formData.repeatEndDate) {
+          alert('Please select an end date for the recurring ride.');
+          return;
+        }
+        payload.recurrenceDays = recurrenceDays;
+        payload.recurrenceEndDate = formData.repeatEndDate.toISOString();
+      }
+
+      await axios.post('/api/rides', payload);
       await refreshRides();
-      console.log('Ride created successfully');
       fetchRiderRides();
     } catch (error) {
       console.error('Failed to create ride:', error);

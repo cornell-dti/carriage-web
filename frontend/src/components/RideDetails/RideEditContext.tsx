@@ -25,7 +25,7 @@ interface RideEditContextType {
   startEditing: () => void;
   stopEditing: () => void;
   updateRideField: (field: keyof RideType, value: any) => void;
-  saveChanges: () => Promise<boolean>;
+  saveChanges: (scope?: 'single' | 'future') => Promise<boolean>;
   hasChanges: boolean;
   canEdit: boolean;
   userRole: UserRole;
@@ -143,7 +143,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     return hasChangesResult;
   }, [editedRide, originalRide]);
 
-  const saveChanges = useCallback(async (): Promise<boolean> => {
+  const saveChanges = useCallback(async (scope?: 'single' | 'future'): Promise<boolean> => {
     if (!editedRide) {
       return false;
     }
@@ -228,6 +228,9 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
           'type',
           'driver',
           'riders',
+          'isRecurring',
+          'recurrenceDays',
+          'recurrenceEndDate',
         ];
 
         for (const field of fieldsToCheck) {
@@ -245,7 +248,7 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
         }
 
         // Use optimistic update from RidesContext
-        await updateRideInfo(ride.id, updatePayload);
+        await updateRideInfo(ride.id, updatePayload, scope);
 
         // Update the context with the optimistically updated ride
         if (onRideUpdated) {
