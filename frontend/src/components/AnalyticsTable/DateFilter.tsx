@@ -73,7 +73,7 @@ const DateFilter = ({
               }
             }}
             outline={true}
-            className="bg-black text-white rounded-[10px] text-xl p-2 px-4 ml-4"
+            className="rounded-[10px] text-xl p-2 px-4 ml-4"
           >
             Apply Dates
           </Button>
