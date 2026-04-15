@@ -58,7 +58,9 @@ const Notification = () => {
           </div>
         </div>
         <div className="grow">
-          <p className="text-[10px] text-gray-400">{moment(time).format('MMMM Do')}</p>
+          <p className="text-[10px] text-gray-400">
+            {moment(time).format('MMMM Do')}
+          </p>
           <p>{body}</p>
         </div>
         <div className="text-[10px] text-[#0084f4]">View</div>

@@ -35,11 +35,17 @@ const UnregisteredUserPage: React.FC<UnregisteredUserProps> = ({
           </p>
           <p className="mt-6">
             Call{' '}
-            <a href="tel:607-254-4545" className="text-[#0075db] no-underline font-medium hover:underline">
+            <a
+              href="tel:607-254-4545"
+              className="text-[#0075db] no-underline font-medium hover:underline"
+            >
               607-254-4545
             </a>{' '}
             or email{' '}
-            <a href="mailto:culift@cornell.edu" className="text-[#0075db] no-underline font-medium hover:underline">
+            <a
+              href="mailto:culift@cornell.edu"
+              className="text-[#0075db] no-underline font-medium hover:underline"
+            >
               culift@cornell.edu
             </a>{' '}
             if you have any questions.

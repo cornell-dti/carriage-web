@@ -118,7 +118,9 @@ const MapContent = ({
         >
           <div className="p-1 min-w-40">
             <div className="flex items-center justify-between gap-2 min-w-35">
-              <h4 className="m-0 text-base whitespace-nowrap">{selectedLocation.shortName}</h4>
+              <h4 className="m-0 text-base whitespace-nowrap">
+                {selectedLocation.shortName}
+              </h4>
               <OpenInFull
                 className="-scale-x-100"
                 onClick={(e) => {

@@ -207,10 +207,16 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   ];
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className="flex flex-col w-full h-full">
+    <form
+      onSubmit={handleSubmit(beforeSubmit)}
+      className="flex flex-col w-full h-full"
+    >
       <div className="mb-6 w-full grid grid-cols-12 gap-5 [@media(max-width:1092px)]:flex [@media(max-width:1092px)]:flex-col [@media(max-width:1092px)]:gap-5">
         <div className="row-start-1 col-start-1 col-span-4">
-          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="firstName">
+          <Label
+            className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+            htmlFor="firstName"
+          >
             First Name:{' '}
           </Label>
           <Input
@@ -230,7 +236,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className="row-start-1 col-start-5 col-span-3">
-          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="lastName">
+          <Label
+            className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+            htmlFor="lastName"
+          >
             Last Name:{' '}
           </Label>
           <Input
@@ -250,7 +259,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className="row-start-1 col-start-8 col-span-5">
-          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="netid">
+          <Label
+            className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+            htmlFor="netid"
+          >
             NetID:{' '}
           </Label>
           <Input
@@ -264,11 +276,16 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
             className="w-full"
             aria-required="true"
           />
-          {errors.netid && <p className="text-[#dc3545] text-xs mt-1">Invalid NetID</p>}
+          {errors.netid && (
+            <p className="text-[#dc3545] text-xs mt-1">Invalid NetID</p>
+          )}
         </div>
 
         <div className="row-start-2 col-start-1 col-span-6">
-          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="phoneNumber">
+          <Label
+            className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+            htmlFor="phoneNumber"
+          >
             Phone Number:{' '}
           </Label>
           <Input
@@ -289,7 +306,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
         </div>
 
         <div className="row-start-2 col-start-7 col-span-6">
-          <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="needs">
+          <Label
+            className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+            htmlFor="needs"
+          >
             Needs:{' '}
           </Label>
           <div className="flex flex-col gap-2">
@@ -348,7 +368,9 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
               </div>
             )}
             {errors.needs && (
-              <p className="text-[#dc3545] text-xs mt-1">Please select at least one need</p>
+              <p className="text-[#dc3545] text-xs mt-1">
+                Please select at least one need
+              </p>
             )}
           </div>
         </div>
@@ -357,7 +379,10 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           <p>Duration</p>
           <div className="flex gap-5 items-center [@media(max-width:1092px)]:flex-col [@media(max-width:1092px)]:gap-4">
             <div>
-              <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="joinDate">
+              <Label
+                className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+                htmlFor="joinDate"
+              >
                 Join Date:{' '}
               </Label>
               <Input
@@ -369,14 +394,19 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 className="w-full min-w-50"
               />
               {errors.joinDate && (
-                <p className="text-[#dc3545] text-xs mt-1">Please enter a join date</p>
+                <p className="text-[#dc3545] text-xs mt-1">
+                  Please enter a join date
+                </p>
               )}
             </div>
             <div className="text-2xl h-full">
               <p>→</p>
             </div>
             <div>
-              <Label className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold" htmlFor="endDate">
+              <Label
+                className="block mb-2 font-semibold text-[#333] [@media(max-width:1092px)]:font-bold"
+                htmlFor="endDate"
+              >
                 End Date:{' '}
               </Label>
               <Input
@@ -394,7 +424,9 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
                 className="w-full min-w-50"
               />
               {errors.endDate?.type === 'required' && (
-                <p className="text-[#dc3545] text-xs mt-1">Please enter an end date</p>
+                <p className="text-[#dc3545] text-xs mt-1">
+                  Please enter an end date
+                </p>
               )}
               {errors.endDate?.type === 'validate' && (
                 <p className="text-[#dc3545] text-xs mt-1">Invalid end time</p>

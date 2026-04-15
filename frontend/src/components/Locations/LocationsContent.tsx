@@ -106,9 +106,13 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
                       sx={{ marginLeft: '0.5rem' }}
                     />
                   </div>
-                  <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">{location.address}</p>
+                  <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">
+                    {location.address}
+                  </p>
                   <div className="text-[#666] flex items-center justify-between">
-                    <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">{location.info}</p>
+                    <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">
+                      {location.info}
+                    </p>
                     <OpenInFull
                       className="-scale-x-100"
                       onClick={(e) => {

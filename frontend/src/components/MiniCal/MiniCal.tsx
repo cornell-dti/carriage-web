@@ -58,7 +58,10 @@ const MiniCal = () => {
     render() {
       return (
         <>
-          <span aria-live="polite" className="top-0 -left-px w-px h-px absolute overflow-hidden">
+          <span
+            aria-live="polite"
+            className="top-0 -left-px w-px h-px absolute overflow-hidden"
+          >
             Modal is{isExpanded}
           </span>
           <button

@@ -231,7 +231,9 @@ export const LocationFormModal: React.FC<Props> = ({
               </Typography>
 
               <div className="mt-4">
-                <Typography className="text-[0.875rem] font-medium mb-2">Address</Typography>
+                <Typography className="text-[0.875rem] font-medium mb-2">
+                  Address
+                </Typography>
 
                 <PlacesSearch
                   onAddressSelect={(a, lat, lng) =>
