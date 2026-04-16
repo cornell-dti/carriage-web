@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
-import styles from './requestridedialog.module.css';
 
 interface RequestRidePlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
@@ -111,7 +110,7 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
   );
 
   return (
-    <div className={styles.placesSearch}>
+    <div className="relative w-full mb-4">
       {/* Hidden map div for PlacesService */}
       <div ref={mapDivRef} style={{ display: 'none' }} />
 
@@ -139,11 +138,14 @@ const RequestRidePlacesSearch: React.FC<RequestRidePlacesSearchProps> = ({
       </form>
 
       {results.length > 0 && (
-        <Paper className={styles.resultsContainer} elevation={3}>
+        <Paper
+          className="absolute top-full left-0 right-0 z-1000 mt-1 max-h-50 overflow-y-auto"
+          elevation={3}
+        >
           {results.map((place, index) => (
             <div
               key={index}
-              className={styles.resultItem}
+              className="px-4 py-2 cursor-pointer border-b border-[#ddd] hover:bg-black/4"
               onClick={() => handleSelect(place)}
             >
               {place.formatted_address || place.name}
