@@ -1,5 +1,4 @@
 import { ReactElement, useEffect } from 'react';
-import styles from './landing.module.css';
 import { logo } from '../../icons/other';
 import dti from './dti.png';
 import topLaptop from './landing-images/laptop1.svg';
@@ -22,45 +21,38 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
     document.title = 'Login - Carriage';
   }, []);
   return (
-    <main id="main" className={styles.pageMain}>
-      <div className={styles.home}>
-        <div className={styles.tosButtonContainer}>
+    <main id="main" className="w-full max-w-full overflow-x-hidden">
+      <div className="relative bg-cover min-h-fit w-full flex flex-col justify-center items-center" style={{ backgroundImage: 'url(./campus.jpg)' }}>
+        <div className="absolute top-5 right-5">
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
-            <button className={styles.tosButton}>Terms of Service</button>
+            <button className="w-44 h-10 border-0 bg-white text-black rounded hover:bg-gray-200 cursor-pointer text-base">Terms of Service</button>
           </a>
         </div>
-        <div className={styles.main}>
-          <div className={styles.left}>
-            <img src={logo} className={styles.badge} alt="Carriage logo" />
-            <span className={styles.title}>Carriage</span>
+        <div className="rounded-2xl p-32 flex min-h-fit max-lg:max-w-[95%] max-lg:min-h-auto max-lg:h-auto max-md:flex-col max-md:p-0">
+          <div className="rounded-l-2xl bg-black grow flex flex-col justify-center items-center p-4 max-md:rounded-t-2xl max-md:rounded-bl-none">
+            <img src={logo} alt="Carriage logo" />
+            <span className="text-5xl font-semibold text-white mt-4">Carriage</span>
           </div>
-          <div className={styles.right}>
-            <div className={styles.spacing_container}>
-              <h1 className={styles.heading}>Login</h1>
+          <div className="rounded-r-2xl bg-white grow flex flex-col justify-between items-center text-center p-16 relative max-md:rounded-b-2xl max-md:rounded-tr-none">
+            <div className="flex flex-col justify-center items-center flex-1">
+              <h1 className="text-3xl">Login</h1>
               {ssoError && (
                 <div
-                  style={{
-                    backgroundColor: '#ffebee',
-                    color: '#c62828',
-                    padding: '12px 16px',
-                    borderRadius: '4px',
-                    marginBottom: '16px',
-                    border: '1px solid #ef5350',
-                  }}
+                  className="bg-red-100 text-red-900 p-3 rounded border border-red-400 mb-4 w-full"
                 >
                   {ssoError}
                 </div>
               )}
-              <div className={styles.container}>
-                <div className={styles.container_item}>{students}</div>
-                <div className={styles.container_item}>{admins}</div>
-                <div className={styles.container_item}>{drivers}</div>
+              <div className="flex justify-between items-center max-md:flex-col gap-2">
+                <div className="mx-2.5">{students}</div>
+                <div className="mx-2.5">{admins}</div>
+                <div className="mx-2.5">{drivers}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className={styles.customShape}>
+        <div className="w-full p-0 leading-none" style={{ transform: 'translateY(2px)' }}>
           <svg
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"
@@ -69,46 +61,46 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
           >
             <path
               d={WAVE_PATH.trim()}
-              className={styles.shapeFill}
+              className="fill-white"
               transform="translate(0, 120) scale(1, -1)"
             />
           </svg>
         </div>
       </div>
 
-      <div className={styles.information}>
-        <div className={styles.adminInfo}>
-          <p>
+      <div className="relative flex flex-row justify-center items-start max-lg:mt-15 max-md:mt-15">
+        <div className="py-36 px-32 flex flex-row items-center gap-52 justify-center max-xl:flex-col max-xl:gap-12 max-lg:px-6 max-lg:py-12 max-md:px-6 max-md:py-12">
+          <p className="text-5xl min-w-[30%] max-xl:max-w-[70%] max-lg:text-2xl">
             Administrators add students and employees and assign rides on Admin
             Web.
           </p>
-          <img src={topLaptop} alt="top laptop" className={styles.topLaptop} />
+          <img src={topLaptop} alt="top laptop" className="max-w-full h-auto" />
         </div>
       </div>
 
-      <div className={styles.studentInfo}>
-        <div className={styles.studentImgContainer}>
+      <div className="bg-zinc-900 py-20 px-32 flex flex-row gap-36 items-center justify-center max-xl:flex-col max-xl:gap-12 max-lg:px-6 max-lg:py-12 max-md:px-6 max-md:py-12">
+        <div className="flex items-center justify-center flex-row gap-16 max-lg:gap-4">
           <img
             src={bottomLaptop}
             alt="bottom laptop"
-            className={styles.bottomLaptop}
+            className="w-167.5 max-w-full h-auto max-md:w-[60%] max-md:max-w-50"
           />
-          <img src={phone} alt="phone" className={styles.phone} />
+          <img src={phone} alt="phone" className="w-55 max-w-full h-auto max-md:w-[30%] max-md:max-w-25" />
         </div>
 
-        <p>
+        <p className="text-white text-5xl min-w-[30%] max-xl:max-w-[70%] max-xl:mt-20 max-lg:text-xl max-lg:max-w-[80%] max-md:text-xl">
           Students Schedule, Edit, and Cancel rides on Rider Web and Mobile.
         </p>
       </div>
 
-      <div className={styles.footer}>
-        <div className={styles.dti_container}>
+      <div className="bg-white flex items-center justify-center gap-px py-3">
+        <div className="flex flex-row justify-center items-center p-4">
           <a
             href="https://www.cornelldti.org/"
             target="_blank"
             rel="noreferrer"
           >
-            <img src={dti} className={styles.dti_logo} alt="DTI Logo" />
+            <img src={dti} className="w-56 h-auto" alt="DTI Logo" />
           </a>
         </div>
       </div>

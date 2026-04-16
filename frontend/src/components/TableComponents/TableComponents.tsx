@@ -1,6 +1,5 @@
 import React from 'react';
 import cn from 'classnames';
-import styles from './tablecomponents.module.css';
 import Tag from '../Tag/Tag';
 import useWindowSize from '../../hooks/useWindowSize';
 
@@ -18,15 +17,15 @@ type CellProps = {
 export const Cell = ({ data, tag, smallTag }: CellProps) => {
   if (tag) {
     return (
-      <div className={styles.cell}>
+      <div className="w-36 wrap-break-word p-0 px-3">
         <Tag location={data} tag={tag} reduced={smallTag} />
       </div>
     );
   }
   return typeof data === 'object' ? (
-    <div className={styles.cell}>{data}</div>
+    <div className="w-36 wrap-break-word p-0 px-3">{data}</div>
   ) : (
-    <p className={styles.cell}>{data}</p>
+    <p className="w-36 wrap-break-word p-0 px-3">{data}</p>
   );
 };
 
@@ -81,7 +80,7 @@ export const Row = ({
     const groupCols = colSizes.slice(groupStart);
     return (
       <div
-        className={cn(styles.rowGroup, className)}
+        className={cn('grid my-5 px-3', className)}
         style={
           !isMobile
             ? { gridTemplateColumns: formatColSizes(colSizes) }
@@ -89,7 +88,7 @@ export const Row = ({
         }
       >
         <div
-          className={styles.nongroup}
+          className="grid p-4"
           style={
             !isMobile
               ? {
@@ -105,7 +104,7 @@ export const Row = ({
           {createCells(nonGroup)}
         </div>
         <div
-          className={styles.group}
+          className="grid p-4 bg-white rounded-xl"
           style={
             !isMobile
               ? {
@@ -126,8 +125,8 @@ export const Row = ({
   return (
     <div
       className={cn(
-        { [styles.row]: !header },
-        { [styles.header]: header },
+        { 'grid my-5 px-3 bg-white rounded-xl': !header },
+        { 'grid font-bold p-2 bg-[#f3f3f3] rounded': header },
         className
       )}
       style={
@@ -153,5 +152,5 @@ type TableProps = {
 };
 
 export const Table = ({ children }: TableProps) => (
-  <div className={styles.table}>{children}</div>
+  <div className="p-4 pl-8 pr-8">{children}</div>
 );

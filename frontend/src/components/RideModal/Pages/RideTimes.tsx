@@ -10,7 +10,6 @@ import cn from 'classnames';
 import moment from 'moment';
 import { ModalPageProps } from '../../Modal/types';
 import { Button, Input, Label } from '../../FormElements/FormElements';
-import styles from '../ridemodal.module.css';
 import { useDate } from '../../../context/date';
 import { format_date, checkBounds } from '../../../util/index';
 import { ObjectType, RepeatValues } from '../../../types';
@@ -26,6 +25,10 @@ type FormData = {
     [key: string]: string;
   };
 };
+
+const inputClass =
+  'w-full py-3 px-3 text-base border border-[#ced4da] rounded bg-white transition-[border-color,box-shadow] duration-150';
+const errorClass = 'text-[#dc3545] text-[0.8rem] mt-1 max-w-48';
 
 const DaySelector = () => {
   const [selected, setSelected] = useState<ObjectType>({});
@@ -77,9 +80,10 @@ const DaySelector = () => {
         <button
           key={day}
           type="button"
-          className={cn(styles.day, {
-            [styles.daySelected]: isSelected(day),
-          })}
+          className={cn(
+            'rounded-full h-9 w-9 border-2 border-[#6c757d] p-0 cursor-pointer mx-1 bg-transparent text-[#6c757d] font-semibold transition-all duration-200 focus:outline-none focus:shadow-[0_0_0_3px_rgba(108,117,125,0.5)]',
+            { 'bg-black text-white border-black': isSelected(day) }
+          )}
           onClick={() => toggle(day)}
           {...register(`days.${day}` as const, { validate })}
         >
@@ -87,7 +91,7 @@ const DaySelector = () => {
         </button>
       ))}
       {errors.days?.Mon?.type === 'validate' && (
-        <p className={styles.error}>Please select a day</p>
+        <p className={errorClass}>Please select a day</p>
       )}
     </>
   );
@@ -107,12 +111,12 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
   return (
     <>
       {repeatValue === RepeatValues.Custom && (
-        <div className={styles.colSpan}>
+        <div className="col-span-full">
           <Label htmlFor="repeatsOn">Repeats on:</Label>
           <DaySelector />
         </div>
       )}
-      <div className={styles.colSpan}>
+      <div className="col-span-full">
         <Label htmlFor="endDate">End date:</Label>
         <Input
           id="endDate"
@@ -130,10 +134,10 @@ const RepeatSection: React.FC<RepeatSectionProps> = ({ repeatValue }) => {
           aria-required="true"
         />
         {errors.endDate?.type === 'required' && (
-          <p className={styles.error}>Please enter an end date</p>
+          <p className={errorClass}>Please enter an end date</p>
         )}
         {errors.endDate?.type === 'validate' && (
-          <p className={styles.error}>Invalid date</p>
+          <p className={errorClass}>Invalid date</p>
         )}
       </div>
     </>
@@ -177,9 +181,9 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <div className={cn(styles.inputContainer, styles.rideTime)}>
-          <div className={styles.col1}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full">
+        <div className="mb-6 w-full grid grid-cols-2 gap-5 max-[500px]:grid-cols-1">
+          <div className="flex flex-col">
             <Label htmlFor="date">Day:</Label>
             <Input
               id="date"
@@ -192,7 +196,7 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                   const notWeekend =
                     moment(date).day() !== 0 && moment(date).day() !== 6;
                   if (fmtDate < fmtCurr) {
-                    return 'Please choose a future date.'; // can admin add rides same day?
+                    return 'Please choose a future date.';
                   } else if (
                     !notWeekend ||
                     isHoliday(new Date(`${fmtDate}T00:00:00`))
@@ -203,23 +207,23 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                 },
               })}
               aria-required="true"
-              className={cn(styles.dateStyle)}
+              className={inputClass}
             />
             {errors.date?.type === 'required' && (
-              <p className={styles.error}>Please enter a date</p>
+              <p className={errorClass}>Please enter a date</p>
             )}
             {errors.date?.type === 'validate' && (
-              <p className={styles.error}>{errors.date.message}</p>
+              <p className={errorClass}>{errors.date.message}</p>
             )}
           </div>
-          <div className={styles.col2}>
+          <div className="flex flex-col">
             <Label htmlFor="repeats">Repeats:</Label>
             <select
               id="repeats"
               {...register('repeats', {
                 required: 'Please select a repeat option',
               })}
-              className={cn(styles.selectInputContainer, styles.selectInput)}
+              className={cn(inputClass, 'ride-select')}
             >
               {repeatOptions.map((option) => (
                 <option key={option.id} value={option.id}>
@@ -228,16 +232,16 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               ))}
             </select>
             {errors.repeats?.type === 'required' && (
-              <p className={styles.error}>Please enter a time</p>
+              <p className={errorClass}>Please enter a time</p>
             )}
           </div>
           {isRepeating && <RepeatSection repeatValue={watchRepeats} />}
-          <div className={styles.col1}>
+          <div className="flex flex-col">
             <Label htmlFor="pickupTime">Pickup time:</Label>
             <Input
               id="pickupTime"
               type="time"
-              className={cn(styles.timeStyle)}
+              className={inputClass}
               {...register('pickupTime', {
                 required: true,
                 validate: (pickupTime: string) => {
@@ -249,20 +253,20 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
               aria-required="true"
             />
             {errors.pickupTime?.type === 'required' && (
-              <p className={styles.error}>Please choose a valid pickup time</p>
+              <p className={errorClass}>Please choose a valid pickup time</p>
             )}
             {errors.pickupTime?.type === 'validate' && (
-              <p className={styles.error}>
+              <p className={errorClass}>
                 Please choose a time between 7:30 am and 10:00 pm
               </p>
             )}
           </div>
-          <div className={styles.col2}>
+          <div className="flex flex-col">
             <Label htmlFor="dropoffTime">Dropoff time:</Label>
             <Input
               id="dropoffTime"
               type="time"
-              className={cn(styles.timeStyle)}
+              className={inputClass}
               {...register('dropoffTime', {
                 required: true,
                 validate: (dropoffTime: string) => {
@@ -279,15 +283,13 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
                   return true;
                 },
               })}
-              // min="7:30"
-              // max="22:00"
               aria-required="true"
             />
             {errors.dropoffTime?.type === 'required' && (
-              <p className={styles.error}>Please choose a valid dropoff time</p>
+              <p className={errorClass}>Please choose a valid dropoff time</p>
             )}
             {errors.dropoffTime?.type === 'validate' && (
-              <p className={styles.error}>{errors.dropoffTime.message}</p>
+              <p className={errorClass}>{errors.dropoffTime.message}</p>
             )}
           </div>
         </div>

@@ -13,7 +13,6 @@ import UserInfoCard from './UserInfoCard';
 import StatisticsCard from './StatisticsCard';
 import ActionsCard from './ActionsCard';
 import useUserDetailData from './hooks/useUserDetailData';
-import styles from './UserDetailCards.module.css';
 
 interface UserDetailPageProps {
   userType: 'employee' | 'rider';
@@ -106,7 +105,7 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
 
         {/* Rides Section */}
         <div
-          className={`bg-white rounded-xl border border-gray-200 ${styles.userDetailCardShadow}`}
+          className="bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.1),0_-1px_4px_rgba(0,0,0,0.05)]"
         >
           <div className="p-4">
             <RideTable rides={rides} userRole="admin" />

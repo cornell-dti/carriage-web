@@ -22,7 +22,6 @@ import axios from '../../util/axios';
 import RiderList from './RiderList';
 import SearchPopup from './SearchPopup';
 import { SearchableType } from '../../utils/searchConfig';
-import styles from './RidePeople.module.css';
 
 interface RidePeopleProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -43,9 +42,9 @@ const PersonCard: React.FC<PersonCardProps> = ({
   const rider = isRider ? (person as RiderType) : undefined;
 
   return (
-    <div className={styles.personCard}>
+    <div className="h-full rounded-lg flex flex-col">
       <CardContent>
-        <div className={styles.personHeader}>
+        <div className="flex items-center mb-3 gap-3 max-md:mb-2 max-md:gap-2.5">
           <Avatar src={person.photoLink} sx={{ width: 48, height: 48 }}>
             {person.firstName?.charAt(0)}
             {person.lastName?.charAt(0)}
@@ -65,9 +64,9 @@ const PersonCard: React.FC<PersonCardProps> = ({
         </div>
 
         {/* Contact Information */}
-        <div className={styles.contactInfo}>
+        <div className="flex flex-col gap-1.5 mb-3 max-md:mb-2 max-md:gap-1">
           {person.phoneNumber && (
-            <div className={styles.contactRow}>
+            <div className="flex items-center gap-2">
               <IconButton size="small" aria-label="Call">
                 <PhoneIcon fontSize="small" />
               </IconButton>
@@ -75,7 +74,7 @@ const PersonCard: React.FC<PersonCardProps> = ({
             </div>
           )}
           {person.email && (
-            <div className={styles.contactRow}>
+            <div className="flex items-center gap-2">
               <IconButton size="small" aria-label="Email">
                 <EmailIcon fontSize="small" />
               </IconButton>
@@ -88,11 +87,11 @@ const PersonCard: React.FC<PersonCardProps> = ({
         {showAccessibility &&
           rider?.accessibility &&
           rider.accessibility.length > 0 && (
-            <div className={styles.accessibilitySection}>
+            <div className="border-t border-[#e0e0e0] mt-3 pt-3 max-md:mt-2 max-md:pt-2">
               <Typography variant="body2" color="textSecondary" gutterBottom>
                 Accessibility Needs
               </Typography>
-              <div className={styles.accessibilityChips}>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {rider.accessibility.map((need: string) => (
                   <Chip
                     key={need}
@@ -222,18 +221,18 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   };
 
   const renderRiderView = () => (
-    <div className={styles.container}>
-      <div className={styles.adminContainer}>
-        <div className={styles.adminCard}>
+    <div className="max-w-200 h-full flex flex-col">
+      <div className="flex gap-4 flex-wrap flex-1 content-start overflow-hidden max-md:flex-col max-md:gap-3 max-md:flex-nowrap">
+        <div className="flex-1 min-w-70 flex flex-col overflow-hidden max-md:min-w-0 max-md:flex-none">
           <Typography variant="subtitle1" gutterBottom>
             Driver
           </Typography>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div className="h-80 flex flex-col overflow-hidden">
+            <div className="h-full overflow-y-auto flex flex-col border border-[#e0e0e0] rounded-lg p-1.5">
               {ride.driver ? (
                 <PersonCard person={ride.driver} type="driver" />
               ) : (
-                <div className={styles.notAssigned}>
+                <div className="flex items-center justify-center h-full text-[#666] bg-[#f5f5f5] border border-dashed border-[#ccc] rounded-lg">
                   <Typography variant="body1">Not assigned</Typography>
                 </div>
               )}
@@ -245,14 +244,14 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
   );
 
   const renderDriverView = () => (
-    <div className={styles.container}>
-      <div className={styles.adminContainer}>
-        <div className={styles.adminCard}>
+    <div className="max-w-200 h-full flex flex-col">
+      <div className="flex gap-4 flex-wrap flex-1 content-start overflow-hidden max-md:flex-col max-md:gap-3 max-md:flex-nowrap">
+        <div className="flex-1 min-w-70 flex flex-col overflow-hidden max-md:min-w-0 max-md:flex-none">
           <Typography variant="subtitle1" gutterBottom>
             Riders ({ride.riders?.length || 0})
           </Typography>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div className="h-80 flex flex-col overflow-hidden">
+            <div className="h-full overflow-y-auto flex flex-col border border-[#e0e0e0] rounded-lg p-1.5">
               <RiderList
                 riders={ride.riders || []}
                 showAccessibility
@@ -270,14 +269,14 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
     const canEditDriver = canAssignDriver(ride, 'admin');
 
     return (
-      <div className={styles.container}>
-        <div className={styles.adminContainer}>
-          <div className={styles.adminCard}>
+      <div className="max-w-200 h-full flex flex-col">
+        <div className="flex gap-4 flex-wrap flex-1 content-start overflow-hidden max-md:flex-col max-md:gap-3 max-md:flex-nowrap">
+          <div className="flex-1 min-w-70 flex flex-col overflow-hidden max-md:min-w-0 max-md:flex-none">
             <Typography variant="subtitle1" gutterBottom>
               Riders ({ride.riders?.length || 0})
             </Typography>
-            <div className={styles.contentArea}>
-              <div className={styles.riderListContainer}>
+            <div className="h-80 flex flex-col overflow-hidden">
+              <div className="h-full overflow-y-auto flex flex-col border border-[#e0e0e0] rounded-lg p-1.5">
                 <RiderList
                   riders={ride.riders || []}
                   showAccessibility
@@ -286,7 +285,7 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
               </div>
             </div>
             {isEditing && canEditRider && (
-              <div className={styles.actionButtons}>
+              <div className="mt-auto pt-4 shrink-0">
                 <Button
                   ref={riderButtonRef}
                   variant="outlined"
@@ -299,23 +298,23 @@ const RidePeople: React.FC<RidePeopleProps> = ({ userRole }) => {
               </div>
             )}
           </div>
-          <div className={styles.adminCard}>
+          <div className="flex-1 min-w-70 flex flex-col overflow-hidden max-md:min-w-0 max-md:flex-none">
             <Typography variant="subtitle1" gutterBottom>
               Driver
             </Typography>
-            <div className={styles.contentArea}>
-              <div className={styles.riderListContainer}>
+            <div className="h-80 flex flex-col overflow-hidden">
+              <div className="h-full overflow-y-auto flex flex-col border border-[#e0e0e0] rounded-lg p-1.5">
                 {tempCurrentDriver ? (
                   <PersonCard person={tempCurrentDriver} type="driver" />
                 ) : (
-                  <div className={styles.notAssigned}>
+                  <div className="flex items-center justify-center h-full text-[#666] bg-[#f5f5f5] border border-dashed border-[#ccc] rounded-lg">
                     <Typography variant="body1">Not assigned</Typography>
                   </div>
                 )}
               </div>
             </div>
             {isEditing && canEditDriver && (
-              <div className={styles.actionButtons}>
+              <div className="mt-auto pt-4 shrink-0">
                 {tempCurrentDriver ? (
                   <>
                     <Button

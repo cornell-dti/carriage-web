@@ -3,7 +3,6 @@ import moment from 'moment';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
 import Tag from '../Tag/Tag';
 import { RideType } from '@carriage-web/shared/types/ride';
-import styles from './smodal.module.css';
 import ProgressBar from './ProgressBar';
 import { trash, x } from '../../icons/other/index';
 
@@ -42,20 +41,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
         onClose={() => setDeleteOpen(false)}
       />
       {isOpen && (
-        <div className={styles.modal} ref={wrapperRef}>
-          <div className={styles.body}>
-            <div className={styles.modalOptions}>
+        <div className="fixed left-1/2 top-1/2 w-92.5 min-h-85 -ml-22.25 -translate-y-1/2 z-1000" ref={wrapperRef}>
+          <div className="relative p-6.25 bg-white rounded-[5px] shadow-[0_0.5rem_1.5rem_0_rgba(0,0,0,0.2)] text-xs">
+            <div className="absolute top-3.75 right-3.75 inline">
               <button
-                className={styles.cancel}
+                className="cursor-pointer bg-none border-none h-4 w-4 pb-[0.1rem] mr-[0.7rem] focus:outline-none"
                 onClick={() => setDeleteOpen(true)}
               >
                 <img src={trash} alt="trash" />
               </button>
-              <button className={styles.close} onClick={close}>
+              <button className="cursor-pointer bg-none border-none h-4 w-4 focus:outline-none" onClick={close}>
                 <img src={x} alt="close" />
               </button>
             </div>
-            <h3 className={styles.title}>
+            <h3 className="m-0 mb-4 font-normal text-base">
               {ride.riders && ride.riders.length > 0
                 ? ride.riders.length === 1
                   ? `${ride.riders[0].firstName} ${ride.riders[0].lastName}`
@@ -65,20 +64,20 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                 : 'No rider assigned'}
             </h3>
             <p>Status Updates</p>
-            <div className={styles.bar}>
+            <div className="mt-4">
               <ProgressBar status={ride.status} late={false} />
             </div>
-            <div className={styles.row}>
-              <div className={styles.column}>
+            <div className="flex">
+              <div className="leading-8 w-38.75 p-1.25">
                 <p>{moment(new Date(ride.startTime)).format('h:mm a')}</p>
-                <div className={styles.location}>
+                <div className="p-1.25 bg-[#f9f9f9] rounded-[5px]">
                   <Tag location="" tag={ride.startLocation.tag} />
-                  <p className={styles.locationName}>
+                  <p className="leading-[1.6]">
                     {ride.startLocation.name}
                   </p>
                 </div>
               </div>
-              <div className={styles.center}>
+              <div className="flex-[40px] flex justify-center items-center">
                 <svg
                   width="28"
                   height="8"
@@ -113,19 +112,19 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                   />
                 </svg>
               </div>
-              <div className={styles.column}>
+              <div className="leading-8 w-38.75 p-1.25">
                 <p>{moment(new Date(ride.endTime)).format('h:mm a')}</p>
-                <div className={styles.location}>
+                <div className="p-1.25 bg-[#f9f9f9] rounded-[5px]">
                   <Tag location="" tag={ride.endLocation.tag} />
-                  <p className={styles.locationName}>{ride.endLocation.name}</p>
+                  <p className="leading-[1.6]">{ride.endLocation.name}</p>
                 </div>
               </div>
             </div>
 
-            <div className={styles.footer}>
-              <hr className={styles.divider} />
-              <div className={styles.row}>
-                <div className={styles.column2}>
+            <div className="w-80">
+              <hr className="border-t border-[#a5a5a5] rounded-[1px] my-4" />
+              <div className="flex">
+                <div className="w-7.5">
                   <svg
                     width="24"
                     height="1em"

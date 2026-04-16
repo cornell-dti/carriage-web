@@ -27,7 +27,6 @@ import { useRideEdit } from './RideEditContext';
 import { useLocations } from '../../context/LocationsContext';
 import { SearchableType } from '../../utils/searchConfig';
 import SearchPopup from './SearchPopup';
-import styles from './RideLocations.module.css';
 
 interface RideLocationsProps {
   // No props needed - gets ride from context
@@ -67,16 +66,16 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
   };
 
   return (
-    <div className={styles.locationBlock}>
-      <div className={styles.locationHeader}>
+    <div className="flex-1 flex flex-col">
+      <div className="flex items-center mb-3 gap-2">
         {icon}
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
           {label}
         </Typography>
       </div>
       <div
-        className={`${styles.locationCard} ${
-          isChanging ? styles.locationCardChanging : ''
+        className={`flex-1 border border-[#e0e0e0] rounded-lg p-4 bg-[#fafafa] flex flex-col${
+          isChanging ? ' transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)]' : ''
         }`}
         style={
           isChanging
@@ -88,8 +87,8 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
             : {}
         }
       >
-        <div className={styles.locationCardHeader}>
-          <div className={styles.locationInfo}>
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex-1">
             <Typography variant="body1" sx={{ fontWeight: 500, mb: 0.5 }}>
               {location.name}
             </Typography>
@@ -108,7 +107,7 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
               </Typography>
             )}
             {location.tag && (
-              <div className={styles.locationTag}>
+              <div className="mt-2">
                 <Chip
                   label={location.tag}
                   size="small"
@@ -118,13 +117,13 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
               </div>
             )}
           </div>
-          <div className={styles.locationActions}>
+          <div className="flex items-center gap-2 max-md:flex-col max-md:items-stretch">
             {!isChanging && location.address && (
               <IconButton
                 size="small"
                 onClick={handleCopyAddress}
                 title="Copy address"
-                className={styles.copyButton}
+                className="ml-2"
               >
                 <ContentCopyIcon fontSize="small" />
               </IconButton>
@@ -140,7 +139,7 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
               </Button>
             )}
             {isChanging && (
-              <div className={styles.changingActions}>
+              <div className="flex items-center gap-2">
                 <Button
                   ref={dropdownButtonRef}
                   variant="outlined"
@@ -150,7 +149,7 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
                 >
                   Select
                 </Button>
-                <div className={styles.confirmActions}>
+                <div className="flex gap-1">
                   <IconButton
                     size="small"
                     onClick={onConfirm}
@@ -379,7 +378,7 @@ const RideMap: React.FC<RideMapProps> = ({
   // if custom location, show placeholder instead of map
   if (hasCustomLocation) {
     return (
-      <div className={styles.mapContainer}>
+      <div className="flex-1 rounded-lg overflow-hidden mb-4 min-h-80">
         <div
           style={{
             width: '100%',
@@ -410,7 +409,7 @@ const RideMap: React.FC<RideMapProps> = ({
   return (
     <>
       {/* Map */}
-      <div className={styles.mapContainer}>
+      <div className="flex-1 rounded-lg overflow-hidden mb-4 min-h-80">
         <Map
           defaultZoom={12}
           defaultCenter={getMapCenter()}
@@ -479,10 +478,10 @@ const RideMap: React.FC<RideMapProps> = ({
 
       {/* Distance and Time */}
       {tripInfo && (tripInfo.distance || tripInfo.duration) && (
-        <div className={styles.tripInfo}>
-          <div className={styles.tripInfoGrid}>
+        <div className="border border-[#e0e0e0] rounded-lg p-4 bg-[#f9f9f9]">
+          <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1 max-md:gap-3">
             {tripInfo.distance && (
-              <div className={styles.tripInfoItem}>
+              <div className="flex items-center gap-2">
                 <DirectionsCarIcon color="action" fontSize="small" />
                 <Box>
                   <Typography variant="body2" color="textSecondary">
@@ -495,7 +494,7 @@ const RideMap: React.FC<RideMapProps> = ({
               </div>
             )}
             {tripInfo.duration && (
-              <div className={styles.tripInfoItem}>
+              <div className="flex items-center gap-2">
                 <TimelapseIcon color="action" fontSize="small" />
                 <Box>
                   <Typography variant="body2" color="textSecondary">
@@ -584,10 +583,10 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.locationsGrid}>
+    <div className="max-w-250">
+      <div className="grid grid-cols-2 gap-6 mb-6 items-start max-md:grid-cols-1 max-md:gap-4">
         {/* Left side - Address blocks */}
-        <div className={styles.locationsContainer}>
+        <div className="flex flex-col h-full min-h-75 justify-between">
           <LocationBlock
             location={getDisplayLocation('pickup')}
             label="Pickup Location"
@@ -617,7 +616,7 @@ const RideLocations: React.FC<RideLocationsProps> = () => {
         </div>
 
         {/* Right side - Map */}
-        <div className={styles.mapAndInfoContainer}>
+        <div className="flex flex-col h-full min-h-75">
           <RideMapWithProvider
             startLocation={getDisplayLocation('pickup')}
             endLocation={getDisplayLocation('dropoff')}

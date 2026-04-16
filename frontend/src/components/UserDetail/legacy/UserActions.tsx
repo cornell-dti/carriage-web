@@ -25,7 +25,6 @@ import { DriverType } from '@carriage-web/shared/types/driver';
 import { useRiders } from '../../../context/RidersContext';
 import { ToastStatus, useToast } from '../../../context/toastContext';
 import axios from '../../../util/axios';
-import styles from './UserActions.module.css';
 
 type UserRole = 'driver' | 'admin' | 'rider' | 'both';
 
@@ -128,14 +127,17 @@ const UserActions = ({
     return rider.active ? <DeactivateIcon /> : <ActivateIcon />;
   };
 
+  const actionButtonClass = 'min-w-12 h-12 rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] max-md:min-w-11 max-md:h-11';
+  const baseButtonClass = 'py-2.5 px-4 rounded-lg normal-case font-medium min-h-10 shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)]';
+
   return (
-    <Card className={styles.actionsContainer} elevation={2}>
-      <CardContent className={styles.actionsCardContent}>
-        <Typography variant="h6" className={styles.actionsHeader}>
+    <Card className="w-full rounded-xl h-fit flex flex-col max-md:flex-row max-md:justify-center max-md:items-center max-md:gap-2" elevation={2}>
+      <CardContent className="p-6 flex flex-col gap-4">
+        <Typography variant="h6" className="text-lg font-semibold text-[#333] mb-2">
           Actions
         </Typography>
 
-        <Box className={styles.buttonsContainer}>
+        <Box className="flex flex-col gap-3 items-stretch">
           {showToast && rider && (
             <Toast
               message={`Rider ${rider.active ? 'activated' : 'deactivated'}.`}
@@ -150,7 +152,7 @@ const UserActions = ({
                 <Tooltip title={getActivateButtonText()}>
                   <IconButton
                     onClick={toggleActive}
-                    className={styles.actionButton}
+                    className={actionButtonClass}
                     color={rider.active ? 'error' : 'success'}
                   >
                     {getActivateButtonIcon()}
@@ -161,7 +163,7 @@ const UserActions = ({
                   variant="outlined"
                   startIcon={getActivateButtonIcon()}
                   onClick={toggleActive}
-                  className={styles.activateButton}
+                  className={`${baseButtonClass} bg-white`}
                   color={rider.active ? 'error' : 'success'}
                 >
                   {getActivateButtonText()}
@@ -175,7 +177,7 @@ const UserActions = ({
             <Tooltip title="Edit">
               <IconButton
                 onClick={handleEdit}
-                className={styles.actionButton}
+                className={actionButtonClass}
                 color="primary"
               >
                 <EditIcon />
@@ -186,7 +188,7 @@ const UserActions = ({
               variant="outlined"
               startIcon={<EditIcon />}
               onClick={handleEdit}
-              className={styles.editButton}
+              className={`${baseButtonClass} bg-white border-[#1976d2] text-[#1976d2] hover:bg-[rgba(25,118,210,0.04)]`}
             >
               Edit
             </Button>
@@ -197,7 +199,7 @@ const UserActions = ({
             <Tooltip title="Delete">
               <IconButton
                 onClick={handleDelete}
-                className={styles.actionButton}
+                className={actionButtonClass}
                 color="error"
               >
                 <DeleteIcon />
@@ -208,7 +210,7 @@ const UserActions = ({
               variant="outlined"
               startIcon={<DeleteIcon />}
               onClick={handleDelete}
-              className={styles.deleteButton}
+              className={`${baseButtonClass} bg-white border-[#d32f2f] text-[#d32f2f] hover:bg-[rgba(211,47,47,0.04)]`}
               color="error"
             >
               Delete

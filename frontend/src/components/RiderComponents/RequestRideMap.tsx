@@ -1,3 +1,4 @@
+/// <reference types="google.maps" />
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   APIProvider,
@@ -10,8 +11,6 @@ import {
 } from '@vis.gl/react-google-maps';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import type { Marker } from '@googlemaps/markerclusterer';
-import styles from './requestridedialog.module.css';
-// Removed unused imports
 import { LocationType } from '@carriage-web/shared/types/location';
 
 interface RequestRideMapProps {
@@ -73,7 +72,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   }, []);
 
   const fetchAndDrawRoute = useCallback(async () => {
-    if (!window.google || !map || !pickupLocation || !dropoffLocation) {
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined' || !map || !pickupLocation || !dropoffLocation) {
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
         polylineRef.current = null;
@@ -81,7 +80,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
       return;
     }
 
-    const directionsService = new window.google.maps.DirectionsService();
+    const directionsService = new google.maps.DirectionsService();
 
     try {
       const result = await directionsService.route({
@@ -165,7 +164,7 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
         mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
         gestureHandling={'greedy'}
         disableDefaultUI={false}
-        className={styles.mapContainer}
+        className="w-full h-full rounded-sm overflow-hidden absolute inset-0 bg-[#f5f5f5]"
       >
         {/* Pickup Location Marker */}
         {pickupLocation && (
@@ -261,10 +260,12 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
             }}
             onCloseClick={() => setMarkerWithPopup(null)}
           >
-            <div className={styles.mapPopup}>
-              <h4>{markerWithPopup.shortName}</h4>
-              <p>{markerWithPopup.name}</p>
-              <p>{markerWithPopup.address}</p>
+            <div className="p-2 min-w-45">
+              <h4 className="m-0 mb-2 text-base">
+                {markerWithPopup.shortName}
+              </h4>
+              <p className="my-1 text-sm">{markerWithPopup.name}</p>
+              <p className="my-1 text-sm">{markerWithPopup.address}</p>
             </div>
           </InfoWindow>
         )}
