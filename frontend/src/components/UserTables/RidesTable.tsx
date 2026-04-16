@@ -140,9 +140,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
 
             const valueEdit = {
               data: (
-                <div
-                  className="flex gap-2"
-                >
+                <div className="flex gap-2">
                   {editButton}
                   {assignButton(ride.driver !== undefined)}
                 </div>

@@ -967,10 +967,7 @@ const RequestRideDialog: React.FC<RequestRideDialogProps> = ({
 
                 {formData.repeatType === 'custom' && (
                   <div className="mt-4">
-                    <FormLabel
-                      component="legend"
-                      className="block mb-2"
-                    >
+                    <FormLabel component="legend" className="block mb-2">
                       Select Days
                     </FormLabel>
                     <ToggleButtonGroup

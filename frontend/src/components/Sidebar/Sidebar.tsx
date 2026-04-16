@@ -116,7 +116,10 @@ const Sidebar = ({ type, children }: SidebarProps) => {
       <nav className="flex bg-white w-24 min-h-screen fixed border-r border-gray-300 justify-between flex-col z-100 py-7 shadow-[0px_5px_32px_-7px_rgba(0,0,0,0.05)] max-md:h-24 max-md:min-w-full max-md:w-full max-md:min-h-24 max-md:flex-row max-md:py-0 max-md:px-7 max-md:overflow-x-auto max-md:overflow-y-hidden">
         <div className="flex flex-col max-md:flex-row max-md:flex-nowrap max-md:items-center">
           {menuItems.map(({ path, icon, caption }) => (
-            <div key={path} className="no-underline text-center mb-7 max-md:mb-0 max-md:mr-7 flex flex-col justify-center">
+            <div
+              key={path}
+              className="no-underline text-center mb-7 max-md:mb-0 max-md:mr-7 flex flex-col justify-center"
+            >
               <div className="text-black font-semibold text-sm" id={path}>
                 <Link
                   key={path}

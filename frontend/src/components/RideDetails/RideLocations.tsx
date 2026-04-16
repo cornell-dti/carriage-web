@@ -75,7 +75,9 @@ const LocationBlock: React.FC<LocationBlockProps> = ({
       </div>
       <div
         className={`flex-1 border border-[#e0e0e0] rounded-lg p-4 bg-[#fafafa] flex flex-col${
-          isChanging ? ' transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)]' : ''
+          isChanging
+            ? ' transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)]'
+            : ''
         }`}
         style={
           isChanging

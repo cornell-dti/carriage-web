@@ -104,9 +104,7 @@ const UserDetailPage: React.FC<UserDetailPageProps> = ({ userType }) => {
         </div>
 
         {/* Rides Section */}
-        <div
-          className="bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.1),0_-1px_4px_rgba(0,0,0,0.05)]"
-        >
+        <div className="bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.1),0_-1px_4px_rgba(0,0,0,0.05)]">
           <div className="p-4">
             <RideTable rides={rides} userRole="admin" />
           </div>

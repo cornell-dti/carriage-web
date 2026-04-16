@@ -200,12 +200,16 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
           </div>
           <div className="flex items-center gap-1.5 mb-1 text-sm">
             <LocationOnIcon fontSize="small" />
-            <span className="font-medium text-[#555] min-w-13.75">Pick-up:</span>
+            <span className="font-medium text-[#555] min-w-13.75">
+              Pick-up:
+            </span>
             <span>{ride.startLocation.name}</span>
           </div>
           <div className="flex items-center gap-1.5 mb-1 text-sm">
             <LocationOnIcon fontSize="small" />
-            <span className="font-medium text-[#555] min-w-13.75">Drop-off:</span>
+            <span className="font-medium text-[#555] min-w-13.75">
+              Drop-off:
+            </span>
             <span>{ride.endLocation.name}</span>
           </div>
         </div>
@@ -231,19 +235,25 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PersonIcon fontSize="small" />
-                  <span className="font-medium text-[#555] min-w-13.75">Name:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Name:
+                  </span>
                   <span>
                     {ride.driver.firstName} {ride.driver.lastName}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PhoneIcon fontSize="small" />
-                  <span className="font-medium text-[#555] min-w-13.75">Phone:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Phone:
+                  </span>
                   <span>{ride.driver.phoneNumber}</span>
                 </div>
                 <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <EmailIcon fontSize="small" />
-                  <span className="font-medium text-[#555] min-w-13.75">Email:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Email:
+                  </span>
                   <span>{ride.driver.email}</span>
                 </div>
                 <div className="py-1 px-2 bg-[#f0f0f0] rounded capitalize text-sm ml-2">
@@ -256,7 +266,9 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PersonIcon fontSize="small" />
-                  <span className="font-medium text-[#555] min-w-13.75">Scheduling:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Scheduling:
+                  </span>
                   <span>Unscheduled</span>
                 </div>
                 <div className="py-1 px-2 bg-[#f0f0f0] rounded capitalize text-sm ml-2">

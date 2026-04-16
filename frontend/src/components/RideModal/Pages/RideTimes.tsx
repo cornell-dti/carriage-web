@@ -181,7 +181,10 @@ const RideTimesPage: React.FC<RideTimesProps> = ({
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col w-full h-full"
+      >
         <div className="mb-6 w-full grid grid-cols-2 gap-5 max-[500px]:grid-cols-1">
           <div className="flex flex-col">
             <Label htmlFor="date">Day:</Label>

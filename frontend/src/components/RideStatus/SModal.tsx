@@ -41,7 +41,10 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
         onClose={() => setDeleteOpen(false)}
       />
       {isOpen && (
-        <div className="fixed left-1/2 top-1/2 w-92.5 min-h-85 -ml-22.25 -translate-y-1/2 z-1000" ref={wrapperRef}>
+        <div
+          className="fixed left-1/2 top-1/2 w-92.5 min-h-85 -ml-22.25 -translate-y-1/2 z-1000"
+          ref={wrapperRef}
+        >
           <div className="relative p-6.25 bg-white rounded-[5px] shadow-[0_0.5rem_1.5rem_0_rgba(0,0,0,0.2)] text-xs">
             <div className="absolute top-3.75 right-3.75 inline">
               <button
@@ -50,7 +53,10 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
               >
                 <img src={trash} alt="trash" />
               </button>
-              <button className="cursor-pointer bg-none border-none h-4 w-4 focus:outline-none" onClick={close}>
+              <button
+                className="cursor-pointer bg-none border-none h-4 w-4 focus:outline-none"
+                onClick={close}
+              >
                 <img src={x} alt="close" />
               </button>
             </div>
@@ -72,9 +78,7 @@ const SModal = ({ isOpen, close, ride, cancel }: SModalProps) => {
                 <p>{moment(new Date(ride.startTime)).format('h:mm a')}</p>
                 <div className="p-1.25 bg-[#f9f9f9] rounded-[5px]">
                   <Tag location="" tag={ride.startLocation.tag} />
-                  <p className="leading-[1.6]">
-                    {ride.startLocation.name}
-                  </p>
+                  <p className="leading-[1.6]">{ride.startLocation.name}</p>
                 </div>
               </div>
               <div className="flex-[40px] flex justify-center items-center">

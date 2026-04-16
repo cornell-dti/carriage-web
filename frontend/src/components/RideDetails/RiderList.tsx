@@ -36,9 +36,15 @@ const RiderCard: React.FC<RiderCardProps> = ({
   onRef,
 }) => {
   return (
-    <div ref={onRef} className="border border-[#e0e0e0] rounded-lg bg-[#fafafa] overflow-hidden transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]">
+    <div
+      ref={onRef}
+      className="border border-[#e0e0e0] rounded-lg bg-[#fafafa] overflow-hidden transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+    >
       {/* Compact View - Always Visible */}
-      <div className="flex items-center px-4 py-3 cursor-pointer transition-colors duration-200 min-h-16 hover:bg-[#f0f0f0] max-md:px-3 max-md:py-2.5 max-md:min-h-14" onClick={onToggleExpanded}>
+      <div
+        className="flex items-center px-4 py-3 cursor-pointer transition-colors duration-200 min-h-16 hover:bg-[#f0f0f0] max-md:px-3 max-md:py-2.5 max-md:min-h-14"
+        onClick={onToggleExpanded}
+      >
         <Avatar
           src={rider.photoLink}
           sx={{ width: 40, height: 40 }}

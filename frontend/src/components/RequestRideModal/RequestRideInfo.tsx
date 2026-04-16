@@ -45,8 +45,7 @@ const boxClass = 'flex max-md:block';
 const errorBoxClass = 'flex flex-col flex-nowrap items-stretch';
 const errorClass = 'text-[#eb0023] text-[0.66rem] mx-2 my-2';
 const radioBoxClass = 'max-md:block';
-const whenRepeatClass =
-  'focus:[outline:3px_solid_black] max-md:inline-block';
+const whenRepeatClass = 'focus:[outline:3px_solid_black] max-md:inline-block';
 
 const RequestRideInfo: React.FC<RequestRideInfoProps> = ({
   ride,

@@ -72,7 +72,13 @@ const RequestRideMap: React.FC<RequestRideMapProps> = ({
   }, []);
 
   const fetchAndDrawRoute = useCallback(async () => {
-    if (typeof google === 'undefined' || typeof google.maps === 'undefined' || !map || !pickupLocation || !dropoffLocation) {
+    if (
+      typeof google === 'undefined' ||
+      typeof google.maps === 'undefined' ||
+      !map ||
+      !pickupLocation ||
+      !dropoffLocation
+    ) {
       if (polylineRef.current) {
         polylineRef.current.setMap(null);
         polylineRef.current = null;

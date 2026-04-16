@@ -47,7 +47,10 @@ const DriverPage = ({
   }, [startTime, endTime, date]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col w-full h-full"
+    >
       <div className="mb-6 w-full">
         <div
           className="flex flex-col max-h-75 overflow-y-auto border border-[#ced4da] rounded bg-[#f8f9fa]"

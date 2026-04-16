@@ -45,7 +45,9 @@ const renderFormattedTime = (time: Date): ReactNode => {
   return (
     <span className="flex gap-1 items-center">
       <p>{formattedTime.time}</p>
-      <p className="text-xs text-gray-500 font-light">{formattedTime.meridiem}</p>
+      <p className="text-xs text-gray-500 font-light">
+        {formattedTime.meridiem}
+      </p>
     </span>
   );
 };

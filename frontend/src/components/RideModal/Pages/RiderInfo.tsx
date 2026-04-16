@@ -66,7 +66,10 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
   }, [riders, locations]);
 
   return (
-    <form onSubmit={handleSubmit(beforeSubmit)} className="flex flex-col w-full h-full">
+    <form
+      onSubmit={handleSubmit(beforeSubmit)}
+      className="flex flex-col w-full h-full"
+    >
       <div className="mb-6 w-full">
         <div>
           <Label htmlFor={'name'}>Name</Label>
@@ -91,7 +94,10 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div>
-          <Label htmlFor={'pickupLoc'} className="block mb-2 font-semibold text-[#333]">
+          <Label
+            htmlFor={'pickupLoc'}
+            className="block mb-2 font-semibold text-[#333]"
+          >
             Pickup Location
           </Label>
           <SelectComponent
@@ -112,7 +118,10 @@ const RiderInfoPage = ({ formData, onBack, onSubmit }: ModalPageProps) => {
           </datalist>
         </div>
         <div>
-          <Label htmlFor={'dropoffLoc'} className="block mb-2 font-semibold text-[#333]">
+          <Label
+            htmlFor={'dropoffLoc'}
+            className="block mb-2 font-semibold text-[#333]"
+          >
             Dropoff Location
           </Label>
           <SelectComponent

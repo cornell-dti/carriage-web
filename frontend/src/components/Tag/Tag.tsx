@@ -32,14 +32,20 @@ const Tag = ({ reduced, location, tag }: TagProps) => {
   const tagColor = getTagColor(tag);
   return (
     <p>
-      {reduced && <span className={cn('h-2.75 w-2.75 inline-block ml-1.5 mr-1.25 leading-none rounded-full', tagColor)} />}
+      {reduced && (
+        <span
+          className={cn(
+            'h-2.75 w-2.75 inline-block ml-1.5 mr-1.25 leading-none rounded-full',
+            tagColor
+          )}
+        />
+      )}
       {location}{' '}
       {!reduced && (
         <span className={cn('rounded px-1 text-sm', tagColor)}>{tag}</span>
       )}
     </p>
   );
-
 };
 
 export default Tag;

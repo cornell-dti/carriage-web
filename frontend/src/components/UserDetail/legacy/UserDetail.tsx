@@ -97,16 +97,24 @@ const UserDetail = ({
         <Box className="flex-1 min-w-0 flex flex-col gap-6 max-md:text-center">
           <Box className="flex flex-col gap-2">
             <Box className="flex flex-col gap-1">
-              <Typography variant="h4" className="text-[1.75rem] font-bold text-[#1a1a1a] m-0 leading-tight max-md:text-2xl">
+              <Typography
+                variant="h4"
+                className="text-[1.75rem] font-bold text-[#1a1a1a] m-0 leading-tight max-md:text-2xl"
+              >
                 {fullName}
               </Typography>
-              <Typography variant="body2" className="text-base text-[#6b7280] m-0 font-medium">
+              <Typography
+                variant="body2"
+                className="text-base text-[#6b7280] m-0 font-medium"
+              >
                 {netId}
               </Typography>
             </Box>
           </Box>
 
-          <Box className="flex flex-col gap-4 bg-[#f8f9fa] p-6 rounded-lg border border-[#e9ecef] max-md:p-4">{children}</Box>
+          <Box className="flex flex-col gap-4 bg-[#f8f9fa] p-6 rounded-lg border border-[#e9ecef] max-md:p-4">
+            {children}
+          </Box>
         </Box>
       </CardContent>
     </Card>

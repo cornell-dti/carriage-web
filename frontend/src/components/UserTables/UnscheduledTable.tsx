@@ -22,7 +22,9 @@ const Table = () => {
   return rides.length ? (
     <RidesTable rides={rides} />
   ) : (
-    <div className="text-center text-3xl font-bold mt-8 mb-8">No unscheduled rides</div>
+    <div className="text-center text-3xl font-bold mt-8 mb-8">
+      No unscheduled rides
+    </div>
   );
 };
 

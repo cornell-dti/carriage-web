@@ -22,24 +22,29 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
   }, []);
   return (
     <main id="main" className="w-full max-w-full overflow-x-hidden">
-      <div className="relative bg-cover min-h-fit w-full flex flex-col justify-center items-center" style={{ backgroundImage: 'url(./campus.jpg)' }}>
+      <div
+        className="relative bg-cover min-h-fit w-full flex flex-col justify-center items-center"
+        style={{ backgroundImage: 'url(./campus.jpg)' }}
+      >
         <div className="absolute top-5 right-5">
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
-            <button className="w-44 h-10 border-0 bg-white text-black rounded hover:bg-gray-200 cursor-pointer text-base">Terms of Service</button>
+            <button className="w-44 h-10 border-0 bg-white text-black rounded hover:bg-gray-200 cursor-pointer text-base">
+              Terms of Service
+            </button>
           </a>
         </div>
         <div className="rounded-2xl p-32 flex min-h-fit max-lg:max-w-[95%] max-lg:min-h-auto max-lg:h-auto max-md:flex-col max-md:p-0">
           <div className="rounded-l-2xl bg-black grow flex flex-col justify-center items-center p-4 max-md:rounded-t-2xl max-md:rounded-bl-none">
             <img src={logo} alt="Carriage logo" />
-            <span className="text-5xl font-semibold text-white mt-4">Carriage</span>
+            <span className="text-5xl font-semibold text-white mt-4">
+              Carriage
+            </span>
           </div>
           <div className="rounded-r-2xl bg-white grow flex flex-col justify-between items-center text-center p-16 relative max-md:rounded-b-2xl max-md:rounded-tr-none">
             <div className="flex flex-col justify-center items-center flex-1">
               <h1 className="text-3xl">Login</h1>
               {ssoError && (
-                <div
-                  className="bg-red-100 text-red-900 p-3 rounded border border-red-400 mb-4 w-full"
-                >
+                <div className="bg-red-100 text-red-900 p-3 rounded border border-red-400 mb-4 w-full">
                   {ssoError}
                 </div>
               )}
@@ -52,7 +57,10 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
           </div>
         </div>
 
-        <div className="w-full p-0 leading-none" style={{ transform: 'translateY(2px)' }}>
+        <div
+          className="w-full p-0 leading-none"
+          style={{ transform: 'translateY(2px)' }}
+        >
           <svg
             data-name="Layer 1"
             xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +93,11 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
             alt="bottom laptop"
             className="w-167.5 max-w-full h-auto max-md:w-[60%] max-md:max-w-50"
           />
-          <img src={phone} alt="phone" className="w-55 max-w-full h-auto max-md:w-[30%] max-md:max-w-25" />
+          <img
+            src={phone}
+            alt="phone"
+            className="w-55 max-w-full h-auto max-md:w-[30%] max-md:max-w-25"
+          />
         </div>
 
         <p className="text-white text-5xl min-w-[30%] max-xl:max-w-[70%] max-xl:mt-20 max-lg:text-xl max-lg:max-w-[80%] max-md:text-xl">

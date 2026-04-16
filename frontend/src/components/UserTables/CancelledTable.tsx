@@ -32,14 +32,18 @@ const CancelledTable = () => {
         const driverRides = rides.filter((r) => r && r.driver?.id === id);
         return driverRides.length ? (
           <React.Fragment key={id}>
-            <h1 className="mt-7 mb-0 ml-8 text-3xl text-gray-600 font-normal text-left">{name}</h1>
+            <h1 className="mt-7 mb-0 ml-8 text-3xl text-gray-600 font-normal text-left">
+              {name}
+            </h1>
             <RidesTable rides={driverRides} />
           </React.Fragment>
         ) : null;
       })}
     </>
   ) : (
-    <div className="text-center text-3xl font-bold mt-8 mb-8">No cancelled rides</div>
+    <div className="text-center text-3xl font-bold mt-8 mb-8">
+      No cancelled rides
+    </div>
   );
 };
 
