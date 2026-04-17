@@ -1,3 +1,21 @@
+/**
+ * ride.ts — Express router for ride CRUD operations.
+ *
+ * Handles creating, reading, updating, and deleting rides, including support
+ * for recurring ride series. Recurring rides share a recurrenceId and are
+ * generated up to 4 months out from the series start.
+ *
+ * Routes:
+ *   GET    /                  — query all rides (filterable)
+ *   GET    /repeating         — get all active recurring rides
+ *   GET    /download          — export rides for a given date as CSV
+ *   GET    /:id               — get a single ride by ID
+ *   GET    /rider/:id         — get all rides for a specific rider
+ *   POST   /                  — create a ride (single or recurring)
+ *   PUT    /:id               — update a ride (?scope=single|future)
+ *   DELETE /:id               — delete a ride (?scope=single|future)
+ */
+
 import express from 'express';
 import { v4 as uuid } from 'uuid';
 import * as csv from '@fast-csv/format';
@@ -72,7 +90,11 @@ function generateRecurringRides(
   return rides;
 }
 
-// Transform Prisma ride (uppercase enums) to frontend-expected format (lowercase enums)
+/**
+ * Convert prisma ride object to the format the frontend expects
+ * Prisma stores enums in uppercase (e.g. "UPCOMING", "NOT_STARTED")
+ * but frontend uses lowercase strings throughout.
+ */
 const formatRide = (ride: any) => ({
   ...ride,
   type: ride.type?.toLowerCase(),
@@ -80,9 +102,9 @@ const formatRide = (ride: any) => ({
   schedulingState: ride.schedulingState?.toLowerCase(),
 });
 
-// Build a Prisma update payload from request body fields.
+// Build prisma update payload from request body fields
 // Used for single-ride edits — includes schedulingState since admins manage that per-ride.
-// Do NOT use this for bulk future-ride regeneration.
+// not to be used for bulk future-ride regeneration.
 function buildUpdateData(body: any): any {
   const updateData: any = {};
 
@@ -156,6 +178,9 @@ router.get('/diagnose', async (_req, res) => {
   }
 });
 
+// Export all non-cancelled rides for a given date as a csv
+// Expects a `date` query param
+// Each row is one rider ... rides with multiple riders expand into multiple rows
 router.get('/download', async (req, res) => {
   try {
     const dateStart = moment(req.query.date as string).toDate();
@@ -367,16 +392,24 @@ router.post('/', validateUser('User'), async (req, res) => {
       const { recurrenceDays, recurrenceEndDate } = body;
       const timezone = body.timezone || 'America/New_York';
 
-      if (!recurrenceDays || !Array.isArray(recurrenceDays) || recurrenceDays.length === 0) {
+      if (
+        !recurrenceDays ||
+        !Array.isArray(recurrenceDays) ||
+        recurrenceDays.length === 0
+      ) {
         return res.status(400).send({
           err: 'recurrenceDays is required for recurring rides (array of 0–6, where 0=Sun).',
         });
       }
       if (!recurrenceEndDate) {
-        return res.status(400).send({ err: 'recurrenceEndDate is required for recurring rides.' });
+        return res
+          .status(400)
+          .send({ err: 'recurrenceEndDate is required for recurring rides.' });
       }
       if (!body.startTime || !body.endTime) {
-        return res.status(400).send({ err: 'startTime and endTime are required.' });
+        return res
+          .status(400)
+          .send({ err: 'startTime and endTime are required.' });
       }
       const maxEnd = moment().tz(timezone).add(4, 'months').endOf('day');
       if (moment.tz(recurrenceEndDate, timezone).isAfter(maxEnd)) {
@@ -391,17 +424,18 @@ router.post('/', validateUser('User'), async (req, res) => {
         return res.status(400).send({ err: 'At least one rider is required.' });
       }
 
-      const riderIds: string[] =
-        hasRiders
-          ? body.riders.map((r: any) => (typeof r === 'string' ? r : r.id))
-          : [typeof body.rider === 'string' ? body.rider : body.rider.id];
+      const riderIds: string[] = hasRiders
+        ? body.riders.map((r: any) => (typeof r === 'string' ? r : r.id))
+        : [typeof body.rider === 'string' ? body.rider : body.rider.id];
 
       const startLocationId =
         typeof startLocation === 'string' ? startLocation : startLocation.id;
       const endLocationId =
         typeof endLocation === 'string' ? endLocation : endLocation.id;
       const driverId = body.driver
-        ? typeof body.driver === 'string' ? body.driver : body.driver.id
+        ? typeof body.driver === 'string'
+          ? body.driver
+          : body.driver.id
         : null;
       const schedulingState: SchedulingState = driverId
         ? SchedulingState.SCHEDULED
@@ -409,7 +443,10 @@ router.post('/', validateUser('User'), async (req, res) => {
 
       const recurrenceId = uuid();
       const ridesData = generateRecurringRides(
-        { startTime: new Date(body.startTime), endTime: new Date(body.endTime) },
+        {
+          startTime: new Date(body.startTime),
+          endTime: new Date(body.endTime),
+        },
         recurrenceDays,
         new Date(recurrenceEndDate),
         timezone,
@@ -446,7 +483,9 @@ router.post('/', validateUser('User'), async (req, res) => {
         )
       );
 
-      return res.status(200).send({ data: { recurrenceId, count: ridesData.length } });
+      return res
+        .status(200)
+        .send({ data: { recurrenceId, count: ridesData.length } });
     }
 
     const hasRiders = body.riders && body.riders.length > 0;
@@ -600,33 +639,49 @@ router.put('/:id', validateUser('User'), async (req, res) => {
     // --- edit all future rides in the series ---
     if (scope === 'future' && ride.recurrenceId) {
       const timezone = body.timezone ?? ride.timezone ?? 'America/New_York';
-      const recurrenceDays: number[] = body.recurrenceDays ?? ride.recurrenceDays ?? [];
+      const recurrenceDays: number[] =
+        body.recurrenceDays ?? ride.recurrenceDays ?? [];
       const recurrenceEndDate = body.recurrenceEndDate
         ? new Date(body.recurrenceEndDate)
         : ride.recurrenceEndDate;
 
       if (!recurrenceEndDate) {
-        return res.status(400).send({ err: 'recurrenceEndDate is missing from the series.' });
+        return res
+          .status(400)
+          .send({ err: 'recurrenceEndDate is missing from the series.' });
       }
 
       const startLocationId = body.startLocation
-        ? typeof body.startLocation === 'string' ? body.startLocation : body.startLocation.id
+        ? typeof body.startLocation === 'string'
+          ? body.startLocation
+          : body.startLocation.id
         : ride.startLocationId;
       const endLocationId = body.endLocation
-        ? typeof body.endLocation === 'string' ? body.endLocation : body.endLocation.id
+        ? typeof body.endLocation === 'string'
+          ? body.endLocation
+          : body.endLocation.id
         : ride.endLocationId;
       const driverId = Object.prototype.hasOwnProperty.call(body, 'driver')
-        ? body.driver ? (typeof body.driver === 'string' ? body.driver : body.driver.id) : null
+        ? body.driver
+          ? typeof body.driver === 'string'
+            ? body.driver
+            : body.driver.id
+          : null
         : ride.driverId;
       const riderIds: string[] = body.riders
         ? body.riders.map((r: any) => (typeof r === 'string' ? r : r.id))
         : ride.riders.map((r) => r.id);
-      const startTime = body.startTime ? new Date(body.startTime) : ride.startTime;
+      const startTime = body.startTime
+        ? new Date(body.startTime)
+        : ride.startTime;
       const endTime = body.endTime ? new Date(body.endTime) : ride.endTime;
 
       // delete this ride and all future rides in the series
       await prisma.ride.deleteMany({
-        where: { recurrenceId: ride.recurrenceId, startTime: { gte: ride.startTime } },
+        where: {
+          recurrenceId: ride.recurrenceId,
+          startTime: { gte: ride.startTime },
+        },
       });
 
       // regenerate from this point forward with the new parameters
@@ -643,7 +698,9 @@ router.put('/:id', validateUser('User'), async (req, res) => {
       }
 
       // schedulingState is intentionally NOT carried over — admins manage that per-ride
-      const schedulingState = driverId ? SchedulingState.SCHEDULED : SchedulingState.UNSCHEDULED;
+      const schedulingState = driverId
+        ? SchedulingState.SCHEDULED
+        : SchedulingState.UNSCHEDULED;
 
       await prisma.$transaction(
         ridesData.map((r) =>
@@ -707,7 +764,6 @@ router.put('/:id', validateUser('User'), async (req, res) => {
   }
 });
 
-
 // Delete an existing ride
 // ?scope=single (default) — delete only this ride
 // ?scope=future           — delete this ride and all future rides in the series
@@ -760,7 +816,10 @@ router.delete('/:id', validateUser('User'), async (req, res) => {
     // delete this ride and all future rides in the series
     if (scope === 'future' && ride.recurrenceId) {
       const { count } = await prisma.ride.deleteMany({
-        where: { recurrenceId: ride.recurrenceId, startTime: { gte: ride.startTime } },
+        where: {
+          recurrenceId: ride.recurrenceId,
+          startTime: { gte: ride.startTime },
+        },
       });
       return res.status(200).send({ deleted: count });
     }
