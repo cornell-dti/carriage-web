@@ -2,10 +2,10 @@ import express from 'express';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment-timezone';
 import { prisma } from '../db/prisma';
-import { DayOfWeek, Driver } from '../../generated/prisma/client';
+import { DayOfWeek } from '../../generated/prisma/client';
 import {
   validateUser,
-  checkNetIDExists,
+  checkRiderEmailExists,
   checkNetIDExistsForOtherEmployee,
 } from '../util';
 
@@ -14,7 +14,7 @@ const router = express.Router();
 // Get all drivers
 router.get('/', validateUser('Admin'), async (req, res) => {
   try {
-    const drivers = await prisma.driver.findMany();
+    const drivers = await prisma.employee.findMany({ where: { isDriver: true } });
     res.status(200).send({ data: drivers });
   } catch (error) {
     console.error('Error fetching drivers:', error);
@@ -60,7 +60,6 @@ router.get('/available', validateUser('User'), async (req, res) => {
   const dayToken = dayMap[weekday];
 
   try {
-    // Get rides for that day that aren't cancelled
     const ridesOfDay = await prisma.ride.findMany({
       where: {
         startTime: { gte: dayStart, lte: dayEnd },
@@ -69,7 +68,6 @@ router.get('/available', validateUser('User'), async (req, res) => {
       },
     });
 
-    // Find conflicting driver IDs
     const conflictingDriverIds = new Set<string>();
     for (const ride of ridesOfDay) {
       if (!ride.driverId) continue;
@@ -82,16 +80,16 @@ router.get('/available', validateUser('User'), async (req, res) => {
       }
     }
 
-    // Fetch active drivers filtered by availability
-    const drivers = await prisma.driver.findMany({
+    const drivers = await prisma.employee.findMany({
       where: {
+        isDriver: true,
         active: true,
         ...(dayToken ? { availability: { has: dayToken } } : {}),
       },
     });
 
-    const availableDrivers = drivers.filter(
-      (d: Driver) => !conflictingDriverIds.has(d.id)
+    const availableDrivers = (drivers as { id: string }[]).filter(
+      (d) => !conflictingDriverIds.has(d.id)
     );
     res.send({ data: availableDrivers });
   } catch (error) {
@@ -104,9 +102,9 @@ router.get('/available', validateUser('User'), async (req, res) => {
 router.get('/:id', validateUser('User'), async (req, res) => {
   try {
     const { id } = req.params;
-    const driver = await prisma.driver.findUnique({ where: { id } });
+    const driver = await prisma.employee.findUnique({ where: { id } });
     if (!driver) {
-      return res.status(400).send({ err: 'id not found in Drivers' });
+      return res.status(400).send({ err: 'id not found in Employees' });
     }
     res.status(200).json({ data: driver });
   } catch (error) {
@@ -119,9 +117,9 @@ router.get('/:id', validateUser('User'), async (req, res) => {
 router.get('/:id/profile', validateUser('User'), async (req, res) => {
   try {
     const { id } = req.params;
-    const driver = await prisma.driver.findUnique({ where: { id } });
+    const driver = await prisma.employee.findUnique({ where: { id } });
     if (!driver) {
-      return res.status(400).send({ err: 'id not found in Drivers' });
+      return res.status(400).send({ err: 'id not found in Employees' });
     }
     const { email, firstName, lastName, phoneNumber, photoLink } = driver;
     res.send({ email, firstName, lastName, phoneNumber, photoLink });
@@ -131,7 +129,7 @@ router.get('/:id/profile', validateUser('User'), async (req, res) => {
   }
 });
 
-// Create a driver
+// Create or promote an employee to driver
 router.post('/', validateUser('Admin'), async (req, res) => {
   console.log('driver post body:', req.body);
   try {
@@ -146,36 +144,53 @@ router.post('/', validateUser('Admin'), async (req, res) => {
       });
     }
 
-    const emailExists = await checkNetIDExists(body.email, 'driver');
-    if (emailExists) {
+    const riderExists = await checkRiderEmailExists(body.email);
+    if (riderExists) {
       return res
         .status(409)
-        .send({ err: 'An employee with this NetID already exists' });
+        .send({ err: 'A rider with this NetID already exists' });
     }
 
+    const availability = body.availability.map(
+      (d: string) => d.toUpperCase() as DayOfWeek
+    );
     const joinDate = body.startDate || body.joinDate;
 
-    // Reuse existing ID if this person already has an admin or rider record
-    const existing =
-      (await prisma.admin.findUnique({ where: { email: body.email } })) ??
-      (await prisma.rider.findUnique({ where: { email: body.email } }));
-    const sharedId =
-      !body.eid || body.eid === '' ? existing?.id ?? uuid() : body.eid;
-
-    const driver = await prisma.driver.create({
-      data: {
-        id: sharedId,
-        firstName: body.firstName,
-        lastName: body.lastName,
-        availability: body.availability.map(
-          (d: string) => d.toUpperCase() as DayOfWeek
-        ),
-        phoneNumber: body.phoneNumber,
-        email: body.email,
-        photoLink: body.photoLink,
-        ...(joinDate ? { joinDate: new Date(joinDate) } : {}),
-      },
+    // Upsert: if employee already exists (e.g. was an admin), promote them to driver
+    const existing = await prisma.employee.findUnique({
+      where: { email: body.email },
     });
+
+    let driver;
+    if (existing) {
+      driver = await prisma.employee.update({
+        where: { id: existing.id },
+        data: {
+          firstName: body.firstName ?? existing.firstName,
+          lastName: body.lastName ?? existing.lastName,
+          phoneNumber: body.phoneNumber ?? existing.phoneNumber,
+          photoLink: body.photoLink ?? existing.photoLink,
+          isDriver: true,
+          availability,
+          ...(joinDate ? { joinDate: new Date(joinDate) } : {}),
+        },
+      });
+    } else {
+      const id = (!body.eid || body.eid === '') ? uuid() : body.eid;
+      driver = await prisma.employee.create({
+        data: {
+          id,
+          firstName: body.firstName,
+          lastName: body.lastName,
+          availability,
+          phoneNumber: body.phoneNumber,
+          email: body.email,
+          photoLink: body.photoLink,
+          isDriver: true,
+          ...(joinDate ? { joinDate: new Date(joinDate) } : {}),
+        },
+      });
+    }
 
     res.status(200).send({ data: driver });
   } catch (error) {
@@ -195,10 +210,7 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
     }
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(
-        body.email,
-        id
-      );
+      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
       if (emailExists) {
         return res
           .status(409)
@@ -206,25 +218,22 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
       }
     }
 
-    // Map startDate -> joinDate
     if (body.startDate && !body.joinDate) {
       body.joinDate = new Date(body.startDate);
       delete body.startDate;
     }
 
-    // Uppercase availability enums if provided
     if (body.availability && Array.isArray(body.availability)) {
       body.availability = body.availability.map(
         (d: string) => d.toUpperCase() as DayOfWeek
       );
     }
 
-    // Convert date-only strings to full ISO-8601 DateTime
     if (body.joinDate && !String(body.joinDate).includes('T')) {
       body.joinDate = new Date(body.joinDate).toISOString();
     }
 
-    const driver = await prisma.driver.update({
+    const driver = await prisma.employee.update({
       where: { id },
       data: body,
     });
@@ -232,22 +241,35 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
     res.status(200).send({ data: driver });
   } catch (error: any) {
     if (error.code === 'P2025') {
-      return res.status(400).send({ err: 'id not found in Drivers' });
+      return res.status(400).send({ err: 'id not found in Employees' });
     }
     console.error('Error updating driver:', error);
     res.status(500).send({ err: 'Failed to update driver' });
   }
 });
 
-// Delete an existing driver
+// Remove driver role; deletes record entirely if not also an admin
 router.delete('/:id', validateUser('Admin'), async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.driver.delete({ where: { id } });
+    const employee = await prisma.employee.findUnique({ where: { id } });
+    if (!employee) {
+      return res.status(400).send({ err: 'id not found in Employees' });
+    }
+
+    if (employee.isAdmin) {
+      await prisma.employee.update({
+        where: { id },
+        data: { isDriver: false, availability: [] },
+      });
+    } else {
+      await prisma.employee.delete({ where: { id } });
+    }
+
     res.status(200).send({ id });
   } catch (error: any) {
     if (error.code === 'P2025') {
-      return res.status(400).send({ err: 'id not found in Drivers' });
+      return res.status(400).send({ err: 'id not found in Employees' });
     }
     console.error('Error deleting driver:', error);
     res.status(500).send({ err: 'Failed to delete driver' });

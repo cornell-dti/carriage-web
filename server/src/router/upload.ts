@@ -51,13 +51,8 @@ router.post('/', validateUser('User'), (request, response) => {
           let updated;
           switch (tableName) {
             case 'Drivers':
-              updated = await prisma.driver.update({
-                where: { id },
-                data: { photoLink },
-              });
-              break;
             case 'Admins':
-              updated = await prisma.admin.update({
+              updated = await (prisma as any).employee.update({
                 where: { id },
                 data: { photoLink },
               });

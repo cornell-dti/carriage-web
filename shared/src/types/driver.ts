@@ -1,4 +1,5 @@
-// Define day of week enum
+import { EmployeeType } from './employee';
+
 export enum DayOfWeek {
   MONDAY = 'MON',
   TUESDAY = 'TUE',
@@ -7,14 +8,4 @@ export enum DayOfWeek {
   FRIDAY = 'FRI',
 }
 
-export type DriverType = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  photoLink?: string;
-  availability: DayOfWeek[];
-  active?: boolean;
-  joinDate?: string;
-};
+export type DriverType = EmployeeType;

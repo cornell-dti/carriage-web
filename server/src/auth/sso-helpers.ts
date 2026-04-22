@@ -16,8 +16,8 @@ export function extractNetIDFromEmail(email: string): string | null {
 }
 
 /**
- * Find user by NetID (extracted from email) across all user types
- * Matches the same validation logic as Google OAuth in router/auth.ts
+ * Find user by NetID (extracted from email) across all user types.
+ * Admin and Driver both resolve from the unified Employee table.
  * @param netid - Cornell NetID (e.g., "dka34")
  * @param requestedUserType - Optional: specific user type to search for (Rider, Admin, Driver)
  * @returns User object and type, or error message if validation fails
@@ -39,34 +39,18 @@ export async function findUserByNetID(
     }
 
     if (requestedUserType === 'Admin') {
-      const admin = await prisma.admin.findUnique({
+      const employee = await (prisma as any).employee.findUnique({
         where: { email: cornellEmail },
       });
-      if (admin) return { user: admin, userType: 'Admin' };
-
-      // Fallback: check drivers with admin flag
-      const driver = await prisma.driver.findUnique({
-        where: { email: cornellEmail },
-      });
-      if (driver && (driver as any).admin)
-        return { user: driver, userType: 'Admin' };
-
+      if (employee && employee.isAdmin) return { user: employee, userType: 'Admin' };
       return null;
     }
 
     if (requestedUserType === 'Driver') {
-      const driver = await prisma.driver.findUnique({
+      const employee = await (prisma as any).employee.findUnique({
         where: { email: cornellEmail },
       });
-      if (driver) return { user: driver, userType: 'Driver' };
-
-      // Fallback: check admin with isDriver flag
-      const admin = await prisma.admin.findUnique({
-        where: { email: cornellEmail },
-      });
-      if (admin && (admin as any).isDriver)
-        return { user: admin, userType: 'Driver' };
-
+      if (employee && employee.isDriver) return { user: employee, userType: 'Driver' };
       return null;
     }
 
@@ -79,17 +63,12 @@ export async function findUserByNetID(
       return { user: rider, userType: 'Rider' };
     }
 
-    const admin = await prisma.admin.findUnique({
+    const employee = await (prisma as any).employee.findUnique({
       where: { email: cornellEmail },
     });
-    if (admin) return { user: admin, userType: 'Admin' };
-
-    const driver = await prisma.driver.findUnique({
-      where: { email: cornellEmail },
-    });
-    if (driver) {
-      if ((driver as any).admin) return { user: driver, userType: 'Admin' };
-      return { user: driver, userType: 'Driver' };
+    if (employee) {
+      if (employee.isAdmin) return { user: employee, userType: 'Admin' };
+      if (employee.isDriver) return { user: employee, userType: 'Driver' };
     }
 
     return null;

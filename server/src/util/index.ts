@@ -117,46 +117,15 @@ export const timeToMDY = (time: string) => moment(time).format('l');
 
 export const timeTo12Hr = (time: string) => moment(time).format('LT');
 
-type Role = 'rider' | 'driver' | 'admin';
-
-export async function checkNetIDExists(
-  email: string,
-  role: Role
-): Promise<boolean> {
-  if (role === 'rider') {
-    const rider = await prisma.rider.findUnique({ where: { email } });
-    return rider !== null;
-  }
-
-  if (role === 'driver') {
-    const driver = await prisma.driver.findUnique({ where: { email } });
-    return driver !== null;
-  }
-
-  const admin = await prisma.admin.findUnique({ where: { email } });
-  return admin !== null;
+export async function checkRiderEmailExists(email: string): Promise<boolean> {
+  const rider = await prisma.rider.findUnique({ where: { email } });
+  return rider !== null;
 }
 
 export async function checkNetIDExistsForOtherEmployee(
   email: string,
   currentEmployeeId: string
 ): Promise<boolean> {
-  // Determine which table the current employee belongs to, then only check that table.
-  // This prevents false conflicts when the same email is shared across roles (e.g. admin + rider).
-  const [admin, driver, rider] = await Promise.all([
-    prisma.admin.findUnique({ where: { id: currentEmployeeId } }),
-    prisma.driver.findUnique({ where: { id: currentEmployeeId } }),
-    prisma.rider.findUnique({ where: { id: currentEmployeeId } }),
-  ]);
-
-  let emailRecord: { id: string } | null = null;
-  if (admin) {
-    emailRecord = await prisma.admin.findUnique({ where: { email } });
-  } else if (driver) {
-    emailRecord = await prisma.driver.findUnique({ where: { email } });
-  } else if (rider) {
-    emailRecord = await prisma.rider.findUnique({ where: { email } });
-  }
-
-  return emailRecord !== null && emailRecord.id !== currentEmployeeId;
+  const employee = await (prisma as any).employee.findUnique({ where: { email } });
+  return employee !== null && employee.id !== currentEmployeeId;
 }

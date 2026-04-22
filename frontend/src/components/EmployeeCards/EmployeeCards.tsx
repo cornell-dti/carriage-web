@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import Card, { CardInfo } from '../Card/Card';
 import styles from './employeecards.module.css';
 import { phone, wheel, user } from '../../icons/userInfo/index';
-import { AdminType } from '@carriage-web/shared/types/admin';
-import { DriverType } from '@carriage-web/shared/types/driver';
+import { EmployeeType } from '@carriage-web/shared/types/employee';
 
 const formatPhone = (phoneNumber: string | undefined) => {
   if (phoneNumber !== undefined) {
@@ -17,19 +16,9 @@ const formatPhone = (phoneNumber: string | undefined) => {
   }
 };
 
-type Employee = AdminType | DriverType;
-
-function isAdmin(employee: Employee): employee is AdminType {
-  return 'isDriver' in employee;
-}
-
-function isDriver(employee: Employee): employee is DriverType {
-  return 'availability' in employee && !('isDriver' in employee);
-}
-
 type EmployeeCardProps = {
   id: string;
-  employee: Employee;
+  employee: EmployeeType;
 };
 
 const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
@@ -37,14 +26,9 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
   const netId = employee.email.split('@')[0];
   const fmtPhone = formatPhone(employee.phoneNumber);
 
-  // Determine if employee is admin, driver, or both
-  const adminEmployee = isAdmin(employee);
-  const driverEmployee = isDriver(employee);
-  const isBoth = adminEmployee && employee.isDriver;
-
   const roles = (): string => {
-    if (isBoth) return 'Admin • Driver';
-    if (adminEmployee) return 'Admin';
+    if (employee.isAdmin && employee.isDriver) return 'Admin • Driver';
+    if (employee.isAdmin) return 'Admin';
     return 'Driver';
   };
 
@@ -68,8 +52,8 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
           <p>{fmtPhone}</p>
         </CardInfo>
         <CardInfo
-          icon={adminEmployee ? user : wheel}
-          alt={adminEmployee ? 'admin' : 'wheel'}
+          icon={employee.isAdmin ? user : wheel}
+          alt={employee.isAdmin ? 'admin' : 'wheel'}
         >
           <p>{roles()}</p>
         </CardInfo>
@@ -79,7 +63,7 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
 };
 
 type EmployeeCardsProps = {
-  employees: Employee[];
+  employees: EmployeeType[];
 };
 
 const EmployeeCards = ({ employees }: EmployeeCardsProps) => {
