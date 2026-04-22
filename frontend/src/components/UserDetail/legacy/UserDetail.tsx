@@ -68,7 +68,9 @@ const UserDetail = ({
 
   return (
     <Card
-      className={cn('rounded-xl bg-white mb-6', { 'mx-10': isRider })}
+      className={cn('bg-white mb-6', {
+        'mx-10': isRider,
+      })}
       elevation={2}
     >
       <CardContent className="flex flex-row p-6 gap-6 min-h-fit max-md:flex-col max-md:p-6 max-md:gap-6">
@@ -80,7 +82,7 @@ const UserDetail = ({
                   ? `${photoLink}?t=${new Date().getTime()}`
                   : undefined
               }
-              className="w-32 h-32 border-3 border-[#f0f0f0] shadow-[0_4px_12px_rgba(0,0,0,0.1)] max-md:w-24 max-md:h-24"
+              className="min-w-32 min-h-32 border-3 border-[#f0f0f0] ml-4]"
               alt={`${fullName} profile`}
             >
               {(!photoLink || photoLink === '') && (
