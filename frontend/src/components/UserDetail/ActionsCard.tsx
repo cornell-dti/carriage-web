@@ -53,19 +53,21 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
       netId: (employee as any).netId || '',
       email: employee.email,
       phoneNumber: employee.phoneNumber.replaceAll('-', ''),
-      ...(employee.availability || employee.startDate
+      ...(employee.isDriver
         ? {
             driver: {
               availability: (employee.availability || []) as any[],
-              startDate: employee.startDate || '',
+              startDate: employee.startDate
+                ? new Date(employee.startDate).toISOString().split('T')[0]
+                : '',
             },
           }
         : {}),
-      ...(employee.type
+      ...(employee.isAdmin
         ? {
             admin: {
-              isDriver: employee.isDriver || false,
-              type: employee.type || [],
+              isDriver: employee.isDriver,
+              adminRoles: employee.adminRoles || [],
             },
           }
         : {}),
@@ -116,7 +118,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
   const getUserRole = () => {
     if (userType === 'employee') {
       const employee = user as Employee;
-      if (employee.isDriver && employee.type && employee.type.length > 0) {
+      if (employee.isDriver && employee.isAdmin) {
         return 'both';
       } else if (employee.isDriver) {
         return 'driver';

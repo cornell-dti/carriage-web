@@ -7,25 +7,26 @@ import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import Pagination from '@mui/material/Pagination';
 import { useEmployees } from '../../context/EmployeesContext';
 import { wheel, user } from '../../icons/userInfo/index';
-import { AdminType } from '@carriage-web/shared/types/admin';
-import { DriverType } from '@carriage-web/shared/types/driver';
+import { EmployeeType } from '@carriage-web/shared/types/employee';
 import buttonStyles from '../../styles/button.module.css';
 
 const Employees = () => {
   const { admins, drivers } = useEmployees();
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredEmployees, setFilteredEmployees] = useState<
-    (AdminType | DriverType)[]
-  >([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<
-    AdminType | DriverType | null
-  >(null);
+  const [filteredEmployees, setFilteredEmployees] = useState<EmployeeType[]>(
+    []
+  );
+  const [selectedEmployee] = useState<EmployeeType | null>(null);
 
   const [page, setPage] = useState(1);
   const pageSize = 8;
 
+  // Deduplicate by id — a person who is both admin and driver appears in both lists
   const displayEmployees = useMemo(() => {
-    const employeeMap = new Map();
+    const employeeMap = new Map<
+      string,
+      EmployeeType & { roleType: string[] }
+    >();
 
     admins.forEach((admin) => {
       const roleType = admin.isDriver ? ['admin', 'driver'] : ['admin'];
@@ -46,37 +47,31 @@ const Employees = () => {
     setFilteredEmployees(displayEmployees);
   }, [displayEmployees]);
 
-  function convertToEmployeeEntity(employee: AdminType | DriverType): any {
-    // Check if it's an admin
-    const isAdmin = 'type' in employee && 'isDriver' in employee;
-    // Check if it's a driver
-    const isDriver = 'availability' in employee;
-
-    const data = {
+  function convertToEmployeeEntity(employee: EmployeeType): any {
+    return {
       id: employee.id,
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,
-      netId: employee.email.split('@')[0], // Extract netId from email
+      netId: employee.email.split('@')[0],
       phoneNumber: employee.phoneNumber,
       photoLink: employee.photoLink,
-      admin: isAdmin
+      admin: employee.isAdmin
         ? {
-            type: (employee as AdminType).type,
-            isDriver: (employee as AdminType).isDriver,
+            type: employee.adminRoles,
+            isDriver: employee.isDriver,
           }
         : undefined,
-      driver: isDriver
+      driver: employee.isDriver
         ? {
-            availability: (employee as DriverType).availability,
-            startDate: (employee as DriverType).joinDate, // Map joinDate to startDate for the modal
+            availability: employee.availability,
+            startDate: employee.joinDate,
           }
         : undefined,
     };
-    return data;
   }
 
-  const handleFilterApply = (filteredItems: (AdminType | DriverType)[]) => {
+  const handleFilterApply = (filteredItems: EmployeeType[]) => {
     setFilteredEmployees(filteredItems);
     setPage(1);
   };
@@ -106,7 +101,7 @@ const Employees = () => {
   ];
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     setPage(value);

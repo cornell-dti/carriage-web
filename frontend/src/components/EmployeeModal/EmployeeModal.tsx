@@ -13,9 +13,10 @@ import { useEmployees } from '../../context/EmployeesContext';
 import { useToast, ToastStatus } from '../../context/toastContext';
 import axios from '../../util/axios';
 import { extractNetIdFromEmail } from 'util/userUtils';
+import { EmployeeType } from '@carriage-web/shared/types/employee';
 
 type AdminData = {
-  type: string[];
+  adminRoles: string[];
   isDriver: boolean;
 };
 
@@ -37,23 +38,26 @@ type EmployeeEntity = {
   photoLink?: string;
 };
 
-// both for formating to current api data expections
-function extractAdminData(employeeData: EmployeeEntity) {
+// both for formatting to current api data expectations
+function extractAdminData(
+  employeeData: EmployeeEntity
+): Omit<EmployeeType, 'id'> {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
-    type: (employeeData.admin?.type || []) as (
-      | 'sds-admin'
-      | 'redrunner-admin'
-    )[],
+    adminRoles: employeeData.admin?.adminRoles || [],
+    isAdmin: true,
     isDriver: employeeData.admin?.isDriver || false,
     phoneNumber: employeeData.phoneNumber,
     email: employeeData.email,
     photoLink: employeeData.photoLink,
+    availability: employeeData.driver?.availability || [],
   };
 }
 
-function extractDriverData(employeeData: EmployeeEntity) {
+function extractDriverData(
+  employeeData: EmployeeEntity
+): Partial<EmployeeType> {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
@@ -62,6 +66,7 @@ function extractDriverData(employeeData: EmployeeEntity) {
     joinDate: employeeData.driver?.startDate,
     email: employeeData.email,
     photoLink: employeeData.photoLink,
+    isDriver: true,
   };
 }
 
@@ -93,13 +98,11 @@ const EmployeeModal = ({
   // Initialize form and roles when modal opens or existing employee changes
   React.useEffect(() => {
     if (existingEmployee && isOpen) {
-      // Initialize roles
+      // Initialize roles, normalizing Prisma enum values (SDS_ADMIN → sds-admin)
+      const normalizeRole = (r: string) => r.toLowerCase().replace(/_/g, '-');
       const roles: string[] = [];
-      if (existingEmployee.admin) {
-        // Add admin roles
-        if (existingEmployee.admin.type) {
-          roles.push(...existingEmployee.admin.type);
-        }
+      if (existingEmployee.admin?.adminRoles) {
+        roles.push(...existingEmployee.admin.adminRoles.map(normalizeRole));
       }
       if (existingEmployee.driver) {
         roles.push('driver');
@@ -131,8 +134,9 @@ const EmployeeModal = ({
 
   const closeModal = () => {
     methods.clearErrors();
-    setImageBase64(''); // Reset image state
-    setIsUploadingImage(false); // Reset upload state
+    setImageBase64('');
+    setIsUploadingImage(false);
+    setSelectedRole([]);
     setIsOpen(false);
   };
 
@@ -178,7 +182,9 @@ const EmployeeModal = ({
     switch (endpoint) {
       case '/api/drivers':
         // Use optimistic create from context
-        await createDriver(extractDriverData(employeeData));
+        await createDriver(
+          extractDriverData(employeeData) as Omit<EmployeeType, 'id'>
+        );
         res = employeeData; // The context will handle server response and ID assignment
         break;
       case '/api/admins':
@@ -330,7 +336,7 @@ const EmployeeModal = ({
 
     if (hasAdmin) {
       admin_data = {
-        type: selectedRoles.filter((role) => role !== 'driver'),
+        adminRoles: selectedRoles.filter((role) => role !== 'driver'),
         isDriver: hasDriver,
       };
     }
@@ -436,8 +442,13 @@ const EmployeeModal = ({
               phone={existingEmployee?.phoneNumber}
             />
 
+            <RoleSelector
+              selectedRoles={selectedRoles}
+              setSelectedRoles={setSelectedRole}
+            />
+
             {(selectedRoles.includes('driver') ||
-              existingEmployee?.driver?.availability) && (
+              existingEmployee?.driver != null) && (
               <>
                 <StartDate existingDate={existingEmployee?.driver?.startDate} />
                 <WorkingHours
@@ -446,11 +457,6 @@ const EmployeeModal = ({
                 />
               </>
             )}
-
-            <RoleSelector
-              selectedRoles={selectedRoles}
-              setSelectedRoles={setSelectedRole}
-            />
 
             <Button className={styles.submit} type="submit">
               {existingEmployee ? 'Save' : 'Add'}

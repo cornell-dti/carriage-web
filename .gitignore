@@ -86,3 +86,6 @@ docs/
 
 # session code
 private/
+
+#prisma
+/generated/prisma

@@ -1,33 +1,27 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { Employee } from '../types';
-import { AdminType } from '@carriage-web/shared/types/admin';
-import { DriverType } from '@carriage-web/shared/types/driver';
+import { EmployeeType } from '@carriage-web/shared/types/employee';
 import axios from '../util/axios';
 
 type employeesState = {
-  drivers: Array<DriverType>;
-  admins: Array<AdminType>;
+  drivers: EmployeeType[];
+  admins: EmployeeType[];
   loading: boolean;
   refreshDrivers: () => Promise<void>;
   refreshAdmins: () => Promise<void>;
-  // Optimistic operations for drivers
   updateDriverInfo: (
     driverId: string,
-    updates: Partial<DriverType>
+    updates: Partial<EmployeeType>
   ) => Promise<void>;
-  createDriver: (driver: Omit<DriverType, 'id'>) => Promise<void>;
+  createDriver: (driver: Omit<EmployeeType, 'id'>) => Promise<void>;
   deleteDriver: (driverId: string) => Promise<void>;
-  // Optimistic operations for admins
   updateAdminInfo: (
     adminId: string,
-    updates: Partial<AdminType>
+    updates: Partial<EmployeeType>
   ) => Promise<void>;
-  createAdmin: (admin: Omit<AdminType, 'id'>) => Promise<void>;
+  createAdmin: (admin: Omit<EmployeeType, 'id'>) => Promise<void>;
   deleteAdmin: (adminId: string) => Promise<void>;
-  // Helper functions
-  getDriverById: (driverId: string) => DriverType | undefined;
-  getAdminById: (adminId: string) => AdminType | undefined;
-  // Error handling
+  getDriverById: (driverId: string) => EmployeeType | undefined;
+  getAdminById: (adminId: string) => EmployeeType | undefined;
   clearError: () => void;
   error: Error | null;
 };
@@ -68,14 +62,14 @@ const sortByName = (
 
 export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
   const componentMounted = useRef(true);
-  const [drivers, setDrivers] = useState<Array<DriverType>>([]);
-  const [admins, setAdmins] = useState<Array<AdminType>>([]);
+  const [drivers, setDrivers] = useState<EmployeeType[]>([]);
+  const [admins, setAdmins] = useState<EmployeeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const refreshDrivers = useCallback(async () => {
     try {
-      const driversData: Array<DriverType> = await axios
+      const driversData: EmployeeType[] = await axios
         .get('/api/drivers')
         .then((res) => res.data)
         .then((data) => data.data);
@@ -90,7 +84,7 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
 
   const refreshAdmins = useCallback(async () => {
     try {
-      const adminsData: Array<AdminType> = await axios
+      const adminsData: EmployeeType[] = await axios
         .get('/api/admins')
         .then((res) => res.data)
         .then((data) => data.data);
@@ -103,12 +97,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     }
   }, []);
 
-  // Optimistic Driver Operations
   const updateDriverInfo = useCallback(
-    async (driverId: string, updates: Partial<DriverType>) => {
+    async (driverId: string, updates: Partial<EmployeeType>) => {
       const originalDrivers = [...drivers];
       try {
-        // Optimistic update
         setDrivers((prevDrivers) =>
           prevDrivers
             .map((driver) =>
@@ -117,18 +109,15 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
             .sort(sortByName)
         );
 
-        // Make API call
         const response = await axios.put(`/api/drivers/${driverId}`, updates);
         const serverDriver = response.data.data;
 
-        // Update with server data
         setDrivers((prevDrivers) =>
           prevDrivers
             .map((driver) => (driver.id === driverId ? serverDriver : driver))
             .sort(sortByName)
         );
       } catch (error) {
-        // Rollback on error
         console.error('Failed to update driver info:', error);
         setDrivers(originalDrivers);
         setError(error as Error);
@@ -138,28 +127,24 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [drivers]
   );
 
-  const createDriver = useCallback(async (driver: Omit<DriverType, 'id'>) => {
+  const createDriver = useCallback(async (driver: Omit<EmployeeType, 'id'>) => {
     const tempId = `temp-driver-${Date.now()}`;
-    const tempDriver: DriverType = { ...driver, id: tempId };
+    const tempDriver: EmployeeType = { ...driver, id: tempId };
 
     try {
-      // Optimistic update
       setDrivers((prevDrivers) =>
         [...prevDrivers, tempDriver].sort(sortByName)
       );
 
-      // Make API call
       const response = await axios.post('/api/drivers', driver);
       const serverDriver = response.data.data;
 
-      // Replace temp driver with server driver
       setDrivers((prevDrivers) =>
         prevDrivers
           .map((d) => (d.id === tempId ? serverDriver : d))
           .sort(sortByName)
       );
     } catch (error) {
-      // Rollback on error
       console.error('Failed to create driver:', error);
       setDrivers((prevDrivers) => prevDrivers.filter((d) => d.id !== tempId));
       setError(error as Error);
@@ -171,15 +156,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     async (driverId: string) => {
       const originalDrivers = [...drivers];
       try {
-        // Optimistic update
         setDrivers((prevDrivers) =>
           prevDrivers.filter((driver) => driver.id !== driverId)
         );
 
-        // Make API call
         await axios.delete(`/api/drivers/${driverId}`);
       } catch (error) {
-        // Rollback on error
         console.error('Failed to delete driver:', error);
         setDrivers(originalDrivers);
         setError(error as Error);
@@ -189,12 +171,10 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [drivers]
   );
 
-  // Optimistic Admin Operations
   const updateAdminInfo = useCallback(
-    async (adminId: string, updates: Partial<AdminType>) => {
+    async (adminId: string, updates: Partial<EmployeeType>) => {
       const originalAdmins = [...admins];
       try {
-        // Optimistic update
         setAdmins((prevAdmins) =>
           prevAdmins
             .map((admin) =>
@@ -203,18 +183,15 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
             .sort(sortByName)
         );
 
-        // Make API call
         const response = await axios.put(`/api/admins/${adminId}`, updates);
         const serverAdmin = response.data.data;
 
-        // Update with server data
         setAdmins((prevAdmins) =>
           prevAdmins
             .map((admin) => (admin.id === adminId ? serverAdmin : admin))
             .sort(sortByName)
         );
       } catch (error) {
-        // Rollback on error
         console.error('Failed to update admin info:', error);
         setAdmins(originalAdmins);
         setError(error as Error);
@@ -224,26 +201,22 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [admins]
   );
 
-  const createAdmin = useCallback(async (admin: Omit<AdminType, 'id'>) => {
+  const createAdmin = useCallback(async (admin: Omit<EmployeeType, 'id'>) => {
     const tempId = `temp-admin-${Date.now()}`;
-    const tempAdmin: AdminType = { ...admin, id: tempId };
+    const tempAdmin: EmployeeType = { ...admin, id: tempId };
 
     try {
-      // Optimistic update
       setAdmins((prevAdmins) => [...prevAdmins, tempAdmin].sort(sortByName));
 
-      // Make API call
       const response = await axios.post('/api/admins', admin);
       const serverAdmin = response.data.data;
 
-      // Replace temp admin with server admin
       setAdmins((prevAdmins) =>
         prevAdmins
           .map((a) => (a.id === tempId ? serverAdmin : a))
           .sort(sortByName)
       );
     } catch (error) {
-      // Rollback on error
       console.error('Failed to create admin:', error);
       setAdmins((prevAdmins) => prevAdmins.filter((a) => a.id !== tempId));
       setError(error as Error);
@@ -255,15 +228,12 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     async (adminId: string) => {
       const originalAdmins = [...admins];
       try {
-        // Optimistic update
         setAdmins((prevAdmins) =>
           prevAdmins.filter((admin) => admin.id !== adminId)
         );
 
-        // Make API call
         await axios.delete(`/api/admins/${adminId}`);
       } catch (error) {
-        // Rollback on error
         console.error('Failed to delete admin:', error);
         setAdmins(originalAdmins);
         setError(error as Error);
@@ -273,16 +243,15 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     [admins]
   );
 
-  // Helper Functions
   const getDriverById = useCallback(
-    (driverId: string): DriverType | undefined => {
+    (driverId: string): EmployeeType | undefined => {
       return drivers.find((driver) => driver.id === driverId);
     },
     [drivers]
   );
 
   const getAdminById = useCallback(
-    (adminId: string): AdminType | undefined => {
+    (adminId: string): EmployeeType | undefined => {
       return admins.find((admin) => admin.id === adminId);
     },
     [admins]
@@ -292,7 +261,6 @@ export const EmployeesProvider = ({ children }: EmployeesProviderProps) => {
     setError(null);
   }, []);
 
-  // Initialize the data
   React.useEffect(() => {
     const loadData = async () => {
       setLoading(true);
