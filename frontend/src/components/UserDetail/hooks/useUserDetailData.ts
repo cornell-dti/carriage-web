@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Employee } from '../../../types/index';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { RiderType } from '@carriage-web/shared/types/rider';
-import { AdminType } from '@carriage-web/shared/types/admin';
-import { DriverType } from '@carriage-web/shared/types/driver';
+import { EmployeeType } from '@carriage-web/shared/types/employee';
 import { useRiders } from '../../../context/RidersContext';
 import { useEmployees } from '../../../context/EmployeesContext';
 import axios from '../../../util/axios';
@@ -37,54 +36,27 @@ const useUserDetailData = (
   const { riders, loading: ridersLoading } = useRiders();
   const { drivers, admins, loading: employeesLoading } = useEmployees();
 
-  // Helper function to find employee from context
   const findEmployeeInContext = (employeeId: string): Employee | null => {
-    // Look in admins first
-    const admin = admins.find((a) => a.id === employeeId);
-    if (admin) {
-      // If admin is also a driver, merge the data
-      const driver = drivers.find((d) => d.id === employeeId);
-      return {
-        id: admin.id,
-        firstName: admin.firstName,
-        lastName: admin.lastName,
-        type: admin.type,
-        isDriver: admin.isDriver,
-        phoneNumber: admin.phoneNumber,
-        email: admin.email,
-        photoLink: admin.photoLink,
-        availability: driver?.availability,
-        startDate: driver?.joinDate,
-      } as Employee;
-    }
-
-    // Look in drivers only
-    const driver = drivers.find((d) => d.id === employeeId);
-    if (driver) {
-      return {
-        id: driver.id,
-        firstName: driver.firstName,
-        lastName: driver.lastName,
-        isDriver: true,
-        phoneNumber: driver.phoneNumber,
-        email: driver.email,
-        photoLink: driver.photoLink,
-        availability: driver.availability,
-        startDate: driver.joinDate,
-      } as Employee;
-    }
-
-    return null;
+    // Check admins first, then drivers — both now return the same Employee shape
+    const found =
+      admins.find((a) => a.id === employeeId) ||
+      drivers.find((d) => d.id === employeeId);
+    if (!found) return null;
+    return {
+      ...found,
+      startDate: found.joinDate,
+    } as Employee;
   };
 
-  const fetchAdminData = async (employeeId: string) => {
-    const res = await axios.get(`/api/admins/${employeeId}`);
-    return res.data.data;
-  };
-
-  const fetchDriverData = async (employeeId: string) => {
-    const res = await axios.get(`/api/drivers/${employeeId}`);
-    return res.data.data;
+  const fetchEmployeeData = async (employeeId: string) => {
+    // Try admin endpoint first, fall back to driver endpoint
+    try {
+      const res = await axios.get(`/api/admins/${employeeId}`);
+      return res.data.data as EmployeeType;
+    } catch {
+      const res = await axios.get(`/api/drivers/${employeeId}`);
+      return res.data.data as EmployeeType;
+    }
   };
 
   const fetchStats = async (employeeId: string) => {
@@ -113,62 +85,29 @@ const useUserDetailData = (
   };
 
   const setEmployeeData = async (employeeId: string) => {
-    console.log('🔄 setEmployeeData called for ID:', employeeId);
     setLoading(true);
     setError(null);
-
-    // Try to fetch as admin first
     try {
-      const adminData: AdminType = await fetchAdminData(employeeId);
+      const data = await fetchEmployeeData(employeeId);
+      setUser({ ...data, startDate: data.joinDate } as Employee);
 
-      if (adminData.isDriver) {
-        const driverData: DriverType = await fetchDriverData(employeeId);
-        setUser({
-          ...driverData,
-          ...adminData,
-          startDate: driverData.joinDate,
-        } as Employee);
-        setEmployeeRides(employeeId);
-        setEmployeeStats(employeeId);
-      } else {
-        setUser({
-          ...adminData,
-        } as Employee);
+      if (data.isDriver) {
+        const ridesData = await fetchEmployeeRides(employeeId);
+        setRides(ridesData.sort(compRides));
+        const statsData = await fetchStats(employeeId);
+        if (!statsData?.err) {
+          setStatistics({
+            rideCount: Math.floor(statsData.rides),
+            workingHours: Math.floor(statsData.workingHours),
+          });
+        }
       }
       setLoading(false);
-    } catch (adminError) {
-      // If not an admin, try as driver only
-      try {
-        const driverData: DriverType = await fetchDriverData(employeeId);
-        setUser({
-          ...driverData,
-          isDriver: true,
-          startDate: driverData.joinDate,
-        } as Employee);
-        setEmployeeRides(employeeId);
-        setEmployeeStats(employeeId);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching employee data:', err);
-        setError('Failed to fetch employee data');
-        setLoading(false);
-      }
+    } catch (err) {
+      console.error('Error fetching employee data:', err);
+      setError('Failed to fetch employee data');
+      setLoading(false);
     }
-  };
-
-  const setEmployeeStats = async (employeeId: string) => {
-    const data = await fetchStats(employeeId);
-    if (!data.err) {
-      setStatistics({
-        rideCount: Math.floor(data.rides),
-        workingHours: Math.floor(data.workingHours),
-      });
-    }
-  };
-
-  const setEmployeeRides = async (employeeId: string) => {
-    const data = await fetchEmployeeRides(employeeId);
-    setRides(data.sort(compRides));
   };
 
   const setRiderData = async (riderId: string) => {
@@ -176,7 +115,6 @@ const useUserDetailData = (
       setLoading(true);
       setError(null);
 
-      // Get rider from context
       const rider = riders.find((r) => r.id === riderId);
       if (!rider) {
         setError('Rider not found');
@@ -184,7 +122,6 @@ const useUserDetailData = (
         return;
       }
 
-      // Fetch rider's rides
       const ridesData = await fetchRiderRides(riderId);
 
       setUser(rider);
@@ -199,30 +136,26 @@ const useUserDetailData = (
   };
 
   useEffect(() => {
-    console.log(
-      '🚀 useEffect triggered - userType:',
-      userType,
-      'userId:',
-      userId,
-      'ridersLoading:',
-      ridersLoading,
-      'employeesLoading:',
-      employeesLoading
-    );
     if (userId && !ridersLoading && !employeesLoading) {
       if (userType === 'employee') {
-        // First try to get employee from context (optimistic data)
         const contextEmployee = findEmployeeInContext(userId);
         if (contextEmployee) {
           setUser(contextEmployee);
           setLoading(false);
-          // Still fetch additional data like rides and stats
-          setEmployeeRides(userId);
           if (contextEmployee.isDriver) {
-            setEmployeeStats(userId);
+            fetchEmployeeRides(userId).then((data) =>
+              setRides(data.sort(compRides))
+            );
+            fetchStats(userId).then((data) => {
+              if (!data?.err) {
+                setStatistics({
+                  rideCount: Math.floor(data.rides),
+                  workingHours: Math.floor(data.workingHours),
+                });
+              }
+            });
           }
         } else {
-          // Fallback to API fetch
           setEmployeeData(userId);
         }
       } else {
@@ -232,7 +165,6 @@ const useUserDetailData = (
     }
   }, [userId, userType, ridersLoading, employeesLoading]);
 
-  // Effect to update user data when riders context changes (for rider updates)
   useEffect(() => {
     if (
       userType === 'rider' &&
@@ -243,22 +175,13 @@ const useUserDetailData = (
     ) {
       const updatedRider = riders.find((r) => r.id === userId);
       if (updatedRider && user) {
-        // Check if any properties have changed to avoid unnecessary updates
-        const currentRider = user as RiderType;
         const hasChanges =
-          JSON.stringify(updatedRider) !== JSON.stringify(currentRider);
-
-        if (hasChanges) {
-          console.log(
-            '🔄 Updating rider data from context change (optimistic or server update)'
-          );
-          setUser(updatedRider);
-        }
+          JSON.stringify(updatedRider) !== JSON.stringify(user);
+        if (hasChanges) setUser(updatedRider);
       }
     }
   }, [riders, userId, userType, ridersLoading, user]);
 
-  // Effect to update user data when employees context changes (for employee updates)
   useEffect(() => {
     if (
       userType === 'employee' &&
@@ -268,37 +191,22 @@ const useUserDetailData = (
     ) {
       const updatedEmployee = findEmployeeInContext(userId);
       if (updatedEmployee && user) {
-        // Check if any properties have changed to avoid unnecessary updates
-        const currentEmployee = user as Employee;
         const hasChanges =
-          JSON.stringify(updatedEmployee) !== JSON.stringify(currentEmployee);
-
-        if (hasChanges) {
-          console.log(
-            '🔄 Updating employee data from context change (optimistic or server update)'
-          );
-          setUser(updatedEmployee);
-        }
+          JSON.stringify(updatedEmployee) !== JSON.stringify(user);
+        if (hasChanges) setUser(updatedEmployee);
       }
     }
   }, [admins, drivers, userId, userType, employeesLoading, user]);
 
-  // Function to refresh user data without full reload
   const refreshUserData = () => {
     if (userType === 'rider' && userId && !ridersLoading && riders.length > 0) {
       const updatedRider = riders.find((r) => r.id === userId);
-      if (updatedRider) {
-        console.log('🔄 Refreshing user data without full reload');
-        setUser(updatedRider);
-      }
+      if (updatedRider) setUser(updatedRider);
     } else if (userType === 'employee' && userId && !employeesLoading) {
-      // For employees, first try to get from context (optimistic data)
       const contextEmployee = findEmployeeInContext(userId);
       if (contextEmployee) {
-        console.log('🔄 Refreshing employee data without full reload');
         setUser(contextEmployee);
       } else {
-        // Fallback to API fetch
         setEmployeeData(userId);
       }
     }

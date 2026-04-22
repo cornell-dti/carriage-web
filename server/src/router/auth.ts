@@ -18,23 +18,10 @@ const audience = [
   '241748771473-7rfda2grc8f7p099bmf98en0q9bcvp18.apps.googleusercontent.com',
 ];
 
-/**
- * Derives the singular user type from the table name.
- * For example, 'Riders' becomes 'Rider'.
- * @param table - The string name of the table.
- */
 function getUserType(table: string) {
   return table.slice(0, table.length - 1);
 }
 
-/**
- * Finds a user in Prisma by email and sends back a JWT token if found.
- * If logging in as an Admin and no match is found, the Driver table is checked as a fallback for admin-flagged users.
- * @param res - Express response object.
- * @param table - Name of the user table (used to derive userType).
- * @param email - The email address to look up.
- * @param userInfo - Optional user info from Google OAuth (name, etc.).
- */
 async function findUserAndSendToken(
   res: express.Response,
   table: string,
@@ -51,17 +38,15 @@ async function findUserAndSendToken(
         return;
       }
     } else if (table === 'Drivers') {
-      user = await prisma.driver.findUnique({ where: { email } });
+      user = await (prisma as any).employee.findUnique({
+        where: { email },
+      });
+      if (user && !user.isDriver) user = null;
     } else if (table === 'Admins') {
-      user = await prisma.admin.findUnique({ where: { email } });
-
-      // Fallback: Check drivers table for admins
-      if (!user) {
-        const driver = await prisma.driver.findUnique({ where: { email } });
-        if (driver) {
-          user = driver;
-        }
-      }
+      user = await (prisma as any).employee.findUnique({
+        where: { email },
+      });
+      if (user && !user.isAdmin) user = null;
     }
 
     if (user) {
@@ -88,20 +73,12 @@ async function findUserAndSendToken(
   }
 }
 
-/**
- * Exchanges an OAuth2 authorization code for an ID token using the provided client.
- * @param client - An instance of OAuth2Client.
- * @param code - The authorization code returned from Google login.
- */
 async function getIdToken(client: OAuth2Client, code: string) {
   const { tokens } = await client.getToken(code);
   const idToken = tokens.id_token!;
   return idToken;
 }
 
-// Verify an authentication token
-// If a code is supplied, retrieves the token from the code such that either a
-// code or token is sufficient
 router.post('/', async (req, res) => {
   const { code, table } = req.body;
   try {

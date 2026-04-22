@@ -112,18 +112,21 @@ model Location {
 
 //--------------------
 
-/// A driver who can be assigned to fulfill ride requests
-model Driver {
+/// A platform employee who may be an admin, a driver, or both
+model Employee {
   id           String      @id @default(uuid())
   firstName    String
   lastName     String
   phoneNumber  String
   email        String      @unique
   photoLink    String?
+  isAdmin      Boolean     @default(false)
+  adminRoles   AdminRole[]
+  isDriver     Boolean     @default(false)
   availability DayOfWeek[]
   active       Boolean     @default(true)
   joinDate     DateTime    @default(now())
-  rides Ride[]
+  rides        Ride[]
 }
 
 //--------------------
@@ -169,7 +172,7 @@ model Ride {
   riders          Rider[]         @relation("RideRiders")
 
   driverId        String?
-  driver          Driver?         @relation(fields: [driverId], references: [id])
+  driver          Employee?       @relation(fields: [driverId], references: [id])
 
   isRecurring       Boolean         @default(false)
   recurrenceId      String?         // Shared UUID for all rides in a series
@@ -202,17 +205,6 @@ model Favorite {
 
 //--------------------
 
-/// A platform administrator who manages riders, drivers, and rides
-model Admin {
-  id          String      @id @default(uuid())
-  firstName   String
-  lastName    String
-  roles       AdminRole[]
-  isDriver    Boolean     @default(false)
-  phoneNumber String
-  email       String      @unique
-  photoLink   String?
-}
 
 //--------------------
 

@@ -20,18 +20,8 @@ export type RideModel = runtime.Types.Result.DefaultSelection<Prisma.$RidePayloa
 
 export type AggregateRide = {
   _count: RideCountAggregateOutputType | null
-  _avg: RideAvgAggregateOutputType | null
-  _sum: RideSumAggregateOutputType | null
   _min: RideMinAggregateOutputType | null
   _max: RideMaxAggregateOutputType | null
-}
-
-export type RideAvgAggregateOutputType = {
-  recurrenceDays: number | null
-}
-
-export type RideSumAggregateOutputType = {
-  recurrenceDays: number[]
 }
 
 export type RideMinAggregateOutputType = {
@@ -45,8 +35,9 @@ export type RideMinAggregateOutputType = {
   endTime: Date | null
   driverId: string | null
   isRecurring: boolean | null
+  rrule: string | null
+  parentRideId: string | null
   recurrenceId: string | null
-  recurrenceEndDate: Date | null
   timezone: string | null
 }
 
@@ -61,8 +52,9 @@ export type RideMaxAggregateOutputType = {
   endTime: Date | null
   driverId: string | null
   isRecurring: boolean | null
+  rrule: string | null
+  parentRideId: string | null
   recurrenceId: string | null
-  recurrenceEndDate: Date | null
   timezone: string | null
 }
 
@@ -77,21 +69,15 @@ export type RideCountAggregateOutputType = {
   endTime: number
   driverId: number
   isRecurring: number
+  rrule: number
+  exdate: number
+  rdate: number
+  parentRideId: number
   recurrenceId: number
-  recurrenceDays: number
-  recurrenceEndDate: number
   timezone: number
   _all: number
 }
 
-
-export type RideAvgAggregateInputType = {
-  recurrenceDays?: true
-}
-
-export type RideSumAggregateInputType = {
-  recurrenceDays?: true
-}
 
 export type RideMinAggregateInputType = {
   id?: true
@@ -104,8 +90,9 @@ export type RideMinAggregateInputType = {
   endTime?: true
   driverId?: true
   isRecurring?: true
+  rrule?: true
+  parentRideId?: true
   recurrenceId?: true
-  recurrenceEndDate?: true
   timezone?: true
 }
 
@@ -120,8 +107,9 @@ export type RideMaxAggregateInputType = {
   endTime?: true
   driverId?: true
   isRecurring?: true
+  rrule?: true
+  parentRideId?: true
   recurrenceId?: true
-  recurrenceEndDate?: true
   timezone?: true
 }
 
@@ -136,9 +124,11 @@ export type RideCountAggregateInputType = {
   endTime?: true
   driverId?: true
   isRecurring?: true
+  rrule?: true
+  exdate?: true
+  rdate?: true
+  parentRideId?: true
   recurrenceId?: true
-  recurrenceDays?: true
-  recurrenceEndDate?: true
   timezone?: true
   _all?: true
 }
@@ -181,18 +171,6 @@ export type RideAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: RideAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: RideSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: RideMinAggregateInputType
@@ -223,8 +201,6 @@ export type RideGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: RideCountAggregateInputType | true
-  _avg?: RideAvgAggregateInputType
-  _sum?: RideSumAggregateInputType
   _min?: RideMinAggregateInputType
   _max?: RideMaxAggregateInputType
 }
@@ -240,13 +216,13 @@ export type RideGroupByOutputType = {
   endTime: Date
   driverId: string | null
   isRecurring: boolean
+  rrule: string | null
+  exdate: string[]
+  rdate: string[]
+  parentRideId: string | null
   recurrenceId: string | null
-  recurrenceDays: number[]
-  recurrenceEndDate: Date | null
   timezone: string
   _count: RideCountAggregateOutputType | null
-  _avg: RideAvgAggregateOutputType | null
-  _sum: RideSumAggregateOutputType | null
   _min: RideMinAggregateOutputType | null
   _max: RideMaxAggregateOutputType | null
 }
@@ -280,14 +256,16 @@ export type RideWhereInput = {
   endTime?: Prisma.DateTimeFilter<"Ride"> | Date | string
   driverId?: Prisma.StringNullableFilter<"Ride"> | string | null
   isRecurring?: Prisma.BoolFilter<"Ride"> | boolean
+  rrule?: Prisma.StringNullableFilter<"Ride"> | string | null
+  exdate?: Prisma.StringNullableListFilter<"Ride">
+  rdate?: Prisma.StringNullableListFilter<"Ride">
+  parentRideId?: Prisma.StringNullableFilter<"Ride"> | string | null
   recurrenceId?: Prisma.StringNullableFilter<"Ride"> | string | null
-  recurrenceDays?: Prisma.IntNullableListFilter<"Ride">
-  recurrenceEndDate?: Prisma.DateTimeNullableFilter<"Ride"> | Date | string | null
   timezone?: Prisma.StringFilter<"Ride"> | string
   startLocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   endLocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   riders?: Prisma.RiderListRelationFilter
-  driver?: Prisma.XOR<Prisma.DriverNullableScalarRelationFilter, Prisma.DriverWhereInput> | null
+  driver?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.EmployeeWhereInput> | null
   favorites?: Prisma.FavoriteListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
 }
@@ -303,14 +281,16 @@ export type RideOrderByWithRelationInput = {
   endTime?: Prisma.SortOrder
   driverId?: Prisma.SortOrderInput | Prisma.SortOrder
   isRecurring?: Prisma.SortOrder
+  rrule?: Prisma.SortOrderInput | Prisma.SortOrder
+  exdate?: Prisma.SortOrder
+  rdate?: Prisma.SortOrder
+  parentRideId?: Prisma.SortOrderInput | Prisma.SortOrder
   recurrenceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  recurrenceDays?: Prisma.SortOrder
-  recurrenceEndDate?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   startLocation?: Prisma.LocationOrderByWithRelationInput
   endLocation?: Prisma.LocationOrderByWithRelationInput
   riders?: Prisma.RiderOrderByRelationAggregateInput
-  driver?: Prisma.DriverOrderByWithRelationInput
+  driver?: Prisma.EmployeeOrderByWithRelationInput
   favorites?: Prisma.FavoriteOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
 }
@@ -329,14 +309,16 @@ export type RideWhereUniqueInput = Prisma.AtLeast<{
   endTime?: Prisma.DateTimeFilter<"Ride"> | Date | string
   driverId?: Prisma.StringNullableFilter<"Ride"> | string | null
   isRecurring?: Prisma.BoolFilter<"Ride"> | boolean
+  rrule?: Prisma.StringNullableFilter<"Ride"> | string | null
+  exdate?: Prisma.StringNullableListFilter<"Ride">
+  rdate?: Prisma.StringNullableListFilter<"Ride">
+  parentRideId?: Prisma.StringNullableFilter<"Ride"> | string | null
   recurrenceId?: Prisma.StringNullableFilter<"Ride"> | string | null
-  recurrenceDays?: Prisma.IntNullableListFilter<"Ride">
-  recurrenceEndDate?: Prisma.DateTimeNullableFilter<"Ride"> | Date | string | null
   timezone?: Prisma.StringFilter<"Ride"> | string
   startLocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   endLocation?: Prisma.XOR<Prisma.LocationScalarRelationFilter, Prisma.LocationWhereInput>
   riders?: Prisma.RiderListRelationFilter
-  driver?: Prisma.XOR<Prisma.DriverNullableScalarRelationFilter, Prisma.DriverWhereInput> | null
+  driver?: Prisma.XOR<Prisma.EmployeeNullableScalarRelationFilter, Prisma.EmployeeWhereInput> | null
   favorites?: Prisma.FavoriteListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
 }, "id">
@@ -352,15 +334,15 @@ export type RideOrderByWithAggregationInput = {
   endTime?: Prisma.SortOrder
   driverId?: Prisma.SortOrderInput | Prisma.SortOrder
   isRecurring?: Prisma.SortOrder
+  rrule?: Prisma.SortOrderInput | Prisma.SortOrder
+  exdate?: Prisma.SortOrder
+  rdate?: Prisma.SortOrder
+  parentRideId?: Prisma.SortOrderInput | Prisma.SortOrder
   recurrenceId?: Prisma.SortOrderInput | Prisma.SortOrder
-  recurrenceDays?: Prisma.SortOrder
-  recurrenceEndDate?: Prisma.SortOrderInput | Prisma.SortOrder
   timezone?: Prisma.SortOrder
   _count?: Prisma.RideCountOrderByAggregateInput
-  _avg?: Prisma.RideAvgOrderByAggregateInput
   _max?: Prisma.RideMaxOrderByAggregateInput
   _min?: Prisma.RideMinOrderByAggregateInput
-  _sum?: Prisma.RideSumOrderByAggregateInput
 }
 
 export type RideScalarWhereWithAggregatesInput = {
@@ -377,9 +359,11 @@ export type RideScalarWhereWithAggregatesInput = {
   endTime?: Prisma.DateTimeWithAggregatesFilter<"Ride"> | Date | string
   driverId?: Prisma.StringNullableWithAggregatesFilter<"Ride"> | string | null
   isRecurring?: Prisma.BoolWithAggregatesFilter<"Ride"> | boolean
+  rrule?: Prisma.StringNullableWithAggregatesFilter<"Ride"> | string | null
+  exdate?: Prisma.StringNullableListFilter<"Ride">
+  rdate?: Prisma.StringNullableListFilter<"Ride">
+  parentRideId?: Prisma.StringNullableWithAggregatesFilter<"Ride"> | string | null
   recurrenceId?: Prisma.StringNullableWithAggregatesFilter<"Ride"> | string | null
-  recurrenceDays?: Prisma.IntNullableListFilter<"Ride">
-  recurrenceEndDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Ride"> | Date | string | null
   timezone?: Prisma.StringWithAggregatesFilter<"Ride"> | string
 }
 
@@ -391,14 +375,16 @@ export type RideCreateInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
   riders?: Prisma.RiderCreateNestedManyWithoutRidesInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutRideInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRideInput
 }
@@ -414,9 +400,11 @@ export type RideUncheckedCreateInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
@@ -431,14 +419,16 @@ export type RideUpdateInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
   riders?: Prisma.RiderUpdateManyWithoutRidesNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutRideNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRideNestedInput
 }
@@ -454,9 +444,11 @@ export type RideUncheckedUpdateInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
@@ -474,9 +466,11 @@ export type RideCreateManyInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
 }
 
@@ -488,9 +482,11 @@ export type RideUpdateManyMutationInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -505,9 +501,11 @@ export type RideUncheckedUpdateManyInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -521,14 +519,6 @@ export type RideOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type IntNullableListFilter<$PrismaModel = never> = {
-  equals?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
-  has?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
-  hasEvery?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  hasSome?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
-}
-
 export type RideCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   type?: Prisma.SortOrder
@@ -540,14 +530,12 @@ export type RideCountOrderByAggregateInput = {
   endTime?: Prisma.SortOrder
   driverId?: Prisma.SortOrder
   isRecurring?: Prisma.SortOrder
+  rrule?: Prisma.SortOrder
+  exdate?: Prisma.SortOrder
+  rdate?: Prisma.SortOrder
+  parentRideId?: Prisma.SortOrder
   recurrenceId?: Prisma.SortOrder
-  recurrenceDays?: Prisma.SortOrder
-  recurrenceEndDate?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
-}
-
-export type RideAvgOrderByAggregateInput = {
-  recurrenceDays?: Prisma.SortOrder
 }
 
 export type RideMaxOrderByAggregateInput = {
@@ -561,8 +549,9 @@ export type RideMaxOrderByAggregateInput = {
   endTime?: Prisma.SortOrder
   driverId?: Prisma.SortOrder
   isRecurring?: Prisma.SortOrder
+  rrule?: Prisma.SortOrder
+  parentRideId?: Prisma.SortOrder
   recurrenceId?: Prisma.SortOrder
-  recurrenceEndDate?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
 }
 
@@ -577,13 +566,10 @@ export type RideMinOrderByAggregateInput = {
   endTime?: Prisma.SortOrder
   driverId?: Prisma.SortOrder
   isRecurring?: Prisma.SortOrder
+  rrule?: Prisma.SortOrder
+  parentRideId?: Prisma.SortOrder
   recurrenceId?: Prisma.SortOrder
-  recurrenceEndDate?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
-}
-
-export type RideSumOrderByAggregateInput = {
-  recurrenceDays?: Prisma.SortOrder
 }
 
 export type RideScalarRelationFilter = {
@@ -755,8 +741,12 @@ export type RideUncheckedUpdateManyWithoutRidersNestedInput = {
   deleteMany?: Prisma.RideScalarWhereInput | Prisma.RideScalarWhereInput[]
 }
 
-export type RideCreaterecurrenceDaysInput = {
-  set: number[]
+export type RideCreateexdateInput = {
+  set: string[]
+}
+
+export type RideCreaterdateInput = {
+  set: string[]
 }
 
 export type EnumRideTypeFieldUpdateOperationsInput = {
@@ -771,9 +761,14 @@ export type EnumSchedulingStateFieldUpdateOperationsInput = {
   set?: $Enums.SchedulingState
 }
 
-export type RideUpdaterecurrenceDaysInput = {
-  set?: number[]
-  push?: number | number[]
+export type RideUpdateexdateInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type RideUpdaterdateInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type RideCreateNestedOneWithoutFavoritesInput = {
@@ -812,13 +807,15 @@ export type RideCreateWithoutStartLocationInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
   riders?: Prisma.RiderCreateNestedManyWithoutRidesInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutRideInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRideInput
 }
@@ -833,9 +830,11 @@ export type RideUncheckedCreateWithoutStartLocationInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
@@ -860,13 +859,15 @@ export type RideCreateWithoutEndLocationInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   riders?: Prisma.RiderCreateNestedManyWithoutRidesInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutRideInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRideInput
 }
@@ -881,9 +882,11 @@ export type RideUncheckedCreateWithoutEndLocationInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
@@ -930,9 +933,11 @@ export type RideScalarWhereInput = {
   endTime?: Prisma.DateTimeFilter<"Ride"> | Date | string
   driverId?: Prisma.StringNullableFilter<"Ride"> | string | null
   isRecurring?: Prisma.BoolFilter<"Ride"> | boolean
+  rrule?: Prisma.StringNullableFilter<"Ride"> | string | null
+  exdate?: Prisma.StringNullableListFilter<"Ride">
+  rdate?: Prisma.StringNullableListFilter<"Ride">
+  parentRideId?: Prisma.StringNullableFilter<"Ride"> | string | null
   recurrenceId?: Prisma.StringNullableFilter<"Ride"> | string | null
-  recurrenceDays?: Prisma.IntNullableListFilter<"Ride">
-  recurrenceEndDate?: Prisma.DateTimeNullableFilter<"Ride"> | Date | string | null
   timezone?: Prisma.StringFilter<"Ride"> | string
 }
 
@@ -960,9 +965,11 @@ export type RideCreateWithoutDriverInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
@@ -981,9 +988,11 @@ export type RideUncheckedCreateWithoutDriverInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
@@ -1024,13 +1033,15 @@ export type RideCreateWithoutRidersInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutRideInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRideInput
 }
@@ -1046,9 +1057,11 @@ export type RideUncheckedCreateWithoutRidersInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRideInput
@@ -1083,14 +1096,16 @@ export type RideCreateWithoutFavoritesInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
   riders?: Prisma.RiderCreateNestedManyWithoutRidesInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutRideInput
 }
 
@@ -1105,9 +1120,11 @@ export type RideUncheckedCreateWithoutFavoritesInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRideInput
@@ -1137,14 +1154,16 @@ export type RideUpdateWithoutFavoritesInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
   riders?: Prisma.RiderUpdateManyWithoutRidesNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRideNestedInput
 }
 
@@ -1159,9 +1178,11 @@ export type RideUncheckedUpdateWithoutFavoritesInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRideNestedInput
@@ -1175,14 +1196,16 @@ export type RideCreateWithoutNotificationsInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   startLocation: Prisma.LocationCreateNestedOneWithoutRidesAsStartInput
   endLocation: Prisma.LocationCreateNestedOneWithoutRidesAsEndInput
   riders?: Prisma.RiderCreateNestedManyWithoutRidesInput
-  driver?: Prisma.DriverCreateNestedOneWithoutRidesInput
+  driver?: Prisma.EmployeeCreateNestedOneWithoutRidesInput
   favorites?: Prisma.FavoriteCreateNestedManyWithoutRideInput
 }
 
@@ -1197,9 +1220,11 @@ export type RideUncheckedCreateWithoutNotificationsInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
   riders?: Prisma.RiderUncheckedCreateNestedManyWithoutRidesInput
   favorites?: Prisma.FavoriteUncheckedCreateNestedManyWithoutRideInput
@@ -1229,14 +1254,16 @@ export type RideUpdateWithoutNotificationsInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
   riders?: Prisma.RiderUpdateManyWithoutRidesNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutRideNestedInput
 }
 
@@ -1251,9 +1278,11 @@ export type RideUncheckedUpdateWithoutNotificationsInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
@@ -1269,9 +1298,11 @@ export type RideCreateManyStartLocationInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
 }
 
@@ -1285,9 +1316,11 @@ export type RideCreateManyEndLocationInput = {
   endTime: Date | string
   driverId?: string | null
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
 }
 
@@ -1299,13 +1332,15 @@ export type RideUpdateWithoutStartLocationInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
   riders?: Prisma.RiderUpdateManyWithoutRidesNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutRideNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRideNestedInput
 }
@@ -1320,9 +1355,11 @@ export type RideUncheckedUpdateWithoutStartLocationInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
@@ -1339,9 +1376,11 @@ export type RideUncheckedUpdateManyWithoutStartLocationInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1353,13 +1392,15 @@ export type RideUpdateWithoutEndLocationInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   riders?: Prisma.RiderUpdateManyWithoutRidesNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutRideNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRideNestedInput
 }
@@ -1374,9 +1415,11 @@ export type RideUncheckedUpdateWithoutEndLocationInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
@@ -1393,9 +1436,11 @@ export type RideUncheckedUpdateManyWithoutEndLocationInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1409,9 +1454,11 @@ export type RideCreateManyDriverInput = {
   startTime: Date | string
   endTime: Date | string
   isRecurring?: boolean
+  rrule?: string | null
+  exdate?: Prisma.RideCreateexdateInput | string[]
+  rdate?: Prisma.RideCreaterdateInput | string[]
+  parentRideId?: string | null
   recurrenceId?: string | null
-  recurrenceDays?: Prisma.RideCreaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Date | string | null
   timezone?: string
 }
 
@@ -1423,9 +1470,11 @@ export type RideUpdateWithoutDriverInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
@@ -1444,9 +1493,11 @@ export type RideUncheckedUpdateWithoutDriverInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   riders?: Prisma.RiderUncheckedUpdateManyWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
@@ -1463,9 +1514,11 @@ export type RideUncheckedUpdateManyWithoutDriverInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1477,13 +1530,15 @@ export type RideUpdateWithoutRidersInput = {
   startTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   startLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsStartNestedInput
   endLocation?: Prisma.LocationUpdateOneRequiredWithoutRidesAsEndNestedInput
-  driver?: Prisma.DriverUpdateOneWithoutRidesNestedInput
+  driver?: Prisma.EmployeeUpdateOneWithoutRidesNestedInput
   favorites?: Prisma.FavoriteUpdateManyWithoutRideNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutRideNestedInput
 }
@@ -1499,9 +1554,11 @@ export type RideUncheckedUpdateWithoutRidersInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
   favorites?: Prisma.FavoriteUncheckedUpdateManyWithoutRideNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRideNestedInput
@@ -1518,9 +1575,11 @@ export type RideUncheckedUpdateManyWithoutRidersInput = {
   endTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   driverId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isRecurring?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  rrule?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  exdate?: Prisma.RideUpdateexdateInput | string[]
+  rdate?: Prisma.RideUpdaterdateInput | string[]
+  parentRideId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recurrenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recurrenceDays?: Prisma.RideUpdaterecurrenceDaysInput | number[]
-  recurrenceEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   timezone?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -1584,9 +1643,11 @@ export type RideSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   endTime?: boolean
   driverId?: boolean
   isRecurring?: boolean
+  rrule?: boolean
+  exdate?: boolean
+  rdate?: boolean
+  parentRideId?: boolean
   recurrenceId?: boolean
-  recurrenceDays?: boolean
-  recurrenceEndDate?: boolean
   timezone?: boolean
   startLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   endLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1608,9 +1669,11 @@ export type RideSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   endTime?: boolean
   driverId?: boolean
   isRecurring?: boolean
+  rrule?: boolean
+  exdate?: boolean
+  rdate?: boolean
+  parentRideId?: boolean
   recurrenceId?: boolean
-  recurrenceDays?: boolean
-  recurrenceEndDate?: boolean
   timezone?: boolean
   startLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   endLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1628,9 +1691,11 @@ export type RideSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   endTime?: boolean
   driverId?: boolean
   isRecurring?: boolean
+  rrule?: boolean
+  exdate?: boolean
+  rdate?: boolean
+  parentRideId?: boolean
   recurrenceId?: boolean
-  recurrenceDays?: boolean
-  recurrenceEndDate?: boolean
   timezone?: boolean
   startLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   endLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1648,13 +1713,15 @@ export type RideSelectScalar = {
   endTime?: boolean
   driverId?: boolean
   isRecurring?: boolean
+  rrule?: boolean
+  exdate?: boolean
+  rdate?: boolean
+  parentRideId?: boolean
   recurrenceId?: boolean
-  recurrenceDays?: boolean
-  recurrenceEndDate?: boolean
   timezone?: boolean
 }
 
-export type RideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "schedulingState" | "startLocationId" | "endLocationId" | "startTime" | "endTime" | "driverId" | "isRecurring" | "recurrenceId" | "recurrenceDays" | "recurrenceEndDate" | "timezone", ExtArgs["result"]["ride"]>
+export type RideOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "type" | "status" | "schedulingState" | "startLocationId" | "endLocationId" | "startTime" | "endTime" | "driverId" | "isRecurring" | "rrule" | "exdate" | "rdate" | "parentRideId" | "recurrenceId" | "timezone", ExtArgs["result"]["ride"]>
 export type RideInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   startLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
   endLocation?: boolean | Prisma.LocationDefaultArgs<ExtArgs>
@@ -1681,7 +1748,7 @@ export type $RidePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     startLocation: Prisma.$LocationPayload<ExtArgs>
     endLocation: Prisma.$LocationPayload<ExtArgs>
     riders: Prisma.$RiderPayload<ExtArgs>[]
-    driver: Prisma.$DriverPayload<ExtArgs> | null
+    driver: Prisma.$EmployeePayload<ExtArgs> | null
     favorites: Prisma.$FavoritePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
   }
@@ -1696,9 +1763,11 @@ export type $RidePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     endTime: Date
     driverId: string | null
     isRecurring: boolean
+    rrule: string | null
+    exdate: string[]
+    rdate: string[]
+    parentRideId: string | null
     recurrenceId: string | null
-    recurrenceDays: number[]
-    recurrenceEndDate: Date | null
     timezone: string
   }, ExtArgs["result"]["ride"]>
   composites: {}
@@ -2097,7 +2166,7 @@ export interface Prisma__RideClient<T, Null = never, ExtArgs extends runtime.Typ
   startLocation<T extends Prisma.LocationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationDefaultArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   endLocation<T extends Prisma.LocationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LocationDefaultArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   riders<T extends Prisma.Ride$ridersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ride$ridersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RiderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  driver<T extends Prisma.Ride$driverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ride$driverArgs<ExtArgs>>): Prisma.Prisma__DriverClient<runtime.Types.Result.GetResult<Prisma.$DriverPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  driver<T extends Prisma.Ride$driverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ride$driverArgs<ExtArgs>>): Prisma.Prisma__EmployeeClient<runtime.Types.Result.GetResult<Prisma.$EmployeePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   favorites<T extends Prisma.Ride$favoritesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ride$favoritesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FavoritePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Ride$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Ride$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2139,9 +2208,11 @@ export interface RideFieldRefs {
   readonly endTime: Prisma.FieldRef<"Ride", 'DateTime'>
   readonly driverId: Prisma.FieldRef<"Ride", 'String'>
   readonly isRecurring: Prisma.FieldRef<"Ride", 'Boolean'>
+  readonly rrule: Prisma.FieldRef<"Ride", 'String'>
+  readonly exdate: Prisma.FieldRef<"Ride", 'String[]'>
+  readonly rdate: Prisma.FieldRef<"Ride", 'String[]'>
+  readonly parentRideId: Prisma.FieldRef<"Ride", 'String'>
   readonly recurrenceId: Prisma.FieldRef<"Ride", 'String'>
-  readonly recurrenceDays: Prisma.FieldRef<"Ride", 'Int[]'>
-  readonly recurrenceEndDate: Prisma.FieldRef<"Ride", 'DateTime'>
   readonly timezone: Prisma.FieldRef<"Ride", 'String'>
 }
     
@@ -2572,18 +2643,18 @@ export type Ride$ridersArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
  */
 export type Ride$driverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Driver
+   * Select specific fields to fetch from the Employee
    */
-  select?: Prisma.DriverSelect<ExtArgs> | null
+  select?: Prisma.EmployeeSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Driver
+   * Omit specific fields from the Employee
    */
-  omit?: Prisma.DriverOmit<ExtArgs> | null
+  omit?: Prisma.EmployeeOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DriverInclude<ExtArgs> | null
-  where?: Prisma.DriverWhereInput
+  include?: Prisma.EmployeeInclude<ExtArgs> | null
+  where?: Prisma.EmployeeWhereInput
 }
 
 /**

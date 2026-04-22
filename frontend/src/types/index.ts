@@ -20,13 +20,16 @@ export type Employee = {
   id: string;
   firstName: string;
   lastName: string;
-  type?: string[];
-  isDriver?: boolean;
+  adminRoles: string[];
+  isAdmin: boolean;
+  isDriver: boolean;
   phoneNumber: string;
   email: string;
-  availability?: DayOfWeek[];
+  availability: DayOfWeek[];
   photoLink?: string;
   startDate?: string;
+  joinDate?: string;
+  active?: boolean;
 };
 
 export type User = {

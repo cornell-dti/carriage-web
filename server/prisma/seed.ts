@@ -7,9 +7,10 @@ const connectionString = `${process.env.DATABASE_URL}`;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
+
 async function main() {
     // add yourself!
-    const you = await prisma.admin.upsert({
+    const you = await (prisma as any).employee.upsert({
         where: { email: "XXXXXX@cornell.edu" },
         update: {},
         create: {
@@ -17,12 +18,14 @@ async function main() {
             firstName: "",
             lastName: "",
             phoneNumber: "", // numbers only!
-            roles: ["SDS_ADMIN", "REDRUNNER_ADMIN"],
+            isAdmin: true,
+            adminRoles: ["SDS_ADMIN", "REDRUNNER_ADMIN"],
             isDriver: true,
         },
     });
     console.log({ you });
 }
+
 main()
     .then(async () => {
         await prisma.$disconnect();
