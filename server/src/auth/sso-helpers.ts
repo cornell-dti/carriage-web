@@ -42,7 +42,8 @@ export async function findUserByNetID(
       const employee = await (prisma as any).employee.findUnique({
         where: { email: cornellEmail },
       });
-      if (employee && employee.isAdmin) return { user: employee, userType: 'Admin' };
+      if (employee && employee.isAdmin)
+        return { user: employee, userType: 'Admin' };
       return null;
     }
 
@@ -50,7 +51,8 @@ export async function findUserByNetID(
       const employee = await (prisma as any).employee.findUnique({
         where: { email: cornellEmail },
       });
-      if (employee && employee.isDriver) return { user: employee, userType: 'Driver' };
+      if (employee && employee.isDriver)
+        return { user: employee, userType: 'Driver' };
       return null;
     }
 

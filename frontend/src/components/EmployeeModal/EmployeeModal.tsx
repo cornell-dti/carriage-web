@@ -39,7 +39,9 @@ type EmployeeEntity = {
 };
 
 // both for formatting to current api data expectations
-function extractAdminData(employeeData: EmployeeEntity): Omit<EmployeeType, 'id'> {
+function extractAdminData(
+  employeeData: EmployeeEntity
+): Omit<EmployeeType, 'id'> {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
@@ -53,7 +55,9 @@ function extractAdminData(employeeData: EmployeeEntity): Omit<EmployeeType, 'id'
   };
 }
 
-function extractDriverData(employeeData: EmployeeEntity): Partial<EmployeeType> {
+function extractDriverData(
+  employeeData: EmployeeEntity
+): Partial<EmployeeType> {
   return {
     firstName: employeeData.firstName,
     lastName: employeeData.lastName,
@@ -95,8 +99,7 @@ const EmployeeModal = ({
   React.useEffect(() => {
     if (existingEmployee && isOpen) {
       // Initialize roles, normalizing Prisma enum values (SDS_ADMIN → sds-admin)
-      const normalizeRole = (r: string) =>
-        r.toLowerCase().replace(/_/g, '-');
+      const normalizeRole = (r: string) => r.toLowerCase().replace(/_/g, '-');
       const roles: string[] = [];
       if (existingEmployee.admin?.adminRoles) {
         roles.push(...existingEmployee.admin.adminRoles.map(normalizeRole));
@@ -179,7 +182,9 @@ const EmployeeModal = ({
     switch (endpoint) {
       case '/api/drivers':
         // Use optimistic create from context
-        await createDriver(extractDriverData(employeeData) as Omit<EmployeeType, 'id'>);
+        await createDriver(
+          extractDriverData(employeeData) as Omit<EmployeeType, 'id'>
+        );
         res = employeeData; // The context will handle server response and ID assignment
         break;
       case '/api/admins':

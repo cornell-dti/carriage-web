@@ -10,7 +10,7 @@ import {
 } from '../../generated/prisma/client';
 import {
   validateUser,
-  checkNetIDExists,
+  checkRiderEmailExists,
   checkNetIDExistsForOtherEmployee,
 } from '../util';
 
@@ -209,7 +209,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
   try {
     const { body } = req;
 
-    const emailExists = await checkNetIDExists(body.email, 'rider');
+    const emailExists = await checkRiderEmailExists(body.email);
     if (emailExists) {
       return res
         .status(409)
@@ -221,10 +221,10 @@ router.post('/', validateUser('Admin'), async (req, res) => {
       ? body.accessibility.map((a: string) => a.toUpperCase() as Accessibility)
       : [];
 
-    // Reuse existing ID if this person already has an admin or driver record
-    const existing =
-      (await prisma.admin.findUnique({ where: { email: body.email } })) ??
-      (await prisma.driver.findUnique({ where: { email: body.email } }));
+    // Reuse existing ID if this person already has an employee record
+    const existing = await prisma.employee.findUnique({
+      where: { email: body.email },
+    });
     const sharedId = existing?.id ?? uuid();
 
     const rider = await prisma.rider.create({
