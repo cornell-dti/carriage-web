@@ -36,14 +36,14 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
             </button>
           </a>
         </div>
-        <div className="rounded-2xl flex overflow-clip my-32">
-          <div className="bg-black flex flex-col justify-center items-center p-4 z-10">
+        <div className="rounded-2xl flex overflow-clip my-32 flex-col lg:flex-row">
+          <div className="bg-black flex flex-col justify-center items-center p-4 relative">
             <img src={logo} alt="Carriage logo" />
             <span className="text-5xl font-semibold text-white mt-4">
               Carriage
             </span>
           </div>
-          <div className="bg-white grow flex flex-col justify-between items-center text-center p-16 relative max-md:rounded-b-2xl max-md:rounded-tr-none">
+          <div className="bg-white grow flex flex-col justify-between items-center text-center p-16 relative">
             <div className="flex flex-col justify-center items-center flex-1 gap-6">
               <h1 className="text-3xl font-black">Login</h1>
               {ssoError && (
@@ -51,7 +51,7 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
                   {ssoError}
                 </div>
               )}
-              <div className="flex justify-between items-center max-md:flex-col gap-2">
+              <div className="flex justify-between items-center flex-col lg:flex-row gap-2">
                 <div className="mx-2.5">{students}</div>
                 <div className="mx-2.5">{admins}</div>
                 <div className="mx-2.5">{drivers}</div>
@@ -79,9 +79,9 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
         </div>
       </div>
 
-      <div className="relative flex flex-row justify-center items-start max-lg:mt-15 max-md:mt-15">
-        <div className="py-36 px-32 flex flex-row items-center gap-52 justify-center max-xl:flex-col max-xl:gap-12 max-lg:px-6 max-lg:py-12 max-md:px-6 max-md:py-12">
-          <p className="text-5xl min-w-[30%] max-xl:max-w-[70%] max-lg:text-2xl">
+      <div className="relative flex justify-center items-start mt-15">
+        <div className="py-36 flex lg:flex-row  flex-col-reverse items-center gap-24 px-8 lg:px-24">
+          <p className=" text-xl lg:text-3xl w-full">
             Administrators add students and employees and assign rides on Admin
             Web.
           </p>
@@ -89,21 +89,13 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
         </div>
       </div>
 
-      <div className="bg-zinc-900 py-20 px-32 flex flex-row gap-36 items-center justify-center max-xl:flex-col max-xl:gap-12 max-lg:px-6 max-lg:py-12 max-md:px-6 max-md:py-12">
-        <div className="flex items-center justify-center flex-row gap-16 max-lg:gap-4">
-          <img
-            src={bottomLaptop}
-            alt="bottom laptop"
-            className="w-167.5 max-w-full h-auto max-md:w-[60%] max-md:max-w-50"
-          />
-          <img
-            src={phone}
-            alt="phone"
-            className="w-55 max-w-full h-auto max-md:w-[30%] max-md:max-w-25"
-          />
+      <div className="bg-zinc-900 py-20 px-8 lg:px-24 flex flex-col lg:flex-row items-center justify-center gap-24">
+        <div className="flex items-center justify-center flex-row gap-4 w-full h-56">
+          <img src={bottomLaptop} alt="bottom laptop" className="w-full" />
+          <img src={phone} alt="phone" className="w-1/2 h-full" />
         </div>
 
-        <p className="text-white text-5xl min-w-[30%] max-xl:max-w-[70%] max-xl:mt-20 max-lg:text-xl max-lg:max-w-[80%] max-md:text-xl">
+        <p className="text-white  text-xl lg:text-3xl w-full">
           Students Schedule, Edit, and Cancel rides on Rider Web and Mobile.
         </p>
       </div>
