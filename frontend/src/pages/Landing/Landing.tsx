@@ -5,6 +5,7 @@ import topLaptop from './landing-images/laptop1.svg';
 import bottomLaptop from './landing-images/laptop2.svg';
 import phone from './landing-images/iPhone.svg';
 import { WAVE_PATH } from '../../util/constants';
+import campus from './campus.jpg';
 
 const cuLiftTerms = `https://sds.cornell.edu/accommodations-services
 /transportation/culift-guidelines`;
@@ -22,10 +23,12 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
   }, []);
   return (
     <main id="main" className="w-full max-w-full overflow-x-hidden">
-      <div
-        className="relative bg-cover min-h-fit w-full flex flex-col justify-center items-center"
-        style={{ backgroundImage: 'url(./campus.jpg)' }}
-      >
+      <div className="relative bg-cover min-h-fit w-full flex flex-col justify-center items-center">
+        <img
+          src={campus}
+          alt="A aerial photo of Cornell"
+          className="absolute w-full h-full object-cover"
+        />
         <div className="absolute top-5 right-5">
           <a href={cuLiftTerms} target="_blank" rel="noreferrer">
             <button className="w-44 h-10 border-0 bg-white text-black rounded hover:bg-gray-200 cursor-pointer text-base">
@@ -33,16 +36,16 @@ const Landing = ({ students, admins, drivers, ssoError }: LandingPropType) => {
             </button>
           </a>
         </div>
-        <div className="rounded-2xl p-32 flex min-h-fit max-lg:max-w-[95%] max-lg:min-h-auto max-lg:h-auto max-md:flex-col max-md:p-0">
-          <div className="rounded-l-2xl bg-black grow flex flex-col justify-center items-center p-4 max-md:rounded-t-2xl max-md:rounded-bl-none">
+        <div className="rounded-2xl flex overflow-clip my-32">
+          <div className="bg-black flex flex-col justify-center items-center p-4 z-10">
             <img src={logo} alt="Carriage logo" />
             <span className="text-5xl font-semibold text-white mt-4">
               Carriage
             </span>
           </div>
-          <div className="rounded-r-2xl bg-white grow flex flex-col justify-between items-center text-center p-16 relative max-md:rounded-b-2xl max-md:rounded-tr-none">
-            <div className="flex flex-col justify-center items-center flex-1">
-              <h1 className="text-3xl">Login</h1>
+          <div className="bg-white grow flex flex-col justify-between items-center text-center p-16 relative max-md:rounded-b-2xl max-md:rounded-tr-none">
+            <div className="flex flex-col justify-center items-center flex-1 gap-6">
+              <h1 className="text-3xl font-black">Login</h1>
               {ssoError && (
                 <div className="bg-red-100 text-red-900 p-3 rounded border border-red-400 mb-4 w-full">
                   {ssoError}
