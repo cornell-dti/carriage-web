@@ -26,7 +26,7 @@ const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
             {labels.map((label, idx) => (
               <h1 key={label} className="inline">
                 <button
-                  className={`inline text-center text-[1.75rem] font-bold px-[0.6rem] pb-1 bg-white border-none cursor-pointer focus:border-[3px] focus:border-solid focus:border-black ${
+                  className={`inline text-center text-[1.75rem] font-bold px-[0.6rem] pb-1 bg-white border-none cursor-pointer  ${
                     currentTab === idx
                       ? 'text-black border-b-4 border-b-black border-solid'
                       : 'text-[#848484]'
