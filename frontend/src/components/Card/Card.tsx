@@ -34,7 +34,7 @@ const Card = ({
       : `${firstName} ${lastName}`;
 
   return (
-    <div className="inline-block w-[17rem] h-[20rem] bg-white rounded-[0.5rem] border border-[#ddd] overflow-hidden shadow-[0px_5px_16px_-7px_rgba(0,0,0,0.15)]">
+    <div className="inline-block w-68 h-80 bg-white rounded-lg border border-[#ddd] overflow-hidden shadow-[0px_5px_16px_-7px_rgba(0,0,0,0.15)]">
       {photoLink && photoLink !== '' ? (
         <img
           className="bg-[#dddddd] object-cover w-full h-[9.38rem]"
@@ -44,8 +44,8 @@ const Card = ({
       ) : (
         <div className="bg-[#dddddd] object-cover w-full h-[9.38rem]"> </div>
       )}
-      <div className="p-[1.2rem_0rem_1.81rem_1rem]">
-        <div className="ml-[-1rem] p-[0.25rem_0_0.25rem_0.81rem] border-l-[0.19rem] border-black">
+      <div className="p-4">
+        <div className="-ml-4 px-3 border-l-[0.19rem] border-black gap-4 flex items-center">
           <h2 className="inline-block text-[1.25rem] font-bold m-0">
             {fullName}
           </h2>

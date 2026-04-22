@@ -38,7 +38,6 @@ const EmployeeCard = ({ id, employee }: EmployeeCardProps) => {
 
   // Determine if employee is admin, driver, or both
   const adminEmployee = isAdmin(employee);
-  const driverEmployee = isDriver(employee);
   const isBoth = adminEmployee && employee.isDriver;
 
   const roles = (): string => {
