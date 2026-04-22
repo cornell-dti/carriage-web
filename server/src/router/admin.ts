@@ -48,7 +48,9 @@ router.post('/', validateUser('Admin'), async (req, res) => {
       });
     }
 
-    const adminRoles = normalizeRoles(body.adminRoles || body.type || body.roles);
+    const adminRoles = normalizeRoles(
+      body.adminRoles || body.type || body.roles
+    );
 
     // Upsert: if employee already exists (e.g. was a driver), promote them to admin
     const existing = await prisma.employee.findUnique({
@@ -69,7 +71,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
         },
       });
     } else {
-      const id = (!body.eid || body.eid === '') ? uuid() : body.eid;
+      const id = !body.eid || body.eid === '' ? uuid() : body.eid;
       employee = await prisma.employee.create({
         data: {
           id,
@@ -99,7 +101,10 @@ router.put('/:id', validateUser('Admin'), async (req, res) => {
     const { body } = req;
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res.status(409).send({
           err: 'An employee with this NetID already exists',

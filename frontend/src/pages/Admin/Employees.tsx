@@ -13,7 +13,9 @@ import buttonStyles from '../../styles/button.module.css';
 const Employees = () => {
   const { admins, drivers } = useEmployees();
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredEmployees, setFilteredEmployees] = useState<EmployeeType[]>([]);
+  const [filteredEmployees, setFilteredEmployees] = useState<EmployeeType[]>(
+    []
+  );
   const [selectedEmployee] = useState<EmployeeType | null>(null);
 
   const [page, setPage] = useState(1);
@@ -21,7 +23,10 @@ const Employees = () => {
 
   // Deduplicate by id — a person who is both admin and driver appears in both lists
   const displayEmployees = useMemo(() => {
-    const employeeMap = new Map<string, EmployeeType & { roleType: string[] }>();
+    const employeeMap = new Map<
+      string,
+      EmployeeType & { roleType: string[] }
+    >();
 
     admins.forEach((admin) => {
       const roleType = admin.isDriver ? ['admin', 'driver'] : ['admin'];

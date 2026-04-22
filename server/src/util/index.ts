@@ -126,6 +126,8 @@ export async function checkNetIDExistsForOtherEmployee(
   email: string,
   currentEmployeeId: string
 ): Promise<boolean> {
-  const employee = await (prisma as any).employee.findUnique({ where: { email } });
+  const employee = await (prisma as any).employee.findUnique({
+    where: { email },
+  });
   return employee !== null && employee.id !== currentEmployeeId;
 }

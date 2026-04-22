@@ -8,10 +8,16 @@ type employeesState = {
   loading: boolean;
   refreshDrivers: () => Promise<void>;
   refreshAdmins: () => Promise<void>;
-  updateDriverInfo: (driverId: string, updates: Partial<EmployeeType>) => Promise<void>;
+  updateDriverInfo: (
+    driverId: string,
+    updates: Partial<EmployeeType>
+  ) => Promise<void>;
   createDriver: (driver: Omit<EmployeeType, 'id'>) => Promise<void>;
   deleteDriver: (driverId: string) => Promise<void>;
-  updateAdminInfo: (adminId: string, updates: Partial<EmployeeType>) => Promise<void>;
+  updateAdminInfo: (
+    adminId: string,
+    updates: Partial<EmployeeType>
+  ) => Promise<void>;
   createAdmin: (admin: Omit<EmployeeType, 'id'>) => Promise<void>;
   deleteAdmin: (adminId: string) => Promise<void>;
   getDriverById: (driverId: string) => EmployeeType | undefined;

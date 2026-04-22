@@ -14,7 +14,9 @@ const router = express.Router();
 // Get all drivers
 router.get('/', validateUser('Admin'), async (req, res) => {
   try {
-    const drivers = await prisma.employee.findMany({ where: { isDriver: true } });
+    const drivers = await prisma.employee.findMany({
+      where: { isDriver: true },
+    });
     res.status(200).send({ data: drivers });
   } catch (error) {
     console.error('Error fetching drivers:', error);
@@ -176,7 +178,7 @@ router.post('/', validateUser('Admin'), async (req, res) => {
         },
       });
     } else {
-      const id = (!body.eid || body.eid === '') ? uuid() : body.eid;
+      const id = !body.eid || body.eid === '' ? uuid() : body.eid;
       driver = await prisma.employee.create({
         data: {
           id,
@@ -210,7 +212,10 @@ router.put('/:id', validateUser('Driver'), async (req, res) => {
     }
 
     if (body.email) {
-      const emailExists = await checkNetIDExistsForOtherEmployee(body.email, id);
+      const emailExists = await checkNetIDExistsForOtherEmployee(
+        body.email,
+        id
+      );
       if (emailExists) {
         return res
           .status(409)

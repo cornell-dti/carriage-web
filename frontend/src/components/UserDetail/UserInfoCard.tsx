@@ -30,7 +30,12 @@ const UserInfoCard: React.FC<UserInfoCardProps> = ({ user, userType }) => {
   const getEmployeeRole = (employee: Employee) => {
     const roles: string[] = [];
     if (employee.isDriver) roles.push('driver');
-    if (employee.isAdmin) roles.push(...(employee.adminRoles.length > 0 ? employee.adminRoles.map((r) => r.toLowerCase().replace('_', '-')) : ['admin']));
+    if (employee.isAdmin)
+      roles.push(
+        ...(employee.adminRoles.length > 0
+          ? employee.adminRoles.map((r) => r.toLowerCase().replace('_', '-'))
+          : ['admin'])
+      );
     return roles.length > 0 ? roles.join(' • ') : 'N/A';
   };
 
