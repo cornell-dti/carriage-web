@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import cn from 'classnames';
-import styles from './tabSwitcher.module.css';
-import pageStyles from '../../pages/Admin/page.module.css';
 
 // Adapted from here: https://codepen.io/piotr-modes/pen/ErqdxE
 
@@ -23,15 +20,17 @@ const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
 
   return (
     <main id="main">
-      <div className={pageStyles.pageTitle}>
+      <div className="flex justify-between items-center p-8 text-[1.75rem] text-left m-0">
         <div>
           <div>
             {labels.map((label, idx) => (
-              <h1 key={label} className={styles.tabHeading}>
+              <h1 key={label} className="inline">
                 <button
-                  className={cn(styles.tab, {
-                    [styles.current]: currentTab === idx,
-                  })}
+                  className={`inline text-center text-[1.75rem] font-bold px-[0.6rem] pb-1 bg-white border-none cursor-pointer  ${
+                    currentTab === idx
+                      ? 'text-black border-b-4 border-b-black border-solid'
+                      : 'text-[#848484]'
+                  }`}
                   onClick={() => setCurrentTab(idx)}
                 >
                   {label}
@@ -39,11 +38,11 @@ const TabSwitcher = ({ labels, children, renderRight }: TabSwitcherProps) => {
               </h1>
             ))}
           </div>
-          <span className={styles.underline} />
+          <span className="block w-full h-px bg-[#757575]" />
         </div>
-        <div className={styles.rightSection}>{renderRight()}</div>
+        <div className="flex items-center">{renderRight()}</div>
       </div>
-      <div className={pageStyles.pageContainer}>{children[currentTab]}</div>
+      <div className="mx-8">{children[currentTab]}</div>
     </main>
   );
 };

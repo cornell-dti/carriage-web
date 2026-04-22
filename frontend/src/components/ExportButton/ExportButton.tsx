@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import { download } from '../../icons/other';
 import { Button } from '../FormElements/FormElements';
-import styles from './exportButton.module.css';
 import { ToastStatus, useToast } from '../../context/toastContext';
 import axios from '../../util/axios';
 
@@ -50,14 +49,14 @@ const ExportButton = ({
       <Button
         onClick={() => downloadCSV()}
         outline={true}
-        className={styles.exportButton}
+        className="flex items-center gap-2"
       >
         <img src={download} alt="capacity icon" /> Export
       </Button>
       <CSVLink
         data={downloadData}
         filename={filename}
-        className={styles.hidden}
+        className="hidden"
         ref={csvLink}
         target="_blank"
       />

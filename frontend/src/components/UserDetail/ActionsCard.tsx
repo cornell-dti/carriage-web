@@ -12,7 +12,6 @@ import ConfirmationModal from '../Modal/ConfirmationModal';
 import Toast from '../ConfirmationToast/ConfirmationToast';
 import { useRiders } from '../../context/RidersContext';
 import { ToastStatus, useToast } from '../../context/toastContext';
-import styles from './UserDetailCards.module.css';
 
 interface ActionsCardProps {
   user: Employee | RiderType;
@@ -131,7 +130,7 @@ const ActionsCard: React.FC<ActionsCardProps> = ({
   const employee = userType === 'employee' ? (user as Employee) : undefined;
 
   return (
-    <Card className={styles.userDetailCard}>
+    <Card className="bg-white rounded-xl border border-[#e5e7eb] p-4 flex flex-col h-full shadow-[0_2px_8px_rgba(0,0,0,0.1),0_-1px_4px_rgba(0,0,0,0.05)]">
       <CardContent className="flex-1 flex flex-col p-0">
         <h3 className="text-md font-medium text-gray-900 mb-3">Actions</h3>
 

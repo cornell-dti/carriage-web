@@ -4,14 +4,13 @@ import cn from 'classnames';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import { DriverType } from '@carriage-web/shared/types/driver';
 import { user as defaultUserIcon } from '../../../icons/userInfo/index';
-import styles from './userDetail.module.css';
 
 type otherInfo = {
   children: JSX.Element | JSX.Element[];
 };
 
 export const OtherInfo = ({ children }: otherInfo) => (
-  <div className={styles.otherInfoContainer}>{children}</div>
+  <div className="[border-top-style:ridge] pt-[3%] mt-[3%]">{children}</div>
 );
 
 type UserContactInfo = {
@@ -21,9 +20,9 @@ type UserContactInfo = {
 };
 
 export const UserContactInfo = ({ icon, alt, text }: UserContactInfo) => (
-  <div className={styles.contactInfo}>
-    <img className={styles.contactIcon} src={icon} alt={alt} />
-    <p className={styles.contactText}>{text}</p>
+  <div className="flex flex-row items-center gap-4 py-2">
+    <img className="w-5 h-5 opacity-70 shrink-0" src={icon} alt={alt} />
+    <p className="text-base text-[#374151] font-medium leading-snug">{text}</p>
   </div>
 );
 
@@ -69,45 +68,55 @@ const UserDetail = ({
 
   return (
     <Card
-      className={cn(styles.userDetail, { [styles.rider]: isRider })}
+      className={cn('bg-white mb-6', {
+        'mx-10': isRider,
+      })}
       elevation={2}
     >
-      <CardContent className={styles.userDetailContent}>
-        <Box className={styles.profileSection}>
-          <Box className={styles.profilePicContainer}>
+      <CardContent className="flex flex-row p-6 gap-6 min-h-fit max-md:flex-col max-md:p-6 max-md:gap-6">
+        <Box className="flex items-center justify-center shrink-0 max-md:items-center max-md:justify-center">
+          <Box className="flex items-center justify-center h-full">
             <Avatar
               src={
                 photoLink && photoLink !== ''
                   ? `${photoLink}?t=${new Date().getTime()}`
                   : undefined
               }
-              className={styles.profilePic}
+              className="min-w-32 min-h-32 border-3 border-[#f0f0f0] ml-4]"
               alt={`${fullName} profile`}
             >
               {(!photoLink || photoLink === '') && (
                 <img
                   src={defaultUserIcon}
                   alt="Default user"
-                  className={styles.defaultUserIcon}
+                  className="w-12 h-12 opacity-60 grayscale max-md:w-10 max-md:h-10"
                 />
               )}
             </Avatar>
           </Box>
         </Box>
 
-        <Box className={styles.basicInfoContainer}>
-          <Box className={styles.basicInfoTop}>
-            <Box className={styles.nameInfoContainer}>
-              <Typography variant="h4" className={styles.name}>
+        <Box className="flex-1 min-w-0 flex flex-col gap-6 max-md:text-center">
+          <Box className="flex flex-col gap-2">
+            <Box className="flex flex-col gap-1">
+              <Typography
+                variant="h4"
+                className="text-[1.75rem] font-bold text-[#1a1a1a] m-0 leading-tight max-md:text-2xl"
+              >
                 {fullName}
               </Typography>
-              <Typography variant="body2" className={styles.netId}>
+              <Typography
+                variant="body2"
+                className="text-base text-[#6b7280] m-0 font-medium"
+              >
                 {netId}
               </Typography>
             </Box>
           </Box>
 
-          <Box className={styles.contactInfoContainer}>{children}</Box>
+          <Box className="flex flex-col gap-4 bg-[#f8f9fa] p-6 rounded-lg border border-[#e9ecef] max-md:p-4">
+            {children}
+          </Box>
         </Box>
       </CardContent>
     </Card>

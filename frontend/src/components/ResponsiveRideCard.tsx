@@ -9,7 +9,6 @@ import {
   WatchLater,
 } from '@mui/icons-material';
 import { AdvancedMarker, Map, Pin } from '@vis.gl/react-google-maps';
-import styles from './ResponsiveRideCard.module.css';
 import buttonStyles from '../styles/button.module.css';
 
 interface ResponsiveRideCardProps {
@@ -44,9 +43,11 @@ const formatTime = (time: Date): FormattedTime => {
 const renderFormattedTime = (time: Date): ReactNode => {
   const formattedTime = formatTime(time);
   return (
-    <span className={styles.timeWrapper}>
+    <span className="flex gap-1 items-center">
       <p>{formattedTime.time}</p>
-      <p className={styles.timeMeridiem}>{formattedTime.meridiem}</p>
+      <p className="text-xs text-gray-500 font-light">
+        {formattedTime.meridiem}
+      </p>
     </span>
   );
 };
@@ -71,73 +72,73 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.statusContainer}>
+    <div className="w-full relative h-min min-w-80 bg-white rounded px-4 py-4 flex flex-col gap-4 border border-[#e0e0e0] text-base">
+      <div className="w-full h-min flex items-center justify-between">
         {/* ride status chip */}
         {ride.schedulingState === SchedulingState.UNSCHEDULED ? (
-          <div className={`${styles.statusBadge} ${styles.statusRequested}`}>
+          <div className="w-32 h-7 rounded flex justify-center items-center text-base text-gray-500 bg-[#f5f5f5]">
             <p>Requested</p>
           </div>
         ) : ride.status === Status.CANCELLED ? (
-          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
+          <div className="w-32 h-7 rounded flex justify-center items-center text-base text-red-700 bg-[#fff0f0]">
             <p>Canceled</p>
           </div>
         ) : ride.status === Status.NO_SHOW ? (
-          <div className={`${styles.statusBadge} ${styles.statusCanceled}`}>
+          <div className="w-32 h-7 rounded flex justify-center items-center text-base text-red-700 bg-[#fff0f0]">
             <p>No Show</p>
           </div>
         ) : (
-          <div className={`${styles.statusBadge} ${styles.statusScheduled}`}>
+          <div className="w-32 h-7 rounded flex justify-center items-center text-base text-gray-500 bg-[#f5f5f5]">
             <p>Approved</p>
           </div>
         )}
 
         <button
           onClick={() => setExpanded(!expanded)}
-          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} ${styles.detailsButton}`}
+          className={`${buttonStyles.button} ${buttonStyles.buttonSecondary} max-w-32`}
         >
           {expanded ? 'Hide Details' : 'Details'}
         </button>
       </div>
       <div
-        className={`${styles.contentWrapper} ${
+        className={`w-full h-min flex text-nowrap ${
           expanded
-            ? styles.contentWrapperExpanded
-            : styles.contentWrapperCollapsed
+            ? 'flex-col justify-normal gap-4'
+            : 'flex-row justify-between gap-4'
         }`}
       >
-        <div className={styles.infoSection}>
+        <div className="w-full h-min flex max-sm:flex-col max-sm:gap-4">
           {/* time-related */}
-          <div className={styles.column}>
-            <span className={styles.row}>
-              <span className={styles.labelWrapper}>
+          <div className="w-full h-min flex flex-col gap-2">
+            <span className="flex gap-2 items-center">
+              <span className="flex items-center gap-1 w-20">
                 <WatchLater />
-                <p className={styles.labelText}>Start</p>
+                <p className="text-xs">Start</p>
               </span>
               {renderFormattedTime(new Date(ride.startTime))}
             </span>
-            <span className={styles.rowSecondary}>
-              <span className={styles.labelWrapper}>
+            <span className="flex gap-2 items-center text-gray-500">
+              <span className="flex items-center gap-1 w-20">
                 <SubdirectoryArrowRight />
-                <p className={styles.labelText}>End</p>
+                <p className="text-xs">End</p>
               </span>
               {renderFormattedTime(new Date(ride.endTime))}
             </span>
           </div>
 
           {/* location-related */}
-          <div className={styles.column}>
-            <span className={styles.row}>
-              <span className={styles.labelWrapper}>
+          <div className="w-full h-min flex flex-col gap-2">
+            <span className="flex gap-2 items-center">
+              <span className="flex items-center gap-1 w-20">
                 <Place />
-                <p className={styles.labelText}>Pickup</p>
+                <p className="text-xs">Pickup</p>
               </span>
               <p>{ride.startLocation.name}</p>
             </span>
-            <span className={styles.rowSecondary}>
-              <span className={styles.labelWrapper}>
+            <span className="flex gap-2 items-center text-gray-500">
+              <span className="flex items-center gap-1 w-20">
                 <FlagRounded />
-                <p className={styles.labelText}>Dropoff</p>
+                <p className="text-xs">Dropoff</p>
               </span>
               <p>{ride.endLocation.name}</p>
             </span>
@@ -146,10 +147,10 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         {/* driver info */}
         {expanded && (
           <div>
-            <span className={styles.row}>
-              <span className={styles.labelWrapper}>
+            <span className="flex gap-2 items-center">
+              <span className="flex items-center gap-1 w-20">
                 <BadgeRounded></BadgeRounded>
-                <p className={styles.labelText}>Driver</p>
+                <p className="text-xs">Driver</p>
               </span>
               <p>
                 {ride.driver !== undefined
@@ -161,7 +162,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
         )}
         {/* expanded location view */}
         {expanded && (
-          <div className={styles.mapContainer}>
+          <div className="w-full h-min flex gap-2 rounded overflow-hidden border border-[#e0e0e0]">
             {hasCustomLocation() ? (
               <div
                 style={{
@@ -194,7 +195,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
               </div>
             ) : (
               <Map
-                className={styles.map}
+                className="w-full h-48 rounded"
                 defaultCenter={{
                   lat: (ride.startLocation.lat + ride.endLocation.lat) / 2,
                   lng: (ride.startLocation.lng + ride.endLocation.lng) / 2,
@@ -202,7 +203,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                 defaultZoom={13}
                 gestureHandling="greedy"
                 disableDefaultUI
-                mapId={process.env.VITE_GOOGLE_MAPS_MAP_ID}
+                mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
               >
                 <AdvancedMarker
                   position={{
@@ -226,7 +227,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
                   clickable={true}
                   title={ride.endLocation.name}
                 >
-                  <FlagRounded className={styles.flagIcon} />
+                  <FlagRounded className="text-gray-600 w-12 h-12" />
                 </AdvancedMarker>
               </Map>
             )}
@@ -236,7 +237,7 @@ const ResponsiveRideCard: FC<ResponsiveRideCardProps> = ({
 
       {/* expanded buttons */}
       {expanded ? (
-        <div className={styles.buttonContainer}>
+        <div className="w-full h-min flex gap-2">
           <button
             onClick={(e) => {
               e.stopPropagation();

@@ -1,5 +1,4 @@
 import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import styles from './employeemodal.module.css';
 import { Label, Input } from '../FormElements/FormElements';
 
 type Props = {
@@ -17,12 +16,12 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
   };
 
   return (
-    <div className={styles.roleSelector}>
-      <p className={styles.roleSelectorTitle}>Role</p>
-      <div className={styles.radioGroup}>
-        <div className={styles.radioOption}>
+    <div className="mb-6">
+      <p className="mb-2 font-medium">Role</p>
+      <div className="flex gap-4">
+        <div className="flex items-center gap-1">
           <Input
-            className={styles.radioButton}
+            className="cursor-pointer focus:outline-2 focus:outline-black"
             id="driver"
             name="role"
             type="checkbox"
@@ -30,13 +29,11 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('driver')}
           />
-          <Label className={styles.driverLabel} htmlFor={'driver'}>
-            Driver
-          </Label>
+          <Label htmlFor={'driver'}>Driver</Label>
         </div>
-        <div className={styles.radioOption}>
+        <div className="flex items-center gap-1">
           <Input
-            className={styles.radioButton}
+            className="cursor-pointer focus:outline-2 focus:outline-black"
             id="redrunner-admin"
             name="role"
             type="checkbox"
@@ -44,13 +41,11 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('redrunner-admin')}
           />
-          <Label className={styles.driverLabel} htmlFor={'redrunner-admin'}>
-            Redrunner Admin
-          </Label>
+          <Label htmlFor={'redrunner-admin'}>Redrunner Admin</Label>
         </div>
-        <div className={styles.radioOption}>
+        <div className="flex items-center gap-1">
           <Input
-            className={styles.radioButton}
+            className="cursor-pointer focus:outline-2 focus:outline-black"
             id="sds-admin"
             name="role"
             type="checkbox"
@@ -58,9 +53,7 @@ const RoleSelector = ({ selectedRoles, setSelectedRoles }: Props) => {
             onChange={onChange}
             checked={selectedRoles.includes('sds-admin')}
           />
-          <Label className={styles.driverLabel} htmlFor={'sds-admin'}>
-            SDS Admin
-          </Label>
+          <Label htmlFor={'sds-admin'}>SDS Admin</Label>
         </div>
       </div>
     </div>

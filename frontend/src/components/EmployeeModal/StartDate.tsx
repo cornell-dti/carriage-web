@@ -3,8 +3,6 @@ import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import { Label, Input } from '../FormElements/FormElements';
 
-import styles from './employeemodal.module.css';
-
 type StartDateProps = {
   existingDate?: string;
 };
@@ -13,7 +11,7 @@ const StartDate = ({ existingDate }: StartDateProps) => {
   const { register } = useFormContext();
 
   return (
-    <div className={cn(styles.col1, styles.workingHours)}>
+    <div className={cn('col-start-1 mb-4')}>
       <Label htmlFor="startDate">Start Date:</Label>
       <Input
         id="startDate"

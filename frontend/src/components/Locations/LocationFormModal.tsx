@@ -22,7 +22,6 @@ import PlacesSearch from './PlacesSearch';
 import GeocoderService from './GeocoderService';
 import { Tag } from 'types';
 import { LocationType } from '@carriage-web/shared/types/location';
-import styles from './locations.module.css';
 import LocationImagesUpload, { LocationImage } from './LocationImagesUpload';
 
 const CAMPUS_OPTIONS = [
@@ -162,9 +161,9 @@ export const LocationFormModal: React.FC<Props> = ({
           apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
           libraries={['places']}
         >
-          <div className={styles.formGrid}>
+          <div className="grid grid-cols-2 gap-6">
             {/* -------- Left column (Form inputs) -------------------------------- */}
-            <div className={styles.formColumn}>
+            <div className="flex flex-col gap-4">
               <TextField
                 label="Location Name"
                 fullWidth
@@ -208,13 +207,13 @@ export const LocationFormModal: React.FC<Props> = ({
               <LocationImagesUpload
                 images={locationImages}
                 onImagesChange={handleImagesChange}
-                maxImages={4} // Set to 4 images max
+                maxImages={4}
               />
             </div>
 
             {/* -------- Right column (Map and Address) -------------------------- */}
-            <div className={styles.formColumn}>
-              <div className={styles.mapSection}>
+            <div className="flex flex-col gap-4">
+              <div className="h-100 w-full rounded overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.2)]">
                 <LocationPickerMap
                   key={`picker-${mapKey}`}
                   onPointSelected={selectPoint}
@@ -227,12 +226,14 @@ export const LocationFormModal: React.FC<Props> = ({
                 />
               </div>
 
-              <Typography className={styles.infoText}>
+              <Typography className="text-[0.9rem] text-[#666] mt-2">
                 Click on the map to select a location and fetch its address.
               </Typography>
 
-              <div className={styles.addressSection}>
-                <Typography className={styles.addressTitle}>Address</Typography>
+              <div className="mt-4">
+                <Typography className="text-[0.875rem] font-medium mb-2">
+                  Address
+                </Typography>
 
                 <PlacesSearch
                   onAddressSelect={(a, lat, lng) =>
@@ -242,7 +243,7 @@ export const LocationFormModal: React.FC<Props> = ({
                   onChange={(val) => update({ address: val })}
                 />
 
-                <div className={styles.addressTools}>
+                <div className="flex items-center gap-2 mt-2">
                   <Button
                     variant="outlined"
                     size="small"
@@ -254,7 +255,7 @@ export const LocationFormModal: React.FC<Props> = ({
                   {loadingAddr && <CircularProgress size={20} />}
                 </div>
 
-                <Typography className={styles.coordinatesText}>
+                <Typography className="text-[0.875rem] text-[#666] mt-2">
                   Current coordinates:
                   {form.lat && form.lng
                     ? ` ${form.lat.toFixed(6)}, ${form.lng.toFixed(6)}`

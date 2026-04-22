@@ -4,7 +4,6 @@ import UserDetail, {
 } from '../../components/UserDetail/legacy/UserDetail';
 import { phone, mail } from '../../icons/userInfo/index';
 import AuthContext from '../../context/auth';
-import pageStyles from '../Admin/page.module.css';
 import { RiderType } from '@carriage-web/shared/types/rider';
 
 const Settings = () => {
@@ -17,9 +16,9 @@ const Settings = () => {
 
   return (
     <main id="main">
-      <div className={pageStyles.pageTitle}>
-        <h1 className={pageStyles.header}>Settings</h1>
-        <div className={pageStyles.rightSection}></div>
+      <div className="flex justify-between items-center p-8 text-[1.75rem] text-left m-0">
+        <h1 className="w-full text-left text-[1.75rem] m-0">Settings</h1>
+        <div className="w-full flex items-center justify-end gap-2 [&>div]:ml-3.5"></div>
       </div>
       <UserDetail
         firstName={user?.firstName || ''}

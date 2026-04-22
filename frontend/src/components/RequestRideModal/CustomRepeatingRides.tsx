@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { useFormContext } from 'react-hook-form';
 import { RideType } from '@carriage-web/shared/types/ride';
-import styles from './requestridemodal.module.css';
 import { Label, SRLabel } from '../FormElements/FormElements';
 
 type WeekType = {
@@ -51,8 +50,8 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
     week.Mon || week.Tue || week.Wed || week.Thu || week.Fri;
 
   return (
-    <div className={styles.dayBox}>
-      <Label id={'repeatDays'} className={styles.boldLabel}>
+    <div className="flex">
+      <Label id={'repeatDays'} className="font-bold text-sm">
         Repeat every
       </Label>
       {Object.entries(dayLabels).map(([day, label]) => (
@@ -67,7 +66,10 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
               validate: () => dayClicked(),
             })}
             value={week[day] ? label[1] : -1}
-            className={cn(styles.day, { [styles.daySelected]: week[day] })}
+            className={cn(
+              'rounded-[40%] h-4 w-4 border-0 p-0 cursor-pointer mx-0.5 bg-black/10 focus:shadow-[0_0_0_3px_rgba(0,0,0,0.5)]',
+              { 'bg-black text-white': week[day] }
+            )}
             onClick={() => handleClick(day)}
           >
             {label[0]}
@@ -75,7 +77,9 @@ const CustomRepeatingRides = ({ ride }: CustomRepeatingRidesProps) => {
         </div>
       ))}
       {errors.Mon && (
-        <p className={styles.error}>Please select at least one day</p>
+        <p className="text-[#eb0023] text-[0.66rem] mx-2 my-2">
+          Please select at least one day
+        </p>
       )}
     </div>
   );

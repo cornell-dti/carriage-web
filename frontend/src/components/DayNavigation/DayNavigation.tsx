@@ -2,7 +2,6 @@ import { NavigateBefore, NavigateNext } from '@mui/icons-material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useDate } from 'context/date';
-import buttonStyles from '../../styles/button.module.css';
 
 export const DayNavigation = () => {
   const { curDate, setCurDate } = useDate();
@@ -28,17 +27,10 @@ export const DayNavigation = () => {
   };
 
   return (
-    <div
-      style={{
-        width: '18rem',
-        display: 'flex',
-        gap: '0.25rem',
-      }}
-    >
+    <div className="w-72 flex gap-1">
       <button
         onClick={previousBusinessDay}
-        className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-        style={{ width: '3rem', height: '2.5rem' }}
+        className="w-12 h-10 flex items-center justify-center cursor-pointer rounded text-base whitespace-nowrap px-4 border border-[#ddd] bg-white transition-colors duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
         aria-label="Previous Week"
         aria-hidden="true"
       >
@@ -90,8 +82,7 @@ export const DayNavigation = () => {
       </LocalizationProvider>
       <button
         onClick={nextBusinessDay}
-        className={`${buttonStyles.button} ${buttonStyles.buttonSecondary}`}
-        style={{ width: '3rem', height: '2.5rem' }}
+        className="w-12 h-10 flex items-center justify-center cursor-pointer rounded text-base whitespace-nowrap px-4 border border-[#ddd] bg-white transition-colors duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
         aria-label="Next Week"
         aria-hidden="true"
       >

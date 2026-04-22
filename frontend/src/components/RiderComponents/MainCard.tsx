@@ -17,7 +17,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import EditIcon from '@mui/icons-material/Edit';
 import CallIcon from '@mui/icons-material/Call';
 import CancelIcon from '@mui/icons-material/Cancel';
-import styles from './maincard.module.css';
 import DeleteOrEditTypeModal from 'components/Modal/DeleteOrEditTypeModal';
 import RequestRideDialog from './RequestRideDialog';
 import { useLocations } from 'context/LocationsContext';
@@ -111,13 +110,13 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
   };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
-        <h2>{cardTitle}</h2>
-        <div className={styles.actions}>
+    <div className="bg-white rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] p-3 text-black h-fit max-h-50 overflow-y-auto">
+      <div className="flex items-center relative pb-2 mb-2 border-b border-[#f0f0f0]">
+        <h2 className="m-0 text-[1.1rem] text-[#333] flex-1">{cardTitle}</h2>
+        <div className="flex gap-1 ml-auto max-md:absolute max-md:right-0 max-md:top-0">
           <button
             onClick={handleCancel}
-            className={`${styles.button} ${styles.cancelButton}`}
+            className="p-1 border-0 rounded-sm cursor-pointer bg-transparent transition-colors duration-200 flex items-center justify-center hover:bg-[rgba(255,77,79,0.1)]"
           >
             <CancelIcon fontSize="small" />
           </button>
@@ -135,7 +134,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
           />
           <button
             onClick={handleEdit}
-            className={`${styles.button} ${styles.editButton}`}
+            className="p-1 border-0 rounded-sm cursor-pointer bg-transparent transition-colors duration-200 flex items-center justify-center hover:bg-[rgba(24,144,255,0.1)]"
           >
             <EditIcon fontSize="small" />
           </button>
@@ -167,7 +166,7 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
             <>
               <button
                 onClick={handleContact}
-                className={`${styles.button} ${styles.contactButton}`}
+                className="p-1 border-0 rounded-sm cursor-pointer bg-transparent transition-colors duration-200 flex items-center justify-center hover:bg-[rgba(82,196,26,0.1)]"
               >
                 <CallIcon fontSize="small" />
               </button>
@@ -186,81 +185,93 @@ const MainCard: React.FC<MainCardProps> = ({ ride }) => {
         </div>
       </div>
 
-      <div className={styles.contentRow}>
+      <div className="flex justify-between items-start gap-4 mt-2 max-md:flex-col">
         {/* Destination Information */}
-        <div className={styles.section}>
-          <div className={styles.detail}>
+        <div className="mb-2 text-[#333]">
+          <div className="flex items-center gap-1.5 mb-1 text-sm">
             <CalendarMonthIcon fontSize="small" />
-            <span className={styles.label}>Date:</span>
+            <span className="font-medium text-[#555] min-w-13.75">Date:</span>
             <span>{date}</span>
           </div>
-          <div className={styles.detail}>
+          <div className="flex items-center gap-1.5 mb-1 text-sm">
             <AccessTimeIcon fontSize="small" />
-            <span className={styles.label}>Time:</span>
+            <span className="font-medium text-[#555] min-w-13.75">Time:</span>
             <span>{time}</span>
           </div>
-          <div className={styles.detail}>
+          <div className="flex items-center gap-1.5 mb-1 text-sm">
             <LocationOnIcon fontSize="small" />
-            <span className={styles.label}>Pick-up:</span>
+            <span className="font-medium text-[#555] min-w-13.75">
+              Pick-up:
+            </span>
             <span>{ride.startLocation.name}</span>
           </div>
-          <div className={styles.detail}>
+          <div className="flex items-center gap-1.5 mb-1 text-sm">
             <LocationOnIcon fontSize="small" />
-            <span className={styles.label}>Drop-off:</span>
+            <span className="font-medium text-[#555] min-w-13.75">
+              Drop-off:
+            </span>
             <span>{ride.endLocation.name}</span>
           </div>
         </div>
 
         {/* Driver Information or Scheduling Status */}
-        <div className={styles.section}>
+        <div className="mb-2 text-[#333]">
           {ride.driver ? (
-            <div className={styles.driverInfo}>
-              <div className={styles.driverImageContainer}>
+            <div className="flex gap-3 items-start">
+              <div className="w-15 h-15 shrink-0">
                 {getDriverImageSrc() ? (
                   <img
                     src={getDriverImageSrc()!}
                     alt={`${ride.driver.firstName} ${ride.driver.lastName}`}
-                    className={styles.driverImage}
+                    className="w-full h-full object-cover rounded-full"
                     onError={handleImageError}
                   />
                 ) : (
-                  <div className={styles.driverImagePlaceholder}>
+                  <div className="w-full h-full bg-[#f0f0f0] rounded-full flex items-center justify-center text-[#999]">
                     <PersonIcon fontSize="large" />
                   </div>
                 )}
               </div>
-              <div className={styles.driverDetails}>
-                <div className={styles.detail}>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PersonIcon fontSize="small" />
-                  <span className={styles.label}>Name:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Name:
+                  </span>
                   <span>
                     {ride.driver.firstName} {ride.driver.lastName}
                   </span>
                 </div>
-                <div className={styles.detail}>
+                <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PhoneIcon fontSize="small" />
-                  <span className={styles.label}>Phone:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Phone:
+                  </span>
                   <span>{ride.driver.phoneNumber}</span>
                 </div>
-                <div className={styles.detail}>
+                <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <EmailIcon fontSize="small" />
-                  <span className={styles.label}>Email:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Email:
+                  </span>
                   <span>{ride.driver.email}</span>
                 </div>
-                <div className={styles.status}>
+                <div className="py-1 px-2 bg-[#f0f0f0] rounded capitalize text-sm ml-2">
                   Status: {ride.status.replace('_', ' ')}
                 </div>
               </div>
             </div>
           ) : (
-            <div className={styles.driverInfo}>
-              <div className={styles.driverDetails}>
-                <div className={styles.detail}>
+            <div className="flex gap-3 items-start">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1.5 mb-1 text-sm">
                   <PersonIcon fontSize="small" />
-                  <span className={styles.label}>Scheduling:</span>
+                  <span className="font-medium text-[#555] min-w-13.75">
+                    Scheduling:
+                  </span>
                   <span>Unscheduled</span>
                 </div>
-                <div className={styles.status}>
+                <div className="py-1 px-2 bg-[#f0f0f0] rounded capitalize text-sm ml-2">
                   Status: {ride.status.replace('_', ' ')}
                 </div>
               </div>

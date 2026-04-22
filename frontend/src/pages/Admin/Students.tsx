@@ -3,13 +3,11 @@ import StudentsTable from '../../components/UserTables/StudentsTable';
 import RiderModal from '../../components/Modal/RiderModal';
 import CopyButton from '../../components/CopyButton/CopyButton';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
-import styles from './page.module.css';
 import { useRiders } from '../../context/RidersContext';
 import { Accessibility } from '../../types';
 import { RiderType } from '@carriage-web/shared/types/rider';
 import StatsBox from 'components/AnalyticsOverview/StatsBox';
 import { active, inactive } from '../../icons/other/index';
-import buttonStyles from '../../styles/button.module.css';
 
 const Riders = () => {
   const { riders } = useRiders();
@@ -48,16 +46,13 @@ const Riders = () => {
 
   return (
     <main id="main">
-      <div className={styles.mainContent}>
-        <div className={styles.pageTitle}>
-          <h1 className={styles.header}>Students</h1>
-          <div className={styles.rightSection}>
+      <div className="flex flex-col gap-8 p-8">
+        <div className="flex justify-between items-center p-8 text-[1.75rem] text-left m-0">
+          <h1 className="w-full text-left text-[1.75rem] m-0">Students</h1>
+          <div className="w-full flex items-center justify-end gap-2 [&>div]:ml-3.5">
             <CopyButton />
             <button
-              style={{
-                width: '10rem',
-              }}
-              className={`${buttonStyles.button} ${buttonStyles.buttonPrimary} ${buttonStyles.buttonLarge}`}
+              className="w-40 h-10 flex items-center justify-center cursor-pointer rounded text-base text-nowrap px-6 border border-[#303030] bg-black text-white transition-all duration-100 hover:bg-[#333] hover:text-white active:bg-[#555] active:text-white"
               onClick={() => setIsOpen(true)}
             >
               + Add Student
@@ -66,8 +61,8 @@ const Riders = () => {
           </div>
         </div>
 
-        <div className={styles.statsAndSearch}>
-          <div className={styles.searchFilter}>
+        <div className="px-8 flex flex-row items-center gap-4 w-full h-12">
+          <div className="grow h-[80%] flex [&>div]:w-full [&>div]:h-[80%]">
             <SearchAndFilter
               items={riders}
               searchFields={['firstName', 'lastName']}
@@ -92,14 +87,14 @@ const Riders = () => {
               onFilterApply={handleFilterApply}
             />
           </div>
-          <div className={styles.statsBoxContainer}>
+          <div className="flex gap-4 shrink-0 h-full">
             {studentStats.map((stat, idx) => (
               <StatsBox key={idx} {...stat} />
             ))}
           </div>
         </div>
 
-        <div className={styles.studentTable}>
+        <div className="mt-4">
           <StudentsTable students={filteredStudents} />
         </div>
       </div>

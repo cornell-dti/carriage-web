@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { TextField, Paper, CircularProgress } from '@mui/material';
-import { useMap, Map } from '@vis.gl/react-google-maps';
-import styles from './locations.module.css';
+import { useMap } from '@vis.gl/react-google-maps';
 
 interface PlacesSearchProps {
   onAddressSelect: (address: string, lat: number, lng: number) => void;
@@ -85,7 +84,7 @@ const PlacesSearch = ({
   );
 
   return (
-    <div className={styles.placesSearch}>
+    <div className="relative w-full">
       <form onSubmit={handleSubmit}>
         <TextField
           fullWidth
@@ -106,11 +105,14 @@ const PlacesSearch = ({
       </form>
 
       {results.length > 0 && (
-        <Paper className={styles.resultsContainer} elevation={3}>
+        <Paper
+          className="absolute top-full left-0 right-0 z-1000 mt-1 max-h-50 overflow-y-auto"
+          elevation={3}
+        >
           {results.map((place, index) => (
             <div
               key={index}
-              className={styles.resultItem}
+              className="px-4 py-2 cursor-pointer border-b border-[#ddd] hover:bg-black/4"
               onClick={() => handleSelect(place)}
             >
               {place.formatted_address || place.name}

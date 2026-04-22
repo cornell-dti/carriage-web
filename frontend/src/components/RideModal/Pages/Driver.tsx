@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ModalPageProps } from '../../Modal/types';
-import styles from '../ridemodal.module.css';
 import { Label, Input, Button } from '../../FormElements/FormElements';
 import axios from '../../../util/axios';
 
@@ -48,41 +47,49 @@ const DriverPage = ({
   }, [startTime, endTime, date]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-      <div className={styles.inputContainer}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col w-full h-full"
+    >
+      <div className="mb-6 w-full">
         <div
-          className={styles.drivers}
+          className="flex flex-col max-h-75 overflow-y-auto border border-[#ced4da] rounded bg-[#f8f9fa]"
           aria-required="true"
           role="radiogroup"
           aria-labelledby={labelid}
         >
           {loaded ? (
             availableDrivers.map((d) => (
-              <div className={styles.driver} key={d.id}>
+              <div
+                className="flex items-center p-4 border-b border-[#e9ecef] transition-colors duration-200 last:border-b-0 hover:bg-[#e9ecef]"
+                key={d.id}
+              >
                 <Input
                   id={d.firstName + d.lastName}
-                  className={styles.driverRadio}
+                  className="appearance-none w-5 h-5 border-2 border-[#ced4da] rounded-full outline-none transition-all duration-200 checked:border-black checked:bg-black checked:shadow-[inset_0_0_0_4px_#fff] focus:shadow-[0_0_0_3px_rgba(0,0,0,0.25),inset_0_0_0_4px_#fff]"
                   type="radio"
                   value={d.id}
                   {...register('driver', { required: true })}
                 />
                 <Label
                   htmlFor={d.firstName + d.lastName}
-                  className={styles.driverLabel}
+                  className="grow ml-4 text-base text-[#333] cursor-pointer"
                 >
                   {d.firstName} {d.lastName}
                 </Label>
               </div>
             ))
           ) : (
-            <p className={styles.loading}>Loading...</p>
+            <p className="text-center text-[#6c757d] italic">Loading...</p>
           )}
         </div>
         {errors.driver?.type === 'required' && (
-          <p className={styles.error}>Please select a driver</p>
+          <p className="text-[#dc3545] text-[0.8rem] mt-1 max-w-48">
+            Please select a driver
+          </p>
         )}
       </div>
-      <div className={styles.btnContainer}>
+      <div className="flex justify-between mt-auto max-[500px]:flex-col max-[500px]:gap-4">
         <Button outline type="button" onClick={onBack}>
           Back
         </Button>

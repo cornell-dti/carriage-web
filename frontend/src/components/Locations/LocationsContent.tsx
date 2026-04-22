@@ -2,7 +2,6 @@ import React, { useState, useMemo, useEffect } from 'react';
 import SearchAndFilter from 'components/FormElements/SearchAndFilter';
 import { LocationMap } from './LocationMap';
 import { Chip } from '@mui/material';
-import styles from './locations.module.css';
 import LocationDialog from './LocationDialog';
 import { OpenInFull, LocationOn } from '@mui/icons-material';
 import { LocationType } from '@carriage-web/shared/types/location';
@@ -59,9 +58,9 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
   };
 
   return (
-    <div className={styles.mainContent}>
-      <div className={styles.leftPanel}>
-        <div className={styles.searchFilterWrapper}>
+    <div className="grid grid-cols-[400px_1fr] gap-4 px-8 relative">
+      <div className="flex flex-col gap-3 h-full min-h-0">
+        <div className="h-9.5 min-h-9.5 shrink-0 bg-white rounded px-2">
           <SearchAndFilter
             items={locations}
             searchFields={['name', 'address']}
@@ -79,18 +78,18 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
           />
         </div>
 
-        <div className={styles.locationsList}>
+        <div className="flex-1 overflow-y-auto bg-[#f5f5f5] rounded p-4 min-h-0 max-h-[calc(100vh-300px)] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-[#f1f1f1] [&::-webkit-scrollbar-track]:rounded [&::-webkit-scrollbar-thumb]:bg-[#c1c1c1] [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb:hover]:bg-[#a8a8a8]">
           {filteredLocations.map((location) => (
             <div
               key={location.id}
               onClick={() => handleListItemClick(location)}
-              className={`${styles.locationItem} ${
+              className={`bg-white rounded p-4 mb-4 last:mb-0 cursor-pointer transition-all duration-200 hover:shadow-[0_2px_4px_rgba(0,0,0,0.1)] ${
                 selectedLocation?.id === location.id
-                  ? styles.locationItemSelected
+                  ? 'border-2 border-[#1976d2]'
                   : ''
               }`}
             >
-              <div className={styles.locationContent}>
+              <div className="flex">
                 <LocationOn
                   sx={{
                     color: '#1976d2',
@@ -98,20 +97,24 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
                     marginTop: '0.25rem',
                   }}
                 />
-                <div className={styles.locationInfo}>
-                  <div className={styles.locationHeader}>
-                    <h3 className={styles.locationName}>{location.name}</h3>
+                <div className="flex-1">
+                  <div className="flex items-center">
+                    <h3 className="m-0 text-[1.1rem]">{location.name}</h3>
                     <Chip
                       label={location.tag}
                       size="small"
                       sx={{ marginLeft: '0.5rem' }}
                     />
                   </div>
-                  <p className={styles.locationDetails}>{location.address}</p>
-                  <div className={styles.locationFooter}>
-                    <p className={styles.locationDetails}>{location.info}</p>
+                  <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">
+                    {location.address}
+                  </p>
+                  <div className="text-[#666] flex items-center justify-between">
+                    <p className="mt-2 mb-0 text-[#666] text-[0.9rem]">
+                      {location.info}
+                    </p>
                     <OpenInFull
-                      className={styles.expandIcon}
+                      className="-scale-x-100"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedLocationForDialog(location);
@@ -125,7 +128,7 @@ const LocationsContent: React.FC<LocationsContentProps> = ({
         </div>
       </div>
 
-      <div className={styles.mapContainer}>
+      <div className="relative h-full rounded overflow-hidden">
         <LocationMap
           locations={filteredLocations}
           selectedLocation={selectedLocation}

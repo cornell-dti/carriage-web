@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { CSVLink } from 'react-csv';
 import ScheduledTable from '../UserTables/ScheduledTable';
-import styles from './exportPreview.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import ExportButton from '../ExportButton/ExportButton';
 import { useDate } from '../../context/date';
@@ -35,12 +34,14 @@ const ExportPreview = () => {
 
   return (
     <>
-      <p className={styles.date}>{format_date(curDate)}</p>
-      <h1 className={styles.header}>Scheduled Rides</h1>
+      <p className="font-bold text-gray-500 ml-[2%] mt-[2%]">
+        {format_date(curDate)}
+      </p>
+      <h1 className="-mt-[1%] ml-[2%]">Scheduled Rides</h1>
       <div id="exportTable">
         <ScheduledTable />
       </div>
-      <div className={styles.exportButtonContainer}>
+      <div className="pb-[5%] mt-[2%] ml-[50%] -translate-x-[10%]">
         {/* <ExportButton onClick={downloadCSV} /> */}
         <CSVLink
           data={downloadData}

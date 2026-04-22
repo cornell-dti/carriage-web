@@ -13,7 +13,6 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EmailIcon from '@mui/icons-material/Email';
 import { RiderType } from '@carriage-web/shared/types/rider';
-import styles from './RiderList.module.css';
 
 interface RiderListProps {
   riders: RiderType[];
@@ -37,19 +36,25 @@ const RiderCard: React.FC<RiderCardProps> = ({
   onRef,
 }) => {
   return (
-    <div ref={onRef} className={styles.riderCard}>
+    <div
+      ref={onRef}
+      className="border border-[#e0e0e0] rounded-lg bg-[#fafafa] overflow-hidden transition-shadow duration-200 hover:shadow-[0_2px_8px_rgba(0,0,0,0.1)]"
+    >
       {/* Compact View - Always Visible */}
-      <div className={styles.compactView} onClick={onToggleExpanded}>
+      <div
+        className="flex items-center px-4 py-3 cursor-pointer transition-colors duration-200 min-h-16 hover:bg-[#f0f0f0] max-md:px-3 max-md:py-2.5 max-md:min-h-14"
+        onClick={onToggleExpanded}
+      >
         <Avatar
           src={rider.photoLink}
           sx={{ width: 40, height: 40 }}
-          className={styles.avatar}
+          className="mr-3 shrink-0 max-md:mr-2.5"
         >
           {rider.firstName?.charAt(0)}
           {rider.lastName?.charAt(0)}
         </Avatar>
 
-        <Box className={styles.compactInfo}>
+        <Box className="flex-1 min-w-0">
           <Typography variant="body1" sx={{ fontWeight: 600 }}>
             {rider.firstName} {rider.lastName.charAt(0)}
           </Typography>
@@ -79,15 +84,15 @@ const RiderCard: React.FC<RiderCardProps> = ({
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ pt: 1, pb: 2 }}>
           {/* Contact Information */}
-          <div className={styles.contactInfo}>
+          <div className="flex flex-col gap-2 my-3">
             {rider.phoneNumber && (
-              <div className={styles.contactRow}>
+              <div className="flex items-center gap-2">
                 <PhoneIcon fontSize="small" color="action" />
                 <Typography variant="body2">{rider.phoneNumber}</Typography>
               </div>
             )}
             {rider.email && (
-              <div className={styles.contactRow}>
+              <div className="flex items-center gap-2">
                 <EmailIcon fontSize="small" color="action" />
                 <Typography variant="body2">{rider.email}</Typography>
               </div>
@@ -98,7 +103,7 @@ const RiderCard: React.FC<RiderCardProps> = ({
           {showAccessibility &&
             rider.accessibility &&
             rider.accessibility.length > 0 && (
-              <div className={styles.accessibilitySection}>
+              <div className="border-t border-[#e0e0e0] mt-4 pt-3">
                 <Typography
                   variant="body2"
                   color="textSecondary"
@@ -107,7 +112,7 @@ const RiderCard: React.FC<RiderCardProps> = ({
                 >
                   Accessibility Needs
                 </Typography>
-                <div className={styles.accessibilityChips}>
+                <div className="flex flex-wrap gap-1.5 mt-2 max-md:gap-1">
                   {rider.accessibility.map((need: string) => (
                     <Chip
                       key={need}
@@ -170,7 +175,7 @@ const RiderList: React.FC<RiderListProps> = ({
 
   if (!riders || riders.length === 0) {
     return (
-      <div className={styles.emptyState}>
+      <div className="flex items-center h-full justify-center bg-[#f5f5f5] border border-dashed border-[#ccc] rounded-lg">
         <Typography variant="body1" color="textSecondary">
           No riders assigned
         </Typography>
@@ -179,7 +184,7 @@ const RiderList: React.FC<RiderListProps> = ({
   }
 
   return (
-    <div className={styles.riderList}>
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden pr-1 [scrollbar-width:thin] [scrollbar-color:#bbb_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#bbb] [&::-webkit-scrollbar-thumb]:rounded-[3px] [&::-webkit-scrollbar-thumb:hover]:bg-[#999] max-md:min-h-20 max-md:max-h-62.5">
       {!hideHeader && (
         <Typography
           variant="subtitle2"
@@ -189,7 +194,7 @@ const RiderList: React.FC<RiderListProps> = ({
         </Typography>
       )}
 
-      <div className={styles.riderCards}>
+      <div className="flex flex-col gap-2 max-md:gap-1.5">
         {riders.map((rider) => (
           <RiderCard
             key={rider.id}

@@ -5,7 +5,6 @@ import { ObjectType, TableData } from '../../types';
 import { useEmployees } from '../../context/EmployeesContext';
 import editIcon from './edit.svg';
 import checkIcon from './check.svg';
-import styles from './analyticstable.module.css';
 import axios from '../../util/axios';
 
 type Cell = string | number;
@@ -44,14 +43,11 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
   };
 
   return (
-    <tr
-      className={styles.row}
-      style={{ backgroundColor: index % 2 ? undefined : '#EBEAEA' }}
-    >
+    <tr style={{ backgroundColor: index % 2 ? undefined : '#EBEAEA' }}>
       {data.map((d, cellIndex) => (
         <td
           key={cellIndex}
-          className={styles.cell}
+          className="py-4.5 px-2 text-center"
           style={{ borderRadius: getBorderRadius(cellIndex, data.length) }}
         >
           {isEditing && cellIndex >= 2 ? ( // excluding first two columns
@@ -61,7 +57,7 @@ const Row = ({ data, index, isEditing, onEdit }: RowProps) => {
                 type="number"
                 min={0}
                 id={`${index}${cellIndex}`}
-                className={styles.input}
+                className="bg-[#f2f2f2] border border-black box-border rounded-[10px] text-center w-14 text-base"
                 defaultValue={d}
                 onInput={(e) => handleEdit(e, cellIndex)}
               />
@@ -204,9 +200,9 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
   }, [data, driverNames, drivers, type]);
 
   return (
-    <div className={styles.analyticsTable}>
+    <div className="relative p-7.5 shadow-[2px_4px_15px_rgba(0,0,0,0.1)]">
       <button
-        className={styles.editBtn}
+        className="absolute top-5 right-8.5 border-none bg-none p-0"
         aria-label={!isEditing ? 'Edit' : 'Submit'}
         onClick={!isEditing ? () => setIsEditing(true) : handleSubmit}
       >
@@ -216,10 +212,10 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
           <img src={checkIcon} alt="checkmark" />
         )}
       </button>
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
+      <div className="overflow-auto whitespace-nowrap">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className={styles.row}>
+            <tr>
               {type === 'ride'
                 ? rideTableHeader.map((title, idx) => {
                     let color;
@@ -232,8 +228,8 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
                     return (
                       <th
                         key={idx}
-                        className={cn(styles.cell, {
-                          [styles.sticky]: idx < 2,
+                        className={cn('py-4.5 px-2 text-center', {
+                          'sticky left-0': idx < 2,
                         })}
                         style={{ color }}
                       >
@@ -244,7 +240,9 @@ const Table = ({ type, data, refreshTable }: TableProps) => {
                 : driverTableHeader.map((title, idx) => (
                     <th
                       key={idx}
-                      className={cn(styles.cell, { [styles.sticky]: idx < 2 })}
+                      className={cn('py-4.5 px-2 text-center', {
+                        'sticky left-0': idx < 2,
+                      })}
                     >
                       {title}
                     </th>

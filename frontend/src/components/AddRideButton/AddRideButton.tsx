@@ -3,7 +3,6 @@ import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
 import { createEmptyRide } from '../../util/modelFixtures';
 import { RideType } from '@carriage-web/shared/types/ride';
 import { useRides } from '../../context/RidesContext';
-import buttonStyles from '../../styles/button.module.css';
 
 const AddRideButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -29,11 +28,8 @@ const AddRideButton: React.FC = () => {
   return (
     <>
       <button
-        style={{
-          width: '8rem',
-        }}
         onClick={handleOpenModal}
-        className={`${buttonStyles.buttonLarge} ${buttonStyles.button} ${buttonStyles.buttonPrimary}`}
+        className="w-32 h-10 flex items-center justify-center cursor-pointer rounded text-base whitespace-nowrap pl-6 pr-6 border border-[#303030] bg-black text-white transition-all duration-100 hover:bg-[#333] active:bg-[#555]"
       >
         + Add ride
       </button>

@@ -4,7 +4,6 @@ import { Row, Table } from '../TableComponents/TableComponents';
 import AssignDriverModal from '../Modal/AssignDriverModal';
 import RideModal from '../RideModal/RideModal';
 import RideDetailsComponent from '../RideDetails/RideDetailsComponent';
-import styles from './table.module.css';
 import { useEmployees } from '../../context/EmployeesContext';
 import { useRides } from '../../context/RidesContext';
 import DeleteOrEditTypeModal from '../Modal/DeleteOrEditTypeModal';
@@ -141,10 +140,7 @@ const RidesTable = ({ rides }: RidesTableProps) => {
 
             const valueEdit = {
               data: (
-                <div
-                  className={styles.dataValues}
-                  style={{ display: 'flex', gap: '0.5rem' }}
-                >
+                <div className="flex gap-2">
                   {editButton}
                   {assignButton(ride.driver !== undefined)}
                 </div>

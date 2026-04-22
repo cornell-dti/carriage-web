@@ -3,7 +3,6 @@ import { useDate } from 'context/date';
 import { useRides } from 'context/RidesContext';
 import { FC, useState } from 'react';
 import { format_date } from '../../util/index';
-import buttonStyles from '../../styles/button.module.css';
 import { FileDownload } from '@mui/icons-material';
 
 export const CSVFromRidesButton: FC = () => {
@@ -81,11 +80,10 @@ export const CSVFromRidesButton: FC = () => {
   return (
     <>
       <button
-        style={{ width: '14rem' }}
         onClick={(e) => setMenuAnchorElement(e.currentTarget)}
-        className={`${buttonStyles.buttonLarge} ${buttonStyles.buttonSecondary} ${buttonStyles.button}`}
+        className="w-56 h-10 flex items-center justify-center cursor-pointer rounded-sm text-base whitespace-nowrap pl-6 pr-6 border border-[#ddd] bg-white transition-colors duration-100 hover:bg-[#fafafa] active:bg-[#eaeaea]"
       >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <span className="flex items-center gap-1">
           <FileDownload
             sx={{ width: '1.2rem', height: '1.2rem' }}
           ></FileDownload>

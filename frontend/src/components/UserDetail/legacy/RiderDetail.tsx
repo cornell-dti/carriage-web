@@ -7,14 +7,13 @@ import UserDetail, { UserContactInfo } from './UserDetail';
 import UserActions from './UserActions';
 import { phone, home, calendar } from '../../../icons/userInfo/index';
 import { RideType } from '@carriage-web/shared/types/ride';
-import styles from './userDetail.module.css';
 import { useRiders } from '../../../context/RidersContext';
 import axios from '../../../util/axios';
 import { RideTable } from '../../RideDetails';
 
 const Header = ({ onBack }: { onBack: () => void }) => {
   return (
-    <Box className={styles.pageDivTitle}>
+    <Box className="text-left text-[1.75rem] m-0 flex justify-between items-center py-9 px-10 font-bold max-md:py-6 max-md:px-4">
       <Button
         startIcon={<ArrowBack />}
         onClick={onBack}
@@ -110,10 +109,10 @@ const RiderDetail = () => {
   return rider ? (
     <main id="main">
       <Header onBack={handleBack} />
-      <Box className={styles.pageContainer}>
+      <Box className="w-[95%] mx-auto flex flex-col gap-8 max-md:w-[98%] max-md:gap-4">
         {/* User Information Section */}
-        <Box className={styles.userInformationSection}>
-          <Box className={styles.userInfoContainer}>
+        <Box className="flex gap-6 items-center flex-wrap min-h-fit max-[1200px]:flex-col max-[1200px]:gap-6 max-[1200px]:items-stretch max-md:gap-4">
+          <Box className="flex-1 min-w-75 max-md:w-full max-md:min-w-0">
             <UserDetail
               firstName={rider.firstName}
               lastName={rider.lastName}
@@ -142,13 +141,13 @@ const RiderDetail = () => {
             </UserDetail>
           </Box>
 
-          <Box className={styles.actionsContainer}>
+          <Box className="w-62.5 shrink-0 max-[1200px]:w-full max-[1200px]:max-w-none max-md:w-full">
             <UserActions role="rider" rider={rider} />
           </Box>
         </Box>
 
         {/* Rides Table Section */}
-        <Box className={styles.ridesTableSection}>
+        <Box className="w-full">
           <RideTable rides={rides} userRole="admin" />
         </Box>
       </Box>

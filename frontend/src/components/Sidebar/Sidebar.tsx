@@ -13,7 +13,6 @@ import {
 } from '../../icons/sidebar/index';
 import AuthContext from '../../context/auth';
 import useClientId from '../../hooks/useClientId';
-import styles from './sidebar.module.css';
 import Footer from '../Footer/Footer';
 import axios from '../../util/axios';
 
@@ -113,27 +112,35 @@ const Sidebar = ({ type, children }: SidebarProps) => {
   }
 
   return (
-    <div className={styles.container}>
-      <nav className={styles.sidebar}>
-        <div className={styles.menuItems}>
+    <div className="flex w-full flex-row h-full min-h-screen items-stretch">
+      <nav className="flex bg-white w-24 min-h-screen fixed border-r border-gray-300 justify-between flex-col z-100 py-7 shadow-[0px_5px_32px_-7px_rgba(0,0,0,0.05)] max-md:h-24 max-md:min-w-full max-md:w-full max-md:min-h-24 max-md:flex-row max-md:py-0 max-md:px-7 max-md:overflow-x-auto max-md:overflow-y-hidden">
+        <div className="flex flex-col max-md:flex-row max-md:flex-nowrap max-md:items-center">
           {menuItems.map(({ path, icon, caption }) => (
-            <div key={path} className={styles.sidebarLinks}>
-              <div className={styles.caption} id={path}>
+            <div
+              key={path}
+              className="no-underline text-center mb-7 max-md:mb-0 max-md:mr-7 flex flex-col justify-center"
+            >
+              <div className="text-black font-semibold text-sm" id={path}>
                 <Link
                   key={path}
                   onClick={() => setSelected(path)}
-                  className={styles.icon}
+                  className="cursor-pointer no-underline flex flex-col items-center"
                   to={path}
                   aria-labelledby={path}
                 >
                   <div
-                    className={
+                    className={cn(
+                      'w-10 h-10 rounded-full flex justify-center items-center',
                       path === selected
-                        ? cn(styles.selected, styles.circle)
-                        : styles.circle
-                    }
+                        ? 'bg-black'
+                        : 'bg-gray-200 hover:bg-gray-300'
+                    )}
                   >
-                    <img alt={`Go to ${caption}`} src={icon} />
+                    <img
+                      alt={`Go to ${caption}`}
+                      src={icon}
+                      className={cn('w-1/2', path === selected && 'invert')}
+                    />
                   </div>
                 </Link>
                 {caption}
@@ -141,20 +148,23 @@ const Sidebar = ({ type, children }: SidebarProps) => {
             </div>
           ))}
         </div>
-        <div className={styles.logout}>
+        <div className="text-center drop-shadow-[0px_4px_12px_rgba(0,0,0,0.12)] flex flex-col justify-center items-center max-md:w-auto max-md:margin-0 max-md:mr-7 max-md:shrink-0">
           {/* {(isAdmin || isDriver) && (
             <img
               alt="profile_picture"
-              className={styles.profile}
+              className="w-10 h-10 rounded-full"
               src={photoLink ? `${photoLink}?t=${new Date().getTime()}` : blank}
             />
           )} */}
-          <button className={styles.logoutLink} onClick={authContext.logout}>
+          <button
+            className="cursor-pointer font-semibold text-sm no-underline text-blue-700 text-center block mx-auto bg-transparent border-none focus:outline-blue-600 focus:outline-[3px] max-md:mt-1"
+            onClick={authContext.logout}
+          >
             Log out
           </button>
         </div>
       </nav>
-      <div className={styles.content}>
+      <div className="flex flex-col w-[calc(100%-6rem)] min-h-screen ml-24 p-0 max-md:w-full max-md:ml-0 max-md:mt-24">
         {children}
         <Footer />
       </div>

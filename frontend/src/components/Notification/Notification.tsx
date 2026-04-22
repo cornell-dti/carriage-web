@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useId } from '@react-aria/utils';
 import moment from 'moment';
 import Popup from 'reactjs-popup';
-import cn from 'classnames';
-import styles from './notification.module.css';
 import 'reactjs-popup/dist/index.css';
 import { notificationBadge, notificationBell } from '../../icons/other';
 import { RideType } from '@carriage-web/shared/types/ride';
@@ -51,17 +49,21 @@ const Notification = () => {
 
   const mapMessages = (msgs: Message[]) =>
     msgs.map(({ time, title, body }, i) => (
-      <div key={i} className={styles.body}>
-        <div className={styles.user}>
-          <div className={styles.avatar}>
-            <span className={styles.initials}>C</span>
+      <div key={i} className="p-2.5 text-xs flex">
+        <div className="pr-2">
+          <div className="w-8 h-8 bg-pink-300 text-center rounded-full">
+            <span className="relative top-1.5 text-xs leading-3 text-white font-bold">
+              C
+            </span>
           </div>
         </div>
-        <div className={styles.msg}>
-          <p className={styles.date}>{moment(time).format('MMMM Do')}</p>
+        <div className="grow">
+          <p className="text-[10px] text-gray-400">
+            {moment(time).format('MMMM Do')}
+          </p>
           <p>{body}</p>
         </div>
-        <div className={styles.link}>View</div>
+        <div className="text-[10px] text-[#0084f4]">View</div>
       </div>
     ));
 
@@ -76,13 +78,13 @@ const Notification = () => {
         <button
           id={popupId}
           aria-expanded={isNotifOpen}
-          className={styles.bell}
+          className="bg-transparent border-0 cursor-pointer relative focus:[outline:3px_solid_black]"
         >
           <img src={notificationBell} alt="Notifications" />
           {notify && (
             <img
               src={notificationBadge}
-              className={styles.badge}
+              className="w-11 h-11"
               alt="notification badge"
             />
           )}
@@ -103,15 +105,15 @@ const Notification = () => {
         width: '333px',
       }}
     >
-      <div className={styles.content}>
+      <div>
         {newMessages.length === 0 || (
-          <h6 className={cn(styles.heading, styles.divider)}>
+          <h6 className="m-0 px-2.5 py-1.25 text-sm text-[#666666] font-normal border-b border-[#d6d6d6]">
             You have {newMessages.length} new message
             {newMessages.length === 1 || 's'}
           </h6>
         )}
         {newMessages.length === 0 || mapMessages(newMessages)}
-        <h6 className={styles.heading}>Message History</h6>
+        <h6 className="m-0 px-2.5 pt-2.5 pb-0 text-sm">Message History</h6>
         {mapMessages(messages)}
       </div>
     </Popup>

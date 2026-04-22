@@ -34,7 +34,6 @@ import RecurrenceDisplay from './RecurrenceDisplay';
 import RiderList from './RiderList';
 import { isNewRide } from '../../util/modelFixtures';
 import { validateRideTimes } from './TimeValidation';
-import styles from './RideOverview.module.css';
 
 interface RideOverviewProps {
   userRole: 'rider' | 'driver' | 'admin';
@@ -122,9 +121,9 @@ const PersonCardOverview: React.FC<{
   const rider = isRider ? (person as RiderType) : undefined;
 
   return (
-    <div className={styles.personCard}>
+    <div className="h-full flex flex-col">
       <CardContent sx={{ p: 2 }}>
-        <div className={styles.personHeader}>
+        <div className="flex items-center mb-3">
           <Avatar src={person.photoLink} sx={{ width: 48, height: 48 }}>
             {person.firstName?.charAt(0)}
             {person.lastName?.charAt(0)}
@@ -144,15 +143,15 @@ const PersonCardOverview: React.FC<{
         </div>
 
         {/* Contact Information */}
-        <div className={styles.contactInfo}>
+        <div className="flex flex-col gap-1.5 mb-3">
           {person.phoneNumber && (
-            <div className={styles.contactRow}>
+            <div className="flex items-center gap-2">
               <PhoneIcon fontSize="small" color="action" />
               <Typography variant="body2">{person.phoneNumber}</Typography>
             </div>
           )}
           {person.email && (
-            <div className={styles.contactRow}>
+            <div className="flex items-center gap-2">
               <EmailIcon fontSize="small" color="action" />
               <Typography variant="body2">{person.email}</Typography>
             </div>
@@ -163,7 +162,7 @@ const PersonCardOverview: React.FC<{
         {showAccessibility &&
           rider?.accessibility &&
           rider.accessibility.length > 0 && (
-            <div className={styles.accessibilitySection}>
+            <div className="border-t border-[#e0e0e0] mt-3 pt-3">
               <Typography
                 variant="body2"
                 color="textSecondary"
@@ -172,7 +171,7 @@ const PersonCardOverview: React.FC<{
               >
                 Accessibility Needs
               </Typography>
-              <div className={styles.accessibilityChips}>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {rider.accessibility.map((need: string) => (
                   <Chip
                     key={need}
@@ -314,17 +313,17 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
     if (userRole === 'rider') {
       return (
-        <div className={styles.rightColumn}>
-          <div className={styles.sectionTitle}>
+        <div className="flex flex-col">
+          <div className="flex items-center mb-4 gap-2">
             <PersonIcon color="primary" />
             <Typography variant="h6">Driver</Typography>
           </div>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div className="h-95 flex flex-col overflow-y-auto border border-[#e0e0e0] rounded-lg p-4 bg-[#fafafa]">
+            <div className="h-full overflow-y-auto flex flex-col">
               {ride.driver ? (
                 <PersonCardOverview person={ride.driver} type="driver" />
               ) : (
-                <div className={styles.notAssigned}>
+                <div className="flex items-center justify-center h-full bg-[#f5f5f5] border border-dashed border-[#ccc] rounded-lg">
                   <Typography variant="body1" color="textSecondary">
                     Not assigned
                   </Typography>
@@ -338,15 +337,15 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
     if (userRole === 'driver') {
       return (
-        <div className={styles.rightColumn}>
-          <div className={styles.sectionTitle}>
+        <div className="flex flex-col">
+          <div className="flex items-center mb-4 gap-2">
             <PersonIcon color="primary" />
             <Typography variant="h6">
               Riders ({ride.riders?.length || 0})
             </Typography>
           </div>
-          <div className={styles.contentArea}>
-            <div className={styles.riderListContainer}>
+          <div className="h-95 flex flex-col overflow-y-auto border border-[#e0e0e0] rounded-lg p-4 bg-[#fafafa]">
+            <div className="h-full overflow-y-auto flex flex-col">
               <RiderList
                 riders={ride.riders || []}
                 showAccessibility
@@ -362,24 +361,26 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="max-w-250">
       <div
         className={
-          userRole === 'admin' ? styles.adminOverviewGrid : styles.overviewGrid
+          userRole === 'admin'
+            ? 'grid grid-cols-1 max-w-200 mx-auto max-md:max-w-full max-md:mx-0'
+            : 'grid grid-cols-2 gap-6 items-start max-md:grid-cols-1 max-md:gap-4'
         }
       >
         {/* Left Column - Ride Information */}
-        <div className={styles.leftColumn}>
-          <div className={styles.sectionTitle}>
+        <div className="flex flex-col">
+          <div className="flex items-center mb-4 gap-2">
             <DirectionsCarIcon color="primary" />
             <Typography variant="h6">Ride Overview</Typography>
           </div>
-          <div className={styles.contentArea}>
+          <div className="h-95 flex flex-col overflow-y-auto border border-[#e0e0e0] rounded-lg p-4 bg-[#fafafa]">
             {/* Schedule Section */}
-            <div className={styles.scheduleSection}>
+            <div className="mb-5">
               {isEditing ? (
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <div className={styles.editFormFields}>
+                  <div className="flex flex-col gap-4">
                     {(() => {
                       // For editing existing rides, allow past times; for new rides, don't
                       const allowPastTimes = !isNewRide(ride);
@@ -415,7 +416,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
                       return (
                         <>
-                          <div className={styles.dateTimeRow}>
+                          <div className="flex gap-3 items-center max-md:flex-col max-md:gap-2">
                             <div style={{ flex: 1 }}>
                               <DatePicker
                                 label="Start Date"
@@ -467,7 +468,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                             </div>
                           </div>
 
-                          <div className={styles.dateTimeRow}>
+                          <div className="flex gap-3 items-center max-md:flex-col max-md:gap-2">
                             <div style={{ flex: 1 }}>
                               <DatePicker
                                 label="End Date"
@@ -528,15 +529,15 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                 </LocalizationProvider>
               ) : (
                 <>
-                  <div className={styles.dateRow}>
+                  <div className="flex items-center gap-3 mb-4">
                     <CalendarTodayIcon fontSize="small" color="action" />
                     <Typography variant="body1" sx={{ fontWeight: 500 }}>
                       {startDateTime.date}
                     </Typography>
                   </div>
 
-                  <div className={styles.timeRow}>
-                    <div className={styles.timeBlock}>
+                  <div className="flex gap-6 mb-4">
+                    <div className="flex items-center gap-2">
                       <AccessTimeIcon fontSize="small" color="action" />
                       <Box>
                         <Typography variant="body2" color="textSecondary">
@@ -547,7 +548,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                         </Typography>
                       </Box>
                     </div>
-                    <div className={styles.timeBlock}>
+                    <div className="flex items-center gap-2">
                       <AccessTimeIcon fontSize="small" color="action" />
                       <Box>
                         <Typography variant="body2" color="textSecondary">
@@ -564,14 +565,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
             </div>
 
             {/* Status Section */}
-            <div className={styles.statusSection}>
-              <div className={styles.statusHeader}>
+            <div className="mb-5">
+              <div className="flex items-center mb-4 gap-2">
                 <InfoIcon color="primary" />
                 <Typography variant="h6">Status</Typography>
               </div>
 
               {isEditing && userRole === 'admin' && !isNewRide(ride) ? (
-                <div className={styles.editStatusFields}>
+                <div className="flex flex-wrap gap-4 items-center max-md:flex-col max-md:items-stretch max-md:gap-3">
                   <FormControl size="small" sx={{ minWidth: 120 }}>
                     <InputLabel>Status</InputLabel>
                     <Select
@@ -618,7 +619,7 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                   </FormControl>
                 </div>
               ) : (
-                <div className={styles.chipsContainer}>
+                <div className="flex flex-wrap gap-2">
                   <Chip
                     label={ride.status.replace(/_/g, ' ')}
                     color={getStatusColor(ride.status)}
@@ -647,14 +648,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
 
             {/* Recurrence Section - Show for Rider and Admin only */}
             {showRecurrence && (
-              <div className={styles.recurrenceSection}>
-                <div className={styles.sectionTitle}>
+              <div className="mb-4">
+                <div className="flex items-center mb-4 gap-2">
                   <RepeatIcon color="primary" />
                   <Typography variant="h6">Recurrence</Typography>
                 </div>
 
                 {isEditing ? (
-                  <div className={styles.editRecurrenceFields}>
+                  <div className="flex flex-col gap-3 items-start">
                     <FormControl size="small" sx={{ minWidth: 120 }}>
                       <InputLabel>Repeat</InputLabel>
                       <Select
