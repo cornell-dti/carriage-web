@@ -34,6 +34,11 @@ type InputType = React.DetailedHTMLProps<
   HTMLInputElement
 >;
 
+/**
+ * Styled input component
+ *
+ * Auto applies type-specific styles (like textInput or emailInput)
+ */
 export const Input = React.forwardRef<HTMLInputElement, InputType>(
   ({ type, className, ...props }, ref) => (
     <input
@@ -56,6 +61,13 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
+/**
+ * Reusable button component with size + style variants
+ *
+ * - 'outline' switches between primary and secondary styles
+ * - 'small' turns on compact sizing
+ * - click handler is disabled automatically when 'disabled is true
+ */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const {
