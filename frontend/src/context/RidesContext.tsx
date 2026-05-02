@@ -24,7 +24,11 @@ type ridesState = {
     driverId?: string
   ) => Promise<void>;
   assignDriver: (rideId: string, driverId: string) => Promise<void>;
-  updateRideInfo: (rideId: string, updates: Partial<RideType>, scope?: 'single' | 'future') => Promise<void>;
+  updateRideInfo: (
+    rideId: string,
+    updates: Partial<RideType>,
+    scope?: 'single' | 'future'
+  ) => Promise<void>;
   createRide: (ride: Omit<RideType, 'id'>) => Promise<void>;
   cancelRide: (rideId: string) => Promise<void>;
   deleteRide: (rideId: string) => Promise<void>;
@@ -328,7 +332,11 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
   );
 
   const updateRideInfo = useCallback(
-    async (rideId: string, updates: Partial<RideType>, scope?: 'single' | 'future') => {
+    async (
+      rideId: string,
+      updates: Partial<RideType>,
+      scope?: 'single' | 'future'
+    ) => {
       let originalRide: RideType | undefined = getRideById(rideId);
 
       // If ride not found in current context, fetch it from the server first
@@ -376,7 +384,10 @@ export const RidesProvider = ({ children }: RidesProviderProps) => {
         }
 
         // Make API call
-        const response = await axios.put(`/api/rides/${rideId}${scope ? `?scope=${scope}` : ''}`, updates);
+        const response = await axios.put(
+          `/api/rides/${rideId}${scope ? `?scope=${scope}` : ''}`,
+          updates
+        );
         const serverRide = response.data.data;
         console.log(serverRide, 'serverride');
 

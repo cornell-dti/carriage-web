@@ -51,7 +51,6 @@ const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
   return 'Upcoming';
 };
 
-
 const getStatusColor = (
   status: Status
 ): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
@@ -649,9 +648,14 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                       <InputLabel>Repeat</InputLabel>
                       <Select
                         value={(() => {
-                          if (!ride.isRecurring || !ride.recurrenceDays?.length) return 'none';
+                          if (!ride.isRecurring || !ride.recurrenceDays?.length)
+                            return 'none';
                           const days = ride.recurrenceDays;
-                          if (days.length === 5 && [1,2,3,4,5].every(d => days.includes(d))) return 'daily';
+                          if (
+                            days.length === 5 &&
+                            [1, 2, 3, 4, 5].every((d) => days.includes(d))
+                          )
+                            return 'daily';
                           if (days.length === 1) return 'weekly';
                           return 'custom';
                         })()}
@@ -666,7 +670,9 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                             updateRideField('recurrenceDays', [1, 2, 3, 4, 5]);
                           } else if (val === 'weekly') {
                             updateRideField('isRecurring', true);
-                            updateRideField('recurrenceDays', [new Date(ride.startTime).getDay()]);
+                            updateRideField('recurrenceDays', [
+                              new Date(ride.startTime).getDay(),
+                            ]);
                           } else if (val === 'custom') {
                             updateRideField('isRecurring', true);
                           }
@@ -686,10 +692,17 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                         type="date"
                         size="small"
                         InputLabelProps={{ shrink: true }}
-                        value={ride.recurrenceEndDate ? ride.recurrenceEndDate.split('T')[0] : ''}
+                        value={
+                          ride.recurrenceEndDate
+                            ? ride.recurrenceEndDate.split('T')[0]
+                            : ''
+                        }
                         onChange={(e) => {
                           const val = e.target.value;
-                          updateRideField('recurrenceEndDate', val ? new Date(val).toISOString() : undefined);
+                          updateRideField(
+                            'recurrenceEndDate',
+                            val ? new Date(val).toISOString() : undefined
+                          );
                         }}
                         placeholder="No end date"
                       />

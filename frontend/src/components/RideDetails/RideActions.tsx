@@ -65,7 +65,9 @@ const RideActions: React.FC<RideActionsProps> = ({
   const [contactAdminOpen, setContactAdminOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [scopeDialogMode, setScopeDialogMode] = useState<'save' | 'cancel' | null>(null);
+  const [scopeDialogMode, setScopeDialogMode] = useState<
+    'save' | 'cancel' | null
+  >(null);
 
   const ride = editedRide!; // We know this exists from the context
   const rideCompleted = ride.status === Status.COMPLETED;
@@ -436,7 +438,9 @@ const RideActions: React.FC<RideActionsProps> = ({
         fullWidth
       >
         <DialogTitle>
-          {scopeDialogMode === 'save' ? 'Edit Recurring Ride' : 'Cancel Recurring Ride'}
+          {scopeDialogMode === 'save'
+            ? 'Edit Recurring Ride'
+            : 'Cancel Recurring Ride'}
         </DialogTitle>
         <DialogContent>
           <Typography>

@@ -39,8 +39,8 @@ export type RideType = {
   driver?: DriverType;
 
   isRecurring: boolean;
-  recurrenceId?: string;      // Shared UUID for all rides in a series
-  recurrenceDays?: number[];  // Days of week: 0=Sun, 1=Mon, ..., 6=Sat
+  recurrenceId?: string; // Shared UUID for all rides in a series
+  recurrenceDays?: number[]; // Days of week: 0=Sun, 1=Mon, ..., 6=Sat
   recurrenceEndDate?: string; // ISO date string — last date for the series
   timezone?: string;
 };

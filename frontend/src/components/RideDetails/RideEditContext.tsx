@@ -143,134 +143,137 @@ export const RideEditProvider: React.FC<RideEditProviderProps> = ({
     return hasChangesResult;
   }, [editedRide, originalRide]);
 
-  const saveChanges = useCallback(async (scope?: 'single' | 'future'): Promise<boolean> => {
-    if (!editedRide) {
-      return false;
-    }
-
-    // Validate ride times
-    if (editedRide.startTime && editedRide.endTime) {
-      const timeValidation = validateRideTimes(
-        editedRide.startTime,
-        editedRide.endTime,
-        {
-          allowPastTimes: !isNewRide(editedRide),
-          maxDurationHours: 24,
-          minDurationMinutes: 5,
-        }
-      );
-
-      if (!timeValidation.isValid) {
-        console.error('Time validation failed:', timeValidation.errors);
-        return false;
-      }
-    }
-
-    // For new rides, we need different validation and payload
-    if (isNewRide(editedRide)) {
-      // Validate required fields for new ride
-      if (
-        !editedRide.startLocation.id ||
-        !editedRide.endLocation.id ||
-        !editedRide.startTime ||
-        !editedRide.endTime
-      ) {
-        console.error('Missing required fields for new ride');
+  const saveChanges = useCallback(
+    async (scope?: 'single' | 'future'): Promise<boolean> => {
+      if (!editedRide) {
         return false;
       }
 
-      try {
-        // Prepare payload for new ride creation
-        const createPayload = {
-          type: editedRide.type,
-          schedulingState: editedRide.schedulingState,
-          startTime: editedRide.startTime,
-          endTime: editedRide.endTime,
-          startLocation: editedRide.startLocation,
-          endLocation: editedRide.endLocation,
-          riders: editedRide.riders || [],
-          driver: editedRide.driver || null,
-          isRecurring: false,
-        };
-
-        // Create new ride
-        const response = await axios.post('/api/rides', createPayload);
-
-        // Update the context with the response
-        if (onRideUpdated) {
-          onRideUpdated(response.data);
-        }
-
-        stopEditing();
-        return true;
-      } catch (error) {
-        console.error('Failed to create new ride:', error);
-        return false;
-      }
-    } else {
-      // Existing ride update logic
-      if (!originalRide || !hasChanges()) {
-        return false;
-      }
-
-      try {
-        // Prepare the update payload - only include changed fields (like the previous implementation)
-        const updatePayload: any = {};
-
-        // Only include changed fields - include riders for single rider updates
-        const fieldsToCheck: (keyof RideType)[] = [
-          'startTime',
-          'endTime',
-          'startLocation',
-          'endLocation',
-          'status',
-          'schedulingState',
-          'type',
-          'driver',
-          'riders',
-          'isRecurring',
-          'recurrenceDays',
-          'recurrenceEndDate',
-        ];
-
-        for (const field of fieldsToCheck) {
-          if (
-            JSON.stringify(editedRide[field]) !==
-            JSON.stringify(originalRide[field])
-          ) {
-            updatePayload[field] = editedRide[field];
+      // Validate ride times
+      if (editedRide.startTime && editedRide.endTime) {
+        const timeValidation = validateRideTimes(
+          editedRide.startTime,
+          editedRide.endTime,
+          {
+            allowPastTimes: !isNewRide(editedRide),
+            maxDurationHours: 24,
+            minDurationMinutes: 5,
           }
+        );
+
+        if (!timeValidation.isValid) {
+          console.error('Time validation failed:', timeValidation.errors);
+          return false;
         }
-
-        // Special handling for driver removal
-        if (originalRide.driver && !editedRide.driver) {
-          updatePayload.$REMOVE = ['driver'];
-        }
-
-        // Use optimistic update from RidesContext
-        await updateRideInfo(ride.id, updatePayload, scope);
-
-        // Update the context with the optimistically updated ride
-        if (onRideUpdated) {
-          onRideUpdated({ ...editedRide } as RideType);
-        }
-
-        stopEditing();
-        return true;
-      } catch (error) {
-        console.error('Failed to save ride changes:', error);
-        return false;
       }
-    }
-  }, [
-    editedRide,
-    originalRide,
-    hasChanges,
-    ride.id,
-    onRideUpdated,
-    stopEditing,
-    updateRideInfo,
-  ]);
+
+      // For new rides, we need different validation and payload
+      if (isNewRide(editedRide)) {
+        // Validate required fields for new ride
+        if (
+          !editedRide.startLocation.id ||
+          !editedRide.endLocation.id ||
+          !editedRide.startTime ||
+          !editedRide.endTime
+        ) {
+          console.error('Missing required fields for new ride');
+          return false;
+        }
+
+        try {
+          // Prepare payload for new ride creation
+          const createPayload = {
+            type: editedRide.type,
+            schedulingState: editedRide.schedulingState,
+            startTime: editedRide.startTime,
+            endTime: editedRide.endTime,
+            startLocation: editedRide.startLocation,
+            endLocation: editedRide.endLocation,
+            riders: editedRide.riders || [],
+            driver: editedRide.driver || null,
+            isRecurring: false,
+          };
+
+          // Create new ride
+          const response = await axios.post('/api/rides', createPayload);
+
+          // Update the context with the response
+          if (onRideUpdated) {
+            onRideUpdated(response.data);
+          }
+
+          stopEditing();
+          return true;
+        } catch (error) {
+          console.error('Failed to create new ride:', error);
+          return false;
+        }
+      } else {
+        // Existing ride update logic
+        if (!originalRide || !hasChanges()) {
+          return false;
+        }
+
+        try {
+          // Prepare the update payload - only include changed fields (like the previous implementation)
+          const updatePayload: any = {};
+
+          // Only include changed fields - include riders for single rider updates
+          const fieldsToCheck: (keyof RideType)[] = [
+            'startTime',
+            'endTime',
+            'startLocation',
+            'endLocation',
+            'status',
+            'schedulingState',
+            'type',
+            'driver',
+            'riders',
+            'isRecurring',
+            'recurrenceDays',
+            'recurrenceEndDate',
+          ];
+
+          for (const field of fieldsToCheck) {
+            if (
+              JSON.stringify(editedRide[field]) !==
+              JSON.stringify(originalRide[field])
+            ) {
+              updatePayload[field] = editedRide[field];
+            }
+          }
+
+          // Special handling for driver removal
+          if (originalRide.driver && !editedRide.driver) {
+            updatePayload.$REMOVE = ['driver'];
+          }
+
+          // Use optimistic update from RidesContext
+          await updateRideInfo(ride.id, updatePayload, scope);
+
+          // Update the context with the optimistically updated ride
+          if (onRideUpdated) {
+            onRideUpdated({ ...editedRide } as RideType);
+          }
+
+          stopEditing();
+          return true;
+        } catch (error) {
+          console.error('Failed to save ride changes:', error);
+          return false;
+        }
+      }
+    },
+    [
+      editedRide,
+      originalRide,
+      hasChanges,
+      ride.id,
+      onRideUpdated,
+      stopEditing,
+      updateRideInfo,
+    ]
+  );
 
   const contextValue: RideEditContextType = {
     isEditing,

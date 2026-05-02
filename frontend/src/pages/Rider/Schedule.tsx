@@ -165,14 +165,21 @@ const Schedule: React.FC = () => {
       const dateStr = formData.date.toISOString().split('T')[0];
       const timeStr = formData.time.toTimeString().split(' ')[0];
       const startISO = new Date(`${dateStr}T${timeStr}`).toISOString();
-      const endISO = new Date(new Date(startISO).getTime() + 30 * 60 * 1000).toISOString();
+      const endISO = new Date(
+        new Date(startISO).getTime() + 30 * 60 * 1000
+      ).toISOString();
 
       const isRecurring = formData.repeatType !== 'none';
 
       // Map day abbreviations to day-of-week numbers (0=Sun…6=Sat)
       const dayNameToNumber: Record<string, number> = {
-        Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
-        Thursday: 4, Friday: 5, Saturday: 6,
+        Sunday: 0,
+        Monday: 1,
+        Tuesday: 2,
+        Wednesday: 3,
+        Thursday: 4,
+        Friday: 5,
+        Saturday: 6,
       };
 
       let recurrenceDays: number[] = [];
