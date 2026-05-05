@@ -76,7 +76,9 @@ const RidesTable = ({ rides }: RidesTableProps) => {
                 return (
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     {primaryRider.accessibility.map((accessibility) => (
-                      <p style={{ textWrap: 'nowrap' }}>{accessibility}</p>
+                      <p key={accessibility} style={{ textWrap: 'nowrap' }}>
+                        {accessibility}
+                      </p>
                     ))}
                   </div>
                 );

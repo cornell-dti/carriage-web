@@ -51,17 +51,6 @@ const getTemporalType = (ride: RideType): 'Past' | 'Active' | 'Upcoming' => {
   return 'Upcoming';
 };
 
-// Helper function to format recurrence summary
-const getRecurrenceSummary = (ride: RideType): string => {
-  if (!ride.isRecurring || !ride.rrule) return '';
-
-  // Basic RRULE parsing - in practice you might use a library like rrule
-  if (ride.rrule.includes('FREQ=DAILY')) return 'Daily';
-  if (ride.rrule.includes('FREQ=WEEKLY')) return 'Weekly';
-  if (ride.rrule.includes('FREQ=MONTHLY')) return 'Monthly';
-  return 'Custom recurrence';
-};
-
 const getStatusColor = (
   status: Status
 ): 'default' | 'primary' | 'info' | 'warning' | 'success' | 'error' => {
@@ -658,40 +647,65 @@ const RideOverview: React.FC<RideOverviewProps> = ({ userRole }) => {
                     <FormControl size="small" sx={{ minWidth: 120 }}>
                       <InputLabel>Repeat</InputLabel>
                       <Select
-                        value={ride.isRecurring ? 'weekly' : 'none'}
-                        onChange={(e) =>
-                          updateRideField(
-                            'isRecurring',
-                            e.target.value !== 'none'
+                        value={(() => {
+                          if (!ride.isRecurring || !ride.recurrenceDays?.length)
+                            return 'none';
+                          const days = ride.recurrenceDays;
+                          if (
+                            days.length === 5 &&
+                            [1, 2, 3, 4, 5].every((d) => days.includes(d))
                           )
-                        }
+                            return 'daily';
+                          if (days.length === 1) return 'weekly';
+                          return 'custom';
+                        })()}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === 'none') {
+                            updateRideField('isRecurring', false);
+                            updateRideField('recurrenceDays', []);
+                            updateRideField('recurrenceEndDate', undefined);
+                          } else if (val === 'daily') {
+                            updateRideField('isRecurring', true);
+                            updateRideField('recurrenceDays', [1, 2, 3, 4, 5]);
+                          } else if (val === 'weekly') {
+                            updateRideField('isRecurring', true);
+                            updateRideField('recurrenceDays', [
+                              new Date(ride.startTime).getDay(),
+                            ]);
+                          } else if (val === 'custom') {
+                            updateRideField('isRecurring', true);
+                          }
+                        }}
                         label="Repeat"
                       >
                         <MenuItem value="none">Does not repeat</MenuItem>
-                        <MenuItem value="daily">Daily</MenuItem>
+                        <MenuItem value="daily">Daily (Mon–Fri)</MenuItem>
                         <MenuItem value="weekly">Weekly</MenuItem>
-                        <MenuItem value="monthly">Monthly</MenuItem>
                         <MenuItem value="custom">Custom</MenuItem>
                       </Select>
                     </FormControl>
 
                     {ride.isRecurring && (
-                      <>
-                        <TextField
-                          label="End date (optional)"
-                          type="date"
-                          size="small"
-                          InputLabelProps={{ shrink: true }}
-                          placeholder="No end date"
-                        />
-                        <Typography
-                          variant="caption"
-                          color="textSecondary"
-                          sx={{ fontStyle: 'italic' }}
-                        >
-                          Note: Full recurrence functionality coming soon
-                        </Typography>
-                      </>
+                      <TextField
+                        label="End date (optional)"
+                        type="date"
+                        size="small"
+                        InputLabelProps={{ shrink: true }}
+                        value={
+                          ride.recurrenceEndDate
+                            ? ride.recurrenceEndDate.split('T')[0]
+                            : ''
+                        }
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          updateRideField(
+                            'recurrenceEndDate',
+                            val ? new Date(val).toISOString() : undefined
+                          );
+                        }}
+                        placeholder="No end date"
+                      />
                     )}
                   </div>
                 ) : (

@@ -65,6 +65,9 @@ const RideActions: React.FC<RideActionsProps> = ({
   const [contactAdminOpen, setContactAdminOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [scopeDialogMode, setScopeDialogMode] = useState<
+    'save' | 'cancel' | null
+  >(null);
 
   const ride = editedRide!; // We know this exists from the context
   const rideCompleted = ride.status === Status.COMPLETED;
@@ -91,32 +94,26 @@ const RideActions: React.FC<RideActionsProps> = ({
   };
 
   const handleCancel = () => {
-    setCancelConfirmOpen(true);
+    // Recurring rides need scope selection before cancelling
+    if (ride.recurrenceId) {
+      setScopeDialogMode('cancel');
+    } else {
+      setCancelConfirmOpen(true);
+    }
   };
 
-  const handleCancelConfirm = async () => {
-    // Check for recurring rides (not supported yet)
-    if (ride.isRecurring) {
-      showToast('Recurring ride deletion not supported yet', ToastStatus.ERROR);
-      return;
-    }
-
+  const handleCancelConfirm = async (scope?: 'single' | 'future') => {
     try {
-      // Call the DELETE endpoint like DeleteOrEditTypeModal does
-      await axios.delete(`/api/rides/${ride.id}`);
+      const url = scope
+        ? `/api/rides/${ride.id}?scope=${scope}`
+        : `/api/rides/${ride.id}`;
+      await axios.delete(url);
 
-      // Close the cancel confirmation modal
       setCancelConfirmOpen(false);
+      setScopeDialogMode(null);
 
-      // Close the main ride details dialog since the ride no longer exists
-      if (onClose) {
-        onClose();
-      }
-
-      // Refresh the rides data
+      if (onClose) onClose();
       refreshRides();
-
-      // Show success message
       showToast('Ride Cancelled', ToastStatus.SUCCESS);
     } catch (error) {
       console.error('Failed to cancel ride:', error);
@@ -126,34 +123,35 @@ const RideActions: React.FC<RideActionsProps> = ({
 
   const handleEdit = () => {
     if (isEditing) {
-      // Save changes
       handleSave();
     } else {
-      // Start editing
       startEditing();
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (scope?: 'single' | 'future') => {
+    // If ride is recurring and no scope decided yet, show scope dialog
+    if (ride.recurrenceId && scope === undefined) {
+      setScopeDialogMode('save');
+      return;
+    }
+
     setSaving(true);
     try {
-      const success = await saveChanges();
+      const success = await saveChanges(scope);
       if (success) {
         const message = isNewRide(ride)
           ? 'Ride created successfully'
           : 'Ride saved successfully';
         showToast(message, ToastStatus.SUCCESS);
 
-        // Only refresh rides if the ride is on the current date being displayed in the context
         const rideDate = new Date(ride.startTime).toDateString();
         const contextDate = curDate.toDateString();
         if (rideDate === contextDate) {
           refreshRides();
         }
 
-        if (onClose) {
-          onClose(); // Close modal after creating new ride
-        }
+        if (onClose) onClose();
       } else {
         const message = isNewRide(ride)
           ? 'Failed to create ride'
@@ -168,6 +166,7 @@ const RideActions: React.FC<RideActionsProps> = ({
       showToast(message, ToastStatus.ERROR);
     } finally {
       setSaving(false);
+      setScopeDialogMode(null);
     }
   };
 
@@ -422,11 +421,56 @@ const RideActions: React.FC<RideActionsProps> = ({
         <DialogActions>
           <Button onClick={() => setCancelConfirmOpen(false)}>Keep Ride</Button>
           <Button
-            onClick={handleCancelConfirm}
+            onClick={() => handleCancelConfirm()}
             variant="contained"
             color="error"
           >
             Cancel Ride
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Recurring Scope Dialog — shown when editing or cancelling a recurring ride */}
+      <Dialog
+        open={scopeDialogMode !== null}
+        onClose={() => setScopeDialogMode(null)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>
+          {scopeDialogMode === 'save'
+            ? 'Edit Recurring Ride'
+            : 'Cancel Recurring Ride'}
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            {scopeDialogMode === 'save'
+              ? 'Do you want to edit just this ride, or this and all future rides in the series?'
+              : 'Do you want to cancel just this ride, or this and all future rides in the series?'}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setScopeDialogMode(null)}>Back</Button>
+          <Button
+            variant="outlined"
+            onClick={() =>
+              scopeDialogMode === 'save'
+                ? handleSave('single')
+                : handleCancelConfirm('single')
+            }
+          >
+            Just this ride
+          </Button>
+          <Button
+            variant="contained"
+            color={scopeDialogMode === 'cancel' ? 'error' : 'primary'}
+            onClick={() =>
+              scopeDialogMode === 'save'
+                ? handleSave('future')
+                : handleCancelConfirm('future')
+            }
+          >
+            This and all future rides
           </Button>
         </DialogActions>
       </Dialog>

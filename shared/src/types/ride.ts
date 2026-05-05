@@ -38,12 +38,9 @@ export type RideType = {
   riders: RiderType[];
   driver?: DriverType;
 
-  // RFC 5545 Recurrence fields (placeholders - no functionality yet)
   isRecurring: boolean;
-  rrule?: string; // RFC 5545 recurrence rule
-  exdate?: string[]; // Excluded dates (ISO 8601 format)
-  rdate?: string[]; // Additional dates (ISO 8601 format)
-  parentRideId?: string; // Reference to parent ride for series
-  recurrenceId?: string; // Original start time for overrides
-  timezone?: string; // Timezone for recurrence calculations
+  recurrenceId?: string; // Shared UUID for all rides in a series
+  recurrenceDays?: number[]; // Days of week: 0=Sun, 1=Mon, ..., 6=Sat
+  recurrenceEndDate?: string; // ISO date string — last date for the series
+  timezone?: string;
 };

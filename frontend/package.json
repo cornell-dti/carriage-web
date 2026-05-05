@@ -5,10 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "@carriage-web/shared": "workspace:*",
-    "@tailwindcss/vite": "^4.2.2"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit"
@@ -34,6 +35,7 @@
     "@mui/utils": "^7.3.6",
     "@mui/x-date-pickers": "^7.23.1",
     "@react-aria/utils": "^3.25.2",
+    "@tailwindcss/vite": "^4.2.2",
     "@types/crypto-js": "^4.2.2",
     "@types/google.maps": "^3.58.1",
     "@types/node": "^22.5.5",
