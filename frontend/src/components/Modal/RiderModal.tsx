@@ -31,6 +31,7 @@ const RiderModal = ({
 
   const closeModal = () => setIsOpen(false);
 
+  // Accumulates form data into state before calling the next step (supports multi-page forms)
   const saveDataThen = (next: () => void) => (data: ObjectType) => {
     setFormData((prev) => ({ ...prev, ...data }));
     next();
@@ -41,6 +42,8 @@ const RiderModal = ({
     closeModal();
   };
 
+  // Modal closes first (submitData sets isSubmitted), then this effect fires the API call so the
+  // user isn't blocked waiting on the network before modal dismisses
   useEffect(() => {
     if (isSubmitted) {
       const method = existingRider ? axios.put : axios.post;
@@ -71,7 +74,13 @@ const RiderModal = ({
   return (
     <>
       <Modal
-        title={!existingRider ? 'Add a Student' : 'Edit a Student'}
+        title={
+          !existingRider
+            ? 'Add a Student'
+            : isRiderWeb
+            ? 'Edit Profile'
+            : 'Edit a Student'
+        }
         isOpen={isOpen}
         currentPage={0}
         onClose={closeModal}
