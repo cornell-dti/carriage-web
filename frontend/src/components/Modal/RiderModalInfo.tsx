@@ -251,23 +251,24 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           )}
         </div>
 
-        <div className={cn(styles.gridR1, styles.gridCSmall3)}>
-          <Label className={styles.label} htmlFor="netid">
-            NetID:{' '}
-          </Label>
-          <Input
-            id="netid"
-            {...register('netid', {
-              required: true,
-              pattern: /^[a-zA-Z]+[0-9]+$/,
-            })}
-            type="text"
-            disabled={isStudentEditing}
-            className={styles.firstRow}
-            aria-required="true"
-          />
-          {errors.netid && <p className={styles.error}>Invalid NetID</p>}
-        </div>
+        {!isStudentEditing && (
+          <div className={cn(styles.gridR1, styles.gridCSmall3)}>
+            <Label className={styles.label} htmlFor="netid">
+              NetID:{' '}
+            </Label>
+            <Input
+              id="netid"
+              {...register('netid', {
+                required: true,
+                pattern: /^[a-zA-Z]+[0-9]+$/,
+              })}
+              type="text"
+              className={styles.firstRow}
+              aria-required="true"
+            />
+            {errors.netid && <p className={styles.error}>Invalid NetID</p>}
+          </div>
+        )}
 
         <div className={cn(styles.gridR2, styles.gridCBig1)}>
           <Label className={styles.label} htmlFor="phoneNumber">
@@ -354,55 +355,55 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           </div>
         </div>
 
-        <div className={cn(styles.gridR3, styles.gridCAll)}>
-          <p>Duration</p>
-          <div className={styles.lastRow}>
-            <div>
-              <Label className={styles.label} htmlFor="joinDate">
-                Join Date:{' '}
-              </Label>
-              <Input
-                id="joinDate"
-                {...register('joinDate', { required: true })}
-                type="date"
-                aria-required="true"
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.joinDate && (
-                <p className={styles.error}>Please enter a join date</p>
-              )}
-            </div>
-            <div className={styles.to}>
-              <p>→</p>
-            </div>
-            <div>
-              <Label className={styles.label} htmlFor="endDate">
-                End Date:{' '}
-              </Label>
-              <Input
-                id="endDate"
-                {...register('endDate', {
-                  required: true,
-                  validate: (endDate) => {
-                    const joinDate = getValues('joinDate');
-                    return joinDate < endDate;
-                  },
-                })}
-                type="date"
-                aria-required="true"
-                disabled={isStudentEditing}
-                className={styles.riderDate}
-              />
-              {errors.endDate?.type === 'required' && (
-                <p className={styles.error}>Please enter an end date</p>
-              )}
-              {errors.endDate?.type === 'validate' && (
-                <p className={styles.error}>Invalid end time</p>
-              )}
+        {!isStudentEditing && (
+          <div className={cn(styles.gridR3, styles.gridCAll)}>
+            <p>Duration</p>
+            <div className={styles.lastRow}>
+              <div>
+                <Label className={styles.label} htmlFor="joinDate">
+                  Join Date:{' '}
+                </Label>
+                <Input
+                  id="joinDate"
+                  {...register('joinDate', { required: true })}
+                  type="date"
+                  aria-required="true"
+                  className={styles.riderDate}
+                />
+                {errors.joinDate && (
+                  <p className={styles.error}>Please enter a join date</p>
+                )}
+              </div>
+              <div className={styles.to}>
+                <p>→</p>
+              </div>
+              <div>
+                <Label className={styles.label} htmlFor="endDate">
+                  End Date:{' '}
+                </Label>
+                <Input
+                  id="endDate"
+                  {...register('endDate', {
+                    required: true,
+                    validate: (endDate) => {
+                      const joinDate = getValues('joinDate');
+                      return joinDate < endDate;
+                    },
+                  })}
+                  type="date"
+                  aria-required="true"
+                  className={styles.riderDate}
+                />
+                {errors.endDate?.type === 'required' && (
+                  <p className={styles.error}>Please enter an end date</p>
+                )}
+                {errors.endDate?.type === 'validate' && (
+                  <p className={styles.error}>Invalid end time</p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className={styles.buttonContainer}>
@@ -415,7 +416,11 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           Cancel
         </Button>
         <Button type="submit" className={styles.submit}>
-          {isEditing ? 'Edit a Student' : 'Add a Student'}
+          {isStudentEditing
+            ? 'Save Changes'
+            : isEditing
+              ? 'Edit a Student'
+              : 'Add a Student'}
         </Button>
       </div>
     </form>
