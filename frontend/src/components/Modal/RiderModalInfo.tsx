@@ -197,7 +197,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   };
 
   const cancel = () => {
-    setFormData({});  // Clear stale data so a reopened modal doesn't submit a partial previous entry
+    setFormData({}); // Clear stale data so a reopened modal doesn't submit a partial previous entry
     setIsOpen(false);
   };
 
