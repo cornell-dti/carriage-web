@@ -75,8 +75,8 @@ const RiderModal = ({
           !existingRider
             ? 'Add a Student'
             : isRiderWeb
-              ? 'Edit Profile'
-              : 'Edit a Student'
+            ? 'Edit Profile'
+            : 'Edit a Student'
         }
         isOpen={isOpen}
         currentPage={0}

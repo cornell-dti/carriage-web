@@ -419,8 +419,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
           {isStudentEditing
             ? 'Save Changes'
             : isEditing
-              ? 'Edit a Student'
-              : 'Add a Student'}
+            ? 'Edit a Student'
+            : 'Add a Student'}
         </Button>
       </div>
     </form>
