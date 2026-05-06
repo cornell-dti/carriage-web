@@ -39,6 +39,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customNeed, setCustomNeed] = useState('');
 
+  // Returns a validator function so both name fields share the same logic with different labels
   const makeNameValidator =
     (fieldLabel: 'First name' | 'Last name') => (value: string) => {
       const trimmed = value.trim();
@@ -124,6 +125,8 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     }),
   };
 
+  // "Add Custom Need" is a sentinel option
+  // intercept it to show the free-text input instead of adding it as a real need
   const handleNeedsChange = (
     selectedOptions: readonly NeedOption[] | null,
     { action }: any
@@ -145,6 +148,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     if (customNeed.trim()) {
       const currentNeeds = getValues('needs') || [];
       const newNeed: NeedOption = {
+        // Normalize to UPPER_SNAKE_CASE to match the Accessibility enum format on the backend
         value: customNeed.toUpperCase().replace(/\s+/g, '_'),
         label: customNeed.trim(),
       };
@@ -173,6 +177,7 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
     const accessibility = needs.map((option) => option.value.toString());
     const normalizedPhoneNumber = normalizePhoneNumber(phoneNumber);
 
+    // Derive active status client-side so backend doesn't need to recalculate it on every edit
     const today = new Date().toISOString().slice(0, 10);
     const active = joinDate <= today && today <= endDate;
 
@@ -192,12 +197,13 @@ const RiderModalInfo: React.FC<ModalFormProps> = ({
   };
 
   const cancel = () => {
-    setFormData({});
+    setFormData({});  // Clear stale data so a reopened modal doesn't submit a partial previous entry
     setIsOpen(false);
   };
 
   const localUserType = localStorage.getItem('userType');
   const isEditing = rider !== undefined;
+  // Riders editing their own profile get a restricted form — no NetID or duration fields
   const isStudentEditing = isEditing && localUserType === 'Rider';
 
   const needsOptions: NeedOption[] = [

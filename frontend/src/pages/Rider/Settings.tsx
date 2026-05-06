@@ -41,6 +41,7 @@ const Settings = () => {
         />
         <UserContactInfo icon={mail} alt="Email" text={user?.email || ''} />
       </UserDetail>
+      {/* isRiderWeb triggers student-edit mode: hides NetID/duration fields and refreshes the auth user on save */}
       <RiderModal
         existingRider={user as RiderType}
         isRiderWeb={true}
